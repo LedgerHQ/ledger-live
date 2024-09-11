@@ -10,10 +10,8 @@ import network from "@ledgerhq/live-network/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
-import {
-  listAppsUseCase,
-  execWithTransport,
-} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { delay } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";

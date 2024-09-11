@@ -43,7 +43,7 @@ runs:
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
-    - uses: actions/setup-dotnet@v3.2.0
+    - uses: actions/setup-dotnet@v4
       if: inputs.install-dotnet != ''
       with:
         dotnet-version: 2.1.816
@@ -64,7 +64,7 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
         aws-region: ${{ inputs.region }}
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 20.11.0
         registry-url: "https://registry.npmjs.org"

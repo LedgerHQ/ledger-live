@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, RouteComponentProps } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Card from "~/renderer/components/Box/Card";
 import {
@@ -12,12 +12,14 @@ import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CARD_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { CARD_APP_ID, INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import CardPlatformApp from "./CardPlatformApp";
 
-const LiveAppCard = () => {
-  const { state: urlParams, search } = useLocation();
+type CardState = { account?: string } | undefined;
+
+const LiveAppCard = ({ appId }: { appId: string }) => {
+  const { state: urlParams, search } = useLocation<CardState>();
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(localeSelector);
   const language = useSelector(languageSelector);
@@ -26,8 +28,8 @@ const LiveAppCard = () => {
   const mockManifest: LiveAppManifest | undefined =
     process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
 
-  const localManifest = useLocalLiveAppManifest(CARD_APP_ID);
-  const remoteManifest = useRemoteLiveAppManifest(CARD_APP_ID);
+  const localManifest = useLocalLiveAppManifest(appId);
+  const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
 
@@ -36,7 +38,7 @@ const LiveAppCard = () => {
    * to ensure the context is reset. last-screen is used to give an external app's webview context
    * of the last screen the user was on before navigating to the external app screen.
    */
-  if (manifest?.id) {
+  if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
     const { localStorage } = window;
     localStorage.removeItem("last-screen");
     localStorage.removeItem("manifest-id");
@@ -67,10 +69,15 @@ const LiveAppCard = () => {
   );
 };
 
-const CardDapp = () => {
+export type ComponentParams = {
+  appId?: string;
+};
+
+const CardDapp = ({ match }: RouteComponentProps<ComponentParams>) => {
+  const appId = match?.params?.appId;
   const ptxCardFlag = useFeature("ptxCard");
   if (ptxCardFlag?.enabled) {
-    return <LiveAppCard />;
+    return <LiveAppCard appId={appId || CARD_APP_ID} />;
   } else {
     return <CardPlatformApp />; // Baanx card
   }

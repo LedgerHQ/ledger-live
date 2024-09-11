@@ -1,7 +1,7 @@
 name: "@Desktop • Test App (external)"
-run-name: "@Desktop • Test App (external) triggered by ${{ inputs.login }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       ref:
@@ -16,10 +16,6 @@ on:
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
 
 permissions:
   id-token: write
@@ -47,7 +43,7 @@ jobs:
         with:
           skip_builds: true
       - name: lint
-        run: pnpm desktop lint:ci
+        run: pnpm desktop lint:ci:external
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
@@ -56,8 +52,8 @@ jobs:
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
-          name: lint
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
+          name: lint-desktop-external
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint-desktop-external.json
       - name: check for dead code
         run: pnpm desktop unimported
         shell: bash
@@ -161,13 +157,13 @@ jobs:
       - name: "download linter results"
         uses: actions/download-artifact@v4
         with:
-          name: lint
+          name: lint-desktop-external
       - name: download images artifacts
         uses: actions/download-artifact@v4
         with:
           name: images
       - name: parse images
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const fs = require("fs");
@@ -189,7 +185,7 @@ jobs:
         with:
           images: images.json
           no-actor: true
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: prepare status
         id: status
         with:
@@ -275,7 +271,7 @@ jobs:
             // Store eslint results as annotations
             let annotations = []
             try {
-              const lintResult = require("./lint.json");
+              const lintResult = require("./lint-desktop-external.json");
               const LEVELS = {
                 0: "notice",
                 1: "warning",
