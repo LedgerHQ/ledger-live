@@ -195,8 +195,12 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - name: Log installed packages, pre-install
+        run: pnpm list --depth=0
       - name: Install dependencies
         run: pnpm i --filter="./libs/ui/**"
+      - name: Log installed packages, post-install
+        run: pnpm list --depth=0
       - name: Build and Test affected libraries
         id: test-ui
         run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
