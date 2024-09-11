@@ -15,6 +15,14 @@ export class ReceiveModal extends Modal {
   private warningMessage = this.page.locator('div[type="warning"]');
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
+  private sendAssetWarningMessage = (
+    account: Account,
+    specificTokens: string,
+  ) => `Please only send ${account.currency.ticker} or ${specificTokens} tokens to ${account.currency.name} accounts. 
+          Sending other crypto assets may result in the permanent loss of funds.`;
+  private sendTronAddressActivationWarningMessage =
+    "You first need to send at least 0.1 TRX to this address to activate it. Learn more";
+
   @step("Select token")
   async selectToken(SubAccount: Account) {
     await this.selectAccount.click();
@@ -41,16 +49,14 @@ export class ReceiveModal extends Modal {
   @step("Verify send currency / tokens warning message $1")
   async verifySendCurrencyTokensWarningMessage(account: Account, specificTokens: string) {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage)
-      .toContainText(`Please only send ${account.currency.ticker} or ${specificTokens} tokens to ${account.currency.name} accounts. 
-          Sending other crypto assets may result in the permanent loss of funds.`);
+    await expect(this.warningMessage).toContainText(
+      this.sendAssetWarningMessage(account, specificTokens),
+    );
   }
 
   @step("Verify TRON address activation warning message")
   async verifyTronAddressActivationWarningMessage() {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage).toContainText(
-      `You first need to send at least 0.1 TRX to this address to activate it. Learn more`,
-    );
+    await expect(this.warningMessage).toContainText(this.sendTronAddressActivationWarningMessage);
   }
 }

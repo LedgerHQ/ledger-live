@@ -39,7 +39,6 @@ for (const account of accounts) {
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.accountName);
         await app.account.expectAccountVisibility(account.accountName);
-
         await app.account.clickReceive();
         switch (account) {
           case Account.TRX_1:
@@ -82,7 +81,6 @@ test.describe("Receive", () => {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.expectAccountVisibility(account.accountName);
-
       await app.account.clickReceive();
       await app.modal.continue();
       await app.receive.verifyTronAddressActivationWarningMessage();
