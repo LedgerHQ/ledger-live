@@ -3250,6 +3250,9 @@ importers:
       '@ledgerhq/hw-app-vet':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-vet
+      '@ledgerhq/hw-transport':
+        specifier: ^6.31.2
+        version: 6.31.2
       '@ledgerhq/live-config':
         specifier: ^3.0.0
         version: 3.0.0
@@ -11002,6 +11005,9 @@ packages:
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
+  '@ledgerhq/errors@6.18.0':
+    resolution: {integrity: sha512-L3jQWAGyooxRDk/MRlW2v4Ji9+kloBtdmz9wBkHaj2j0n+05rweJSV3GHw9oye1BYMbVFqFffmT4H3hlXlCasw==}
+
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
@@ -11026,6 +11032,9 @@ packages:
 
   '@ledgerhq/hw-transport@6.30.6':
     resolution: {integrity: sha512-fT0Z4IywiuJuZrZE/+W0blkV5UCotDPFTYKLkKCLzYzuE6javva7D/ajRaIeR+hZ4kTmKF4EqnsmDCXwElez+w==}
+
+  '@ledgerhq/hw-transport@6.31.2':
+    resolution: {integrity: sha512-B27UIzMzm2IXPGYnEB95R7eHxpXBkTBHh6MUJJQZVknt8LilEz1tfpTYUdzAKDGQ+Z5MZyYb01Eh3Zqm3kn3uw==}
 
   '@ledgerhq/hw-transport@6.31.3':
     resolution: {integrity: sha512-rFplkHWF5NXtlYwAusqLlMu298NHtRD+2q/jrTYc//uu/xJO9LkDIgKid6IVF2+e1Wj7yX6YQVrU6L0Yu1ntEw==}
@@ -36181,6 +36190,8 @@ snapshots:
 
   '@ledgerhq/errors@5.50.0': {}
 
+  '@ledgerhq/errors@6.18.0': {}
+
   '@ledgerhq/errors@6.19.1': {}
 
   '@ledgerhq/hw-app-eth@5.11.0':
@@ -36223,6 +36234,13 @@ snapshots:
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
       '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/hw-transport@6.31.2':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.18.0
       '@ledgerhq/logs': 6.12.0
       events: 3.3.0
 

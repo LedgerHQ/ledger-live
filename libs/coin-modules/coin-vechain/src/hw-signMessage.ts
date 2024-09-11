@@ -5,7 +5,7 @@ import { Transaction as ThorTransaction } from "thor-devkit";
 export const signMessage = async (
   transport: Transport,
   { path, message, rawMessage }: { path: string; message: string; rawMessage: string },
-): Promise<string> => {
+): Promise<string | undefined> => {
   let messageObj;
   let unsigned;
   try {
@@ -17,7 +17,7 @@ export const signMessage = async (
   }
   const vet = new Vet(transport);
 
-  const result = await vet.signTransaction(path, unsigned.encode().toString("hex"));
+  const result = await vet.signTransaction(path, (unsigned as ThorTransaction).encode().toString("hex"));
 
   return result.toString("hex");
 };

@@ -65,6 +65,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",
+    "@ledgerhq/hw-transport": "^6.31.2",
     "@ledgerhq/live-config": "^3.0.0",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",

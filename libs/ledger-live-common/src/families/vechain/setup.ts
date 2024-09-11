@@ -13,7 +13,7 @@ import Vet from "@ledgerhq/hw-app-vet";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
-import { VechainCoinConfig } from "./config";
+import { VechainCoinConfig } from "@ledgerhq/coin-vechain/lib/config";
 
 const createSigner: CreateSigner<VechainSigner> = (transport: Transport) => new Vet(transport);
 

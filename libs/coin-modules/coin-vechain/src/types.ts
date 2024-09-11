@@ -29,7 +29,7 @@ export type TransactionInfo = {
   amount: BigNumber;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  tokenAccount?: TokenAccount;
+  tokenAccount: TokenAccount | undefined;
   estimatedFees: string;
   estimatedGas: number;
 };

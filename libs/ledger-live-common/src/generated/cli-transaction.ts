@@ -1,6 +1,9 @@
 import celo from "../families/celo/cli-transaction";
 import crypto_org from "../families/crypto_org/cli-transaction";
 import vechain from "../families/vechain/cli-transaction";
+import filecoin from "../families/filecoin/cli-transaction";
+import hedera from "../families/hedera/cli-transaction";
+import stacks from "../families/stacks/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
