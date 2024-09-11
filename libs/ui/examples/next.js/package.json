@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "echo '[DEBUG]: pnpm list:' && pnpm list && echo '[DEBUG]: done' && echo '[DEBUG]: pnpm list next:' && pnpm list next && echo '[DEBUG]: done' && next build",
+    "build": "echo '[DEBUG]: pnpm list:' && pnpm list && echo '[DEBUG]: done' && echo '[DEBUG]: pnpm show @next/env:' && pnpm show @next/env && echo '[DEBUG]: done' && next build",
     "start": "next start",
     "serve": "next start -p 8080",
     "lint": "next lint",
