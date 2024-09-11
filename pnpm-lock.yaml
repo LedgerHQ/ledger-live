@@ -2798,6 +2798,9 @@ importers:
       '@ledgerhq/hw-app-vet':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-vet
+      '@ledgerhq/hw-transport':
+        specifier: ^6.31.2
+        version: 6.31.2
       '@ledgerhq/live-config':
         specifier: ^3.0.0
         version: 3.0.0
@@ -10322,6 +10325,9 @@ packages:
   '@ledgerhq/errors@6.16.4':
     resolution: {integrity: sha512-M57yFaLYSN+fZCX0E0zUqOmrV6eipK+s5RhijHoUNlHUqrsvUz7iRQgpd5gRgHB5VkIjav7KdaZjKiWGcHovaQ==}
 
+  '@ledgerhq/errors@6.18.0':
+    resolution: {integrity: sha512-L3jQWAGyooxRDk/MRlW2v4Ji9+kloBtdmz9wBkHaj2j0n+05rweJSV3GHw9oye1BYMbVFqFffmT4H3hlXlCasw==}
+
   '@ledgerhq/hw-app-eth@5.11.0':
     resolution: {integrity: sha512-qgpPwZzM8UMHYMC5+9xYV2O+8kgkDAl9+38w9JiBksaGmUFqcS4najsB1nj6AWf2rGEuXdKMb2WEYRskVypJrA==}
 
@@ -10343,6 +10349,9 @@ packages:
 
   '@ledgerhq/hw-transport@6.30.6':
     resolution: {integrity: sha512-fT0Z4IywiuJuZrZE/+W0blkV5UCotDPFTYKLkKCLzYzuE6javva7D/ajRaIeR+hZ4kTmKF4EqnsmDCXwElez+w==}
+
+  '@ledgerhq/hw-transport@6.31.2':
+    resolution: {integrity: sha512-B27UIzMzm2IXPGYnEB95R7eHxpXBkTBHh6MUJJQZVknt8LilEz1tfpTYUdzAKDGQ+Z5MZyYb01Eh3Zqm3kn3uw==}
 
   '@ledgerhq/icons-ui@file:libs/ui/packages/icons':
     resolution: {directory: libs/ui/packages/icons, type: directory}
@@ -35756,6 +35765,8 @@ snapshots:
 
   '@ledgerhq/errors@6.16.4': {}
 
+  '@ledgerhq/errors@6.18.0': {}
+
   '@ledgerhq/hw-app-eth@5.11.0':
     dependencies:
       '@ledgerhq/errors': 5.50.0
@@ -35796,6 +35807,13 @@ snapshots:
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
       '@ledgerhq/errors': 6.16.4
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/hw-transport@6.31.2':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.18.0
       '@ledgerhq/logs': 6.12.0
       events: 3.3.0
 
