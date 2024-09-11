@@ -11,6 +11,8 @@ function getColumns(props: Props) {
   return columns === "none" ? columns : `repeat(${columns || 12}, minmax(0, 1fr));`;
 }
 
+console.log("hello");
+
 function getRows(props: Props) {
   const { rows } = props;
   return !rows ? "initial" : rows === "none" ? rows : `repeat(${rows}, minmax(0, 1fr));`;
