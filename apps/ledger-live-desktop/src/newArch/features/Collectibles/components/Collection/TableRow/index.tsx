@@ -1,6 +1,6 @@
 import React from "react";
 import { Media, Skeleton } from "../../index";
-import { Box, Flex, Text } from "@ledgerhq/react-ui";
+import { Box, Text } from "@ledgerhq/react-ui";
 import { rgba } from "~/renderer/styles/helpers";
 import styled from "styled-components";
 import {
@@ -10,6 +10,7 @@ import {
 } from "LLD/features/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/features/Collectibles/types/Collection";
 import TokenTitle from "./TokenTitle";
+import IconContainer from "./IconContainer";
 
 const Container = styled(Box)`
   &.disabled {
@@ -23,13 +24,6 @@ const Container = styled(Box)`
   &:hover {
     background: ${p => rgba(p.theme.colors.wallet, 0.04)};
   }
-`;
-
-const SatsIconContainer = styled(Flex)`
-  border-radius: 8px;
-  background: ${p => p.theme.colors.opacityDefault.c05};
-  border: 1px solid ${p => p.theme.colors.opacityDefault.c10};
-  padding: 8px;
 `;
 
 const TableRow: React.FC<Props> = props => {
@@ -53,17 +47,7 @@ const TableRow: React.FC<Props> = props => {
           </Skeleton>
         )}
         {isOrdinalsRow(props) && props.tokenIcons.length != 0 && (
-          <SatsIconContainer
-            p={"8px"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            flexDirection={"row"}
-            columnGap={"12px"}
-          >
-            {props.tokenIcons?.map((Icon, index) => (
-              <Icon key={index} size={"XS"} color={"neutral.c100"} />
-            ))}
-          </SatsIconContainer>
+          <IconContainer icons={props.tokenIcons} />
         )}
       </>
     );
@@ -75,7 +59,6 @@ const TableRow: React.FC<Props> = props => {
       justifyContent="center"
       px={4}
       py={3}
-      maxHeight={64}
       display={"flex"}
       onClick={props.onClick}
     >

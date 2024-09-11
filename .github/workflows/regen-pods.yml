@@ -83,7 +83,7 @@ jobs:
           git push
       - name: create summary (failure)
         if: failure() && inputs.number != null
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -94,7 +94,7 @@ jobs:
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (success)
         if: inputs.number != null && steps.check-status.outputs.status != 0
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -105,7 +105,7 @@ jobs:
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (no change)
         if: inputs.number != null && steps.check-status.outputs.status == 0
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -133,7 +133,7 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: report start
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
@@ -171,7 +171,7 @@ jobs:
         with:
           name: summary.txt
       - name: report job status
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string

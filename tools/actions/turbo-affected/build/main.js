@@ -19469,6 +19469,7 @@ var package_default = {
     "eslint-plugin-prettier": "^5.0.1",
     nyc: "^15.1.0",
     prettier: "^3.0.3",
+    nyc: "^15.1.0",
     rimraf: "^4.4.1",
     turbo: "2.1.1",
     typescript: "^5.4.3",
@@ -19492,6 +19493,7 @@ var package_default = {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
       "detox@20.23.0": "patches/detox@20.23.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
@@ -19559,6 +19561,11 @@ function main() {
         core.info(`Affected packages since ${ref} (${packages.length}):
 ${affected}`);
         core.setOutput("affected", affected);
+        core.setOutput("packages", JSON.stringify(Object.keys(affectedPackages)));
+        core.setOutput(
+          "paths",
+          JSON.stringify(Object.keys(affectedPackages || {}).map(p => affectedPackages[p].path)),
+        );
         core.setOutput("is-package-affected", isPackageAffected);
         core.summary.addHeading("Affected Packages");
         core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
@@ -19569,6 +19576,8 @@ ${affected}`);
       } else {
         core.info(`No packages affected since ${ref}`);
         core.setOutput("affected", JSON.stringify({}));
+        core.setOutput("paths", []);
+        core.setOutput("packages", []);
         core.setOutput("is-package-affected", false);
         core.summary.addHeading("Affected Packages");
         core.summary.addRaw(`No affected packages since ${ref}`);
