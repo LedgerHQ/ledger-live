@@ -1,11 +1,5 @@
-name: Build and Test
+name: "[PR] Build and Test"
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
   pull_request:
 
 concurrency:
