@@ -44,7 +44,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
           </Box>
           <Box flex={0}>
             <Separator noMargin />
-            <Box flexDirection="row-reverse" pt={16}>
+            <Box style={{ flexDirection: "row-reverse" }} pt={16}>
               <Button primary onClick={() => swapId && onViewDetails(swapId)}>
                 <Trans i18nKey="swap2.exchangeDrawer.completed.seeDetails" />
               </Button>
