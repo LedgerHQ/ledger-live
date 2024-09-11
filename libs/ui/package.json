@@ -14,6 +14,7 @@
     "lint-staged": "^14.0.0"
   },
   "scripts": {
+    "dummy": "echo 'dummy'",
     "pretest:react": "playwright install",
     "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
     "pretest:react:update-snapshots": "playwright install",
