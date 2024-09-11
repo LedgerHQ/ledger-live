@@ -1,5 +1,14 @@
 # @ledgerhq/speculos-transport
 
+## 0.1.5-nightly.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.4.3-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.29.3-nightly.3
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-nightly.4
+
 ## 0.1.5-nightly.5
 
 ### Patch Changes

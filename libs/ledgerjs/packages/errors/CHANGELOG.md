@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.19.0-nightly.3
+
+### Patch Changes
+
+- [#7771](https://github.com/LedgerHQ/ledger-live/pull/7771) [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new PINNotSet error
+
 ## 6.19.0-nightly.2
 
 ### Patch Changes

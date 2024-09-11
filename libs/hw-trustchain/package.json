@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-trustchain",
-  "version": "0.1.5-nightly.5",
+  "version": "0.1.5-nightly.6",
   "description": "Ledger Live trustchain hardware layer",
   "private": true,
   "keywords": [

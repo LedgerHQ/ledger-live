@@ -1,5 +1,30 @@
 # @ledgerhq/live-cli
 
+## 24.6.0-nightly.11
+
+### Minor Changes
+
+- [#7771](https://github.com/LedgerHQ/ledger-live/pull/7771) [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330) Thanks [@valpinkman](https://github.com/valpinkman)! - Implement reinstallConfiguration command
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.0-nightly.3
+  - @ledgerhq/device-core@0.4.0-nightly.8
+  - @ledgerhq/coin-framework@0.17.1-nightly.8
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.6
+  - @ledgerhq/live-common@34.8.0-nightly.11
+  - @ledgerhq/devices@8.4.3-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.3
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.4
+  - @ledgerhq/hw-transport-node-hid@6.29.4-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.29.3-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.6
+  - @ledgerhq/live-countervalues@0.2.5-nightly.8
+  - @ledgerhq/live-wallet@0.6.0-nightly.12
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.4
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.3
+
 ## 24.5.2-nightly.10
 
 ### Patch Changes

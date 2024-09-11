@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.1.5-nightly.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3-nightly.3
+
 ## 0.1.5-nightly.5
 
 ### Patch Changes

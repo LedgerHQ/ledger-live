@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0-nightly.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.17.1-nightly.8
+  - @ledgerhq/devices@8.4.3-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.6
+  - @ledgerhq/trustchain@0.3.0-nightly.10
+
 ## 0.6.0-nightly.11
 
 ### Patch Changes

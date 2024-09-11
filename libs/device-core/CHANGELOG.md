@@ -1,5 +1,19 @@
 # @ledgerhq/device-core
 
+## 0.4.0-nightly.8
+
+### Minor Changes
+
+- [#7771](https://github.com/LedgerHQ/ledger-live/pull/7771) [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new reinstallConfiguration consent use case
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.0-nightly.3
+  - @ledgerhq/devices@8.4.3-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.6
+
 ## 0.3.3-nightly.7
 
 ### Patch Changes

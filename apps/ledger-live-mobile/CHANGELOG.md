@@ -1,5 +1,34 @@
 # live-mobile
 
+## 3.49.0-nightly.11
+
+### Patch Changes
+
+- [#7778](https://github.com/LedgerHQ/ledger-live/pull/7778) [`8649ebf`](https://github.com/LedgerHQ/ledger-live/commit/8649ebf286d15c2cd97426ae03009d4ef2d28f4e) Thanks [@thesan](https://github.com/thesan)! - Fix device selection after LedgerSync aborted flow
+
+- [#7771](https://github.com/LedgerHQ/ledger-live/pull/7771) [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new PINNotSet error
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.1-nightly.8
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.9
+  - @ledgerhq/domain-service@1.2.4-nightly.4
+  - @ledgerhq/live-common@34.8.0-nightly.11
+  - @ledgerhq/devices@8.4.3-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.3
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.4
+  - @ledgerhq/react-native-hid@6.32.3-nightly.3
+  - @ledgerhq/react-native-hw-transport-ble@6.33.3-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.6
+  - @ledgerhq/trustchain@0.3.0-nightly.10
+  - @ledgerhq/live-countervalues@0.2.5-nightly.8
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.8
+  - @ledgerhq/live-nft@0.4.5-nightly.8
+  - @ledgerhq/live-nft-react@0.4.5-nightly.8
+  - @ledgerhq/live-wallet@0.6.0-nightly.12
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.6
+
 ## 3.49.0-nightly.10
 
 ### Patch Changes
