@@ -32,5 +32,5 @@ permissions:
 jobs:
   build-desktop:
     name: "Build Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@feat/ci-improvements
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit

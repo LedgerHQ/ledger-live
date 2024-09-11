@@ -45,5 +45,5 @@ permissions:
 jobs:
   test-mobile-e2e:
     name: "Test Mobile E2E"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@feat/ci-improvements
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit

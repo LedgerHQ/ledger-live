@@ -34,5 +34,5 @@ permissions:
 jobs:
   test-mobile:
     name: "Test Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@feat/ci-improvements
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit

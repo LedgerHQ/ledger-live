@@ -29,5 +29,5 @@ permissions:
 jobs:
   test-libraries:
     name: "Test Libraries"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@feat/ci-improvements
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
