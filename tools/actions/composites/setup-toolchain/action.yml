@@ -64,21 +64,6 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
         aws-region: ${{ inputs.region }}
 
-    - name: Cache pnpm store
-      uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
-        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-        bucket: ll-gha-s3-cache
-        region: ${{ inputs.region }}
-        use-fallback: false
-
     - uses: actions/setup-node@v3
       with:
         node-version: 20.11.0
@@ -89,18 +74,6 @@ runs:
       run: |
         npm i -g npm
       shell: bash
-
-    - name: TurboRepo local caching server
-      id: turborepo-cache-server
-      if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
-      with:
-        server-token: "${{ inputs.turbo-server-token }}"
-        cleanup-cache-folder: "true"
-        aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
-        aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
-        region: ${{ inputs.region }}
 
     - name: Cache LLM pods
       uses: actions/cache@v3
