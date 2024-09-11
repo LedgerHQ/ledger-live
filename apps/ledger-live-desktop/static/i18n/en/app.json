@@ -6247,6 +6247,9 @@
     },
     "DeleteAppDataError": {
       "title": "Error deleting app data"
+    },
+    "PinNotSet": {
+      "title": "PIN not set"
     }
   },
   "cryptoOrg": {

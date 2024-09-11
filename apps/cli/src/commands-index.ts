@@ -47,6 +47,7 @@ import i18n from "./commands/device/i18n";
 import listApps from "./commands/device/listApps";
 import managerListApps from "./commands/device/managerListApps";
 import proxy from "./commands/device/proxy";
+import reinstallConfigurationConsent from "./commands/device/reinstallConfigurationConsent";
 import repl from "./commands/device/repl";
 import speculosList from "./commands/device/speculosList";
 import balanceHistory from "./commands/live/balanceHistory";
@@ -110,6 +111,7 @@ export default {
   listApps,
   managerListApps,
   proxy,
+  reinstallConfigurationConsent,
   repl,
   speculosList,
   balanceHistory,
