@@ -1,6 +1,7 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import {
   getElementById,
+  scrollToId,
   tapByElement,
   tapById,
   typeTextByElement,
@@ -63,6 +64,7 @@ export default class CommonPage {
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
     await bridge.addDevicesUSB(nano);
+    await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
     await new DeviceAction(nano).accessManager();
