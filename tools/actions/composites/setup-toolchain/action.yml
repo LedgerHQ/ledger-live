@@ -48,6 +48,10 @@ runs:
       with:
         dotnet-version: 2.1.816
 
+    - name: DEBUG - branch check
+      run: echo "[DEBUG] new branch"
+      shell: bash
+
     - uses: pnpm/action-setup@v4
       with:
         version: 9.4.0
