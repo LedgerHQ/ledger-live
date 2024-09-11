@@ -187,7 +187,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@temp/turborepo-pre-upgrade-debug
         id: toolchain
         with:
           skip-turbo-cache: "false"
