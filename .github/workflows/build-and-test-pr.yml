@@ -14,7 +14,7 @@ permissions:
 jobs:
   determine-affected:
     name: "Turbo Affected"
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@fix/turborepo-2-upgrade-post-ci-refactor
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}

@@ -15,7 +15,7 @@ jobs:
   determine-affected:
     name: "Turbo Affected"
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@fix/turborepo-2-upgrade-post-ci-refactor
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}

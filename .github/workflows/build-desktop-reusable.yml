@@ -162,7 +162,7 @@ jobs:
           prNumber: ${{ inputs.prNumber }}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@fix/turborepo-2-upgrade-post-ci-refactor
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}
