@@ -1,9 +1,12 @@
-name: "@Desktop • Build App"
-run-name: "@Desktop • Build App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "@Libraries • Tests"
+run-name: "@Libraries • Tests triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   workflow_dispatch:
     inputs:
+      since_branch:
+        description: The branch that turborepo will check when diffing.
+        default: "develop"
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -12,12 +15,6 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: false
-      base_ref:
-        description: The base branch to merge the head into when checking out the code
-        required: false
-      prNumber:
-        description: PR number
         required: false
 
 concurrency:
@@ -30,7 +27,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  build-desktop:
-    name: "Build Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+  test-libraries:
+    name: "Test Libraries"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
