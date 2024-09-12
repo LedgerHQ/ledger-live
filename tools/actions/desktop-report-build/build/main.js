@@ -40534,7 +40534,7 @@ function main() {
       isFailed,
       summary
     };
-    fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+    fs.writeFileSync("actions/desktop-report-build.json", JSON.stringify(data), "utf-8");
   });
 }
 main().catch((err) => {
