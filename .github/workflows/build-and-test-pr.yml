@@ -83,7 +83,7 @@ jobs:
       - test-libraries
       - test-design-system
     runs-on: ubuntu-22.04
-    if: always() && !cancelled()
+    if: always()
     steps:
       - name: Check result
         if: contains(needs.*.result, 'failure')
