@@ -41,7 +41,7 @@ jobs:
 
   # Final Check required
   ok:
-    name: "OK"
+    name: "OK External"
     needs:
       - build-desktop-external
       - test-desktop-external
