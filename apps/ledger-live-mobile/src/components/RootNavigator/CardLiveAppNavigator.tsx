@@ -15,6 +15,7 @@ const Stack = createStackNavigator<PtxNavigatorParamList>();
 
 const Card = (props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>) => {
   const { t } = useTranslation();
+  const { goToURL, lastScreen, platform, referrer } = props.route.params || {};
   return (
     <PtxScreen
       {...props}
@@ -26,10 +27,10 @@ const Card = (props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>
       route={{
         ...props.route,
         params: {
-          goToURL: props.route.params?.goToURL,
-          lastScreen: props.route.params?.lastScreen,
-          platform: props.route.params?.platform || CARD_APP_ID,
-          referrer: props.route.params?.referrer,
+          goToURL,
+          lastScreen,
+          platform: platform || CARD_APP_ID,
+          referrer,
         },
       }}
     />

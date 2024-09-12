@@ -25,7 +25,18 @@ const createExchangeScreen =
     const buySellUiFlag = useFeature("buySellUi");
     const { t } = useTranslation();
     const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
-
+    const {
+      defaultAccountId,
+      currency,
+      defaultCurrencyId,
+      goToURL,
+      lastScreen,
+      platform,
+      referrer,
+    } = props.route.params || {};
+    const resolvedCurrency = currency
+      ? findCryptoCurrencyByKeyword(currency)?.id
+      : defaultCurrencyId;
     return (
       <PtxScreen
         {...props}
@@ -37,14 +48,12 @@ const createExchangeScreen =
         route={{
           ...props.route,
           params: {
-            account: props.route.params?.defaultAccountId,
-            currency: props.route.params?.currency
-              ? findCryptoCurrencyByKeyword(props.route.params?.currency)?.id
-              : props.route.params?.defaultCurrencyId,
-            goToURL: props.route.params?.goToURL,
-            lastScreen: props.route.params?.lastScreen,
-            platform: props.route.params?.platform || defaultPlatform,
-            referrer: props.route.params?.referrer,
+            account: defaultAccountId,
+            currency: resolvedCurrency,
+            goToURL,
+            lastScreen,
+            platform: platform || defaultPlatform,
+            referrer: referrer,
           },
         }}
       />

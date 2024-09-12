@@ -179,14 +179,15 @@ export const WebPTXPlayer = ({
           const manifestId = url.searchParams.get("goToManifest");
 
           if (manifestId && goToURL) {
-            const flowName = url.searchParams.get("flowName");
+            const searchParams = url.searchParams;
+            const flowName = searchParams.get("flowName") || "";
+            const lastScreen = searchParams.get("lastScreen") || flowName;
 
-            await AsyncStorage.setItem("manifest-id", manifestId);
-            await AsyncStorage.setItem("flow-name", flowName || "buy");
-            await AsyncStorage.setItem(
-              "last-screen",
-              url.searchParams.get("lastScreen") || flowName || "",
-            );
+            await AsyncStorage.multiSet([
+              ["manifest-id", manifestId],
+              ["flow-name", flowName],
+              ["last-screen", lastScreen],
+            ]);
 
             navigation.navigate(config.navigator, {
               screen: config.screen,
@@ -205,7 +206,7 @@ export const WebPTXPlayer = ({
         lastMatchingURL.current = webviewState.url;
       }
     })();
-  }, [config, isInternalApp, navigation, webviewState.url]);
+  }, [config.navigator, config.screen, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -266,7 +267,7 @@ export const WebPTXPlayer = ({
         headerTitle: () => null,
       });
     }
-  }, [config, manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
+  }, [config, disableHeader, isInternalApp, manifest, navigation, onClose, webviewState?.url]);
 
   const customHandlers = usePTXCustomHandlers(manifest);
 
