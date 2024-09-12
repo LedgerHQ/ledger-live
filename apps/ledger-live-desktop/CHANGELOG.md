@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.12
+
+### Minor Changes
+
+- [#7797](https://github.com/LedgerHQ/ledger-live/pull/7797) [`a0ab5de`](https://github.com/LedgerHQ/ledger-live/commit/a0ab5debfe8e70032b0144afea8311d86c2bf4ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Electron 32
+
+### Patch Changes
+
+- [#7794](https://github.com/LedgerHQ/ledger-live/pull/7794) [`301ef9c`](https://github.com/LedgerHQ/ledger-live/commit/301ef9c5fd700c7f8081c253c5779b874876555c) Thanks [@CremaFR](https://github.com/CremaFR)! - Fixes View Details button for the Swap Live App
+
+- [#7780](https://github.com/LedgerHQ/ledger-live/pull/7780) [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag "deviceSupportEuropa" (for Ledger Flex)
+
+- Updated dependencies [[`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd)]:
+  - @ledgerhq/types-live@6.50.1-nightly.1
+  - @ledgerhq/live-common@34.8.0-nightly.12
+  - @ledgerhq/coin-framework@0.17.1-nightly.9
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.7
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.4
+  - @ledgerhq/coin-evm@2.2.0-nightly.10
+  - @ledgerhq/domain-service@1.2.4-nightly.5
+  - @ledgerhq/live-countervalues@0.2.5-nightly.9
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.9
+  - @ledgerhq/live-nft@0.4.5-nightly.9
+  - @ledgerhq/live-nft-react@0.4.5-nightly.9
+  - @ledgerhq/live-wallet@0.6.0-nightly.13
+
 ## 2.86.0-nightly.11
 
 ### Patch Changes

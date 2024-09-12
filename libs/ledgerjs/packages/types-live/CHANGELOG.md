@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.50.1-nightly.1
+
+### Patch Changes
+
+- [#7780](https://github.com/LedgerHQ/ledger-live/pull/7780) [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag "deviceSupportEuropa" (for Ledger Flex)
+
 ## 6.50.1-nightly.0
 
 ### Patch Changes

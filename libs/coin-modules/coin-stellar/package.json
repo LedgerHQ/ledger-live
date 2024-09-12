@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "0.2.3-nightly.8",
+  "version": "0.2.3-nightly.9",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [

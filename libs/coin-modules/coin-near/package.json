@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.5.5-nightly.8",
+  "version": "0.5.5-nightly.9",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",

@@ -1,5 +1,34 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.12
+
+### Patch Changes
+
+- [#7780](https://github.com/LedgerHQ/ledger-live/pull/7780) [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag "deviceSupportEuropa" (for Ledger Flex)
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.17.1-nightly.9
+  - @ledgerhq/coin-algorand@0.5.5-nightly.9
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.7
+  - @ledgerhq/coin-cardano@0.1.5-nightly.9
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.4
+  - @ledgerhq/coin-evm@2.2.0-nightly.10
+  - @ledgerhq/coin-icon@0.4.2-nightly.9
+  - @ledgerhq/coin-near@0.5.5-nightly.9
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.10
+  - @ledgerhq/coin-solana@0.7.5-nightly.9
+  - @ledgerhq/coin-stellar@0.2.3-nightly.9
+  - @ledgerhq/coin-tezos@0.6.1-nightly.9
+  - @ledgerhq/coin-ton@0.3.13-nightly.10
+  - @ledgerhq/coin-tron@0.0.5-nightly.9
+  - @ledgerhq/coin-xrp@0.5.1-nightly.9
+  - @ledgerhq/device-core@0.4.0-nightly.9
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.10
+  - @ledgerhq/live-countervalues@0.2.5-nightly.9
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.9
+  - @ledgerhq/live-nft@0.4.5-nightly.9
+  - @ledgerhq/live-wallet@0.6.0-nightly.13
+
 ## 34.8.0-nightly.11
 
 ### Patch Changes
