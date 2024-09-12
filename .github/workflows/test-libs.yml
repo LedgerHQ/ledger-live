@@ -29,5 +29,5 @@ permissions:
 jobs:
   test-libraries:
     name: "Test Libraries"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@fix/turborepo-2-upgrade-post-ci-refactor
     secrets: inherit

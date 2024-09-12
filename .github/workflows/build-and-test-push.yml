@@ -43,12 +43,12 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@fix/turborepo-2-upgrade-post-ci-refactor
     secrets: inherit
 
   test-design-system:
     name: "Test Design System"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@fix/turborepo-2-upgrade-post-ci-refactor
     secrets: inherit
 
   # Final Check required
