@@ -12,6 +12,30 @@ permissions:
   pull-requests: write
 
 jobs:
+  status-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { pull_request } = context.payload;
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pull_request.number,
+            });
+
+            console.log(pullRequest);
+
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Passed',
+              head_sha: pull_request.head.sha,
+              status: 'in_progress',
+            });
+
   determine-affected:
     name: "Turbo Affected"
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
@@ -85,6 +109,16 @@ jobs:
     runs-on: ubuntu-22.04
     if: always()
     steps:
-      - name: Check result
-        if: contains(needs.*.result, 'failure')
-        run: exit 1
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { pull_request } = context;
+
+            await github.rest.checks.create({
+              owner: github.context.repo.owner,
+              repo: github.context.repo.repo,
+              name: 'Passed',
+              head_sha: pull_request.head.sha,
+              status: 'completed',
+              conclusion: {{ contains(needs.*.result, 'failure') ? 'failure' : 'success' }},
+            });
