@@ -1283,6 +1283,9 @@ importers:
       '@jest/reporters':
         specifier: ^29.7.0
         version: 29.7.0
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
       '@ledgerhq/test-utils':
         specifier: workspace:^
         version: link:../../libs/test-utils
@@ -1316,9 +1319,15 @@ importers:
       '@testing-library/react-native':
         specifier: ^12.4.5
         version: 12.4.5(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react-test-renderer@18.2.0(react@18.2.0))(react@18.2.0)
+      '@types/body-parser':
+        specifier: ^1.19.5
+        version: 1.19.5
       '@types/color':
         specifier: ^3.0.3
         version: 3.0.6
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.17
       '@types/d3-array':
         specifier: ~2.3.0
         version: 2.3.0
@@ -1328,6 +1337,9 @@ importers:
       '@types/d3-shape':
         specifier: ^3.0.2
         version: 3.1.6
+      '@types/express':
+        specifier: ^4.17.18
+        version: 4.17.21
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
         version: 3.3.5(@types/react@18.2.73)
@@ -1385,6 +1397,12 @@ importers:
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.24.3)
+      body-parser:
+        specifier: ^1.19.1
+        version: 1.20.2
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
       detox:
         specifier: 20.23.0
         version: 20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
@@ -1415,6 +1433,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      express:
+        specifier: ^4.19.2
+        version: 4.19.2
       jest:
         specifier: ^29.6.2
         version: 29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
@@ -14362,6 +14383,9 @@ packages:
 
   '@types/cookies@0.9.0':
     resolution: {integrity: sha512-40Zk8qR147RABiQ7NQnBzWzDcjKzNrntB5BAmeGCb2p/MIyOE+4BVvc17wumsUqUw00bJYqoXFHYygQnEFh4/Q==}
+
+  '@types/cors@2.8.17':
+    resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
 
   '@types/create-hmac@1.1.3':
     resolution: {integrity: sha512-oDDSoBrAfdEPQuBpQp14y/ygUVU1IC6gq8Arm8IPP8TRC11AnLLYmpE3VvNUhPK/Ax3USGDjdE1Sc1LCIpf0NQ==}
@@ -43032,6 +43056,10 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 4.17.21
       '@types/keygrip': 1.0.6
+      '@types/node': 20.12.12
+
+  '@types/cors@2.8.17':
+    dependencies:
       '@types/node': 20.12.12
 
   '@types/create-hmac@1.1.3':
