@@ -6,7 +6,7 @@ export function getBrazeConfig() {
     };
   } else {
     return {
-      apiKey: "d84c8166-a00e-422f-8dc1-e48f103b413c",
+      apiKey: "d84c8166-a00e-422f-8dc1-test",
       endpoint: "sdk.fra-02.braze.eu",
     };
   }
