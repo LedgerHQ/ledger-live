@@ -17,6 +17,8 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeDisplay from "../../screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
+import ScannedInvalidQrCode from "../../screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "../../screens/Synchronize/ScannedOldImportQrCode";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";
@@ -101,6 +103,12 @@ const ActivationFlow = ({
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedInvalidQrCode:
+        return <ScannedInvalidQrCode tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedOldImportQrCode:
+        return <ScannedOldImportQrCode tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
         if (!hasCompletedOnboarding) {
