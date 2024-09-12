@@ -90,8 +90,7 @@ const job = ({ device, port, silent, verbose, speculosApiPort }: ProxyOptions) =
 
     transport = {
       id: `speculos-http-${speculosApiPort}`,
-      open: id =>
-        id.includes(port) ? retry(() => retry(() => SpeculosHttpTransport.open(req))) : null,
+      open: id => (id.includes(port) ? retry(() => SpeculosHttpTransport.open(req)) : null),
       disconnect: () => Promise.resolve(),
     };
     registerTransportModule(transport);
