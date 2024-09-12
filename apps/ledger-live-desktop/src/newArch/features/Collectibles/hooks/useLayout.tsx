@@ -11,7 +11,7 @@ const useLayout = () => {
     (mode: Layout) => dispatch(setCollectiblesViewMode(mode)),
     [dispatch],
   );
-
+  console.log("hello");
   return { collectiblesViewMode, setViewMode };
 };
 
