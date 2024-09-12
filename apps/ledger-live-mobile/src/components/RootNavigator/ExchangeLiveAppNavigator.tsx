@@ -8,17 +8,17 @@ import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { useTranslation } from "react-i18next";
 import styles from "~/navigation/styles";
-import type { PtxLiveAppNavigatorParamList } from "./types/PtxLiveAppNavigator";
+import type { PtxNavigatorParamList } from "./types/PtxNavigator";
 import type { StackNavigatorProps } from "./types/helpers";
 import { PtxScreen } from "~/screens/PTX";
 
-const Stack = createStackNavigator<PtxLiveAppNavigatorParamList>();
+const Stack = createStackNavigator<PtxNavigatorParamList>();
 
 const createExchangeScreen =
   (screenName: ScreenName.ExchangeBuy | ScreenName.ExchangeSell) =>
   (
     props: StackNavigatorProps<
-      PtxLiveAppNavigatorParamList,
+      PtxNavigatorParamList,
       ScreenName.ExchangeBuy | ScreenName.ExchangeSell
     >,
   ) => {

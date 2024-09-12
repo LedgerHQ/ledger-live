@@ -78,7 +78,7 @@ function BackToInternalDomain({
       });
 
       navigation.navigate(navigator, {
-        screen: screen,
+        screen,
         params: {
           referrer: "isExternal",
         },

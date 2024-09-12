@@ -17,7 +17,9 @@ type ExchangeParams = CommonParams & {
 };
 
 export type PtxNavigatorParamList = {
-  [ScreenName.ExchangeBuy]?: ExchangeParams;
+  [ScreenName.ExchangeBuy]?: ExchangeParams & {
+    parentId?: string;
+  };
   [ScreenName.ExchangeSell]?: ExchangeParams;
   [ScreenName.Card]?: CommonParams;
 };
