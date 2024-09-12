@@ -5,6 +5,9 @@ const vechainConfig: CurrencyLiveConfigDefinition = {
     type: "object",
     default: {
       status: { type: "active" },
+      infra: {
+        API_VECHAIN_THOREST: "https://vechain.coin.ledger.com",
+      },
     },
   },
 };
