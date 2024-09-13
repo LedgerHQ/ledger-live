@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
 import {
+  ScannedOldImportQrCode,
+  ScannedInvalidQrCode,
   InvalidDigitsError,
   NoTrustchainInitialized,
   TrustchainAlreadyInitialized,
@@ -72,7 +74,11 @@ export const useSyncWithQrCode = () => {
         onSyncFinished();
         return true;
       } catch (e) {
-        if (e instanceof InvalidDigitsError) {
+        if (e instanceof ScannedOldImportQrCode) {
+          setCurrentStep(Steps.ScannedOldImportQrCode);
+        } else if (e instanceof ScannedInvalidQrCode) {
+          setCurrentStep(Steps.ScannedInvalidQrCode);
+        } else if (e instanceof InvalidDigitsError) {
           setCurrentStep(Steps.SyncError);
           return;
         } else if (e instanceof NoTrustchainInitialized) {

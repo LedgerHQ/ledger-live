@@ -977,6 +977,10 @@
     },
     "DeleteAppDataError": {
       "title": "Error deleting app data"
+    },
+    "ScannedNewImportQrCode": {
+      "title": "Update required",
+      "description": "To sync your apps, please make sure both are updated to the latest version."
     }
   },
   "crash": {
@@ -6874,6 +6878,16 @@
             "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
             "tryAgain": "Try again"
           }
+        },
+        "scannedInvalidQrCode": {
+          "title": "Invalid QR Code",
+          "desc": "It looks like the QR code you scanned isn't valid. Please try again with a Ledger Sync valid QR code.",
+          "tryAgain": "Try again"
+        },
+        "scannedOldQrCode": {
+          "title": "Update required",
+          "desc": "To sync your apps, please make sure both are updated to the latest version.",
+          "tryAgain": "Try again"
         },
         "unbacked": {
           "title": "You need to create your encryption key first",
