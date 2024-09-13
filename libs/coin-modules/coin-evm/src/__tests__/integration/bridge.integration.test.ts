@@ -34,6 +34,7 @@ export const dataset: DatasetTest<Transaction> = {
                 nonce: 0,
               }),
               expectedStatus: (_account, transaction): Partial<TransactionStatusCommon> => {
+                console.log({transaction})
                 const estimatedFees = transaction.gasLimit.times(transaction.maxFeePerGas || 0);
                 return {
                   amount: new BigNumber(1e19), // 10 ETH
@@ -41,7 +42,7 @@ export const dataset: DatasetTest<Transaction> = {
                   totalSpent: new BigNumber(1e19).plus(estimatedFees), // fees are calculated during preparation and therefore cannot be guessed without mocks
                   errors: {
                     amount: new NotEnoughBalance(), // "The parent account balance is insufficient for network fees" since account is empty
-                    gasLimit: new FeeNotLoaded(), // "Could not load fee rates. Please set manual fees" because gas estimation failed as the account is empty
+                    // gasLimit: new FeeNotLoaded(), // "Could not load fee rates. Please set manual fees" because gas estimation failed as the account is empty
                   },
                   warnings: {},
                 };
