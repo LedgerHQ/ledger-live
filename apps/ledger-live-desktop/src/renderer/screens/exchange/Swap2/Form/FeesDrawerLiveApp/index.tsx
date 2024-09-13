@@ -7,12 +7,16 @@ import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Button, Divider } from "@ledgerhq/react-ui";
+import { Button, Divider, Flex } from "@ledgerhq/react-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Alert from "~/renderer/components/Alert";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  mainAccount: AccountLike;
+  account: AccountLike;
   parentAccount: Account;
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
@@ -23,7 +27,7 @@ type Props = {
 
 export default function FeesDrawerLiveApp({
   setTransaction,
-  mainAccount,
+  account,
   parentAccount,
   status,
   provider,
@@ -36,15 +40,17 @@ export default function FeesDrawerLiveApp({
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
   const [transactionStatus, setTransactionStatus] = useState(status);
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const bridge = getAccountBridge(mainAccount, parentAccount);
+  const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
-      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       bridge
-        .prepareTransaction(account, transaction)
+        .prepareTransaction(mainAccount, transaction)
         .then(preparedTransaction =>
-          bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+          bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
             setTransactionStatus(status);
             setTransactionState(preparedTransaction);
             setTransaction(preparedTransaction);
@@ -54,18 +60,17 @@ export default function FeesDrawerLiveApp({
           console.error("Error preparing transaction:", error);
         });
     },
-    [setTransaction, bridge, mainAccount, parentAccount],
+    [setTransaction, bridge, mainAccount],
   );
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
-      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       setTransactionState(prevTransaction => {
         let updatedTransaction = updater(prevTransaction);
         bridge
-          .prepareTransaction(account, updatedTransaction)
+          .prepareTransaction(mainAccount, updatedTransaction)
           .then(preparedTransaction =>
-            bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+            bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
               setTransactionStatus(status);
               setTransaction(preparedTransaction);
               updatedTransaction = preparedTransaction;
@@ -79,7 +84,7 @@ export default function FeesDrawerLiveApp({
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, parentAccount],
+    [setTransaction, bridge, mainAccount],
   );
 
   const mapStrategies = useCallback(
@@ -129,6 +134,19 @@ export default function FeesDrawerLiveApp({
               ...swapDefaultTrack,
             }}
           />
+        )}
+        <LowGasAlertBuyMore
+          account={mainAccount}
+          handleRequestClose={() => handleRequestClose(false)}
+          gasPriceError={gasPriceError}
+          trackingSource={"swap flow"}
+        />
+        {amountError && !gasPriceError && (
+          <Flex>
+            <Alert type="warning">
+              <TranslatedError error={amountError} />
+            </Alert>
+          </Flex>
         )}
       </Box>
       <Divider />
