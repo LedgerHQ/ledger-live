@@ -59,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: commitlint
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: format summary
         id: status
         with:

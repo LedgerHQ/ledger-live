@@ -104,7 +104,7 @@ export type Trc20API = {
   from: string;
   to: string;
   detail: TransactionTronAPI<Trc20Contract>;
-  type: string;
+  type: "Approval" | "Transfer";
   value?: string;
 };
 

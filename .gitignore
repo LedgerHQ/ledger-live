@@ -13,3 +13,5 @@ rce
 .env
 coverage
 db.sqlite*
+.secrets
+event.json
