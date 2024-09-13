@@ -43,7 +43,7 @@ export function EarnInfoDrawer() {
         <Track onMount event="Earn Info Modal" />
         <Flex rowGap={16} alignItems="center">
           <Circle size={64} bg={colors.opacityDefault.c05}>
-            <Icons.InformationFill size={"L"} color={colors.opacityDefault.c80} />
+            <Icons.InformationFill size="L" color={colors.opacityDefault.c80} />
           </Circle>
           <Text variant="h4" fontFamily="Inter" textAlign="center" fontWeight="bold">
             {messageTitle}
