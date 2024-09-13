@@ -54,15 +54,8 @@ function BackToInternalDomain({
   const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-  const [buttonText, setButtonText] = useState("");
 
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
-
-  useEffect(() => {
-    (async () => {
-      setButtonText(btnText);
-    })();
-  }, [btnText]);
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
@@ -105,7 +98,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: buttonText })}
+            {t("common.backTo", { to: btnText })}
           </Text>
         </Flex>
       </TouchableOpacity>
