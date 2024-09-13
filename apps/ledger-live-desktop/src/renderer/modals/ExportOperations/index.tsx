@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import styled from "styled-components";
 import { createStructuredSelector } from "reselect";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
@@ -23,6 +23,7 @@ import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
 import { ModalData } from "../types";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type OwnProps = {};
 type Props = OwnProps & {
@@ -57,6 +58,8 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
   const getDateTxt = useTechnicalDateFn();
+  const walletState = useSelector(walletSelector);
+
   const exportCsv = useCallback(async () => {
     const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
@@ -75,13 +78,14 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
           accounts.filter(account => checkedIds.includes(account.id)),
           countervalueCurrency,
           countervalueState,
+          walletState,
         ),
         () => {
           setSuccess(true);
         },
       );
     }
-  }, [accounts, checkedIds, countervalueCurrency, countervalueState, getDateTxt]);
+  }, [accounts, checkedIds, countervalueCurrency, countervalueState, getDateTxt, walletState]);
   const onClose = useCallback(() => closeModal("MODAL_EXPORT_OPERATIONS"), [closeModal]);
   const handleButtonClick = useCallback(() => {
     let exporting = false;
