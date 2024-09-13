@@ -3729,6 +3729,57 @@
         "description": "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
         "supportLink": "Learn more about Figment validator"
       }
+    },
+    "stake_v2": {
+      "title": "Select staking provider",
+      "category": {
+        "all": "All ethereum staking providers available on Ledger Live.",
+        "liquid": "Stake ETH and receive rewards in liquid token you will still be able to trade and participate in DeFi activities.",
+        "protocol": "Stake a batch of 32 ETH and receive full node rewards in ETH.",
+        "pooling": "TODO.",
+        "restaking": "Restake your liquid token to earn additional rewards."
+      },
+      "how_it_works": "How ETH staking works",
+      "lst": "Liquid token needed",
+      "no_minimum": "No minimum",
+      "provider": {
+        "figment": {
+          "title": "Figment"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking Pool"
+        },
+        "kiln_restaking": {
+          "title": "Kiln Liquid restaking"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking"
+        },
+        "kelpdao": {
+          "title": "Kelp DAO"
+        },
+        "lido": {
+          "title": "Lido"
+        },
+        "p2p": {
+          "title": "P2P"
+        },
+        "rocket_pool": {
+          "title": "Rocket Pool"
+        },
+        "stader-eth": {
+          "title": "Stader Labs"
+        }
+      },
+      "read_about": "Read about ETH staking and different strategies",
+      "required_minimum": "Requires {{min}} ETH",
+      "rewards_strategy": {
+        "auto-compounded": "Auto-compounded rewards",
+        "basic": "Rewards",
+        "daily": "Daily rewards",
+        "eigenlayer_points": "Eigenlayer Points",
+        "validator": "Validator rewards"
+      }
     }
   },
   "graph": {

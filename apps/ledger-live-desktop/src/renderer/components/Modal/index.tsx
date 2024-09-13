@@ -114,7 +114,7 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   background: ${p => p.theme.colors.palette.background.paper};
   color: ${p => p.theme.colors.palette.text.shade80};
   width: ${p => p.width || 500}px;
-  border-radius: 3px;
+  border-radius: 8px;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
   flex-shrink: 1;
   display: flex;

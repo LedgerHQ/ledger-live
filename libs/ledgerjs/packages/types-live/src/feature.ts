@@ -200,17 +200,43 @@ export type Features = CurrencyFeatures & {
 export type FeatureId = keyof Features;
 
 /**
+ * EthStakingProvider category type.
+ */
+export type EthStakingProviderCategory = "liquid" | "pooling" | "protocol" | "restaking";
+
+/**
+ * EthStakingProvider rewards strategy.
+ */
+export type EthStakingProviderRewardsStrategy =
+  | "basic"
+  | "auto-compounded"
+  | "daily"
+  | "eigenlayer_points"
+  | "validator";
+
+/**
+ * EthStakingProvider.
+ */
+export interface EthStakingProvider {
+  id: string;
+  category: EthStakingProviderCategory;
+  disabled?: boolean;
+  icon?: string;
+  liveAppId: string;
+  /** Requires Liquid Staking Token */
+  lst?: boolean;
+  min?: number;
+  name: string;
+  queryParams?: Record<string, string>;
+  rewardsStrategy: EthStakingProviderRewardsStrategy;
+  supportLink?: string;
+}
+
+/**
  * Features types.
  */
 export type Feature_EthStakingProviders = Feature<{
-  listProvider: {
-    id: string;
-    name: string;
-    liveAppId: string;
-    supportLink?: string;
-    icon?: string;
-    queryParams?: Record<string, string>;
-  }[];
+  listProvider: EthStakingProvider[];
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{
