@@ -20,7 +20,8 @@ export async function getEstimatedFees(account: Account): Promise<BigNumber> {
     if (data[0]) {
       return new BigNumber(10000)
         .dividedBy(new BigNumber(data[0]))
-        .integerValue(BigNumber.ROUND_CEIL);
+        .integerValue(BigNumber.ROUND_CEIL)
+        .multipliedBy(estimatedFeeSafetyRate);
     }
     // eslint-disable-next-line no-empty
   } catch {}
