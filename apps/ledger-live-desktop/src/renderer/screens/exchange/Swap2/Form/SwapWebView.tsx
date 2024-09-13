@@ -421,7 +421,7 @@ const SwapWebView = ({
             FeesDrawerLiveApp,
             {
               setTransaction,
-              mainAccount: fromAccount,
+              account: fromAccount,
               parentAccount: fromParentAccount,
               status: status,
               provider: undefined,

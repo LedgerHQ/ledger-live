@@ -10,7 +10,6 @@ import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
-import BuyButton from "~/renderer/components/BuyButton";
 import Label from "~/renderer/components/Label";
 import Input from "~/renderer/components/Input";
 import { useSelector } from "react-redux";
@@ -20,6 +19,8 @@ import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { closeAllModal } from "~/renderer/actions/modals";
+import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
 
 const StepAmount = (props: StepProps) => {
   const {
@@ -60,6 +61,8 @@ const StepAmount = (props: StepProps) => {
   }, [specific.nft, transaction]);
 
   if (!status) return null;
+  const { errors } = status;
+  const { gasPrice } = errors;
 
   return (
     <Box flow={4}>
@@ -114,6 +117,12 @@ const StepAmount = (props: StepProps) => {
           bridgePending={bridgePending}
           updateTransaction={updateTransaction}
         />
+        <LowGasAlertBuyMore
+          account={mainAccount}
+          handleRequestClose={closeAllModal}
+          gasPriceError={gasPrice}
+          trackingSource={"send flow"}
+        />
       </Fragment>
     </Box>
   );
@@ -132,15 +141,11 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-    const { maxPriorityFee: maxPriorityFeeError, maxFee: maxFeeError } = errors;
 
     return (
       <>
         {!isNFTSend ? (
           <AccountFooter parentAccount={parentAccount} account={account} status={status} />
-        ) : null}
-        {maxPriorityFeeError || maxFeeError ? (
-          <BuyButton currency={mainAccount.currency} account={mainAccount} />
         ) : null}
         <Button
           id={"send-amount-continue-button"}

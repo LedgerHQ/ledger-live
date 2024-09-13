@@ -27,6 +27,7 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.hoverDevice(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
+          animations: "disabled",
         });
       });
 

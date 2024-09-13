@@ -10,6 +10,8 @@ export enum AnalyticsPage {
   SyncWithQrCode = "Sync with QR code",
   PinCode = "Pin code",
   PinCodesDoNotMatch = "Pin codes don't match",
+  ScannedInvalidQrCode = "Scanned invalid QR code",
+  ScannedIncompatibleApps = "Scans incompatible apps",
   Loading = "Loading",
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",

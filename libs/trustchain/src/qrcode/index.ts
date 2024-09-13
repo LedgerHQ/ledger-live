@@ -7,6 +7,8 @@ import {
   InvalidDigitsError,
   NoTrustchainInitialized,
   QRCodeWSClosed,
+  ScannedInvalidQrCode,
+  ScannedOldImportQrCode,
   TrustchainAlreadyInitialized,
 } from "../errors";
 import { log } from "@ledgerhq/logs";
@@ -267,7 +269,8 @@ export async function createQRCodeCandidateInstance({
 }): Promise<Trustchain | void> {
   const m = scannedUrl.match(/host=([0-9A-Fa-f]+)/);
   if (!m) {
-    throw new Error("invalid scannedUrl");
+    if (isFromOldAccountsImport(scannedUrl)) throw new ScannedOldImportQrCode();
+    throw new ScannedInvalidQrCode();
   }
   const hostPublicKey = crypto.from_hex(m[1]);
   const ephemeralKey = await crypto.randomKeypair();
@@ -385,4 +388,8 @@ function fromErrorMessage(payload: { message: string; type: string }): Error {
   const error = new Error(payload.message);
   error.name = "TrustchainQRCode-" + payload.type;
   return error;
+}
+
+function isFromOldAccountsImport(scannedUrl: string): boolean {
+  return !!scannedUrl.match(/^[A-Za-z0-9+/=]*$/);
 }

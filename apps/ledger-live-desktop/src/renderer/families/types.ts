@@ -216,6 +216,7 @@ export type LLDCoinFamily<
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
       transactionToUpdate?: T;
+      disableEditGasLimit?: boolean;
     }>;
     fields?: string[];
   };

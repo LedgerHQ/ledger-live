@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { parseFramesReducer, framesToData, areFramesComplete, progressOfFrames } from "qrloop";
 import { Result as ImportAccountsResult, decode } from "@ledgerhq/live-wallet/liveqr/cross";
-import { TrackScreen } from "~/analytics";
+import { screen, TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import Scanner from "~/components/Scanner";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
@@ -11,6 +11,8 @@ import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
 import type { ImportAccountsNavigatorParamList } from "~/components/RootNavigator/types/ImportAccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScannedNewImportQrCode } from "@ledgerhq/trustchain/errors";
+import { AnalyticsPage } from "~/newArch/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type NavigationProps = StackNavigatorProps<
   ImportAccountsNavigatorParamList,
@@ -75,6 +77,13 @@ class Scan extends PureComponent<
           }
         }
       } catch (e) {
+        if (data.match(/host=([0-9A-Fa-f]+)/)) {
+          this.setState({
+            error: new ScannedNewImportQrCode(),
+            progress: 0,
+          });
+          screen("", AnalyticsPage.ScannedIncompatibleApps, { source: "Account Import Sync" });
+        }
         console.warn(e);
       }
     }
