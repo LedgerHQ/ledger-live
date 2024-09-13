@@ -86,5 +86,5 @@ jobs:
     if: always() && !cancelled()
     steps:
       - name: Check result
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

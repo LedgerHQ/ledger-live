@@ -200,6 +200,14 @@ function fetchData(message: MessageData): Promise<string> {
   });
 }
 
+export async function addKnownSpeculos(proxyAddress: string) {
+  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+}
+
+export async function removeKnownSpeculos(id: string) {
+  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);

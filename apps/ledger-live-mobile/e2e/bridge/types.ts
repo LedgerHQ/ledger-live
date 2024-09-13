@@ -45,6 +45,8 @@ export type MessageData =
   | { type: "mockDeviceEvent"; id: string; payload: MockDeviceEvent[] }
   | { type: "acceptTerms"; id: string }
   | { type: "addUSB"; id: string; payload: DeviceUSB }
+  | { type: "addKnownSpeculos"; id: string; payload: string }
+  | { type: "removeKnownSpeculos"; id: string; payload: string }
   | { type: "getLogs"; id: string }
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }

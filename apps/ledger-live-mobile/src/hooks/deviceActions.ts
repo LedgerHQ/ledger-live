@@ -37,7 +37,9 @@ import {
 } from "../../e2e/bridge/types";
 
 export function useAppDeviceAction() {
-  const mock = useEnv("MOCK");
+  const envMock = useEnv("MOCK");
+  const deviceProxy = useEnv("DEVICE_PROXY_URL");
+  const mock = envMock && !deviceProxy;
   return useMemo(() => appCreateAction(mock ? connectAppExecMock : connectApp), [mock]);
 }
 
