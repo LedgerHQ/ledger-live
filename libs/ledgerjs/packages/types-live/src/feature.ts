@@ -179,7 +179,6 @@ export type Features = CurrencyFeatures & {
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
-  supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   spamReportNfts: Feature_SpamReportNfts;
@@ -504,7 +503,6 @@ export type Feature_PtxSwapThorswapProvider = DefaultFeature;
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
-export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;

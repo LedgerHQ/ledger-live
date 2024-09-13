@@ -19,6 +19,10 @@ export default class AccountPage {
     await waitForElementById(this.accountTitleId(assetName));
   }
 
+  async expectAccountBalanceVisible() {
+    await expect(this.assetBalance()).toBeVisible();
+  }
+
   async expectAccountBalance(expectedBalance: string) {
     await expect(this.assetBalance()).toHaveText(expectedBalance);
   }

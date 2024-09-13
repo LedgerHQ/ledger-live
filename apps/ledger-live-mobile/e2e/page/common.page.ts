@@ -1,6 +1,7 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import {
   getElementById,
+  scrollToId,
   tapByElement,
   tapById,
   typeTextByElement,
@@ -9,6 +10,8 @@ import {
 import { expect } from "detox";
 import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";
+
+import { launchSpeculos, deleteSpeculos } from "../helpers";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
@@ -63,8 +66,20 @@ export default class CommonPage {
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
     await bridge.addDevicesUSB(nano);
+    await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
     await new DeviceAction(nano).accessManager();
+  }
+
+  async addSpeculos(nanoApp: string) {
+    const proxyAddress = await launchSpeculos(nanoApp);
+    await bridge.addKnownSpeculos(proxyAddress);
+    return proxyAddress;
+  }
+
+  async removeSpeculos(proxyAddress: string) {
+    await deleteSpeculos(proxyAddress);
+    await bridge.removeKnownSpeculos(proxyAddress);
   }
 }

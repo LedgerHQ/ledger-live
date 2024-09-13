@@ -1,0 +1,54 @@
+name: Build and Test External
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  determine-affected:
+    name: "Turbo Affected"
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
+  # External from Fork branches
+  build-desktop-external:
+    name: "[External] Build Desktop"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
+
+  test-desktop-external:
+    name: "[External] Test Desktop"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
+
+  build-mobile-external:
+    name: "[External] Build Mobile"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.full_name != github.repository}}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
+
+  # Final Check required
+  ok:
+    name: "OK External"
+    needs:
+      - build-desktop-external
+      - test-desktop-external
+      - build-mobile-external
+    runs-on: ubuntu-22.04
+    if: ${{ always() && !cancelled() && github.event.pull_request.head.repo.full_name != github.repository }}
+    steps:
+      - name: Check result
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

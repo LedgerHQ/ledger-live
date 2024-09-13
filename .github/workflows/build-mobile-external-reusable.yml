@@ -1,7 +1,7 @@
 name: "@Mobile • Build App (external)"
-run-name: "@Mobile • Build App (external) triggered by ${{ inputs.login }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       ref:
@@ -109,7 +109,7 @@ jobs:
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: get statuses of runs
         id: status
         with:
