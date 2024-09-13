@@ -1,10 +1,7 @@
 import { Button, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import InformationFill from "@ledgerhq/icons-ui/native/InformationFill";
 import { Linking } from "react-native";
-import Svg, { Path } from "react-native-svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { setEarnInfoModal } from "~/actions/earn";
