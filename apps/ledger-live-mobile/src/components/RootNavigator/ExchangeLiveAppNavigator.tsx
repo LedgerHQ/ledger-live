@@ -63,7 +63,7 @@ const createExchangeScreen =
 const ExchangeBuy = createExchangeScreen(ScreenName.ExchangeBuy);
 const ExchangeSell = createExchangeScreen(ScreenName.ExchangeSell);
 
-export default function ExchangeLiveAppNavigator(_props?: Record<string, unknown>) {
+export default function ExchangeLiveAppNavigator() {
   const { colors } = useTheme();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);

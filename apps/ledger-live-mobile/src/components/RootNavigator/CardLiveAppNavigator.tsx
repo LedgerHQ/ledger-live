@@ -37,7 +37,7 @@ const Card = (props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>
   );
 };
 
-export default function CardAppNavigator(_props?: Record<string, unknown>) {
+export default function CardLiveAppNavigator() {
   const { colors } = useTheme();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
