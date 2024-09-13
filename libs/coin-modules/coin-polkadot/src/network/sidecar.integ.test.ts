@@ -23,7 +23,6 @@ describe("sidecar integration test", () => {
       metadataHash: {
         url: "https://api.zondax.ch/polkadot/node/metadata/hash",
       },
-      runtimeUpgraded: false,
     }));
   });
 

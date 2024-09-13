@@ -237,7 +237,6 @@ const coinConfig: PolkadotCoinConfig = {
   metadataHash: {
     url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
   },
-  runtimeUpgraded: true,
 };
 
 const subscriptions: any[] = [];

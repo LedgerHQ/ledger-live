@@ -44,7 +44,6 @@ describe("getEstimatedFees", () => {
         metadataHash: {
           url: "https://api.zondax.ch/polkadot/node/metadata/hash",
         },
-        runtimeUpgraded: false,
       };
     });
   });
