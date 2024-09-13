@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 0.0.5-nightly.10
+
+### Patch Changes
+
+- [#7762](https://github.com/LedgerHQ/ledger-live/pull/7762) [`308e787`](https://github.com/LedgerHQ/ledger-live/commit/308e787725082b517eb436a4e198595a6a0958c4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix approve operations on Tron
+
 ## 0.0.5-nightly.9
 
 ### Patch Changes
