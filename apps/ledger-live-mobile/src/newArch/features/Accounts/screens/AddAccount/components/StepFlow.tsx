@@ -14,6 +14,8 @@ import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCo
 import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";
 import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
+import ScannedInvalidQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
 
 type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -96,6 +98,12 @@ const StepFlow = ({
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedInvalidQrCode:
+        return <ScannedInvalidQrCode tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedOldImportQrCode:
+        return <ScannedOldImportQrCode tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
         return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
