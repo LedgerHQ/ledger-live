@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.11
+
+### Patch Changes
+
+- [#7800](https://github.com/LedgerHQ/ledger-live/pull/7800) [`52ae4d3`](https://github.com/LedgerHQ/ledger-live/commit/52ae4d3ea2ae52306e868923e48f4a5807a78d57) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Display relevant error when scanning old accounts export qr code or an invalid one
+
 ## 0.3.0-nightly.10
 
 ### Patch Changes

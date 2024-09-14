@@ -1,5 +1,18 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.14
+
+### Minor Changes
+
+- [#7798](https://github.com/LedgerHQ/ledger-live/pull/7798) [`e0536c5`](https://github.com/LedgerHQ/ledger-live/commit/e0536c5e27a2036919abd0fd182765b32ea0112e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Add safety margin to Hedera fee estimates
+
+### Patch Changes
+
+- [#7813](https://github.com/LedgerHQ/ledger-live/pull/7813) [`5762905`](https://github.com/LedgerHQ/ledger-live/commit/5762905a8cc4d2e737f532a09ba2504c7d7961df) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix issue following CVS migration. The export didn't include account name
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.6.0-nightly.14
+
 ## 34.8.0-nightly.13
 
 ### Patch Changes

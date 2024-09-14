@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.14
+
+### Minor Changes
+
+- [#7782](https://github.com/LedgerHQ/ledger-live/pull/7782) [`06a6ce1`](https://github.com/LedgerHQ/ledger-live/commit/06a6ce18d2902a85ef0fe39f5b47475808e06e02) Thanks [@CremaFR](https://github.com/CremaFR)! - refactor: LowGasAlert to be consistent with all other errors
+
+- [#7784](https://github.com/LedgerHQ/ledger-live/pull/7784) [`0bad0cb`](https://github.com/LedgerHQ/ledger-live/commit/0bad0cb9ca5d6a40efdaf4398c4d41e3d51fb5de) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: allow gasLimit field to be disabled
+
+### Patch Changes
+
+- [#7814](https://github.com/LedgerHQ/ledger-live/pull/7814) [`5203d7f`](https://github.com/LedgerHQ/ledger-live/commit/5203d7f87619d696be8be4520a90c8d0a96a4073) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Market Starred filter
+
+- [#7813](https://github.com/LedgerHQ/ledger-live/pull/7813) [`5762905`](https://github.com/LedgerHQ/ledger-live/commit/5762905a8cc4d2e737f532a09ba2504c7d7961df) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix issue following CVS migration. The export didn't include account name
+
+- Updated dependencies [[`e0536c5`](https://github.com/LedgerHQ/ledger-live/commit/e0536c5e27a2036919abd0fd182765b32ea0112e), [`52ae4d3`](https://github.com/LedgerHQ/ledger-live/commit/52ae4d3ea2ae52306e868923e48f4a5807a78d57), [`5762905`](https://github.com/LedgerHQ/ledger-live/commit/5762905a8cc4d2e737f532a09ba2504c7d7961df)]:
+  - @ledgerhq/live-common@34.8.0-nightly.14
+  - @ledgerhq/trustchain@0.3.0-nightly.11
+  - @ledgerhq/live-wallet@0.6.0-nightly.14
+
 ## 2.86.0-nightly.13
 
 ### Patch Changes
