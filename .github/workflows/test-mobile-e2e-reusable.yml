@@ -257,7 +257,7 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t
+        run: pnpm mobile e2e:ci -p android -t --speculos
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
