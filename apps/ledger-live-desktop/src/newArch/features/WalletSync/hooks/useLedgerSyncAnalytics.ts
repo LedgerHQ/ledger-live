@@ -25,12 +25,12 @@ export enum AnalyticsPage {
   DesktopSync = "Sync from a desktop",
   KeyCreated = "Backup creation success",
   KeyUpdated = "Sync apps success",
-  Loading = "Loading",
+  Loading = "Loading Trustchain",
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
   PinCodeError = "Pin code error",
-  UnbackedError = "No trustchain initialized error",
+  UnbackedError = "Trustchain initialization error",
 
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",
@@ -96,6 +96,7 @@ export const StepsOutsideFlow: Step[] = [
   Step.AutoRemoveInstance,
   Step.UnsecuredLedger,
   Step.BackupDeletionError,
+  Step.SynchronizedInstances,
 ];
 
 export function useLedgerSyncAnalytics() {

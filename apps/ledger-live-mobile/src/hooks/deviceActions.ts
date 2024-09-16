@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { createAction as appCreateAction } from "@ledgerhq/live-common/hw/actions/app";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as startExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/startExchange";
@@ -11,6 +11,7 @@ import { createAction as staxFetchImageCreateAction } from "@ledgerhq/live-commo
 import { createAction as installLanguageCreateAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
 import { createAction as staxRemoveImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import { createAction as renameDeviceCreateAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
@@ -36,7 +37,9 @@ import {
 } from "../../e2e/bridge/types";
 
 export function useAppDeviceAction() {
-  const mock = useEnv("MOCK");
+  const envMock = useEnv("MOCK");
+  const deviceProxy = useEnv("DEVICE_PROXY_URL");
+  const mock = envMock && !deviceProxy;
   return useMemo(() => appCreateAction(mock ? connectAppExecMock : connectApp), [mock]);
 }
 
@@ -123,4 +126,19 @@ export function useRenameDeviceAction() {
     () => renameDeviceCreateAction(mock ? renameDeviceExecMock : renameDevice),
     [mock],
   );
+}
+
+export function useSelectDevice() {
+  const [device, setDevice] = useState<Device | null | undefined>(null);
+
+  const onDeviceUpdated = useRef<() => void>();
+  const registerDeviceSelection = useCallback((handler: () => void) => {
+    onDeviceUpdated.current = handler;
+  }, []);
+  const selectDevice = useCallback((device: Device | null | undefined) => {
+    setDevice(device);
+    onDeviceUpdated.current?.();
+  }, []);
+
+  return { device, selectDevice, registerDeviceSelection };
 }

@@ -29,7 +29,9 @@ export function restoreAppDataUseCase(
   ).pipe(
     switchMap((appStorage: AppStorageType | null) => {
       if (!appStorage) {
-        return of<RestoreAppDataEvent>({ type: RestoreAppDataEventType.NoAppDataToRestore });
+        return of<RestoreAppDataEvent>({
+          type: RestoreAppDataEventType.NoAppDataToRestore,
+        });
       }
       return restoreAppDataFn(appStorage.appData);
     }),

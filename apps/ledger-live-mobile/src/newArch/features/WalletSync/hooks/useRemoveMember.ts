@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
@@ -21,17 +21,11 @@ type Props = {
 };
 
 export function useRemoveMember({ device, member }: Props): DrawerProps {
-  const [DrawerProps, setScene] = useFollowInstructionDrawer();
-
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
-
-  // eslint-disable-next-line no-console
-  const onResetFlow = useCallback(() => console.log("onResetFlow"), []);
-  //  () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances })),
 
   const transitionToNextScreen = useCallback(
     (trustchainResult: Trustchain) => {
@@ -44,9 +38,10 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
     [dispatch, member, navigation],
   );
 
-  const removeMember = useCallback(
-    async (member: TrustchainMember) => {
+  return useFollowInstructionDrawer(
+    async setScene => {
       try {
+        if (!member) return;
         if (!device) return;
         if (!trustchain || !memberCredentials) {
           throw new Error("trustchain or memberCredentials is not set");
@@ -72,18 +67,6 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
         }
       }
     },
-    [setScene, device, memberCredentials, sdk, transitionToNextScreen, trustchain],
+    [device, member, memberCredentials, sdk, transitionToNextScreen, !trustchain],
   );
-
-  useEffect(() => {
-    if (device && device.deviceId) {
-      if (!member) {
-        onResetFlow();
-      } else {
-        removeMember(member);
-      }
-    }
-  }, [device, member, onResetFlow, removeMember]);
-
-  return DrawerProps;
 }

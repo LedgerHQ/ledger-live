@@ -164,7 +164,7 @@
   {
     "type": "CryptoCurrency",
     "id": "polygon",
-    "ticker": "MATIC",
+    "ticker": "POL",
     "name": "Polygon",
     "family": "ethereum",
     "color": "#6d29de",

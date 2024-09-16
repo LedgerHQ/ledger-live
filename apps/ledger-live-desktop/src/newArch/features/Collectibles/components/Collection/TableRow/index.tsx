@@ -10,6 +10,7 @@ import {
 } from "LLD/features/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/features/Collectibles/types/Collection";
 import TokenTitle from "./TokenTitle";
+import IconContainer from "./IconContainer";
 
 const Container = styled(Box)`
   &.disabled {
@@ -37,14 +38,18 @@ const TableRow: React.FC<Props> = props => {
 
   const nftCount = () => {
     return (
-      <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
+      <>
         {isNFTRow(props) && (
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
-            {props.numberOfNfts || 0}
-          </Text>
+          <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
+            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
+              {props.numberOfNfts || 0}
+            </Text>
+          </Skeleton>
         )}
-        {isOrdinalsRow(props) && null}
-      </Skeleton>
+        {isOrdinalsRow(props) && props.tokenIcons.length != 0 && (
+          <IconContainer icons={props.tokenIcons} />
+        )}
+      </>
     );
   };
 
@@ -59,7 +64,11 @@ const TableRow: React.FC<Props> = props => {
     >
       {mediaBox()}
       <Box ml={3} flex={1}>
-        <TokenTitle tokenName={props.tokenName} isLoading={props.isLoading} />
+        <TokenTitle
+          tokenName={props.tokenName}
+          isLoading={props.isLoading}
+          collectionName={isOrdinalsRow(props) ? props.collectionName : undefined}
+        />
       </Box>
       {nftCount()}
     </Container>

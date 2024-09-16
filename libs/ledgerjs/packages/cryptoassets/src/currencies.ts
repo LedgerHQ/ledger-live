@@ -2151,14 +2151,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ETH,
     name: "Polygon",
     managerAppName: "Ethereum",
-    ticker: "MATIC",
+    ticker: "POL",
     scheme: "polygon",
     color: "#6d29de",
     family: "evm",
     ethereumLikeInfo: {
       chainId: 137,
     },
-    units: ethereumUnits("MATIC", "MATIC"),
+    units: ethereumUnits("POL", "POL"),
     explorerViews: [
       {
         tx: "https://polygonscan.com/tx/$hash",

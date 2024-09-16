@@ -1,6 +1,13 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigatorName, ScreenName } from "~/const";
 import FollowInstructions from "../../components/FollowInstructions";
 
 import GenericErrorView from "~/components/GenericErrorView";
@@ -21,9 +28,13 @@ const GenericFollowInstructionsDrawer = ({
   handleClose,
   scene,
   goToDelete,
-  backToKeyError,
+  backToWrongSeedError,
   confirmDeleteKey,
+  retry,
 }: Props) => {
+  const { navigate } =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
   const getScene = () => {
     switch (scene.kind) {
       case SceneKind.DeviceInstructions:
@@ -36,8 +47,10 @@ const GenericFollowInstructionsDrawer = ({
           </Flex>
         );
 
-      case SceneKind.WrongSeedError:
-        return <ConfirmManageKey onClickConfirm={confirmDeleteKey} onCancel={backToKeyError} />;
+      case SceneKind.ConfirmDeleteWrongSeedError:
+        return (
+          <ConfirmManageKey onClickConfirm={confirmDeleteKey} onCancel={backToWrongSeedError} />
+        );
 
       case SceneKind.KeyError:
         return (
@@ -62,6 +75,23 @@ const GenericFollowInstructionsDrawer = ({
 
       case SceneKind.GenericError:
         return <GenericErrorView error={scene.error} withDescription withHelp hasExportLogButton />;
+
+      case SceneKind.UnbackedError:
+        return (
+          <SpecificError
+            error={ErrorReason.NO_BACKUP_ONBOARDING_DEVICE}
+            primaryAction={retry}
+            secondaryAction={() => {
+              navigate(NavigatorName.BaseOnboarding, {
+                screen: NavigatorName.Onboarding,
+                params: {
+                  screen: ScreenName.OnboardingPostWelcomeSelection,
+                  params: { userHasDevice: true },
+                },
+              });
+            }}
+          />
+        );
     }
   };
 

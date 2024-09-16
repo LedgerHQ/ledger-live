@@ -1,6 +1,7 @@
 import installApp from "./installApp";
 import type {
   AppStorageType,
+  DeleteAppDataEvent,
   RestoreAppDataEvent,
   StorageProvider,
 } from "../device/use-cases/appDataBackup/types";
@@ -16,10 +17,9 @@ export default function installAppWithRestore(
   app: ApplicationVersion | App,
   deviceId: DeviceModelId,
   storage: StorageProvider<AppStorageType>,
-  shouldRestore: boolean = true,
-): Observable<{ progress: number } | RestoreAppDataEvent> {
+): Observable<{ progress: number } | RestoreAppDataEvent | DeleteAppDataEvent> {
   const install = installApp(transport, targetId, app);
   const restore = restoreAppDataUseCaseDI(transport, app.name, deviceId, storage);
 
-  return shouldRestore ? concat(install, restore) : install;
+  return concat(install, restore);
 }

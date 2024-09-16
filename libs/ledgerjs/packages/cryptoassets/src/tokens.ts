@@ -6,10 +6,10 @@ import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
 import casperTokens, { CasperToken } from "./data/casper";
 import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import jettonTokens, { JettonToken } from "./data/jetton";
-import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import filecoinTokens, { FilecoinERC20Token } from "./data/filecoin-erc20";
+import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import vechainTokens, { vip180Token } from "./data/vip180";
@@ -531,7 +531,7 @@ export function convertJettonToken([
   magnitude,
   delisted,
   enableCountervalues,
-]: JettonToken): TokenCurrency | undefined {
+]: TonJettonToken): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById("ton");
 
   if (!parentCurrency) {

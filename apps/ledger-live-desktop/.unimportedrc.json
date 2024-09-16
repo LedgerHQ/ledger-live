@@ -21,10 +21,7 @@
     "src/generate-cryptoassets-md.ts",
 
     "src/newArch/features/Collectibles/**",
-    "src/newArch/features/AnalyticsOptInPrompt/**",
-    "src/newArch/features/WalletSync/**",
-    "src/newArch/components/ContextMenu/**",
-    "src/newArch/components/BreadCrumb/**",
+    "src/newArch/features/WalletSync/__tests__/shared.tsx",
     "src/renderer/DesktopStorageProvider.ts"
   ],
   "ignoreUnused": [

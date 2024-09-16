@@ -9,6 +9,8 @@ import { useMutation } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
+import { useCurrentStep } from "./useCurrentStep";
+import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
@@ -16,6 +18,7 @@ export function useDestroyTrustchain() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const { setCurrentStep } = useCurrentStep();
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -29,6 +32,7 @@ export function useDestroyTrustchain() {
     onSuccess: () => {
       dispatch(resetTrustchainStore());
       dispatch(walletSyncUpdate(null, 0));
+      setCurrentStep(Steps.Activation);
     },
   });
 

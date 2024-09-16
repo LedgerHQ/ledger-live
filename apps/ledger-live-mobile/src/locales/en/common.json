@@ -893,6 +893,9 @@
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
     },
+    "PinNotSet": {
+      "title": "PIN not set"
+    },
     "PriorityFeeTooLow": {
       "title": "Priority fee is lower than the recommended value"
     },
@@ -974,6 +977,10 @@
     },
     "DeleteAppDataError": {
       "title": "Error deleting app data"
+    },
+    "ScannedNewImportQrCode": {
+      "title": "Update required",
+      "description": "To sync your apps, please make sure both are updated to the latest version."
     }
   },
   "crash": {
@@ -6690,7 +6697,7 @@
         "title": "Manage your preferences",
         "analytics": {
           "title": "Analytics",
-          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
+          "description": "To measure Ledger Live’s performance and improve both app and your experience, I agree to the collection of my data, including page visits and clicks"
         },
         "personalizedExp": {
           "title": "Personalization",
@@ -6700,7 +6707,7 @@
           "notNow": "Not now",
           "accept": "Accept",
           "acceptAll": "Accept All",
-          "confirm": "Share"
+          "confirm": "Validate"
         },
         "infoText": {
           "info": "You can revoke your consent any time in the app settings.",
@@ -6872,10 +6879,26 @@
             "tryAgain": "Try again"
           }
         },
+        "scannedInvalidQrCode": {
+          "title": "Invalid QR Code",
+          "desc": "It looks like the QR code you scanned isn't valid. Please try again with a Ledger Sync valid QR code.",
+          "tryAgain": "Try again"
+        },
+        "scannedOldQrCode": {
+          "title": "Update required",
+          "desc": "To sync your apps, please make sure both are updated to the latest version.",
+          "tryAgain": "Try again"
+        },
         "unbacked": {
           "title": "You need to create your encryption key first",
           "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
           "cta": "Create your encryption key"
+        },
+        "unbackedOnboarding": {
+          "title": "No backup detected",
+          "description": "Secure your other app with a Ledger then try again or continue your onboarding",
+          "cta": "Try again",
+          "cancel": "Continue without sync"
         },
         "backedWithDifferentSeeds": {
           "title": "These apps have different backups",
@@ -6886,6 +6909,11 @@
           "title": "These apps are already secured by a Ledger",
           "cta": "I understand"
         }
+      },
+      "unbackedOnboarding": {
+        "title": "This Ledger doesn’t secure a backup",
+        "cta": "Try another Ledger",
+        "cancel": "Continue without sync"
       },
       "alreadySecureError": {
         "title": "This app is already secured by this Ledger",

@@ -461,7 +461,6 @@ export const DEFAULT_FEATURES: Features = {
 
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
-  supportDeviceEuropa: DEFAULT_FEATURE,
   lldRefreshMarketData: {
     ...DEFAULT_FEATURE,
     params: {

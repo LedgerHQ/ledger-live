@@ -31,7 +31,7 @@ const QrCodeMethod = ({
     setSelectedOption(option);
     const button =
       option === Options.SCAN ? AnalyticsButton.ScanQRCode : AnalyticsButton.ShowQRCode;
-    const page = option === Options.SCAN ? AnalyticsPage.ScanQRCode : AnalyticsPage.ShowQRCode;
+    const page = option === Options.SCAN ? AnalyticsPage.ShowQRCode : AnalyticsPage.ScanQRCode;
     onClickTrack({
       button,
       page,

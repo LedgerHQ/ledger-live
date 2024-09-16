@@ -38,7 +38,7 @@ export function ManageKey({ onClickDelete }: Props) {
           >
             <Icons.Trash size="M" color={"error.c50"} />
           </Flex>
-          <Flex flexDirection="column" ml={3}>
+          <Flex flexDirection="column" ml={3} flex={1}>
             <Text variant="paragraph" fontWeight="semiBold" color="neutral.c100">
               {t("walletSync.walletSyncActivated.manageKey.drawer.step1.titleCta")}
             </Text>

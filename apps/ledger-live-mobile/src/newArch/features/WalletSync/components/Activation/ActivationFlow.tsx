@@ -1,6 +1,15 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { useSelector } from "react-redux";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Options, Steps } from "../../types/Activation";
@@ -8,6 +17,8 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeDisplay from "../../screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
+import ScannedInvalidQrCode from "../../screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "../../screens/Synchronize/ScannedOldImportQrCode";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";
@@ -52,6 +63,10 @@ const ActivationFlow = ({
     if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
   };
 
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const { navigate } =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.Activation:
@@ -89,7 +104,30 @@ const ActivationFlow = ({
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
+      case Steps.ScannedInvalidQrCode:
+        return <ScannedInvalidQrCode tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedOldImportQrCode:
+        return <ScannedOldImportQrCode tryAgain={navigateToQrCodeMethod} />;
+
       case Steps.UnbackedError:
+        if (!hasCompletedOnboarding) {
+          return (
+            <SpecificError
+              primaryAction={navigateToQrCodeMethod}
+              secondaryAction={() => {
+                navigate(NavigatorName.BaseOnboarding, {
+                  screen: NavigatorName.Onboarding,
+                  params: {
+                    screen: ScreenName.OnboardingPostWelcomeSelection,
+                    params: { userHasDevice: true },
+                  },
+                });
+              }}
+              error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
+            />
+          );
+        }
         return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
 
       case Steps.AlreadyBacked:

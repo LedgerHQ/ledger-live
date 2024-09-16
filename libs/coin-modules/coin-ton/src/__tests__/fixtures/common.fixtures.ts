@@ -117,7 +117,7 @@ export const jettonTransferResponse: TonResponseJettonTransfer = {
       destination: mockAddress,
       amount: "",
       source_wallet: "",
-      jetton_master: "0:729C13B6DF2C07CBF0A06AB63D34AF454F3D320EC1BCD8FB5C6D24D0806A17C2",
+      jetton_master: "0:2F956143C461769579BAEF2E32CC2D7BC18283F40D20BB03E432CD603AC33FFC",
       transaction_hash: "",
       transaction_lt: "",
       transaction_now: 0,

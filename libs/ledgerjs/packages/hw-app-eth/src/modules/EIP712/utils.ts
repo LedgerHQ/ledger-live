@@ -27,36 +27,36 @@ export const EIP712_TYPE_PROPERTIES: Record<
   string,
   {
     key: (size?: number) => number;
-    sizeInBits: (size?: number) => number | null;
+    size: (size?: number) => number | null;
   }
 > = {
   CUSTOM: {
     key: () => 0,
-    sizeInBits: () => null,
+    size: () => null,
   },
   INT: {
     key: () => 1,
-    sizeInBits: size => Number(size) / 8,
+    size: size => Number(size) / 8,
   },
   UINT: {
     key: () => 2,
-    sizeInBits: size => Number(size) / 8,
+    size: size => Number(size) / 8,
   },
   ADDRESS: {
     key: () => 3,
-    sizeInBits: () => null,
+    size: () => null,
   },
   BOOL: {
     key: () => 4,
-    sizeInBits: () => null,
+    size: () => null,
   },
   STRING: {
     key: () => 5,
-    sizeInBits: () => null,
+    size: () => null,
   },
   BYTES: {
     key: size => (typeof size !== "undefined" ? 6 : 7),
-    sizeInBits: size => (typeof size !== "undefined" ? Number(size) : null),
+    size: size => (typeof size !== "undefined" ? Number(size) : null),
   },
 };
 
@@ -66,7 +66,7 @@ export const EIP712_TYPE_PROPERTIES: Record<
  * A Map of encoders to transform a value to formatted buffer
  */
 export const EIP712_TYPE_ENCODERS = {
-  INT(value: string | null, sizeInBits = 256): Buffer {
+  INT(value: string | null, size = 256): Buffer {
     const failSafeValue = value ?? "0";
 
     if (typeof failSafeValue === "string" && failSafeValue?.startsWith("0x")) {
@@ -78,7 +78,7 @@ export const EIP712_TYPE_ENCODERS = {
     // "reversibly convert a positive binary number into a negative binary number with equivalent (but negative) value".
     // thx wikipedia
     if (valueAsBN.lt(0)) {
-      const sizeInBytes = sizeInBits / 8;
+      const sizeInBytes = size / 8;
       // Creates BN from a buffer serving as a mask filled by maximum value 0xff
       const maskAsBN = new BigNumber(`0x${Buffer.alloc(sizeInBytes, 0xff).toString("hex")}`);
 
@@ -109,10 +109,10 @@ export const EIP712_TYPE_ENCODERS = {
     return Buffer.from(value ?? "", "utf-8");
   },
 
-  BYTES(value: string | null, sizeInBits?: number): Buffer {
+  BYTES(value: string | null, size?: number): Buffer {
     const failSafeValue = value ?? "";
     // Why slice again ?
-    return hexBuffer(failSafeValue).slice(0, sizeInBits ?? (failSafeValue?.length - 2) / 2);
+    return hexBuffer(failSafeValue).slice(0, size ?? (failSafeValue?.length - 2) / 2);
   },
 };
 
@@ -132,23 +132,23 @@ export const EIP712_TYPE_ENCODERS = {
  */
 export const destructTypeFromString = (
   typeName?: string,
-): [{ name: string; bits: number | undefined } | null, Array<number | null>] => {
+): [{ name: string; size: number | undefined } | null, Array<number | null>] => {
   // Will split "any[][1][10]" in "any", "[][1][10]"
   const splitNameAndArraysRegex = new RegExp(/^([^[\]]*)(\[.*\])*/g);
   // Will match all numbers (or null) inside each array. [0][10][] => [0,10,null]
   const splitArraysRegex = new RegExp(/\[(\d*)\]/g);
-  // Will separate the the name from the potential bits allocation. uint8 => [uint,8]
-  const splitNameAndNumberRegex = new RegExp(/(\D*)(\d*)/);
+  // Will separate the the name from the potential bits/bytes allocation. uint8 => [uint,8]
+  const splitNameAndNumberRegex = new RegExp(/(?=u?int|bytes)([a-zA-Z-0-9]+?)(\d{1,3})$/g);
 
   const [, type, maybeArrays] = splitNameAndArraysRegex.exec(typeName || "") || [];
-  const [, name, bits] = splitNameAndNumberRegex.exec(type || "") || [];
-  const typeDescription = name ? { name, bits: bits ? Number(bits) : undefined } : null;
+  const [, name = type, size] = splitNameAndNumberRegex.exec(type || "") || [];
+  const typeDescription = name ? { name, size: size ? Number(size) : undefined } : null;
 
   const arrays = maybeArrays ? [...maybeArrays.matchAll(splitArraysRegex)] : [];
   // Parse each size to either a Number or null
-  const arraySizes = arrays.map(([, size]) => (size ? Number(size) : null));
+  const arrayLengths = arrays.map(([, arrayLength]) => (arrayLength ? Number(arrayLength) : null));
 
-  return [typeDescription, arraySizes];
+  return [typeDescription, arrayLengths];
 };
 
 /**
@@ -200,10 +200,10 @@ export const makeTypeEntryStructBuffer = ({ name, type }: EIP712MessageTypesEntr
     EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""] ||
     EIP712_TYPE_PROPERTIES.CUSTOM;
 
-  const typeKey = typeProperties.key(typeDescription?.bits);
-  const typeSizeInBits = typeProperties.sizeInBits(typeDescription?.bits);
+  const typeKey = typeProperties.key(typeDescription?.size);
+  const typeSize = typeProperties.size(typeDescription?.size);
 
-  const typeDescData = constructTypeDescByteString(isTypeAnArray, typeSizeInBits, typeKey);
+  const typeDescData = constructTypeDescByteString(isTypeAnArray, typeSize, typeKey);
 
   const bufferArray: Buffer[] = [Buffer.from(typeDescData, "hex")];
 
@@ -212,8 +212,8 @@ export const makeTypeEntryStructBuffer = ({ name, type }: EIP712MessageTypesEntr
     bufferArray.push(Buffer.from(typeDescription?.name ?? "", "utf-8"));
   }
 
-  if (typeof typeSizeInBits === "number") {
-    bufferArray.push(Buffer.from(intAsHexBytes(typeSizeInBits, 1), "hex"));
+  if (typeof typeSize === "number") {
+    bufferArray.push(Buffer.from(intAsHexBytes(typeSize, 1), "hex"));
   }
 
   if (isTypeAnArray) {
@@ -255,7 +255,9 @@ export const getCoinRefTokensMap = (
   const coinRefsTokensMap: Record<number, { token: string; coinRefMemorySlot?: number }> = {};
   if (shouldUseV1Filters || !filters) return coinRefsTokensMap;
 
-  const tokenFilters = filters.fields.filter(({ format }) => format === "token");
+  const tokenFilters = filters.fields
+    .filter(({ format }) => format === "token")
+    .sort((a, b) => (a.coin_ref || 0) - (b.coin_ref || 0));
   const tokens = tokenFilters.reduce<{ token: string; coinRef: number }[]>((acc, filter) => {
     const token = getValueFromPath(filter.path, message);
     if (Array.isArray(token)) {
@@ -367,22 +369,19 @@ export const getPayloadForFilterV2 = (
 
     case "token": {
       const { deviceTokenIndex } = coinRefsTokensMap[coinRef!];
-      if (typeof deviceTokenIndex === "undefined") {
-        throw new Error("Missing coinRef");
-      }
 
-      return Buffer.concat([Buffer.from(intAsHexBytes(deviceTokenIndex, 1), "hex"), sigBuffer]);
+      return Buffer.concat([
+        Buffer.from(intAsHexBytes(deviceTokenIndex || coinRef || 0, 1), "hex"),
+        sigBuffer,
+      ]);
     }
 
     case "amount": {
       const { deviceTokenIndex } = coinRefsTokensMap[coinRef!];
-      if (typeof deviceTokenIndex === "undefined") {
-        throw new Error("Missing coinRef");
-      }
 
       return Buffer.concat([
         displayNameBuffer,
-        Buffer.from(intAsHexBytes(deviceTokenIndex, 1), "hex"),
+        Buffer.from(intAsHexBytes(deviceTokenIndex || coinRef || 0, 1), "hex"),
         sigBuffer,
       ]);
     }

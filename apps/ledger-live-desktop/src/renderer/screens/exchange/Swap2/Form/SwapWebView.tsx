@@ -353,10 +353,9 @@ const SwapWebView = ({
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
-          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
-          finalTx = preparedTransaction;
+          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
+          finalTx = newTransaction;
           return newTransaction;
         };
 
@@ -422,7 +421,7 @@ const SwapWebView = ({
             FeesDrawerLiveApp,
             {
               setTransaction,
-              mainAccount: fromAccount,
+              account: fromAccount,
               parentAccount: fromParentAccount,
               status: status,
               provider: undefined,
@@ -461,6 +460,8 @@ const SwapWebView = ({
       hasError: swapState?.error ? "true" : undefined, // append param only if error is true
       isMaxEnabled: isMaxEnabled,
       loading: swapState?.loading,
+      fromParentAccountId: swapState?.fromParentAccountId,
+      swapApiBase: process.env.SWAP_API_BASE,
       networkFees: swapState?.estimatedFees,
       networkFeesCurrency: fromCurrency,
       provider: swapState?.provider,

@@ -15,13 +15,6 @@ import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import Alert from "~/renderer/components/Alert";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
-import { closeAllModal } from "~/renderer/actions/modals";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { Flex } from "@ledgerhq/react-ui";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -44,31 +37,14 @@ const Fields: Props = ({
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
+  const [isAdvanceMode, setAdvanceMode] = useState(
+    !transaction.feesStrategy || transaction.feesStrategy === "custom",
+  );
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
-
-  const dispatch = useDispatch();
-  const history = useHistory();
-
-  const onBuyClick = useCallback(() => {
-    dispatch(closeAllModal());
-    setTrackingSource("send flow");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        currency: account.currency.id,
-        account: account.id,
-        mode: "buy", // buy or sell
-      },
-    });
-  }, [account.currency.id, account.id, dispatch, history]);
-
-  const { errors } = status;
-  const { amount: messageAmount } = errors;
 
   /* TODO: How do we set default RBF to be true ? (@gre)
    * Meanwhile, using this trick (please don't kill me)
@@ -181,13 +157,6 @@ const Fields: Props = ({
             mapStrategies={mapStrategies}
             status={status}
           />
-          {messageAmount && (
-            <Flex onClick={onBuyClick}>
-              <Alert type="warning">
-                <TranslatedError error={messageAmount} />
-              </Alert>
-            </Flex>
-          )}
         </>
       )}
     </>
