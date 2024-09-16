@@ -480,10 +480,12 @@ export type Feature_BuySellUiManifest = Feature<{
 export type Feature_LldWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
 }>;
 export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

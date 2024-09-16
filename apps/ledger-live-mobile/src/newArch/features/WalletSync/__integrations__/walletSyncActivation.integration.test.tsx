@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render, waitFor } from "@tests/test-renderer";
-import { WalletSyncSharedNavigator } from "./shared";
+import { INITIAL_TEST, WalletSyncSharedNavigator } from "./shared";
 import { DeviceLike, State } from "~/reducers/types";
 import { setEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -74,5 +74,38 @@ describe("WalletSyncActivation", () => {
     // await waitFor(async () => {
     //   expect(await screen.findByText(`Continue on your Ledger Stax`)).toBeVisible();
     // });
+  });
+
+  it("Should open WalletSyncActivation Flow with learn More link", async () => {
+    render(<WalletSyncSharedNavigator />, {
+      overrideInitialState: INITIAL_TEST,
+    });
+
+    expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
+    expect(await screen.findByText(/learn more/i)).toBeVisible();
+  });
+
+  it("Should open WalletSyncActivation Flow without learn More link", async () => {
+    render(<WalletSyncSharedNavigator />, {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          readOnlyModeEnabled: false,
+          overriddenFeatureFlags: {
+            llmWalletSync: {
+              enabled: true,
+              params: {
+                environment: "STAGING",
+                watchConfig: {},
+              },
+            },
+          },
+        },
+      }),
+    });
+
+    expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
+    expect(screen.queryByText(/learn more/i)).toBeUndefined;
   });
 });
