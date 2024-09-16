@@ -76,7 +76,7 @@ export function useAddMember({ device }: { device: Device | null }) {
             onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
           },
           undefined,
-          trustchainRef?.current ?? undefined,
+          trustchainRef.current ?? undefined,
         );
 
         transitionToNextScreen(trustchainResult);
