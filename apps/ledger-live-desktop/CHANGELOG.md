@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.15
+
+### Patch Changes
+
+- [#7815](https://github.com/LedgerHQ/ledger-live/pull/7815) [`7a0bf37`](https://github.com/LedgerHQ/ledger-live/commit/7a0bf37edbbcbb08b4f448f472e3fadc0150b7c0) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add missing swap custom methods for demo3
+
 ## 2.86.0-nightly.14
 
 ### Minor Changes
