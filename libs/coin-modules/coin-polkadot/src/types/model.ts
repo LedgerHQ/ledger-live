@@ -53,7 +53,7 @@ export type ExplorerExtrinsic = {
   };
 };
 
-export type TransasctionPayloadInfo = {
+export type TransactionPayloadInfo = {
   // after runtime upgrade
   address: string;
   blockHash: string;
@@ -70,5 +70,5 @@ export type TransasctionPayloadInfo = {
 
 export type CoreTransaction = {
   registry: TypeRegistry;
-  unsigned: TransasctionPayloadInfo;
+  unsigned: TransactionPayloadInfo;
 };
