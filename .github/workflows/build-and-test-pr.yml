@@ -71,6 +71,20 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
+  test-web-tools:
+    name: "Test Web Tools"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@develop
+    secrets: inherit
+
+  test-cli:
+    name: "Test CLI"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    secrets: inherit
+
   # Final Check required
   ok:
     name: "OK"
@@ -82,6 +96,8 @@ jobs:
       - test-mobile-e2e
       - test-libraries
       - test-design-system
+      - test-web-tools
+      - test-cli
     runs-on: ubuntu-22.04
     if: always() && !cancelled()
     steps:
