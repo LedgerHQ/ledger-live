@@ -7,6 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
+import { blockPasswordLock } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
@@ -20,18 +22,23 @@ type NavigationProps = BaseComposite<
 const startingStep = Steps.AddAccountMethod;
 
 const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) => {
+  const dispatch = useDispatch();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
-  const navigateToQrCodeMethod = () => setCurrentStep(Steps.QrCodeMethod);
+  const navigateToQrCodeMethod = () => {
+    dispatch(blockPasswordLock(true)); // Avoid Background on Android
+    setCurrentStep(Steps.QrCodeMethod);
+  };
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const onGoBack = () => setCurrentStep(getPreviousStep(currentStep));
 
   useEffect(() => {
     setCurrentStep(startingStep);
-  }, [setCurrentStep]);
+  }, [isOpened, setCurrentStep]);
 
   const reset = () => {
+    dispatch(blockPasswordLock(false));
     setCurrentStep(startingStep);
     setCurrentOption(Options.SCAN);
   };
