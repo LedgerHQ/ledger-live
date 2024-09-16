@@ -1597,6 +1597,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "blast",
   "scroll",
   "binance_beacon_chain",
+  "etherlink",
   "ethereum/erc20/$aapl",
   "ethereum/erc20/$based",
   "ethereum/erc20/$die",
