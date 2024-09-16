@@ -439,6 +439,10 @@ jobs:
         with:
           name: summary-detox.json
           path: ${{ github.workspace }}/summary-detox.json
+      - name: Push report to summary
+        run: |
+          echo "## Detox results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary-detox.json >> $GITHUB_STEP_SUMMARY
 
   report-on-slack:
     runs-on: ubuntu-latest

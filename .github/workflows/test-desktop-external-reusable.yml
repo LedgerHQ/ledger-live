@@ -318,6 +318,10 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+      - name: Push report to summary
+        run: |
+          echo "## Test results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary.json >> $GITHUB_STEP_SUMMARY
 
   allure-report:
     name: "Allure Reports Export on Server"

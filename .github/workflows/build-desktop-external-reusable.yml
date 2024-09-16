@@ -184,6 +184,12 @@ jobs:
               summary,
             }
             fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+
+      - name: Push report to summary
+        run: |
+          echo "## Build results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary.json >> $GITHUB_STEP_SUMMARY
+
       - uses: actions/upload-artifact@v4
         name: Upload output
         with:

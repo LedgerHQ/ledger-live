@@ -227,10 +227,14 @@ jobs:
               summary,
               actions
             };
-
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
             fs.writeFileSync("summary-libraries.json", JSON.stringify(output), "utf-8");
       - uses: actions/upload-artifact@v4
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary-libraries.json
           name: summary-libraries.json
+      - name: Push report to summary
+        run: |
+          echo "## Test results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary.json >> $GITHUB_STEP_SUMMARY

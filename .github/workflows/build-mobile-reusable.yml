@@ -237,6 +237,12 @@ jobs:
               }],
             }
             fs.writeFileSync("summary-build-mobile.json", JSON.stringify(output), "utf-8");
+
+      - name: Push report to summary
+        run: |
+          echo "## Build results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary-build-mobile.json >> $GITHUB_STEP_SUMMARY
+
       - uses: actions/upload-artifact@v4
         name: upload output
         with:

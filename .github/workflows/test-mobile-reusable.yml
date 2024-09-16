@@ -65,3 +65,7 @@ jobs:
         with:
           name: lint-mobile
           path: ${{ github.workspace }}/apps/ledger-live-mobile/lint-mobile.json
+      - name: Push report to summary
+        run: |
+          echo "## Lint results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/apps/ledger-live-mobile/lint-mobile.json >> $GITHUB_STEP_SUMMARY
