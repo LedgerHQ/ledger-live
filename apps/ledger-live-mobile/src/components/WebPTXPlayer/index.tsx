@@ -37,26 +37,25 @@ type BackToInternalDomainProps = {
   manifest: AppManifest;
   webviewURL?: string;
   lastMatchingURL?: string | null;
+  config: {
+    screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
+    navigator: NavigatorName.Exchange | NavigatorName.Card;
+    btnText: string;
+  };
 };
 
 function BackToInternalDomain({
   manifest,
   webviewURL,
   lastMatchingURL,
+  config,
 }: BackToInternalDomainProps) {
   const { t } = useTranslation();
+  const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-  const [buttonText, setButtonText] = useState("");
 
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
-
-  useEffect(() => {
-    (async () => {
-      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
-      setButtonText(lastScreen === "compare_providers" ? t("common.quote") : manifest.name);
-    })();
-  }, [manifest.id, manifest.name, t]);
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
@@ -71,8 +70,8 @@ function BackToInternalDomain({
         flow: flowName,
       });
 
-      navigation.navigate(NavigatorName.Exchange, {
-        screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+      navigation.navigate(navigator, {
+        screen,
         params: {
           referrer: "isExternal",
         },
@@ -99,7 +98,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: buttonText })}
+            {t("common.backTo", { to: btnText })}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -117,9 +116,29 @@ type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
   disableHeader?: boolean;
+  config?:
+    | {
+        screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell;
+        navigator: NavigatorName.Exchange;
+        btnText: string;
+      }
+    | {
+        screen: ScreenName.Card;
+        navigator: NavigatorName.Card;
+        btnText: string;
+      };
 };
 
-export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
+export const WebPTXPlayer = ({
+  manifest,
+  inputs,
+  disableHeader,
+  config = {
+    screen: ScreenName.ExchangeSell,
+    btnText: manifest.name,
+    navigator: NavigatorName.Exchange,
+  },
+}: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -153,14 +172,18 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
           const manifestId = url.searchParams.get("goToManifest");
 
           if (manifestId && goToURL) {
-            const flowName = url.searchParams.get("flowName") || "buy";
+            const searchParams = url.searchParams;
+            const flowName = searchParams.get("flowName") || "";
+            const lastScreen = searchParams.get("lastScreen") || flowName;
 
-            await AsyncStorage.setItem("manifest-id", manifestId);
-            await AsyncStorage.setItem("flow-name", flowName);
-            await AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+            await AsyncStorage.multiSet([
+              ["manifest-id", manifestId],
+              ["flow-name", flowName],
+              ["last-screen", lastScreen],
+            ]);
 
-            navigation.navigate(NavigatorName.Exchange, {
-              screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+            navigation.navigate(config.navigator, {
+              screen: config.screen,
               params: {
                 platform: manifestId,
                 goToURL,
@@ -176,7 +199,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
         lastMatchingURL.current = webviewState.url;
       }
     })();
-  }, [isInternalApp, navigation, webviewState.url]);
+  }, [config.navigator, config.screen, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -231,12 +254,13 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
               manifest={manifest}
               webviewURL={webviewState?.url}
               lastMatchingURL={lastMatchingURL?.current}
+              config={config}
             />
           ),
         headerTitle: () => null,
       });
     }
-  }, [manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
+  }, [config, disableHeader, isInternalApp, manifest, navigation, onClose, webviewState?.url]);
 
   const customHandlers = usePTXCustomHandlers(manifest);
 
