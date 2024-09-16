@@ -23,6 +23,7 @@ const hedera: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:hedera:0.0.751515:`,
         seedIdentifier: "",

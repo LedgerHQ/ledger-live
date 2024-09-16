@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
@@ -48,6 +49,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
 
   const { t } = useTranslation();
+  const ptxCardFlag = useFeature("ptxCard");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -76,11 +78,17 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   }, [navigation]);
 
   const onSideImageCardButtonPress = useCallback(() => {
-    navigation.navigate(ScreenName.PlatformApp, {
-      platform: "cl-card",
-      name: "CL Card Powered by Ledger",
-    });
-  }, [navigation]);
+    if (ptxCardFlag?.enabled) {
+      navigation.navigate(NavigatorName.Card, {
+        screen: ScreenName.Card,
+      });
+    } else {
+      navigation.navigate(ScreenName.PlatformApp, {
+        platform: "cl-card",
+        name: "CL Card Powered by Ledger",
+      });
+    }
+  }, [navigation, ptxCardFlag]);
 
   return (
     <Flex flexDirection="row" alignItems="center" justifyContent="space-between" py={3}>

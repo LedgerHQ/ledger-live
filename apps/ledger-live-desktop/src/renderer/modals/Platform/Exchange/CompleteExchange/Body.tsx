@@ -1,21 +1,21 @@
+import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Operation, SignedOperation } from "@ledgerhq/types-live";
-import { Exchange } from "@ledgerhq/live-common/exchange/types";
-import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
-import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { BodyContent } from "./BodyContent";
-import { BigNumber } from "bignumber.js";
-import { AccountLike } from "@ledgerhq/types-live";
-import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
-import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
-import { getEnv } from "@ledgerhq/live-env";
 import styled from "styled-components";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
+import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
+import { BodyContent } from "./BodyContent";
 
 export type Data = {
   provider: string;
@@ -195,13 +195,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSellTransaction = (operation: Operation, result: ResultsState) => {
     handleTransactionResult(result, operation);
   };
+  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        return onCancel(new DisabledTransactionBroadcastError());
-      }
-
       const isSwapTransaction =
         swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency;
 
@@ -210,6 +207,14 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         sourceCurrency;
 
       const result = getResultByTransactionType(isSwapTransaction);
+
+      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        if (!isSwapTransaction || (isSwapTransaction && !isDemo3Enabled)) {
+          return onCancel(new DisabledTransactionBroadcastError());
+        } else {
+          return handleTransactionResult(result, operation);
+        }
+      }
 
       if (isSwapTransaction) {
         handleSwapTransaction(operation, result);

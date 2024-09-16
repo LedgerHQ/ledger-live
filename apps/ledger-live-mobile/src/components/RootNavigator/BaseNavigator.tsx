@@ -30,6 +30,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
+import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -298,6 +299,12 @@ export default function BaseNavigator() {
               }
             },
           })}
+        />
+        <Stack.Screen
+          name={NavigatorName.Card}
+          component={CardLiveAppNavigator}
+          options={{ headerShown: false }}
+          {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
