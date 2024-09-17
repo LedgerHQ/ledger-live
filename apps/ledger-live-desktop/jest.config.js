@@ -37,6 +37,7 @@ const commonConfig = {
     __SENTRY_URL__: null,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
+    Buffer: Uint8Array,
   },
   moduleNameMapper,
   testPathIgnorePatterns,
