@@ -262,28 +262,17 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
-      - name: Generate token
-        if: ${{inputs.speculos_tests}} == 'true'
-        id: generate-token
-        uses: tibdex/github-app-token@v1
+      - name: Setup Speculos image and Coin Apps
+        if: ${{ inputs.speculos_tests }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Retrieving coin apps
-        if: ${{inputs.speculos_tests}} == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: ${{ env.COINAPPS }}
-      - name: Pull docker image
-        if: ${{inputs.speculos_tests}} == 'true'
-        run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
-        shell: bash
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t ${INPUT_SPECULOS:+--speculos}
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
