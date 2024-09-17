@@ -88,12 +88,19 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 onResult: result => {
                   if (result.error) {
                     onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
                   }
                   if (result.operation) {
                     onSuccess(result.operation.id);
                   }
                   setDevice(undefined);
-                  navigation.pop();
+                  !result.error && navigation.pop();
                 },
               },
             });
