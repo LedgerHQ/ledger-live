@@ -70,6 +70,12 @@ jest.mock("expo-barcode-scanner", () => ({
   },
 }));
 
+jest.mock("expo-camera/next", () => {
+  return {
+    CameraView: jest.fn(() => null),
+  };
+});
+
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
   getTimeZone: jest.fn(),

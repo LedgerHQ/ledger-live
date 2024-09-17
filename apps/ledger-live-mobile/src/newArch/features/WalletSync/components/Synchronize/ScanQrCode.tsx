@@ -3,10 +3,10 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
-import { BarCodeScanningResult, Camera, CameraType } from "expo-camera";
-import { BarCodeScanner } from "expo-barcode-scanner";
+import { CameraView } from "expo-camera/next";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
+import { BarCodeScanningResult } from "expo-camera";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -73,17 +73,16 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Camera
+          <CameraView
             style={{
               backgroundColor: colors.neutral.c50,
               width: 280,
               height: 280,
             }}
-            type={CameraType.back}
-            barCodeScannerSettings={{
-              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr"],
             }}
-            onBarCodeScanned={onBarCodeScanned}
+            onBarcodeScanned={onBarCodeScanned}
           />
           <ScanTargetSvg style={{ position: "absolute" }} />
         </Flex>
