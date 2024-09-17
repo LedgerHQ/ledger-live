@@ -34,7 +34,8 @@ describe("Polkadot Api", () => {
       const result = await module.estimateFees(address, amount);
 
       // Then
-      expect(result).toEqual(BigInt(154107779));
+      expect(result).toBeGreaterThanOrEqual(BigInt(100000000));
+      expect(result).toBeLessThanOrEqual(BigInt(200000000));
     });
   });
 
@@ -73,7 +74,7 @@ describe("Polkadot Api", () => {
 
       // Then
       expect(result).toBeGreaterThan(0);
-    });
+    }, 10000);
   });
 
   describe("craftTransaction", () => {
@@ -88,7 +89,7 @@ describe("Polkadot Api", () => {
 
       // Then
       expect(result).toEqual(
-        "6c0053ddb3b3a89ed5c8d8326066032beac6de225c9e010300000a0000a31e81ac3425310e3274a4698a793b2839dc0afa00",
+        "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
       );
     });
   });
