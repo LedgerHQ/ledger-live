@@ -1,10 +1,10 @@
 {
-  "apdus": "=> e0050000c30101070201001210894b3e832dc5b737038102092e6898ca1401011547304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7160466a911ff202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 6985\n",
+  "apdus": "=> e0050000c40101070201001210c27cce0fb9ab5666ac23e8792bc405fb14010115483046022100b8a2fdf413155162ccdb6901295fcdc11417a03c46a5ede9b9ee7019b73cde7d022100c82b7a56239e8de0dffe1944b692a1a57cd3f323b1c6511e3088d99d3421377c160466d58dee202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 6985\n",
   "crypto": {
     "randomBytesOutputs": [],
     "randomKeypairOutputs": [
-      "e93cdbdcf80987a7ffad6dbdb78cf17474de1db597c718c90c8774284e50e7ba",
-      "2fbff08b58cbe2cd40937dd0c4ed76614adfcbf0e8c8f27fee501a8568564c0c"
+      "1de4a0e986b07344333465f083dcbccb658f499188fc4cd31dca4ba4b4ff9d20",
+      "f29250e5285b009d237c1a5f4e5b3ee4f4113738b74e33d840640dd1c0bc5d29"
     ]
   },
   "http": {
@@ -16,7 +16,8 @@
           "headers": {
             "accept": "application/json, text/plain, */*",
             "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
-            "user-agent": "axios/0.26.1"
+            "user-agent": "axios/1.7.3",
+            "accept-encoding": "gzip, compress, deflate, br"
           }
         },
         "response": {
@@ -24,14 +25,14 @@
           "headers": {
             "cache-control": "no-store, no-cache, max-age=0",
             "connection": "keep-alive",
-            "content-length": "917",
+            "content-length": "921",
             "content-type": "application/json",
-            "date": "Tue, 30 Jul 2024 15:47:02 GMT",
+            "date": "Mon, 02 Sep 2024 09:35:33 GMT",
             "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
             "pragma": "no-cache",
             "strict-transport-security": "max-age=31536000; includeSubDomains"
           },
-          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"894b3e832dc5b737038102092e6898ca\",\"expiry\":\"2024-07-30T16:17:03Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210894b3e832dc5b737038102092e6898ca1401011547304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7160466a911ff202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"c27cce0fb9ab5666ac23e8792bc405fb\",\"expiry\":\"2024-09-02T10:05:34Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"3046022100b8a2fdf413155162ccdb6901295fcdc11417a03c46a5ede9b9ee7019b73cde7d022100c82b7a56239e8de0dffe1944b692a1a57cd3f323b1c6511e3088d99d3421377c\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210c27cce0fb9ab5666ac23e8792bc405fb14010115483046022100b8a2fdf413155162ccdb6901295fcdc11417a03c46a5ede9b9ee7019b73cde7d022100c82b7a56239e8de0dffe1944b692a1a57cd3f323b1c6511e3088d99d3421377c160466d58dee202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
         }
       }
     ]

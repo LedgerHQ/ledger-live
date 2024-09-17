@@ -121,6 +121,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
             stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
             transactionData: liveTx,
             useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
             account,
             parentAccount,
             onResult: onSuccess,

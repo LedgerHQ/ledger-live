@@ -1,20 +1,28 @@
 import { resetTrustchainStore } from "@ledgerhq/trustchain/store";
 import { useDispatch } from "react-redux";
-import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
+import {
+  TrustchainEjected,
+  TrustchainNotAllowed,
+  TrustchainOutdated,
+} from "@ledgerhq/trustchain/errors";
 import { ErrorType } from "./type.hooks";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-import { ScreenName } from "~/const";
+import { StackActions, useNavigation } from "@react-navigation/native";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useRestoreTrustchain } from "./useRestoreTrustchain";
+import { NavigatorName, ScreenName } from "~/const";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
-
-  const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const sdk = useTrustchainSdk();
+  const { refetch: restoreTrustchain } = useRestoreTrustchain();
+  const navigation = useNavigation();
 
   function reset() {
     dispatch(resetTrustchainStore());
-    navigation.navigate(ScreenName.WalletSyncActivationInit);
+    const routeName = NavigatorName.WalletSync;
+    const screen = ScreenName.WalletSyncActivationInit;
+    navigation.dispatch(StackActions.replace(routeName, { screen }));
+    sdk.invalidateJwt();
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
@@ -26,6 +34,8 @@ export const useLifeCycle = () => {
 
     if (error instanceof TrustchainEjected) reset();
     if (error instanceof TrustchainNotAllowed) reset();
+
+    if (error instanceof TrustchainOutdated) restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

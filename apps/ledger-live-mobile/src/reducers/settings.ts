@@ -79,6 +79,7 @@ import type {
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
+  SettingsSetFromLedgerSyncOnboardingPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -174,6 +175,7 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenAnalyticsOptInPrompt: false,
   dismissedContentCards: {},
   starredMarketCoins: [],
+  fromLedgerSyncOnboarding: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -638,6 +640,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
+  [SettingsActionTypes.SET_LEDGER_SYNC_ONBOARDING]: (state, action) => ({
+    ...state,
+    fromLedgerSyncOnboarding: (action as Action<SettingsSetFromLedgerSyncOnboardingPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
     ...state,
     starredMarketCoins: [
@@ -874,5 +882,7 @@ export const supportedCounterValuesSelector = (state: State) =>
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+export const isFromLedgerSyncOnboardingSelector = (state: State) =>
+  state.settings.fromLedgerSyncOnboarding;
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

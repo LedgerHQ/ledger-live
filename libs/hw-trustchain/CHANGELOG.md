@@ -1,5 +1,25 @@
 # @ledgerhq/live-wallet
 
+## 0.1.5
+
+### Patch Changes
+
+- [#7719](https://github.com/LedgerHQ/ledger-live/pull/7719) [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df) Thanks [@thesan](https://github.com/thesan)! - Fix the "Expected signature to be an Uint8Array with length 64" error
+
+- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/live-env@2.3.0
+  - @ledgerhq/hw-transport@6.31.3
+
+## 0.1.5-next.0
+
+### Patch Changes
+
+- [#7719](https://github.com/LedgerHQ/ledger-live/pull/7719) [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df) Thanks [@thesan](https://github.com/thesan)! - Fix the "Expected signature to be an Uint8Array with length 64" error
+
+- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/live-env@2.3.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
 ## 0.1.4
 
 ### Patch Changes

@@ -1,15 +1,31 @@
 import { useCallback, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+  QRCodeWSClosed,
+  TrustchainAlreadyInitialized,
+} from "@ledgerhq/trustchain/errors";
+import { MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
+import {
+  trustchainSelector,
+  memberCredentialsSelector,
+  setTrustchain,
+} from "@ledgerhq/trustchain/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "./type.hooks";
+import { useInstanceName } from "./useInstanceName";
+
+const MIN_TIME_TO_REFRESH = 30_000;
 
 export function useQRCode() {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -18,53 +34,79 @@ export function useQRCode() {
   const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
-  const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const memberName = useInstanceName();
 
   const goToActivation = useCallback(() => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
   }, [dispatch]);
 
-  const startQRCodeProcessing = useCallback(() => {
-    if (!trustchain || !memberCredentials) return;
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (memberCredentials: MemberCredentials) =>
+      createQRCodeHostInstance({
+        trustchainApiBaseUrl,
+        onDisplayQRCode: url => {
+          setUrl(url);
+        },
+        onDisplayDigits: digits => {
+          dispatch(setQrCodePinCode(digits));
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
+        },
+        addMember: async member => {
+          if (trustchain) {
+            await sdk.addMember(trustchain, memberCredentials, member);
+            return trustchain;
+          }
+          throw new NoTrustchainInitialized();
+        },
+        memberCredentials,
+        memberName,
+        initialTrustchainId: trustchain?.rootId,
+      }),
 
-    setError(null);
-    setIsLoading(true);
-    createQRCodeHostInstance({
-      trustchainApiBaseUrl,
-      onDisplayQRCode: url => {
-        setUrl(url);
-        setIsLoading(false);
-      },
-      onDisplayDigits: digits => {
-        dispatch(setQrCodePinCode(digits));
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
-      },
-      addMember: async member => {
-        await sdk.addMember(trustchain, memberCredentials, member);
-        return trustchain;
-      },
-    })
-      .catch(e => {
-        if (e instanceof InvalidDigitsError) {
-          return;
-        }
-        setError(e);
-        setIsLoading(false);
-      })
-      .then(() => {
-        setUrl(null);
-        dispatch(setQrCodePinCode(null));
-        setIsLoading(false);
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
-      });
-  }, [trustchainApiBaseUrl, trustchain, memberCredentials, dispatch, sdk]);
+    // Don't use retry here because it always uses a delay despite setting it to 0
+    onError(e) {
+      if (e instanceof QRCodeWSClosed) {
+        const { time } = e as unknown as { time: number };
+        if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
+      }
+      if (e instanceof InvalidDigitsError) {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
+      }
+      if (e instanceof NoTrustchainInitialized) {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
+      }
+      if (e instanceof TrustchainAlreadyInitialized) {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+      }
+    },
+
+    onSuccess(newTrustchain) {
+      if (newTrustchain) {
+        dispatch(setTrustchain(newTrustchain));
+      }
+      dispatch(
+        setFlow({
+          flow: Flow.Synchronize,
+          step: Step.SynchronizeLoading,
+          nextStep: Step.Synchronized,
+          hasTrustchainBeenCreated: false,
+        }),
+      );
+      queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+      setUrl(null);
+      dispatch(setQrCodePinCode(null));
+    },
+  });
+
+  const startQRCodeProcessing = useCallback(() => {
+    if (memberCredentials) mutate(memberCredentials);
+  }, [mutate, memberCredentials]);
 
   return {
     url,
     error,
-    isLoading,
+    isLoading: isPending,
     startQRCodeProcessing,
     goToActivation,
   };

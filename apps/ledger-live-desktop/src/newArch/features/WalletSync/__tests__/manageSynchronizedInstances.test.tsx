@@ -1,34 +1,13 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
-import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
-import { mockedSdk, simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
-
-const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
-
-const INSTANCES: Array<TrustchainMember> = [
-  {
-    id: "currentInstance",
-    name: "macOS",
-    permissions: 112,
-  },
-  {
-    id: "2",
-    name: "Ipone 15",
-    permissions: 112,
-  },
-];
+import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
+import { INSTANCES } from "./shared";
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
     getMembers: (mockedSdk.getMembers = jest.fn()),
     removeMember: (mockedSdk.removeMember = jest.fn()),
+    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
   }),
 }));
 

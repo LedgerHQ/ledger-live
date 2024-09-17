@@ -11,7 +11,7 @@ type Props = {
   choices: string[];
   multipleChoices: boolean;
   path: string;
-  initalValue: string[] | string;
+  initialValue?: string[] | string;
   handleChange: (path: string, value: unknown) => void;
 };
 
@@ -22,10 +22,10 @@ function FormLiveAppSelector({
   fieldName,
   optional,
   multipleChoices,
-  initalValue,
+  initialValue,
 }: Props) {
   const [selectedValues, setValues] = useState<string[] | string>(
-    initalValue ? (multipleChoices ? [...initalValue] : initalValue) : [],
+    initialValue ? (multipleChoices ? [...initialValue] : initialValue) : [],
   );
 
   useEffect(() => {

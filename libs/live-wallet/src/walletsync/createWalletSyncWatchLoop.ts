@@ -1,5 +1,5 @@
 import { ZodType, z } from "zod";
-import { CloudSyncSDK } from "../cloudsync";
+import { CloudSyncSDKInterface } from "../cloudsync";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
@@ -17,32 +17,13 @@ export type VisualConfig = {
   visualPendingTimeout: number;
 };
 
-/**
- * createWalletSyncWatchLoop is a helper to create a watch loop that will automatically sync the wallet with the cloud sync backend.
- * make sure to unsubscribe if you need to rerun a new watch loop. notably if one of the input changes.
- */
-export function createWalletSyncWatchLoop<
+export type CreateWalletSyncWatchLoopParams<
   UserState,
   LocalState,
   Update,
   Schema extends ZodType,
   DistantState = z.infer<Schema>,
->({
-  watchConfig,
-  visualConfig,
-  walletsync,
-  walletSyncSdk,
-  trustchain,
-  memberCredentials,
-  setVisualPending,
-  onStartPolling,
-  onTrustchainRefreshNeeded,
-  onError,
-  getState,
-  localStateSelector,
-  latestDistantStateSelector,
-  localIncrementUpdate,
-}: {
+> = {
   /**
    * the configuration to use to watch for changes.
    */
@@ -58,7 +39,7 @@ export function createWalletSyncWatchLoop<
   /**
    * the wallet sync sdk to use to interact with the cloud sync backend.
    */
-  walletSyncSdk: CloudSyncSDK<Schema>;
+  walletSyncSdk: CloudSyncSDKInterface<DistantState>;
   /**
    * the trustchain to use to authenticate with the cloud sync backend.
    */
@@ -110,7 +91,28 @@ export function createWalletSyncWatchLoop<
    * a function we need to regularly call to also resolve possible local state updates. (see incrementalUpdates.ts)
    */
   localIncrementUpdate: () => Promise<void>;
-}): {
+};
+
+/**
+ * createWalletSyncWatchLoop is a helper to create a watch loop that will automatically sync the wallet with the cloud sync backend.
+ * make sure to unsubscribe if you need to rerun a new watch loop. notably if one of the input changes.
+ */
+export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema extends ZodType>({
+  watchConfig,
+  visualConfig,
+  walletsync,
+  walletSyncSdk,
+  trustchain,
+  memberCredentials,
+  setVisualPending,
+  onStartPolling,
+  onTrustchainRefreshNeeded,
+  onError,
+  getState,
+  localStateSelector,
+  latestDistantStateSelector,
+  localIncrementUpdate,
+}: CreateWalletSyncWatchLoopParams<UserState, LocalState, Update, Schema>): {
   onUserRefreshIntent: () => void;
   unsubscribe: () => void;
 } {
@@ -131,7 +133,6 @@ export function createWalletSyncWatchLoop<
       if (onStartPolling) onStartPolling();
 
       // check if there is a pull to do
-      // TODO this needs to be called separately, probably more often than the rest of this logic.
       await walletSyncSdk.pull(trustchain, memberCredentials);
       if (unsubscribed) return;
 
@@ -170,7 +171,7 @@ export function createWalletSyncWatchLoop<
 
   const notificationsEnabled = watchConfig?.notificationsEnabled || false;
   const pollingInterval = watchConfig?.pollingInterval || 10000;
-  const initialTimeout = watchConfig?.initialTimeout || 5000;
+  const initialTimeout = watchConfig?.initialTimeout || 1000;
   const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
 
   // main loop

@@ -58,8 +58,6 @@ permissions:
 jobs:
   e2e-tests-linux:
     name: "Desktop Tests E2E (Ubuntu)"
-    outputs:
-      status: ${{ steps.tests.outcome }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -78,7 +76,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      
+
       - name: Setup broadcast environment variables
         id: set-env
         run: |
@@ -98,18 +96,21 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+
       - name: Generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - name: Retrieving coin apps
         uses: actions/checkout@v4
         with:
@@ -117,9 +118,11 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
+
       - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
+
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -188,6 +191,7 @@ jobs:
 
       - name: Get summary
         if: ${{ !cancelled() }}
+        id: summary
         shell: bash
         run: |
           cd apps/ledger-live-desktop
@@ -200,15 +204,12 @@ jobs:
           totalTests=$(jq '.statistic.total' summary.json)
           echo "TEST_RESULT=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> $GITHUB_ENV
 
-      - name: Get status color
-        if: ${{ !cancelled() }}
-        shell: bash
-        run: >
-          if ${{ needs.e2e-tests-linux.outputs.status == 'success' }};
-          then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ needs.e2e-tests-linux.outputs.status == 'failure' }};
-          then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
-          else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
+          if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
+            echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
+            echo "STATUS_EMOJI=❌" >> $GITHUB_ENV;
+          else
+            echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
+            echo "STATUS_EMOJI=✅" >> $GITHUB_ENV;
           fi
 
       - uses: actions/github-script@v6
@@ -246,6 +247,7 @@ jobs:
                 status: "${{ needs.e2e-tests-linux.outputs.status }}",
               }
             };
+            const statusEmoji = process.env.STATUS_EMOJI;
 
             let summary = `### Playwright Tests
             `
@@ -270,7 +272,7 @@ jobs:
             |`;
 
             Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+              summary += ` ${values.pass ? statusEmoji : "❌"} (${values.status}) |`;
             });
 
             summary += `
@@ -318,7 +320,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"} ${process.env.TEST_RESULT || 'No test results'}`
+                        "text": `- 🐧 linux: ${statusEmoji} ${process.env.TEST_RESULT || 'No test results'}`
                       }
                     },
                     {
@@ -356,6 +358,7 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          STATUS_COLOR: ${{ env.STATUS_COLOR }}
 
   upload-to-xray:
     name: "Upload to Xray"

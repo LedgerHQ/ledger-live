@@ -11,7 +11,7 @@ type ViewProps = {
   doesNotHaveAccount?: boolean;
   onClickAdd: () => void;
   onClickImport: () => void;
-  setWalletSyncDrawerVisible?: () => void;
+  onClickImportLedgerSync?: () => void;
 };
 
 type AddAccountScreenProps = {
@@ -26,7 +26,7 @@ function View({
   isReadOnlyModeEnabled,
   onClickAdd,
   onClickImport,
-  setWalletSyncDrawerVisible,
+  onClickImportLedgerSync,
   doesNotHaveAccount,
 }: ViewProps) {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ function View({
     rows.push({
       titleKey: "addAccountsModal.drawer.walletSync.title",
       descriptionKey: "addAccountsModal.drawer.walletSync.description",
-      onPress: setWalletSyncDrawerVisible,
+      onPress: onClickImportLedgerSync,
       icon: <Icons.QrCode color={"primary.c80"} />,
       testID: "add-accounts-modal-wallet-sync-button",
     });

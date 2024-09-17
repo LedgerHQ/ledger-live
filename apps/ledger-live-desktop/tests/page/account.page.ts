@@ -17,8 +17,8 @@ export class AccountPage extends AppPage {
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private accountName = (name: string) => this.page.locator(`text=${name}`);
   private lastOperation = this.page.locator("text=Latest operations");
-  private tokenValue = (tokenName: string) =>
-    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
+  private tokenValue = (tokenName: string, accountName: string) =>
+    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`).getByText(`${accountName}`);
   private accountBalance = this.page.getByTestId("total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
@@ -35,8 +35,8 @@ export class AccountPage extends AppPage {
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
     if (SubAccount.currency.name) {
-      await expect(this.tokenValue(SubAccount.currency.name)).toBeVisible();
-      await this.tokenValue(SubAccount.currency.name).click();
+      await expect(this.tokenValue(SubAccount.currency.name, SubAccount.accountName)).toBeVisible();
+      await this.tokenValue(SubAccount.currency.name, SubAccount.accountName).click();
     }
   }
 

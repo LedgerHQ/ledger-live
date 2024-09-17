@@ -3,21 +3,16 @@ import { useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import { useTranslation } from "react-i18next";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useLifeCycle } from "./walletSync.hooks";
 import { useEffect } from "react";
-
-export const TrustchainNotFound = createCustomErrorClass("TrustchainNotFound");
-export const MemberCredentialsNotFound = createCustomErrorClass("MemberCredentialsNotFound");
+import { TrustchainNotFound } from "@ledgerhq/trustchain/errors";
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const { t } = useTranslation();
 
-  const errorHandler = useLifeCycle();
+  const { handleError } = useLifeCycle();
 
   function getMembers() {
     if (!memberCredentials) {
@@ -25,7 +20,7 @@ export function useGetMembers() {
     }
 
     if (!trustchain) {
-      throw new TrustchainNotFound(t("walletSync.walletSyncActivated.errors.trustchain"));
+      throw new TrustchainNotFound();
     }
 
     try {
@@ -42,13 +37,14 @@ export function useGetMembers() {
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     retry: false,
+    enabled: !!trustchain && !!memberCredentials,
   });
 
   useEffect(() => {
     if (memberHook.isError) {
-      errorHandler.handleError(memberHook.error);
+      handleError(memberHook.error);
     }
-  }, [errorHandler, memberHook.error, memberHook.isError]);
+  }, [handleError, memberHook.error, memberHook.isError]);
 
   return memberHook;
 }

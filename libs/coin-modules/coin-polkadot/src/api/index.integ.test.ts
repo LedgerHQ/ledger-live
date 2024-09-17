@@ -52,7 +52,7 @@ describe("Polkadot Api", () => {
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
-    });
+    }, 20000);
   });
 
   describe("lastBlock", () => {
@@ -81,6 +81,7 @@ describe("Polkadot Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
+        mode: "send",
         recipient: "16YreVmGhM8mNMqnsvK7rn7b1e4SKYsTfFUn4UfCZ65BgDjh",
         amount: BigInt(10),
         fee: BigInt(1),

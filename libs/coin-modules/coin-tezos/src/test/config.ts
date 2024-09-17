@@ -12,6 +12,7 @@ export const mockConfig = {
   },
   fees: {
     minGasLimit: 0,
+    minRevealGasLimit: 0,
     minStorageLimit: 0,
     minFees: 0,
     minEstimatedFees: 0,

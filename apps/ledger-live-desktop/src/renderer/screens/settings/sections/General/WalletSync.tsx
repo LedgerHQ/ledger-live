@@ -9,13 +9,15 @@ import {
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 import { resetWalletSync, setDrawerVisibility } from "~/renderer/actions/walletSync";
-import { trustchainSelector } from "@ledgerhq/trustchain/store";
+
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsPage,
-} from "LLD/features/WalletSync/hooks/useWalletSyncAnalytics";
+  AnalyticsFlow,
+  StepsOutsideFlow,
+} from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
-import { useFlows, STEPS_WITH_BACK } from "~/newArch/features/WalletSync/hooks/useFlows";
+import { useFlows, STEPS_WITH_BACK } from "LLD/features/WalletSync/hooks/useFlows";
 
 /**
  *
@@ -37,14 +39,19 @@ const WalletSyncRow = () => {
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
-  const trustchain = useSelector(trustchainSelector);
 
-  const { onClickTrack, onActionTrack } = useWalletSyncAnalytics();
+  const hasFlowEvent = useMemo(() => !StepsOutsideFlow.includes(currentStep), [currentStep]);
+
+  const { onClickTrack, onActionTrack } = useLedgerSyncAnalytics();
 
   const handleBack = () => {
     if (childRef.current && hasBack) {
       childRef.current.goBack();
-      onActionTrack({ button: "Back", step: currentStep, flow: "Wallet Sync" });
+      onActionTrack({
+        button: "Back",
+        step: currentStep,
+        flow: hasFlowEvent ? AnalyticsFlow : undefined,
+      });
     }
   };
 
@@ -52,15 +59,19 @@ const WalletSyncRow = () => {
     if (hasBeenFaked) {
       dispatch(resetWalletSync());
     } else {
-      onActionTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
+      onActionTrack({
+        button: "Close",
+        step: currentStep,
+        flow: hasFlowEvent ? AnalyticsFlow : undefined,
+      });
     }
     dispatch(setDrawerVisibility(false));
   };
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync(!!trustchain?.rootId);
-      onClickTrack({ button: "Wallet Sync", page: AnalyticsPage.SettingsGeneral });
+      goToWelcomeScreenWalletSync();
+      onClickTrack({ button: "Manage Ledger Sync", page: AnalyticsPage.SettingsGeneral });
     }
     dispatch(setDrawerVisibility(true));
   };

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/trustchain",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ledger Live trustchain layer",
   "private": true,
   "keywords": [
@@ -65,6 +65,7 @@
     "@ledgerhq/types-devices": "workspace:^",
     "base64-js": "1",
     "isomorphic-ws": "5",
+    "rxjs": "^7.8.1",
     "ws": "8"
   },
   "devDependencies": {

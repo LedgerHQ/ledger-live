@@ -402,6 +402,7 @@ function useUiHook(): UiHook {
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,
+            dependencies: options?.dependencies,
             onSuccess: ({
               signedOperation,
               transactionSignError,
@@ -528,7 +529,7 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencies = useManifestCurrencies(manifest);
-  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
 
   const onSelectAccount = useCallback(() => {
@@ -557,5 +558,5 @@ export function useSelectAccount({
     }
   }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
 
-  return { onSelectAccount };
+  return { onSelectAccount, currentAccount };
 }

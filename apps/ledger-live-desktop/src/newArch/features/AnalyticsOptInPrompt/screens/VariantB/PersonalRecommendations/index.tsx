@@ -33,7 +33,7 @@ const RecommandationsScreen = ({
   return (
     <>
       <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
-      <Flex flexDirection={"column"} height={"100%"} rowGap={32}>
+      <Flex flexDirection={"column"} height={"100%"} rowGap={32} overflowY={"scroll"}>
         <Header currentTheme={currentTheme} />
         <Body {...bodyProps} handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>

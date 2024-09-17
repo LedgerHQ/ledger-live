@@ -99,7 +99,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     publicKey: {
       curve: "secp256k1",
       data: Buffer.from(
-        "04dbd3e4818b34bbf1f3642fc61f4f34e58e15888692b3d22c41e6169ec3e663851bacc656f1109b1441d0474130edcfe917a84b712fb8f2164835c55333b5620f",
+        "048abacf1b1027b7c5f96d77826eada263e21d2ba8a2a037a84e0679e05d997a91ff34df181f88bdaf3521c26fb70eb028622f3afd66d0c282d5bb61da38ad76c1",
         "hex",
       ),
     },
@@ -173,6 +173,34 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
   },
 };
 
+type CurrencyDataResponse = {
+  id: string;
+  exchange_app_config_serialized: string;
+  exchange_app_signature: string;
+}[];
+
+type CurrencyData = {
+  id: string;
+  config: string;
+  signature: string;
+};
+
+type ProvidersDataResponse = {
+  name: string;
+  signature: string;
+  public_key: string;
+  public_key_curve: string;
+}[];
+
+type ProviderData = {
+  name: string;
+  publicKey: {
+    curve: string;
+    data: Buffer;
+  };
+  signature: Buffer;
+};
+
 let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
 
 export const getSwapProvider = async (
@@ -187,7 +215,7 @@ export const getSwapProvider = async (
   return res[providerName.toLowerCase()];
 };
 
-function transformData(providersData) {
+function transformData(providersData: ProvidersDataResponse): Record<string, ProviderData> {
   const transformed = {};
   providersData.forEach(provider => {
     const key = provider.name.toLowerCase();
@@ -203,14 +231,44 @@ function transformData(providersData) {
   return transformed;
 }
 
-export const getProvidersData = async () => {
-  const providersData = await network({
-    url:
-      "https://crypto-assets-service.api.ledger.com/v1/partners" +
-      "?output=name,signature,public_key,public_key_curve" +
-      "&service_name=swap",
+export const getProvidersData = async (): Promise<Record<string, ProviderData>> => {
+  const { data: providersData } = await network<ProvidersDataResponse>({
+    method: "GET",
+    url: "https://crypto-assets-service.api.ledger.com/v1/partners",
+    params: {
+      output: "name,signature,public_key,public_key_curve",
+      service_name: "swap",
+    },
   });
-  return transformData(providersData.data);
+
+  return transformData(providersData);
+};
+
+/**
+ * Retrieves the currency data for a given ID
+ * @param currencyId The unique identifier for the currency.
+ * @returns A promise that resolves to the currency data including ID, serialized config, and signature.
+ */
+export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> => {
+  const { data: currencyData } = await network<CurrencyDataResponse>({
+    method: "GET",
+    url: "https://crypto-assets-service.api.ledger.com/v1/currencies",
+    params: {
+      output: "id,exchange_app_config_serialized,exchange_app_signature",
+      id: currencyId,
+    },
+  });
+  if (!currencyData.length) {
+    throw new Error(`Exchange, missing configuration for ${currencyId}`);
+  }
+  if (currencyData.length !== 1) {
+    throw new Error(`Exchange, multiple configurations found for ${currencyId}`);
+  }
+  return {
+    id: currencyData[0].id,
+    config: currencyData[0].exchange_app_config_serialized,
+    signature: currencyData[0].exchange_app_signature,
+  } as CurrencyData;
 };
 
 export const getProvidersCDNData = async () => {

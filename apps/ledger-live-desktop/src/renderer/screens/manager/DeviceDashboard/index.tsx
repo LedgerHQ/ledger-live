@@ -30,6 +30,7 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
+import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 
 const Container = styled.div`
   display: flex;
@@ -85,11 +86,13 @@ const DeviceDashboard = ({
 }: Props) => {
   const { t } = useTranslation();
   const { deviceName } = result;
-  const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
+  const storage = useAppDataStorageProvider();
+  const [state, dispatch] = useAppsRunner(result, exec, storage, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
     undefined,
   );
+
   const [appUninstallDep, setAppUninstallDep] = useState<
     { dependents: App[]; app: App } | undefined
   >(undefined);
@@ -98,6 +101,7 @@ const DeviceDashboard = ({
   const reduxDispatch = useDispatch();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
   const isFirstCustomImageUpdate = useRef<boolean>(true);
+
   useEffect(() => {
     if (isFirstCustomImageUpdate.current) {
       isFirstCustomImageUpdate.current = false;
@@ -108,8 +112,10 @@ const DeviceDashboard = ({
       });
     }
   }, [dispatch, lastSeenCustomImage]);
+
   const { installQueue, uninstallQueue, currentError } = state;
   const jobInProgress = installQueue.length > 0 || uninstallQueue.length > 0;
+
   const distribution = useMemo(() => {
     const newState = installQueue.length
       ? predictOptimisticState(
@@ -121,21 +127,26 @@ const DeviceDashboard = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
+
   const onCloseDepsInstallModal = useCallback(
     () => setAppInstallDep(undefined),
     [setAppInstallDep],
   );
+
   const onCloseDepsUninstallModal = useCallback(
     () => setAppUninstallDep(undefined),
     [setAppUninstallDep],
   );
+
   const installState =
     installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall";
+
   const onCloseError = useCallback(() => {
     dispatch({
       type: "recover",
     });
   }, [dispatch]);
+
   useEffect(() => {
     if (state.installed.length && !hasInstalledApps) {
       reduxDispatch(setHasInstalledApps(true));
@@ -165,10 +176,13 @@ const DeviceDashboard = ({
     // Not ideal but we have no concept of device ids so we can consider
     // an empty custom image size an indicator of not having an image set.
     // If this is troublesome we'd have to react by asking the device directly.
-    if (state.customImageBlocks === 0) reduxDispatch(clearLastSeenCustomImage());
-  }, [reduxDispatch, state.customImageBlocks]);
+    if (result.customImageBlocks === 0) reduxDispatch(clearLastSeenCustomImage());
+  }, [reduxDispatch, result.customImageBlocks]);
 
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
+
+  const [hasCustomLockScreen, setHasCustomLockScreen] = useState(result.customImageBlocks !== 0);
+
   return (
     <>
       {renderFirmwareUpdateBanner
@@ -209,6 +223,8 @@ const DeviceDashboard = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
+          hasCustomLockScreen={hasCustomLockScreen}
+          setHasCustomLockScreen={setHasCustomLockScreen}
         />
         <ProviderWarning />
         <AppList

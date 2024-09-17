@@ -11,6 +11,7 @@ import type {
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { initAccounts } from "@ledgerhq/live-wallet/store";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const version = 0; // FIXME this needs to come from user data
 
@@ -26,7 +27,9 @@ export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => 
     }
   }
   const accounts = tuples.map(([account]) => account);
-  const accountsUserData = tuples.map(([, userData]) => userData);
+  const accountsUserData = tuples
+    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
+    .map(([, userData]) => userData);
   return initAccounts(accounts, accountsUserData);
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(

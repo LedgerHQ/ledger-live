@@ -27,6 +27,8 @@ import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
+import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
+import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
@@ -41,6 +43,7 @@ import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Params = {
   id: string;
@@ -104,6 +107,12 @@ const AccountPage = ({
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
+  const nftReworked = useFeature("lldNftsGalleryNewArch");
+  const isNftReworkedEnabled = nftReworked?.enabled;
+
+  const ordinalsFF = useFeature("lldnewArchOrdinals");
+  const isOrdinalsEnabled = ordinalsFF?.enabled;
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -204,7 +213,14 @@ const AccountPage = ({
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
-            <Collections account={account} />
+            isNftReworkedEnabled ? (
+              <NftCollections account={account} />
+            ) : (
+              <Collections account={account} />
+            )
+          ) : null}
+          {isOrdinalsEnabled && account.type === "Account" && account.currency.id === "bitcoin" ? (
+            <OrdinalsAccount account={account} />
           ) : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList

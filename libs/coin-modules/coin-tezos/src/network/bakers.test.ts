@@ -111,9 +111,11 @@ describe("Tezos Baker", () => {
       const response = {
         data,
         status: 200,
-        headers: {},
+        headers: {} as any,
         statusText: "",
-        config: {},
+        config: {
+          headers: {} as any,
+        },
       };
 
       mockedNetwork.mockReturnValue(Promise.resolve(response));

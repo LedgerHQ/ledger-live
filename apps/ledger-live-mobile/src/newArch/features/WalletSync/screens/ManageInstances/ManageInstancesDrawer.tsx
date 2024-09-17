@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ListInstances } from "../../components/ManageInstances/ListInstances";
-import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
+import { DeletionError } from "../../components/ManageInstances/DeletionError";
 
 import { HookResult, Scene } from "./useManageInstanceDrawer";
+import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
+import { ErrorReason } from "../../hooks/useSpecificError";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
@@ -19,6 +20,12 @@ const ManageInstancesDrawer = ({
   onClickInstance,
 }: HookResult) => {
   const { error, isError, isLoading, data } = memberHook;
+  const manageKeyHook = useManageKeyDrawer();
+
+  const goToManageBackup = useCallback(() => {
+    handleClose();
+    manageKeyHook.openDrawer();
+  }, [manageKeyHook, handleClose]);
 
   const getScene = () => {
     if (isError) {
@@ -47,21 +54,17 @@ const ManageInstancesDrawer = ({
       return (
         <DeletionError
           error={ErrorReason.AUTO_REMOVE}
-          // eslint-disable-next-line no-console
-          goToDelete={() => console.log("gotoDelete")}
-          understood={() => changeScene(Scene.List)}
+          primaryAction={() => changeScene(Scene.List)}
+          secondaryAction={goToManageBackup}
         />
       );
     }
   };
 
   return (
-    <>
-      <TrackScreen />
-      <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
-        {getScene()}
-      </QueuedDrawer>
-    </>
+    <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
+      {getScene()}
+    </QueuedDrawer>
   );
 };
 

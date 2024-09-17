@@ -1,6 +1,6 @@
-import Transport from "@ledgerhq/hw-transport";
 import { generateMnemonic } from "bip39";
-import { TrustchainSDK } from "../../src/types";
+import Transport from "@ledgerhq/hw-transport";
+import { TrustchainSDK, WithDevice } from "../../src/types";
 
 export type ScenarioOptions = {
   /**
@@ -14,7 +14,11 @@ export type ScenarioOptions = {
   /**
    * switch to the another device seed
    */
-  switchDeviceSeed: (newSeed?: string) => Promise<Transport>;
+  switchDeviceSeed: (newSeed?: string) => Promise<{ id: string; transport: Transport }>;
+  /**
+   * withDevice function to pass to HWDeviceProvider
+   */
+  withDevice: WithDevice;
 };
 
 export type RecorderConfig = {
@@ -27,8 +31,15 @@ export type RecorderConfig = {
 };
 
 export const recorderConfigDefaults = {
-  goNextOnText: ["Login request", "Identify with your", "request?", "Ensure you trust the"],
-  approveOnText: ["Log in to", "Enable"],
+  goNextOnText: [
+    "Login request",
+    "Identify with your",
+    "request",
+    "Ensure you trust the",
+    "keep",
+    "update request",
+  ],
+  approveOnText: ["Log in to", "Enable", "Confirm"],
 };
 
 export const genSeed = () => generateMnemonic(256);

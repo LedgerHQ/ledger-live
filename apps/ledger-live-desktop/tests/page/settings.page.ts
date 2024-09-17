@@ -1,12 +1,15 @@
 import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 
 export class SettingsPage extends AppPage {
+  private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
   readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
+
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
   );
@@ -21,10 +24,12 @@ export class SettingsPage extends AppPage {
   private themeChoiceLight = this.page.locator("text='Clair'");
   private versionRow = this.page.getByTestId("version-row");
   private deviceLanguagesDrawer = this.page.getByTestId("device-language-installation-container");
+  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
 
+  @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();
   }
@@ -75,5 +80,15 @@ export class SettingsPage extends AppPage {
       await this.versionRow.click();
     }
     await this.developerTab.click();
+  }
+
+  @step("Click 'Hide Empty Token Accounts' toggle")
+  async clickHideEmptyTokenAccountsToggle() {
+    await this.hideEmptyTokenAccountsToggle.click();
+  }
+
+  @step("Open Ledger Sync Manager")
+  async openManageLedgerSync() {
+    await this.manageLedgerSyncButton.click();
   }
 }

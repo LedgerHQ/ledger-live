@@ -1,7 +1,7 @@
 import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
@@ -23,7 +23,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
 
   const dispatch = useDispatch();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleGoDeleteInstance = (instance: TrustchainMember) => {
     onClickTrack({ button: "remove instance", page: AnalyticsPage.ManageInstances });
@@ -68,6 +68,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
 
 const List = styled(Flex)`
   overflow-y: auto;
+  padding-bottom: 12%;
   max-height: calc(100vh - 12%);
   ::-webkit-scrollbar {
     width: 0;

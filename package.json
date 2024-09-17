@@ -64,6 +64,7 @@
     "coin:algorand": "pnpm --filter coin-algorand",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:cardano": "pnpm --filter coin-cardano",
+    "coin:cosmos": "pnpm --filter coin-cosmos",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
     "coin:tester": "pnpm --filter coin-tester",

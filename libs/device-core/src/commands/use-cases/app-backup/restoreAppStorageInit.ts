@@ -1,7 +1,13 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { APDU } from "../../entities/APDU";
-import { AppNotFound, InvalidAppNameLength, InvalidBackupLength, PinNotSet } from "../../../errors";
+import {
+  AppNotFound,
+  InvalidAppNameLength,
+  InvalidBackupLength,
+  PinNotSet,
+  UserRefusedOnDevice,
+} from "../../../errors";
 
 /**
  * Name in documentation: INS_APP_STORAGE_RESTORE_INIT
@@ -58,7 +64,6 @@ export async function restoreAppStorageInit(
   tracer.trace("Start");
 
   const params: Buffer = Buffer.concat([
-    Buffer.from([appName.length + 4]), // LC
     Buffer.from(backupSize.toString(16).padStart(8, "0"), "hex"), // BACKUP_LEN
     Buffer.from(appName, "ascii"), // APP_NAME
   ]);
@@ -82,8 +87,9 @@ export function parseResponse(data: Buffer): void {
     case StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT:
       throw new AppNotFound("Application not found.");
     case StatusCodes.DEVICE_IN_RECOVERY_MODE:
-    case StatusCodes.USER_REFUSED_ON_DEVICE:
       break;
+    case StatusCodes.USER_REFUSED_ON_DEVICE:
+      throw new UserRefusedOnDevice("User refused on device.");
     case StatusCodes.PIN_NOT_SET:
       throw new PinNotSet("Invalid consent, PIN is not set.");
     case StatusCodes.INVALID_APP_NAME_LENGTH:

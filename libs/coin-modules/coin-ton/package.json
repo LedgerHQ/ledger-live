@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -53,17 +53,19 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ton/core": "^0.56.1",
+    "@ton/core": "^0.56.3",
     "@ton/ton": "^13.11.1",
-    "@ton/crypto": "3.2.0",
+    "@ton/crypto": "^3.3.0",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
+    "imurmurhash": "^0.1.4",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "msw": "^2.0.11",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

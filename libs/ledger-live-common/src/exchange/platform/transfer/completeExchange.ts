@@ -102,7 +102,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           o.next({

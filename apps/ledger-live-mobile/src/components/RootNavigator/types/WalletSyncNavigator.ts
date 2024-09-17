@@ -2,9 +2,15 @@ import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { ScreenName } from "~/const";
 
 export type WalletSyncNavigatorStackParamList = {
+  [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
+
   [ScreenName.WalletSyncActivationInit]: undefined;
 
   [ScreenName.WalletSyncSuccess]: {
+    created: boolean;
+  };
+
+  [ScreenName.WalletSyncLoading]: {
     created: boolean;
   };
 

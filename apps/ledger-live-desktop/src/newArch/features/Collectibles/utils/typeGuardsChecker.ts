@@ -6,7 +6,7 @@ import {
 } from "../types/Collection";
 
 export function isNFTRow(props: Props): props is Props & NftRowProps {
-  return "media" in props;
+  return "media" in props && !("collectionName" in props);
 }
 
 export function isOrdinalsRow(props: Props): props is Props & OrdinalsRowProps {

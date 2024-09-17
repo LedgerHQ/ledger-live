@@ -2,12 +2,13 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box } from "@ledgerhq/native-ui";
+import { Category } from "LLM/features/Web3Hub/utils/api/categories";
 import useCategoriesListViewModel, {
   type useCategoriesListViewModelProps,
 } from "./useCategoriesListViewModel";
 import Badge from "./Badge";
 
-const identityFn = (item: string) => item;
+const identityFn = (item: Category) => item.id;
 
 type Props = useCategoriesListViewModelProps;
 
@@ -15,14 +16,14 @@ const renderItem = ({
   item,
   extraData,
 }: {
-  item: string;
+  item: Category;
   extraData?: useCategoriesListViewModelProps;
 }) => {
   return (
     <Badge
-      onPress={() => extraData?.selectCategory(item)}
-      label={item}
-      selected={extraData?.selectedCategory === item}
+      onPress={() => extraData?.selectCategory(item.id)}
+      label={item.name}
+      selected={extraData?.selectedCategory === item.id}
     />
   );
 };

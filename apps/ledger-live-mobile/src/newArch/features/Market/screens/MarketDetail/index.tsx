@@ -1,5 +1,6 @@
 import React, { memo, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
+import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ import MarketGraph from "./components/MarketGraph";
 import { ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { FabMarketActions } from "~/components/FabActions/actionsList/market";
+import { MarketQuickActions } from "~/components/MarketQuickActions";
 import BackButton from "./components/BackButton";
 import { Item } from "~/components/Graph/types";
 import {
@@ -138,13 +140,18 @@ function View({
             </Flex>
 
             {internalCurrency ? (
-              <Flex mb={6}>
-                <FabMarketActions
-                  defaultAccount={defaultAccount}
-                  currency={internalCurrency}
-                  accounts={accounts}
-                />
-              </Flex>
+              <FeatureToggle
+                featureId="llmMarketQuickActions"
+                fallback={
+                  <Flex mb={6}>
+                    <FabMarketActions
+                      defaultAccount={defaultAccount}
+                      currency={internalCurrency}
+                      accounts={accounts}
+                    />
+                  </Flex>
+                }
+              />
             ) : null}
           </>
         }
@@ -165,6 +172,12 @@ function View({
           range={range}
           currency={internalCurrency}
         />
+
+        {internalCurrency && (
+          <FeatureToggle featureId="llmMarketQuickActions">
+            <MarketQuickActions currency={internalCurrency} accounts={accounts} />
+          </FeatureToggle>
+        )}
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>

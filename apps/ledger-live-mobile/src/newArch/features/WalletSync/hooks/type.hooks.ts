@@ -1,6 +1,9 @@
 export enum QueryKey {
   getMembers = "useGetMembers",
   destroyTrustchain = "useDestroyTrustchain",
+  fetchTrustchainStatus = "useFetchTrustchainStatus",
+  fetchCloudSyncStatus = "useFetchCloudSyncStatus",
+  restoreTrustchain = "useRestoreTrustchain",
 }
 
 export enum ErrorType {

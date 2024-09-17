@@ -25,8 +25,16 @@ const Root = (props: {
           </LabelInfoTooltip>
         </Label>
       </Box>
-      <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
-        <Box grow={1}>
+      <Box
+        mb={15}
+        horizontal
+        grow
+        alignItems="center"
+        justifyContent="space-between"
+        maxWidth={"100%"}
+        id="testinggg"
+      >
+        <Box grow={1} maxWidth={"100%"}>
           <CommentField {...props} />
         </Box>
       </Box>

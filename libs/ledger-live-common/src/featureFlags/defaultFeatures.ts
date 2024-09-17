@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
+import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 
 /**
  * Default disabled feature.
@@ -384,14 +385,14 @@ export const DEFAULT_FEATURES: Features = {
   buySellUi: {
     enabled: false,
     params: {
-      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+      manifestId: BUY_SELL_UI_APP_ID,
     },
   },
 
   buySellShortcut: {
     enabled: false,
   },
-
+  ptxCard: DEFAULT_FEATURE,
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
@@ -403,6 +404,13 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       manifest_id: "swap-live-app-demo-1",
+    },
+  },
+
+  ptxSwapLiveAppDemoThree: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
     },
   },
 
@@ -484,6 +492,7 @@ export const DEFAULT_FEATURES: Features = {
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
+  llmMarketQuickActions: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

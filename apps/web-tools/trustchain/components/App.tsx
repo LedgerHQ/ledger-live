@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { getInitialStore } from "@ledgerhq/trustchain/store";
 import useEnv from "../useEnv";
@@ -113,7 +114,7 @@ const App = () => {
   );
 
   const sdk = useMemo(
-    () => getSdk(!!mockEnv, context, lifecycle),
+    () => getSdk(!!mockEnv, context, withDevice, lifecycle),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       mockEnv,
@@ -266,6 +267,7 @@ const App = () => {
             <AppQRCodeCandidate
               memberCredentials={memberCredentials}
               setTrustchain={setTrustchain}
+              trustchain={trustchain}
             />
           </Expand>
         </Expand>

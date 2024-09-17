@@ -18,9 +18,9 @@ const TextEllipsis = styled.div`
   text-overflow: ellipsis;
 `;
 
-type Props = { onClose?: () => void };
+type Props = { onClose: () => void; onRemoved?: () => void };
 
-const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
+const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
   const request = useMemo(() => ({}), []);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -40,7 +40,8 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
     setCompleted(true);
     setRunning(false);
     dispatch(clearLastSeenCustomImage());
-  }, [dispatch]);
+    onRemoved && onRemoved();
+  }, [dispatch, onRemoved]);
 
   const onError = useCallback(
     (error: Error) => {

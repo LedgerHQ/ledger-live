@@ -3,18 +3,19 @@ import fsPromises from "fs/promises";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 
 import { Application } from "tests/page";
-import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
+import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
-import { Currency } from "tests/enum/Currency";
+import { randomUUID } from "crypto";
+import { AppInfos } from "tests/enum/AppInfos";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosCurrency: Currency;
+  speculosApp: AppInfos;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -41,7 +42,7 @@ export const test = base.extend<TestFixtures>({
   userdata: undefined,
   featureFlags: undefined,
   simulateCamera: undefined,
-  speculosCurrency: undefined,
+  speculosApp: undefined,
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -49,7 +50,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async ({}, use) => {
-    await use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
+    await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
     await use(path.join(__dirname, "../userdata/", `${userdata}.json`));
@@ -68,7 +69,7 @@ export const test = base.extend<TestFixtures>({
       env,
       featureFlags,
       simulateCamera,
-      speculosCurrency,
+      speculosApp,
     },
     use,
     testInfo,
@@ -82,7 +83,7 @@ export const test = base.extend<TestFixtures>({
 
     let device: any | undefined;
 
-    if (IS_NOT_MOCK && speculosCurrency) {
+    if (IS_NOT_MOCK && speculosApp) {
       // Ensure the portCounter stays within the valid port range
       if (portCounter > MAX_PORT) {
         portCounter = BASE_PORT;
@@ -94,7 +95,7 @@ export const test = base.extend<TestFixtures>({
       );
       device = await startSpeculos(
         testInfo.title.replace(/ /g, "_"),
-        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
+        specs[speculosApp.name.replace(/ /g, "_")],
       );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }

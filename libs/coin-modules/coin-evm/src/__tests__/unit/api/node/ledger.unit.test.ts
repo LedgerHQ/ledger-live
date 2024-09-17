@@ -386,7 +386,7 @@ describe("EVM Family", () => {
         }
       });
 
-      it("should return the medium value of the Ledger explorers gas tracker", async () => {
+      it("should return the fee data based on the transaction's feesStrategy", async () => {
         jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
@@ -408,16 +408,64 @@ describe("EVM Family", () => {
           },
         }));
 
-        const legacyFeeData = await LEDGER_API.getFeeData(currency, { type: 0 } as any);
-        const eip1559FeeData = await LEDGER_API.getFeeData(currency, { type: 2 } as any);
+        const slowFeeData = await LEDGER_API.getFeeData(currency, {
+          type: 2,
+          feesStrategy: "slow",
+        } as any);
+        const mediumFeeData = await LEDGER_API.getFeeData(currency, {
+          type: 2,
+          feesStrategy: "medium",
+        } as any);
+        const fastFeeData = await LEDGER_API.getFeeData(currency, {
+          type: 2,
+          feesStrategy: "fast",
+        } as any);
 
-        expect(legacyFeeData).toEqual({
+        expect(slowFeeData).toEqual({
+          maxFeePerGas: new BigNumber(1),
+          maxPriorityFeePerGas: new BigNumber(2),
+          gasPrice: new BigNumber(3),
+          nextBaseFee: new BigNumber(4),
+        });
+        expect(mediumFeeData).toEqual({
           maxFeePerGas: new BigNumber(5),
           maxPriorityFeePerGas: new BigNumber(6),
           gasPrice: new BigNumber(7),
           nextBaseFee: new BigNumber(8),
         });
-        expect(eip1559FeeData).toEqual({
+        expect(fastFeeData).toEqual({
+          maxFeePerGas: new BigNumber(9),
+          maxPriorityFeePerGas: new BigNumber(10),
+          gasPrice: new BigNumber(11),
+          nextBaseFee: new BigNumber(12),
+        });
+      });
+
+      it("should return medium fee data if feesStrategy is not provided", async () => {
+        jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
+          slow: {
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(2),
+            gasPrice: new BigNumber(3),
+            nextBaseFee: new BigNumber(4),
+          },
+          medium: {
+            maxFeePerGas: new BigNumber(5),
+            maxPriorityFeePerGas: new BigNumber(6),
+            gasPrice: new BigNumber(7),
+            nextBaseFee: new BigNumber(8),
+          },
+          fast: {
+            maxFeePerGas: new BigNumber(9),
+            maxPriorityFeePerGas: new BigNumber(10),
+            gasPrice: new BigNumber(11),
+            nextBaseFee: new BigNumber(12),
+          },
+        }));
+
+        const feeData = await LEDGER_API.getFeeData(currency, { type: 2 } as any);
+
+        expect(feeData).toEqual({
           maxFeePerGas: new BigNumber(5),
           maxPriorityFeePerGas: new BigNumber(6),
           gasPrice: new BigNumber(7),

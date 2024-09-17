@@ -105,6 +105,16 @@ export enum RestoreAppDataEventType {
    * The application data has been restored.
    */
   AppDataRestored = "appDataRestored",
+
+  /**
+   * There is no application data to restore.
+   */
+  NoAppDataToRestore = "noAppDataToRestore",
+
+  /**
+   * The user refused to restore the application data.
+   */
+  UserRefused = "userRefused",
 }
 
 export type RestoreAppDataEvent =
@@ -120,9 +130,43 @@ export type RestoreAppDataEvent =
     }
   | {
       type: RestoreAppDataEventType.AppDataRestored;
+    }
+  | {
+      type: RestoreAppDataEventType.NoAppDataToRestore;
+    }
+  | {
+      type: RestoreAppDataEventType.UserRefused;
     };
 
 /**
  * An error that occurs during the restore process, the error message should be descriptive when thrown.
  */
 export const RestoreAppDataError = createCustomErrorClass("RestoreAppDataError");
+
+export enum DeleteAppDataEventType {
+  AppDataDeleteStarted = "appDataDeleteStarted",
+  /**
+   * The application data has been deleted.
+   */
+  AppDataDeleted = "appDataDeleted",
+  /**
+   * There is no application data to delete.
+   */
+  NoAppDataToDelete = "noAppDataToDelete",
+}
+
+export type DeleteAppDataEvent =
+  | {
+      type: DeleteAppDataEventType.AppDataDeleteStarted;
+    }
+  | {
+      type: DeleteAppDataEventType.AppDataDeleted;
+    }
+  | {
+      type: DeleteAppDataEventType.NoAppDataToDelete;
+    };
+
+/**
+ * An error that occurs during the delete process (local data), the error message should be descriptive when thrown.
+ */
+export const DeleteAppDataError = createCustomErrorClass("DeleteAppDataError");

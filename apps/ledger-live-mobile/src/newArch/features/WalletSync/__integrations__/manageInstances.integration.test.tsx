@@ -1,5 +1,5 @@
 import React from "react";
-import { screen } from "@testing-library/react-native";
+import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
@@ -30,6 +30,7 @@ jest.mock("../hooks/useGetMembers", () => ({
     data: INSTANCES,
     isError: false,
     error: null,
+    refetch: jest.fn(),
   }),
 }));
 
@@ -119,5 +120,32 @@ describe("ManageInstances", () => {
 
     const myInstance = screen.getByTestId("walletSync-manage-instance-2");
     expect(myInstance).toBeDefined();
+  });
+  it("Should redirect to the Manage Key screen", async () => {
+    const { user } = render(<WalletSyncSettingsNavigator />, {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          readOnlyModeEnabled: false,
+          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+        },
+        trustchain: {
+          ...state.trustchain,
+          trustchain,
+          memberCredentials: {
+            privatekey: "privatekey",
+            pubkey: "currentInstance",
+          },
+        },
+      }),
+    });
+
+    await user.press(await screen.findByText(/ledger sync/i));
+    await user.press(await screen.findByText(/Manage now/i));
+    await user.press(screen.getAllByText("Remove")[0]);
+    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
+    await user.press(await screen.findByText(/Delete my encryption key/i));
+    await waitFor(() => screen.findByText(/Manage your key/i));
   });
 });

@@ -61,6 +61,8 @@ type Props = {
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
+  hasCustomLockScreen: boolean;
+  setHasCustomLockScreen: (value: boolean) => void;
 };
 
 /**
@@ -79,6 +81,8 @@ const DeviceInformationSummary = ({
   isIncomplete,
   installQueue,
   uninstallQueue,
+  hasCustomLockScreen,
+  setHasCustomLockScreen,
 }: Props) => {
   const navigationLocked = useSelector(isNavigationLocked);
 
@@ -164,6 +168,8 @@ const DeviceInformationSummary = ({
                 <CustomImageManagerButton
                   disabled={navigationLocked}
                   deviceModelId={deviceModel.id}
+                  hasCustomLockScreen={hasCustomLockScreen}
+                  setHasCustomLockScreen={setHasCustomLockScreen}
                 />
               </>
             ) : null}

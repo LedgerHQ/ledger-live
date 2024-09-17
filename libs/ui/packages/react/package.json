@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.15.4",
+  "version": "0.16.0",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {
@@ -77,6 +77,7 @@
     "@tippyjs/react": "^4.2.6",
     "color": "^4.0.0",
     "embla-carousel-react": "8.0.0-rc17",
+    "framer-motion": "^11.3.28",
     "react-is": "^17.0.2",
     "react-select": "^5.2.1",
     "react-spring": "8.0.27",
@@ -97,10 +98,10 @@
     "@storybook/addon-actions": "^7.5.3",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
-    "@storybook/react": "^7.5.3",
-    "@storybook/react-webpack5": "^7.5.3",
     "@storybook/blocks": "^7.5.3",
     "@storybook/manager-api": "7.5.3",
+    "@storybook/react": "^7.5.3",
+    "@storybook/react-webpack5": "^7.5.3",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "*",
     "@types/color": "^3.0.2",

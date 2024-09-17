@@ -55,6 +55,46 @@ describe("Wallet store", () => {
     expect(result.accountNames.get(POLKADOT_ACCOUNT)).toBe(POLKADOT_ACCOUNT_NAME);
     expect(result.accountNames.get(NEW_POLKADOT_ACCOUNT)).toBe(NEW_POLKADOT_ACCOUNT_NAME);
   });
+  it("should not save the default accounts names when adding an account", () => {
+    const editedNames = new Map();
+    editedNames.set(ETHEREUM_ACCOUNT, "Ethereum 1");
+    editedNames.set(POLKADOT_ACCOUNT, "Polkadot 1");
+    editedNames.set(NEW_POLKADOT_ACCOUNT, NEW_POLKADOT_ACCOUNT_NAME);
+    const result = handlers.ADD_ACCOUNTS(
+      {
+        ...initialState,
+        accountNames: new Map(),
+      },
+      {
+        payload: {
+          allAccounts: [
+            {
+              id: ETHEREUM_ACCOUNT,
+              type: "Account",
+              currency: { name: "Ethereum" },
+              index: 0,
+            } as Account,
+            {
+              id: POLKADOT_ACCOUNT,
+              type: "Account",
+              currency: { name: "Polkadot" },
+              index: 0,
+            } as Account,
+            {
+              id: NEW_POLKADOT_ACCOUNT,
+              type: "Account",
+              currency: { name: "Polkadot" },
+              index: 1,
+            } as Account,
+          ],
+          editedNames,
+        },
+      },
+    );
+    expect(result.accountNames.get(ETHEREUM_ACCOUNT)).toBe(undefined);
+    expect(result.accountNames.get(POLKADOT_ACCOUNT)).toBe(undefined);
+    expect(result.accountNames.get(NEW_POLKADOT_ACCOUNT)).toBe(NEW_POLKADOT_ACCOUNT_NAME);
+  });
 
   it("can decompose an account raw", () => {
     const account = genAccount("foo", {

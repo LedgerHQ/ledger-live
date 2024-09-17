@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { LogoWrapper } from "../../components/LogoWrapper";
 
 type Props = {
@@ -18,7 +18,7 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
 
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={AnalyticsPage.Activation} />
+      <TrackPage category={AnalyticsPage.Activation} source={AnalyticsPage.SettingsGeneral} />
       <Flex justifyContent="center" alignItems="center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />

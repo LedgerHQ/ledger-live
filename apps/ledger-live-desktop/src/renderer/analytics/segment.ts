@@ -67,13 +67,13 @@ const getMarketWidgetAnalytics = () => {
   return !!marketWidget?.enabled;
 };
 
-const getWalletSyncAttributes = (state: State) => {
+const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
 
   return {
-    hasWalletSync: !!walletSync?.enabled,
-    walletSyncActivated: !!state.trustchain.trustchain,
+    hasLedgerSync: !!walletSync?.enabled,
+    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
   };
 };
 
@@ -81,10 +81,12 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxCard = analyticsFeatureFlagMethod("ptxCard");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
   const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
   const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
   const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
   const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
 
@@ -106,9 +108,11 @@ const getPtxAttributes = () => {
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
+    ptxCard,
     ptxSwapMoonpayProviderEnabled,
     ptxSwapLiveAppDemoZero,
     ptxSwapLiveAppDemoOne,
+    ptxSwapLiveAppDemoThree,
     ptxSwapThorswapProvider,
     ptxSwapExodusProvider,
   };
@@ -140,7 +144,7 @@ const extraProperties = (store: ReduxStore) => {
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
 
-  const walletSyncAtributes = getWalletSyncAttributes(state);
+  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
 
   const deviceInfo = device
     ? {
@@ -195,7 +199,7 @@ const extraProperties = (store: ReduxStore) => {
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
-    ...walletSyncAtributes,
+    ...ledgerSyncAtributes,
   };
 };
 
@@ -295,8 +299,8 @@ export const track = (
   }
 
   const eventPropertiesWithoutExtra = {
-    ...properties,
     page: currentRouteNameRef.current,
+    ...properties,
   };
 
   const allProperties = {

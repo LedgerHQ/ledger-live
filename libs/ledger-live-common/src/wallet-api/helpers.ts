@@ -1,6 +1,5 @@
-import picomatch from "picomatch";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   WalletAPICurrency,
   WalletAPISupportedCurrency,
@@ -115,32 +114,6 @@ export const safeUrl = (url: string) => {
     return null;
   }
 };
-
-export function matchCurrencies(
-  currencies: CryptoOrTokenCurrency[],
-  patterns: string[],
-): CryptoOrTokenCurrency[] {
-  const matchedCurrencies: CryptoOrTokenCurrency[] = [];
-  const patternCount = patterns.length;
-  const currencyCount = currencies.length;
-
-  for (let i = 0; i < patternCount; i += 1) {
-    const currentPattern = patterns[i];
-    if (currentPattern) {
-      const isMatch = picomatch(currentPattern);
-
-      for (let j = 0; j < currencyCount; j += 1) {
-        const currentCurrency = currencies[j];
-        if (currentCurrency) {
-          if (isMatch(currentCurrency.id)) {
-            matchedCurrencies.push(currentCurrency);
-          }
-        }
-      }
-    }
-  }
-  return matchedCurrencies;
-}
 
 // Copied from https://www.npmjs.com/package/ethereumjs-util
 export const isHexPrefixed = (str: string): boolean => {

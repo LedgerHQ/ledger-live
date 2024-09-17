@@ -3,10 +3,15 @@ import styled from "styled-components";
 import Fallback from "./Fallback.png";
 import { Box } from "@ledgerhq/react-ui";
 
-const StyledPlaceholder = styled.div`
+type StyledPlaceholderProps = {
+  backgroundSize?: string;
+};
+
+const StyledPlaceholder = styled.div<StyledPlaceholderProps>`
   background-image: url("${Fallback}");
   background-repeat: no-repeat;
   background-position: center;
+  background-size: ${p => (p.backgroundSize ? p.backgroundSize : "cover")};
   border-radius: 4px;
   width: 100%;
   height: 100%;
@@ -16,11 +21,12 @@ const StyledPlaceholder = styled.div`
 
 type Props = {
   size?: number;
+  backgroundSize?: string;
 };
 
-const PlaceholderComponent: React.FC<Props> = ({ size }) => (
+const PlaceholderComponent: React.FC<Props> = ({ size, backgroundSize = undefined }) => (
   <Box size={size}>
-    <StyledPlaceholder />
+    <StyledPlaceholder backgroundSize={backgroundSize} />
   </Box>
 );
 

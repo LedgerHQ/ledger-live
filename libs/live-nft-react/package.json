@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-nft-react",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Ledger Live nft React module",
   "keywords": [
     "Ledger"

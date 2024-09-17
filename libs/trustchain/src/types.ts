@@ -1,4 +1,6 @@
+import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
+import { TrustchainsResponse } from "./api";
 
 /**
  * The JWT is a JSON Web Token that is used to authenticate the user.
@@ -11,6 +13,14 @@ export type JWT = {
     };
   };
 };
+
+/**
+ * A function which allow all interactions with the hardware device.
+ */
+export type WithDevice = (
+  deviceId: string,
+  options?: { openTimeoutMs?: number },
+) => <T>(fn: (transport: Transport) => Observable<T>) => Observable<T>;
 
 /**
  * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.
@@ -132,7 +142,7 @@ export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
  *
  * import { sdk } from "@ledgerhq/trustchain";
  *
- * sdk.authWithDevice(transport).then(jwt => console.log(jwt));
+ * sdk.getOrCreateTrustchain(deviceId, memberCredentials).then(trustchain => console.log(trustchain));
  */
 export interface TrustchainSDK {
   /**
@@ -161,10 +171,11 @@ export interface TrustchainSDK {
    * The latest jwt is also returned because it was potentially updated during the process.
    */
   getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
-    callbacks?: TrustchainDeviceCallbacks,
+    callbacks?: GetOrCreateTrustchainCallbacks,
     topic?: Uint8Array,
+    currentTrustchainId?: string,
   ): Promise<TrustchainResult>;
 
   /**
@@ -187,7 +198,7 @@ export interface TrustchainSDK {
    * remove a member from the application trustchain
    */
   removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
@@ -217,9 +228,15 @@ export interface TrustchainSDK {
    * decrypt data with the trustchain encryption key
    */
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
+
+  invalidateJwt(): void;
 }
 
 export interface TrustchainDeviceCallbacks {
-  onStartRequestUserInteraction: () => void;
-  onEndRequestUserInteraction: () => void;
+  onStartRequestUserInteraction?: () => void;
+  onEndRequestUserInteraction?: () => void;
+}
+
+export interface GetOrCreateTrustchainCallbacks extends TrustchainDeviceCallbacks {
+  onInitialResponse?: (trustchains: TrustchainsResponse) => void;
 }

@@ -10,27 +10,34 @@ import {
   TrustchainResult,
   TrustchainResultType,
   TrustchainLifecycle,
+  GetOrCreateTrustchainCallbacks,
 } from "./types";
 import {
   crypto,
   Challenge,
-  CommandStream,
   CommandStreamEncoder,
-  CommandStreamDecoder,
   StreamTree,
   Permissions,
   DerivationPath,
   SoftwareDevice,
   Device,
 } from "@ledgerhq/hw-trustchain";
-import Transport from "@ledgerhq/hw-transport";
 import getApi from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { TrustchainEjected, TrustchainNotAllowed, TrustchainOutdated } from "./errors";
+import {
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+  TrustchainEjected,
+  TrustchainNotAllowed,
+  TrustchainOutdated,
+} from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
+
+type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
+type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
 
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
@@ -93,29 +100,44 @@ export class SDK implements TrustchainSDK {
   }
 
   async getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
-    callbacks?: TrustchainDeviceCallbacks,
+    callbacks?: GetOrCreateTrustchainCallbacks,
     topic?: Uint8Array,
+    currentTrustchainId?: string,
   ): Promise<TrustchainResult> {
+    this.invalidateJwt();
+
     let type = TrustchainResultType.restored;
 
     const withJwt: WithJwt = job =>
-      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     let trustchains = await withJwt(this.api.getTrustchains);
+
+    callbacks?.onInitialResponse?.(trustchains);
+
+    if (currentTrustchainId) {
+      if (
+        Object.keys(trustchains).length > 0 &&
+        Object.keys(trustchains).find(key => key === currentTrustchainId)
+      ) {
+        throw new TrustchainAlreadyInitialized();
+      } else throw new TrustchainAlreadyInitializedWithOtherSeed();
+    }
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
       type = TrustchainResultType.created;
-      const streamTree = await this.hwDeviceProvider.withHw(transport, hw =>
+      const streamTree = await this.hwDeviceProvider.withHw(deviceId, hw =>
         StreamTree.createNewTree(hw, { topic }),
       );
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await withJwt(jwt => this.api.postSeed(jwt, crypto.to_hex(commandStream)));
       // deviceJwt have changed, proactively refresh it
-      await this.hwDeviceProvider.refreshJwt(transport, callbacks);
+      await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
       trustchains = await withJwt(this.api.getTrustchains);
     }
 
@@ -147,16 +169,11 @@ export class SDK implements TrustchainSDK {
     }
     if (shouldShare) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
-      streamTree = await this.hwDeviceProvider.withHw(
-        transport,
-        hw =>
-          this.pushMember(streamTree, path, trustchainRootId, withJwt, hw, {
-            id: memberCredentials.pubkey,
-            name: this.context.name,
-            permissions: Permissions.OWNER,
-          }),
-        callbacks,
-      );
+      streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+        id: memberCredentials.pubkey,
+        name: this.context.name,
+        permissions: Permissions.OWNER,
+      });
     }
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
@@ -201,18 +218,25 @@ export class SDK implements TrustchainSDK {
     const { resolved } = await this.withAuth(trustchain, memberCredentials, jwt =>
       this.fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
     );
-    return resolved.getMembersData();
+    const members = resolved.getMembersData();
+    if (!members.some(m => m.id === memberCredentials.pubkey)) {
+      throw new TrustchainEjected("Not a member of trustchain");
+    }
+    return members;
   }
 
   async removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
+    this.invalidateJwt();
+
     const withJwt: WithJwt = job =>
-      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     // invariant because the sdk does not support this case, and the UI should not allows it.
     invariant(
@@ -241,34 +265,25 @@ export class SDK implements TrustchainSDK {
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // We close the current trustchain with the hardware wallet in order to get a user confirmation of the action
-    const sendCloseStreamToAPI = await await this.hwDeviceProvider.withHw(
-      transport,
-      hw => this.closeStream(streamTree, applicationRootPath, trustchainId, withJwt, hw),
-      callbacks,
+    const sendCloseStreamToAPI = await this.closeStream(
+      streamTree,
+      applicationRootPath,
+      trustchainId,
+      withJwt,
+      withHw,
     );
 
     // derive a new branch of the tree on the new path
-    streamTree = await this.hwDeviceProvider.withHw(
-      transport,
-      hw =>
-        this.pushMember(streamTree, newPath, trustchainId, withJwt, hw, {
-          id: memberCredentials.pubkey,
-          name: this.context.name,
-          permissions: Permissions.OWNER,
-        }),
-      callbacks,
-    );
+    streamTree = await this.pushMember(streamTree, newPath, trustchainId, withJwt, withHw, {
+      id: memberCredentials.pubkey,
+      name: this.context.name,
+      permissions: Permissions.OWNER,
+    });
 
     // add the remaining members
+    const withSw = (job: (device: Device) => Promise<StreamTree>) => job(softwareDevice);
     for (const m of withoutMemberOrMe) {
-      streamTree = await this.pushMember(
-        streamTree,
-        newPath,
-        trustchainId,
-        withJwt,
-        softwareDevice,
-        m,
-      );
+      streamTree = await this.pushMember(streamTree, newPath, trustchainId, withJwt, withSw, m);
     }
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
@@ -280,7 +295,7 @@ export class SDK implements TrustchainSDK {
     await sendCloseStreamToAPI();
 
     // deviceJwt have changed, proactively refresh it
-    await this.hwDeviceProvider.refreshJwt(transport, callbacks);
+    await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
 
     const newTrustchain: Trustchain = {
       rootId: trustchainId,
@@ -311,14 +326,20 @@ export class SDK implements TrustchainSDK {
       this.fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
     );
     const softwareDevice = getSoftwareDevice(memberCredentials);
+    const withSw = (job: (device: Device) => Promise<StreamTree>) => job(softwareDevice);
     await this.pushMember(
       streamTree,
       applicationRootPath,
       trustchain.rootId,
       withJwt,
-      softwareDevice,
+      withSw,
       member,
     );
+  }
+
+  invalidateJwt() {
+    this.jwt = undefined;
+    this.hwDeviceProvider.clearJwt();
   }
 
   async destroyTrustchain(
@@ -328,8 +349,7 @@ export class SDK implements TrustchainSDK {
     await this.withAuth(trustchain, memberCredentials, jwt =>
       this.api.deleteTrustchain(jwt, trustchain.rootId),
     );
-    this.jwt = undefined;
-    this.hwDeviceProvider.clearJwt();
+    this.invalidateJwt();
   }
 
   async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
@@ -346,10 +366,7 @@ export class SDK implements TrustchainSDK {
 
   private async fetchTrustchain(jwt: JWT, trustchainId: string) {
     const trustchainData = await this.api.getTrustchain(jwt, trustchainId);
-    const streams = Object.values(trustchainData).map(
-      data => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(data))),
-    );
-    const streamTree = StreamTree.from(...streams);
+    const streamTree = StreamTree.deserialize(trustchainData);
     return { streamTree };
   }
 
@@ -395,16 +412,16 @@ export class SDK implements TrustchainSDK {
     path: string,
     trustchainId: string,
     withJwt: WithJwt,
-    hw: Device,
+    withDevice: (job: (device: Device) => Promise<StreamTree>) => Promise<StreamTree>,
     member: TrustchainMember,
   ) {
+    const isMemberAlreadyInStreamTree = await isMemberInStreamTree(streamTree, path, member);
+    if (isMemberAlreadyInStreamTree) {
+      return streamTree;
+    }
     const isNewDerivation = !streamTree.getChild(path);
-    streamTree = await streamTree.share(
-      path,
-      hw,
-      crypto.from_hex(member.id),
-      member.name,
-      member.permissions,
+    streamTree = await withDevice(device =>
+      streamTree.share(path, device, crypto.from_hex(member.id), member.name, member.permissions),
     );
 
     const child = streamTree.getChild(path);
@@ -431,9 +448,9 @@ export class SDK implements TrustchainSDK {
     path: string,
     trustchainId: string,
     withJwt: WithJwt,
-    softwareDevice: Device,
+    withDevice: (job: (device: Device) => Promise<StreamTree>) => Promise<StreamTree>,
   ) {
-    streamTree = await streamTree.close(path, softwareDevice);
+    streamTree = await withDevice(device => streamTree.close(path, device));
     const child = streamTree.getChild(path);
     invariant(child, "StreamTree.close failed to create the child stream.");
     await child.resolve(); // double checks the signatures are correct before sending to the backend
@@ -445,8 +462,6 @@ export class SDK implements TrustchainSDK {
     return () => withJwt(jwt => this.api.putCommands(jwt, trustchainId, request));
   }
 }
-
-type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 
 export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberCredentials {
   return {
@@ -506,4 +521,18 @@ function invariant(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+async function isMemberInStreamTree(
+  streamTree: StreamTree,
+  path: string,
+  member: TrustchainMember,
+): Promise<boolean> {
+  const child = streamTree.getChild(path);
+  if (!child) {
+    return false;
+  }
+  const resolved = await child.resolve();
+  const members = resolved.getMembersData();
+  return members.some(m => m.id === member.id);
 }

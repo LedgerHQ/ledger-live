@@ -1,6 +1,6 @@
 {
   "name": "@actions/live-common-affected",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Returns a list of main paths affected by code changes",
   "license": "MIT",
   "private": true,

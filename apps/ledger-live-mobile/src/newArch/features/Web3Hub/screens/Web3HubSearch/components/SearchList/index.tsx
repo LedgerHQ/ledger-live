@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
+import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import LoadingIndicator from "LLM/features/Web3Hub/components/ManifestsList/LoadingIndicator";
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
@@ -13,29 +13,33 @@ import SearchItem from "./SearchItem";
 
 type NavigationProp = SearchProps["navigation"];
 
+type Props = {
+  navigation: NavigationProp;
+  search: string;
+  onScroll?: FlashListProps<AppManifest>["onScroll"];
+  pt?: number;
+};
+
+const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
+
 const keyExtractor = (item: AppManifest) => item.id;
 
 const noop = () => {};
 
 const renderItem = ({
   item,
+  index,
   extraData = noop,
 }: {
+  index: number;
   item: AppManifest;
   extraData?: (manifest: AppManifest) => void;
 }) => {
-  return <SearchItem manifest={item} onPress={extraData} />;
+  return <SearchItem isFirst={index === 0} manifest={item} onPress={extraData} />;
 };
 
-export default function SearchList({
-  navigation,
-  search,
-}: {
-  navigation: NavigationProp;
-  search: string;
-}) {
+export default function SearchList({ navigation, search, onScroll, pt = 0 }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { data, isLoading, onEndReached } = useSearchListViewModel(search);
 
   const goToApp = useCallback(
@@ -52,9 +56,9 @@ export default function SearchList({
   return (
     <>
       <Disclaimer disclaimer={disclaimer} />
-      <FlashList
+      <AnimatedFlashList
         contentContainerStyle={{
-          paddingBottom: insets.bottom,
+          paddingTop: pt,
         }}
         testID="web3hub-manifests-search-scroll"
         keyExtractor={keyExtractor}
@@ -71,6 +75,8 @@ export default function SearchList({
         data={data}
         extraData={disclaimer.onPressItem}
         onEndReached={onEndReached}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       />
     </>
   );

@@ -1,25 +1,31 @@
-import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  setTrustchain,
+  trustchainSelector,
+} from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import {
-  MemberCredentials,
-  TrustchainResult,
-  TrustchainResultType,
-} from "@ledgerhq/trustchain/types";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+} from "@ledgerhq/trustchain/errors";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const trustchain = useSelector(trustchainSelector);
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
   const sdkRef = useRef(sdk);
   const deviceRef = useRef(device);
+  const trustchainRef = useRef(trustchain);
   const memberCredentialsRef = useRef(memberCredentials);
 
   const transitionToNextScreen = useCallback(
@@ -28,10 +34,12 @@ export function useAddMember({ device }: { device: Device | null }) {
       dispatch(
         setFlow({
           flow: Flow.Activation,
-          step:
+          step: Step.ActivationLoading,
+          nextStep:
             trustchainResult.type === TrustchainResultType.created
               ? Step.ActivationFinal
               : Step.SynchronizationFinal,
+          hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
         }),
       );
     },
@@ -52,26 +60,34 @@ export function useAddMember({ device }: { device: Device | null }) {
   };
 
   useEffect(() => {
-    if (!deviceRef.current) {
-      handleMissingDevice();
-    }
-
     const addMember = async () => {
       try {
-        await runWithDevice(deviceRef.current?.deviceId, async transport => {
-          const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
-            transport,
-            memberCredentialsRef.current as MemberCredentials,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
+        if (!deviceRef.current) {
+          return handleMissingDevice();
+        }
+        if (!memberCredentialsRef.current) {
+          throw new Error("memberCredentials is not set");
+        }
+        const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
+          deviceRef.current.deviceId,
+          memberCredentialsRef.current,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+          undefined,
+          trustchainRef?.current?.rootId,
+        );
 
-          transitionToNextScreen(trustchainResult);
-        });
+        transitionToNextScreen(trustchainResult);
       } catch (error) {
-        setError(error as Error);
+        if (error instanceof TrustchainAlreadyInitialized) {
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
+        } else if (error instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
+        } else {
+          setError(error as Error);
+        }
       }
     };
 

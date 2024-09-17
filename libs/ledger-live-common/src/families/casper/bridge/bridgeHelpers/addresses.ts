@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
-import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
+import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
 import { CASPER_CHECKSUM_HEX_LEN } from "../../consts";
 
 export const getAddress = (
@@ -40,7 +40,7 @@ export function casperAccountHashFromPublicKey(
 }
 
 export function casperAddressFromPubKey(pubkey: Buffer, keySig: CLPublicKeyTag): string {
-  return `${keySig.toString()}${pubkey}`;
+  return `${keySig.toString().padStart(2, "0")}${Buffer.from(pubkey).toString("hex")}`;
 }
 
 export function getCLPublicKey(address: string): CLPublicKey {

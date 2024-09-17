@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
-import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -18,7 +18,7 @@ const ExchangeBuy = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeBuy>,
 ) => {
   const buySellUiFlag = useFeature("buySellUi");
-  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
   return (
     <BuyAndSellScreen
       {..._props}
@@ -44,7 +44,7 @@ const ExchangeSell = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeSell>,
 ) => {
   const buySellUiFlag = useFeature("buySellUi");
-  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
   return (
     <BuyAndSellScreen
       {..._props}

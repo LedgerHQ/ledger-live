@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/context-module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ledger context module",
   "files": [
     "./lib"
@@ -26,7 +26,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "axios": "^1.6.8",
+    "axios": "1.7.3",
     "ethers": "^5.7.2"
   }
 }

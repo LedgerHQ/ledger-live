@@ -2,11 +2,10 @@ import React from "react";
 import { Flex, Button, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsButton,
   AnalyticsPage,
-  AnalyticsFlow,
-} from "LLM/features/WalletSync/hooks/useWalletSyncAnalytics";
+} from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type Props = {
   onPressSyncAccounts: () => void;
@@ -15,13 +14,13 @@ type Props = {
 
 const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) => {
   const { t } = useTranslation();
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const onPressSync = () => {
     onClickTrack({
       button: AnalyticsButton.SyncYourAccounts,
-      page: AnalyticsPage.ActivateWalletSync,
-      flow: AnalyticsFlow.WalletSync,
+      page: AnalyticsPage.ActivateLedgerSync,
+      hasFlow: true,
     });
     onPressSyncAccounts();
   };
@@ -29,8 +28,8 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
   const onPressHasAlreadyAKey = () => {
     onClickTrack({
       button: AnalyticsButton.AlreadyCreatedKey,
-      page: AnalyticsPage.ActivateWalletSync,
-      flow: AnalyticsFlow.WalletSync,
+      page: AnalyticsPage.ActivateLedgerSync,
+      hasFlow: true,
     });
     onPressHasAlreadyCreatedAKey();
   };

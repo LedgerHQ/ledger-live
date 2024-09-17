@@ -19,16 +19,16 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header, UnbondingHeader } from "./Header";
 import { Row, UnbondingRow } from "./Row";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

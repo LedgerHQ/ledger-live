@@ -36,6 +36,7 @@ import type {
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -281,6 +282,7 @@ export enum SettingsActionTypes {
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
+  SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -385,6 +387,7 @@ export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterV
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
+export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
@@ -444,6 +447,7 @@ export type SettingsPayload =
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
+  | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 
@@ -526,10 +530,17 @@ export type MarketPayload =
 // === WALLETSYNC ACTIONS ===
 export enum WalletSyncActionTypes {
   WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
+  LEDGER_SYNC_SET_ACTIVATE_DRAWER = "LEDGER_SYNC_SET_ACTIVATE_DRAWER",
+  LEDGER_SYNC_SET_ACTIVATE_STEP = "LEDGER_SYNC_SET_ACTIVATE_STEP",
 }
 
 export type WalletSyncSetManageKeyDrawerPayload = boolean;
-export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload;
+export type WalletSyncSetActivateDrawer = boolean;
+export type WalletSyncSetActivateStep = Steps;
+export type WalletSyncPayload =
+  | WalletSyncSetManageKeyDrawerPayload
+  | WalletSyncSetActivateDrawer
+  | WalletSyncSetActivateStep;
 
 // === PAYLOADS ===
 

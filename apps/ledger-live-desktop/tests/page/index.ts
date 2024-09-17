@@ -9,6 +9,8 @@ import { ReceiveModal } from "../page/modal/receive.modal";
 import { SpeculosPage } from "tests/page/speculos.page";
 import { SendModal } from "tests/page/modal/send.modal";
 import { Drawer } from "tests/page/drawer/drawer";
+import { SettingsPage } from "tests/page/settings.page";
+import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -21,4 +23,6 @@ export class Application extends PageHolder {
   public receive = new ReceiveModal(this.page);
   public speculos = new SpeculosPage(this.page);
   public send = new SendModal(this.page);
+  public settings = new SettingsPage(this.page);
+  public ledgerSync = new LedgerSyncDrawer(this.page);
 }
