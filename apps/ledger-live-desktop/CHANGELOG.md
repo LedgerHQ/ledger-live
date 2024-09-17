@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.16
+
+### Patch Changes
+
+- [#7750](https://github.com/LedgerHQ/ledger-live/pull/7750) [`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Multiversx/Elrond to its own module
+
+- Updated dependencies [[`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513)]:
+  - @ledgerhq/live-common@34.8.0-nightly.15
+
 ## 2.86.0-nightly.15
 
 ### Patch Changes

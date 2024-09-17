@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-elrond",
-  "version": "6.21.0",
+  "version": "6.21.1-nightly.0",
   "description": "Ledger Hardware Wallet Elrond Application API",
   "keywords": [
     "Ledger",

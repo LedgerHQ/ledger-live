@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.49.0-nightly.15
+
+### Patch Changes
+
+- [#7765](https://github.com/LedgerHQ/ledger-live/pull/7765) [`d18ec03`](https://github.com/LedgerHQ/ledger-live/commit/d18ec0344ec48da52efb57cf0fab48a2bec1cdca) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Upgrade Earn Info modal to support and display "Learn more" links
+
+- [#7822](https://github.com/LedgerHQ/ledger-live/pull/7822) [`bec3c6a`](https://github.com/LedgerHQ/ledger-live/commit/bec3c6a4794af68bfe79db4b51971536f2194751) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Block password lock when scanning QR
+
+- [#7821](https://github.com/LedgerHQ/ledger-live/pull/7821) [`eb052c4`](https://github.com/LedgerHQ/ledger-live/commit/eb052c492ba94bf5cbd828588ba8dd14f08f21b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix camera not re focus when scanning LS qr code
+
+- [#7750](https://github.com/LedgerHQ/ledger-live/pull/7750) [`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Multiversx/Elrond to its own module
+
+- Updated dependencies [[`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513)]:
+  - @ledgerhq/coin-elrond@0.1.1-nightly.0
+  - @ledgerhq/live-common@34.8.0-nightly.15
+
 ## 3.49.0-nightly.14
 
 ### Patch Changes

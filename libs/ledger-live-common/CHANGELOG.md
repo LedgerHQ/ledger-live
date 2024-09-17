@@ -1,5 +1,15 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.15
+
+### Patch Changes
+
+- [#7750](https://github.com/LedgerHQ/ledger-live/pull/7750) [`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Multiversx/Elrond to its own module
+
+- Updated dependencies [[`8679584`](https://github.com/LedgerHQ/ledger-live/commit/86795841982e06058294528bd8d2847fc4f62513)]:
+  - @ledgerhq/hw-app-elrond@6.21.1-nightly.0
+  - @ledgerhq/coin-elrond@0.1.1-nightly.0
+
 ## 34.8.0-nightly.14
 
 ### Minor Changes
