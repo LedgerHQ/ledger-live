@@ -31,14 +31,14 @@ export default function CustomError({ route }: CustomErrorPropsProps) {
           {error && "cause" in error && error.cause?.swapCode && (
             <Trans
               i18nKey="errors.CustomError.errorCode"
-              values={{ errorCode: error?.cause.swapCode }}
+              values={{ errorCode: error.cause.swapCode }}
             />
           )}
 
-          {error && "message" in error && error?.message && (
+          {error && "message" in error && error.message && (
             <Trans
               i18nKey="errors.CustomError.errorMessage"
-              values={{ errorMessage: error?.message }}
+              values={{ errorMessage: error.message }}
             />
           )}
         </Text>
