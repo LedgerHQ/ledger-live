@@ -32,6 +32,11 @@ on:
         description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
         required: false
         type: string
+      speculos_tests:
+        description: Run Speculos tests
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -258,12 +263,14 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
       - name: Generate token
+        if: ${{inputs.speculos_tests}} == 'true'
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Retrieving coin apps
+        if: ${{inputs.speculos_tests}} == 'true'
         uses: actions/checkout@v4
         with:
           ref: master
@@ -271,15 +278,17 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: ${{ env.COINAPPS }}
       - name: Pull docker image
+        if: ${{inputs.speculos_tests}} == 'true'
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t --speculos
+        run: pnpm mobile e2e:ci -p android -t ${INPUT_SPECULOS:+--speculos}
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
       - name: Generate single file Allure report
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
