@@ -23,6 +23,7 @@ jest.mock("../network", () => {
         extrinsics: mockExtrinsics(),
       }),
     getTransactionParams: () => mockGetTransactionParams(),
+    metadataHash: () => "0x12345678",
   };
 });
 
@@ -88,16 +89,14 @@ describe("buildTransaction", () => {
     const result = await buildTransaction(account, transaction);
 
     // THEN
-    expect(spyRegistry).toHaveBeenCalledTimes(6);
-    expect(spyRegistry).toHaveBeenCalledWith("BlockNumber", 12);
+    expect(spyRegistry).toHaveBeenCalledTimes(3);
     expect(spyRegistry).toHaveBeenCalledWith("ExtrinsicEra", {
       current: 12,
       period: 64,
     });
     expect(spyRegistry).toHaveBeenCalledWith("u32", 42);
-    expect(spyRegistry).toHaveBeenCalledWith("Compact<Balance>", 0);
     expect(spyRegistry).toHaveBeenCalledWith("u32", 22);
-    expect(mockCodec).toHaveBeenCalledTimes(6);
+    expect(mockCodec).toHaveBeenCalledTimes(3);
     expect(mockExtrinsics).toHaveBeenCalledTimes(1);
     expect(mockTransferKeepAlive).toHaveBeenCalledTimes(1);
     expect(mockTransferKeepAlive.mock.calls[0][0]).toEqual("WHATEVER");
@@ -110,25 +109,16 @@ describe("buildTransaction", () => {
         blockHash: "0xb10c4a54",
         genesisHash: "0x83835154a54",
         method: expectExtrinsicMethodHex,
-        signedExtensions: [
-          "CheckVersion",
-          "CheckGenesis",
-          "CheckEra",
-          "CheckNonce",
-          "CheckWeight",
-          "ChargeTransactionPayment",
-          "CheckBlockGasLimit",
-        ],
-        blockNumber: "HexCodec 4 BlockNumber",
         era: "HexCodec 4 ExtrinsicEra",
-        nonce: "HexCodec 4 Compact<Index>",
+        nonce: expect.any(Number),
+        mode: 1,
+        metadataHash: new Uint8Array([1, 0, 18, 52, 86, 120]),
         specVersion: "HexCodec 4 u32",
-        tip: "HexCodec 4 Compact<Balance>",
         transactionVersion: "HexCodec 4 u32",
         version: 4,
       },
     };
-    expect(result).toEqual(expectedResult);
+    expect(result.unsigned).toEqual(expectedResult.unsigned);
   });
 
   it('returns an unsigned with all validators when transaction has mode "nominate"', async () => {
