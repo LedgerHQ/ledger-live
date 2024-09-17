@@ -34,7 +34,7 @@ export class Layout extends Component {
 
   // general
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
-  readonly inputWarning = this.page.getByTestId("alert-insufficient-funds-warning");
+  readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
   private loadingSpinner = this.page.getByTestId("loading-spinner");
   readonly logo = this.page.getByTestId("logo");
 
@@ -101,8 +101,8 @@ export class Layout extends Component {
 
   @step("Check warning message")
   async checkWarningMessage(expectedWarningMessage: RegExp) {
-    await this.inputWarning.waitFor({ state: "visible" });
-    const warningText = await this.inputWarning.innerText();
+    await expect(this.insufficientFundsWarning).toBeVisible();
+    const warningText = await this.insufficientFundsWarning.innerText();
     expect(warningText).toMatch(expectedWarningMessage);
   }
 
