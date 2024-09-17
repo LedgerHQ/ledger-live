@@ -1,16 +1,18 @@
-import React from "react";
+import {
+  hasMinimumDelegableBalance,
+  randomizeProviders,
+} from "@ledgerhq/live-common/families/elrond/helpers";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
-import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import React from "react";
 import { Trans } from "react-i18next";
 
 import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
-import { NavigatorName, ScreenName } from "~/const";
+import { getCurrentElrondPreloadData } from "@ledgerhq/coin-elrond/preload";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
 
 /*
  * Declare the types for the properties and return payload.
@@ -39,6 +41,7 @@ const getMainActions = ({
    */
   const preloaded = getCurrentElrondPreloadData();
   const validators = randomizeProviders(preloaded.validators);
+
   const isFirstTimeFlow =
     account.elrondResources && account.elrondResources.delegations.length === 0;
   const screen = isFirstTimeFlow

@@ -814,6 +814,9 @@ importers:
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
+      '@ledgerhq/coin-elrond':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-elrond
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
@@ -2150,10 +2153,83 @@ importers:
         version: 29.5.12
       '@types/lodash':
         specifier: ^4.14.191
-        version: 4.17.4
+        version: 4.17.7
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/coin-modules/coin-elrond:
+    dependencies:
+      '@elrondnetwork/erdjs':
+        specifier: 11.0.0
+        version: 11.0.0
+      '@elrondnetwork/erdjs-network-providers':
+        specifier: ^1.1.2
+        version: 1.2.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bech32:
+        specifier: ^1.1.3
+        version: 1.1.4
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3349,12 +3425,6 @@ importers:
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
-      '@elrondnetwork/erdjs':
-        specifier: 11.0.0
-        version: 11.0.0
-      '@elrondnetwork/erdjs-network-providers':
-        specifier: ^1.1.2
-        version: 1.2.0
       '@hashgraph/sdk':
         specifier: 2.14.2
         version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6(react@18.2.0))(react@18.2.0)
@@ -3370,6 +3440,9 @@ importers:
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../coin-modules/coin-cosmos
+      '@ledgerhq/coin-elrond':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-elrond
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
@@ -3427,6 +3500,9 @@ importers:
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
+      '@ledgerhq/hw-app-elrond':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-elrond
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
@@ -4173,6 +4249,52 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+
+  libs/ledgerjs/packages/hw-app-elrond:
+    dependencies:
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      '@multiversx/sdk-core':
+        specifier: ^13.3.0
+        version: 13.3.0(bignumber.js@9.1.2)(protobufjs@7.3.2)
+      bignumber.js:
+        specifier: ^9.0.1
+        version: 9.1.2
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+      protobufjs:
+        specifier: ^7.2.6
+        version: 7.3.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/node':
+        specifier: ^20.8.10
+        version: 20.12.12
+      documentation:
+        specifier: 14.0.2
+        version: 14.0.2
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
@@ -10468,6 +10590,15 @@ packages:
     resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
     engines: {node: '>=18'}
 
+  '@multiversx/sdk-core@13.3.0':
+    resolution: {integrity: sha512-P8/8KzMrWL58nhtxg/Ti+18V1dg4YYCn4tY8Gw9+Ke9mErz9Q2+rvWirwBqKgv6romZDMhUB+x7fME1W2PiIng==}
+    peerDependencies:
+      bignumber.js: ^9.0.1
+      protobufjs: ^7.2.6
+
+  '@multiversx/sdk-transaction-decoder@1.0.2':
+    resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
+
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     resolution: {integrity: sha512-dbrCL0Pl5KZG7x7tXdtVsA5CO6At5ohDX3myf5xIYn9kN4jDFxsocl8bNt6Vb/hZQoJd8fI+k5VlJt+rFhbdVw==}
     engines: {node: '>= 10'}
@@ -14607,6 +14738,9 @@ packages:
 
   '@types/lodash@4.17.4':
     resolution: {integrity: sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==}
+
+  '@types/lodash@4.17.7':
+    resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -20423,10 +20557,6 @@ packages:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
     engines: {node: '>=8'}
 
-  globalthis@1.0.3:
-    resolution: {integrity: sha512-sFdI5LyBiNTHjRd7cGPWapiHWMOXKyuBNX/cWJ3NfzrZQVa8GI/8cofCl74AOVqq9W5kNmguTIzJ/1s2gyI9wA==}
-    engines: {node: '>= 0.4'}
-
   globalthis@1.0.4:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
@@ -25435,6 +25565,10 @@ packages:
 
   protobufjs@7.2.5:
     resolution: {integrity: sha512-gGXRSXvxQ7UiPgfw8gevrfRWcTlSbOFg+p/N+JVJEK5VhueL2miT6qTymqAmjr1Q5WbOCyJbyrk6JfWKwlFn6A==}
+    engines: {node: '>=12.0.0'}
+
+  protobufjs@7.3.2:
+    resolution: {integrity: sha512-RXyHaACeqXeqAKGLDl68rQKbmObRsTIn4TYVUUug1KfS47YWCo5MacGITEryugIgZqORCvJWEk4l449POg5Txg==}
     engines: {node: '>=12.0.0'}
 
   protocols@2.0.1:
@@ -35117,7 +35251,7 @@ snapshots:
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.2.3
-      protobufjs: 7.2.5
+      protobufjs: 7.3.2
       yargs: 17.7.2
 
   '@hapi/bourne@2.1.0': {}
@@ -36363,6 +36497,21 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.2
       strict-event-emitter: 0.5.1
+
+  '@multiversx/sdk-core@13.3.0(bignumber.js@9.1.2)(protobufjs@7.3.2)':
+    dependencies:
+      '@multiversx/sdk-transaction-decoder': 1.0.2
+      bech32: 1.1.4
+      bignumber.js: 9.1.2
+      blake2b: 2.1.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      json-bigint: 1.0.0
+      keccak: 3.0.2
+      protobufjs: 7.3.2
+
+  '@multiversx/sdk-transaction-decoder@1.0.2':
+    dependencies:
+      bech32: 2.0.0
 
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     optional: true
@@ -40969,7 +41118,7 @@ snapshots:
       '@storybook/preview-api': 7.6.17
       '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.17
-      '@types/lodash': 4.17.4
+      '@types/lodash': 4.17.7
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -41002,7 +41151,7 @@ snapshots:
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.20
-      '@types/lodash': 4.17.4
+      '@types/lodash': 4.17.7
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -43303,6 +43452,8 @@ snapshots:
 
   '@types/lodash@4.17.4': {}
 
+  '@types/lodash@4.17.7': {}
+
   '@types/long@4.0.2': {}
 
   '@types/markdown-it@14.1.1':
@@ -45372,13 +45523,13 @@ snapshots:
 
   babel-plugin-macros@2.8.0:
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.24.1
       cosmiconfig: 6.0.0
       resolve: 1.22.8
 
   babel-plugin-macros@3.1.0:
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.24.1
       cosmiconfig: 7.1.0
       resolve: 1.22.8
 
@@ -48701,7 +48852,7 @@ snapshots:
       es-set-tostringtag: 2.0.3
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
-      globalthis: 1.0.3
+      globalthis: 1.0.4
       has-property-descriptors: 1.0.2
       has-proto: 1.0.3
       has-symbols: 1.0.3
@@ -51069,10 +51220,6 @@ snapshots:
   globals@13.24.0:
     dependencies:
       type-fest: 0.20.2
-
-  globalthis@1.0.3:
-    dependencies:
-      define-properties: 1.2.1
 
   globalthis@1.0.4:
     dependencies:
@@ -59024,6 +59171,21 @@ snapshots:
       '@types/node': 20.12.12
       long: 5.2.3
 
+  protobufjs@7.3.2:
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/node': 20.12.12
+      long: 5.2.3
+
   protocols@2.0.1: {}
 
   proxy-addr@2.0.7:
@@ -63090,6 +63252,19 @@ snapshots:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
       jest: 29.7.0
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.3
+      typescript: 5.4.3
+      yargs-parser: 21.1.1
+
+  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2

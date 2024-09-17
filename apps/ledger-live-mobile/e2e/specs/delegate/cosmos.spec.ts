@@ -8,6 +8,7 @@ import {
 } from "../../models/currencies";
 import { Application } from "../../page";
 import DeviceAction from "../../models/DeviceAction";
+import BigNumber from "bignumber.js";
 
 let app: Application;
 let deviceAction: DeviceAction;
@@ -37,7 +38,12 @@ describe("Cosmos delegate flow", () => {
     const unit = getAccountUnit(testAccount);
 
     const usableAmount = testAccount.spendableBalance.minus(COSMOS_MIN_SAFE).minus(COSMOS_MIN_FEES);
-    const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
+    // rounding to avoid floating point errors
+    // NOTE: we could allow for some precision error here to avoid rounding issues
+    const delegatedAmount = usableAmount
+      .multipliedBy(delegatedPercent)
+      .div(100)
+      .integerValue(BigNumber.ROUND_CEIL);
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
     await app.stake.selectCurrency(testedCurrency);

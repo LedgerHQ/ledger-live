@@ -518,13 +518,15 @@ export const DeeplinksProvider = ({
 
           if (hostname === "earn") {
             if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") || "";
-              const messageTitle = searchParams.get("messageTitle") || "";
+              const message = searchParams.get("message") ?? "";
+              const messageTitle = searchParams.get("messageTitle") ?? "";
+              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
 
               dispatch(
                 setEarnInfoModal({
                   message,
                   messageTitle,
+                  learnMoreLink,
                 }),
               );
               return;
