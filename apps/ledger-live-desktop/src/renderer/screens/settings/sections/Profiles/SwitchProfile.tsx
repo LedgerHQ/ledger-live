@@ -69,7 +69,7 @@ const SwitchProfile = () => {
             >
               Create new profile
             </Button>
-            <Button small primary onClick={importProfile} data-testid="settings-import-profile">
+            <Button small primary disabled={newProfileName === ""} onClick={importProfile} data-testid="settings-import-profile">
               Import from file
             </Button>
           </Flex>
