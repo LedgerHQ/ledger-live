@@ -174,7 +174,7 @@
     "nyc": "^15.1.0",
     "prettier": "^3.0.3",
     "rimraf": "^4.4.1",
-    "turbo": "1.10.1",
+    "turbo": "2.1.2",
     "typescript": "^5.4.3",
     "unimported": "1.30.0",
     "zx": "^7.2.2"
@@ -218,5 +218,6 @@
         }
       }
     }
-  }
+  },
+  "packageManager": "pnpm@9.4.0"
 }
