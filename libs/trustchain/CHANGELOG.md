@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.12
+
+### Minor Changes
+
+- [#7823](https://github.com/LedgerHQ/ledger-live/pull/7823) [`c4309b1`](https://github.com/LedgerHQ/ledger-live/commit/c4309b17f8e34e664896fd357d1eeac14e318473) Thanks [@thesan](https://github.com/thesan)! - Allow members to sync immediately after getting removed
+
 ## 0.3.0-nightly.11
 
 ### Patch Changes

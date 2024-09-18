@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.49.0-nightly.16
+
+### Patch Changes
+
+- [#7823](https://github.com/LedgerHQ/ledger-live/pull/7823) [`c4309b1`](https://github.com/LedgerHQ/ledger-live/commit/c4309b17f8e34e664896fd357d1eeac14e318473) Thanks [@thesan](https://github.com/thesan)! - Allow members to sync immediately after getting removed
+
+- [#7819](https://github.com/LedgerHQ/ledger-live/pull/7819) [`ace3185`](https://github.com/LedgerHQ/ledger-live/commit/ace3185b206bcec9286a69fa4955c8ac62614e76) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update HC links
+
+- [#7825](https://github.com/LedgerHQ/ledger-live/pull/7825) [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add a field to ledger sync feature flag so we can use a dynamic learn more link
+
+- Updated dependencies [[`c4309b1`](https://github.com/LedgerHQ/ledger-live/commit/c4309b17f8e34e664896fd357d1eeac14e318473), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.12
+  - @ledgerhq/types-live@6.50.1-nightly.2
+  - @ledgerhq/live-common@34.8.0-nightly.16
+  - @ledgerhq/live-wallet@0.6.0-nightly.15
+  - @ledgerhq/coin-framework@0.17.1-nightly.10
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.5
+  - @ledgerhq/coin-elrond@0.1.1-nightly.1
+  - @ledgerhq/coin-evm@2.2.0-nightly.11
+  - @ledgerhq/domain-service@1.2.4-nightly.6
+  - @ledgerhq/live-countervalues@0.2.5-nightly.10
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.10
+  - @ledgerhq/live-nft@0.4.5-nightly.10
+  - @ledgerhq/live-nft-react@0.4.5-nightly.10
+
 ## 3.49.0-nightly.15
 
 ### Patch Changes

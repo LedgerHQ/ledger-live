@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "6.38.1-nightly.10",
+  "version": "6.38.1-nightly.11",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.50.1-nightly.2
+
+### Patch Changes
+
+- [#7825](https://github.com/LedgerHQ/ledger-live/pull/7825) [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add a field to ledger sync feature flag so we can use a dynamic learn more link
+
 ## 6.50.1-nightly.1
 
 ### Patch Changes

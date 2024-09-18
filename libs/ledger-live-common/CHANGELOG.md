@@ -1,5 +1,35 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.16
+
+### Patch Changes
+
+- [#7825](https://github.com/LedgerHQ/ledger-live/pull/7825) [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add a field to ledger sync feature flag so we can use a dynamic learn more link
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.6.0-nightly.15
+  - @ledgerhq/coin-framework@0.17.1-nightly.10
+  - @ledgerhq/coin-algorand@0.5.5-nightly.10
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.8
+  - @ledgerhq/coin-cardano@0.1.5-nightly.10
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.5
+  - @ledgerhq/coin-elrond@0.1.1-nightly.1
+  - @ledgerhq/coin-evm@2.2.0-nightly.11
+  - @ledgerhq/coin-icon@0.4.2-nightly.10
+  - @ledgerhq/coin-near@0.5.5-nightly.10
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.11
+  - @ledgerhq/coin-solana@0.7.5-nightly.10
+  - @ledgerhq/coin-stellar@0.2.3-nightly.10
+  - @ledgerhq/coin-tezos@0.6.1-nightly.10
+  - @ledgerhq/coin-ton@0.3.13-nightly.11
+  - @ledgerhq/coin-tron@0.0.5-nightly.11
+  - @ledgerhq/coin-xrp@0.5.1-nightly.10
+  - @ledgerhq/device-core@0.4.0-nightly.10
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.11
+  - @ledgerhq/live-countervalues@0.2.5-nightly.10
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.10
+  - @ledgerhq/live-nft@0.4.5-nightly.10
+
 ## 34.8.0-nightly.15
 
 ### Patch Changes
