@@ -1,0 +1,27 @@
+{
+  "json": {
+    "version": 0,
+    "challenge": {
+      "data": "f0c8ba737d490e16fb10dec07d2ae872",
+      "expiry": "2024-09-18T13:41:45Z"
+    },
+    "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+    "rp": [
+      {
+        "credential": {
+          "version": 0,
+          "curveId": 33,
+          "signAlgorithm": 1,
+          "publicKey": "03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2"
+        },
+        "signature": "3045022100fc6b314d0cfc74ccb3b3aa2ff0d5648c9b4e8ef997eae2370593f78223be0b1b02201e56255b3b3caf29a349ca8d69c0955b32f0eed54d70077d2b46f23b4fb19052"
+      }
+    ],
+    "protocolVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "tlv": "0101070201001210f0c8ba737d490e16fb10dec07d2ae87214010115473045022100fc6b314d0cfc74ccb3b3aa2ff0d5648c9b4e8ef997eae2370593f78223be0b1b02201e56255b3b3caf29a349ca8d69c0955b32f0eed54d70077d2b46f23b4fb19052160466ead899202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000"
+}
