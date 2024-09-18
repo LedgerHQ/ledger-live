@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cosmos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ledger Cosmos Coin integration",
   "keywords": [
     "Ledger",

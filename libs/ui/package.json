@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/ui",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "devDependencies": {
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",

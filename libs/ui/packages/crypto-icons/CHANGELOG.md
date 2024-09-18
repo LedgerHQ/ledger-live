@@ -1,5 +1,29 @@
 # @ledgerhq/icons-ui
 
+## 1.4.1
+
+### Patch Changes
+
+- [#7770](https://github.com/LedgerHQ/ledger-live/pull/7770) [`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds angle tokens icon
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7533](https://github.com/LedgerHQ/ledger-live/pull/7533) [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds stader tokens icons
+
+## 1.4.1-next.0
+
+### Patch Changes
+
+- [#7770](https://github.com/LedgerHQ/ledger-live/pull/7770) [`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds angle tokens icon
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7533](https://github.com/LedgerHQ/ledger-live/pull/7533) [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds stader tokens icons
+
 ## 1.4.0
 
 ### Minor Changes

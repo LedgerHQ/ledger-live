@@ -1,5 +1,17 @@
 # ui
 
+## 0.2.2
+
+### Patch Changes
+
+- [#7734](https://github.com/LedgerHQ/ledger-live/pull/7734) [`255f035`](https://github.com/LedgerHQ/ledger-live/commit/255f035b8415eb09683f959e37593e1969f5911c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rare satoshis icons to ui package and a mapping inside LLD to use them
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- [#7734](https://github.com/LedgerHQ/ledger-live/pull/7734) [`255f035`](https://github.com/LedgerHQ/ledger-live/commit/255f035b8415eb09683f959e37593e1969f5911c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rare satoshis icons to ui package and a mapping inside LLD to use them
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-transport-ble",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Package to expose the Swift BLE transport to JS",
   "keywords": [
     "Ledger",
