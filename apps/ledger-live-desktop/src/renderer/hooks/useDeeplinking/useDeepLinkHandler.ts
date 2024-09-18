@@ -123,6 +123,10 @@ export function useDeepLinkHandler() {
       });
 
       switch (url) {
+        case "loadprofile": {
+          const { buffer, id } = query;
+          navigate(`/settings/profile?id=${id}&buffer=${buffer}`);
+        }
         case "accounts": {
           const { address } = query;
           if (address && typeof address === "string") {

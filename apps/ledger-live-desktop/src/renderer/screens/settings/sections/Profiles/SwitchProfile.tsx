@@ -2,12 +2,14 @@ import React from "react";
 import Button from "~/renderer/components/Button";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import styled from "styled-components";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
 
 import useProfile, { ProfileInfos } from "./useProfile";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
+import { ItemContainer } from "~/renderer/components/TopBar/shared";
+import { useLocation } from 'react-router-dom';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -29,16 +31,19 @@ const SwitchProfile = () => {
     removeProfile,
     importProfile,
     switchProfile,
+    shareProfile,
   } = useProfile();
+  // console.log({windowlocation: window.location.search})
 
-  const startingProfile = {id: '', name: 'starting profile', description: 'starting profile'};
+  const startingProfile = { id: "", name: "starting profile", description: "starting profile" };
   const profilesWithStartProfile = [startingProfile, ...profiles];
+  
+
 
   return (
     <>
       <Row title={"Add a profile"} desc={""}>
         <Flex flexDirection={"row"} columnGap={3}>
-          {/* <Input */}
           <Flex flexDirection={"column"} rowGap={3}>
             <Flex flexDirection={"row"} columnGap={3}>
               <Input placeholder={"name"} value={newProfileName} onChange={setNewProfileName} />
@@ -49,12 +54,14 @@ const SwitchProfile = () => {
               />
             </Flex>
             <Flex flexDirection={"row"} columnGap={3}>
-              <Flex justifyContent="space-between"  alignItems="center">
+              <Flex justifyContent="space-between" alignItems="center">
                 <Switch
                   isChecked={newProfileTransferSettings}
                   onChange={() => setNewProfileTransferSettings(!newProfileTransferSettings)}
                 />
-                <Text ml={2} fontSize={4}>{"Copy current settings to this profile"}</Text>
+                <Text ml={2} fontSize={4}>
+                  {"Copy current settings to this profile"}
+                </Text>
               </Flex>
             </Flex>
           </Flex>
@@ -69,7 +76,13 @@ const SwitchProfile = () => {
             >
               Create new profile
             </Button>
-            <Button small primary disabled={newProfileName === ""} onClick={importProfile} data-testid="settings-import-profile">
+            <Button
+              small
+              primary
+              disabled={newProfileName === ""}
+              onClick={importProfile}
+              data-testid="settings-import-profile"
+            >
               Import from file
             </Button>
           </Flex>
@@ -82,6 +95,14 @@ const SwitchProfile = () => {
           title={profile.name}
           desc={`${profile.description} id = ${profile.id}`}
         >
+          <Flex flexDirection={"row"} columnGap={3}>
+          <ItemContainer
+            isInteractive
+            onClick={() => shareProfile(profile.id)}
+          >
+            <IconsLegacy.ShareMedium size={18} />
+          </ItemContainer>
+
           <ButtonContainer>
             {profile.id === inUseId ? (
               <Button small primary disabled>
@@ -108,6 +129,7 @@ const SwitchProfile = () => {
               {"Delete"}
             </Button>
           </ButtonContainer>
+          </Flex>
         </Row>
       ))}
     </>
