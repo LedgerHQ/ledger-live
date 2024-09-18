@@ -8,7 +8,7 @@ const currencies: Currency[] = [
   Currency.ETH,
   Currency.ETC,
   Currency.XRP,
-  Currency.DOT,
+  //Currency.DOT, //Reactivate after DOT API issue is resolved - TSD-3603
   Currency.TRX,
   Currency.ADA,
   Currency.XLM,
