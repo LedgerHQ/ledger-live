@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup -d build src/main.ts src/server.ts src/cleanup.ts",
+    "build": "tsup --target node20 -d build src/main.ts src/server.ts src/cleanup.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },
