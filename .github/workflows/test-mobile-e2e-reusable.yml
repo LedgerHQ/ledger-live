@@ -264,7 +264,7 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
       - name: Setup Speculos image and Coin Apps
         if: ${{ inputs.speculos_tests }}
-        uses: ./tools/actions/composites/setup-speculos_image
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
