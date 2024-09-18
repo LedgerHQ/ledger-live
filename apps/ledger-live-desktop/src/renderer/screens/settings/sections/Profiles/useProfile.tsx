@@ -13,22 +13,29 @@ export type ProfileInfos = {
 };
 
 const useProfile = () => {
+  const [settings, setSettings] = useState<any>({});
   const [newProfileName, setNewProfileName] = useState<string>("");
   const [newProfileDescription, setNewProfileDescription] = useState<string>("");
+  const [newProfileTransferSettings, setNewProfileTransferSettings] = useState<boolean>(false);
+  const [userDataPath, setUserDataPath] = useState<string>("");
 
   const [profiles, setProfiles] = useState<ProfileInfos[]>([]);
   const [inUseId, setInUseId] = useState<string>("");
 
-  const userDataPath = useCallback(async () => await ipcRenderer.invoke("getPathUserData"), []);
-  console.log("userDataPath", userDataPath);
+  const userDataPathGetter = useCallback(async () => await ipcRenderer.invoke("getPathUserData"), []);
+  // console.log("userDataPath", userDataPath);
 
   const initProfile = useCallback(async () => {
     console.log("Initializing profile...");
-    const _profilesFromStorage = await getKey("profiles", "list");
+    const profilesFromStorage = await getKey("profiles", "list");
     const inUseFromStorage = await getKey("profiles", "inUse");
-    
-    const startingProfile = {id: '', name: 'starting profile', description: 'starting profile'};
-    const profilesFromStorage = [startingProfile, ...(_profilesFromStorage as ProfileInfos[])];
+    const _userDataPath = await userDataPathGetter();
+    setUserDataPath(_userDataPath);
+    console.log({initUserDataPath: userDataPath});
+
+    const settingsFromStorage = await getKey("app", "settings");
+    setSettings(settingsFromStorage);
+
 
     setProfiles(profilesFromStorage as ProfileInfos[]);
     setInUseId(inUseFromStorage as string);
@@ -40,13 +47,14 @@ const useProfile = () => {
     initProfile();
   }, [initProfile]);
 
-  function makeAppJSON(accounts: Account[]) {
+  const makeAppJSON = useCallback((accounts: Account[]) => {
     console.log("Creating app JSON...");
+    const newProfileSettings = newProfileTransferSettings ? settings : {
+      hasCompletedOnboarding: true,
+    }
     const jsondata = {
       data: {
-        settings: {
-          hasCompletedOnboarding: true,
-        },
+        settings: newProfileSettings,
         accounts: accounts.map(account => ({
           data: toAccountRaw(account),
           version: 1,
@@ -55,9 +63,9 @@ const useProfile = () => {
     };
     console.log("App JSON created.");
     return JSON.stringify(jsondata);
-  }
+  }, [newProfileTransferSettings, settings]);
 
-  const createProfile = () => {
+  const createProfile = async () => {
     console.log("Creating profile...");
     if (newProfileName === "") return;
     const newProfile: ProfileInfos = {
@@ -72,6 +80,8 @@ const useProfile = () => {
 
     console.log("userDataPath", userDataPath);
 
+    // NOTE: there's no need to create an app.json unless we're copying the current settings
+    console.log({userDataPath})
     fs.writeFileSync(`${userDataPath}/app_${newProfile.id}.json`, makeAppJSON([]));
 
     setNewProfileName("");
@@ -148,8 +158,10 @@ const useProfile = () => {
     inUseId,
     newProfileName,
     newProfileDescription,
+    newProfileTransferSettings,
     setNewProfileName,
     setNewProfileDescription,
+    setNewProfileTransferSettings,
     createProfile,
     removeProfile,
     importProfile,

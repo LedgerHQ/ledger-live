@@ -2,9 +2,12 @@ import React from "react";
 import Button from "~/renderer/components/Button";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import styled from "styled-components";
-import { Flex, Input } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 
 import useProfile, { ProfileInfos } from "./useProfile";
+import Switch from "~/renderer/components/Switch";
+import Input from "~/renderer/components/Input";
+import Text from "~/renderer/components/Text";
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -18,25 +21,44 @@ const SwitchProfile = () => {
     inUseId,
     newProfileName,
     newProfileDescription,
+    newProfileTransferSettings,
     setNewProfileName,
     setNewProfileDescription,
+    setNewProfileTransferSettings,
     createProfile,
     removeProfile,
     importProfile,
     switchProfile,
   } = useProfile();
 
-  console.log("IN SUE: ", inUseId);
+  const startingProfile = {id: '', name: 'starting profile', description: 'starting profile'};
+  const profilesWithStartProfile = [startingProfile, ...profiles];
+
   return (
     <>
-      <Row title={"Add a profile"} desc={"TODO: desc"}>
+      <Row title={"Add a profile"} desc={""}>
         <Flex flexDirection={"row"} columnGap={3}>
-          <Input placeholder={"name"} value={newProfileName} onChange={setNewProfileName} />
-          <Input
-            placeholder={"description"}
-            value={newProfileDescription}
-            onChange={setNewProfileDescription}
-          />
+          {/* <Input */}
+          <Flex flexDirection={"column"} rowGap={3}>
+            <Flex flexDirection={"row"} columnGap={3}>
+              <Input placeholder={"name"} value={newProfileName} onChange={setNewProfileName} />
+              <Input
+                placeholder={"description"}
+                value={newProfileDescription}
+                onChange={setNewProfileDescription}
+              />
+            </Flex>
+            <Flex flexDirection={"row"} columnGap={3}>
+              <Flex justifyContent="space-between"  alignItems="center">
+                <Switch
+                  isChecked={newProfileTransferSettings}
+                  onChange={() => setNewProfileTransferSettings(!newProfileTransferSettings)}
+                />
+                <Text ml={2} fontSize={4}>{"Copy current settings to this profile"}</Text>
+              </Flex>
+            </Flex>
+          </Flex>
+
           <Flex flexDirection={"column"} rowGap={3}>
             <Button
               small
@@ -54,8 +76,12 @@ const SwitchProfile = () => {
         </Flex>
       </Row>
 
-      {profiles.map((profile: ProfileInfos) => (
-        <Row key={profile.name} title={profile.name} desc={`${profile.description} id = ${profile.id}`}>
+      {profilesWithStartProfile.map((profile: ProfileInfos) => (
+        <Row
+          key={profile.id}
+          title={profile.name}
+          desc={`${profile.description} id = ${profile.id}`}
+        >
           <ButtonContainer>
             {profile.id === inUseId ? (
               <Button small primary disabled>
