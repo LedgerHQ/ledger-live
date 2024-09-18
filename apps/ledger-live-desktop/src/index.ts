@@ -8,10 +8,4 @@ if (getEnv("PLAYWRIGHT_RUN") && getEnv("MOCK")) {
   });
 }
 
-if (!process.env.IS_INTERNAL_PROCESS) {
-  // Main electron thread
-  require("./main");
-} else {
-  // Internal thread (coins, hardware)
-  require("./internal");
-}
+require("./main");
