@@ -24,12 +24,11 @@ const useProfile = () => {
 
   const initProfile = useCallback(async () => {
     console.log("Initializing profile...");
-    const profilesFromStorage = await getKey("app", "profiles", {
-      list: [],
-      inUse: "",
-    });
-    setProfiles(profilesFromStorage.list as ProfileInfos[]);
-    setInUseId(profilesFromStorage.inUse === "" ? "0" : profilesFromStorage.inUse);
+    const profilesFromStorage = await getKey("profiles", "list");
+    const inUseFromStorage = await getKey("profiles", "inUse");
+
+    setProfiles(profilesFromStorage as ProfileInfos[]);
+    setInUseId(inUseFromStorage as string);
     console.log({ inUseId, profilesFromStorage });
     console.log("Profile initialized.");
   }, [inUseId]);
@@ -63,11 +62,10 @@ const useProfile = () => {
       name: newProfileName,
       description: newProfileDescription,
     };
-    setKey("app", "profiles", {
-      list: [...profiles, newProfile],
-      inUse: inUseId,
-    });
-    setProfiles([...profiles, newProfile]);
+    const updatedProfiles = [...profiles, newProfile];
+
+    setKey("profiles", "list", updatedProfiles);
+    setProfiles(updatedProfiles);
 
     console.log("userDataPath", userDataPath);
 
@@ -83,10 +81,7 @@ const useProfile = () => {
     console.log("Removing profile...");
     if (inUseId === id) return;
     const updatedProfiles = profiles.filter(profile => profile.id !== id);
-    setKey("app", "profiles", {
-      list: updatedProfiles,
-      inUse: inUseId,
-    });
+    setKey("profiles", "list", updatedProfiles);
     setProfiles(updatedProfiles);
 
     const filePath = `${userDataPath}/app_${id}.json`;
@@ -119,25 +114,27 @@ const useProfile = () => {
 
       const updatedProfiles = [...(profiles || []), importedProfileInfos];
 
-      setKey("app", "profiles", {
-        list: updatedProfiles,
-        inUse: inUseId,
-      });
+      fs.writeFileSync(`${userDataPath}/app_${importedProfileInfos.id}.json`, JSON.stringify(data));
+
+      setKey("profiles", "list", updatedProfiles);
+      // setKey("app", "profiles", {
+      //   list: updatedProfiles,
+      //   inUse: inUseId,
+      // });
       setProfiles(updatedProfiles);
 
-      fs.writeFileSync(`${userDataPath}/app_${importedProfileInfos.id}.json`, JSON.stringify(data));
+      // fs.writeFileSync(`${userDataPath}/app_${importedProfileInfos.id}.json`, JSON.stringify(data));
     }
     console.log("Profile imported.");
   }, [profiles, inUseId, userDataPath]);
 
   const switchProfile = (id: string) => {
     console.log("Switching profile...");
-    setKey("app", "profiles", {
-      list: profiles,
-      inUse: id,
-    });
+    setKey("profiles", "inUse", id);
     setInUseId(id);
-    ipcRenderer.send("app-reload");
+    setTimeout(() => {
+      ipcRenderer.send("app-reload");
+    }, 2000);
     console.log("Profile switched.");
   };
 

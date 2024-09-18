@@ -26,6 +26,7 @@ const SwitchProfile = () => {
     switchProfile,
   } = useProfile();
 
+  console.log("IN SUE: ", inUseId);
   return (
     <>
       <Row title={"Add a profile"} desc={"TODO: desc"}>
@@ -68,7 +69,7 @@ const SwitchProfile = () => {
                   switchProfile(profile.id);
                 }}
               >
-                Load
+                Load - {profile.id}
               </Button>
             )}
 
