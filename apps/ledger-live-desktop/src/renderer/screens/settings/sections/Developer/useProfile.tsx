@@ -132,6 +132,7 @@ const useProfile = () => {
     console.log("Switching profile...");
     setKey("profiles", "inUse", id);
     setInUseId(id);
+    // NOTE: give enough time to debounched setKey to save the profile
     setTimeout(() => {
       ipcRenderer.send("app-reload");
     }, 2000);
