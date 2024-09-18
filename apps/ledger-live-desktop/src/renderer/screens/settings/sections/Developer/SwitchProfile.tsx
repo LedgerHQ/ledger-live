@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-
 import React, { useCallback, useEffect, useState } from "react";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
@@ -13,6 +12,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getKey, setKey } from "~/renderer/storage";
+import * as fs from "fs";
+import * as path from "path";
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -52,10 +53,10 @@ const SwitchProfile = () => {
     // setKey("profiles")
     //  - save profile to profile.json
     //  - save app_{name}.json
-    const updatedProfiles = [...profiles, { name: newProfileName, comment: newProfileComment }]
+    const updatedProfiles = [...profiles, { name: newProfileName, comment: newProfileComment }];
     // TODO: validate name to be in slug format
     // TODO: validate name to be unique
-    console.log({updatedProfiles})
+    console.log({ updatedProfiles });
     setKey("profiles", "list", updatedProfiles);
     setProfiles(updatedProfiles);
     // NOTE: ^ optimistic update, maybe handle errors instead
@@ -69,9 +70,48 @@ const SwitchProfile = () => {
     // ipcRenderer.send("reload");
     // ipcRenderer.send("reloadRenderer");
     setTimeout(() => {
-    ipcRenderer.send("app-reload");
+      ipcRenderer.send("app-reload");
     }, 2000);
   }, []);
+
+  const importProfile = useCallback(
+    async (name: string) => {
+      const { filePaths } = await ipcRenderer.invoke("show-open-dialog", {
+        title: "Import app.json profile",
+        filters: [
+          {
+            name: "All Files",
+            extensions: ["json"],
+          },
+        ],
+      });
+      if (filePaths && filePaths[0]) {
+        const file = fs.readFileSync(filePaths[0]);
+        const data = JSON.parse(file.toString());
+
+        console.log(data);
+
+        const updatedProfiles = [
+          ...(profiles || []),
+          { name: newProfileName, comment: newProfileComment },
+        ];
+
+        // console.log(path.join(__dirname, "../userdata/", `test.json`));
+
+        const userDataPath = await ipcRenderer.invoke("getPathUserData");
+
+        fs.writeFileSync(`${userDataPath}/app_${newProfileName}.json`, JSON.stringify(data));
+
+        /*console.log({ updatedProfiles });
+        setKey("profiles", "list", updatedProfiles);
+        setProfiles(updatedProfiles);*/
+
+        setKey("profiles", "list", updatedProfiles);
+        setProfiles(updatedProfiles);
+      }
+    },
+    [newProfileName, newProfileComment, profiles],
+  );
 
   const onDeleteProfile = useCallback((name: string) => {
     // TODO:
@@ -90,17 +130,17 @@ const SwitchProfile = () => {
             value={newProfileComment}
             onChange={setNewProfileComment}
           />
-          <Button
-            small
-            primary
-            onClick={onSaveProfile}
-            data-testid="settings-open-local-manifest-form"
-          >
-            Create new profile
-          </Button>
+          <Flex flexDirection={"column"} rowGap={3}>
+            <Button small primary onClick={onSaveProfile} data-testid="settings-save-profile">
+              Create new profile
+            </Button>
+            <Button small primary onClick={importProfile} data-testid="settings-import-profile">
+              Import from file
+            </Button>
+          </Flex>
         </Flex>
       </Row>
-      {profiles.map((profile: any) => (
+      {(profiles || []).map((profile: any) => (
         <Row key={profile.name} title={profile.name} desc={profile.comment}>
           <ButtonContainer>
             {profile.name === inUse ? (
