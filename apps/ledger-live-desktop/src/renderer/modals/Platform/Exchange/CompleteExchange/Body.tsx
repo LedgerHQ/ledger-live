@@ -16,6 +16,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
 export type Data = {
   provider: string;
@@ -69,8 +70,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
-  // toAccount exists only in swap mode
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
+  const bridge = getAccountBridge(account, parentAccount);
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -251,9 +252,24 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;
-    broadcast(signedOperation)
-      .then(onBroadcastSuccess, setError)
-      .finally(() => (broadcastRef.current = true));
+
+    const hash = bridge.getTransactionHash ? bridge.getTransactionHash(transaction) : null; // Fallback to old flow if getTransactionHash is not implemented
+
+    if (hash) {
+      sendHashAndSwapId(hash, swapId)
+        .then(() => broadcast(signedOperation))
+        .then(onBroadcastSuccess, setError)
+        .finally(() => {
+          broadcastRef.current = true;
+        });
+    } else {
+      // Fallback to old flow
+      broadcast(signedOperation)
+        .then(onBroadcastSuccess, setError)
+        .finally(() => {
+          broadcastRef.current = true;
+        });
+    }
   }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (
@@ -274,3 +290,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 };
 
 export default Body;
+
+// tmp function to mock the sendHashAndSwapId function
+function sendHashAndSwapId(hash: any, swapId: string | undefined): Promise<Boolean> {
+  return Promise.resolve(hash && swapId);
+}

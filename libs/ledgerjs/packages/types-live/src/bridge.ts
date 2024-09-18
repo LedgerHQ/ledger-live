@@ -210,6 +210,7 @@ export interface AccountBridge<
   broadcast: BroadcastFnSignature<A>;
   fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
   toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
+  getTransactionHash?: (arg0: T) => string;
 }
 
 type ExpectFn = (...args: Array<any>) => any;

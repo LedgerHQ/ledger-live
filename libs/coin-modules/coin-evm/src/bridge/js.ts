@@ -20,6 +20,7 @@ import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
+import { getTransactionHash } from "../transactionHash";
 
 export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -58,6 +59,7 @@ export function buildAccountBridge(
     signOperation,
     broadcast,
     estimateMaxSpendable,
+    getTransactionHash,
   };
 }
 
