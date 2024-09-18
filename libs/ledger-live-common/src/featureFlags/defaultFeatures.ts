@@ -478,6 +478,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       environment: "STAGING",
       watchConfig: {},
+      learnMoreLink: "",
     },
   },
   llmWalletSync: {
@@ -485,6 +486,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       environment: "STAGING",
       watchConfig: {},
+      learnMoreLink: "",
     },
   },
   lldNftsGalleryNewArch: DEFAULT_FEATURE,

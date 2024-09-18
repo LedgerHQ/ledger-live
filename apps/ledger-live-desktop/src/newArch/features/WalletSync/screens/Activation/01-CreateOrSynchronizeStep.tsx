@@ -6,6 +6,8 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { LogoWrapper } from "../../components/LogoWrapper";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { openURL } from "~/renderer/linking";
 
 type Props = {
   goToCreateBackup: () => void;
@@ -15,6 +17,15 @@ type Props = {
 export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const ledgerSyncFF = useFeature("lldWalletSync");
+  const learnMoreUrl = ledgerSyncFF?.params?.learnMoreLink;
+  const hasLearnMoreLink = !!learnMoreUrl;
+
+  const onLearnMore = () => {
+    if (learnMoreUrl) {
+      openURL(learnMoreUrl);
+    }
+  };
 
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
@@ -39,17 +50,28 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
       <Text fontSize={14} variant="body" color="hsla(0, 0%, 58%, 1)" textAlign="center">
         {t("walletSync.activate.description")}
       </Text>
-      <Flex justifyContent="center">
-        <ButtonV3 variant="main" onClick={goToCreateBackup}>
-          {t("walletSync.activate.cta")}
+      <Flex justifyContent="center" width="100%">
+        <ButtonV3 variant="main" width="100%" onClick={goToCreateBackup}>
+          <Text variant="body" color="neutral.c00" fontSize={14} flexShrink={1}>
+            {t("walletSync.activate.cta")}
+          </Text>
         </ButtonV3>
       </Flex>
 
-      <Link onClick={goToSync} alignItems="center" justifyContent="center">
-        <Text variant="body" fontSize={14} flexShrink={1}>
-          {t("walletSync.alreadySync")}
-        </Text>
-      </Link>
+      <Flex justifyContent="center" width="100%">
+        <ButtonV3 variant="shade" width="100%" onClick={goToSync}>
+          <Text variant="body" fontSize={14} flexShrink={1}>
+            {t("walletSync.alreadySync")}
+          </Text>
+        </ButtonV3>
+      </Flex>
+      {hasLearnMoreLink && (
+        <Link onClick={onLearnMore}>
+          <Text variant="body" fontSize={14} flexShrink={1}>
+            {t("walletSync.learnMore")}
+          </Text>
+        </Link>
+      )}
     </Flex>
   );
 }

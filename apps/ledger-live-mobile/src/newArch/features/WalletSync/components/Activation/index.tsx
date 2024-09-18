@@ -5,18 +5,28 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Linking } from "react-native";
 
 type Props = { onSyncMethodPress: () => void };
 
 const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const walletSyncFF = useFeature("llmWalletSync");
+  const learnMoreLink = walletSyncFF?.params?.learnMoreLink;
 
   useInitMemberCredentials();
 
   const onPressSyncAccounts = () => onSyncMethodPress();
 
   const onPressHasAlreadyCreatedAKey = () => onSyncMethodPress();
+
+  const onPressLearnMore = () => {
+    if (learnMoreLink) {
+      Linking.openURL(learnMoreLink);
+    }
+  };
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
@@ -39,6 +49,7 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
       <Actions
         onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
         onPressSyncAccounts={onPressSyncAccounts}
+        onPressLearnMore={onPressLearnMore}
       />
     </Flex>
   );

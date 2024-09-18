@@ -90,7 +90,6 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
       paddingX="64px"
       alignItems="center"
       justifyContent="center"
-      rowGap="48px"
     >
       {getStep()}
     </Flex>
