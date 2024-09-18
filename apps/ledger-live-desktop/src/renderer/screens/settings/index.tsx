@@ -12,6 +12,7 @@ import SectionDeveloper from "./sections/Developer";
 import SectionAccounts from "./sections/Accounts";
 import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
+import SectionProfile from "./sections/Profiles";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 
@@ -41,6 +42,11 @@ const getItems = (t: (a: string) => string, devMode?: boolean) => {
       key: "experimental",
       label: t("settings.tabs.experimental"),
       value: SectionExperimental,
+    },
+    {
+      key: "profile",
+      label: "Profile",
+      value: SectionProfile,
     },
   ];
   if (devMode) {

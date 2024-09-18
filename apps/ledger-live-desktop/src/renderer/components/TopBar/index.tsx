@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
@@ -14,7 +14,6 @@ import HelpSideBar from "~/renderer/modals/Help";
 import BreadCrumbNewArch from "LLD/components/BreadCrumb";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
 import { setDiscreetMode } from "~/renderer/actions/settings";
@@ -23,19 +22,6 @@ import { NotificationIndicator } from "~/renderer/components/TopBar/Notification
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
-
-/* POC */
-import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
-import { firstValueFrom, from } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { setLastSeenDevice } from "~/renderer/actions/settings";
-import { setKey, getKey } from "~/renderer/storage";
-import DeviceIllustration from "../DeviceIllustration";
-import { lastSeenDeviceSelector, latestFirmwareSelector } from "~/renderer/reducers/settings";
-
-
-
 const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
   box-sizing: content-box;
@@ -82,53 +68,6 @@ const TopBar = () => {
       });
     }
   }, [history, location]);
-  const showDeviceSelector = () => {
-    console.log(`TODO`)
-  }
-
-  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-
-  // const [settings, setSettings] = useState(null);
-  // useEffect(() => {
-  //   let res = getKey("app", "settings").then(res => {
-  //   // let res = getKey("app", "accounts").then(res => {
-  //     setSettings(res)
-  //     console.log({settings})
-  //   });
-  // }, [location])
-
-  
-  /* 
--------- POC -------
-*/
-// const [result, setResult] = useState<Result | null>(null);
-// const dispatch2 = useDispatch();
-// const refreshDeviceInfo = useCallback(() => {
-//   if (result?.device) {
-//     firstValueFrom(
-//       withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport))),
-//     ).then(deviceInfo => {
-//       setResult({
-//         ...result,
-//         deviceInfo,
-//       });
-//       dispatch2(
-//         setLastSeenDevice({
-//           deviceInfo,
-//         }),
-//       );
-//     });
-//   }
-// }, [result, dispatch2]);
-  
-// const onResult = useCallback((result: Result) => setResult(result), []);
-
-//   useEffect(() => {
-//     refreshDeviceInfo()
-//   })
-
-// console.log({result})
-
   return (
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
@@ -145,20 +84,6 @@ const TopBar = () => {
             )}
             <LiveAppDrawer />
             <NotificationIndicator />
-            <Box justifyContent="center">
-              <Bar />
-            </Box>
-            <Tooltip content={t("settings.discreet")} placement="bottom">
-            <ItemContainer
-              data-testid="topbar-discreet-button"
-              isInteractive
-              onClick={showDeviceSelector}
-            >
-            <DeviceIllustration deviceId={lastSeenDevice?.modelId} size={20}/>
-                {lastSeenDevice?.modelId} {lastSeenDevice?.deviceInfo?.targetId}
-            </ItemContainer>
-          </Tooltip>
-
             <Box justifyContent="center">
               <Bar />
             </Box>
@@ -227,3 +152,4 @@ const TopBar = () => {
   );
 };
 export default TopBar;
+

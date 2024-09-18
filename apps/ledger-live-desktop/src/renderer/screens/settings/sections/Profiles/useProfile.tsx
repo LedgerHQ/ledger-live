@@ -24,8 +24,11 @@ const useProfile = () => {
 
   const initProfile = useCallback(async () => {
     console.log("Initializing profile...");
-    const profilesFromStorage = await getKey("profiles", "list");
+    const _profilesFromStorage = await getKey("profiles", "list");
     const inUseFromStorage = await getKey("profiles", "inUse");
+    
+    const startingProfile = {id: '', name: 'starting profile', description: 'starting profile'};
+    const profilesFromStorage = [startingProfile, ...(_profilesFromStorage as ProfileInfos[])];
 
     setProfiles(profilesFromStorage as ProfileInfos[]);
     setInUseId(inUseFromStorage as string);

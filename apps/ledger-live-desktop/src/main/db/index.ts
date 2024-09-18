@@ -77,9 +77,7 @@ async function load(ns: string): Promise<unknown> {
   return memoryNamespaces[ns];
 }
 async function ensureNSLoaded(ns: string) {
-  // console.log(`ensureNSLoaded`)
   if (!memoryNamespaces[ns]) {
-    console.log(`ensureNSLoaded: ${ns}`)
     await load(ns);
   }
 }
@@ -108,7 +106,6 @@ const encryptedDataPaths = [
  * in `save` to encrypt it back
  */
 async function setEncryptionKey(encryptionKey: string): Promise<void> {
-  console.log(`setEncryptionKey`, encryptionKey)
   const nsToSave = new Set<string>();
 
   for (const [ns, keyPath] of encryptedDataPaths) {

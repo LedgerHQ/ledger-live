@@ -55,7 +55,7 @@ const SwitchProfile = () => {
       </Row>
 
       {profiles.map((profile: ProfileInfos) => (
-        <Row key={profile.name} title={profile.name} desc={profile.description}>
+        <Row key={profile.name} title={profile.name} desc={`${profile.description} id = ${profile.id}`}>
           <ButtonContainer>
             {profile.id === inUseId ? (
               <Button small primary disabled>
@@ -69,14 +69,14 @@ const SwitchProfile = () => {
                   switchProfile(profile.id);
                 }}
               >
-                Load - {profile.id}
+                Load
               </Button>
             )}
 
             <Button
               small
               danger
-              disabled={profile.id === inUseId}
+              disabled={profile.id === inUseId || profile.id === ""}
               onClick={() => removeProfile(profile.id)}
             >
               {"Delete"}
