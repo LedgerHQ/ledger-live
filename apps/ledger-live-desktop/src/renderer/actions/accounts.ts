@@ -10,14 +10,8 @@ export const removeAccount = (payload: Account) => ({
   payload,
 });
 
-export const initAccounts = (data: [Account, AccountUserData][], lastSeenDeviceId?: string) => {
-  console.log(`initAccounts`, {data})
-  // const accounts = lastSeenDeviceId ?
-  //  data.map(([account]) => {return {...account, deviceId: lastSeenDeviceId}})
-  //  : data.map(([account]) => account) 
-  
-  const accounts = data.map(([account]) => account) 
-  console.log({accounts})
+export const initAccounts = (data: [Account, AccountUserData][]) => {
+  const accounts = data.map(([account]) => account);
   const accountsUserData = data
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);

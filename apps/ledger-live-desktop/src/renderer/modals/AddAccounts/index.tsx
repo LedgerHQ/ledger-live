@@ -8,7 +8,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getCurrentDevice, getLastSeenDeviceId } from "~/renderer/reducers/devices";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
@@ -25,7 +25,6 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 export type Props = {
   // props from redux
   device: Device | undefined | null;
-  lastSeenDeviceId: string;
   existingAccounts: Account[];
   closeModal: (a: string) => void;
   addAccountsAction: typeof addAccountsAction;
@@ -128,7 +127,6 @@ type State = {
 };
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
-  lastSeenDeviceId: getLastSeenDeviceId,
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
@@ -152,14 +150,11 @@ class AddAccounts extends PureComponent<Props, State> {
   handleClickAdd = async () => {
     const { addAccountsAction, existingAccounts } = this.props;
     const { scannedAccounts, checkedAccountsIds, editedNames } = this.state;
-    console.log({lastSeenDeviceId:this.props.lastSeenDeviceId})
-    // console.log({device, deviceId: this.props.device ? this.props.device.deviceId : ""});
     addAccountsAction({
       scannedAccounts,
       existingAccounts,
       selectedIds: checkedAccountsIds,
       renamings: editedNames,
-      deviceId: this.props.lastSeenDeviceId,
     });
   };
 

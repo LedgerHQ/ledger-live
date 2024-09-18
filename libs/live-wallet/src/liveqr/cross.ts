@@ -381,7 +381,6 @@ export const accountDataToAccount = ({
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
-  console.log(`accountDataToAccount`)
 
   const accountUserData: AccountUserData = {
     id,

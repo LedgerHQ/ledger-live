@@ -118,7 +118,6 @@ export type AddAccountsProps = {
   scannedAccounts: Account[];
   selectedIds: string[];
   renamings: Record<string, string>;
-  deviceId: string;
 };
 
 export type AddAccountsAction = {
@@ -129,7 +128,6 @@ export type AddAccountsAction = {
     allAccounts: Account[];
     // possible edited names that were done on the accounts
     editedNames: Map<string, string>;
-    // deviceId?: string;
   };
 };
 
@@ -138,7 +136,6 @@ export function addAccountsAction({
   scannedAccounts,
   selectedIds,
   renamings,
-  deviceId,
 }: AddAccountsProps): AddAccountsAction {
   const newAccounts: Account[] = [];
   // scanned accounts that was selected
@@ -148,18 +145,14 @@ export function addAccountsAction({
     const update = selected.find(a => sameAccountIdentity(a, existing));
     const account = update || existing;
     newAccounts.push(account);
-    // newAccounts.push({...account, deviceId});
-    // NOTE: not needed if deviceId already there
   });
   // append the new accounts
   selected.forEach(acc => {
     const alreadyThere = newAccounts.find(r => sameAccountIdentity(r, acc));
     if (!alreadyThere) {
-      console.log(`pushing new account `, acc);
-      newAccounts.push({...acc, deviceId});
+      newAccounts.push(acc);
     }
   });
-  console.log({newAccounts})
   // deduplicate accounts
   const allAccounts = uniqWith(newAccounts, sameAccountIdentity);
   const editedNames = new Map();
@@ -169,13 +162,11 @@ export function addAccountsAction({
       editedNames.set(account.id, name);
     }
   }
-  debugger;
   return {
     type: "ADD_ACCOUNTS",
     payload: {
       allAccounts,
       editedNames,
-      // deviceId,
     },
   };
 }

@@ -55,9 +55,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     swapHistory,
     syncHash,
     nfts,
-    deviceId,
   } = rawAccount;
-  console.log(`fromaccountraw`)
 
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
@@ -103,10 +101,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
-  if (deviceId) {
-    res.deviceId = deviceId;
-  }
-
 
   if (typeof used === "undefined") {
     // old account data that didn't had the field yet
@@ -168,7 +162,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     swapHistory,
     syncHash,
     nfts,
-    deviceId,
   } = account;
 
   const convertOperation = (op: Operation) =>
@@ -193,10 +186,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
   };
-  console.log({toAccountRawRes: res})
-  if (deviceId) {
-    res.deviceId = deviceId;
-  }
 
   if (feesCurrency) {
     res.feesCurrencyId = feesCurrency.id;
