@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Subscription, Observable } from "rxjs";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
-import { IPCTransport } from "../IPCTransport";
+import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+import { Subscription } from "@ledgerhq/hw-transport";
+import { Observable } from "rxjs";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
@@ -12,25 +13,28 @@ export const useListenToHidDevices = () => {
     function syncDevices() {
       const devices: { [key: string]: boolean } = {};
 
-      sub = new Observable(IPCTransport.listen).subscribe(
-        ({ device, deviceModel, type, descriptor }) => {
-          if (device) {
-            const deviceId = descriptor || "";
-            const stateDevice = {
-              deviceId,
-              modelId: deviceModel ? deviceModel.id : DeviceModelId.nanoS,
-              wired: true,
-            };
+      const onDeviceEvent = ({ deviceModel, type, descriptor }: DescriptorEvent<HIDDevice>) => {
+        const deviceId = typeof descriptor === "string" ? descriptor : "";
+        const stateDevice = {
+          deviceId,
+          modelId: deviceModel ? deviceModel.id : DeviceModelId.nanoS,
+          wired: true,
+        };
 
-            if (type === "add") {
-              devices[deviceId] = true;
-              dispatch(addDevice(stateDevice));
-            } else if (type === "remove") {
-              delete devices[deviceId];
-              dispatch(removeDevice(stateDevice));
-            }
-          }
-        },
+        if (type === "add") {
+          devices[deviceId] = true;
+          dispatch(addDevice(stateDevice));
+        } else if (type === "remove") {
+          delete devices[deviceId];
+          dispatch(removeDevice(stateDevice));
+        }
+      };
+
+      // Initialisation: check if there are already connected devices (listen is badly named)
+      TransportWebHID.listen({ next: onDeviceEvent, error: () => {}, complete: () => {} });
+
+      sub = new Observable(TransportWebHID.listenToConnectionEvents).subscribe(
+        onDeviceEvent,
         () => {
           resetDevices();
           syncDevices();

@@ -303,6 +303,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
+      '@ledgerhq/hw-transport-webhid':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-webhid
       '@ledgerhq/hw-trustchain':
         specifier: workspace:^
         version: link:../../libs/hw-trustchain

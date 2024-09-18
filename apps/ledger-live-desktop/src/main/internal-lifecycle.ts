@@ -76,7 +76,7 @@ const spawnCoreProcess = () => {
     // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal process
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
   });
-  internal.start();
+  // internal.start();
 };
 
 internal.onStart(() => {

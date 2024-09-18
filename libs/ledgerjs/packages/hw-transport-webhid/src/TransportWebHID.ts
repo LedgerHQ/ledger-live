@@ -139,6 +139,43 @@ export default class TransportWebHID extends Transport {
   };
 
   /**
+   *
+   */
+  static listenToConnectionEvents = (
+    observer: Observer<DescriptorEvent<HIDDevice>>,
+  ): Subscription => {
+    const onConnect = (event: HIDConnectionEvent) => {
+      const { device } = event;
+      if (device.vendorId !== ledgerUSBVendorId) return;
+      observer.next({
+        type: "add",
+        descriptor: device,
+        deviceModel: identifyUSBProductId(device.productId),
+      });
+    };
+
+    const onDisconnect = (event: HIDConnectionEvent) => {
+      const { device } = event;
+      if (device.vendorId !== ledgerUSBVendorId) return;
+      observer.next({
+        type: "remove",
+        descriptor: device,
+        deviceModel: identifyUSBProductId(device.productId),
+      });
+    };
+
+    getHID().addEventListener("connect", onConnect);
+    getHID().addEventListener("disconnect", onDisconnect);
+
+    return {
+      unsubscribe: () => {
+        getHID().removeEventListener("connect", onConnect);
+        getHID().removeEventListener("disconnect", onDisconnect);
+      },
+    };
+  };
+
+  /**
    * Similar to create() except it will always display the device permission (even if some devices are already accepted).
    */
   static async request() {
@@ -196,6 +233,7 @@ export default class TransportWebHID extends Transport {
    * @returns a promise of apdu response
    */
   exchange = async (apdu: Buffer): Promise<Buffer> => {
+    console.log("WebHID exchange =>", apdu);
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
       log("apdu", "=> " + apdu.toString("hex"));
@@ -227,6 +265,7 @@ export default class TransportWebHID extends Transport {
 
       throw e;
     });
+    console.log("WebHID exchange <=", b);
     return b as Buffer;
   };
 

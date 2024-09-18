@@ -61,6 +61,7 @@
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ethereum-provider": "workspace:^",
+    "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
