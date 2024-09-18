@@ -105,8 +105,10 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     if (error instanceof ImageCommitRefusedOnDevice) {
       dispatch(clearLastSeenCustomImage());
     }
-    onError && onError(error);
-  }, [dispatch, error, onError]);
+    if (!isRefusedOnStaxError) {
+      onError && onError(error);
+    }
+  }, [dispatch, error, onError, isRefusedOnStaxError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
@@ -115,8 +117,9 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   const handleRetry = useCallback(() => {
     if (isRefusedOnStaxError) onTryAnotherImage();
+    if (status.onRetry) status.onRetry();
     else remountMe();
-  }, [isRefusedOnStaxError, onTryAnotherImage, remountMe]);
+  }, [isRefusedOnStaxError, onTryAnotherImage, status, remountMe]);
 
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
