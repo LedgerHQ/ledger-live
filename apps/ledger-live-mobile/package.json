@@ -239,7 +239,7 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "12.3.6",
-    "@react-native-community/cli-platform-android": "12.3.6",
+    "@react-native-community/cli-platform-android": "12.3.7",
     "@react-native-community/cli-platform-ios": "12.3.6",
     "@react-native/babel-preset": "0.73.19",
     "@react-native/dev-middleware": "0.73.7",
