@@ -46,6 +46,7 @@ const save = debounce(saveToDisk, DEBOUNCE_MS);
  * Reset memory state, db path, encryption keys, transforms..
  */
 function init(_DBPath: string) {
+  console.log("init", {_DBPath, DBPath})
   DBPath = _DBPath;
   memoryNamespaces = {};
   encryptionKeys = {};
@@ -57,9 +58,11 @@ function init(_DBPath: string) {
 async function load(ns: string): Promise<unknown> {
   try {
     if (!DBPath) throw new NoDBPathGiven();
+    console.log("load", {DBPath, ns})
     const filePath = path.resolve(DBPath, `${ns}.json`);
     const fileContent = await readFile(filePath);
     const { data } = JSON.parse(fileContent.toString());
+    console.log({filePath, fileContent, data})
     memoryNamespaces[ns] = data;
     // debugger;
   } catch (err) {
@@ -76,7 +79,7 @@ async function load(ns: string): Promise<unknown> {
 async function ensureNSLoaded(ns: string) {
   // console.log(`ensureNSLoaded`)
   if (!memoryNamespaces[ns]) {
-    console.log(`ensureNSLoaded: load`)
+    console.log(`ensureNSLoaded: ${ns}`)
     await load(ns);
   }
 }
@@ -162,8 +165,20 @@ async function removeEncryptionKey() {
 /**
  * Set a key in the given namespace
  */
-async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
-  console.log(`setkey`, {ns, keyPath})
+async function setKey<K>(_ns: string, keyPath: string, value: K): Promise<void> {
+  console.log(`setkey`, {_ns, keyPath})
+  let profileInUse;
+  try {
+   profileInUse = await getKey("profiles", "inUse");
+   console.log({profileInUse})
+  } catch(err){ 
+    console.error("error fetching inUse profile", err)
+  }
+  let ns = _ns;
+  if (profileInUse && _ns === "app") {
+    ns = `${ns}_${profileInUse}`;
+  }
+
   await ensureNSLoaded(ns);
   set(memoryNamespaces[ns]!, keyPath, value);
   return save(ns);
@@ -173,13 +188,25 @@ async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
  * Get a key in the given namespace
  */
 async function getKey<V>(
-  ns: string,
+  _ns: string,
   keyPath: string,
   defaultValue?: V,
 ): Promise<V | Record<string, V> | undefined> {
+  let profileInUse;
+  try {
+   profileInUse = await getKey("profiles", "inUse");
+   console.log({profileInUse})
+  } catch(err){ 
+    console.error("error fetching inUse profile", err)
+  }
+  let ns = _ns;
+  if (profileInUse && _ns === "app") {
+    ns = `${ns}_${profileInUse}`;
+  }
   await ensureNSLoaded(ns);
   if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
   console.log(`getKey`, keyPath)
+  console.log({memoryNamespaces})
   return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
 }
 
@@ -205,7 +232,22 @@ async function hasBeenDecrypted(): Promise<boolean> {
 /**
  * Save given namespace to corresponding file, in atomic way
  */
-async function saveToDisk(ns: string) {
+async function saveToDisk(_ns: string) {
+  
+  let profileInUse;
+  try {
+   profileInUse = await getKey("profiles", "inUse");
+   console.log("saveToDisk", {profileInUse})
+  } catch(err){ 
+    console.error("error fetching inUse profile", err)
+  }
+  let ns = _ns;
+  if (profileInUse && _ns === "app") {
+    ns = `${ns}_${profileInUse}`;
+  }
+
+
+
   console.log("saving to disk")
   // debugger;
   if (!DBPath) throw new NoDBPathGiven();

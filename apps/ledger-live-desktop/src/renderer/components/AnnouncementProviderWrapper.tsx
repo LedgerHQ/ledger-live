@@ -42,6 +42,7 @@ async function saveAnnouncements({
     lastUpdateTime,
   });
 }
+// NOTE: inspired by this one
 async function loadAnnouncements(): Promise<{
   announcements: Announcement[];
   seenIds: string[];

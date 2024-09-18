@@ -68,7 +68,12 @@ type DatabaseValues = {
   ptx: {
     lastScreen: string;
   };
+  profiles: {
+    list: any;
+    inUse: string;
+  };
 };
+
 
 // Infers the type seen from the user side (non-raw).
 type DatabaseValue<

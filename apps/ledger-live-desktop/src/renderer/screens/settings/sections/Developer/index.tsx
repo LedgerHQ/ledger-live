@@ -11,6 +11,7 @@ import CatalogProviderInput from "./CatalogProviderInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
 import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
+import SwitchProfile from "./SwitchProfile";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
@@ -78,6 +79,7 @@ const Default = () => {
         <EnableAnalyticsConsole />
       </Row>
       <RunLocalAppButton />
+      <SwitchProfile />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
       <Row
