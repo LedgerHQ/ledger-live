@@ -57,5 +57,4 @@ export class SpeculosPage extends AppPage {
   async clickNextUntilText(text: string) {
     await pressRightUntil(text);
   }
-
 }
