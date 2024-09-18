@@ -69,11 +69,10 @@ type DatabaseValues = {
     lastScreen: string;
   };
   profiles: {
-    list: any;
+    list: unknown[];
     inUse: string;
   };
 };
-
 
 // Infers the type seen from the user side (non-raw).
 type DatabaseValue<
