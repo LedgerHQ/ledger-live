@@ -27,7 +27,6 @@ const WalletSyncManage = () => {
 
   const manageKeyHook = useManageKeyDrawer();
   const manageInstancesHook = useManageInstancesDrawer();
-
   const { error: ledgerSyncError, isError: isLedgerSyncError } = useLedgerSyncStatus();
 
   const {
@@ -168,7 +167,7 @@ const WalletSyncManage = () => {
           </InstancesRow>
 
           <ActivationDrawer
-            startingStep={Steps.ChooseSyncMethod}
+            startingStep={Steps.QrCodeMethod}
             isOpen={isSyncDrawerOpen}
             handleClose={closeSyncDrawer}
           />
