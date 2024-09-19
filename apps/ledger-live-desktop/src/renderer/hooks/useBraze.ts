@@ -117,8 +117,6 @@ export async function useBraze() {
 
     if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
 
-    braze.requestPushPermission();
-
     braze.requestContentCardsRefresh();
 
     braze.subscribeToContentCardsUpdates(cards => {
@@ -153,6 +151,7 @@ export async function useBraze() {
   }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
 
   useEffect(() => {
+    console.log("Init Braze");
     initBraze();
   }, [initBraze]);
 }

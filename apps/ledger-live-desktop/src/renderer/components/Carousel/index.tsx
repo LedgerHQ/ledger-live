@@ -154,17 +154,23 @@ const Carousel = ({
   const [paused, setPaused] = useState(false);
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
+  const [hasLoggedFirstImpression, setHasLoggedFirstImpression] = useState(false);
 
   useEffect(() => {
-    logSlideImpression(0);
-  }, [logSlideImpression]);
+    if (!hasLoggedFirstImpression) {
+      setHasLoggedFirstImpression(true);
+      logSlideImpression(0);
+    }
+  }, [hasLoggedFirstImpression, logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
-    (index: number) => {
-      setIndex(index);
-      logSlideImpression(index);
+    (newIndex: number) => {
+      if (index !== newIndex) {
+        setIndex(newIndex);
+        logSlideImpression(newIndex);
+      }
     },
-    [logSlideImpression],
+    [index, logSlideImpression],
   );
 
   const onChooseSlide = useCallback(
