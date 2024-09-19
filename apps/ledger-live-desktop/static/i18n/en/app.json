@@ -1530,7 +1530,8 @@
     "messageIfSkipped": "Your {{name}} address was not confirmed on your Ledger device. Please verify it for security.",
     "showQrCode": "Show QR Code",
     "taprootWarning": "Make sure the sender supports taproot",
-    "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
+    "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
+    "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid."
   },
   "emptyState": {
     "dashboard": {
