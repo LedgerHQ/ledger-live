@@ -127,7 +127,9 @@ export function useDeepLinkHandler() {
           const { key, id } = query;
           console.log("DEEPLINK", {key,id})
           // NOTE: weird bug with ?id=${id}&key=${key}
+          dispatch(closeAllModal());
           navigate(`/settings/profile/${id}/${key}`);
+          dispatch(closeAllModal());
           break;
         }
         case "accounts": {

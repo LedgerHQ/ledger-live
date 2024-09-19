@@ -270,7 +270,7 @@ const useProfile = () => {
       setProfiles(updatedProfiles);
     }
     console.log("Profile imported.");
-  }, [profiles, inUseId, userDataPath]);
+  }, [profiles, inUseId, userDataPath, newProfileName, newProfileDescription]);
 
   const shareProfile = useCallback(
     async (id: string) => {
