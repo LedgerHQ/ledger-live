@@ -60,24 +60,14 @@ describe("ManageKey", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Key Flow
-    expect(await screen.findByText(/Manage Key/i)).toBeVisible();
+    expect(await screen.findByText(/Delete Sync/i)).toBeVisible();
 
-    await user.press(await screen.findByText(/Manage Key/i));
+    await user.press(await screen.findByText(/Delete Sync/i));
 
-    expect(await screen.findByText(/Delete your key/i)).toBeVisible();
-
-    await user.press(await screen.findByText(/Delete your key/i));
-
-    expect(
-      await screen.findByText(/Do you really want to delete your encryption key?/i),
-    ).toBeVisible();
+    expect(await screen.findByText(/Sure you want delete sync?/i)).toBeVisible();
 
     await user.press(await screen.findByTestId("delete-trustchain"));
 
-    expect(
-      await screen.findByText(
-        /Your devices have been unsynchronized and your key has been deleted/i,
-      ),
-    ).toBeVisible();
+    expect(await screen.findByText(/Your Ledger Live apps are no longer synched/i)).toBeVisible();
   });
 });
