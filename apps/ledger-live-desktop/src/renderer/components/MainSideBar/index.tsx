@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
@@ -35,6 +35,11 @@ import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import {
+  useDeviceSdk,
+  useDeviceSessionState,
+} from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
+import { GetDeviceStatusDeviceAction } from "@ledgerhq/device-sdk-core";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -225,6 +230,12 @@ const MainSideBar = () => {
   const { t } = useTranslation();
   const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
   const isCardDisabled = !manifest;
+  const deviceSdk = useDeviceSdk();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [sessionId, setSessionId] = useState<string>();
+  const deviceSessionState = useDeviceSessionState(sessionId);
+
+  console.log("deviceSessionState", deviceSessionState);
 
   /** redux navigation locked state */
   const navigationLocked = useSelector(isNavigationLocked);
@@ -346,6 +357,54 @@ const MainSideBar = () => {
     ].filter((path): path is string => !!path), // Filter undefined values,
   );
 
+  const handleClickDeviceSdk = useCallback(() => {
+    deviceSdk?.startDiscovering().subscribe({
+      next: device => {
+        deviceSdk?.connect({ deviceId: device.id }).then(sessionId => {
+          console.log("sessionId", sessionId);
+          setSessionId(sessionId);
+        });
+      },
+      complete: () => {
+        console.log("complete");
+      },
+      error: error => {
+        console.error("error", error);
+      },
+    });
+  }, [deviceSdk]);
+
+  const handleClickWithSessionId = useCallback(() => {
+    if (sessionId) {
+      const deviceAction = new GetDeviceStatusDeviceAction({
+        input: {
+          unlockTimeout: 2 * 60 * 1000,
+        },
+      });
+      deviceSdk
+        ?.executeDeviceAction({
+          sessionId,
+          deviceAction,
+        })
+        .observable.subscribe({
+          next: state => {
+            console.log("state", state);
+          },
+          complete: () => {
+            console.log("complete");
+            deviceSdk?.disconnect({ sessionId });
+            setSessionId(undefined);
+          },
+          error: error => {
+            console.error("error", error);
+          },
+        });
+    }
+  }, [deviceSdk, sessionId]);
+
+  const title =
+    sessionId && deviceSessionState?.deviceStatus ? deviceSessionState?.deviceStatus : "Connect";
+
   return (
     <Transition
       in={!collapsed}
@@ -373,6 +432,14 @@ const MainSideBar = () => {
               <TopGradient />
               <Space of={70} />
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
+                <SideBarListItem
+                  id={"device-sdk"}
+                  label={title}
+                  icon={IconsLegacy.DevicesAltMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={sessionId ? handleClickWithSessionId : handleClickDeviceSdk}
+                />
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}

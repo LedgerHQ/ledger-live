@@ -287,6 +287,11 @@ function readPackage(pkg, context) {
       addDependencies("@actions/github", {
         undici: "*",
       }),
+
+      // DEVICE SDK
+      addDependencies("@ledgerhq/device-sdk-core", {
+        "@statelyai/inspect": "*",
+      }),
     ],
     pkg,
     context,
