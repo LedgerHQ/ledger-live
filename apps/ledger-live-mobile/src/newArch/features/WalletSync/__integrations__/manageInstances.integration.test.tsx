@@ -146,6 +146,6 @@ describe("ManageInstances", () => {
     await user.press(screen.getAllByText("Remove")[0]);
     expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
     await user.press(await screen.findByText(/Delete my encryption key/i));
-    await waitFor(() => screen.findByText(/Manage your key/i));
+    await waitFor(() => screen.findByText(/Sure you want delete sync?/i));
   });
 });

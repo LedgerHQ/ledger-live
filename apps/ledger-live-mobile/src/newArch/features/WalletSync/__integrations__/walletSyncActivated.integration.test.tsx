@@ -52,7 +52,7 @@ describe("WalletSyncActivated", () => {
 
     // Check if the activated screen is visible
 
-    expect(await screen.findByText(/Manage Key/i)).toBeVisible();
+    expect(await screen.findByText(/Delete Sync/i)).toBeVisible();
 
     expect(await screen.findByText(/Manage now/i)).toBeVisible();
   });
