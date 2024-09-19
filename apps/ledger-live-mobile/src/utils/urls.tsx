@@ -211,4 +211,5 @@ export const urls = {
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },
+  updateLedgerLive: "https://support.ledger.com/article/4410960111889-zd",
 };

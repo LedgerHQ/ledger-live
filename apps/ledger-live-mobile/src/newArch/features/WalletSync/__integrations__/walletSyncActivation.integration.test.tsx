@@ -46,20 +46,18 @@ describe("WalletSyncActivation", () => {
     });
 
     // Check if the activation screen is visible
-    expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
+    expect(await screen.findByText(/Turn on Ledger Sync for this phone?/i)).toBeVisible();
 
     // On Press Sync Accounts
     await user.press(
       await screen.findByRole("button", {
-        name: "Sync your accounts",
+        name: "Turn on Ledger Sync",
       }),
     );
 
     await user.press(screen.getByText(/use your ledger/i));
 
-    expect(
-      await screen.findByText(/choose the Ledger device you will use to secure your backup/i),
-    ).toBeVisible();
+    expect(await screen.findByText(/Choose your Ledger device/i)).toBeVisible();
 
     await user.press(
       await screen.findByRole("button", {
@@ -81,8 +79,8 @@ describe("WalletSyncActivation", () => {
       overrideInitialState: INITIAL_TEST,
     });
 
-    expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
-    expect(await screen.findByText(/learn more/i)).toBeVisible();
+    expect(await screen.findByText(/Turn on Ledger Sync for this phone/i)).toBeVisible();
+    expect(await screen.findByText(/How does Ledger Sync work?/i)).toBeVisible();
   });
 
   it("Should open WalletSyncActivation Flow without learn More link", async () => {
@@ -105,7 +103,7 @@ describe("WalletSyncActivation", () => {
       }),
     });
 
-    expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
-    expect(screen.queryByText(/learn more/i)).toBeUndefined;
+    expect(await screen.findByText(/Turn on Ledger Sync for this phone/i)).toBeVisible();
+    expect(screen.queryByText(/How does Ledger Sync work?/i)).toBeUndefined;
   });
 });

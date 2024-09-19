@@ -59,6 +59,6 @@ describe("WalletSyncStatus", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     // Check if the activation screen is visible
-    expect(await screen.findByText(/Ledger Sync is currently unavailable./i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Sync is temporarily unavailable/i)).toBeVisible();
   });
 });

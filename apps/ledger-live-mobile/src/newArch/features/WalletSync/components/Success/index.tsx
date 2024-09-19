@@ -25,7 +25,13 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <PreventNativeBack />
       <TrackScreen name={analyticsPage} />
-      <Flex flexDirection="column" alignItems="center" justifyContent="space-between" flex={1}>
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="space-between"
+        flex={1}
+        px={2}
+      >
         <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap={16}>
           <Container borderRadius={50}>
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />

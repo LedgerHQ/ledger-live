@@ -54,6 +54,6 @@ describe("WalletSyncActivated", () => {
 
     expect(await screen.findByText(/Delete Sync/i)).toBeVisible();
 
-    expect(await screen.findByText(/Manage now/i)).toBeVisible();
+    expect(await screen.findByText(/Manage/i)).toBeVisible();
   });
 });

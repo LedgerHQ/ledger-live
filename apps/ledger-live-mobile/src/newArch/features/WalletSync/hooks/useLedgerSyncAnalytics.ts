@@ -60,6 +60,7 @@ export enum AnalyticsButton {
   Understand = "I understand",
   TryAnotherLedger = "Try another Ledger",
   ContinueWihtoutSync = "Continue without sync",
+  CheckoutArticle = "Check out this article",
 }
 
 type OnClickTrack = {

@@ -27,7 +27,7 @@ describe("SynchronizeWithQrCode", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/Already synced a Ledger Live app?/i));
+    await user.press(await screen.findByText(/I already turned it on/i));
     await user.press(await screen.findByText(/scan a qr code/i));
     await user.press(await screen.queryAllByText(/show qr/i)[0]);
     expect(await screen.getByTestId("ws-qr-code-displayed")).toBeVisible();
@@ -36,7 +36,7 @@ describe("SynchronizeWithQrCode", () => {
     // Need to wait 3 seconds to simulate the time taken to scan the QR code
     setTimeout(async () => {
       await waitFor(() => {
-        expect(screen.getByText("Enter the code")).toBeDefined();
+        expect(screen.getByText("Enter Ledger Sync code")).toBeDefined();
       });
     }, 3000);
 
