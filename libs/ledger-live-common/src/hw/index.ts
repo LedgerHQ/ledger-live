@@ -12,7 +12,7 @@ import {
   LogLevel,
 } from "@ledgerhq/device-sdk-core";
 
-const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Info)).build();
+const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Debug)).build();
 
 export const LOG_TYPE = "hw";
 
@@ -27,9 +27,18 @@ class DeviceSdkTransport extends Transport {
   }
 
   async exchange(apdu: Buffer, _options: { abortTimeoutMs: number }) {
-    const apduUint8Array = new Uint8Array(apdu.buffer);
+    // eslint-disable-next-line no-console
+    console.log("[DeviceSdkTransport][exchange] apdu", apdu);
+    const apduUint8Array = new Uint8Array(apdu);
+    // eslint-disable-next-line no-console
+    console.log("[DeviceSdkTransport][exchange] apduUint8Array", apduUint8Array);
     const response = await this.sdk.sendApdu({ sessionId: this.sessionId, apdu: apduUint8Array });
-    return Buffer.from(response.data.buffer);
+    // eslint-disable-next-line no-console
+    console.log("[DeviceSdkTransport][exchange] response", response);
+    const res = Buffer.from([...response.data, ...response.statusCode]);
+    // eslint-disable-next-line no-console
+    console.log("[DeviceSdkTransport][exchange] res", res);
+    return res;
   }
 
   async close() {

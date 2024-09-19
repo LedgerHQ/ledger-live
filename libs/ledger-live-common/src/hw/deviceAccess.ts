@@ -236,7 +236,7 @@ export const withDevice =
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];
             // TODO: SDK reuse sendApdu
-            await transport.send(0, 0, 0, 0).catch(() => {});
+            // await transport.send(0, 0, 0, 0).catch(() => {});
           }
 
           return transport;
