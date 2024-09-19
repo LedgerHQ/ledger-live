@@ -2,14 +2,13 @@ import React from "react";
 import Button from "~/renderer/components/Button";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import styled from "styled-components";
-import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Popin, Link } from "@ledgerhq/react-ui";
 
 import useProfile, { ProfileInfos } from "./useProfile";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import { ItemContainer } from "~/renderer/components/TopBar/shared";
-import { useLocation } from 'react-router-dom';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -21,27 +20,51 @@ const SwitchProfile = () => {
   const {
     profiles,
     inUseId,
+    isOpen,
+    shareUrl,
     newProfileName,
     newProfileDescription,
     newProfileTransferSettings,
     setNewProfileName,
     setNewProfileDescription,
     setNewProfileTransferSettings,
+    setIsOpen,
     createProfile,
     removeProfile,
     importProfile,
     switchProfile,
     shareProfile,
+    setShareUrl,
   } = useProfile();
   // console.log({windowlocation: window.location.search})
-
   const startingProfile = { id: "", name: "starting profile", description: "starting profile" };
   const profilesWithStartProfile = [startingProfile, ...(profiles ? profiles : [])];
-  
 
+  const setToClipboard = (text: string) => {
+    if (navigator.clipboard && text) {
+      navigator.clipboard.writeText(text);
+    }
+  };
 
   return (
     <>
+      <Popin isOpen={isOpen} p={0} style={{ width: "480px", height: "unset" }} position="relative">
+        <Popin.Header
+          onClose={() => {
+            setShareUrl("");
+            setIsOpen(false);
+          }}
+        >
+          {null}
+        </Popin.Header>
+        <Popin.Body>
+          <Flex flexDirection="column" alignItems="center">
+            <Text color={"neutral.c80"}>Link has been shared successfully !</Text>
+          </Flex>
+          <br />
+          <Link onClick={() => setToClipboard(shareUrl)}>Click to copy to clipboard</Link>
+        </Popin.Body>
+      </Popin>
       <Row title={"Add a profile"} desc={""}>
         <Flex flexDirection={"row"} columnGap={3}>
           <Flex flexDirection={"column"} rowGap={3}>
@@ -96,39 +119,36 @@ const SwitchProfile = () => {
           desc={`${profile.description} id = ${profile.id}`}
         >
           <Flex flexDirection={"row"} columnGap={3}>
-          <ItemContainer
-            isInteractive
-            onClick={() => shareProfile(profile.id)}
-          >
-            <IconsLegacy.ShareMedium size={18} />
-          </ItemContainer>
+            <ItemContainer isInteractive onClick={() => shareProfile(profile.id)}>
+              <IconsLegacy.ShareMedium size={18} />
+            </ItemContainer>
 
-          <ButtonContainer>
-            {profile.id === inUseId ? (
-              <Button small primary disabled>
-                In Use
-              </Button>
-            ) : (
+            <ButtonContainer>
+              {profile.id === inUseId ? (
+                <Button small primary disabled>
+                  In Use
+                </Button>
+              ) : (
+                <Button
+                  small
+                  outline
+                  onClick={() => {
+                    switchProfile(profile.id);
+                  }}
+                >
+                  Load
+                </Button>
+              )}
+
               <Button
                 small
-                outline
-                onClick={() => {
-                  switchProfile(profile.id);
-                }}
+                danger
+                disabled={profile.id === inUseId || profile.id === ""}
+                onClick={() => removeProfile(profile.id)}
               >
-                Load
+                {"Delete"}
               </Button>
-            )}
-
-            <Button
-              small
-              danger
-              disabled={profile.id === inUseId || profile.id === ""}
-              onClick={() => removeProfile(profile.id)}
-            >
-              {"Delete"}
-            </Button>
-          </ButtonContainer>
+            </ButtonContainer>
           </Flex>
         </Row>
       ))}

@@ -41,9 +41,10 @@ const useProfile = () => {
   const [newProfileDescription, setNewProfileDescription] = useState<string>("");
   const [newProfileTransferSettings, setNewProfileTransferSettings] = useState<boolean>(false);
   const [userDataPath, setUserDataPath] = useState<string>("");
-
   const [profiles, setProfiles] = useState<ProfileInfos[]>([]);
   const [inUseId, setInUseId] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [shareUrl, setShareUrl] = useState<string>("");
   const location = useLocation();
   console.log({ location });
   const [user, setUser] = useState<any>({});
@@ -179,22 +180,22 @@ const useProfile = () => {
         // const bufferFromStr = atob(content)
         // const decoded = b64DecodeUnicode(content);
         // const decoded = decodeURIComponent(content);
-      //   axios.get(`https://file.io/${key}`, {
-      //     headers: {
-      //         'accept': '*/*'
-      //     }
-      // })
-      // .then(response => {
-      //       console.log({response})
-      // });
-      //   return
+        //   axios.get(`https://file.io/${key}`, {
+        //     headers: {
+        //         'accept': '*/*'
+        //     }
+        // })
+        // .then(response => {
+        //       console.log({response})
+        // });
+        //   return
         fetch(`https://file.io/${key}`, {
           method: "GET",
-          mode: 'no-cors',
+          mode: "no-cors",
           headers: {
-            'Host': 'file.io',          // Specify the Host
-            'User-Agent': 'curl/8.6.0', // Mimic the curl User-Agent NOTE: doesn't work, need to set it like https://stackoverflow.com/questions/35672602/how-to-set-electron-useragent
-            'Accept': '*/*', 
+            Host: "file.io", // Specify the Host
+            "User-Agent": "curl/8.6.0", // Mimic the curl User-Agent NOTE: doesn't work, need to set it like https://stackoverflow.com/questions/35672602/how-to-set-electron-useragent
+            Accept: "*/*",
           },
         })
           .then(response => {
@@ -222,7 +223,7 @@ const useProfile = () => {
             console.log({ updatedProfiles, shareableId });
             setKey("profiles", "list", updatedProfiles);
             setProfiles(updatedProfiles);
-            
+
             // NOTE: instaloading the profile would be nice, but buggy it seems.
 
             setKey("profiles", "inUse", shareableId);
@@ -299,7 +300,7 @@ const useProfile = () => {
         formData.append("expires", "1d"); // Example expiration (1 day)
         formData.append("maxDownloads", "10"); // Example max downloads
         formData.append("autoDelete", "true"); // Auto-delete after downloads
-        
+
         fetch("https://file.io/", {
           method: "POST",
           headers: {
@@ -313,7 +314,8 @@ const useProfile = () => {
           .then(data => {
             console.log(data);
             const { key } = data;
-            console.log(`ledgerlive://loadprofile?id=${shareableId}&key=${key}`);
+            setIsOpen(true);
+            setShareUrl(`ledgerlive://loadprofile?id=${shareableId}&key=${key}`);
             // console.log({parsed, encoded})
           })
           .catch(error => console.error("Error:", error));
@@ -339,17 +341,21 @@ const useProfile = () => {
   return {
     profiles,
     inUseId,
+    isOpen,
     newProfileName,
     newProfileDescription,
     newProfileTransferSettings,
+    shareUrl,
     setNewProfileName,
     setNewProfileDescription,
     setNewProfileTransferSettings,
+    setIsOpen,
     createProfile,
     removeProfile,
     importProfile,
     switchProfile,
     shareProfile,
+    setShareUrl,
   };
 };
 
