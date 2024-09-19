@@ -34,7 +34,7 @@ const WalletSyncManage = () => {
   const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goToSync = () => {
-    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
 
     onClickTrack({ button: "Synchronize", page: AnalyticsPage.LedgerSyncSettings });
   };
