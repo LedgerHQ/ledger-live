@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ListRenderItemInfo, Linking, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
@@ -54,6 +54,7 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { useSettings } from "~/hooks";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -141,6 +142,32 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     hasTokenAccountsWithPositiveBalance || // always show token accounts if they are not empty
     (!hideEmptyTokenAccount && hasTokenAccounts); // conditionally show empty token accounts
 
+  const { language } = useSettings();
+  const mappedLanguage: {
+    [k: string]: string;
+  } = {
+    de: "de-DE",
+    el: "el-GR",
+    en: "en-US",
+    es: "es-ES",
+    fi: "fi-FI",
+    fr: "fr-FR",
+    hu: "hu-HU",
+    it: "it-IT",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    nl: "nl-NL",
+    no: "no-NO",
+    pl: "pl-PL",
+    pt: "pt-BR",
+    ru: "ru-RU",
+    sr: "sr-SR",
+    sv: "sv-SV",
+    tr: "tr-TR",
+    zh: "zh-CN",
+    ar: "ar-EG",
+  };
+  const trueLocale = mappedLanguage[language] || "en-US";
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
@@ -156,6 +183,18 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           />
         ) : null}
       </WalletTabSafeAreaView>,
+      <Button
+        key="my-button"
+        type="shade"
+        size="large"
+        outline
+        mt={6}
+        onPress={() => {
+          Linking.openURL("ledgerlive://storyly?g=142749&instance=17650&play=sg");
+        }}
+      >
+        {`Display story with language "${trueLocale}"`}
+      </Button>,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
           <RecoverBanner />
@@ -202,6 +241,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
+      trueLocale,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
