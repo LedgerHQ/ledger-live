@@ -36,7 +36,7 @@ const SwitchProfile = () => {
   // console.log({windowlocation: window.location.search})
 
   const startingProfile = { id: "", name: "starting profile", description: "starting profile" };
-  const profilesWithStartProfile = [startingProfile, ...profiles];
+  const profilesWithStartProfile = [startingProfile, ...(profiles ? profiles : [])];
   
 
 

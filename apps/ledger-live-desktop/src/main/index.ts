@@ -84,6 +84,12 @@ app.on("ready", async () => {
       return value;
     }, userId);
   }
+  
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    details.requestHeaders['User-Agent'] = 'curl/8.6.0';
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+  
 
   /**
    * Clears the session’s HTTP cache

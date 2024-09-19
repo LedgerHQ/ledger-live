@@ -124,8 +124,11 @@ export function useDeepLinkHandler() {
 
       switch (url) {
         case "loadprofile": {
-          const { buffer, id } = query;
-          navigate(`/settings/profile?id=${id}&buffer=${buffer}`);
+          const { key, id } = query;
+          console.log("DEEPLINK", {key,id})
+          // NOTE: weird bug with ?id=${id}&key=${key}
+          navigate(`/settings/profile/${id}/${key}`);
+          break;
         }
         case "accounts": {
           const { address } = query;
