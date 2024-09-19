@@ -151,7 +151,6 @@ export async function useBraze() {
   }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
 
   useEffect(() => {
-    console.log("Init Braze");
     initBraze();
   }, [initBraze]);
 }
