@@ -176,6 +176,7 @@ export async function createMainWindow(
     (webContents, permission, requestingOrigin, details) => {
       console.log("setPermissionCheckHandler FIRED WITH", permission, requestingOrigin, details);
       if (permission === "hid") return true;
+      return false;
     },
   );
 
@@ -184,6 +185,7 @@ export async function createMainWindow(
     if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
       return true;
     }
+    return false;
   });
 
   mainWindow.name = "MainWindow";

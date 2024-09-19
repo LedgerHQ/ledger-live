@@ -7,9 +7,10 @@ import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
-import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
+// import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
+import { listen as listenLogs } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
-import { LOG_TYPE_INTERNAL } from "./logger";
+// import { LOG_TYPE_INTERNAL } from "./logger";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
@@ -53,35 +54,34 @@ if (getEnv("SPECULOS_API_PORT")) {
     disconnect: () => Promise.resolve(),
   });
 } else {
-  registerTransportModule({
-    id: "hid",
-    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      trace({
-        type: LOG_TYPE_INTERNAL,
-        message: "Open called on registered module",
-        data: {
-          transport: "TransportNodeHidSingleton",
-          timeoutMs,
-        },
-        context: {
-          openContext: context,
-        },
-      });
-
-      // No retry in the `internal` process to avoid multiplying retries. Retries are done in the `renderer` process.
-      return TransportNodeHidSingleton.open(id, timeoutMs, context);
-    },
-    disconnect: () => {
-      trace({
-        type: LOG_TYPE_INTERNAL,
-        message: "Disconnect called on registered module. Not doing anything for HID USB.",
-        data: {
-          transport: "TransportNodeHidSingleton",
-        },
-      });
-      return Promise.resolve();
-    },
-  });
+  // registerTransportModule({
+  //   id: "hid",
+  //   open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+  //     trace({
+  //       type: LOG_TYPE_INTERNAL,
+  //       message: "Open called on registered module",
+  //       data: {
+  //         transport: "TransportNodeHidSingleton",
+  //         timeoutMs,
+  //       },
+  //       context: {
+  //         openContext: context,
+  //       },
+  //     });
+  //     // No retry in the `internal` process to avoid multiplying retries. Retries are done in the `renderer` process.
+  //     return TransportNodeHidSingleton.open(id, timeoutMs, context);
+  //   },
+  //   disconnect: () => {
+  //     trace({
+  //       type: LOG_TYPE_INTERNAL,
+  //       message: "Disconnect called on registered module. Not doing anything for HID USB.",
+  //       data: {
+  //         transport: "TransportNodeHidSingleton",
+  //       },
+  //     });
+  //     return Promise.resolve();
+  //   },
+  // });
 }
 
 /**

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
@@ -36,7 +36,6 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import Carousel from "~/renderer/components/Carousel";
 import useActionCards from "~/renderer/hooks/useActionCards";
-import { useDeviceSdk } from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -86,23 +85,6 @@ export default function DashboardPage() {
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
-
-  const deviceSdk = useDeviceSdk();
-
-  useEffect(() => {
-    if (deviceSdk) {
-      deviceSdk.startDiscovering().subscribe({
-        next: device => {
-          deviceSdk.connect({ deviceId: device.id }).then(sessionId => {
-            console.log("sessionId", sessionId);
-          });
-        },
-        error: error => {
-          console.error("error", error);
-        },
-      });
-    }
-  }, [deviceSdk]);
 
   return (
     <>

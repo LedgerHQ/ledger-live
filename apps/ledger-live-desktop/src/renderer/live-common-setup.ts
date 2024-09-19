@@ -8,13 +8,14 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
-import { IPCTransport } from "./IPCTransport";
+// import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
-import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { SdkTransport } from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
 
 setEnvOnAllThreads("USER_ID", getUserId());
 
-const originalDeviceMode = currentMode;
+// const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
 
 // Listens to logs from `@ledgerhq/logs` (happening on the renderer process) and transfers them to the LLD logger system
@@ -29,34 +30,58 @@ listenLogs(({ id, date, ...log }) => {
 // });
 
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
+// registerTransportModule({
+//   id: "ipc",
+//   open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+//     // id could be another type of transport such as vault-transport
+//     if (id.startsWith(vaultTransportPrefixID)) return;
+
+//     if (originalDeviceMode !== currentMode) {
+//       setDeviceMode(originalDeviceMode);
+//     }
+
+//     trace({
+//       type: "renderer-setup",
+//       message: "Open called on registered module",
+//       data: {
+//         transport: "IPCTransport",
+//         timeoutMs,
+//       },
+//       context: {
+//         openContext: context,
+//       },
+//     });
+
+//     // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
+//     return retry(() => IPCTransport.open(id, timeoutMs, context), {
+//       interval: 500,
+//       maxRetry: 4,
+//     });
+//   },
+//   disconnect: () => Promise.resolve(),
+// });
+
 registerTransportModule({
-  id: "ipc",
-  open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-    // id could be another type of transport such as vault-transport
-    if (id.startsWith(vaultTransportPrefixID)) return;
-
-    if (originalDeviceMode !== currentMode) {
-      setDeviceMode(originalDeviceMode);
-    }
-
+  id: "sdk",
+  open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
+    console.log({ _id });
     trace({
       type: "renderer-setup",
       message: "Open called on registered module",
       data: {
-        transport: "IPCTransport",
+        transport: "SDKTransport",
         timeoutMs,
       },
       context: {
         openContext: context,
       },
     });
-
-    // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-    return retry(() => IPCTransport.open(id, timeoutMs, context), {
+    return retry(() => SdkTransport.open(), {
       interval: 500,
       maxRetry: 4,
     });
   },
+
   disconnect: () => Promise.resolve(),
 });
 
