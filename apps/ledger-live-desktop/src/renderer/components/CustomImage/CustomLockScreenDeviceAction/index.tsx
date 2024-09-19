@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
+import { setLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -54,7 +54,6 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     onResult,
     onSkip,
     source,
-    remountMe,
     onTryAnotherImage,
     onError,
     blockNavigation,
@@ -101,14 +100,8 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   useEffect(() => {
     if (!error) return;
-    // Once transferred the old image is wiped, we need to clear it from the data.
-    if (error instanceof ImageCommitRefusedOnDevice) {
-      dispatch(clearLastSeenCustomImage());
-    }
-    if (!isRefusedOnStaxError) {
-      onError && onError(error);
-    }
-  }, [dispatch, error, onError, isRefusedOnStaxError]);
+    onError && onError(error);
+  }, [error, onError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
@@ -116,10 +109,9 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   }, [shouldNavBeBlocked, blockNavigation]);
 
   const handleRetry = useCallback(() => {
-    if (isRefusedOnStaxError) onTryAnotherImage();
-    if (status.onRetry) status.onRetry();
-    else remountMe();
-  }, [isRefusedOnStaxError, onTryAnotherImage, status, remountMe]);
+    if (onTryAnotherImage) onTryAnotherImage();
+    else if (status.onRetry) status.onRetry();
+  }, [status, onTryAnotherImage]);
 
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
