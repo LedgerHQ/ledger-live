@@ -3,7 +3,8 @@
   "compilerOptions": {
     "allowJs": false,
     "composite": true,
-    "module": "es2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",

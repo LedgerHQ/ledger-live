@@ -20,6 +20,7 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
 import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
 import DrawerProvider from "~/renderer/drawers/Provider";
+import { DeviceSdkProvider } from "~/renderer/hooks/ldmk-provider/useDeviceSdk";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
@@ -83,22 +84,24 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                   <CountervaluesProvider initialState={initialCountervalues}>
                     <ToastProvider>
                       <AnnouncementProviderWrapper>
-                        <Router>
-                          <PostOnboardingProviderWrapped>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </NftMetadataProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </PostOnboardingProviderWrapped>
-                        </Router>
+                        <DeviceSdkProvider>
+                          <Router>
+                            <PostOnboardingProviderWrapped>
+                              <PlatformAppProviderWrapper>
+                                <DrawerProvider>
+                                  <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                                    <StorylyProvider>
+                                      <QueryClientProvider client={queryClient}>
+                                        <Default />
+                                        <ReactQueryDevtoolsProvider />
+                                      </QueryClientProvider>
+                                    </StorylyProvider>
+                                  </NftMetadataProvider>
+                                </DrawerProvider>
+                              </PlatformAppProviderWrapper>
+                            </PostOnboardingProviderWrapped>
+                          </Router>
+                        </DeviceSdkProvider>
                       </AnnouncementProviderWrapper>
                     </ToastProvider>
                   </CountervaluesProvider>
