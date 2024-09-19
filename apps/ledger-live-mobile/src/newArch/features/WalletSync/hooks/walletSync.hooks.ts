@@ -30,8 +30,6 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    console.error("GetMember :" + error);
-
     if (error instanceof TrustchainEjected) reset();
     if (error instanceof TrustchainNotAllowed) reset();
 
