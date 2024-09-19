@@ -155,6 +155,41 @@ export async function createMainWindow(
   };
   mainWindow = new BrowserWindow(windowOptions);
 
+  mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
+    console.log("select-hid-device FIRED WITH", event, details);
+    event.preventDefault();
+    if (details.deviceList && details.deviceList.length > 0) {
+      // TODO: filter ledger vendorId
+      callback(details.deviceList[0].deviceId);
+    }
+  });
+
+  mainWindow.webContents.session.on("hid-device-added", (event, device) => {
+    console.log("hid-device-added FIRED WITH", device);
+  });
+
+  mainWindow.webContents.session.on("hid-device-removed", (event, device) => {
+    console.log("hid-device-removed FIRED WITH", device);
+  });
+
+  mainWindow.webContents.session.setPermissionCheckHandler(
+    (webContents, permission, requestingOrigin, details) => {
+      console.log("setPermissionCheckHandler FIRED WITH", permission, requestingOrigin, details);
+      if (permission === "hid") return true;
+
+      return false;
+    },
+  );
+
+  mainWindow.webContents.session.setDevicePermissionHandler(details => {
+    console.log("setDevicePermissionHandler FIRED WITH", details);
+    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+      return true;
+    }
+
+    return false;
+  });
+
   mainWindow.name = "MainWindow";
   loadWindow();
   if (DEV_TOOLS && !DISABLE_DEV_TOOLS) {

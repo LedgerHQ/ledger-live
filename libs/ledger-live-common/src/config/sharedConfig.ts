@@ -9,14 +9,14 @@ import { cosmosConfig } from "../families/cosmos/config";
 import { cryptoOrgConfig } from "../families/crypto_org/config";
 import { elrondConfig } from "../families/elrond/config";
 import { evmConfig } from "../families/evm/config";
-import { fileCoinConfig } from "../families/filecoin/config";
+// import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { nearConfig } from "../families/near/config";
 import { polkadotConfig } from "../families/polkadot/config";
 import { xrpConfig } from "../families/xrp/config";
 import { solanaConfig } from "../families/solana/config";
-import { stacksConfig } from "../families/stacks/config";
+// import { stacksConfig } from "../families/stacks/config";
 import { stellarConfig } from "../families/stellar/config";
 import { tezosConfig } from "../families/tezos/config";
 import { tonConfig } from "../families/ton/config";
@@ -51,14 +51,14 @@ export const liveConfig: ConfigSchema = {
   ...cryptoOrgConfig,
   ...elrondConfig,
   ...evmConfig,
-  ...fileCoinConfig,
+  // ...fileCoinConfig,
   ...hederaConfig,
   ...internetComputerConfig,
   ...nearConfig,
   ...polkadotConfig,
   ...xrpConfig,
   ...solanaConfig,
-  ...stacksConfig,
+  // ...stacksConfig,
   ...stellarConfig,
   ...tezosConfig,
   ...tronConfig,

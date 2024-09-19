@@ -53,12 +53,6 @@ import type {
   TransactionStatusRaw as evmTransactionStatusRaw,
 } from "@ledgerhq/coin-evm/types/index";
 import type {
-  Transaction as filecoinTransaction,
-  TransactionRaw as filecoinTransactionRaw,
-  TransactionStatus as filecoinTransactionStatus,
-  TransactionStatusRaw as filecoinTransactionStatusRaw,
-} from "../families/filecoin/types";
-import type {
   Transaction as hederaTransaction,
   TransactionRaw as hederaTransactionRaw,
   TransactionStatus as hederaTransactionStatus,
@@ -94,12 +88,6 @@ import type {
   TransactionStatus as solanaTransactionStatus,
   TransactionStatusRaw as solanaTransactionStatusRaw,
 } from "@ledgerhq/coin-solana/types";
-import type {
-  Transaction as stacksTransaction,
-  TransactionRaw as stacksTransactionRaw,
-  TransactionStatus as stacksTransactionStatus,
-  TransactionStatusRaw as stacksTransactionStatusRaw,
-} from "../families/stacks/types";
 import type {
   Transaction as stellarTransaction,
   TransactionRaw as stellarTransactionRaw,
@@ -147,14 +135,12 @@ export type Transaction =
   | crypto_orgTransaction
   | elrondTransaction
   | evmTransaction
-  | filecoinTransaction
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
-  | stacksTransaction
   | stellarTransaction
   | tezosTransaction
   | tonTransaction
@@ -172,14 +158,12 @@ export type TransactionRaw =
   | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | evmTransactionRaw
-  | filecoinTransactionRaw
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
-  | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
   | tonTransactionRaw
@@ -197,14 +181,12 @@ export type TransactionStatus =
   | crypto_orgTransactionStatus
   | elrondTransactionStatus
   | evmTransactionStatus
-  | filecoinTransactionStatus
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
-  | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
   | tonTransactionStatus
@@ -222,14 +204,12 @@ export type TransactionStatusRaw =
   | crypto_orgTransactionStatusRaw
   | elrondTransactionStatusRaw
   | evmTransactionStatusRaw
-  | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
-  | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tonTransactionStatusRaw

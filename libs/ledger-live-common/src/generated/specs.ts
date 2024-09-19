@@ -1,10 +1,8 @@
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import crypto_org from "../families/crypto_org/specs";
-import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
-import stacks from "../families/stacks/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
@@ -26,10 +24,8 @@ export default {
   casper,
   celo,
   crypto_org,
-  filecoin,
   hedera,
   internet_computer,
-  stacks,
   vechain,
   algorand,
   bitcoin,
