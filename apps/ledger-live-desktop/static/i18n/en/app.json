@@ -6461,12 +6461,12 @@
         "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup": {
-        "label": "Manage Key",
-        "description": "Secure or delete your encryption key via another Ledger."
+        "label": "Delete sync",
+        "description": "Your synched crypto accounts across different Ledger Live apps will stop synching."
       },
       "instance": {
-        "label": "1 Synchronized instance",
-        "label_other": "{{count}} Synchronized instances",
+        "label": "1 Ledger Live app synched",
+        "label_other": "{{count}} Ledger Live apps synched",
         "cta": "Manage"
       }
     },
@@ -6520,17 +6520,11 @@
     },
     "manageBackup": {
       "title": "Manage your key",
-      "options": {
-        "deleteBackup": {
-          "title": "Delete your backup",
-          "description": "All synced accounts will be removed. This won’t affect your local accounts."
-        }
-      },
       "deleteBackup": {
-        "title": "Do you really want to delete your encryption key?",
-        "description": "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time.",
-        "delete": "Delete",
-        "cancel": "Cancel"
+        "title": "Sure you want to delete sync?",
+        "description": "Your crypto accounts across Ledger Live apps on different phones and computers will stop being in sync. This does not impact your funds in any way. ",
+        "delete": "Yes, delete",
+        "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
         "title": "Your devices have been unsynchronized and your key has been deleted"

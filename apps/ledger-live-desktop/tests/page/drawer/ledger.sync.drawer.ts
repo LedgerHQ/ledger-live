@@ -7,7 +7,6 @@ export class LedgerSyncDrawer extends Drawer {
   private syncAccountsButton = this.page.getByRole("button", { name: "Sync your accounts" });
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private manageBackupButton = this.page.getByTestId("walletSync-manage-backup");
-  private deleteBackupButton = this.page.getByTestId("walletSync-manage-backup-delete");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Delete" });
   private successTextElement = this.page.locator("span", { hasText: "Success" }).first();
   private backupDeletionSuccessText = this.page.getByText(
@@ -32,12 +31,6 @@ export class LedgerSyncDrawer extends Drawer {
     await this.manageBackupButton.click();
   }
 
-  @step("Click on the 'Delete your data' button")
-  async deleteBackup() {
-    await expect(this.deleteBackupButton).toBeVisible();
-    await this.deleteBackupButton.click();
-  }
-
   @step("Confirm the deletion of the data")
   async confirmBackupDeletion() {
     await expect(this.confirmBackupDeletionButton).toBeVisible();
@@ -47,7 +40,6 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Destroy the trustchain - Delete the data")
   async destroyTrustchain() {
     await this.manageBackup();
-    await this.deleteBackup();
     await this.confirmBackupDeletion();
   }
 
