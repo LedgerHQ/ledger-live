@@ -52,4 +52,9 @@ export class SpeculosPage extends AppPage {
     await pressRightUntil(text);
     await pressBoth();
   }
+
+  @step("Press right on the device until specified text appears")
+  async clickNextUntilText(text: string) {
+    await pressRightUntil(text);
+  }
 }
