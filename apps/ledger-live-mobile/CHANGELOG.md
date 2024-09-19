@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.50.0-nightly.0
+
+### Minor Changes
+
+- [#7827](https://github.com/LedgerHQ/ledger-live/pull/7827) [`e3b5030`](https://github.com/LedgerHQ/ledger-live/commit/e3b503046f91e176494c90083685af9fad279526) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds error handling for LLM
+
+### Patch Changes
+
+- [#7826](https://github.com/LedgerHQ/ledger-live/pull/7826) [`cbac385`](https://github.com/LedgerHQ/ledger-live/commit/cbac38571cb3506f4d7ceafe4673b48b5a9318fd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Blank account screen when removing account from LLD when LS activated
+
 ## 3.49.0
 
 ### Minor Changes
