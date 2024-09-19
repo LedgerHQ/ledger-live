@@ -51,11 +51,6 @@ describe("Synchronize flow", () => {
 
     await user.click(row);
 
-    // Select Sync with QRCode
-    await waitFor(() => expect(screen.getByTestId("walletSync-synchronize-scan")).toBeDefined());
-    const qrCodeCard = screen.getByTestId("walletSync-synchronize-scan");
-    await user.click(qrCodeCard);
-
     // QRCode Page
     await waitFor(() =>
       expect(
