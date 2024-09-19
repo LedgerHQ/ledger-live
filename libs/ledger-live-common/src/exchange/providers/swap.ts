@@ -1,3 +1,4 @@
+import { version } from "node:os";
 import { ExchangeProviderNameAndSignature } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 import { getProvidersData } from "./getProvidersData";
@@ -17,6 +18,9 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
+  signature?: Buffer;
+  name?: string;
+  publicKey?: any;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
@@ -71,6 +75,14 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
+  },
+  thorswap: {
+    type: "DEX",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "mailto:support@thorswap.finance",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
   },
 };
 
@@ -172,6 +184,22 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
   },
+  thorswap: {
+    type: "DEX",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "mailto:support@thorswap.finance",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+  },
 };
 
 type CurrencyDataResponse = {
@@ -244,7 +272,6 @@ export const fetchAndMergeProviderData = async () => {
       getProvidersData("swap"),
       getProvidersCDNData(),
     ]);
-
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;
 
