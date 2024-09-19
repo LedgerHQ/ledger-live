@@ -1,38 +1,22 @@
 # @ledgerhq/hw-app-btc
 
-## 10.4.2-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.3-nightly.3
-
-## 10.4.2-nightly.3
+## 10.4.2
 
 ### Patch Changes
 
 - [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
-## 10.4.2-nightly.2
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3
+
+## 10.4.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.3-nightly.2
-
-## 10.4.2-nightly.1
-
-### Patch Changes
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.3-nightly.1
-
-## 10.4.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
 
 ## 10.4.1
 

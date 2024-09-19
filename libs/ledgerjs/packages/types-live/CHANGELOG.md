@@ -1,22 +1,28 @@
 # @ledgerhq/types-live
 
-## 6.50.1-nightly.2
+## 6.51.0
 
-### Patch Changes
+### Minor Changes
 
-- [#7825](https://github.com/LedgerHQ/ledger-live/pull/7825) [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add a field to ledger sync feature flag so we can use a dynamic learn more link
-
-## 6.50.1-nightly.1
-
-### Patch Changes
-
-- [#7780](https://github.com/LedgerHQ/ledger-live/pull/7780) [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag "deviceSupportEuropa" (for Ledger Flex)
-
-## 6.50.1-nightly.0
+- [#7558](https://github.com/LedgerHQ/ledger-live/pull/7558) [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451) Thanks [@thesan](https://github.com/thesan)! - Create the llmMarketQuickActions feature flag
 
 ### Patch Changes
 
 - [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7573](https://github.com/LedgerHQ/ledger-live/pull/7573) [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] setup demo3 flag and routes
+
+## 6.51.0-next.0
+
+### Minor Changes
+
+- [#7558](https://github.com/LedgerHQ/ledger-live/pull/7558) [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451) Thanks [@thesan](https://github.com/thesan)! - Create the llmMarketQuickActions feature flag
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7573](https://github.com/LedgerHQ/ledger-live/pull/7573) [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] setup demo3 flag and routes
 
 ## 6.50.0
 

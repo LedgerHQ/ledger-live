@@ -354,7 +354,7 @@ export const dataset: DatasetTest<Transaction> = {
               expectedStatus: {
                 // You can get the spendable balance here
                 // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
-                amount: new BigNumber(12486627),
+                amount: new BigNumber(12486647),
                 errors: {},
                 warnings: {},
               },

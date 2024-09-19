@@ -1,69 +1,24 @@
 # @ledgerhq/hw-app-vet
 
-## 0.2.5-nightly.7
+## 0.2.5
 
 ### Patch Changes
 
-- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
-  - @ledgerhq/errors@6.19.0-nightly.3
-  - @ledgerhq/hw-transport@6.31.3-nightly.3
-  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.3
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/cryptoassets@13.4.0
+  - @ledgerhq/hw-transport@6.31.3
+  - @ledgerhq/hw-transport-mocker@6.29.3
 
-## 0.2.5-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.4
-
-## 0.2.5-nightly.5
+## 0.2.5-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.3
-
-## 0.2.5-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.2
-
-## 0.2.5-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
-  - @ledgerhq/errors@6.19.0-nightly.2
-  - @ledgerhq/hw-transport@6.31.3-nightly.2
-  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.2
-
-## 0.2.5-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
-  - @ledgerhq/errors@6.19.0-nightly.1
-  - @ledgerhq/cryptoassets@13.4.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.3-nightly.1
-  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.1
-
-## 0.2.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.0
-
-## 0.2.5-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.0
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/cryptoassets@13.4.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.3-next.0
 
 ## 0.2.4
 

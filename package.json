@@ -23,26 +23,26 @@
     "build:dummy-wallet-app": "pnpm turbo build --filter=\"@ledgerhq/dummy-wallet-app\"",
     "build:dummy-live-app": "pnpm turbo build --filter=\"@ledgerhq/dummy-live-app\"",
     "build:actions": "pnpm turbo build --filter=@actions/*",
-    "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
+    "build:cli": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-cli",
     "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
-    "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
-    "build:network": "pnpm turbo build --no-daemon --filter=live-network",
-    "build:config": "pnpm turbo build --no-daemon --filter=live-config",
-    "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
+    "build:domain": "pnpm turbo build --no-daemon --filter=@ledgerhq/domain-service",
+    "build:network": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-network",
+    "build:config": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-config",
+    "build:llc": "pnpm turbo build --no-daemon --filter=./libs/ledger-live-common",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
     "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
     "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
     "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
     "build:ljs": "pnpm turbo build --no-daemon --filter=\"./libs/ledgerjs/**\"",
-    "build:web-tools": "pnpm turbo build --no-daemon --filter=web-tools",
+    "build:web-tools": "pnpm turbo build --no-daemon --filter=./apps/web-tools",
     "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
     "build-ci:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
     "clean:ljs": "pnpm turbo clean --no-daemon --filter=\"./libs/ledgerjs/**\"",
     "doc:ljs": "pnpm turbo doc --no-daemon --filter=\"./libs/ledgerjs/**\"",
     "watch:ljs": "pnpm turbo watch --no-daemon --filter=\"./libs/ledgerjs/**\"",
-    "watch:common": "pnpm turbo watch --no-daemon --filter=live-common",
-    "dev:cli": "pnpm turbo watch --no-daemon --filter=live-cli",
+    "watch:common": "pnpm turbo watch --no-daemon --filter=./libs/ledger-live-common",
+    "dev:cli": "pnpm turbo watch --no-daemon --filter=@ledgerhq/live-cli",
     "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
@@ -174,7 +174,7 @@
     "nyc": "^15.1.0",
     "prettier": "^3.0.3",
     "rimraf": "^4.4.1",
-    "turbo": "1.10.1",
+    "turbo": "2.1.2",
     "typescript": "^5.4.3",
     "unimported": "1.30.0",
     "zx": "^7.2.2"
@@ -218,5 +218,6 @@
         }
       }
     }
-  }
+  },
+  "packageManager": "pnpm@9.4.0"
 }

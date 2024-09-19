@@ -1,105 +1,40 @@
 # @ledgerhq/live-countervalues
 
-## 0.2.5-nightly.10
-
-### Patch Changes
-
-- Updated dependencies [[`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5)]:
-  - @ledgerhq/types-live@6.50.1-nightly.2
-  - @ledgerhq/coin-framework@0.17.1-nightly.10
-
-## 0.2.5-nightly.9
-
-### Patch Changes
-
-- Updated dependencies [[`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd)]:
-  - @ledgerhq/types-live@6.50.1-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.9
-
-## 0.2.5-nightly.8
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.17.1-nightly.8
-  - @ledgerhq/live-network@2.0.0-nightly.6
-
-## 0.2.5-nightly.7
-
-### Patch Changes
-
-- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.4
-  - @ledgerhq/coin-framework@0.17.1-nightly.7
-
-## 0.2.5-nightly.6
+## 0.2.5
 
 ### Patch Changes
 
 - [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
 
-- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.3
-  - @ledgerhq/coin-framework@0.17.1-nightly.6
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
 
-## 0.2.5-nightly.5
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
 
-### Patch Changes
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/cryptoassets@13.4.0
+  - @ledgerhq/live-network@2.0.0
+  - @ledgerhq/coin-framework@0.18.0
+  - @ledgerhq/types-live@6.51.0
+  - @ledgerhq/live-env@2.3.0
+  - @ledgerhq/types-cryptoassets@7.15.1
 
-- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.2
-  - @ledgerhq/live-network@2.0.0-nightly.5
-  - @ledgerhq/coin-framework@0.17.1-nightly.5
-
-## 0.2.5-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.17.1-nightly.4
-  - @ledgerhq/live-network@1.4.1-nightly.4
-
-## 0.2.5-nightly.3
+## 0.2.5-next.0
 
 ### Patch Changes
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
 
 - [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
 
 - [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
 
-- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
-  - @ledgerhq/types-live@6.50.1-nightly.0
-  - @ledgerhq/types-cryptoassets@7.15.1-nightly.0
-  - @ledgerhq/cryptoassets@13.4.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.3
-  - @ledgerhq/live-network@1.4.1-nightly.3
-
-## 0.2.5-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
-  - @ledgerhq/live-env@2.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.2
-  - @ledgerhq/live-network@1.4.1-nightly.2
-
-## 0.2.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/live-network@1.4.1-nightly.1
-
-## 0.2.5-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.0
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.0
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/cryptoassets@13.4.0-next.0
+  - @ledgerhq/live-network@2.0.0-next.0
+  - @ledgerhq/coin-framework@0.18.0-next.0
+  - @ledgerhq/types-live@6.51.0-next.0
+  - @ledgerhq/live-env@2.3.0-next.0
+  - @ledgerhq/types-cryptoassets@7.15.1-next.0
 
 ## 0.2.4
 

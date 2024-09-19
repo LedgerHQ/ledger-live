@@ -65,7 +65,7 @@ async function main() {
     summary,
   };
 
-  fs.writeFileSync("actions/desktop-report-build.json", JSON.stringify(data), "utf-8");
+  fs.writeFileSync("summary-build-desktop.json", JSON.stringify(data), "utf-8");
 }
 
 main().catch(err => {

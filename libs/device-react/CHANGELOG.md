@@ -1,81 +1,18 @@
 # @ledgerhq/device-react
 
-## 0.2.5-nightly.10
+## 0.2.5
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.4.0-nightly.10
+- Updated dependencies [[`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6), [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3)]:
+  - @ledgerhq/device-core@0.3.3
 
-## 0.2.5-nightly.9
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.4.0-nightly.9
-
-## 0.2.5-nightly.8
+## 0.2.5-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
-  - @ledgerhq/device-core@0.4.0-nightly.8
-
-## 0.2.5-nightly.7
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.7
-
-## 0.2.5-nightly.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.6
-
-## 0.2.5-nightly.5
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.5
-
-## 0.2.5-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.4
-
-## 0.2.5-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3)]:
-  - @ledgerhq/device-core@0.3.3-nightly.3
-
-## 0.2.5-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6)]:
-  - @ledgerhq/device-core@0.3.3-nightly.2
-
-## 0.2.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.1
-
-## 0.2.5-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.3.3-nightly.0
+- Updated dependencies [[`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6), [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3)]:
+  - @ledgerhq/device-core@0.3.3-next.0
 
 ## 0.2.4
 

@@ -1,13 +1,6 @@
 # @ledgerhq/live-network
 
-## 2.0.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
-  - @ledgerhq/errors@6.19.0-nightly.3
-
-## 2.0.0-nightly.5
+## 2.0.0
 
 ### Major Changes
 
@@ -17,40 +10,23 @@
 
 - [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
-## 1.4.1-nightly.4
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/live-env@2.3.0
+
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrate to axios version 1.7.3
 
 ### Patch Changes
 
-- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
-  - @ledgerhq/errors@6.19.0-nightly.2
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
-## 1.4.1-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3)]:
-  - @ledgerhq/errors@6.19.0-nightly.1
-
-## 1.4.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
-  - @ledgerhq/live-env@2.3.0-nightly.1
-
-## 1.4.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/errors@6.19.0-nightly.0
-
-## 1.4.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/live-env@2.3.0-nightly.0
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/live-env@2.3.0-next.0
 
 ## 1.4.0
 

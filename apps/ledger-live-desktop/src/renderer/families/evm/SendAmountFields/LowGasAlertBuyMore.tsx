@@ -57,7 +57,7 @@ const LowGasAlertBuyMore = ({
   if (!gasPriceError) return null;
   return (
     <Flex onClick={isCurrencySupported("BUY", account.currency) ? onBuyClick : undefined}>
-      <Alert type="warning">
+      <Alert type="warning" data-testid="insufficient-funds-warning">
         <TranslatedError error={gasPriceError} />
       </Alert>
     </Flex>

@@ -1,28 +1,28 @@
 # @ledgerhq/errors
 
-## 6.19.0-nightly.3
+## 6.19.0
 
-### Patch Changes
+### Minor Changes
 
-- [#7771](https://github.com/LedgerHQ/ledger-live/pull/7771) [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new PINNotSet error
-
-## 6.19.0-nightly.2
-
-### Patch Changes
-
-- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
-
-## 6.19.0-nightly.1
+- [#7603](https://github.com/LedgerHQ/ledger-live/pull/7603) [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7) Thanks [@thesan](https://github.com/thesan)! - Fix Trustchain error when switching device while logged in
 
 ### Patch Changes
 
 - [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
 
-## 6.19.0-nightly.0
+- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
+
+## 6.19.0-next.0
 
 ### Minor Changes
 
 - [#7603](https://github.com/LedgerHQ/ledger-live/pull/7603) [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7) Thanks [@thesan](https://github.com/thesan)! - Fix Trustchain error when switching device while logged in
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
 
 ## 6.18.0
 

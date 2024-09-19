@@ -1,53 +1,24 @@
 # @ledgerhq/domain-service
 
-## 1.2.4-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5)]:
-  - @ledgerhq/types-live@6.50.1-nightly.2
-
-## 1.2.4-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd)]:
-  - @ledgerhq/types-live@6.50.1-nightly.1
-
-## 1.2.4-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
-  - @ledgerhq/errors@6.19.0-nightly.3
-
-## 1.2.4-nightly.3
+## 1.2.4
 
 ### Patch Changes
 
 - [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
-## 1.2.4-nightly.2
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/types-live@6.51.0
+
+## 1.2.4-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
-  - @ledgerhq/errors@6.19.0-nightly.2
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
 
-## 1.2.4-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3)]:
-  - @ledgerhq/types-live@6.50.1-nightly.0
-  - @ledgerhq/errors@6.19.0-nightly.1
-
-## 1.2.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/errors@6.19.0-nightly.0
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/types-live@6.51.0-next.0
 
 ## 1.2.3
 
