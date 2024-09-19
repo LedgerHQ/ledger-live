@@ -17,6 +17,7 @@ import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hook
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 export type Data = {
   provider: string;
@@ -72,7 +73,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
   const bridge = getAccountBridge(account, parentAccount);
-
+  const mainAccount = getMainAccount(account, parentAccount);
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
   const onViewDetails = useCallback(
@@ -253,23 +254,24 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;
 
-    const hash = bridge.getTransactionHash ? bridge.getTransactionHash(transaction) : null; // Fallback to old flow if getTransactionHash is not implemented
+    const hashPromise = bridge.getTransactionHash
+      ? bridge.getTransactionHash({ transaction, account: mainAccount })
+      : Promise.resolve(null); // Fallback to old flow if getTransactionHash is not implemented
 
-    if (hash) {
-      sendHashAndSwapId(hash, swapId)
-        .then(() => broadcast(signedOperation))
-        .then(onBroadcastSuccess, setError)
-        .finally(() => {
-          broadcastRef.current = true;
-        });
-    } else {
-      // Fallback to old flow
-      broadcast(signedOperation)
-        .then(onBroadcastSuccess, setError)
-        .finally(() => {
-          broadcastRef.current = true;
-        });
-    }
+    hashPromise
+      .then(hash => {
+        if (hash) {
+          return sendHashAndSwapId(hash, swapId).then(() => broadcast(signedOperation));
+        } else {
+          // Fallback to old flow
+          return broadcast(signedOperation);
+        }
+      })
+      .then(onBroadcastSuccess)
+      .catch(setError)
+      .finally(() => {
+        broadcastRef.current = true;
+      });
   }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (

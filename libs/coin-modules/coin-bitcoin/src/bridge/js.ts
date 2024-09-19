@@ -20,6 +20,7 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
+import { getTransactionHash } from "../transactionHash";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
@@ -76,6 +77,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
+    getTransactionHash,
   };
 }
 
