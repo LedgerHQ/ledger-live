@@ -11,8 +11,7 @@ const currencies = [
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-2645, B2CQA-2659, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2660, B2CQA-2674" },
   { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2661, B2CQA-2675" },
-  //todo: Reactivate after DOT API issue is resolved - TSD-3603
-  //{ currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2662, B2CQA-2676" },
+  { currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2662, B2CQA-2676" },
   { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2663, B2CQA-2677" },
   { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2664, B2CQA-2678" },
   { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2665, B2CQA-2679" },
