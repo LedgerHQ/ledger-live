@@ -4,6 +4,8 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "downlevelIteration": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": ".",
     "outDir": "lib", // if out path for a file is same as its src path, nothing will be emitted
     "jsx": "react",

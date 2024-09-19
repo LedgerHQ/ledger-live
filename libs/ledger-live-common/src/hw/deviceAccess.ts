@@ -220,6 +220,7 @@ export const withDevice =
             previousJobId: previousQueuedJob.id,
             currentJobId: jobId,
           });
+          // TODO: SDK reuse session
           return open(deviceId, options?.openTimeoutMs, tracer.getContext());
         }) // open the transport
         .then(async transport => {
@@ -231,8 +232,10 @@ export const withDevice =
             return finalize(transport, [resolveQueuedJob]);
           }
 
+          // TODO: Needs cleanup is useless, needs to be removed
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];
+            // TODO: SDK reuse sendApdu
             await transport.send(0, 0, 0, 0).catch(() => {});
           }
 

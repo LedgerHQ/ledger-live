@@ -5,8 +5,37 @@ import type { DeviceModel } from "@ledgerhq/types-devices";
 import Transport from "@ledgerhq/hw-transport";
 import { TraceContext, trace } from "@ledgerhq/logs";
 import { CantOpenDevice } from "@ledgerhq/errors";
+import {
+  type DeviceSdk,
+  DeviceSdkBuilder,
+  ConsoleLogger,
+  LogLevel,
+} from "@ledgerhq/device-sdk-core";
+
+const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Info)).build();
 
 export const LOG_TYPE = "hw";
+
+class DeviceSdkTransport extends Transport {
+  readonly sdk: DeviceSdk;
+  readonly sessionId: string;
+
+  constructor(sdk: DeviceSdk, sessionId: string) {
+    super();
+    this.sdk = sdk;
+    this.sessionId = sessionId;
+  }
+
+  async exchange(apdu: Buffer, _options: { abortTimeoutMs: number }) {
+    const apduUint8Array = new Uint8Array(apdu.buffer);
+    const response = await this.sdk.sendApdu({ sessionId: this.sessionId, apdu: apduUint8Array });
+    return Buffer.from(response.data.buffer);
+  }
+
+  async close() {
+    await this.sdk.disconnect({ sessionId: this.sessionId });
+  }
+}
 
 export type DeviceEvent = {
   type: "add" | "remove";
@@ -96,84 +125,108 @@ export const discoverDevices = (
  *   if no transport implementation can open the device
  */
 export const open = (
-  deviceId: string,
+  _deviceId: string,
   timeoutMs?: number,
   context?: TraceContext,
 ): Promise<Transport> => {
+  const p = new Promise<Transport>((resolve, reject) => {
+    return deviceSdk.startDiscovering().subscribe({
+      next: device => {
+        trace({
+          type: LOG_TYPE,
+          message: `Found a matching Transport: ${device.id}`,
+          context,
+          data: { timeoutMs },
+        });
+        deviceSdk.connect({ deviceId: device.id }).then(sessionId => {
+          trace({
+            type: LOG_TYPE,
+            message: `Connected to device with sessionId: ${sessionId}`,
+            context,
+            data: { timeoutMs },
+          });
+          const transport = new DeviceSdkTransport(deviceSdk, sessionId);
+          resolve(transport);
+        });
+      },
+      error: error => {
+        // eslint-disable-next-line no-console
+        console.log(error);
+        reject(new CantOpenDevice());
+      },
+    });
+  });
+
+  return p;
   // The first registered Transport (TransportModule) accepting the given device will be returned.
   // The open is not awaited, the check on the device is done synchronously.
   // A TransportModule can check the prefix of the device id to guess if it should use USB or not on LLM for ex.
-  for (let i = 0; i < modules.length; i++) {
-    const m = modules[i];
-    const p = m.open(deviceId, timeoutMs, context);
-    if (p) {
-      trace({
-        type: LOG_TYPE,
-        message: `Found a matching Transport: ${m.id}`,
-        context,
-        data: { timeoutMs },
-      });
-
-      if (!timeoutMs) {
-        return p;
-      }
-
-      let timer: ReturnType<typeof setTimeout> | null = null;
-
-      // Throws CantOpenDevice on timeout, otherwise returns the transport.
-      // Important: with Javascript Promise, when one promise finishes,
-      // the other will still continue, even if its return value will be discarded.
-      return Promise.race([
-        p.then(transport => {
-          // Necessary to stop the ongoing timeout
-          if (timer) {
-            clearTimeout(timer);
-          }
-
-          return transport;
-        }),
-        new Promise((_resolve, reject) => {
-          timer = setTimeout(() => {
-            trace({
-              type: LOG_TYPE,
-              message: `Could not open registered transport ${m.id} on ${deviceId}, timed out after ${timeoutMs}ms`,
-              context,
-            });
-
-            return reject(new CantOpenDevice(`Timeout while opening device on transport ${m.id}`));
-          }, timeoutMs);
-        }),
-      ]) as Promise<Transport>;
-    }
-  }
-
-  return Promise.reject(new CantOpenDevice(`Cannot find registered transport to open ${deviceId}`));
+  // for (let i = 0; i < modules.length; i++) {
+  //   const m = modules[i];
+  //   const p = m.open(deviceId, timeoutMs, context);
+  //   if (p) {
+  //     trace({
+  //       type: LOG_TYPE,
+  //       message: `Found a matching Transport: ${m.id}`,
+  //       context,
+  //       data: { timeoutMs },
+  //     });
+  //     if (!timeoutMs) {
+  //       return p;
+  //     }
+  //     let timer: ReturnType<typeof setTimeout> | null = null;
+  //     // Throws CantOpenDevice on timeout, otherwise returns the transport.
+  //     // Important: with Javascript Promise, when one promise finishes,
+  //     // the other will still continue, even if its return value will be discarded.
+  //     return Promise.race([
+  //       p.then(transport => {
+  //         // Necessary to stop the ongoing timeout
+  //         if (timer) {
+  //           clearTimeout(timer);
+  //         }
+  //         return transport;
+  //       }),
+  //       new Promise((_resolve, reject) => {
+  //         timer = setTimeout(() => {
+  //           trace({
+  //             type: LOG_TYPE,
+  //             message: `Could not open registered transport ${m.id} on ${deviceId}, timed out after ${timeoutMs}ms`,
+  //             context,
+  //           });
+  //           return reject(new CantOpenDevice(`Timeout while opening device on transport ${m.id}`));
+  //         }, timeoutMs);
+  //       }),
+  //     ]) as Promise<Transport>;
+  //   }
+  // }
+  // return Promise.reject(new CantOpenDevice(`Cannot find registered transport to open ${deviceId}`));
 };
 
 export const close = (
   transport: Transport,
-  deviceId: string,
+  _deviceId: string,
   context?: TraceContext,
 ): Promise<void> => {
   trace({ type: LOG_TYPE, message: "Trying to close transport", context });
+  return transport.close();
 
   // Tries to call close on the registered TransportModule implementation first
-  for (let i = 0; i < modules.length; i++) {
-    const m = modules[i];
-    const p = m.close && m.close(transport, deviceId);
-    if (p) {
-      trace({
-        type: LOG_TYPE,
-        message: `Closing transport via registered module: ${m.id}`,
-        context,
-      });
-      return p;
-    }
-  }
+  // for (let i = 0; i < modules.length; i++) {
+  //   const m = modules[i];
+  //   const p = m.close && m.close(transport, deviceId);
+  //   if (p) {
+  //     trace({
+  //       type: LOG_TYPE,
+  //       message: `Closing transport via registered module: ${m.id}`,
+  //       context,
+  //     });
+  //     return p;
+  //   }
+  // }
 
-  trace({ type: LOG_TYPE, message: `Closing transport via the transport implementation`, context });
-  // Otherwise fallbacks on the transport implementation of close directly
-  return transport.close();
+  // trace({ type: LOG_TYPE, message: `Closing transport via the transport implementation`, context });
+  // // Otherwise fallbacks on the transport implementation of close directly
+  // return transport.close();
 };
 
 export const disconnect = (deviceId: string): Promise<void> => {

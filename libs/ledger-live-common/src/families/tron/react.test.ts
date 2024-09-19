@@ -102,8 +102,7 @@ test("Tron search SR - search SR in the list - Expect to retrieve a specific lis
   const { result } = renderHook(() =>
     useSortedSr(
       superRepresentatives[SR_INDEX_1].name as string,
-      // @ts-expect-error wat
-      superRepresentatives,
+      superRepresentatives as any,
       votes,
     ),
   );
