@@ -28,6 +28,7 @@ export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {
       {isSuccessful ? (
         <Success
           title={t("walletSync.manageBackup.deleteBackupSuccess.title")}
+          description={t("walletSync.manageBackup.deleteBackupSuccess.description")}
           withClose
           onClose={onClose}
           analyticsPage={AnalyticsPage.BackupDeleted}

@@ -4,7 +4,7 @@ import { Drawer } from "./drawer";
 import { extractNumberFromText } from "tests/utils/textParserUtils";
 
 export class LedgerSyncDrawer extends Drawer {
-  private syncAccountsButton = this.page.getByRole("button", { name: "Sync your accounts" });
+  private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private manageBackupButton = this.page.getByTestId("walletSync-manage-backup");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Delete" });

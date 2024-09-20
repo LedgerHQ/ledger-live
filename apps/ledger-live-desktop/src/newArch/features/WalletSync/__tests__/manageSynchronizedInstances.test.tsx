@@ -58,7 +58,7 @@ describe("manageSynchronizedInstances", () => {
 
     //Manage Synch Instances Step
 
-    await waitFor(() => expect(screen.getByText("Manage synchronized instances")).toBeDefined());
+    await waitFor(() => expect(screen.getByText("Ledger Live is synched across")).toBeDefined());
 
     const instance = screen.getByTestId("walletSync-manage-instance-currentInstance");
     expect(instance).toBeDefined();
@@ -66,7 +66,7 @@ describe("manageSynchronizedInstances", () => {
     await user.click(screen.getAllByText("Remove")[0]);
 
     // Auto remove check handled
-    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
+    expect(screen.getByText(/You can’t remove this computer while you’re using it/i)).toBeDefined();
 
     await user.click(
       screen.getByRole("button", {
