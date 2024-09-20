@@ -12,7 +12,6 @@ export enum Flow {
 
 export enum Step {
   //ManageBackup
-  ManageBackup = "ManageBackup",
   DeleteBackup = "DeleteBackup",
   BackupDeleted = "BackupDeleted",
   BackupDeletionError = "BackupDeletionError",

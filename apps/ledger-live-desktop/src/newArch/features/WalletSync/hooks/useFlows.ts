@@ -40,9 +40,8 @@ export const FlowOptions: Record<
   },
   [Flow.ManageBackup]: {
     steps: {
-      1: Step.ManageBackup,
-      2: Step.DeleteBackup,
-      3: Step.BackupDeleted,
+      1: Step.DeleteBackup,
+      2: Step.BackupDeleted,
     },
   },
   [Flow.ManageInstances]: {
@@ -70,7 +69,6 @@ export const FlowOptions: Record<
  *
  */
 export const STEPS_WITH_BACK: Step[] = [
-  Step.ManageBackup,
   Step.DeleteBackup,
   Step.SynchronizedInstances,
   Step.SynchronizeMode,

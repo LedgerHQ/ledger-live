@@ -50,8 +50,8 @@ export const DeletionError = ({ error }: Props) => {
     onClickTrack({ button: "connect new ledger", page: errorConfig[error].analyticsPage });
   };
   const goToDelete = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
-    onClickTrack({ button: "delete key", page: errorConfig[error].analyticsPage });
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.DeleteBackup }));
+    onClickTrack({ button: "Delete sync", page: errorConfig[error].analyticsPage });
   };
 
   const understood = () => {

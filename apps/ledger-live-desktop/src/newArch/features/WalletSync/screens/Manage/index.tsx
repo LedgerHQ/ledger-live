@@ -36,12 +36,15 @@ const WalletSyncManage = () => {
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
 
-    onClickTrack({ button: "Synchronize", page: AnalyticsPage.LedgerSyncSettings });
+    onClickTrack({
+      button: "Synchronize with another app",
+      page: AnalyticsPage.LedgerSyncSettings,
+    });
   };
 
   const goToManageBackup = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
-    onClickTrack({ button: "Manage Key", page: AnalyticsPage.LedgerSyncSettings });
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.DeleteBackup }));
+    onClickTrack({ button: "Delete sync", page: AnalyticsPage.LedgerSyncSettings });
   };
 
   const goToManageInstances = () => {
