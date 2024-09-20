@@ -21,8 +21,6 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
-import icon from "@ledgerhq/coin-icon/transaction";
-import ton from "@ledgerhq/coin-ton/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
 export default {
@@ -49,7 +47,5 @@ export default {
   ton,
   tron,
   xrp,
-  icon,
-  ton,
   mina,
 };

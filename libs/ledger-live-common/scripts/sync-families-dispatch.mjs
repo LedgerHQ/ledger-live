@@ -37,8 +37,6 @@ const familiesWPackage = [
   "ton",
   "tron",
   "xrp",
-  "icon",
-  "ton",
   "mina",
 ];
 

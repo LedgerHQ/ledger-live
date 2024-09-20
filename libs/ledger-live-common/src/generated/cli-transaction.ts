@@ -19,8 +19,6 @@ import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as ton } from "../families/ton/setup";
 import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
-import { cliTools as icon } from "../families/icon/setup";
-import { cliTools as ton } from "../families/ton/setup";
 import { cliTools as mina } from "../families/mina/setup";
 
 export default {
@@ -45,7 +43,5 @@ export default {
   ton,
   tron,
   xrp,
-  icon,
-  ton,
   mina,
 };
