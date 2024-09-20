@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.86.1-nightly.0
+
+### Patch Changes
+
+- [#7850](https://github.com/LedgerHQ/ledger-live/pull/7850) [`4ae8284`](https://github.com/LedgerHQ/ledger-live/commit/4ae82843780ec117d51974ea481eb288b13a181d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change delete sync flow on LS to skip a step and update copy
+
+- [#7851](https://github.com/LedgerHQ/ledger-live/pull/7851) [`5e4272d`](https://github.com/LedgerHQ/ledger-live/commit/5e4272d5a559d06124c3231a06ead1813382110b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update sync flow for LS when active on instance and copy
+
+- [#7840](https://github.com/LedgerHQ/ledger-live/pull/7840) [`332312b`](https://github.com/LedgerHQ/ledger-live/commit/332312bc84fc6c255966536a410a770c7d29f75d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add UTXO disclaimer on Receive
+
 ## 2.86.0
 
 ### Minor Changes

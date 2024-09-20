@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.50.0-nightly.1
+
+### Patch Changes
+
+- [#7848](https://github.com/LedgerHQ/ledger-live/pull/7848) [`a168663`](https://github.com/LedgerHQ/ledger-live/commit/a168663e007572f7cf352e2fb0d709ca51f6dc39) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Onboarding Skip prompt drawer for LedgerSync
+
+- [#7854](https://github.com/LedgerHQ/ledger-live/pull/7854) [`45a27dc`](https://github.com/LedgerHQ/ledger-live/commit/45a27dc196db6e06df5952ac1167f5e3449bd796) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Block users from syncing with device if Ledger Sync is active on instance
+
+- [#7836](https://github.com/LedgerHQ/ledger-live/pull/7836) [`d9a4644`](https://github.com/LedgerHQ/ledger-live/commit/d9a4644582f48b960ad53d379424f34aac92df28) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Avoid blink when LLM is unsync
+
+- [#7849](https://github.com/LedgerHQ/ledger-live/pull/7849) [`75e8548`](https://github.com/LedgerHQ/ledger-live/commit/75e85484f4fffc37ba127145d73bc09a9363c57d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Skip drawer when user clicks on delete Sync + update copy
+
 ## 3.50.0-nightly.0
 
 ### Minor Changes
