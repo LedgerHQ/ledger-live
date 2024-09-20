@@ -91,7 +91,7 @@ function AccessExistingWallet() {
                   title: t("onboarding.welcomeBackStep.walletSync"),
                   event: "button_clicked",
                   eventProperties: {
-                    button: AnalyticsButton.SyncWithAnotherLedgerLive,
+                    button: AnalyticsButton.UseLedgerSync,
                     page: AnalyticsPage.OnboardingAccessExistingWallet,
                   },
                   testID: "Existing Wallet | Wallet Sync",
