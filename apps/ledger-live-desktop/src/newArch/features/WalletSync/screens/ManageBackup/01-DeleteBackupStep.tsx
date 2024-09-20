@@ -27,14 +27,15 @@ export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
   return (
     <Flex flexDirection="column" rowGap="24px">
       <TrackPage category={AnalyticsPage.ConfirmDeleteBackup} />
-      <Text fontSize={23} variant="large" color="neutral.c100">
-        {t("walletSync.manageBackup.deleteBackup.title")}
-      </Text>
+      <Flex flexDirection="column" rowGap="8px">
+        <Text fontSize={23} variant="large" color="neutral.c100">
+          {t("walletSync.manageBackup.deleteBackup.title")}
+        </Text>
 
-      <Text fontSize={14} variant="body" color="neutral.c70">
-        {t("walletSync.manageBackup.deleteBackup.description")}
-      </Text>
-
+        <Text fontSize={14} variant="body" color="neutral.c70">
+          {t("walletSync.manageBackup.deleteBackup.description")}
+        </Text>
+      </Flex>
       <Flex flexDirection="row" alignItems="flex-start">
         <ButtonV3 onClick={handleCancel} variant="shade">
           {t("walletSync.manageBackup.deleteBackup.cancel")}

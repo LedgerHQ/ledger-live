@@ -2,19 +2,12 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { BackProps, BackRef } from "../router";
-import ManageBackupStep from "./01-ManageBackupStep";
-import DeleteBackupStep from "./02-DeleteBackupStep";
-import BackupDeleted from "./03-FinalStep";
+import DeleteBackupStep from "./01-DeleteBackupStep";
+import BackupDeleted from "./02-FinalStep";
 import { useFlows } from "LLD/features/WalletSync/hooks/useFlows";
 
 const WalletSyncManageBackup = forwardRef<BackRef, BackProps>((_props, ref) => {
-  const {
-    currentStep,
-    goToNextScene,
-    goToPreviousScene,
-    FlowOptions,
-    goToWelcomeScreenWalletSync,
-  } = useFlows();
+  const { currentStep, goToPreviousScene, FlowOptions, goToWelcomeScreenWalletSync } = useFlows();
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -31,8 +24,6 @@ const WalletSyncManageBackup = forwardRef<BackRef, BackProps>((_props, ref) => {
   const getStep = () => {
     switch (currentStep) {
       default:
-      case Step.ManageBackup:
-        return <ManageBackupStep goToDeleteBackup={goToNextScene} />;
       case Step.DeleteBackup:
         return <DeleteBackupStep cancel={goBack} />;
       case Step.BackupDeleted:

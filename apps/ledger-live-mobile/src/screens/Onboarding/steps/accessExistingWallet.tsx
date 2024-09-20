@@ -115,7 +115,7 @@ function AccessExistingWallet() {
       />
 
       <ActivationDrawer
-        startingStep={Steps.Activation}
+        startingStep={Steps.ChooseSyncMethod}
         isOpen={isDrawerVisible}
         handleClose={closeDrawer}
       />

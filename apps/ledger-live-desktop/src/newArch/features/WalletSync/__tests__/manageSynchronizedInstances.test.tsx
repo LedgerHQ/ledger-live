@@ -52,7 +52,7 @@ describe("manageSynchronizedInstances", () => {
 
     await waitFor(() => expect(row).toBeDefined());
 
-    expect(screen.getByText("2 Synchronized instances")).toBeDefined();
+    expect(screen.getByText("2 Ledger Live apps synched")).toBeDefined();
 
     await user.click(row);
 

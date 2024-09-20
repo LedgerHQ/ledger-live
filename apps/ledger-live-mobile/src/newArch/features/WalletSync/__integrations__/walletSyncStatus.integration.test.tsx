@@ -3,6 +3,8 @@ import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
+import { http, HttpResponse } from "msw";
+import { server } from "@tests/server";
 
 jest.mock("../hooks/useLedgerSyncStatus", () => ({
   useLedgerSyncStatus: () => ({
@@ -43,6 +45,12 @@ describe("WalletSyncStatus", () => {
         },
       }),
     });
+
+    server.use(
+      http.get("https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge", () => {
+        return HttpResponse.error();
+      }),
+    );
 
     // Check if the ledger sync row is visible
     await expect(await screen.findByText(/ledger sync/i)).toBeVisible();
