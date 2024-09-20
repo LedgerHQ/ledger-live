@@ -58,9 +58,7 @@ describe("ManageYourBackup", () => {
 
     //Success message
     await waitFor(() =>
-      expect(
-        screen.getByText("Your devices have been unsynchronized and your key has been deleted"),
-      ).toBeDefined(),
+      expect(screen.getByText("Your Ledger Live apps are no longer synched")).toBeDefined(),
     );
   });
 });

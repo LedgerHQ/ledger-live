@@ -4010,7 +4010,7 @@
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
+      "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -6448,12 +6448,13 @@
     "title": "Ledger Sync",
     "close": "Close",
     "activate": {
-      "title": "Sync your accounts across all platforms",
-      "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
-      "cta": "Sync your accounts"
+      "title": "Turn on Ledger Sync for this computer?",
+      "description": "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+      "cta": "Turn on Ledger Sync",
+      "alreadySync": "I already turned it on",
+      "learnMore": "How does Ledger Sync work?"
     },
-    "alreadySync": "Already synced a Ledger Live app?",
-    "learnMore": "Learn more",
+
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6480,14 +6481,13 @@
       "description": "Please try again later.",
       "cta": "Try again",
       "fetching": "Something went wrong while fetching your data.",
-      "ledgerSyncDown": "Ledger Sync is currently unavailable.<br/>This doesn’t have any impact on your assets."
+      "ledgerSyncDown": "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
     },
     "unsecuredError": {
-      "title": "The synchronization isn't secured by this Ledger",
-      "description": "Please connect the Ledger device you used to create your encryption key.",
-      "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "title": "Connect the same Ledger device you used for enabling Ledger Sync",
+      "description": "If you don’t have the same Ledger device, select “Delete sync” instead.",
       "cta": "Connect another Ledger",
-      "ctaDelete": "Delete my encryption key"
+      "ctaDelete": "Delete sync"
     },
     "alreadySecureError": {
       "title": "This app is already secured by this Ledger",
@@ -6497,23 +6497,21 @@
     "alreadySecureOtherSeedError": {
       "title": "You can’t use this Ledger to sync",
       "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
-      "cta": "Delete my encryption key"
+      "cta": "Delete sync"
     },
     "autoRemoveError": {
-      "title": "You can’t remove the current instance",
-      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
-      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "title": "You can’t remove this computer while you’re using it",
+      "description": "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync' instead.",
       "cta": "I understand",
-      "ctaDelete": "Delete my encryption key"
+      "ctaDelete": "Delete sync"
     },
     "success": {
       "backup": {
-        "title": "Success",
-        "desc": "You successfully enabled Ledger Sync."
+        "title": "Ledger Sync turned on for Ledger Live on this computer"
       },
       "synch": {
-        "title": "Synchronization successful!",
-        "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
+        "title": "Sync successful!",
+        "desc": "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers. "
       },
       "synchAnother": "Sync with another Ledger Live app",
       "close": "Close"
@@ -6527,7 +6525,8 @@
         "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
-        "title": "Your devices have been unsynchronized and your key has been deleted"
+        "title": "Your Ledger Live apps are no longer synched",
+        "description": "You can turn on sync anytime"
       },
       "deleteBackupError": {
         "title": "Something went wrong"
@@ -6553,10 +6552,10 @@
           "desktop": "Sync with computer"
         },
         "mobile": {
-          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "description": "Sync with the Ledger Live app on another phone",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
             "step3": "Scan QR code"
           }
         },
@@ -6564,7 +6563,7 @@
           "description": "Synchronize your accounts with another Ledger Live app",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
             "step3": "Connect your Ledger"
           }
         }
@@ -6575,18 +6574,18 @@
         "cta": "Create your encryption key"
       },
       "pinCode": {
-        "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "title": "Your Ledger Sync code",
+        "description": "To sync your crypto accounts across both Ledger Live apps, enter this code in Ledger Live on your phone.",
         "error": {
-          "title": "Codes do not match",
+          "title": "The codes don’t match",
           "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
         }
       }
     },
     "manageInstances": {
-      "title": "Manage synchronized instances",
+      "title": "Ledger Live is synched across",
       "remove": "Remove",
-      "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceSuccess": "Your Ledger Live app on {{instanceName}} is no longer connected to Ledger Sync",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
     },
     "deviceAction": {

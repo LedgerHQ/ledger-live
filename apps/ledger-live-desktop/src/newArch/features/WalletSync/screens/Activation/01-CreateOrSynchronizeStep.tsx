@@ -61,14 +61,14 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
       <Flex justifyContent="center" width="100%">
         <ButtonV3 variant="shade" width="100%" onClick={goToSync}>
           <Text variant="body" fontSize={14} flexShrink={1}>
-            {t("walletSync.alreadySync")}
+            {t("walletSync.activate.alreadySync")}
           </Text>
         </ButtonV3>
       </Flex>
       {hasLearnMoreLink && (
         <Link onClick={onLearnMore}>
           <Text variant="body" fontSize={14} flexShrink={1}>
-            {t("walletSync.learnMore")}
+            {t("walletSync.activate.learnMore")}
           </Text>
         </Link>
       )}
