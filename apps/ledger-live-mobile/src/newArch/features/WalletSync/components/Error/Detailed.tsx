@@ -59,7 +59,7 @@ export function DetailedError(props: Props) {
           {cta}
         </Button>
         {ctaSecondary && secondaryAction && (
-          <Link onPress={secondaryAction}>
+          <Link onPress={secondaryAction} testID="ctaSecondary-detailled-error">
             <Text variant="paragraph" fontWeight="semiBold" color="neutral.c70">
               {ctaSecondary}
             </Text>

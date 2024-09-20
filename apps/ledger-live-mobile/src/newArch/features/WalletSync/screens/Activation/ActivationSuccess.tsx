@@ -24,7 +24,7 @@ export function ActivationSuccess({ navigation, route }: Props) {
   const isFromLedgerSyncOnboarding = useSelector(isFromLedgerSyncOnboardingSelector);
   const { created } = route.params;
   const title = created ? "walletSync.success.activation" : "walletSync.success.sync";
-  const desc = created ? "walletSync.success.activationDesc" : "walletSync.success.syncDesc";
+  const desc = created ? "" : "walletSync.success.syncDesc";
   const page = created ? AnalyticsPage.BackupCreationSuccess : AnalyticsPage.SyncSuccess;
   const dispatch = useDispatch();
   const { setCurrentStep } = useCurrentStep();

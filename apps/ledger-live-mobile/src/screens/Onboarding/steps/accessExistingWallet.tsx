@@ -96,7 +96,7 @@ function AccessExistingWallet() {
                   },
                   testID: "Existing Wallet | Wallet Sync",
                   onPress: openDrawer,
-                  icon: <Icons.QrCode color={colors.primary.c80} />,
+                  icon: <Icons.Refresh color={colors.primary.c80} />,
                 },
               ]
             : [

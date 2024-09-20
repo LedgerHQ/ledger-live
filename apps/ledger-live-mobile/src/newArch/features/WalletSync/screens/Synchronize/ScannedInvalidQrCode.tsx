@@ -14,7 +14,7 @@ export default function ScannedInvalidQrCode({ tryAgain }: Props) {
   const onTryAgain = () => {
     tryAgain();
     track("button_clicked", {
-      button: AnalyticsButton.TryAgain,
+      button: AnalyticsButton.Understand,
       page: AnalyticsPage.ScannedInvalidQrCode,
     });
   };
@@ -23,6 +23,7 @@ export default function ScannedInvalidQrCode({ tryAgain }: Props) {
     <ErrorComponent
       title={t("walletSync.synchronize.qrCode.scannedInvalidQrCode.title")}
       desc={t("walletSync.synchronize.qrCode.scannedInvalidQrCode.desc")}
+      info={t("walletSync.synchronize.qrCode.scannedInvalidQrCode.info")}
       mainButton={{
         label: t("walletSync.synchronize.qrCode.scannedInvalidQrCode.tryAgain"),
         onPress: onTryAgain,
