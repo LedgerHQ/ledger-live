@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
+// TODO version selector
+import { EvmStakingDrawer } from "~/families/evm/StakingDrawerV2";
 
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
 import { InitialDrawerID, RootDrawerProps } from "./types";

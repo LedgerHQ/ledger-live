@@ -19,6 +19,7 @@ export type TabItemProps = Partial<BaseTabsProps> & {
   activeColor?: string;
   activeBg?: string;
   disabled?: boolean;
+  size?: "small" | "medium";
 };
 
 export type TabsProps = BaseTabsProps & {

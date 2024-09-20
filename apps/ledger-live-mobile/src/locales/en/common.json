@@ -6622,7 +6622,7 @@
   },
   "stake": {
     "ethereum": {
-      "title": "Grow your ETH holdings",
+      "title": "Grow your ETHHHH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
       "tagMinimum": "Requires {{min}} ETH",
       "close": "Close",
@@ -6654,6 +6654,72 @@
           "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
           "supportLink": "Learn more about Kiln"
         }
+      }
+    },
+    "ethereum_v2": {
+      "title": "Select staking provider",
+      "category": {
+        "all": {
+          "name": "All",
+          "description": "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid": {
+          "name": "Liquid",
+          "description": "Stake ETH and receive rewards in liquid token you will still be able to trade and participate in DeFi activities."
+        },
+        "protocol": {
+          "name": "Protocol",
+          "description": "Stake a batch of 32 ETH and receive full node rewards in ETH."
+        },
+        "pooling": {
+          "name": "Pooling",
+          "description": "TODO."
+        },
+        "restaking": {
+          "name": "Restaking",
+          "description": "Restake your liquid token to earn additional rewards."
+        }
+      },
+      "how_it_works": "How ETH staking works",
+      "lst": "Liquid token needed",
+      "no_minimum": "No minimum",
+      "provider": {
+        "figment": {
+          "title": "Figment"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking Pool"
+        },
+        "kiln_restaking": {
+          "title": "Kiln Liquid restaking"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking"
+        },
+        "kelpdao": {
+          "title": "Kelp DAO"
+        },
+        "lido": {
+          "title": "Lido"
+        },
+        "p2p": {
+          "title": "P2P"
+        },
+        "rocket_pool": {
+          "title": "Rocket Pool"
+        },
+        "stader-eth": {
+          "title": "Stader Labs"
+        }
+      },
+      "read_about": "Read about ETH staking and different strategies",
+      "required_minimum": "Requires {{min}} ETH",
+      "rewards_strategy": {
+        "auto-compounded": "Auto-compounded rewards",
+        "basic": "Rewards",
+        "daily": "Daily rewards",
+        "eigenlayer_points": "Eigenlayer points",
+        "validator": "Validator rewards"
       }
     },
     "noFundsModal": {

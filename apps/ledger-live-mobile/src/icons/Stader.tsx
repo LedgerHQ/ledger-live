@@ -3,11 +3,21 @@ import Svg, { SvgProps, Path, Rect, G, Defs, ClipPath } from "react-native-svg";
 
 type Props = SvgProps & { size?: number };
 
-function Stader({ size = 32, ...props }: Props): JSX.Element {
+const BASE_SIZE = 32;
+
+function Stader({ size = BASE_SIZE, ...props }: Props): JSX.Element {
   return (
-    <Svg width={size} height={size} fill="none" {...props}>
-      <Rect width={size} height={size} fill="#F3F0EB" rx={10} />
-      <Rect width={size} height={size} x={0.5} y={0.5} stroke="#fff" strokeOpacity={0.1} rx={9.5} />
+    <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
+      <Rect width={BASE_SIZE} height={BASE_SIZE} fill="#F3F0EB" rx={10} />
+      <Rect
+        width={BASE_SIZE}
+        height={BASE_SIZE}
+        x={0.5}
+        y={0.5}
+        stroke="#fff"
+        strokeOpacity={0.1}
+        rx={9.5}
+      />
       <G clipPath="url(#stader_svg__a)">
         <Path
           fill="#07C166"

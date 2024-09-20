@@ -105,7 +105,7 @@ export function EthStakingModalBody({
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
       <Flex flexDirection="column" alignItems="center" rowGap={16}>
         <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
-          {t("ethereum.stake.title")}
+          {t("ethereum.stake_v2.title")}
         </Text>
         {listProviders.length <= 1 && (
           <Flex justifyContent="center" py={20} width="100%">

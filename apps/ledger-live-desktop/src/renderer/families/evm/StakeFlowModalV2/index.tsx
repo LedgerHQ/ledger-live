@@ -34,7 +34,7 @@ const ascending = (a: EthStakingProvider, b: EthStakingProvider) => (a?.min ?? 0
 const descending = (a: EthStakingProvider, b: EthStakingProvider) => (b?.min ?? 0) - (a?.min ?? 0);
 
 type Option = EthStakingProviderCategory | "all";
-const OPTIONS: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
+const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
 
 interface Props {
   account: Account;
@@ -102,8 +102,8 @@ const StakingModal = ({ account, hasCheckbox, source }: Props) => {
                 {t("ethereum.stake_v2.title")}
               </Text>
               <Flex flexDirection="row" alignItems="center" height="24px" columnGap={2}>
-                {OPTIONS.map((x, i) => {
-                  const checked = i === OPTIONS.indexOf(selected);
+                {OPTION_VALUES.map((x, i) => {
+                  const checked = i === OPTION_VALUES.indexOf(selected);
                   return (
                     <Button
                       borderRadius={2}
@@ -115,7 +115,7 @@ const StakingModal = ({ account, hasCheckbox, source }: Props) => {
                       style={{ textTransform: "capitalize" }}
                       variant={checked ? "color" : "main"}
                     >
-                      {x}
+                      {t(`ethereum.stake_v2.category.${x}.name`)}
                     </Button>
                   );
                 })}
@@ -126,7 +126,7 @@ const StakingModal = ({ account, hasCheckbox, source }: Props) => {
                 </Flex>
               )}
               <Text textAlign="center" color="neutral.c70" fontSize={14} maxWidth={360}>
-                {t(`ethereum.stake_v2.category.${selected}`)}
+                {t(`ethereum.stake_v2.category.${selected}.description`)}
               </Text>
             </Flex>
             <Box
