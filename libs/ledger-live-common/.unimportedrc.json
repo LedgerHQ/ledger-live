@@ -329,7 +329,8 @@
     "src/walletSync/getEnvironmentParams.ts",
     "src/device/use-cases/appDataBackup/deleteAppData.ts",
     "src/device/use-cases/appDataBackup/deleteAppDataUseCase.ts",
-    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts"
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts",
+    "src/account/typeGuards.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",

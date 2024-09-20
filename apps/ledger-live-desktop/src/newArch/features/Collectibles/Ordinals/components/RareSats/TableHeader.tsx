@@ -14,13 +14,11 @@ export const TableHeader = () => {
 
   const firstColumn = Column("ordinals.rareSats.table.type");
   const secondColumn = Column("ordinals.rareSats.table.year");
-  const thirdColumn = Column("ordinals.rareSats.table.utxo");
 
   return (
     <RowLayout
       firstColumnElement={firstColumn}
       secondColumnElement={secondColumn}
-      thirdColumnElement={thirdColumn}
       bgColor="opacityDefault.c05"
     />
   );

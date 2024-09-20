@@ -1,12 +1,14 @@
-import { mockedRareSats } from "LLD/features/Collectibles/__integration__/mockedRareSats";
-import { processRareSats, groupRareSats, finalizeRareSats } from "./helpers";
+import { matchCorrespondingIcon, createRareSatObject } from "./helpers";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
+import { regroupRareSatsByContractAddress } from "@ledgerhq/live-nft-react";
 
-type RareSatsProps = {};
+type Props = {
+  rareSats: SimpleHashNft[];
+};
 
-export const useRareSatsModel = (_props: RareSatsProps) => {
-  const processedRareSats = processRareSats(mockedRareSats);
-  const groupedRareSats = groupRareSats(processedRareSats);
-  const finalRareSats = finalizeRareSats(groupedRareSats);
-
-  return { rareSats: finalRareSats };
+export const useRareSatsModel = ({ rareSats }: Props) => {
+  const matchedRareSats = matchCorrespondingIcon(rareSats);
+  const regroupedRareSats = regroupRareSatsByContractAddress(matchedRareSats);
+  const rareSatsCreated = createRareSatObject(regroupedRareSats);
+  return { rareSats: rareSatsCreated };
 };
