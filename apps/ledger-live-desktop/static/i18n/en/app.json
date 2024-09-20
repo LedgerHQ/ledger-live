@@ -6517,7 +6517,6 @@
       "close": "Close"
     },
     "manageBackup": {
-      "title": "Manage your key",
       "deleteBackup": {
         "title": "Sure you want to delete sync?",
         "description": "Your crypto accounts across Ledger Live apps on different phones and computers will stop being in sync. This does not impact your funds in any way. ",
@@ -6569,9 +6568,9 @@
         }
       },
       "unbackedError": {
-        "title": "You need to create your encryption key first",
-        "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
-        "cta": "Create your encryption key"
+        "title": "Sync not detected",
+        "description": "Turn on Ledger Sync on either this Ledger Live or the one you’re syncing with",
+        "cta": "Turn on Ledger Sync"
       },
       "pinCode": {
         "title": "Your Ledger Sync code",
