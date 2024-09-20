@@ -8,7 +8,7 @@ import { Providers, Rates } from "tests/enum/Swap";
 
 const swaps = [
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_1, "0.022", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.BTC_1, "0.015", Fee.MEDIUM),
   },
 ];
 
@@ -18,6 +18,11 @@ for (const { swap } of swaps) {
   test.beforeAll(async () => {
     process.env.SWAP_DISABLE_APPS_INSTALL = "true";
     process.env.SWAP_API_BASE = "https://swap-stg.ledger.com/v5";
+  });
+
+  test.afterAll(async () => {
+    delete process.env.SWAP_DISABLE_APPS_INSTALL;
+    delete process.env.SWAP_API_BASE;
   });
 
   test.describe.serial("Swap", () => {
@@ -39,7 +44,7 @@ for (const { swap } of swaps) {
       electronApp,
     }) => {
       const provider = Providers.CHANGELLY;
-      const rate = Rates.FIXED;
+      const rate = Rates.FLOAT;
       await app.layout.goToSwap();
       await app.swap.selectAccountToSwapFrom(swap.accountToDebit.accountName);
       await app.swap.selectCurrencyToSwapTo(swap.accountToCredit.currency.name);
