@@ -83,6 +83,7 @@ const WalletSyncRow = () => {
         onRequestClose={closeDrawer}
         onRequestBack={hasBack ? handleBack : undefined}
         direction="left"
+        forceDisableFocusTrap
       >
         <WalletSyncRouter ref={childRef} />
       </SideDrawer>
