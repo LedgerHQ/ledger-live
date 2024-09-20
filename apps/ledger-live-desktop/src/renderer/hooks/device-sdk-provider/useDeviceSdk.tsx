@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/device-sdk-core";
 import { BehaviorSubject, firstValueFrom } from "rxjs";
 
-const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Info)).build();
+const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Debug)).build();
 
 export const DeviceSdkContext = createContext<DeviceSdk>(deviceSdk);
 

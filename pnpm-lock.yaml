@@ -25,7 +25,7 @@ patchedDependencies:
     hash: ftpe7kgiykw2quxzn7vgiqumd4
     path: patches/@hashgraph__sdk@2.14.2.patch
   '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023':
-    hash: 5m5zmtsqdnmitry4afpdnlpzom
+    hash: ezrx2xjnwu6bcqtoxg4mvfkpha
     path: patches/@ledgerhq__device-sdk-core@0.0.0-develop-20240918001023.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
@@ -281,7 +281,7 @@ importers:
         version: link:../../libs/coin-framework
       '@ledgerhq/device-sdk-core':
         specifier: 0.0.0-develop-20240918001023
-        version: 0.0.0-develop-20240918001023(patch_hash=5m5zmtsqdnmitry4afpdnlpzom)
+        version: 0.0.0-develop-20240918001023(patch_hash=ezrx2xjnwu6bcqtoxg4mvfkpha)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -37132,7 +37132,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023(patch_hash=5m5zmtsqdnmitry4afpdnlpzom)':
+  '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023(patch_hash=ezrx2xjnwu6bcqtoxg4mvfkpha)':
     dependencies:
       '@sentry/minimal': 6.19.7
       '@statelyai/inspect': 0.4.0(xstate@5.18.1)

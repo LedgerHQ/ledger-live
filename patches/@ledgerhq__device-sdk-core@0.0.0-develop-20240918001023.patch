@@ -1,5 +1,5 @@
 diff --git a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
-index 49eb94c6e2bb109fe3641a39bf22a96252bba387..036111f4e9cb754b69d99e8c74a479265acbd10f 100644
+index 49eb94c6e2bb109fe3641a39bf22a96252bba387..c28e5785f152d6205c1e48b06533ec1afa2b0129 100644
 --- a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
 +++ b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
 @@ -106,9 +106,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
@@ -13,8 +13,42 @@ index 49eb94c6e2bb109fe3641a39bf22a96252bba387..036111f4e9cb754b69d99e8c74a47926
              }
              catch (error) {
                  const deviceError = new Errors_1.NoAccessibleDeviceError(error);
+@@ -174,7 +172,15 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+                     this._logger.info(`Got access to ${hidDevices.length} HID devices`);
+                     const discoveredDevices = hidDevices.map((hidDevice) => {
+                         const usbProductId = this.getHidUsbProductId(hidDevice.productId);
+-                        const deviceModels = this.deviceModelDataSource.filterDeviceModels({ usbProductId });
++                        let deviceModels = this.deviceModelDataSource.filterDeviceModels({
++                            usbProductId,
++                          });
++            
++                          if (deviceModels.length === 0) {
++                            deviceModels = this.deviceModelDataSource.filterDeviceModels({
++                              legacyUsbProductId: usbProductId,
++                            });
++                          }
+                         if (deviceModels.length === 1 && deviceModels[0]) {
+                             const id = (0, uuid_1.v4)();
+                             const discoveredDevice = {
+@@ -267,8 +273,15 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+      * The USB/HID product id is represented by only the 2nd byte
+      */
+     getHidUsbProductId(productId) {
++        const matchingLegacyDeviceModel =
++          this.deviceModelDataSource.filterDeviceModels({
++            legacyUsbProductId: productId,
++          })[0];
++        if (matchingLegacyDeviceModel) {
++          return productId;
++        }
+         return productId >> 8;
+-    }
++      }
+     /**
+      * Disconnect from a HID USB device and delete its handlers
+      */
 diff --git a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
-index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..146e390791ea4f1ddb1ae34944bd07273a3c39fd 100644
+index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..db6f4144c90b5a2e08507f5b6c5b2c11a163539e 100644
 --- a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
 +++ b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
 @@ -80,9 +80,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
@@ -28,3 +62,37 @@ index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..146e390791ea4f1ddb1ae34944bd0727
              }
              catch (error) {
                  const deviceError = new NoAccessibleDeviceError(error);
+@@ -148,7 +146,15 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+                     this._logger.info(`Got access to ${hidDevices.length} HID devices`);
+                     const discoveredDevices = hidDevices.map((hidDevice) => {
+                         const usbProductId = this.getHidUsbProductId(hidDevice.productId);
+-                        const deviceModels = this.deviceModelDataSource.filterDeviceModels({ usbProductId });
++                        let deviceModels = this.deviceModelDataSource.filterDeviceModels({
++                            usbProductId,
++                          });
++            
++                          if (deviceModels.length === 0) {
++                            deviceModels = this.deviceModelDataSource.filterDeviceModels({
++                              legacyUsbProductId: usbProductId,
++                            });
++                          }
+                         if (deviceModels.length === 1 && deviceModels[0]) {
+                             const id = uuid();
+                             const discoveredDevice = {
+@@ -241,8 +247,15 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+      * The USB/HID product id is represented by only the 2nd byte
+      */
+     getHidUsbProductId(productId) {
++        const matchingLegacyDeviceModel =
++          this.deviceModelDataSource.filterDeviceModels({
++            legacyUsbProductId: productId,
++          })[0];
++        if (matchingLegacyDeviceModel) {
++          return productId;
++        }
+         return productId >> 8;
+-    }
++      }
+     /**
+      * Disconnect from a HID USB device and delete its handlers
+      */
