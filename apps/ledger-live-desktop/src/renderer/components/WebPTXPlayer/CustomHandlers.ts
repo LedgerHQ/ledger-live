@@ -93,5 +93,5 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         },
       }),
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer, isDrawerOpen]);
 }
