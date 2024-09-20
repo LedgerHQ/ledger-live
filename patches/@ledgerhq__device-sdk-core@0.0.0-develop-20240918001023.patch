@@ -1,0 +1,30 @@
+diff --git a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
+index 49eb94c6e2bb109fe3641a39bf22a96252bba387..036111f4e9cb754b69d99e8c74a479265acbd10f 100644
+--- a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
++++ b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
+@@ -106,9 +106,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+             // `requestDevice` returns an array. but normally the user can select only one device at a time.
+             let hidDevices = [];
+             try {
+-                hidDevices = await hidApi.requestDevice({
+-                    filters: [{ vendorId: UsbHidConfig_1.LEDGER_VENDOR_ID }],
+-                });
++                hidDevices = await hidApi.getDevices();
+             }
+             catch (error) {
+                 const deviceError = new Errors_1.NoAccessibleDeviceError(error);
+diff --git a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
+index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..146e390791ea4f1ddb1ae34944bd07273a3c39fd 100644
+--- a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
++++ b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
+@@ -80,9 +80,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+             // `requestDevice` returns an array. but normally the user can select only one device at a time.
+             let hidDevices = [];
+             try {
+-                hidDevices = await hidApi.requestDevice({
+-                    filters: [{ vendorId: LEDGER_VENDOR_ID }],
+-                });
++                hidDevices = await hidApi.getDevices();
+             }
+             catch (error) {
+                 const deviceError = new NoAccessibleDeviceError(error);

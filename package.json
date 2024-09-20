@@ -204,7 +204,8 @@
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
       "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch",
       "buffer@6.0.3": "patches/buffer@6.0.3.patch",
-      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch"
+      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch",
+      "@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023": "patches/@ledgerhq__device-sdk-core@0.0.0-develop-20240918001023.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

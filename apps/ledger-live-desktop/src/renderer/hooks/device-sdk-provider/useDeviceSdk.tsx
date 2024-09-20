@@ -28,13 +28,14 @@ export const useDeviceSdk = (): DeviceSdk => {
 
 export const useDeviceSessionState = (): DeviceSessionState | undefined => {
   const deviceSdk = useDeviceSdk();
-  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [deviceSessionState, setDeviceSessionState] = useState<DeviceSessionState>();
 
   useEffect(() => {
-    const sub = sessionIdSubject.subscribe({
-      next: sessionId => {
-        setSessionId(sessionId);
+    const sub = activeDeviceSessionSubject.subscribe({
+      next: val => {
+        if (!val) setSessionId(null);
+        else setSessionId(val?.sessionId);
       },
       error: error => {
         console.error("[useDeviceSessionState] error", error);
@@ -65,56 +66,84 @@ export const useDeviceSessionState = (): DeviceSessionState | undefined => {
   return deviceSessionState;
 };
 
-const sessionIdSubject: BehaviorSubject<string | undefined> = new BehaviorSubject<
-  string | undefined
->(undefined);
+const activeDeviceSessionSubject: BehaviorSubject<{
+  sessionId: string;
+  transport: DeviceManagementKitTransport;
+} | null> = new BehaviorSubject<{
+  sessionId: string;
+  transport: DeviceManagementKitTransport;
+} | null>(null);
 
-export class SdkTransport extends Transport {
-  readonly sessionId: string | undefined;
+export class DeviceManagementKitTransport extends Transport {
+  readonly sessionId: string;
   readonly sdk: DeviceSdk;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(sdk: DeviceSdk, sessionId?: string, ...args: any[]) {
-    super(...args);
+  constructor(sdk: DeviceSdk, sessionId: string) {
+    super();
     this.sessionId = sessionId;
     this.sdk = sdk;
+    this.listenToDisconnect();
   }
 
-  static async open(): Promise<SdkTransport> {
-    const sessionId = await firstValueFrom(sessionIdSubject);
-    console.log("[SDKTransport][open] sessionId", sessionId);
-    if (sessionId) {
-      console.log("[SDKTransport][open] existing sessionId", sessionId);
-      console.log("[SDKTransport][open] starting discovering");
-      const state = await firstValueFrom(deviceSdk.getDeviceSessionState({ sessionId }));
-      if (state.deviceStatus !== DeviceStatus.NOT_CONNECTED) {
-        return new SdkTransport(deviceSdk, sessionId);
+  listenToDisconnect = () => {
+    const subscription = this.sdk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
+      next: state => {
+        if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
+          console.log(
+            "[SDKTransport][listenToDisconnect] device not connected, session ended, closing transport",
+          );
+          activeDeviceSessionSubject.next(null);
+          this.emit("disconnect");
+        }
+      },
+      complete: () => {
+        console.log("[SDKTransport][listenToDisconnect] complete");
+        subscription.unsubscribe();
+      },
+    });
+  };
+
+  static async open(): Promise<DeviceManagementKitTransport> {
+    console.log("[SDKTransport][open]");
+    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    if (activeSessionId) {
+      console.log("[SDKTransport][open] checking existing session", activeSessionId);
+      let deviceSessionState: DeviceSessionState | null = null;
+      try {
+        deviceSessionState = await firstValueFrom(
+          deviceSdk.getDeviceSessionState({ sessionId: activeSessionId }),
+        );
+      } catch (e) {
+        console.error("[SDKTransport][open] error getting device session state", e);
+      }
+      if (deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED) {
+        console.log(
+          "[SDKTransport][open] reusing existing session and instantiating a new SdkTransport",
+        );
+        return activeDeviceSessionSubject.value.transport;
       }
     }
 
-    const device = await firstValueFrom(deviceSdk.startDiscovering());
-    const connectedSessionId = await deviceSdk.connect({ deviceId: device.id });
+    console.log("[SDKTransport][open] no active session found, starting discovery");
+    const discoveredDevice = await firstValueFrom(deviceSdk.startDiscovering());
+    const connectedSessionId = await deviceSdk.connect({ deviceId: discoveredDevice.id });
     console.log("[SDKTransport][open] connected");
-    sessionIdSubject.next(connectedSessionId);
-    return new SdkTransport(deviceSdk, sessionId);
+    const transport = new DeviceManagementKitTransport(deviceSdk, connectedSessionId);
+    activeDeviceSessionSubject.next({ sessionId: connectedSessionId, transport });
+    return transport;
   }
 
   close: () => Promise<void> = () => Promise.resolve();
 
   async exchange(apdu: Buffer): Promise<Buffer> {
-    if (!this.sessionId) {
-      throw new Error("No session ID");
-    }
-    console.log("[SDKTransport][exchange] apdu", apdu);
+    console.log("[SDKTransport][exchange] =>", apdu);
     const apduUint8Array = new Uint8Array(apdu);
-    console.log("[SDKTransport][exchange] apduUint8Array", apduUint8Array);
     const apduResponse = await this.sdk.sendApdu({
       sessionId: this.sessionId,
       apdu: apduUint8Array,
     });
-    console.log("[SDKTransport][exchange] apduResponse", apduResponse);
     const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-    console.log("[SDKTransport][exchange] response", response);
+    console.log("[SDKTransport][exchange] <=", response);
     return response;
   }
 }

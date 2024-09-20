@@ -11,7 +11,7 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 // import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-import { SdkTransport } from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
+import { DeviceManagementKitTransport } from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
 
 setEnvOnAllThreads("USER_ID", getUserId());
 
@@ -76,10 +76,7 @@ registerTransportModule({
         openContext: context,
       },
     });
-    return retry(() => SdkTransport.open(), {
-      interval: 500,
-      maxRetry: 4,
-    });
+    return DeviceManagementKitTransport.open();
   },
 
   disconnect: () => Promise.resolve(),
