@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.50.0-nightly.2
+
+### Patch Changes
+
+- [#7853](https://github.com/LedgerHQ/ledger-live/pull/7853) [`2fd05ea`](https://github.com/LedgerHQ/ledger-live/commit/2fd05ea7fc5aff83a896f6ca4b7c1f19f984ef51) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Copy of LedgerSync
+
+- [#7841](https://github.com/LedgerHQ/ledger-live/pull/7841) [`31a12e7`](https://github.com/LedgerHQ/ledger-live/commit/31a12e7a08d0f16698ad68b4c0231d34d76b3994) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Update Storyly and fix some issues
+
+- Updated dependencies [[`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348)]:
+  - @ledgerhq/live-nft-react@0.4.6-nightly.0
+  - @ledgerhq/live-nft@0.4.6-nightly.0
+  - @ledgerhq/live-common@34.8.1-nightly.0
+
 ## 3.50.0-nightly.1
 
 ### Patch Changes

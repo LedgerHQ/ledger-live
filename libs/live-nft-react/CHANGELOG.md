@@ -1,5 +1,14 @@
 # @ledgerhq/live-nft-react
 
+## 0.4.6-nightly.0
+
+### Patch Changes
+
+- [#7783](https://github.com/LedgerHQ/ledger-live/pull/7783) [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Plug the front with simplehash api for the rare sats table and inscriptions table
+
+- Updated dependencies [[`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348)]:
+  - @ledgerhq/live-nft@0.4.6-nightly.0
+
 ## 0.4.5
 
 ### Patch Changes

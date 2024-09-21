@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.87.0-nightly.1
+
+### Minor Changes
+
+- [#7837](https://github.com/LedgerHQ/ledger-live/pull/7837) [`3d658dc`](https://github.com/LedgerHQ/ledger-live/commit/3d658dc977f2cca6c62986f9a56cd2172e1ee971) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: double drawer fixed, only open error drawer if no drawer open
+
+### Patch Changes
+
+- [#7783](https://github.com/LedgerHQ/ledger-live/pull/7783) [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Plug the front with simplehash api for the rare sats table and inscriptions table
+
+- [#7863](https://github.com/LedgerHQ/ledger-live/pull/7863) [`0000492`](https://github.com/LedgerHQ/ledger-live/commit/0000492e0fc90fbdcb19df8409d12ac9f7699876) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Analytics
+
+- [#7857](https://github.com/LedgerHQ/ledger-live/pull/7857) [`509d47d`](https://github.com/LedgerHQ/ledger-live/commit/509d47d89ece25054ec9ddf9d2736a5ceb24d48f) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix Content Cards clicks tracking and other issues
+
+- [#7859](https://github.com/LedgerHQ/ledger-live/pull/7859) [`dedaec3`](https://github.com/LedgerHQ/ledger-live/commit/dedaec3879ced83f35b45c890ae1f58639339730) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update LLD Ledger Sync Copy
+
+- Updated dependencies [[`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348)]:
+  - @ledgerhq/live-nft-react@0.4.6-nightly.0
+  - @ledgerhq/live-nft@0.4.6-nightly.0
+  - @ledgerhq/live-common@34.8.1-nightly.0
+
 ## 2.86.1-nightly.0
 
 ### Patch Changes
