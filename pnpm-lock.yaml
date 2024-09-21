@@ -1235,8 +1235,8 @@ importers:
         specifier: ^7.3.7
         version: 7.5.4
       storyly-react-native:
-        specifier: 2.18.1
-        version: 2.18.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+        specifier: 3.6.0
+        version: 3.6.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       styled-components:
         specifier: ^5.3.3
         version: 5.3.11(@babel/core@7.24.3)(react-is@18.2.0)(react@18.2.0)
@@ -27838,8 +27838,8 @@ packages:
     resolution: {integrity: sha512-Wt04pPTO71pwmRmsgkyZhNo4Bvdb/1pBAMsIFb9nQLykEdzzpXjvingxFFvdOG4nIowzwgxD+CLlyRqVJqnATw==}
     hasBin: true
 
-  storyly-react-native@2.18.1:
-    resolution: {integrity: sha512-obmcEiqaMk6MRHg8kaN7AV2bKqOAMFEwC3dFmTbEsfPVCt5IEnSjhtzZ9kYkfndjPiEzvq1ySiZ9GUysxL83NQ==}
+  storyly-react-native@3.6.0:
+    resolution: {integrity: sha512-YDHTQe6W91GMZ6jlV+tstJNTvBK2PWWqGLBZUovdbrq3Sh1evzbGC5cG0yicH752FGRDC/U0sjTE8FBuiRwVUg==}
     peerDependencies:
       prop-types: '*'
       react: ^18.0.0
@@ -62919,7 +62919,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  storyly-react-native@2.18.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+  storyly-react-native@3.6.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)

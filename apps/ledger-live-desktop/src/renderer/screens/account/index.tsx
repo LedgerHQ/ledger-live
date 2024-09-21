@@ -44,6 +44,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 
 type Params = {
   id: string;
@@ -146,6 +147,9 @@ const AccountPage = ({
 
   const color = getCurrencyColor(currency, bgColor);
 
+  const displayOrdinals =
+    isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -219,9 +223,7 @@ const AccountPage = ({
               <Collections account={account} />
             )
           ) : null}
-          {isOrdinalsEnabled && account.type === "Account" && account.currency.id === "bitcoin" ? (
-            <OrdinalsAccount account={account} />
-          ) : null}
+          {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
             account={account}

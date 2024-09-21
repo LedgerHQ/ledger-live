@@ -28,6 +28,18 @@ type Props = {
   error: ErrorReason;
 };
 
+interface ErrorConfig {
+  icon: React.ReactNode;
+  title: string;
+  description?: string;
+  info?: string;
+  cta: string;
+  ctaSecondary: string;
+  primaryAction: () => void;
+  secondaryAction: () => void;
+  analyticsPage: AnalyticsPage;
+}
+
 export const DeletionError = ({ error }: Props) => {
   const dispatch = useDispatch();
 
@@ -38,8 +50,8 @@ export const DeletionError = ({ error }: Props) => {
     onClickTrack({ button: "connect new ledger", page: errorConfig[error].analyticsPage });
   };
   const goToDelete = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
-    onClickTrack({ button: "delete key", page: errorConfig[error].analyticsPage });
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.DeleteBackup }));
+    onClickTrack({ button: "Delete sync", page: errorConfig[error].analyticsPage });
   };
 
   const understood = () => {
@@ -49,12 +61,11 @@ export const DeletionError = ({ error }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const errorConfig = {
+  const errorConfig: Record<ErrorReason, ErrorConfig> = {
     [ErrorReason.UNSECURED]: {
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.unsecuredError.title"),
       description: t("walletSync.unsecuredError.description"),
-      info: t("walletSync.unsecuredError.info"),
       cta: t("walletSync.unsecuredError.cta"),
       ctaSecondary: t("walletSync.unsecuredError.ctaDelete"),
       primaryAction: tryAgain,
@@ -65,7 +76,6 @@ export const DeletionError = ({ error }: Props) => {
       icon: <Icons.InformationFill size={"L"} color={colors.primary.c80} />,
       title: t("walletSync.autoRemoveError.title"),
       description: t("walletSync.autoRemoveError.description"),
-      info: t("walletSync.autoRemoveError.info"),
       cta: t("walletSync.autoRemoveError.cta"),
       ctaSecondary: t("walletSync.autoRemoveError.ctaDelete"),
       primaryAction: understood,

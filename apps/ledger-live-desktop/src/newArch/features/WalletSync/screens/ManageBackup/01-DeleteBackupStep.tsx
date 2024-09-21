@@ -15,12 +15,12 @@ export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
   const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleDeleteBackup = async () => {
-    onClickTrack({ button: "delete", page: AnalyticsPage.ConfirmDeleteBackup });
+    onClickTrack({ button: "yes Delete", page: AnalyticsPage.ConfirmDeleteBackup });
     await deleteMutation.mutateAsync();
   };
 
   const handleCancel = () => {
-    onClickTrack({ button: "cancel", page: AnalyticsPage.ConfirmDeleteBackup });
+    onClickTrack({ button: "Keep", page: AnalyticsPage.ConfirmDeleteBackup });
     cancel();
   };
 

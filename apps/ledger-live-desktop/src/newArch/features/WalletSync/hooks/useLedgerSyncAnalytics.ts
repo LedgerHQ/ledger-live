@@ -2,10 +2,9 @@ import { track } from "~/renderer/analytics/segment";
 import { Step } from "~/renderer/reducers/walletSync";
 
 export enum AnalyticsPage {
-  ManageBackup = "Manage Backup",
-  ConfirmDeleteBackup = "Confirm Delete Backup",
-  BackupDeleted = "delete backup success",
-  BackupDeletionError = "Backup Deletion Error",
+  ConfirmDeleteBackup = "Confirm delete sync",
+  BackupDeleted = "delete sync success",
+  BackupDeletionError = "Sync Deletion Error",
 
   ManageInstances = "Manage synchronized instances",
   DeviceActionInstance = "Device Action Manage Instance",
@@ -23,14 +22,14 @@ export enum AnalyticsPage {
   SyncMethod = "Choose sync method",
   MobileSync = "Sync from a mobile",
   DesktopSync = "Sync from a desktop",
-  KeyCreated = "Backup creation success",
+  KeyCreated = "Ledger Sync turned on",
   KeyUpdated = "Sync apps success",
-  Loading = "Loading Trustchain",
+  Loading = "Loading Sync",
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
   PinCodeError = "Pin code error",
-  UnbackedError = "Trustchain initialization error",
+  UnbackedError = "Scan attempt with no sync",
 
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",
@@ -52,7 +51,6 @@ type onActionTrack = {
 };
 
 export const StepMappedToAnalytics: Record<Step, string> = {
-  [Step.ManageBackup]: AnalyticsPage.ManageBackup,
   [Step.DeleteBackup]: AnalyticsPage.ConfirmDeleteBackup,
   [Step.BackupDeleted]: AnalyticsPage.BackupDeleted,
   [Step.BackupDeletionError]: AnalyticsPage.BackupDeletionError,
@@ -92,7 +90,6 @@ export const StepMappedToAnalytics: Record<Step, string> = {
 
 export const StepsOutsideFlow: Step[] = [
   Step.LedgerSyncActivated,
-  Step.ManageBackup,
   Step.AutoRemoveInstance,
   Step.UnsecuredLedger,
   Step.BackupDeletionError,

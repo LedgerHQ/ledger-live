@@ -57,6 +57,7 @@ const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Stor
       {...props}
       storylyId={storylyInstanceId}
       storylySegments={segments}
+      storylyLocale={language}
       onLoad={handleLoad}
       storylyTestMode={storyConfig.testingEnabled}
       style={{ flex: 1 }} // necessary for touches to work

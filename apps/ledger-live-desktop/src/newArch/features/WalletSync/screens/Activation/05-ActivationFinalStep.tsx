@@ -18,7 +18,7 @@ export default function ActivationFinalStep({ isNewBackup }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const title = isNewBackup ? "walletSync.success.backup.title" : "walletSync.success.synch.title";
-  const desc = isNewBackup ? "walletSync.success.backup.desc" : "walletSync.success.synch.desc";
+  const desc = isNewBackup ? "" : "walletSync.success.synch.desc";
 
   const { onClickTrack } = useLedgerSyncAnalytics();
 

@@ -35,12 +35,12 @@ describe("Rendering", () => {
 
     await user.click(button);
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Sync your accounts" })).toBeDefined(),
+      expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined(),
     );
 
-    expect(screen.getByText("Already synced a Ledger Live app?")).toBeDefined();
+    expect(screen.getByText("I already turned it on")).toBeDefined();
     expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync.enabled).toBe(true);
-    expect(screen.getByText(/learn more/i)).toBeDefined();
+    expect(screen.getByText(/How does Ledger Sync work?/i)).toBeDefined();
   });
 
   it("should open drawer and display Wallet Sync Activation flow without learnMore link", async () => {
@@ -53,11 +53,11 @@ describe("Rendering", () => {
 
     await user.click(button);
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Sync your accounts" })).toBeDefined(),
+      expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined(),
     );
 
-    expect(screen.getByText("Already synced a Ledger Live app?")).toBeDefined();
+    expect(screen.getByText("I already turned it on")).toBeDefined();
     expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync).toBe(undefined);
-    expect(screen.queryByText(/learn more/i)).toBeNull();
+    expect(screen.queryByText(/How does Ledger Sync work?/i)).toBeNull();
   });
 });

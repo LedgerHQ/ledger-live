@@ -4010,7 +4010,7 @@
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
+      "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -6448,12 +6448,13 @@
     "title": "Ledger Sync",
     "close": "Close",
     "activate": {
-      "title": "Sync your accounts across all platforms",
-      "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
-      "cta": "Sync your accounts"
+      "title": "Turn on Ledger Sync for this computer?",
+      "description": "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+      "cta": "Turn on Ledger Sync",
+      "alreadySync": "I already turned it on",
+      "learnMore": "How does Ledger Sync work?"
     },
-    "alreadySync": "Already synced a Ledger Live app?",
-    "learnMore": "Learn more",
+
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6480,14 +6481,13 @@
       "description": "Please try again later.",
       "cta": "Try again",
       "fetching": "Something went wrong while fetching your data.",
-      "ledgerSyncDown": "Ledger Sync is currently unavailable.<br/>This doesn’t have any impact on your assets."
+      "ledgerSyncDown": "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
     },
     "unsecuredError": {
-      "title": "The synchronization isn't secured by this Ledger",
-      "description": "Please connect the Ledger device you used to create your encryption key.",
-      "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "title": "Connect the same Ledger device you used for enabling Ledger Sync",
+      "description": "If you don’t have the same Ledger device, select “Delete sync” instead.",
       "cta": "Connect another Ledger",
-      "ctaDelete": "Delete my encryption key"
+      "ctaDelete": "Delete sync"
     },
     "alreadySecureError": {
       "title": "This app is already secured by this Ledger",
@@ -6497,29 +6497,26 @@
     "alreadySecureOtherSeedError": {
       "title": "You can’t use this Ledger to sync",
       "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
-      "cta": "Delete my encryption key"
+      "cta": "Delete sync"
     },
     "autoRemoveError": {
-      "title": "You can’t remove the current instance",
-      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
-      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "title": "You can’t remove this computer while you’re using it",
+      "description": "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync' instead.",
       "cta": "I understand",
-      "ctaDelete": "Delete my encryption key"
+      "ctaDelete": "Delete sync"
     },
     "success": {
       "backup": {
-        "title": "Success",
-        "desc": "You successfully enabled Ledger Sync."
+        "title": "Ledger Sync turned on for Ledger Live on this computer"
       },
       "synch": {
-        "title": "Synchronization successful!",
-        "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
+        "title": "Sync successful!",
+        "desc": "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers. "
       },
       "synchAnother": "Sync with another Ledger Live app",
       "close": "Close"
     },
     "manageBackup": {
-      "title": "Manage your key",
       "deleteBackup": {
         "title": "Sure you want to delete sync?",
         "description": "Your crypto accounts across Ledger Live apps on different phones and computers will stop being in sync. This does not impact your funds in any way. ",
@@ -6527,7 +6524,8 @@
         "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
-        "title": "Your devices have been unsynchronized and your key has been deleted"
+        "title": "Your Ledger Live apps are no longer synched",
+        "description": "You can turn on sync anytime"
       },
       "deleteBackupError": {
         "title": "Something went wrong"
@@ -6553,10 +6551,10 @@
           "desktop": "Sync with computer"
         },
         "mobile": {
-          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "description": "Sync with the Ledger Live app on another phone",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
             "step3": "Scan QR code"
           }
         },
@@ -6564,29 +6562,29 @@
           "description": "Synchronize your accounts with another Ledger Live app",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
             "step3": "Connect your Ledger"
           }
         }
       },
       "unbackedError": {
-        "title": "You need to create your encryption key first",
-        "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
-        "cta": "Create your encryption key"
+        "title": "Sync not detected",
+        "description": "Turn on Ledger Sync on either this Ledger Live or the one you’re syncing with",
+        "cta": "Turn on Ledger Sync"
       },
       "pinCode": {
-        "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "title": "Your Ledger Sync code",
+        "description": "To sync your crypto accounts across both Ledger Live apps, enter this code in Ledger Live on your phone.",
         "error": {
-          "title": "Codes do not match",
+          "title": "The codes don’t match",
           "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
         }
       }
     },
     "manageInstances": {
-      "title": "Manage synchronized instances",
+      "title": "Ledger Live is synched across",
       "remove": "Remove",
-      "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceSuccess": "Your Ledger Live app on {{instanceName}} is no longer connected to Ledger Sync",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
     },
     "deviceAction": {
@@ -6595,12 +6593,45 @@
     }
   },
   "ordinals": {
+    "inscriptions": { "seeMore": "See more inscriptions" },
     "rareSats": {
       "title": "Rare Sats",
       "table": {
         "type": "Sat Type / Amount",
         "year": "Year",
         "utxo": "UTXO size"
+      },
+      "rareSat": {
+        "description": {
+          "alpha": "Step into the birth of each bitcoin with Alpha, marking the initial satoshi. This label signifies the genesis of a Bitcoin unit.",
+          "black_epic": "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
+          "black_legendary": "No Description for Black Legendary",
+          "black_mythic": "No Description for Black Mythic",
+          "black_rare": "Denotes the final satoshi at the conclusion of each mining difficulty adjustment period.",
+          "black_uncommon": "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
+          "block_9": "Block 9 holds a unique distinction in Bitcoin's history. As one of the earliest blocks mined, the satoshis contained within it are some of the oldest sats in circulation. These sats offer a tangible connection to the very beginnings of Bitcoin, shortly after its inception.",
+          "block_9_450x": "Step back in time with Block 9 450x, where sats in first bitcoin of the 9th block are highlighted. This label unfolds a captivating chapter in Bitcoin's history.",
+          "block_78": "Block 78 holds a profound place in the annals of Bitcoin's history. This block was mined by Hal Finney, marking the first instance where someone other than the elusive Satoshi Nakamoto contributed to the blockchain's growth.",
+          "block_286": "Unearth the significance of Block 286, representing satoshis from the second-ever Bitcoin transaction mined by Satoshi Nakamoto. These sats carry the weight of Bitcoin's elusive creator and contribute to the narrative of its enigmatic origins.",
+          "block_666": "No Description for Block 666",
+          "common": "No Description for Common",
+          "epic": "Every four years, the Bitcoin network experiences a \"halving\" event where the mining reward is cut in half. The first sat of each of these halving epochs is labeled \"Epic,\" marking a significant moment in Bitcoin's economic model.",
+          "first_tx": "On January 12, 2009, history was made when Satoshi Nakamoto sent 10 Bitcoins to a computer scientist named Hal Finney. This marked the first-ever Bitcoin transaction. Sats originating from this iconic transaction bear the \"First Transaction\" label, symbolizing the genesis of Bitcoin's peer-to-peer exchange.",
+          "hitman": "No Description for Hitman",
+          "jpeg": "Journey into the past with JPEG, as these satoshis might be tied to the first Bitcoin trade for an image on February 24, 2010. This label narrates a tale of innovation, showcasing Bitcoin's early forays into unconventional transactions and exchanges.",
+          "legacy": "No Description for Legacy",
+          "legendary": "No Description for Legendary",
+          "mythic": "No Description for Mythic",
+          "nakamoto": "The mystique surrounding Bitcoin's pseudonymous creator, Satoshi Nakamoto, remains undiminished. Sats that were mined by Nakamoto himself are branded with this  label, making them highly sought after by collectors.",
+          "omega": "Experience the poetic conclusion of every bitcoin with Omega, the last satoshi. As the final satoshi in a Bitcoin unit.",
+          "paliblock": "No Description for PaliBlock Palindrome",
+          "palindrome": "In a playful twist, any sat whose number can be read the same forwards and backwards is branded a \"Palindrome.\" For example, a sat numbered 12321 or 45654. These unique numerical attributes add a layer of rarity and curiosity to the labeled sats.",
+          "palinception": "Delve into the mesmerizing world of uniform palinception, where each satoshi forms a palindrome of palindromes. These intricately structured sats create a fascinating tapestry of mirrored digits.",
+          "pizza": "One of the most iconic stories in the Bitcoin community is that of a programmer who paid 10,000 Bitcoins for two Papa John's pizzas on May 22, 2010. This event is often cited to demonstrate the meteoric rise in Bitcoin's value. Sats from this legendary transaction wear the \"Pizza\" label.",
+          "rare": "The Bitcoin network periodically adjusts its mining difficulty to ensure that blocks are added roughly every ten minutes. The first sat of each such adjustment period is branded as \"Rare.\" This reflects the ever-evolving nature of the network's security and consensus mechanisms. ",
+          "uncommon": "This label is designated to the first satoshi of every block. Given that a new block is added to the Bitcoin blockchain approximately every 10 minutes, these sats capture the very beginning of that timeframe.",
+          "vintage": "The dawn of Bitcoin was marked by its initial 1,000 blocks. Sats mined within this period are branded \"Vintage,\"."
+        }
       }
     }
   }

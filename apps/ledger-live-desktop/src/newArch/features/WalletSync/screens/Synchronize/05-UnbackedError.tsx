@@ -13,7 +13,7 @@ export default function UnbackedError() {
   const dispatch = useDispatch();
   const onClick = () => {
     onClickTrack({
-      button: "Create enctryption key",
+      button: "Turn on Ledger Sync",
       page: AnalyticsPage.UnbackedError,
     });
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
