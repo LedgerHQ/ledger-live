@@ -507,13 +507,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
       const { targetUrl } = event.nativeEvent;
-      Linking.canOpenURL(targetUrl).then(supported => {
-        if (supported) {
-          Linking.openURL(targetUrl);
-        } else {
-          console.error(`Don't know how to open URI: ${targetUrl}`);
-        }
-      });
+      // Don't use canOpenURL as we cannot check unknown apps on the phone
+      // Without listing everything in plist and android manifest
+      Linking.openURL(targetUrl);
     }, []);
 
     useEffect(() => {
