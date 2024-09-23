@@ -1,5 +1,12 @@
 # @ledgerhq/live-network
 
+## 2.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1-next.0
+
 ## 2.0.0
 
 ### Major Changes

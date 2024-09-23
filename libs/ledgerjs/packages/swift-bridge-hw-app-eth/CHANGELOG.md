@@ -1,5 +1,13 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.2.6-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.38.2-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.4-next.0
+
 ## 1.2.5
 
 ### Patch Changes
