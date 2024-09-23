@@ -195,7 +195,7 @@ function FromRow({
         </Box>
       </Box>
       <Box horizontal boxShadow="0px 2px 4px rgba(0, 0, 0, 0.05);">
-        <Box width="50%">
+        <Box width="50%" data-testid="origin-currency-dropdown">
           <SelectAccount
             accounts={accounts}
             value={fromAccount}
@@ -209,11 +209,12 @@ function FromRow({
             onMenuOpen={trackEditAccount}
           />
         </Box>
-        <InputSection width="50%">
+        <InputSection width="50%" data-testid="origin-currency-amount">
           <InputCurrency
             loading={isSendMaxLoading}
             value={fromAmount}
             onChange={setValue}
+            data-testid="origin-currency-amount-value"
             disabled={!fromAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"

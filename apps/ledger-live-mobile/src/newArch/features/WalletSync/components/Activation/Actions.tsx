@@ -39,6 +39,15 @@ const Actions = ({
     onPressHasAlreadyCreatedAKey();
   };
 
+  const onPressMore = () => {
+    onClickTrack({
+      button: AnalyticsButton.LearnMore,
+      page: AnalyticsPage.ActivateLedgerSync,
+      hasFlow: true,
+    });
+    onPressLearnMore?.();
+  };
+
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={32}>
       <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={16}>
@@ -66,7 +75,7 @@ const Actions = ({
         </Button>
       </Flex>
       {onPressLearnMore && (
-        <Link size="medium" onPress={onPressLearnMore}>
+        <Link size="medium" onPress={onPressMore}>
           {t("walletSync.activation.screen.learnMore")}
         </Link>
       )}

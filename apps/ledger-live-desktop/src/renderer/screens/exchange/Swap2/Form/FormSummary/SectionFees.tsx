@@ -164,6 +164,7 @@ const SectionFees = ({
         ff="Inter|SemiBold"
         showCode
         alwaysShowValue
+        data-testid="fees-value"
       />
     </>
   ) : estimatedFees ? (
@@ -175,6 +176,7 @@ const SectionFees = ({
       ff="Inter|SemiBold"
       showCode
       alwaysShowValue
+      data-testid="fees-value"
     />
   ) : (
     <NoValuePlaceholder />

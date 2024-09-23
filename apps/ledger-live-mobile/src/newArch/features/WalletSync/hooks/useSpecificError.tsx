@@ -68,7 +68,7 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
   };
 
   const onCreate = (props: AnalyticsProps) => {
-    onClickTrack({ button: AnalyticsButton.CreateYourKey, ...props });
+    onClickTrack({ button: AnalyticsButton.SyncYourAccounts, ...props });
   };
 
   const ContinueWihtoutSync = (props: AnalyticsProps) => {
