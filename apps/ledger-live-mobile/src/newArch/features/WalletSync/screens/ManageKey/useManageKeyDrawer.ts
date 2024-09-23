@@ -56,7 +56,7 @@ export const useManageKeyDrawer = () => {
   const handleCancel = () => {
     closeDrawer();
     track("button_clicked", {
-      button: AnalyticsButton.Cancel,
+      button: AnalyticsButton.Keep,
       page: AnalyticsPage.ConfirmDeleteBackup,
     });
   };
@@ -76,9 +76,9 @@ export const useManageKeyDrawer = () => {
     isDrawerVisible,
     openDrawer,
     closeDrawer,
-    handleClose,
     onClickConfirm,
     deleteMutation,
     handleCancel,
+    handleClose,
   };
 };
