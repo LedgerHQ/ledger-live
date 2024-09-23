@@ -6593,7 +6593,15 @@
     }
   },
   "ordinals": {
-    "inscriptions": { "seeMore": "See more inscriptions" },
+    "inscriptions": {
+      "seeMore": "See more inscriptions",
+      "discoveryDrawer": {
+        "title": "Discover Ordinals",
+        "description": "Do you know that you may own valuable rare sats and inscriptions?",
+        "learnMore": "Learn more",
+        "viewCoinControl": "View coin control"
+      }
+    },
     "rareSats": {
       "title": "Rare Sats",
       "table": {
