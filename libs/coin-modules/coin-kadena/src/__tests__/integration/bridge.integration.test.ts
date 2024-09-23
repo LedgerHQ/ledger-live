@@ -1,11 +1,7 @@
-import {
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-} from "@ledgerhq/errors";
-import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import type { Transaction } from "../../types";
 
 const PUBKEY = "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e";
 

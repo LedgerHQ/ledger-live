@@ -1,16 +1,18 @@
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import flatMap from "lodash/flatMap";
-import { fetchNetworkInfo, fetchCoinDetailsForAccount, fetchTransactions } from "./api/network";
+import {
+  fetchBlockHeight,
+  fetchCoinDetailsForAccount,
+  fetchNetworkInfo,
+  fetchTransactions,
+} from "./api/network";
 import { GetTxnsResponse } from "./api/types";
 import { KadenaOperation } from "./types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { log } from "@ledgerhq/logs";
 import { baseUnitToKda } from "./utils";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 
 const getAddressFromPublicKey = (pubkey: string): string => {
   return `k:${pubkey}`;
@@ -38,6 +40,8 @@ export const getAccountShape: GetAccountShape = async info => {
   const rawTxs = await fetchTransactions(address);
   // const mempoolTxs = await fetchFullMempoolTxs(address);
 
+  const blockHeight = await fetchBlockHeight();
+
   let totalBalance = new BigNumber(0);
   for (const balance of Object.values(balanceResp)) {
     totalBalance = totalBalance.plus(balance);
@@ -57,7 +61,7 @@ export const getAccountShape: GetAccountShape = async info => {
     balance,
     spendableBalance: balance,
     operations: rawTxsToOps(rawTxs, accountId, address),
-    blockHeight: networkInfo.nodeLatestBehaviorHeight,
+    blockHeight,
   };
 
   return result;

@@ -1,8 +1,8 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { KDA_FEES_BASE } from "./constants";
+import type { Transaction } from "./types";
 import { kdaToBaseUnit } from "./utils";
-import { KDA_FEES, KDA_FEES_BASE } from "./constants";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -42,7 +42,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Gas Price",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => {
+      expectedValue: () => {
+        // expectedValue: ({ transaction }) => {
         return `KDA ${KDA_FEES_BASE}`;
       },
     },

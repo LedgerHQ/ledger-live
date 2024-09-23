@@ -1,16 +1,16 @@
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
-import { Account } from "@ledgerhq/types-live";
-import { botTest, pickSiblings, genericTestDestination } from "@ledgerhq/coin-framework/bot/specs";
-import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { acceptTransaction } from "./speculos-deviceActions";
 import { fetchCoinDetailsForAccount } from "./api/network";
+import { acceptTransaction } from "./speculos-deviceActions";
+import type { Transaction } from "./types";
 
 const currency = getCryptoCurrencyById("kadena");
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "1");

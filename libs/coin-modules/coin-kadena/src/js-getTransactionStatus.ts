@@ -9,7 +9,7 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchCoinDetailsForAccount } from "./api/network";
 import { Transaction, TransactionStatus } from "./types";
-import { baseUnitToKda, getAddress, validateAddress } from "./utils";
+import { baseUnitToKda, validateAddress } from "./utils";
 
 type ValidatedTransactionFields = "recipient" | "amount";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
@@ -44,20 +44,23 @@ export const validateRecipient = (account: Account, tx: Transaction): Array<Vali
 /**
  * Validate the amount of a transaction for an account
  */
-const validateAmount = async (a: Account, t: Transaction): Promise<Array<ValidationIssues>> => {
-  const fees = t.gasPrice.multipliedBy(t.gasLimit);
+const validateAmount = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<Array<ValidationIssues>> => {
+  const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
 
-  const totalSpent = t.amount.plus(fees);
+  const totalSpent = transaction.amount.plus(fees);
   const errors: ValidationIssues = {};
 
   // if no amount or 0
-  if (!t.amount || t.amount.isZero()) {
+  if (!transaction.amount || transaction.amount.isZero()) {
     errors.amount = new AmountRequired(); // "Amount required"
   } else {
-    const balance = await fetchCoinDetailsForAccount(getAddress(a).address, [
-      t.senderChainId.toString(),
+    const balance = await fetchCoinDetailsForAccount(account.freshAddress, [
+      transaction.senderChainId.toString(),
     ]);
-    const accountBalance = baseUnitToKda(balance[t.senderChainId]) ?? new BigNumber(0);
+    const accountBalance = baseUnitToKda(balance[transaction.senderChainId]) ?? new BigNumber(0);
 
     if (totalSpent.isGreaterThan(accountBalance)) {
       // if not enough to make the transaction
@@ -68,27 +71,27 @@ const validateAmount = async (a: Account, t: Transaction): Promise<Array<Validat
 };
 
 export const getTransactionStatus = async (
-  a: Account,
-  t: Transaction,
+  account: Account,
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   // Recipient related errors and warnings
-  const [recipientErr] = validateRecipient(a, t);
+  const [recipientErr] = validateRecipient(account, transaction);
   // Amount related errors and warnings
-  const [amountErr] = await validateAmount(a, t);
+  const [amountErr] = await validateAmount(account, transaction);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...amountErr,
   };
 
-  const fees = t.gasPrice.multipliedBy(t.gasLimit);
+  const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
 
   return {
-    amount: t.amount,
+    amount: transaction.amount,
     errors,
     warnings: {},
     estimatedFees: fees,
-    totalSpent: t.amount.plus(fees),
+    totalSpent: transaction.amount.plus(fees),
   };
 };
 

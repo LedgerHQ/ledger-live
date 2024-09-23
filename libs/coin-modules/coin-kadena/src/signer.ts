@@ -4,16 +4,19 @@ import {
   TransferTxParams,
 } from "./hw-app-kda/Kadena";
 
-export type KadenaAddress = {
-  publicKey: Uint8Array;
-};
+export interface KadenaAddress {
+  pubkey: Buffer;
+  address: string;
+}
 
 export type KadenaSignature = BuildTransactionResult;
 
 export interface KadenaSigner {
-  getPublicKey(path: string): Promise<KadenaAddress>;
-  verifyAddress(path: string): Promise<KadenaAddress>;
-  signTransferTx(params: TransferTxParams): Promise<KadenaSignature>;
-  signTransferCreateTx(params: TransferTxParams): Promise<KadenaSignature>;
-  signTransferCrossChainTx(params: TransferCrossChainTxParams): Promise<KadenaSignature>;
+  signTransferTx(path: string, params: TransferTxParams): Promise<KadenaSignature>;
+  signTransferCreateTx(path: string, params: TransferTxParams): Promise<KadenaSignature>;
+  signTransferCrossChainTx(
+    path: string,
+    params: TransferCrossChainTxParams,
+  ): Promise<KadenaSignature>;
+  getAddressAndPubKey(path: string, showAddrInDevice?: boolean): Promise<KadenaAddress>;
 }

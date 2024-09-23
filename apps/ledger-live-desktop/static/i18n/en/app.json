@@ -1882,7 +1882,9 @@
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
       "version": "Version",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "senderChainId": "Sender Chain ID",
+      "receiverChainId": "Receiver Chain ID"
     }
   },
   "operationList": {

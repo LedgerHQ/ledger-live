@@ -6,7 +6,7 @@ import { getCoinConfig } from "../config";
 import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
 import { PactCommandObject } from "../hw-app-kda/Kadena";
 import { KadenaOperation } from "../types";
-import { GetInfoResponse, GetTxnsResponse } from "./types";
+import { GetCutResponse, GetInfoResponse, GetTxnsResponse } from "./types";
 
 const getKadenaURL = (subpath?: string): string => {
   const currencyConfig = getCoinConfig();
@@ -16,6 +16,10 @@ const getKadenaURL = (subpath?: string): string => {
 
 export const getKadenaPactURL = (chainId: string): string => {
   return `${getKadenaURL()}/chainweb/${KDA_CHAINWEB_VER}/${KDA_NETWORK}/chain/${chainId}/pact`;
+};
+
+export const getKadenaCutURL = (): string => {
+  return `${getKadenaURL()}/chainweb/${KDA_CHAINWEB_VER}/${KDA_NETWORK}/cut`;
 };
 
 const KadenaApiWrapper = async <T>(path: string, body: any, method: Method) => {
@@ -36,6 +40,19 @@ export const fetchNetworkInfo = async () => {
   const res = await KadenaApiWrapper<GetInfoResponse>(getKadenaURL("/info"), undefined, "GET");
 
   return res.data;
+};
+
+export const fetchBlockHeight = async (): Promise<number | undefined> => {
+  const res = await KadenaApiWrapper<GetCutResponse>(getKadenaCutURL(), undefined, "GET");
+
+  const height = res.data.hashes
+    ? Object.values(res.data.hashes).reduce(
+        (lastVal, val) => (lastVal >= val.height ? lastVal : val.height),
+        0,
+      )
+    : undefined;
+
+  return height;
 };
 
 export const fetchCoinDetailsForAccount = async (

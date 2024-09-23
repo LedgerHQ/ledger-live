@@ -1,4 +1,5 @@
-import type { Transaction, TransactionRaw } from "./types";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -8,8 +9,7 @@ import {
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { Transaction, TransactionRaw } from "./types";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
@@ -41,17 +41,18 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
+const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(transaction);
+  const { family, amount, gasLimit, gasPrice, receiverChainId, senderChainId } = transaction;
 
   return {
     ...common,
-    family: t.family,
-    amount: t.amount.toFixed(),
-    gasLimit: t.gasLimit.toString(),
-    gasPrice: t.gasPrice.toString(),
-    receiverChainId: t.receiverChainId,
-    senderChainId: t.senderChainId,
+    family,
+    amount: amount.toFixed(),
+    gasLimit: gasLimit.toString(),
+    gasPrice: gasPrice.toString(),
+    receiverChainId,
+    senderChainId,
   };
 };
 

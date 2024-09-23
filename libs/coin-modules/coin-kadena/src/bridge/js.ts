@@ -16,6 +16,7 @@ import { getAccountShape } from "../js-synchronisation";
 import { createTransaction, prepareTransaction } from "../js-transaction";
 import type { Transaction } from "../types";
 
+import { KadenaCoinConfig, setCoinConfig } from "../config";
 import { KadenaSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<KadenaSigner>): CurrencyBridge {
@@ -55,7 +56,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<KadenaSigner>) {
+export function createBridges(
+  signerContext: SignerContext<KadenaSigner>,
+  coinConfig: KadenaCoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

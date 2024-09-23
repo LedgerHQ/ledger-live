@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import { getAddress, validateAddress, baseUnitToKda } from "./utils";
+import BigNumber from "bignumber.js";
 import { fetchCoinDetailsForAccount } from "./api/network";
 import { KDA_FEES, KDA_GAS_LIMIT_TRANSFER } from "./constants";
+import { Transaction } from "./types";
+import { baseUnitToKda, validateAddress } from "./utils";
 
 export const createTransaction = (): Transaction => {
   // log("debug", "[createTransaction] creating base tx");
@@ -19,31 +19,36 @@ export const createTransaction = (): Transaction => {
   };
 };
 
-export const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
+export const prepareTransaction = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<Transaction> => {
   // log("debug", "[prepareTransaction] start fn");
 
-  const { address } = getAddress(a);
-  const { recipient } = t;
+  const address = account.freshAddress;
+  const { recipient } = transaction;
 
-  let amount: BigNumber = t.amount;
+  let amount: BigNumber = transaction.amount;
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
     if (validateAddress(recipient) && validateAddress(address)) {
-      if (t.useAllAmount) {
-        const fees = t.gasPrice.multipliedBy(t.gasLimit);
+      if (transaction.useAllAmount) {
+        const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
 
-        const balance = await fetchCoinDetailsForAccount(address, [t.senderChainId.toString()]);
-        if (balance[t.senderChainId] === undefined) {
-          return { ...t, amount: new BigNumber(0) };
+        const balance = await fetchCoinDetailsForAccount(address, [
+          transaction.senderChainId.toString(),
+        ]);
+        if (balance[transaction.senderChainId] === undefined) {
+          return { ...transaction, amount: new BigNumber(0) };
         }
 
-        amount = baseUnitToKda(balance[t.senderChainId]).minus(fees);
-        return { ...t, amount };
+        amount = baseUnitToKda(balance[transaction.senderChainId]).minus(fees);
+        return { ...transaction, amount };
       }
     }
   }
 
   // log("debug", "[prepareTransaction] finish fn");
-  return t;
+  return transaction;
 };

@@ -1,13 +1,9 @@
 import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
+import type { Transaction } from "./types";
 
 // TODO: delete the parameter if we don't need it
-function getDeviceTransactionConfig(_input: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
+function getDeviceTransactionConfig(input: {
   transaction: Transaction;
-  status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
@@ -18,12 +14,12 @@ function getDeviceTransactionConfig(_input: {
   fields.push({
     type: "text",
     label: "Gas Limit",
-    value: "", // TODO: review it when we have a way to get the gas limit and price
+    value: input.transaction.gasLimit.toString(),
   });
   fields.push({
     type: "text",
     label: "Gas Price",
-    value: "", // TODO: review it when we have a way to get the gas limit and price
+    value: input.transaction.gasPrice.toString(),
   });
 
   return fields;

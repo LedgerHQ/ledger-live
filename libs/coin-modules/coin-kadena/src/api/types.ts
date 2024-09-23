@@ -21,3 +21,12 @@ export interface GetInfoResponse {
   nodeNumberOfChains: number;
   nodeVersion: string;
 }
+
+export interface GetCutResponse {
+  hashes: { [key: string]: { height: number; hash: string } };
+  origin: unknown;
+  weight: string;
+  height: number;
+  instance: string;
+  id: string;
+}
