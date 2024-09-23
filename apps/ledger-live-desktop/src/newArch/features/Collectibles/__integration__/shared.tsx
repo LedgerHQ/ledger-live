@@ -35,7 +35,10 @@ export const NoNftCollectionTest = withRouter(() => (
 ));
 
 export const BitcoinPage = () => (
-  <Switch>
-    <Route path="/" render={() => <OrdinalsAccount account={MockedbtcAccount} />} />
-  </Switch>
+  <>
+    <div id="modals"></div>
+    <Switch>
+      <Route path="/" render={() => <OrdinalsAccount account={MockedbtcAccount} />} />
+    </Switch>
+  </>
 );
