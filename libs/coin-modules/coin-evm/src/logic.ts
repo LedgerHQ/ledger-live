@@ -11,11 +11,10 @@ import murmurhash from "imurmurhash";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { hashes as tokensHashesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./api/node/index";
 import { getCoinConfig } from "./config";
@@ -173,15 +172,6 @@ const CALHashByChainIdMap = new Map<CryptoCurrency, string>();
  * Getter for the CAL content hash
  */
 export const getCALHash = (currency: CryptoCurrency): string => {
-  if (!CALHashByChainIdMap.has(currency)) {
-    CALHashByChainIdMap.set(
-      currency,
-      tokensHashesByChainId[
-        (currency?.ethereumLikeInfo?.chainId || "") as keyof typeof tokensHashesByChainId
-      ],
-    );
-  }
-
   return CALHashByChainIdMap.get(currency) || "";
 };
 
@@ -191,6 +181,10 @@ export const getCALHash = (currency: CryptoCurrency): string => {
 export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
   CALHashByChainIdMap.set(currency, hash);
   return CALHashByChainIdMap.get(currency)!;
+};
+
+export const __resetCALHash = (): void => {
+  CALHashByChainIdMap.clear();
 };
 
 /**

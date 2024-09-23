@@ -33,6 +33,7 @@
     "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"
   },
   "dependencies": {
+    "@ledgerhq/live-env": "workspace:^",
     "axios": "1.7.3",
     "bs58check": "^2.1.2",
     "invariant": "2"

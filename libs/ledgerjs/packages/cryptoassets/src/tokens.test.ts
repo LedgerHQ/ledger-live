@@ -19,7 +19,7 @@ const initMainToken: ERC20Token[] = [
     "Ki",
     "304402201fe22e202db62b632e0647a12070c24f34de2006e667abedaed5ca6ea2986b18022054dd4eda5bf5e444601a48e5370cfcf0b51cc5fe1237259f6066311286dbfd55",
     "0x4f6103BAd230295baCF30f914FDa7D4273B7F585",
-    true,
+    false,
     false,
   ],
   [
@@ -41,7 +41,7 @@ const initMainToken: ERC20Token[] = [
     "KICK",
     "3044022000b06bf563f55da06b142b6816e824492a4862673f29842aa8b46f23a7dcbe57022049309464e7123f79df5bcead066a2b0af929965d3d9dc683a324eda32f970b07",
     "0x27695E09149AdC738A978e9A678F99E4c39e9eb9",
-    true,
+    false,
     true,
   ],
   [
