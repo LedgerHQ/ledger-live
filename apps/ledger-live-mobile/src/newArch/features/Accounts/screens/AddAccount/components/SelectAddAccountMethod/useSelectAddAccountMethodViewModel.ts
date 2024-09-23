@@ -48,7 +48,7 @@ const useSelectAddAccountMethodViewModel = ({
   }, [navigation, trackButtonClick, onClose]);
 
   const onClickImportLedgerSync = useCallback(() => {
-    trackButtonClick("Import via another Ledger Live app");
+    trackButtonClick("Account Use Ledger Sync");
     setWalletSyncDrawerVisible?.();
   }, [trackButtonClick, setWalletSyncDrawerVisible]);
 

@@ -1,80 +1,65 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
 import { Box, Flex } from "@ledgerhq/react-ui";
 import { useInscriptionsModel } from "./useInscriptionsModel";
 import TableContainer from "~/renderer/components/TableContainer";
 import TableHeader from "LLD/features/Collectibles/components/Collection/TableHeader";
-import { OrdinalsRowProps, TableHeaderTitleKey } from "LLD/features/Collectibles/types/Collection";
-import TableRow from "LLD/features/Collectibles/components/Collection/TableRow";
+import { TableHeaderTitleKey } from "LLD/features/Collectibles/types/Collection";
 import ShowMore from "LLD/features/Collectibles/components/Collection/ShowMore";
-import { MediaProps } from "LLD/features/Collectibles/types/Media";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
+import Loader from "../Loader";
+import Error from "../Error";
+import Item from "./Item";
 
-type ViewProps = ReturnType<typeof useInscriptionsModel>;
+type ViewProps = ReturnType<typeof useInscriptionsModel> & { isLoading: boolean; isError: boolean };
 
 type Props = {
-  account: Account;
-};
-
-export type InscriptionsItemProps = {
+  inscriptions: SimpleHashNft[];
   isLoading: boolean;
-  tokenName: string;
-  collectionName: string;
-  tokenIcons: OrdinalsRowProps["tokenIcons"];
-  media: MediaProps;
-  onClick: () => void;
+  isError: boolean;
 };
 
-const Item: React.FC<InscriptionsItemProps> = ({
+const View: React.FC<ViewProps> = ({
+  displayShowMore,
   isLoading,
-  tokenName,
-  collectionName,
-  tokenIcons,
-  media,
-  onClick,
+  isError,
+  inscriptions,
+  onShowMore,
 }) => {
-  return (
-    <TableRow
-      isLoading={isLoading}
-      tokenName={tokenName}
-      collectionName={collectionName}
-      tokenIcons={tokenIcons}
-      media={media}
-      onClick={onClick}
-    />
-  );
-};
+  const hasInscriptions = inscriptions.length > 0 && !isError;
+  const nothingToShow = !hasInscriptions && !isLoading && !isError;
 
-function View({ displayedObjects, displayShowMore, onShowMore }: ViewProps) {
   return (
     <Box>
-      <TableContainer id="oridinals-inscriptions">
+      <TableContainer id="ordinals-inscriptions">
         <TableHeader titleKey={TableHeaderTitleKey.Inscriptions} />
-        {/** titlekey doesn't need to be translated so we keep it hard coded  */}
-        {displayedObjects ? (
-          displayedObjects.map((item, index) => (
+        {isLoading && <Loader />}
+        {isError && <Error />}
+        {hasInscriptions &&
+          inscriptions.map((item, index) => (
             <Item
               key={index}
-              isLoading={item.isLoading}
+              isLoading={isLoading}
               tokenName={item.tokenName}
               collectionName={item.collectionName}
               tokenIcons={item.tokenIcons}
               media={item.media}
+              rareSatName={item.rareSatName}
               onClick={item.onClick}
             />
-          ))
-        ) : (
-          <Flex justifyContent={"center"} my={12}>
-            {"NOTHING TO SHOW"}
+          ))}
+        {nothingToShow && (
+          <Flex justifyContent="center" my={4}>
+            {"NOTHING TO SHOW WAITING FOR DESIGN"}
           </Flex>
         )}
-        {displayShowMore && <ShowMore onShowMore={onShowMore} />}
+        {displayShowMore && !isError && <ShowMore onShowMore={onShowMore} isInscriptions />}
       </TableContainer>
     </Box>
   );
-}
-
-const Inscriptions: React.FC<Props> = ({ account }: Props) => {
-  return <View {...useInscriptionsModel({ account })} />;
 };
+
+const Inscriptions: React.FC<Props> = ({ inscriptions, isLoading, isError }) => (
+  <View isLoading={isLoading} isError={isError} {...useInscriptionsModel({ inscriptions })} />
+);
 
 export default Inscriptions;

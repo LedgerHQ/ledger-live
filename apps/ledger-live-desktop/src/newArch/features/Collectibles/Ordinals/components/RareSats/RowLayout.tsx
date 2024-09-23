@@ -5,7 +5,6 @@ import styled from "styled-components";
 type Props = {
   firstColumnElement: JSX.Element;
   secondColumnElement: JSX.Element;
-  thirdColumnElement?: JSX.Element;
   bgColor?: string;
   isMultipleRow?: boolean;
 };
@@ -23,7 +22,6 @@ const Container = styled(Flex)`
 const RowLayout: React.FC<Props> = ({
   firstColumnElement,
   secondColumnElement,
-  thirdColumnElement,
   bgColor,
   isMultipleRow,
 }) => {
@@ -41,9 +39,6 @@ const RowLayout: React.FC<Props> = ({
       <Flex flex={1} flexDirection="row" columnGap={20}>
         <Flex flex={1} justifyContent="flex-end">
           {secondColumnElement}
-        </Flex>
-        <Flex flex={0.2} justifyContent="flex-end">
-          {thirdColumnElement}
         </Flex>
       </Flex>
     </Container>

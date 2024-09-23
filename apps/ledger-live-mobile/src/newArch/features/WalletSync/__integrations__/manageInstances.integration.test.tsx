@@ -62,11 +62,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Synchronized Instances/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
 
-    await user.press(await screen.findByText(/Manage now/i));
+    await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Manage synchronized instances/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();
@@ -99,11 +99,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Synchronized Instances/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
 
-    await user.press(await screen.findByText(/Manage now/i));
+    await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Manage synchronized instances/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();
@@ -114,7 +114,7 @@ describe("ManageInstances", () => {
     await user.press(screen.getAllByText("Remove")[0]);
 
     // Auto remove check handled
-    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
+    expect(screen.getByText(/You can’t remove this phone while you’re using it/i)).toBeDefined();
 
     await user.press(await screen.findByText(/I understand/i));
 
@@ -142,10 +142,10 @@ describe("ManageInstances", () => {
     });
 
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/Manage now/i));
+    await user.press(await screen.findByText(/Manage/i));
     await user.press(screen.getAllByText("Remove")[0]);
-    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
-    await user.press(await screen.findByText(/Delete my encryption key/i));
-    await waitFor(() => screen.findByText(/Manage your key/i));
+    expect(screen.getByText(/You can’t remove this phone while you’re using it/i)).toBeDefined();
+    await user.press(await screen.getByTestId("ctaSecondary-detailled-error"));
+    await waitFor(() => screen.findByText(/Sure you want delete sync?/i));
   });
 });

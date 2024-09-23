@@ -1,14 +1,19 @@
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
 import { mappingKeysWithIconAndName } from "../Ordinals/components/Icons";
 import { IconProps } from "./Collection";
 
 export type MappingKeys = keyof typeof mappingKeysWithIconAndName;
 
-export type RareSat = {
-  count: string;
-  display_name: string | string[];
+type Icon = ({ size, color, style }: IconProps) => JSX.Element;
+
+export interface RareSat {
+  displayed_names: string;
+  icons?: Icon[];
   year: string;
-  utxo_size: string;
-  icons?: { [key: string]: ({ size, color, style }: IconProps) => JSX.Element };
-  name: string;
-  isDoubleRow?: boolean;
-};
+  count: string;
+  names: MappingKeys[];
+  isMultipleRow: boolean;
+}
+export interface SimpleHashNftWithIcons extends SimpleHashNft {
+  icons?: Icon[];
+}

@@ -3,7 +3,13 @@ import fs from "fs";
 import { importTonJettonTokens } from ".";
 
 const tonJetton = [
-  ["EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs", "Tether USD", "USD₮", 6, false, true],
+  {
+    contract_address: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
+    decimals: 6,
+    delisted: false,
+    name: "USDT",
+    ticker: "USDT",
+  },
 ];
 
 const mockedAxios = jest.spyOn(axios, "get");
@@ -11,7 +17,10 @@ const mockedAxios = jest.spyOn(axios, "get");
 describe("import ton Jetton tokens", () => {
   beforeEach(() => {
     mockedAxios.mockImplementation(() =>
-      Promise.resolve({ data: tonJetton, headers: { etag: "etagHash" } }),
+      Promise.resolve({
+        data: tonJetton,
+        headers: { ["etag"]: "commitHash" },
+      }),
     );
   });
 
@@ -26,7 +35,6 @@ describe("import ton Jetton tokens", () => {
   string, // ticker
   number, // magntude
   boolean, // delisted
-  boolean, // enableCountervalues
 ];
 
 import tokens from "./ton-jetton.json";
@@ -40,9 +48,27 @@ export default tokens as TonJettonToken[];
 
     await importTonJettonTokens(".");
 
-    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/jetton.json/));
-    expect(mockedFs).toHaveBeenNthCalledWith(1, "ton-jetton.json", JSON.stringify(tonJetton));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "ton-jetton-hash.json", JSON.stringify("etagHash"));
+    expect(mockedAxios).toHaveBeenCalledWith(
+      "https://crypto-assets-service.api.ledger.com/v1/tokens",
+      {
+        params: {
+          blockchain_name: "ton",
+          output: "contract_address,name,ticker,decimals,delisted",
+        },
+      },
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      1,
+      "ton-jetton.json",
+      JSON.stringify([
+        ["EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs", "USDT", "USDT", 6, false],
+      ]),
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      2,
+      "ton-jetton-hash.json",
+      JSON.stringify("commitHash"),
+    );
     expect(mockedFs).toHaveBeenNthCalledWith(3, "ton-jetton.ts", expectedFile);
   });
 });

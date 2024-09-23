@@ -1118,7 +1118,7 @@ export const renderSwapDeviceConfirmation = ({
               <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
                 <Trans i18nKey={`DeviceAction.swap2.${key}`} />
               </Text>
-              <DeviceSwapSummaryValueStyled>{value}</DeviceSwapSummaryValueStyled>
+              <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
             </Fragment>
           ))}
         </DeviceSwapSummaryStyled>

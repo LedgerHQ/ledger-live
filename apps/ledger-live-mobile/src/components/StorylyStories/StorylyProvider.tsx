@@ -4,6 +4,7 @@ import { Linking } from "react-native";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import { Storyly } from "storyly-react-native";
+import { useSettings } from "~/hooks";
 
 interface StorylyProviderProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ const getTokenForInstanceId = (stories: StoriesType, targetInstanceId: string): 
 const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   const [url, setUrl] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const { language } = useSettings();
 
   const storylyRef = useRef<Storyly>(null);
 
@@ -61,11 +63,14 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   };
 
   const handleEvent = (e: Storyly.StoryEvent) => {
-    if (["StoryGroupClosed", "StoryGroupCompleted", "StoryPaused"].includes(e.event)) {
+    if (
+      (e.event === "StoryPreviousClicked" && e.story?.index === 0) ||
+      ["StoryGroupClosed", "StoryGroupCompleted"].includes(e.event)
+    ) {
       clear();
     }
-    if (e.event === "StoryCTAClicked" && e?.story?.media?.actionUrl) {
-      Linking.openURL(e.story.media.actionUrl);
+    if (e.event === "StoryCTAClicked" && e?.story?.actionUrl) {
+      Linking.openURL(e.story.actionUrl);
       clear();
     }
   };
@@ -81,6 +86,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
             style={{ flex: 1 }} // necessary for touches to work
             onLoad={handleLoad}
             onEvent={handleEvent}
+            storylyLocale={language}
           />
         </Flex>
       ) : null}

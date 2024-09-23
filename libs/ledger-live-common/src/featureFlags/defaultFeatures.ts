@@ -479,6 +479,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       environment: "STAGING",
       watchConfig: {},
+      learnMoreLink: "",
     },
   },
   llmWalletSync: {
@@ -486,6 +487,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       environment: "STAGING",
       watchConfig: {},
+      learnMoreLink: "",
     },
   },
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
@@ -493,6 +495,7 @@ export const DEFAULT_FEATURES: Features = {
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
+  spamFilteringTx: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

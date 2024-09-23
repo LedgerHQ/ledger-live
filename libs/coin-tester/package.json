@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
   "scripts": {

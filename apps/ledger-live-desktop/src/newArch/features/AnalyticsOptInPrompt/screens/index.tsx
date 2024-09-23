@@ -37,6 +37,7 @@ const AnalyticsOptInPrompt = memo(
         style={{
           background: colors.background.main,
         }}
+        forceDisableFocusTrap
       >
         <Box height={"100%"}>
           {isVariantB ? (

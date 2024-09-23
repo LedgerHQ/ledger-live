@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "../../hooks/useCurrentStep";
+import { useDispatch } from "react-redux";
+import { blockPasswordLock } from "~/actions/appstate";
 
 type Props = {
   isOpen: boolean;
@@ -27,9 +29,12 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setCurrentStep(startingStep);
-  }, [startingStep, setCurrentStep]);
+  }, [startingStep, isOpen, setCurrentStep]);
+
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
@@ -59,6 +64,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
       button: AnalyticsButton.ScanQRCode,
       page: AnalyticsPage.ChooseSyncMethod,
     });
+
+    dispatch(blockPasswordLock(true));
     setCurrentStep(Steps.QrCodeMethod);
   };
 
@@ -69,6 +76,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
   const onCloseDrawer = () => {
+    dispatch(blockPasswordLock(false));
     resetStep();
     resetOption();
     handleClose();

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 
 import AccountSectionLabel from "~/components/AccountSectionLabel";
 import Unbonding from "./components/Unbonding";

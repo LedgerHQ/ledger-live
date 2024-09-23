@@ -44,9 +44,8 @@ function View({
   if (isWalletSyncEnabled) {
     rows.push({
       titleKey: "addAccountsModal.drawer.walletSync.title",
-      descriptionKey: "addAccountsModal.drawer.walletSync.description",
       onPress: onClickImportLedgerSync,
-      icon: <Icons.QrCode color={"primary.c80"} />,
+      icon: <Icons.Refresh color={"primary.c80"} />,
       testID: "add-accounts-modal-wallet-sync-button",
     });
   } else {
@@ -61,20 +60,18 @@ function View({
 
   return (
     <>
-      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={16}>
+      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb="32px">
         {doesNotHaveAccount
           ? t("addAccountsModal.title")
           : t("addAccountsModal.drawer.drawerTitleHasAccount")}
       </Text>
-      <Text variant="large" fontWeight="medium" fontSize="14px" color="neutral.c70" mb="32px">
-        {t("addAccountsModal.drawer.drawerSubTitle")}
-      </Text>
+
       <Flex flexDirection="column" rowGap={16}>
         {rows.map((row, index) => (
           <ActionRow
             key={index}
             title={t(row.titleKey)}
-            description={t(row.descriptionKey)}
+            description={t(row.descriptionKey ?? "")}
             onPress={row.onPress}
             icon={row.icon}
             testID={row.testID}

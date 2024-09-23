@@ -51,16 +51,9 @@ describe("Synchronize flow", () => {
 
     await user.click(row);
 
-    // Select Sync with QRCode
-    await waitFor(() => expect(screen.getByTestId("walletSync-synchronize-scan")).toBeDefined());
-    const qrCodeCard = screen.getByTestId("walletSync-synchronize-scan");
-    await user.click(qrCodeCard);
-
     // QRCode Page
     await waitFor(() =>
-      expect(
-        screen.getByText(/Scan and synchronize your accounts with another Ledger Live app/i),
-      ).toBeDefined(),
+      expect(screen.getByText(/Sync with the Ledger Live app on another phone/i)).toBeDefined(),
     );
 
     //PinCode Page after scanning QRCode
@@ -68,7 +61,7 @@ describe("Synchronize flow", () => {
     setTimeout(async () => {
       await waitFor(() => {
         screen.debug();
-        expect(screen.getByText("Enter the code")).toBeDefined();
+        expect(screen.getByText("Your Ledger Sync code")).toBeDefined();
       });
     }, 3000);
 
@@ -78,7 +71,7 @@ describe("Synchronize flow", () => {
         screen.debug();
         expect(
           screen.getByText(
-            "Changes in your accounts will now automatically appear across all apps and platforms.",
+            "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
           ),
         ).toBeDefined();
       });

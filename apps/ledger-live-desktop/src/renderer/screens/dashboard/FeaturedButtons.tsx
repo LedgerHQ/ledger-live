@@ -22,6 +22,7 @@ const FeaturedButtons = () => {
 
   const bannerFeatureFlag = useFeature("portfolioExchangeBanner");
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+
   const { enabled: bannerEnabled } = bannerFeatureFlag || { enabled: false };
 
   const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;

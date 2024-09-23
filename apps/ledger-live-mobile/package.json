@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.48.1",
+  "version": "3.49.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -77,6 +77,7 @@
     "@formatjs/intl-pluralrules": "^5.0.0",
     "@formatjs/intl-relativetimeformat": "^11.1.8",
     "@ledgerhq/coin-cosmos": "workspace:^",
+    "@ledgerhq/coin-elrond": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -216,7 +217,7 @@
     "rn-fetch-blob": "^0.12.0",
     "rxjs": "^7.8.1",
     "semver": "^7.3.7",
-    "storyly-react-native": "2.18.1",
+    "storyly-react-native": "3.6.0",
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
     "text-encoding-polyfill": "^0.6.7",

@@ -31,14 +31,10 @@ export class Modal extends Component {
   protected confirmText = this.page.locator(
     "text=Please confirm the operation on your device to finalize it",
   );
-  protected optionWithTextAndFollowingText = (text: string, followingText: string) =>
-    this.page
-      .locator(
-        `//*[contains(text(),"${text}")]/following::span[contains(text(),"${followingText}")]`,
-      )
-      .first();
-  protected dropdownOptions = this.page.locator("div.select__option");
-  protected dropdownOptionsList = this.page.locator("div.select-options-list");
+
+  constructor(page: any) {
+    super(page);
+  }
 
   @step("Click Continue button")
   async continue() {

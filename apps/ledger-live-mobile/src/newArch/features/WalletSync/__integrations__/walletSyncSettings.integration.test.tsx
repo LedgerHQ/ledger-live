@@ -14,8 +14,8 @@ describe("WalletSyncSettings", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await expect(await screen.findByText(/sync your accounts across all platforms/i)).toBeVisible();
-    await expect(await screen.findByText(/Already synced a Ledger Live app?/i)).toBeVisible();
+    await expect(await screen.findByText(/Turn on Ledger Sync for this phone/i)).toBeVisible();
+    await expect(await screen.findByText(/I already turned it on/i)).toBeVisible();
   });
 
   it("Should open the drawer when 'already created a key' button is pressed", async () => {
@@ -23,7 +23,7 @@ describe("WalletSyncSettings", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/Already synced a Ledger Live app?/i));
+    await user.press(await screen.findByText(/I already turned it on/i));
     await expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
   });
 });

@@ -5,6 +5,7 @@ export enum FieldStatus {
   NoData = "nodata",
   Queued = "queued",
 }
+
 export enum ItemType {
   Separator = "separator",
   ExternalLink = "external",

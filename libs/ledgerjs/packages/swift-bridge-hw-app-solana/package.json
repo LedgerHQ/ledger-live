@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-solana",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package",
   "keywords": [
     "Ledger",

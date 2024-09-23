@@ -190,6 +190,7 @@ export type Features = CurrencyFeatures & {
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
+  spamFilteringTx: Feature_SpamFilteringTx;
 };
 
 /**
@@ -481,10 +482,12 @@ export type Feature_BuySellUiManifest = Feature<{
 export type Feature_LldWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
 }>;
 export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -511,6 +514,7 @@ export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
+export type Feature_SpamFilteringTx = DefaultFeature;
 
 /**
  * Utils types.

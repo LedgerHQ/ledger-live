@@ -388,3 +388,8 @@ export const removeStarredMarketCoins = (payload: string) => ({
   type: "MARKET_REMOVE_STARRED_COINS",
   payload,
 });
+
+export const setHasSeenOrdinalsDiscoveryDrawer = (payload: boolean) => ({
+  type: "SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER",
+  payload,
+});

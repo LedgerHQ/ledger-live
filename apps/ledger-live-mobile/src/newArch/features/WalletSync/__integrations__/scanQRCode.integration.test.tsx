@@ -9,7 +9,7 @@ describe("scanQRCode", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/Already synced a Ledger Live app?/i));
+    await user.press(await screen.findByText(/I already turned it on/i));
     await user.press(await screen.findByText(/scan a qr code/i));
     await expect(screen.queryAllByText(/show qr/i)).toHaveLength(2);
     await expect(screen.getByTestId("ws-scan-camera")).toBeVisible();

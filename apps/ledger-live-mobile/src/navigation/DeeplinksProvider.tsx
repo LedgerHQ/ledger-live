@@ -516,15 +516,21 @@ export const DeeplinksProvider = ({
           }
           const platform = pathname.split("/")[1];
 
+          if (isStorylyLink(url.toString())) {
+            storylyContext.setUrl(url.toString());
+          }
+
           if (hostname === "earn") {
             if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") || "";
-              const messageTitle = searchParams.get("messageTitle") || "";
+              const message = searchParams.get("message") ?? "";
+              const messageTitle = searchParams.get("messageTitle") ?? "";
+              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
 
               dispatch(
                 setEarnInfoModal({
                   message,
                   messageTitle,
+                  learnMoreLink,
                 }),
               );
               return;

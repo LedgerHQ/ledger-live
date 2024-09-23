@@ -1,12 +1,12 @@
 {
   "name": "@actions/turbo-affected",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Returns a list of affected packages, and optionnally if particular has been affected",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup -d build src/main.ts",
+    "build": "tsup --target node20 -d build src/main.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },

@@ -99,12 +99,8 @@
     "src/families/crypto_org/types.ts",
     "src/families/elrond/banner.ts",
     "src/families/elrond/constants.ts",
-    "src/families/elrond/helpers/denominate.ts",
-    "src/families/elrond/helpers/handleTransactionStatus.ts",
-    "src/families/elrond/helpers/hasMinimumDelegableBalance.ts",
-    "src/families/elrond/helpers/randomizeProviders.ts",
-    "src/families/elrond/js-estimateMaxSpendable.ts",
-    "src/families/elrond/preload.ts",
+    "src/families/elrond/helpers.ts",
+    "src/families/elrond/errors.ts",
     "src/families/elrond/react.ts",
     "src/families/elrond/types.ts",
     "src/families/evm/banner.ts",
@@ -333,7 +329,8 @@
     "src/walletSync/getEnvironmentParams.ts",
     "src/device/use-cases/appDataBackup/deleteAppData.ts",
     "src/device/use-cases/appDataBackup/deleteAppDataUseCase.ts",
-    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts"
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts",
+    "src/account/typeGuards.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",
@@ -342,6 +339,7 @@
     "@types/bs58check",
     "@types/pako",
     "@types/qs",
+    "bech32",
     "bip32",
     "bip39",
     "tsx",
