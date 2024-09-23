@@ -1,9 +1,10 @@
 import React from "react";
-import Kiln from "~/icons/Kiln";
+import { Kiln } from "~/icons/Kiln";
 import { Lido } from "~/icons/Lido";
-import Figment from "~/icons/Figment";
-import Stader from "~/icons/Stader";
-import MissingIcon from "~/icons/MissingIcon";
+import { Figment } from "~/icons/Figment";
+import { Stader } from "~/icons/Stader";
+import { MissingIcon } from "~/icons/MissingIcon";
+import { KelpDAO } from "~/icons/KelpDAO";
 
 type Props = {
   icon?: string;
@@ -23,9 +24,9 @@ export function EvmStakingDrawerProviderIcon({ icon = "" }: Props) {
       return <Figment size={ICON_SIZE} />;
     case "Stader":
       return <Stader size={ICON_SIZE} />;
+    case "KelpDAO":
+      return <KelpDAO size={ICON_SIZE} />;
     // TODO
-    // case "KelpDAO":
-    //   return <KelpDAO size={ICON_SIZE} />;
     // case "RocketPool":
     //   return <RocketPool size={ICON_SIZE} />;
     // case "P2P":

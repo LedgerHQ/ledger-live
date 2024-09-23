@@ -3,7 +3,7 @@ import Svg, { SvgProps, Path, Rect } from "react-native-svg";
 
 type Props = SvgProps & { size?: number; color?: string };
 
-function Kiln({ size = 16 }: Props): JSX.Element {
+export function Kiln({ size = 16 }: Props): JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
       <Rect y="0.00390625" width="32" height="32" rx="8" fill="#FBFBFB" />
