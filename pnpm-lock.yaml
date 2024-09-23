@@ -6230,6 +6230,9 @@ importers:
       concurrently:
         specifier: ^8.0.0
         version: 8.2.2
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       json:
         specifier: ^11.0.0
         version: 11.0.0
