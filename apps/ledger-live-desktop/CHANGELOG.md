@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.87.0-nightly.2
+
+### Patch Changes
+
+- [#7873](https://github.com/LedgerHQ/ledger-live/pull/7873) [`3dcc282`](https://github.com/LedgerHQ/ledger-live/commit/3dcc282547752452cc0482fb5c3604b49970d286) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix Braze Modal not responding when the wallet sync drawer or the analytics opt in drawer are opened
+
 ## 2.87.0-nightly.1
 
 ### Minor Changes

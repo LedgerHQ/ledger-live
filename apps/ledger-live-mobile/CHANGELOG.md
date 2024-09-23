@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.50.0-nightly.3
+
+### Patch Changes
+
+- [#7865](https://github.com/LedgerHQ/ledger-live/pull/7865) [`f7f80bd`](https://github.com/LedgerHQ/ledger-live/commit/f7f80bd281fafd924b7b8cef462cbf6b09deb5b0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Analytics
+
 ## 3.50.0-nightly.2
 
 ### Patch Changes
