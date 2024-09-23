@@ -1,12 +1,12 @@
 import fs from "fs";
-import { fetchTokens } from "../fetch";
+import { fetchTokensFromCDN } from "../fetch";
 
 type PolygonERC20Exchange = [string, string, string];
 
 export const importPolygonERC20Exchange = async (outputDir: string) => {
   console.log("importing Polygon-ERC20 exchange...");
   try {
-    const [polygonERC20Exchange, hash] = await fetchTokens<PolygonERC20Exchange>(
+    const [polygonERC20Exchange, hash] = await fetchTokensFromCDN<PolygonERC20Exchange>(
       "evm/137/erc20-exchange.json",
     );
     fs.writeFileSync(
