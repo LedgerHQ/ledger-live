@@ -8,9 +8,9 @@ export class LedgerSyncDrawer extends Drawer {
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private manageBackupButton = this.page.getByTestId("walletSync-manage-backup");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Delete" });
-  private successTextElement = this.page.locator("span", { hasText: "Success" }).first();
+  private successTextElement = this.page.locator("span", { hasText: "Ledger Sync turned on for" }).or(this.page.locator("span", { hasText: "Sync successful!" })).first();
   private backupDeletionSuccessText = this.page.getByText(
-    "Your devices have been unsynchronized and your key has been deleted",
+    "Your Ledger Live apps are no",
   );
 
   @step("Synchronize accounts")
