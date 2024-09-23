@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-// TODO version selector
-import { EvmStakingDrawer } from "~/families/evm/StakingDrawerV2";
-
-import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
-import { InitialDrawerID, RootDrawerProps } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "~/const";
+import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
+// TODO version selector
+import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
+import { InitialDrawerID, RootDrawerProps } from "./types";
 
 export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[]) {
   const initialDrawersToShow = await AsyncStorage.multiGet(initialDrawers);

@@ -6621,7 +6621,7 @@
     "title": "Connect device"
   },
   "stake": {
-    "ethereum": {
+    "ethereum_deprecated": {
       "title": "Grow your ETHHHH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
       "tagMinimum": "Requires {{min}} ETH",
@@ -6656,7 +6656,7 @@
         }
       }
     },
-    "ethereum_v2": {
+    "ethereum": {
       "title": "Select staking provider",
       "category": {
         "all": {
@@ -6712,7 +6712,7 @@
           "title": "Stader Labs"
         }
       },
-      "read_about": "Read about ETH staking and different strategies",
+      "read_about": "Strategies and tactics to know",
       "required_minimum": "Requires {{min}} ETH",
       "rewards_strategy": {
         "auto-compounded": "Auto-compounded rewards",

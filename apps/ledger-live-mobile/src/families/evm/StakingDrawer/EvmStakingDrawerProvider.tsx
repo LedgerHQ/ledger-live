@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native";
 
-import { Flex, Icon, Text, Tag } from "@ledgerhq/native-ui";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
-import { ListProvider } from "./types";
+import { ListProvider } from "./type";
 
 type Props = {
   provider: ListProvider;
@@ -37,9 +37,7 @@ export function EvmStakingDrawerProvider({
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
   const manifest = remoteManifest || localManifest;
 
-  const { t, i18n } = useTranslation();
-  const hasTag: boolean =
-    !!provider?.min && i18n.exists(`stake.ethereum.providers.${provider.id}.tag`);
+  const { t } = useTranslation();
 
   const providerPress = useCallback(() => {
     if (manifest) {
@@ -55,23 +53,45 @@ export function EvmStakingDrawerProvider({
 
   return (
     <TouchableOpacity onPress={providerPress}>
-      <Flex flexDirection="row" columnGap={16}>
+      <Flex
+        flexDirection="row"
+        columnGap={16}
+        alignItems="center"
+        borderRadius={2}
+        p={5}
+        backgroundColor="opacityDefault.c05"
+      >
         <EvmStakingDrawerProviderIcon icon={provider.icon} />
-        <Flex rowGap={2} alignItems="flex-start" flex={1}>
-          <Flex flexDirection="row" columnGap={8} rowGap={8} mb={2}>
-            <Text variant="body" fontWeight="semiBold">
-              {t(`stake.ethereum.providers.${provider.id}.title`)}
+        <Flex rowGap={2} alignItems="flex-start" flex={3}>
+          <Flex flexDirection="column" flex={1} alignItems="flex-start">
+            <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
+              {t(`stake.ethereum.provider.${provider.id}.title`)}
             </Text>
-            {hasTag && <Tag type="color">{t(`stake.ethereum.providers.${provider.id}.tag`)}</Tag>}
-          </Flex>
-          <Flex rowGap={12}>
-            <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
-              {t(`stake.ethereum.providers.${provider.id}.description`)}
+            <Text variant="paragraph" fontSize={13} color="neutral.c70">
+              {provider.lst
+                ? t("stake.ethereum.lst")
+                : provider.min
+                  ? t("stake.ethereum.required_minimum", {
+                      min: provider.min,
+                    })
+                  : t("stake.ethereum.no_minimum")}
             </Text>
           </Flex>
         </Flex>
-        <Flex alignSelf="center">
-          <Icon name="ChevronRight" size={32} color="neutral.c100" />
+        <Flex flex={2}>
+          {provider.rewardsStrategy ? (
+            <Text
+              variant="paragraph"
+              fontSize={12}
+              color="neutral.c70"
+              flexWrap="wrap"
+              textAlign="right"
+            >
+              {t(`stake.ethereum.rewards_strategy.${provider.rewardsStrategy}`)}
+            </Text>
+          ) : (
+            <></>
+          )}
         </Flex>
       </Flex>
     </TouchableOpacity>

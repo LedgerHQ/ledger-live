@@ -9,20 +9,28 @@ type Props = {
   icon?: string;
 };
 
+const ICON_SIZE = 40;
+
 export function EvmStakingDrawerProviderIcon({ icon = "" }: Props) {
   const [name] = icon.split(":");
 
-  if (name === "Kiln") {
-    return <Kiln size={32} />;
+  switch (name) {
+    case "Kiln":
+      return <Kiln size={ICON_SIZE} />;
+    case "Lido":
+      return <Lido size={ICON_SIZE} />;
+    case "Figment":
+      return <Figment size={ICON_SIZE} />;
+    case "Stader":
+      return <Stader size={ICON_SIZE} />;
+    // TODO
+    // case "KelpDAO":
+    //   return <KelpDAO size={ICON_SIZE} />;
+    // case "RocketPool":
+    //   return <RocketPool size={ICON_SIZE} />;
+    // case "P2P":
+    //   return <P2P size={ICON_SIZE} />;
+    default:
+      return <MissingIcon initialLetter={name.charAt(0)} size={ICON_SIZE} />;
   }
-  if (name === "Lido") {
-    return <Lido size={32} />;
-  }
-  if (name === "Stader") {
-    return <Stader size={32} />;
-  }
-  if (name === "Figment") {
-    return <Figment size={32} />;
-  }
-  return <MissingIcon initialLetter={name.charAt(0)} size={32} />;
 }
