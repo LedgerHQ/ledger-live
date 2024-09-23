@@ -38,7 +38,13 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
           >
             {t("analyticsOptInPrompt.variantA.refuse")}
           </Button>
-          <Button variant={"main"} size={"large"} borderRadius={48} onClick={handleAcceptClick}>
+          <Button
+            variant={"main"}
+            size={"large"}
+            borderRadius={48}
+            onClick={handleAcceptClick}
+            data-testid="accept-analytics-button"
+          >
             {t("analyticsOptInPrompt.variantA.accept")}
           </Button>
         </Flex>

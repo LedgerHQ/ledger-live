@@ -35,6 +35,7 @@ const VariantBFooter = ({ clickOptions }: VariantBFooterProps) => {
           borderRadius={48}
           flex={1}
           onClick={clickOptions.accept}
+          data-testid="accept-analytics-button"
         >
           {t("analyticsOptInPrompt.variantB.accept")}
         </Button>

@@ -175,6 +175,9 @@ export const test = base.extend<TestFixtures>({
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
+    // Click on accept analytics button if it exists
+    page.getByTestId("accept-analytics-button").click();
+
     // use page in the test
     await use(page);
 
