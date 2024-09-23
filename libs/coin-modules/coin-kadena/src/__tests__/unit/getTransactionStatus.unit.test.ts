@@ -8,7 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import { fetchCoinDetailsForAccount } from "../../api/network";
 import { setCoinConfig } from "../../config";
-import getTransactionStatus from "../../js-getTransactionStatus";
+import getTransactionStatus from "../../getTransactionStatus";
 import {
   account,
   API_KADENA_ENDPOINT,

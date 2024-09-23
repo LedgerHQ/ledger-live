@@ -7,13 +7,13 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import broadcast from "../broadcast";
 import resolver from "../hw-getAddress";
-import broadcast from "../js-broadcast";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
-import { buildSignOperation } from "../js-signOperation";
-import { getAccountShape } from "../js-synchronisation";
-import { createTransaction, prepareTransaction } from "../js-transaction";
+import { createTransaction, prepareTransaction } from "../prepareTransaction";
+import { buildSignOperation } from "../signOperation";
+import { getAccountShape } from "../synchronisation";
 import type { Transaction } from "../types";
 
 import { KadenaCoinConfig, setCoinConfig } from "../config";

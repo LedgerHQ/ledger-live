@@ -1,7 +1,7 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchCoinDetailsForAccount } from "./api/network";
-import { createTransaction } from "./js-transaction";
+import { createTransaction } from "./prepareTransaction";
 import { Transaction } from "./types";
 import { baseUnitToKda } from "./utils";
 

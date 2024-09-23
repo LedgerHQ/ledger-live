@@ -82,7 +82,7 @@ export const buildSignOperation =
         if (cancelled) return;
 
         invariant(buildTxnRes, "transferCmd is required");
-        
+
         const { pact_command } = buildTxnRes;
 
         o.next({

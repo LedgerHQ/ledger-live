@@ -1,5 +1,5 @@
 import { broadcastTransaction } from "../../api/network";
-import broadcast from "../../js-broadcast";
+import broadcast from "../../broadcast";
 import { account, operation, rawData } from "../fixtures/common.fixtures";
 
 jest.mock("../../api/network");

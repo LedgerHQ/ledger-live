@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { KDA_FEES, KDA_GAS_LIMIT_TRANSFER } from "../../constants";
-import { createTransaction } from "../../js-transaction";
+import { createTransaction } from "../../prepareTransaction";
 
 describe("createTransaction", () => {
   it("should create a valid transaction", async () => {

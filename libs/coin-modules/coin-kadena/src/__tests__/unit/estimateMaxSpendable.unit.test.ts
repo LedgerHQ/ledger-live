@@ -1,5 +1,5 @@
 import { fetchCoinDetailsForAccount } from "../../api/network";
-import estimateMaxSpendable from "../../js-estimateMaxSpendable";
+import estimateMaxSpendable from "../../estimateMaxSpendable";
 import { Transaction } from "../../types";
 import {
   account,
