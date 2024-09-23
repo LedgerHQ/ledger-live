@@ -125,4 +125,11 @@ export class AppInfos {
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly LS = new AppInfos("LedgerSync", [DeviceLabels.LOGIN_LEDGER_SYNC]);
+  static readonly EXCHANGE = new AppInfos("Exchange", [
+    DeviceLabels.SEND,
+    DeviceLabels.GET,
+    DeviceLabels.FEES,
+    DeviceLabels.ACCEPT_AND_SEND,
+    DeviceLabels.REJECT,
+  ]);
 }

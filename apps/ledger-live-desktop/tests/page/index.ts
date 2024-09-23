@@ -11,6 +11,8 @@ import { SendModal } from "tests/page/modal/send.modal";
 import { Drawer } from "tests/page/drawer/drawer";
 import { SettingsPage } from "tests/page/settings.page";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
+import { SwapPage } from "tests/page/swap.page";
+import { SwapConfirmationDrawer } from "tests/page/drawer/swap.confirmation.drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -25,4 +27,6 @@ export class Application extends PageHolder {
   public send = new SendModal(this.page);
   public settings = new SettingsPage(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
+  public swap = new SwapPage(this.page);
+  public swapDrawer = new SwapConfirmationDrawer(this.page);
 }
