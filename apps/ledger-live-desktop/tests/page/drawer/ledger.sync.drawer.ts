@@ -10,7 +10,7 @@ export class LedgerSyncDrawer extends Drawer {
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Delete" });
   private successTextElement = this.page.locator("span", { hasText: "Ledger Sync turned on for" }).or(this.page.locator("span", { hasText: "Sync successful!" })).first();
   private backupDeletionSuccessText = this.page.getByText(
-    "Your Ledger Live apps are no",
+    "Your Ledger Live apps are no longer synched",
   );
 
   @step("Synchronize accounts")
