@@ -22,7 +22,7 @@
       "loaded": true,
       "shareAnalytics": true,
       "sharePersonalizedRecommandations": false,
-      "hasSeenAnalyticsOptInPrompt": false,
+      "hasSeenAnalyticsOptInPrompt": true,
       "sentryLogs": true,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
@@ -84,6 +84,15 @@
       "overriddenFeatureFlags": {
         "customImage": {
           "enabled": true,
+          "overridesRemote": true
+        },
+        "ptxSwapLiveAppDemoZero": {
+          "enabled": true,
+          "params": {
+            "manifest_id": "swap-live-app-demo-0",
+            "currencies": [],
+            "families": []
+          },
           "overridesRemote": true
         },
         "llmNewDeviceSelection": {

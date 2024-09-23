@@ -110,6 +110,7 @@ function ToRow({
           <InputCurrency
             // @DEV: onChange props is required by the component, there is no read-only logic
             onChange={() => null}
+            data-testid="destination-currency-amount"
             value={unit ? toAmount : null}
             disabled
             placeholder="-"
@@ -128,6 +129,7 @@ function ToRow({
                   currency={toCurrency}
                   counterValue={counterValue}
                   value={toAmount}
+                  data-testid="destination-currency-amount-value"
                   color="palette.text.shade40"
                   ff="Inter|Medium"
                   fontSize={3}
