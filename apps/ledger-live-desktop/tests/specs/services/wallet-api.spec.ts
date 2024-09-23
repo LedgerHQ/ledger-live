@@ -238,7 +238,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await drawer.selectCurrency("tether usd");
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
-      "Tether USD (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
+      "Ethereum 3 (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
     );
     await drawer.back();
 
