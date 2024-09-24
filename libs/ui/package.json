@@ -10,13 +10,15 @@
     "@ledgerhq/ui-shared": "workspace:^",
     "@playwright/test": "~1.40.0",
     "concurrently": "^8.0.0",
+    "cross-env": "^7.0.3",
     "json": "^11.0.0",
     "lint-staged": "^14.0.0"
   },
   "scripts": {
     "pretest:react": "playwright install",
-    "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
-    "pretest:react:update-snapshots": "playwright install",
-    "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
+    "clean": "pnpm -F ./examples/webpack.js -F ./examples/next.js clean:full",
+    "build-and-test": "pnpm pretest:react && pnpm build-next && pnpm e2e",
+    "build-next": "pnpm -w -F ./examples/webpack.js build",
+    "e2e": "cross-env UPDATE_SNAPSHOTS=1 pnpm concurrently -s=first -k \"pnpm -w -F ./examples/webpack.js serve\" \"playwright test $([ \"$UPDATE_SNAPSHOTS\" = 1 ] && echo \"--update-snapshots\")\""
   }
 }

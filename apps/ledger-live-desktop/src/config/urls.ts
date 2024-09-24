@@ -178,6 +178,7 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/article/9305992683165-zd",
   genuineCheck: "https://support.ledger.com/article/4404389367057-zd",
+  whatAreOrdinals: "https://www.ledger.com/academy/bitcoin-ordinals",
 };
 
 export const vaultSigner = {

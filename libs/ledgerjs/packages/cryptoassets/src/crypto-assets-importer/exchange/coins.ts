@@ -1,12 +1,12 @@
 import fs from "fs";
-import { fetchTokens } from "../fetch";
+import { fetchTokensFromCDN } from "../fetch";
 
 type CoinExchange = [string, string, string];
 
 export const importCoinsExchange = async (outputDir: string) => {
   console.log("importing coins exchange...");
   try {
-    const [coinsExchange, hash] = await fetchTokens<CoinExchange>("exchange/coins.json");
+    const [coinsExchange, hash] = await fetchTokensFromCDN<CoinExchange>("exchange/coins.json");
     fs.writeFileSync(`${outputDir}/exchange/coins.json`, JSON.stringify(coinsExchange));
     if (hash) {
       fs.writeFileSync(`${outputDir}/exchange/coin-hash.json`, JSON.stringify(hash));
