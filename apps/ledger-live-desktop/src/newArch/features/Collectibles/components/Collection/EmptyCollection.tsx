@@ -30,7 +30,7 @@ const Placeholder = styled.div`
 
 type Props = {
   collectionType: CollectibleType;
-  currencyName: string;
+  currencyName?: string;
   children?: ReactNode;
 };
 
@@ -59,8 +59,22 @@ const EmptyCollection: React.FC<Props> = ({ collectionType, currencyName, childr
             </Text>
           </Placeholder>
         );
-      case CollectibleTypeEnum.Ordinal:
-        return null;
+      case CollectibleTypeEnum.Inscriptions:
+        return (
+          <Placeholder>
+            <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              {t("ordinals.inscriptions.empty")}
+            </Text>
+          </Placeholder>
+        );
+      case CollectibleTypeEnum.RareSat:
+        return (
+          <Placeholder>
+            <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              {t("ordinals.rareSats.empty")}
+            </Text>
+          </Placeholder>
+        );
       default:
         return t("collectibles.emptyState.default");
     }
