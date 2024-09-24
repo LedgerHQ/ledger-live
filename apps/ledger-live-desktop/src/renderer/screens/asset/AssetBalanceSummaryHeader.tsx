@@ -20,7 +20,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
+import { AccountLike, BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 type Props = {
   isAvailable: boolean;
@@ -31,6 +31,7 @@ type Props = {
   countervalueFirst: boolean;
   currency: CryptoCurrency | TokenCurrency;
   unit: Unit;
+  account: AccountLike;
 };
 export default function AssetBalanceSummaryHeader({
   counterValue,
@@ -41,6 +42,7 @@ export default function AssetBalanceSummaryHeader({
   countervalueFirst,
   currency,
   unit,
+  account,
 }: Props) {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -106,10 +108,11 @@ export default function AssetBalanceSummaryHeader({
     history.push({
       pathname: "/swap",
       state: {
+        defaultAccount: account,
         defaultCurrency: currency,
       },
     });
-  }, [currency, history, swapDefaultTrack]);
+  }, [currency, history, swapDefaultTrack, account]);
 
   const onStake = useCallback(() => {
     track("button_clicked2", {
