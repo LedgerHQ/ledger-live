@@ -110,6 +110,7 @@ export default function AssetBalanceSummaryHeader({
       state: {
         defaultAccount: account,
         defaultCurrency: currency,
+        from: history.location.pathname,
       },
     });
   }, [currency, history, swapDefaultTrack, account]);
