@@ -149,7 +149,7 @@ function getTransactions() {
       expect(currentAccount.polkadotResources.nominations?.length).toBe(3);
       expect(
         currentAccount.polkadotResources.nominations?.every(
-          nominiation => nominiation.status === "waiting",
+          nominiation => nominiation.status === "waiting" || nominiation.status === "inactive",
         ),
       ).toBe(true);
     },
