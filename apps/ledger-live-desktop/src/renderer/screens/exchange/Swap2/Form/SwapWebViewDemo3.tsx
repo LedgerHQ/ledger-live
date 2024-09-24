@@ -279,10 +279,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     [],
   );
 
-  useEffect(() => {
-    console.log("xxxx", state);
-  }, [state]);
-
   const hashString = useMemo(
     () =>
       new URLSearchParams({
