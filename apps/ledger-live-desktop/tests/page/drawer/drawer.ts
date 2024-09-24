@@ -58,7 +58,7 @@ export class Drawer extends Component {
     await this.currencyButton(currency).click();
   }
 
-  getAccountButton = (accountName: string, index: number) =>
+  protected getAccountButton = (accountName: string, index: number) =>
     this.page.getByTestId(`account-row-${accountName.toLowerCase()}-${index}`).first();
 
   async selectAccount(accountName: string, index = 0) {

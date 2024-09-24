@@ -103,11 +103,14 @@ for (const { swap } of swaps) {
     }) => {
       const rate = Rates.FLOAT;
       await app.layout.goToSwap();
-      await app.swap.selectAccountToSwapFrom(swap.accountToDebit);
-      await app.swap.selectCurrencyToSwapTo(swap.accountToCredit.currency.name);
-      await app.swap.fillInOriginAmount(swap.amount);
-      await app.swap.selectExchangeQuote(swap.provider.name, rate);
-      await app.swap.clickExchangeButton(electronApp, swap.provider.uiName);
+      await app.swap.selectAssetFrom(electronApp, swap.accountToDebit.accountName);
+      await app.swapDrawer.selectAccount(swap.accountToDebit.accountName);
+      await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
+      await app.swapDrawer.selectAccount(swap.accountToDebit.accountName);
+
+      await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
+      await app.swap.selectQuote(electronApp, swap.provider.uiName, rate);
+      await app.swap.clickExchangeButton(electronApp, swap.provider.name);
       const amountTo = await app.swapDrawer.getAmountToReceive();
       const fees = await app.swapDrawer.getFees();
       swap.setAmountToReceive(amountTo);

@@ -4,13 +4,19 @@ import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 import { Account } from "tests/enum/Account";
+import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
+import { ChooseAccountDrawer } from "tests/page/drawer/choose.account.drawer";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
-  private originCurrencyDropdown = this.page.getByTestId("origin-currency-dropdown");
+  private webview = this.page.locator("webview");
+  private fromAccountCoinSelector = "from-account-coin-selector";
+  private fromAccountAmoutInput = "from-account-amount-input";
+  private toAccountCoinSelector = "to-account-coin-selector";
+  private executeSwap = "execute-swap";
   private originCurrencyAmount = this.page.getByTestId("origin-currency-amount-value");
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
@@ -41,6 +47,8 @@ export class SwapPage extends AppPage {
   // Quote Components
   private quoteContainer = (providerName: string, exchangeType: string) =>
     this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
+  private quoteSelector = (providerName: string, exchangeType: string) =>
+    `quote-container-${providerName}-${exchangeType}`;
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -49,6 +57,9 @@ export class SwapPage extends AppPage {
   readonly swapId = this.page.getByTestId("swap-id");
   private seeDetailsButton = this.page.locator('button:has-text("See details")');
   readonly detailsSwapId = this.page.getByTestId("details-swap-id").first();
+
+  private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+  private chooseAccountDrawer = new ChooseAccountDrawer(this.page);
 
   async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
@@ -120,6 +131,16 @@ export class SwapPage extends AppPage {
     await this.quoteContainer(providerName, exchangeType).click();
   }
 
+  @step("Select exchange quote $1 with rate $2")
+  async selectQuote(
+    electronApp: ElectronApplication,
+    providerName: string,
+    exchangeType: "fixed" | "float",
+  ) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.quoteSelector(providerName, exchangeType)).click();
+  }
+
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
@@ -161,7 +182,7 @@ export class SwapPage extends AppPage {
     const timeoutPromise = new Promise(resolve => setTimeout(resolve, timeout, null));
     return Promise.race([fetchTxByAddressResponse, timeoutPromise]);
   }
-
+  /*
   @step("Select account to swap from")
   async selectAccountToSwapFrom(accountToSwapFrom: Account) {
     await this.waitForAccountsBalance(accountToSwapFrom.address);
@@ -177,7 +198,7 @@ export class SwapPage extends AppPage {
     }
     const selectedAccountFrom = this.originCurrencyDropdown.locator(this.dropdownSelectedValue);
     await expect(selectedAccountFrom).toHaveText(accName);
-  }
+  }*/
 
   @step("Fill in amount: $0")
   async fillInOriginAmount(originAmount: string) {
@@ -217,5 +238,25 @@ export class SwapPage extends AppPage {
         return swapHistoryStyles.getPropertyValue("opacity") === "1";
       }
     });
+  }
+
+  @step("Select currency to swap from: $1")
+  async selectAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Fill in amount: $1")
+  async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountAmoutInput).fill(amount);
+  }
+
+  @step("Select currency to swap to: $1")
+  async selectAssetTo(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.toAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 }
