@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.9.0-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/hw-app-solana@7.2.4-next.1
+  - @ledgerhq/cryptoassets@13.5.0-next.1
+  - @ledgerhq/hw-app-btc@10.4.3-next.1
+  - @ledgerhq/hw-app-eth@6.38.2-next.1
+  - @ledgerhq/coin-bitcoin@0.8.1-next.1
+  - @ledgerhq/coin-cosmos@0.1.2-next.1
+  - @ledgerhq/coin-evm@2.3.0-next.1
+  - @ledgerhq/live-network@2.0.1-next.1
+  - @ledgerhq/coin-framework@0.18.1-next.1
+  - @ledgerhq/hw-app-exchange@0.6.1-next.0
+  - @ledgerhq/speculos-transport@0.1.6-next.1
+  - @ledgerhq/coin-algorand@0.5.6-next.1
+  - @ledgerhq/coin-cardano@0.2.1-next.1
+  - @ledgerhq/coin-elrond@0.1.1-next.1
+  - @ledgerhq/coin-icon@0.4.3-next.1
+  - @ledgerhq/coin-near@0.5.6-next.1
+  - @ledgerhq/coin-polkadot@1.2.2-next.1
+  - @ledgerhq/coin-solana@0.7.6-next.1
+  - @ledgerhq/coin-stellar@0.3.1-next.1
+  - @ledgerhq/coin-tezos@0.6.2-next.1
+  - @ledgerhq/coin-ton@0.3.14-next.1
+  - @ledgerhq/coin-tron@0.0.6-next.1
+  - @ledgerhq/coin-xrp@0.5.2-next.1
+  - @ledgerhq/hw-app-vet@0.2.6-next.1
+  - @ledgerhq/live-countervalues@0.2.6-next.1
+  - @ledgerhq/live-countervalues-react@0.2.6-next.1
+  - @ledgerhq/live-nft@0.4.6-next.1
+  - @ledgerhq/live-wallet@0.6.1-next.1
+  - @ledgerhq/device-core@0.4.0-next.1
+
 ## 34.9.0-next.0
 
 ### Minor Changes
