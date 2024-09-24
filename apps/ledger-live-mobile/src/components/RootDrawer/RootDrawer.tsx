@@ -6,6 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "~/const";
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
 // TODO version selector
+// import { EvmStakingDrawer } from "~/families/evm/StakingDrawer_deprecated";
 import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
 import { InitialDrawerID, RootDrawerProps } from "./types";

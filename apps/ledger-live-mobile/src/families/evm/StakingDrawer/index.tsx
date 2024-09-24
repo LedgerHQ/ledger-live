@@ -75,7 +75,7 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
-      <Flex minHeight="90%" rowGap={24}>
+      <Flex height="100%" rowGap={24}>
         <Flex rowGap={16} alignItems="center">
           <Text variant="h4" textAlign="center">
             {t("stake.ethereum.title")}
