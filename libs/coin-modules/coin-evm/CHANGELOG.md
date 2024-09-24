@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.3.0-nightly.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update preloading method to use the crypto-assets service instead of the CDN for fetching token definitions
+
+### Patch Changes
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0-nightly.0
+  - @ledgerhq/coin-framework@0.18.1-nightly.0
+  - @ledgerhq/evm-tools@1.2.2-nightly.0
+  - @ledgerhq/domain-service@1.2.5-nightly.0
+
 ## 2.2.0
 
 ### Minor Changes

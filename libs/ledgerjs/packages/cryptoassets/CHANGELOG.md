@@ -1,5 +1,15 @@
 # @ledgerhq/cryptoassets
 
+## 13.5.0-nightly.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update all importers to use the crypt-assets service instead of the CDN & remove when possible deprecated and usued values like `disableCounterValue` and `BEP20` type.
+
+### Patch Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update
+
 ## 13.4.0
 
 ### Minor Changes

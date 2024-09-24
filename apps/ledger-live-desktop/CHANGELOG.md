@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.87.0-nightly.3
+
+### Patch Changes
+
+- [#7876](https://github.com/LedgerHQ/ledger-live/pull/7876) [`c95ac37`](https://github.com/LedgerHQ/ledger-live/commit/c95ac37f006d35865bf4eef20753f34591aca8ca) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add discovery drawer when arriving on BTC account
+
+- [#7861](https://github.com/LedgerHQ/ledger-live/pull/7861) [`015f893`](https://github.com/LedgerHQ/ledger-live/commit/015f8934362e3f1a85e40fc1ed94273157da909e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use spendable balance for account selection drawer and parent account name in token selection
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993)]:
+  - @ledgerhq/live-common@34.8.1-nightly.1
+  - @ledgerhq/types-cryptoassets@7.15.2-nightly.0
+  - @ledgerhq/coin-evm@2.3.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.1.2-nightly.0
+  - @ledgerhq/types-live@6.51.1-nightly.0
+  - @ledgerhq/coin-framework@0.18.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.6-nightly.0
+  - @ledgerhq/live-nft@0.4.6-nightly.1
+  - @ledgerhq/live-nft-react@0.4.6-nightly.1
+  - @ledgerhq/live-wallet@0.6.1-nightly.0
+  - @ledgerhq/domain-service@1.2.5-nightly.0
+
 ## 2.87.0-nightly.2
 
 ### Patch Changes

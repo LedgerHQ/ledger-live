@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.51.1-nightly.0
+
+### Patch Changes
+
+- [#7875](https://github.com/LedgerHQ/ledger-live/pull/7875) [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add spamFilteringTx FF
+
 ## 6.51.0
 
 ### Minor Changes

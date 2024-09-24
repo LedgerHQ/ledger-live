@@ -155,6 +155,8 @@
     "@ledgerhq/hw-app-elrond": "6.21.0"
   },
   "changesets": [
+    "blue-apricots-jam",
+    "calm-rocks-march",
     "cuddly-eggs-cross",
     "curly-terms-rescue",
     "curvy-worms-serve",
@@ -165,6 +167,7 @@
     "fair-goats-sniff",
     "few-gifts-double",
     "forty-panthers-clean",
+    "funny-suits-whisper",
     "gentle-fireants-nail",
     "giant-pants-deliver",
     "great-phones-lick",
@@ -174,7 +177,9 @@
     "loud-donkeys-glow",
     "mean-pears-wash",
     "neat-cameras-own",
+    "neat-items-lay",
     "orange-tomatoes-yell",
+    "poor-dots-cry",
     "pretty-buttons-worry",
     "rude-ants-share",
     "shiny-pants-refuse",
@@ -185,16 +190,20 @@
     "smart-mails-refuse",
     "smooth-ears-learn",
     "soft-cherries-fold",
+    "sour-planets-itch",
     "strong-steaks-rule",
     "swift-turtles-taste",
     "tame-tigers-end",
     "thick-glasses-swim",
+    "thin-readers-attend",
     "tiny-gifts-matter",
     "tiny-pigs-sit",
+    "tricky-socks-cheer",
     "twelve-owls-accept",
     "unlucky-beds-leave",
     "unlucky-seals-remember",
     "violet-planets-brake",
-    "wet-clocks-nail"
+    "wet-clocks-nail",
+    "yellow-masks-peel"
   ]
 }

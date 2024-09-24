@@ -1,5 +1,39 @@
 ## 34.5.0-next.4
 
+## 34.8.1-nightly.1
+
+### Patch Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update
+
+- [#7875](https://github.com/LedgerHQ/ledger-live/pull/7875) [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add spamFilteringTx FF
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0-nightly.0
+  - @ledgerhq/coin-evm@2.3.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.1.2-nightly.0
+  - @ledgerhq/coin-framework@0.18.1-nightly.0
+  - @ledgerhq/coin-algorand@0.5.6-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.1-nightly.0
+  - @ledgerhq/coin-cardano@0.2.1-nightly.0
+  - @ledgerhq/coin-elrond@0.1.1-nightly.2
+  - @ledgerhq/coin-icon@0.4.3-nightly.0
+  - @ledgerhq/coin-near@0.5.6-nightly.0
+  - @ledgerhq/coin-polkadot@1.2.2-nightly.0
+  - @ledgerhq/coin-solana@0.7.6-nightly.0
+  - @ledgerhq/coin-stellar@0.3.1-nightly.0
+  - @ledgerhq/coin-tezos@0.6.2-nightly.0
+  - @ledgerhq/coin-ton@0.3.14-nightly.0
+  - @ledgerhq/coin-tron@0.0.6-nightly.0
+  - @ledgerhq/coin-xrp@0.5.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.38.2-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.6-nightly.0
+  - @ledgerhq/live-countervalues@0.2.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.6-nightly.0
+  - @ledgerhq/live-nft@0.4.6-nightly.1
+  - @ledgerhq/live-wallet@0.6.1-nightly.0
+  - @ledgerhq/device-core@0.3.4-nightly.0
+
 ## 34.8.1-nightly.0
 
 ### Patch Changes
