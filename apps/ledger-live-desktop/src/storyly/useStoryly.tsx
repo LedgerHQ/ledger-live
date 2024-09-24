@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
 import { openURL } from "~/renderer/linking";
-import { StorylyRef, StorylyData } from "storyly-web";
+import { StorylyRef, StorylyData, Story, StoryGroup } from "storyly-web";
 
 /**
  * Hook to use Storyly
@@ -26,7 +26,7 @@ export const useStoryly = (
   const dispatch = useDispatch();
   const { setDrawer } = useContext(context);
   const ref = useRef<StorylyRef>();
-  const dataRef = useRef<StorylyData>();
+  const dataRef = useRef<StoryGroup[]>();
   const props = useStorylyDefaultStyleProps();
   const language = useSelector(languageSelector);
 
@@ -39,21 +39,19 @@ export const useStoryly = (
       token: storyly.params?.stories[instanceId].token || "",
       lang: language,
       segments: [`lang_${language}`],
-      events: {
-        isReady: data => {
-          dataRef.current = data;
-          // Triggered when story is ready.
-        },
-        actionClicked: story => {
-          if (story?.media?.actionUrl) {
-            openURL(story.media.actionUrl);
-            ref.current?.close?.();
-            dispatch(closeAllModal());
-            setDrawer();
-          }
-        },
-      },
       props: { ...props, ...options?.styleProps },
+    });
+
+    ref.current?.on("loaded", (data: StorylyData) => {
+      dataRef.current = data.groupList;
+    });
+
+    ref.current?.on("actionClicked", (story: Story) => {
+      if (!story.actionUrl) return;
+      openURL(story.actionUrl);
+      ref.current?.close?.();
+      dispatch(closeAllModal());
+      setDrawer();
     });
   });
 
