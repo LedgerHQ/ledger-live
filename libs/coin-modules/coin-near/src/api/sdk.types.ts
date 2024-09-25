@@ -69,7 +69,6 @@ export type NearStakingPosition = {
   staked: BigNumber;
   available: BigNumber;
   pending: BigNumber;
-  rewards: BigNumber;
   validatorId: string;
 };
 
