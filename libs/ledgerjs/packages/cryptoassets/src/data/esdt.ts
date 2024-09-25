@@ -1,4 +1,4 @@
-export type ElrondESDTToken = [
+export type MultiversXESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -10,4 +10,4 @@ import tokens from "./esdt.json";
 
 export { default as hash } from "./esdt-hash.json";
 
-export default tokens as ElrondESDTToken[];
+export default tokens as MultiversXESDTToken[];
