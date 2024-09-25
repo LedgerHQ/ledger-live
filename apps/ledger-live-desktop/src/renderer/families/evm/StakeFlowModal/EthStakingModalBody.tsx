@@ -11,9 +11,8 @@ import {
   CheckBoxContainer,
   LOCAL_STORAGE_KEY_PREFIX,
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
+import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
-
-import ProviderItem from "./component/ProviderItem";
 
 type Props = {
   account: Account;
@@ -81,7 +80,6 @@ export function EthStakingModalBody({
           </Flex>
         ))}
       </Flex>
-      {/* TODO review */}
       {hasCheckbox && (
         <CheckBoxContainer
           p={3}

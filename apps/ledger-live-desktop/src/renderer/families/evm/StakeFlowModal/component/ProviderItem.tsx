@@ -21,13 +21,7 @@ const IconContainer = styled.div(
 `,
 );
 
-const ProviderIconContainer = styled.div(
-  () => `
-  display: flex;
-`,
-);
-
-export function StakingIcon({ icon }: { icon?: string }) {
+function StakingIcon({ icon }: { icon?: string }) {
   if (!icon) {
     return null;
   }
@@ -42,27 +36,23 @@ export function StakingIcon({ icon }: { icon?: string }) {
       </IconContainer>
     );
   }
-
   if (iconType === "crypto") {
     return <CryptoIcon name={iconName} size={40} />;
   }
   if (iconType === "provider") {
     return (
-      <ProviderIconContainer>
+      <Flex>
         <ProviderIcon name={iconName} size="L" />
-      </ProviderIconContainer>
+      </Flex>
     );
   }
 
   return null;
 }
 
-export const Container: StyledComponent<
-  "div",
-  DefaultTheme,
-  Record<string, unknown>,
-  never
-> = styled(Flex)`
+const Container: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never> = styled(
+  Flex,
+)`
   cursor: pointer;
   background-color: ${p => p.theme.colors.opacityDefault.c05};
   :hover {
@@ -70,12 +60,12 @@ export const Container: StyledComponent<
   }
 `;
 
-type Props = {
+interface Props {
   provider: EthStakingProvider;
   stakeOnClick(_: StakeOnClickProps): void;
-};
+}
 
-const ProviderItem = ({ provider, stakeOnClick }: Props) => {
+export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
   const { t } = useTranslation();
 
   const localManifest = useLocalLiveAppManifest(provider.liveAppId);
@@ -121,5 +111,3 @@ const ProviderItem = ({ provider, stakeOnClick }: Props) => {
     </Container>
   );
 };
-
-export default ProviderItem;
