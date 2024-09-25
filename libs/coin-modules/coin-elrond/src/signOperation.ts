@@ -3,11 +3,11 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransactionToSign } from "./buildTransaction";
-import type { ElrondAccount, Transaction } from "./types";
+import type { MultiversxAccount, Transaction } from "./types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { extractTokenId } from "./logic";
 import { CHAIN_ID } from "./constants";
-import { ElrondSigner } from "./signer";
+import { MultiversxSigner } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 /**
@@ -15,8 +15,8 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
  */
 export const buildSignOperation =
   (
-    signerContext: SignerContext<ElrondSigner>,
-  ): AccountBridge<Transaction, ElrondAccount>["signOperation"] =>
+    signerContext: SignerContext<MultiversxSigner>,
+  ): AccountBridge<Transaction, MultiversxAccount>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       let cancelled = false;

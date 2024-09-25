@@ -1,25 +1,28 @@
 import { getAccountBannerState } from "./banner";
-import { ElrondAccount, ElrondDelegation, ElrondProvider } from "./types";
+import { MultiversxAccount, MultiversxDelegation, MultiversxProvider } from "./types";
 import { BigNumber } from "bignumber.js";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 
 describe("getAccountBannerState", () => {
   it("returns the delegate banner when balance is not zero and there are no delegations", () => {
     const account = {
-      spendableBalance: BigNumber(1000000000000000000000),
-      elrondResources: {
+      spendableBalance: BigNumber("1000000000000000000000"),
+      multiversxResources: {
         delegations: [],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
-          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "delegate",
     });
@@ -28,7 +31,7 @@ describe("getAccountBannerState", () => {
   it("returns no banner when balance is zero and account already has delegations", () => {
     const account = {
       spendableBalance: BigNumber(0),
-      elrondResources: {
+      multiversxResources: {
         delegations: [
           {
             validatorAddress: "validatorAddress",
@@ -36,15 +39,18 @@ describe("getAccountBannerState", () => {
         ],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
-          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "hidden",
     });
@@ -53,22 +59,25 @@ describe("getAccountBannerState", () => {
   it("returns no banner when there is no ledger validator", () => {
     const account = {
       spendableBalance: BigNumber(100),
-      elrondResources: {
+      multiversxResources: {
         delegations: [
           {
             contract: "contract:a",
-          } as ElrondDelegation,
+          } as MultiversxDelegation,
         ],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
           contract: "123",
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "hidden",
     });
@@ -77,31 +86,34 @@ describe("getAccountBannerState", () => {
   it("returns the redelegation banner when the ledger validator is not the worst validator", () => {
     const account = {
       spendableBalance: BigNumber(100),
-      elrondResources: {
+      multiversxResources: {
         delegations: [
           {
             contract: "contract:a",
-          } as ElrondDelegation,
+          } as MultiversxDelegation,
         ],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
           contract: "contract:a",
           aprValue: 0.1,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
-          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "redelegate",
       worstDelegation: {
@@ -112,32 +124,35 @@ describe("getAccountBannerState", () => {
 
   it("returns the delegation banner when ledger is the worst validator and the account balance is not zero", () => {
     const account = {
-      spendableBalance: BigNumber(1000000000000000000000),
-      elrondResources: {
+      spendableBalance: BigNumber("1000000000000000000000"),
+      multiversxResources: {
         delegations: [
           {
             contract: "contract:a",
-          } as ElrondDelegation,
+          } as MultiversxDelegation,
         ],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
           contract: "contract:a",
           aprValue: 0.2,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
-          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.1,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "delegate",
     });
@@ -146,31 +161,34 @@ describe("getAccountBannerState", () => {
   it("returns no banner when ledger is the worst validator and the account balance is zero", () => {
     const account = {
       spendableBalance: BigNumber(0),
-      elrondResources: {
+      multiversxResources: {
         delegations: [
           {
             contract: "contract:a",
-          } as ElrondDelegation,
+          } as MultiversxDelegation,
         ],
       },
     };
-    const elrondPreloadData = {
+    const multiversxPreloadData = {
       validators: [
         {
           contract: "contract:a",
           aprValue: 0.2,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
-          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.1,
-        } as ElrondProvider,
+        } as MultiversxProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as ElrondProvider,
+        } as MultiversxProvider,
       ],
     };
-    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
+    const result = getAccountBannerState(
+      account as unknown as MultiversxAccount,
+      multiversxPreloadData,
+    );
     expect(result).toEqual({
       bannerType: "hidden",
     });

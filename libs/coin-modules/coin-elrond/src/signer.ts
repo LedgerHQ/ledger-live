@@ -1,16 +1,16 @@
-export type ElrondAddress = {
+export type MultiversxAddress = {
   publicKey: string;
   address: string;
 };
 
-export type ElrondSignature = {
+export type MultiversxSignature = {
   signature: null | Buffer;
 };
 
-export interface ElrondSigner {
-  getAddress(path: string, boolDisplay?: boolean): Promise<ElrondAddress>;
+export interface MultiversxSigner {
+  getAddress(path: string, boolDisplay?: boolean): Promise<MultiversxAddress>;
   setAddress(path: string, boolDisplay?: boolean): Promise<void>;
-  sign(path: string, message: string): Promise<ElrondSignature>;
+  sign(path: string, message: string): Promise<MultiversxSignature>;
   provideESDTInfo(
     ticker?: string,
     id?: string,

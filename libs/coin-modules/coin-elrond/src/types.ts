@@ -12,25 +12,25 @@ import type {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-export type ElrondAccount = Account & { elrondResources: ElrondResources };
+export type MultiversxAccount = Account & { multiversxResources: MultiversxResources };
 
-export type ElrondAccountRaw = AccountRaw & {
-  elrondResources: ElrondResourcesRaw;
+export type MultiversxAccountRaw = AccountRaw & {
+  multiversxResources: MultiversxResourcesRaw;
 };
 
-export type ElrondResources = {
+export type MultiversxResources = {
   nonce: number;
-  delegations: ElrondDelegation[];
+  delegations: MultiversxDelegation[];
   isGuarded: boolean;
 };
 
-export type ElrondResourcesRaw = {
+export type MultiversxResourcesRaw = {
   nonce: number;
-  delegations: ElrondDelegation[];
+  delegations: MultiversxDelegation[];
   isGuarded: boolean;
 };
 
-export type ElrondDelegation = {
+export type MultiversxDelegation = {
   address: string;
   contract: string;
   userUnBondable: string;
@@ -45,19 +45,19 @@ export type UserUndelegated = {
 };
 
 /**
- * Elrond transaction
+ * Multiversx transaction
  */
 export type Transaction = TransactionCommon & {
-  family: "elrond";
-  mode: ElrondTransactionMode;
+  family: "multiversx";
+  mode: MultiversxTransactionMode;
   fees: BigNumber | null | undefined;
   data?: string;
   gasLimit: number;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
-  family: "elrond";
-  mode: ElrondTransactionMode;
+  family: "multiversx";
+  mode: MultiversxTransactionMode;
   fees: string | null | undefined;
   data?: string;
   gasLimit: number;
@@ -67,7 +67,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type ElrondTransactionMode =
+export type MultiversxTransactionMode =
   | "send"
   | "delegate"
   | "reDelegateRewards"
@@ -76,9 +76,9 @@ export type ElrondTransactionMode =
   | "withdraw";
 
 /**
- * Elrond transaction payload to sign
+ * Multiversx transaction payload to sign
  */
-export type ElrondProtocolTransaction = {
+export type MultiversxProtocolTransaction = {
   nonce: number;
   value: string;
   receiver: string;
@@ -93,12 +93,12 @@ export type ElrondProtocolTransaction = {
 };
 
 /**
- * Elrond transaction as received from explorer
+ * Multiversx transaction as received from explorer
  */
-export type ElrondApiTransaction = {
-  mode: ElrondTransactionMode;
+export type MultiversxApiTransaction = {
+  mode: MultiversxTransactionMode;
   fees: BigNumber | null | undefined;
-  transfer?: ElrondTransferOptions;
+  transfer?: MultiversxTransferOptions;
   txHash?: string;
   sender?: string;
   receiver?: string;
@@ -115,16 +115,16 @@ export type ElrondApiTransaction = {
   data?: string;
   tokenIdentifier?: string;
   tokenValue?: string;
-  action?: ElrondTransactionAction;
-  operations?: ElrondTransactionOperation[];
+  action?: MultiversxTransactionAction;
+  operations?: MultiversxTransactionOperation[];
 };
 
-export enum ElrondTransferOptions {
+export enum MultiversxTransferOptions {
   egld = "egld",
   esdt = "esdt",
 }
 
-export type ElrondTransactionOperation = {
+export type MultiversxTransactionOperation = {
   action: string;
   type: string;
   sender: string;
@@ -132,17 +132,17 @@ export type ElrondTransactionOperation = {
   value: string;
 };
 
-export type ElrondTransactionAction = {
+export type MultiversxTransactionAction = {
   category: string;
   name: string;
-  arguments: ElrondTransactionActionArguments;
+  arguments: MultiversxTransactionActionArguments;
 };
 
-export type ElrondTransactionActionArguments = {
-  transfers: ElrondTransactionActionArgumentsTransfers[];
+export type MultiversxTransactionActionArguments = {
+  transfers: MultiversxTransactionActionArgumentsTransfers[];
 };
 
-export type ElrondTransactionActionArgumentsTransfers = {
+export type MultiversxTransactionActionArgumentsTransfers = {
   token: string;
   value: string;
 };
@@ -154,7 +154,7 @@ export type ESDTToken = {
 };
 
 export type NetworkInfo = {
-  family?: "elrond";
+  family?: "multiversx";
   chainID: string;
   denomination: number;
   gasLimit: number;
@@ -164,7 +164,7 @@ export type NetworkInfo = {
 };
 
 export type NetworkInfoRaw = {
-  family?: "elrond";
+  family?: "multiversx";
   chainID: string;
   denomination: number;
   gasLimit: number;
@@ -172,14 +172,14 @@ export type NetworkInfoRaw = {
   gasPerByte: number;
 };
 
-export type ElrondPreloadData = {
-  validators: ElrondProvider[];
+export type MultiversxPreloadData = {
+  validators: MultiversxProvider[];
 };
 
 /**
- * Elrond validator
+ * Multiversx validator
  */
-export type ElrondProvider = {
+export type MultiversxProvider = {
   contract: string;
   owner: string;
   serviceFee: string;
@@ -214,20 +214,22 @@ export type ElrondProvider = {
   };
 };
 
-export type ElrondOperation = Operation<ElrondOperationExtra>;
-export type ElrondOperationRaw = OperationRaw<ElrondOperationExtraRaw>;
+export type MultiversxOperation = Operation<MultiversxOperationExtra>;
+export type MultiversxOperationRaw = OperationRaw<MultiversxOperationExtraRaw>;
 
-export type ElrondOperationExtra = {
+export type MultiversxOperationExtra = {
   amount?: BigNumber;
 };
 
-export function isElrondOperationExtra(op: OperationExtra): op is ElrondOperationExtra {
+export function isMultiversxOperationExtra(op: OperationExtra): op is MultiversxOperationExtra {
   return op !== null && typeof op === "object" && "amount" in op;
 }
 
-export type ElrondOperationExtraRaw = {
+export type MultiversxOperationExtraRaw = {
   amount?: string;
 };
-export function isElrondOperationExtraRaw(op: OperationExtraRaw): op is ElrondOperationExtraRaw {
+export function isMultiversxOperationExtraRaw(
+  op: OperationExtraRaw,
+): op is MultiversxOperationExtraRaw {
   return op !== null && typeof op === "object" && "amount" in op;
 }

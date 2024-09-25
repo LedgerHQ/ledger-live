@@ -1,7 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { ElrondAccount, Transaction } from "./types";
+import type { MultiversxAccount, Transaction } from "./types";
 const options = [
   {
     name: "mode",
@@ -18,13 +18,13 @@ function inferTransactions(
   _opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
-    invariant(transaction.family === "elrond", "elrond family");
+    invariant(transaction.family === "multiversx", "multiversx family");
 
     if (account.type === "Account") {
-      invariant((account as ElrondAccount).elrondResources, "unactivated account");
+      invariant((account as MultiversxAccount).multiversxResources, "unactivated account");
     }
 
-    transaction.family = "elrond";
+    transaction.family = "multiversx";
 
     return {
       ...transaction,

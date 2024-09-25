@@ -5,7 +5,7 @@ describe("doBuildTransactionToSign", () => {
   it("should serialize transaction without data field", async () => {
     const serializedTransaction = await doBuildTransactionToSign({
       transaction: {
-        family: "elrond",
+        family: "multiversx",
         mode: "send",
         fees: null,
         amount: new BigNumber("1"),
@@ -27,7 +27,7 @@ describe("doBuildTransactionToSign", () => {
   it("should serialize transaction with data field", async () => {
     const serializedTransaction = await doBuildTransactionToSign({
       transaction: {
-        family: "elrond",
+        family: "multiversx",
         mode: "send",
         fees: null,
         amount: new BigNumber("1"),

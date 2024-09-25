@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import ElrondApi from "./apiCalls";
+import MultiversxApi from "./apiCalls";
 import {
-  ElrondApiTransaction,
-  ElrondDelegation,
-  ElrondProvider,
-  ElrondTransferOptions,
-  ElrondTransactionOperation,
+  MultiversxApiTransaction,
+  MultiversxDelegation,
+  MultiversxProvider,
+  MultiversxTransferOptions,
+  MultiversxTransactionOperation,
   ESDTToken,
   Transaction,
-  ElrondOperation,
+  MultiversxOperation,
 } from "../types";
 import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
@@ -19,21 +19,24 @@ import {
   Address,
   INetworkConfig,
   INonce,
-  Transaction as ElrondSdkTransaction,
+  Transaction as MultiversxSdkTransaction,
   TransactionPayload,
-} from "@elrondnetwork/erdjs/out";
-import { ApiNetworkProvider } from "@elrondnetwork/erdjs-network-providers";
+} from "@multiversx/sdk-core";
+import { ApiNetworkProvider } from "@multiversx/sdk-network-providers";
 import { BinaryUtils } from "../utils/binary.utils";
 import {
   CHAIN_ID,
-  ELROND_STAKING_POOL,
+  MULTIVERSX_STAKING_POOL,
   GAS_PER_DATA_BYTE,
   GAS_PRICE,
   GAS_PRICE_MODIFIER,
   MIN_GAS_LIMIT,
 } from "../constants";
 import { MultiversXAccount } from "./dtos/multiversx-account";
-const api = new ElrondApi(getEnv("ELROND_API_ENDPOINT"), getEnv("ELROND_DELEGATION_API_ENDPOINT"));
+const api = new MultiversxApi(
+  getEnv("ELROND_API_ENDPOINT"),
+  getEnv("ELROND_DELEGATION_API_ENDPOINT"),
+);
 
 const proxy = new ApiNetworkProvider(getEnv("ELROND_API_ENDPOINT"));
 
@@ -48,7 +51,7 @@ export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
   return account;
 };
 
-export const getProviders = async (): Promise<ElrondProvider[]> => {
+export const getProviders = async (): Promise<MultiversxProvider[]> => {
   const providers = await api.getProviders();
   return providers;
 };
@@ -68,11 +71,11 @@ export const getAccountNonce = async (addr: string): Promise<INonce> => {
 /**
  * Returns true if account is the signer
  */
-function isSender(transaction: ElrondApiTransaction, addr: string): boolean {
+function isSender(transaction: MultiversxApiTransaction, addr: string): boolean {
   return transaction.sender === addr;
 }
 
-function isSelfSend(transaction: ElrondApiTransaction): boolean {
+function isSelfSend(transaction: MultiversxApiTransaction): boolean {
   return (
     !!transaction.sender && !!transaction.receiver && transaction.sender === transaction.receiver
   );
@@ -81,7 +84,7 @@ function isSelfSend(transaction: ElrondApiTransaction): boolean {
 /**
  * Map transaction to an Operation Type
  */
-function getEGLDOperationType(transaction: ElrondApiTransaction, addr: string): OperationType {
+function getEGLDOperationType(transaction: MultiversxApiTransaction, addr: string): OperationType {
   if (transaction.action && transaction.action.category == "stake") {
     const stakeAction = transaction.action.name;
     switch (stakeAction) {
@@ -98,14 +101,14 @@ function getEGLDOperationType(transaction: ElrondApiTransaction, addr: string): 
     }
   }
   return isSender(transaction, addr)
-    ? transaction.transfer === ElrondTransferOptions.esdt
+    ? transaction.transfer === MultiversxTransferOptions.esdt
       ? "FEES"
       : "OUT"
     : "IN";
 }
 
 function getESDTOperationValue(
-  transaction: ElrondApiTransaction,
+  transaction: MultiversxApiTransaction,
   tokenIdentifier?: string,
 ): BigNumber {
   const hasFailed =
@@ -131,13 +134,13 @@ function getESDTOperationValue(
   }
 }
 
-function getStakingAmount(transaction: ElrondApiTransaction, address: string): BigNumber {
-  const operation: ElrondTransactionOperation | undefined = transaction.operations?.find(
+function getStakingAmount(transaction: MultiversxApiTransaction, address: string): BigNumber {
+  const operation: MultiversxTransactionOperation | undefined = transaction.operations?.find(
     ({ sender, receiver, action, type }) =>
       action == "transfer" &&
       type == "egld" &&
       sender == transaction.receiver &&
-      (receiver == address || receiver == ELROND_STAKING_POOL),
+      (receiver == address || receiver == MULTIVERSX_STAKING_POOL),
   );
 
   let dataDecoded;
@@ -160,9 +163,9 @@ function getStakingAmount(transaction: ElrondApiTransaction, address: string): B
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getEGLDOperationValue(transaction: ElrondApiTransaction, address: string): BigNumber {
+function getEGLDOperationValue(transaction: MultiversxApiTransaction, address: string): BigNumber {
   if (transaction.mode === "send") {
-    if (transaction.transfer === ElrondTransferOptions.esdt) {
+    if (transaction.transfer === MultiversxTransferOptions.esdt) {
       // Only fees paid in EGLD for token transactions
       return isSender(transaction, address) && transaction.fee
         ? new BigNumber(transaction.fee)
@@ -182,14 +185,14 @@ function getEGLDOperationValue(transaction: ElrondApiTransaction, address: strin
 }
 
 /**
- * Map the Elrond history transaction to a Ledger Live Operation
+ * Map the Multiversx history transaction to a Ledger Live Operation
  */
 function transactionToEGLDOperation(
   accountId: string,
   addr: string,
-  transaction: ElrondApiTransaction,
+  transaction: MultiversxApiTransaction,
   subAccounts: TokenAccount[],
-): ElrondOperation {
+): MultiversxOperation {
   const type = getEGLDOperationType(transaction, addr);
   const fee = new BigNumber(transaction.fee ?? 0);
   const hasFailed =
@@ -205,7 +208,7 @@ function transactionToEGLDOperation(
       ? delegationAmount.minus(fee)
       : getEGLDOperationValue(transaction, addr);
 
-  const operation: ElrondOperation = {
+  const operation: MultiversxOperation = {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
     fee,
@@ -233,9 +236,12 @@ function transactionToEGLDOperation(
     operation.subOperations = subOperations;
   }
 
-  const contract = new Address(transaction.receiver).isContractAddress()
-    ? transaction.receiver
-    : undefined;
+  let contract: string | undefined = undefined;
+  if (transaction.receiver) {
+    const isReceiverSmartContract = Address.newFromBech32(transaction.receiver).isSmartContract();
+
+    contract = isReceiverSmartContract ? transaction.receiver : undefined;
+  }
 
   if (contract) {
     operation.contract = contract;
@@ -245,7 +251,7 @@ function transactionToEGLDOperation(
 }
 
 const getESDTOperationType = (
-  transaction: ElrondApiTransaction,
+  transaction: MultiversxApiTransaction,
   address: string,
 ): OperationType => {
   return isSender(transaction, address) ? "OUT" : "IN";
@@ -254,9 +260,9 @@ const getESDTOperationType = (
 const transactionToESDTOperation = (
   tokenAccountId: string,
   addr: string,
-  transaction: ElrondApiTransaction,
+  transaction: MultiversxApiTransaction,
   tokenIdentifier?: string,
-): ElrondOperation => {
+): MultiversxOperation => {
   const type = getESDTOperationType(transaction, addr);
   const value = getESDTOperationValue(transaction, tokenIdentifier);
   const fee = new BigNumber(transaction.fee ?? 0);
@@ -290,7 +296,7 @@ export const getEGLDOperations = async (
   addr: string,
   startAt: number,
   subAccounts: TokenAccount[],
-): Promise<ElrondOperation[]> => {
+): Promise<MultiversxOperation[]> => {
   const rawTransactions = await api.getHistory(addr, startAt);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map(transaction =>
@@ -302,7 +308,7 @@ export const getAccountESDTTokens = async (address: string): Promise<ESDTToken[]
   return await api.getESDTTokensForAddress(address);
 };
 
-export const getAccountDelegations = async (address: string): Promise<ElrondDelegation[]> => {
+export const getAccountDelegations = async (address: string): Promise<MultiversxDelegation[]> => {
   return await api.getAccountDelegations(address);
 };
 
@@ -316,7 +322,7 @@ export const getESDTOperations = async (
   address: string,
   tokenIdentifier: string,
   startAt: number,
-): Promise<ElrondOperation[]> => {
+): Promise<MultiversxOperation[]> => {
   const accountESDTTransactions = await api.getESDTTransactionsForAddress(
     address,
     tokenIdentifier,
@@ -339,13 +345,13 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
     ChainID: CHAIN_ID,
   };
 
-  const transaction = new ElrondSdkTransaction({
+  const transaction = new MultiversxSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
-    receiver: new Address(getAbandonSeedAddress("elrond")),
+    receiver: new Address(getAbandonSeedAddress("multiversx")),
     chainID: CHAIN_ID,
     gasPrice: GAS_PRICE,
     gasLimit: t.gasLimit ?? networkConfig.MinGasLimit,
-    sender: new Address(),
+    sender: Address.empty(),
   });
 
   const feesStr = transaction.computeFee(networkConfig).toFixed();

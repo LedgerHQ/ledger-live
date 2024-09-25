@@ -1,7 +1,7 @@
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, ElrondTransactionMode, ElrondDelegation } from "./types";
+import type { Transaction, MultiversxTransactionMode, MultiversxDelegation } from "./types";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -48,16 +48,17 @@ export const isValidAddress = (address: string): boolean => {
     return false;
   }
 };
+
 export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
 };
 
 // For some transaction modes the amount doesn't belong to the account's balance
-export const isAmountSpentFromBalance = (mode: ElrondTransactionMode) => {
+export const isAmountSpentFromBalance = (mode: MultiversxTransactionMode) => {
   return ["send", "delegate"].includes(mode);
 };
 
-export const computeDelegationBalance = (delegations: ElrondDelegation[]): BigNumber => {
+export const computeDelegationBalance = (delegations: MultiversxDelegation[]): BigNumber => {
   let totalDelegationBalance = new BigNumber(0);
 
   for (const delegation of delegations) {
@@ -75,7 +76,7 @@ export const computeDelegationBalance = (delegations: ElrondDelegation[]): BigNu
   return totalDelegationBalance;
 };
 
-export const addPrefixToken = (tokenId: string) => `elrond/esdt/${tokenId}`;
+export const addPrefixToken = (tokenId: string) => `multiversx/esdt/${tokenId}`;
 
 export const extractTokenId = (tokenId: string) => {
   return tokenId.split("/")[2];

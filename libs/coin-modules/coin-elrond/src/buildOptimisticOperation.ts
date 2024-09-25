@@ -1,17 +1,17 @@
 import BigNumber from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Address } from "@elrondnetwork/erdjs/out";
+import { Address } from "@multiversx/sdk-core";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
-  ElrondAccount,
-  ElrondProtocolTransaction,
-  ElrondTransactionMode,
+  MultiversxAccount,
+  MultiversxProtocolTransaction,
+  MultiversxTransactionMode,
   Transaction,
 } from "./types";
 
-function getOptimisticOperationType(transactionMode: ElrondTransactionMode): OperationType {
+function getOptimisticOperationType(transactionMode: MultiversxTransactionMode): OperationType {
   switch (transactionMode) {
     case "delegate":
       return "DELEGATE";
@@ -44,9 +44,9 @@ function getOptimisticOperationDelegationAmount(transaction: Transaction): BigNu
 }
 
 export const buildOptimisticOperation = (
-  account: ElrondAccount,
+  account: MultiversxAccount,
   transaction: Transaction,
-  unsignedTx: ElrondProtocolTransaction,
+  unsignedTx: MultiversxProtocolTransaction,
 ): Operation => {
   const senders = [account.freshAddress];
   const recipients = [transaction.recipient];

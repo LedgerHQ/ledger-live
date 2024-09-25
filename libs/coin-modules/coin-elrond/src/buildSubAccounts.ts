@@ -7,7 +7,7 @@ import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getESDTOperations, getAccountESDTTokens } from "./api";
 import { addPrefixToken, extractTokenId } from "./logic";
 
-async function buildElrondESDTTokenAccount({
+async function buildMultiversxESDTTokenAccount({
   parentAccountId,
   accountAddress,
   token,
@@ -64,7 +64,7 @@ async function syncESDTTokenAccountOperations(
   return copy;
 }
 
-async function elrondBuildESDTTokenAccounts({
+async function MultiversxBuildESDTTokenAccounts({
   currency,
   accountId,
   accountAddress,
@@ -109,7 +109,7 @@ async function elrondBuildESDTTokenAccounts({
     if (token && !blacklistedTokenIds.includes(token.id)) {
       let tokenAccount = existingAccountByTicker[token.ticker];
       if (!tokenAccount) {
-        tokenAccount = await buildElrondESDTTokenAccount({
+        tokenAccount = await buildMultiversxESDTTokenAccount({
           parentAccountId: accountId,
           accountAddress,
           token,
@@ -150,4 +150,4 @@ async function elrondBuildESDTTokenAccounts({
   return tokenAccounts;
 }
 
-export default elrondBuildESDTTokenAccounts;
+export default MultiversxBuildESDTTokenAccounts;

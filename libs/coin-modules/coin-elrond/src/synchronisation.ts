@@ -4,12 +4,12 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
-import elrondBuildESDTTokenAccounts from "./buildSubAccounts";
+import MultiversxBuildESDTTokenAccounts from "./buildSubAccounts";
 import { reconciliateSubAccounts } from "./reconciliation";
 import { computeDelegationBalance } from "./logic";
-import { ElrondAccount } from "./types";
+import { MultiversxAccount } from "./types";
 
-export const getAccountShape: GetAccountShape<ElrondAccount> = async (info, syncConfig) => {
+export const getAccountShape: GetAccountShape<MultiversxAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -29,7 +29,7 @@ export const getAccountShape: GetAccountShape<ElrondAccount> = async (info, sync
   let subAccounts: TokenAccount[] = [];
   const hasTokens = await hasESDTTokens(address);
   if (hasTokens) {
-    const tokenAccounts = await elrondBuildESDTTokenAccounts({
+    const tokenAccounts = await MultiversxBuildESDTTokenAccounts({
       currency,
       accountId: accountId,
       accountAddress: address,
@@ -54,7 +54,7 @@ export const getAccountShape: GetAccountShape<ElrondAccount> = async (info, sync
     spendableBalance: account.balance,
     operationsCount: operations.length,
     blockHeight: account.blockHeight,
-    elrondResources: {
+    multiversxResources: {
       nonce: account.nonce,
       delegations,
       isGuarded: account.isGuarded,

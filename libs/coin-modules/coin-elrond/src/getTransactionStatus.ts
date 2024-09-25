@@ -11,20 +11,20 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
-import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
+import type { MultiversxAccount, Transaction, TransactionStatus } from "./types";
 import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";
 import {
-  ElrondDecimalsLimitReached,
-  ElrondMinDelegatedAmountError,
-  ElrondMinUndelegatedAmountError,
-  ElrondDelegationBelowMinimumError,
+  MultiversxDecimalsLimitReached,
+  MultiversxMinDelegatedAmountError,
+  MultiversxMinUndelegatedAmountError,
+  MultiversxDelegationBelowMinimumError,
   NotEnoughEGLDForFees,
 } from "./errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
-  ElrondAccount,
+  MultiversxAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
@@ -71,7 +71,7 @@ export const getTransactionStatus: AccountBridge<
     }
 
     if (!errors.amount && !totalSpentEgld.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpentEgld)) {
-      errors.amount = new ElrondDecimalsLimitReached();
+      errors.amount = new MultiversxDecimalsLimitReached();
     }
   } else {
     totalSpent = totalSpentEgld = isAmountSpentFromBalance(transaction.mode)
@@ -96,18 +96,18 @@ export const getTransactionStatus: AccountBridge<
         },
       );
       if (transaction.mode === "delegate") {
-        errors.amount = new ElrondMinDelegatedAmountError("", {
+        errors.amount = new MultiversxMinDelegatedAmountError("", {
           formattedAmount,
         });
       } else if (transaction.mode === "unDelegate") {
-        errors.amount = new ElrondMinUndelegatedAmountError("", {
+        errors.amount = new MultiversxMinUndelegatedAmountError("", {
           formattedAmount,
         });
       }
     }
 
     // When undelegating, unless undelegating all, the delegation must remain >= 1 EGLD
-    const delegationBalance = account.elrondResources.delegations.find(
+    const delegationBalance = account.multiversxResources.delegations.find(
       d => d.contract === transaction.recipient,
     )?.userActiveStake;
 
@@ -126,7 +126,7 @@ export const getTransactionStatus: AccountBridge<
           showCode: true,
         },
       );
-      errors.amount = new ElrondDelegationBelowMinimumError("", {
+      errors.amount = new MultiversxDelegationBelowMinimumError("", {
         formattedAmount,
       });
     }

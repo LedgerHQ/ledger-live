@@ -2,15 +2,15 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "./types";
 import { getFees } from "./api";
 import { GAS } from "./constants";
-import { ElrondEncodeTransaction } from "./encode";
+import { MultiversxEncodeTransaction } from "./encode";
 import { isAmountSpentFromBalance } from "./logic";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Prepare t before checking status
  *
- * @param {ElrondAccount} account
- * @param {Transaction} transactoin
+ * @param {MultiversxAccount} account
+ * @param {Transaction} transaction
  */
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -26,29 +26,29 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     null;
 
   if (tokenAccount) {
-    preparedTx.data = ElrondEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
+    preparedTx.data = MultiversxEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
     preparedTx.gasLimit = GAS.ESDT_TRANSFER;
   } else {
     switch (transaction.mode) {
       case "delegate":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = ElrondEncodeTransaction.delegate();
+        preparedTx.data = MultiversxEncodeTransaction.delegate();
         break;
       case "claimRewards":
         preparedTx.gasLimit = GAS.CLAIM;
-        preparedTx.data = ElrondEncodeTransaction.claimRewards();
+        preparedTx.data = MultiversxEncodeTransaction.claimRewards();
         break;
       case "withdraw":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = ElrondEncodeTransaction.withdraw();
+        preparedTx.data = MultiversxEncodeTransaction.withdraw();
         break;
       case "reDelegateRewards":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = ElrondEncodeTransaction.reDelegateRewards();
+        preparedTx.data = MultiversxEncodeTransaction.reDelegateRewards();
         break;
       case "unDelegate":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = ElrondEncodeTransaction.unDelegate(transaction);
+        preparedTx.data = MultiversxEncodeTransaction.unDelegate(transaction);
         break;
       case "send":
         break;
