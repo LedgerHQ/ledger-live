@@ -5720,17 +5720,17 @@
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "최대 소수점 제한에 도달했습니다.",
       "description" : "제공된 금액이 소수점 이하 18자리인지 확인하세요."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "위임된 금액은 {{formattedAmount}} 이상이어야 합니다"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "위임되지 않은 금액은 {{formattedAmount}} 이상이어야 합니다."
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
     },
     "NotEnoughEGLDForFees" : {
