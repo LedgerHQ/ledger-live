@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.50.0-nightly.5
+
+### Patch Changes
+
+- [#7884](https://github.com/LedgerHQ/ledger-live/pull/7884) [`f9811e0`](https://github.com/LedgerHQ/ledger-live/commit/f9811e02ffe68c4acb165d0932059d020bbca2f4) Thanks [@valpinkman](https://github.com/valpinkman)! - Update turbo.json to accept envs
+
 ## 3.50.0-nightly.4
 
 ### Patch Changes
