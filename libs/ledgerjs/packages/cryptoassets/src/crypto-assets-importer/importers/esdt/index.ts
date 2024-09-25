@@ -13,7 +13,7 @@ type ElrondESDTToken = [
 export const importESDTTokens = async (outputDir: string) => {
   try {
     console.log("importing esdt tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "elrond" }, [
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "multiversx" }, [
       "ticker",
       "id",
       "decimals",
@@ -30,7 +30,7 @@ export const importESDTTokens = async (outputDir: string) => {
     });
 
     const filePath = path.join(outputDir, "esdt");
-    const estTypeStringified = `export type ElrondESDTToken = [
+    const estTypeStringified = `export type MultiversxESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals

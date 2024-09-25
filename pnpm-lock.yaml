@@ -2166,12 +2166,6 @@ importers:
 
   libs/coin-modules/coin-elrond:
     dependencies:
-      '@elrondnetwork/erdjs':
-        specifier: 11.0.0
-        version: 11.0.0
-      '@elrondnetwork/erdjs-network-providers':
-        specifier: ^1.1.2
-        version: 1.2.0
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -2202,6 +2196,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@multiversx/sdk-core':
+        specifier: 13.6.3
+        version: 13.6.3(bignumber.js@9.1.2)
+      '@multiversx/sdk-network-providers':
+        specifier: ^2.7.1
+        version: 2.7.1
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -9088,18 +9088,6 @@ packages:
     resolution: {integrity: sha512-kbgXxyEauPJiQQUNG2VgUeyfQNFk6hBF11ISN2PNI6agUgPl55pv4eQmaqHzTAzchBvqZ2tQuRVaPStGf0mxGw==}
     engines: {node: '>=8.6'}
 
-  '@elrondnetwork/erdjs-network-providers@1.2.0':
-    resolution: {integrity: sha512-ANh7tDaRohQos9WzZsZS/kyqatUqxY2NqncsKnWhDeSHqYv3RZiwcF3siKsBiWHYiP5hKqIACK1+Wsq3P0ocMg==}
-    deprecated: 'WARNING: This project has been moved to @multiversx/sdk-network-providers. Use @multiversx/sdk-network-providers instead.'
-
-  '@elrondnetwork/erdjs@11.0.0':
-    resolution: {integrity: sha512-XUvWYcEsKp5NKf81Avz0m3yHvHRzkyyztWFH+M/XEDhsPAy7FyZAY0HCH8ri5JvDhDr45IaE3Nlh6oeXqlOc9A==}
-    deprecated: 'WARNING: This project has been moved to @multiversx/sdk-core. Use @multiversx/sdk-core instead.'
-
-  '@elrondnetwork/transaction-decoder@1.0.0':
-    resolution: {integrity: sha512-FFUDXffwDNwo4V6Co+S9ur3OPYyAEzwgen7gh7LtQrG7SNPELFHjl+YssABXI8v1+SWmqcrSxervMggAiDDXkg==}
-    deprecated: 'WARNING: This project has been moved to @multiversx/sdk-transaction-decoder. Use @multiversx/sdk-transaction-decoder instead.'
-
   '@emotion/babel-plugin@11.11.0':
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
 
@@ -10766,6 +10754,17 @@ packages:
     peerDependencies:
       bignumber.js: ^9.0.1
       protobufjs: ^7.2.6
+
+  '@multiversx/sdk-core@13.6.3':
+    resolution: {integrity: sha512-zMnJShVc3v9+Y4qzKjZ3kpBn7IJHTCOisveMhpdfOJ/CaYgjYKo56vKPMNycBRLIGe5jIY9d/cupzclvmiLjQw==}
+    peerDependencies:
+      bignumber.js: ^9.0.1
+      protobufjs: ^7.2.6
+
+  '@multiversx/sdk-network-providers@2.7.1':
+    resolution: {integrity: sha512-pjKD16aadMP2APhLs5cfqYhh5D5tzhHSnFfm2eAhA3g8b13ML5Vjh1amWx0w2L+1lYc8QjRsMysa5ocputvHEg==}
+    peerDependencies:
+      axios: ^1.7.4
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
@@ -16434,12 +16433,6 @@ packages:
   axios@0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
 
-  axios@0.24.0:
-    resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
-
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
-
   axios@1.7.3:
     resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
 
@@ -16613,9 +16606,6 @@ packages:
 
   babel-runtime@6.26.0:
     resolution: {integrity: sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==}
-
-  backslash@0.2.0:
-    resolution: {integrity: sha512-Avs+8FUZ1HF/VFP4YWwHQZSGzRPm37ukU1JQYQWijuHhtXdOuAzcZ8PcAzfIw898a8PyBzdn+RtnKA6MzW0X2A==}
 
   bail@1.0.5:
     resolution: {integrity: sha512-xFbRxM1tahm08yHBP16MMjVUAvDaBMD38zsM9EMAUN61omwLmKlOpB/Zku5QkjZ8TZ4vn53pj+t518cH0S03RQ==}
@@ -22711,9 +22701,6 @@ packages:
   json-cycle@1.5.0:
     resolution: {integrity: sha512-GOehvd5PO2FeZ5T4c+RxobeT5a1PiGpF4u9/3+UvrMU4bhnVqzJY7hm39wg8PDCqkU91fWGH8qjWR4bn+wgq9w==}
     engines: {node: '>= 4'}
-
-  json-duplicate-key-handle@1.0.0:
-    resolution: {integrity: sha512-OLIxL+UpfwUsqcLX3i6Z51ChTou/Vje+6bSeGUSubj96dF/SfjObDprLy++ZXYH07KITuEzsXS7PX7e/BGf4jw==}
 
   json-parse-better-errors@1.0.2:
     resolution: {integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==}
@@ -34030,29 +34017,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@elrondnetwork/erdjs-network-providers@1.2.0':
-    dependencies:
-      axios: 0.24.0
-      bech32: 1.1.4
-      bignumber.js: 9.0.1
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      json-bigint: 1.0.0
-
-  '@elrondnetwork/erdjs@11.0.0':
-    dependencies:
-      '@elrondnetwork/transaction-decoder': 1.0.0
-      bech32: 1.1.4
-      bignumber.js: 9.0.1
-      blake2b: 2.1.3
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      json-duplicate-key-handle: 1.0.0
-      keccak: 3.0.2
-      protobufjs: 6.11.3
-
-  '@elrondnetwork/transaction-decoder@1.0.0':
-    dependencies:
-      bech32: 2.0.0
-
   '@emotion/babel-plugin@11.11.0':
     dependencies:
       '@babel/helper-module-imports': 7.24.3
@@ -37302,6 +37266,23 @@ snapshots:
       json-bigint: 1.0.0
       keccak: 3.0.2
       protobufjs: 7.3.2
+
+  '@multiversx/sdk-core@13.6.3(bignumber.js@9.1.2)':
+    dependencies:
+      '@multiversx/sdk-transaction-decoder': 1.0.2
+      bech32: 1.1.4
+      bignumber.js: 9.1.2
+      blake2b: 2.1.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      json-bigint: 1.0.0
+      keccak: 3.0.2
+
+  '@multiversx/sdk-network-providers@2.7.1':
+    dependencies:
+      bech32: 1.1.4
+      bignumber.js: 9.0.1
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      json-bigint: 1.0.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
     dependencies:
@@ -46440,14 +46421,6 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.6
 
-  axios@0.24.0:
-    dependencies:
-      follow-redirects: 1.15.6
-
-  axios@0.26.1:
-    dependencies:
-      follow-redirects: 1.15.6
-
   axios@1.7.3:
     dependencies:
       follow-redirects: 1.15.6
@@ -46899,8 +46872,6 @@ snapshots:
     dependencies:
       core-js: 2.6.12
       regenerator-runtime: 0.11.1
-
-  backslash@0.2.0: {}
 
   bail@1.0.5: {}
 
@@ -55885,10 +55856,6 @@ snapshots:
   json-buffer@3.0.1: {}
 
   json-cycle@1.5.0: {}
-
-  json-duplicate-key-handle@1.0.0:
-    dependencies:
-      backslash: 0.2.0
 
   json-parse-better-errors@1.0.2: {}
 

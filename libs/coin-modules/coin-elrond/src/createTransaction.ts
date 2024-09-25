@@ -10,7 +10,7 @@ import { Transaction } from "./types";
  */
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   return {
-    family: "elrond",
+    family: "multiversx",
     mode: "send",
     amount: new BigNumber(0),
     recipient: "",

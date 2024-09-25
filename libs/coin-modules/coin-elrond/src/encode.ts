@@ -3,7 +3,7 @@ import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import type { Transaction } from "./types";
 import { extractTokenId } from "./logic";
 
-export class ElrondEncodeTransaction {
+export class MultiversxEncodeTransaction {
   static ESDTTransfer(t: Transaction, ta: SubAccount): string {
     const { token } = decodeTokenAccountId(ta.id);
     const tokenIdentifierHex = token && extractTokenId(token.id);

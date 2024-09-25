@@ -1,4 +1,4 @@
-import { IGasLimit, INetworkConfig, INonce } from "@elrondnetwork/erdjs";
+import { IGasLimit, INetworkConfig, INonce } from "@multiversx/sdk-core";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountNonce, getNetworkConfig } from "./api";
 import {
@@ -7,11 +7,11 @@ import {
   TRANSACTION_VERSION_DEFAULT,
 } from "./constants";
 import { isAmountSpentFromBalance } from "./logic";
-import type { ElrondProtocolTransaction, Transaction } from "./types";
+import type { MultiversxProtocolTransaction, Transaction } from "./types";
 
 /**
  *
- * @param {ElrondAccount} account
+ * @param {MultiversxAccount} account
  * @param {SubAccount | null | undefined} tokenAccount
  * @param {Transaction} transaction
  */
@@ -50,7 +50,7 @@ export const doBuildTransactionToSign = async (options: {
 }): Promise<string> => {
   const gasLimit = options.transaction.gasLimit || options.minGasLimit.valueOf();
 
-  const transaction: ElrondProtocolTransaction = {
+  const transaction: MultiversxProtocolTransaction = {
     nonce: options.nonce.valueOf(),
     value: options.value,
     receiver: options.transaction.recipient,

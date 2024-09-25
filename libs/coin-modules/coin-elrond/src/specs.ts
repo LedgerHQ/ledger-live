@@ -1,4 +1,9 @@
-import type { ElrondAccount, ElrondOperation, ElrondOperationRaw, Transaction } from "./types";
+import type {
+  MultiversxAccount,
+  MultiversxOperation,
+  MultiversxOperationRaw,
+  Transaction,
+} from "./types";
 import invariant from "invariant";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -19,7 +24,7 @@ import { MIN_DELEGATION_AMOUNT } from "./constants";
 import { SubAccount } from "@ledgerhq/types-live";
 import sample from "lodash/sample";
 
-const currency = getCryptoCurrencyById("elrond");
+const currency = getCryptoCurrencyById("multiversx");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 const maxAccounts = 6;
 
@@ -60,9 +65,9 @@ function expectCorrectEsdtBalanceChange(input: TransactionTestInput<Transaction>
 function expectCorrectOptimisticOperation(input: TransactionTestInput<Transaction>) {
   const { operation, optimisticOperation, transaction } = input;
 
-  const opExpected: Partial<ElrondOperationRaw> = toOperationRaw({
+  const opExpected: Partial<MultiversxOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  }) as ElrondOperationRaw;
+  }) as MultiversxOperationRaw;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
@@ -124,7 +129,7 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
 
 function expectCorrectSpendableBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, accountBeforeTransaction } = input;
-  const operation = input.operation as ElrondOperation;
+  const operation = input.operation as MultiversxOperation;
   let value = operation.value;
   if (operation.extra.amount) {
     if (operation.type === "DELEGATE") {
@@ -150,9 +155,9 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
   );
 }
 
-const elrond: AppSpec<Transaction> = {
+const multiversx: AppSpec<Transaction> = {
   name: "Elrond",
-  currency: getCryptoCurrencyById("elrond"),
+  currency: getCryptoCurrencyById("multiversx"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "MultiversX",
@@ -304,7 +309,7 @@ const elrond: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
-        const delegations = (account as ElrondAccount)?.elrondResources?.delegations;
+        const delegations = (account as MultiversxAccount)?.multiversxResources?.delegations;
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           delegations.some(d => new BigNumber(d.userActiveStake).gt(0)),
@@ -334,7 +339,7 @@ const elrond: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptWithdrawTransaction,
       transaction: ({ account, bridge }) => {
-        const delegations = (account as ElrondAccount)?.elrondResources?.delegations;
+        const delegations = (account as MultiversxAccount)?.multiversxResources?.delegations;
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           // among all delegations
@@ -372,5 +377,5 @@ const elrond: AppSpec<Transaction> = {
 };
 
 export default {
-  elrond,
+  multiversx,
 };

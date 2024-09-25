@@ -2,7 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
-import type { ElrondAccount, Transaction } from "@ledgerhq/coin-elrond/types";
+import type { MultiversxAccount, Transaction } from "@ledgerhq/coin-elrond/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
@@ -21,7 +21,7 @@ const receive = makeAccountBridgeReceive();
 const defaultGetFees = (a, t) => t.fees || new BigNumber(0);
 
 const createTransaction = (): Transaction => ({
-  family: "elrond",
+  family: "multiversx",
   mode: "send",
   amount: new BigNumber(0),
   recipient: "",
@@ -38,7 +38,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account: ElrondAccount, transaction: Transaction) => {
+const getTransactionStatus = (account: MultiversxAccount, transaction: Transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;

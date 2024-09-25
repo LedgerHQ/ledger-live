@@ -1,17 +1,19 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-export const ElrondDecimalsLimitReached = createCustomErrorClass("ElrondDecimalsLimitReached");
-
-export const ElrondMinDelegatedAmountError = createCustomErrorClass(
-  "ElrondMinDelegatedAmountError",
+export const MultiversxDecimalsLimitReached = createCustomErrorClass(
+  "MultiversxDecimalsLimitReached",
 );
 
-export const ElrondMinUndelegatedAmountError = createCustomErrorClass(
-  "ElrondMinUndelegatedAmountError",
+export const MultiversxMinDelegatedAmountError = createCustomErrorClass(
+  "MultiversxMinDelegatedAmountError",
 );
 
-export const ElrondDelegationBelowMinimumError = createCustomErrorClass(
-  "ElrondDelegationBelowMinimumError",
+export const MultiversxMinUndelegatedAmountError = createCustomErrorClass(
+  "MultiversxMinUndelegatedAmountError",
+);
+
+export const MultiversxDelegationBelowMinimumError = createCustomErrorClass(
+  "MultiversxDelegationBelowMinimumError",
 );
 
 export const NotEnoughEGLDForFees = createCustomErrorClass("NotEnoughEGLDForFees");

@@ -1,17 +1,17 @@
 import BigNumber from "bignumber.js";
 import {
-  type ElrondResourcesRaw,
-  type ElrondResources,
-  type ElrondAccountRaw,
-  type ElrondAccount,
-  type ElrondOperationExtraRaw,
-  type ElrondOperationExtra,
-  isElrondOperationExtraRaw,
-  isElrondOperationExtra,
+  type MultiversxResourcesRaw,
+  type MultiversxResources,
+  type MultiversxAccountRaw,
+  type MultiversxAccount,
+  type MultiversxOperationExtraRaw,
+  type MultiversxOperationExtra,
+  isMultiversxOperationExtraRaw,
+  isMultiversxOperationExtra,
 } from "./types";
 import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
-export function toElrondResourcesRaw(r: ElrondResources): ElrondResourcesRaw {
+export function toMultiversxResourcesRaw(r: MultiversxResources): MultiversxResourcesRaw {
   const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
@@ -19,7 +19,8 @@ export function toElrondResourcesRaw(r: ElrondResources): ElrondResourcesRaw {
     isGuarded,
   };
 }
-export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
+
+export function fromMultiversxResourcesRaw(r: MultiversxResourcesRaw): MultiversxResources {
   const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
@@ -29,23 +30,24 @@ export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
-  const elrondAccount = account as ElrondAccount;
-  if (elrondAccount.elrondResources) {
-    (accountRaw as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
-      elrondAccount.elrondResources,
+  const multiversxAccount = account as MultiversxAccount;
+  if (multiversxAccount.multiversxResources) {
+    (accountRaw as MultiversxAccountRaw).multiversxResources = toMultiversxResourcesRaw(
+      multiversxAccount.multiversxResources,
     );
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const elrondResourcesRaw = (accountRaw as ElrondAccountRaw).elrondResources;
-  if (elrondResourcesRaw)
-    (account as ElrondAccount).elrondResources = fromElrondResourcesRaw(elrondResourcesRaw);
+  const multiversxResourcesRaw = (accountRaw as MultiversxAccountRaw).multiversxResources;
+  if (multiversxResourcesRaw)
+    (account as MultiversxAccount).multiversxResources =
+      fromMultiversxResourcesRaw(multiversxResourcesRaw);
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
-  const extra: ElrondOperationExtra = {};
-  if (!isElrondOperationExtraRaw(extraRaw)) {
+  const extra: MultiversxOperationExtra = {};
+  if (!isMultiversxOperationExtraRaw(extraRaw)) {
     // All fields might be undefined
     return extra;
   }
@@ -57,8 +59,8 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
 }
 
 export function toOperationExtraRaw(extra: OperationExtra) {
-  const extraRaw: ElrondOperationExtraRaw = {};
-  if (!isElrondOperationExtra(extra)) {
+  const extraRaw: MultiversxOperationExtraRaw = {};
+  if (!isMultiversxOperationExtra(extra)) {
     // All fields might be undefined
     return extraRaw;
   }

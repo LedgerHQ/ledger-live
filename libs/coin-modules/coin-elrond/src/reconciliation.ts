@@ -49,12 +49,12 @@ export function reconciliateSubAccounts(
     if (!anySubAccountHaveChanged && initialSubAccounts) {
       // eslint-disable-next-line prettier/prettier
       log(
-        "elrond",
+        "multiversx",
         `incremental sync: ${String(initialSubAccounts.length)} sub accounts have not changed`,
       );
       subAccounts = initialSubAccounts;
     } else {
-      log("elrond", "incremental sync: sub accounts changed: " + stats.join(", "));
+      log("multiversx", "incremental sync: sub accounts changed: " + stats.join(", "));
     }
   } else {
     subAccounts = tokenAccounts.map((a: TokenAccount) => a);

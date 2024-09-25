@@ -1,14 +1,14 @@
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { ElrondPreloadData, ElrondProvider } from "./types";
+import type { MultiversxPreloadData, MultiversxProvider } from "./types";
 import { getProviders } from "./api";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
-let currentPreloadedData: ElrondPreloadData = {
+let currentPreloadedData: MultiversxPreloadData = {
   validators: [],
 };
 
-function fromHydrateValidator(validatorRaw: Record<string, any>): ElrondProvider {
+function fromHydrateValidator(validatorRaw: Record<string, any>): MultiversxProvider {
   return {
     contract: validatorRaw.contract,
     owner: validatorRaw.owner,
@@ -45,7 +45,7 @@ function fromHydrateValidator(validatorRaw: Record<string, any>): ElrondProvider
   };
 }
 
-function fromHydratePreloadData(data: any): ElrondPreloadData {
+function fromHydratePreloadData(data: any): MultiversxPreloadData {
   let validators = [];
 
   if (typeof data === "object" && data) {
@@ -59,32 +59,37 @@ function fromHydratePreloadData(data: any): ElrondPreloadData {
   };
 }
 
-const updates = new Subject<ElrondPreloadData>();
-export function getCurrentElrondPreloadData(): ElrondPreloadData {
+const updates = new Subject<MultiversxPreloadData>();
+export function getCurrentMultiversxPreloadData(): MultiversxPreloadData {
   return currentPreloadedData;
 }
-export function setElrondPreloadData(data: ElrondPreloadData) {
+
+export function setMultiversxPreloadData(data: MultiversxPreloadData) {
   if (data === currentPreloadedData) return;
   currentPreloadedData = data;
   updates.next(data);
 }
-export function getElrondPreloadDataUpdates(): Observable<ElrondPreloadData> {
+
+export function getMultiversxPreloadDataUpdates(): Observable<MultiversxPreloadData> {
   return updates.asObservable();
 }
+
 export const getPreloadStrategy = () => {
   return {
     preloadMaxAge: PRELOAD_MAX_AGE,
   };
 };
-export const preload = async (): Promise<ElrondPreloadData> => {
-  log("elrond/preload", "preloading elrond data...");
+
+export const preload = async (): Promise<MultiversxPreloadData> => {
+  log("multiversx/preload", "preloading multiversx data...");
   const validators = (await getProviders()) || [];
   return {
     validators,
   };
 };
+
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);
-  log("elrond/preload", `hydrated ${hydrated.validators.length} elrond validators`);
-  setElrondPreloadData(hydrated);
+  log("multiversx/preload", `hydrated ${hydrated.validators.length} multiversx validators`);
+  setMultiversxPreloadData(hydrated);
 };

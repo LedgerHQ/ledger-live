@@ -32,7 +32,7 @@ export const IDS = [
   "ethereum/erc20/binance_usd",
   "near",
   "injective",
-  "elrond",
+  "multiversx",
   "tezos",
   "celo",
   "osmo",
@@ -360,14 +360,14 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "elrond",
+    id: "multiversx",
     coinType: 508,
     name: "MultiversX",
     managerAppName: "MultiversX",
     ticker: "EGLD",
-    scheme: "elrond",
+    scheme: "multiversx",
     color: "#23F7DD",
-    family: "elrond",
+    family: "multiversx",
     blockAvgTime: 6,
     deviceTicker: "EGLD",
     units: [
@@ -379,11 +379,11 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     ],
     explorerViews: [
       {
-        tx: "https://explorer.elrond.com/transactions/$hash",
-        address: "https://explorer.elrond.com/accounts/$address",
+        tx: "https://explorer.multiversx.com/transactions/$hash",
+        address: "https://explorer.multiversx.com/accounts/$address",
       },
     ],
-    keywords: ["elrond"],
+    keywords: ["multiversx"],
   },
   {
     type: "CryptoCurrency",

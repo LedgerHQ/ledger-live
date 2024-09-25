@@ -3,12 +3,12 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { ElrondAccount, ElrondOperation } from "./types";
+import type { MultiversxAccount, MultiversxOperation } from "./types";
 import BigNumber from "bignumber.js";
 
-function formatAccountSpecifics(account: ElrondAccount): string {
-  const { elrondResources } = account;
-  invariant(elrondResources, "elrond account expected");
+function formatAccountSpecifics(account: MultiversxAccount): string {
+  const { multiversxResources } = account;
+  invariant(multiversxResources, "multiversx account expected");
   const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
@@ -23,15 +23,15 @@ function formatAccountSpecifics(account: ElrondAccount): string {
     str += " 0 spendable.";
   }
 
-  if (elrondResources && elrondResources.nonce) {
-    str += "\n  nonce : " + elrondResources.nonce;
+  if (multiversxResources && multiversxResources.nonce) {
+    str += "\n  nonce : " + multiversxResources.nonce;
   }
 
-  if (elrondResources && elrondResources.delegations) {
+  if (multiversxResources && multiversxResources.delegations) {
     let delegated = new BigNumber(0);
     let undelegating = new BigNumber(0);
     let rewards = new BigNumber(0);
-    for (const delegation of elrondResources.delegations) {
+    for (const delegation of multiversxResources.delegations) {
       delegated = delegated.plus(delegation.userActiveStake);
       undelegating = delegation.userUndelegatedList.reduce(
         (sum, undelegation) => sum.plus(undelegation.amount),
@@ -56,7 +56,7 @@ function formatAccountSpecifics(account: ElrondAccount): string {
 }
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { amount } = (op as ElrondOperation).extra;
+  const { amount } = (op as MultiversxOperation).extra;
   return amount?.gt && amount.gt(0)
     ? " amount: " +
         `${

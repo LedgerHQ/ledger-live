@@ -1,24 +1,24 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { ElrondAccount, ElrondProtocolTransaction, Transaction } from "./types";
+import { MultiversxAccount, MultiversxProtocolTransaction, Transaction } from "./types";
 
 describe("buildOptimisticOperation", () => {
   it("should work with mode = send", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as ElrondAccount;
+    } as MultiversxAccount;
 
     const transaction = {
-      family: "elrond",
+      family: "multiversx",
       mode: "send",
       fees: new BigNumber("1"),
       amount: new BigNumber("42"),
       recipient: "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx",
     } as Transaction;
 
-    const notSignedTransaction: ElrondProtocolTransaction = {
+    const notSignedTransaction: MultiversxProtocolTransaction = {
       nonce: 7,
-    } as ElrondProtocolTransaction;
+    } as MultiversxProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 
@@ -33,10 +33,10 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = delegate", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as ElrondAccount;
+    } as MultiversxAccount;
 
     const transaction = {
-      family: "elrond",
+      family: "multiversx",
       mode: "delegate",
       fees: new BigNumber("1"),
       amount: new BigNumber("42"),
@@ -44,9 +44,9 @@ describe("buildOptimisticOperation", () => {
       data: "delegate",
     } as Transaction;
 
-    const notSignedTransaction: ElrondProtocolTransaction = {
+    const notSignedTransaction: MultiversxProtocolTransaction = {
       nonce: 7,
-    } as ElrondProtocolTransaction;
+    } as MultiversxProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 
@@ -61,10 +61,10 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = claimRewards", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as ElrondAccount;
+    } as MultiversxAccount;
 
     const transaction = {
-      family: "elrond",
+      family: "multiversx",
       mode: "claimRewards",
       fees: new BigNumber("1"),
       amount: new BigNumber("42"),
@@ -72,9 +72,9 @@ describe("buildOptimisticOperation", () => {
       data: "claimRewards",
     } as Transaction;
 
-    const notSignedTransaction: ElrondProtocolTransaction = {
+    const notSignedTransaction: MultiversxProtocolTransaction = {
       nonce: 7,
-    } as ElrondProtocolTransaction;
+    } as MultiversxProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 

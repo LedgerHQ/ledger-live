@@ -7,7 +7,7 @@ import { fromTransactionRaw } from "./transaction";
 
 const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
-const elrond: CurrenciesData<Transaction> = {
+const multiversx: CurrenciesData<Transaction> = {
   FIXME_ignorePreloadFields: [
     "validators", // They are always changing
   ],
@@ -29,7 +29,7 @@ const elrond: CurrenciesData<Transaction> = {
       raw: {
         id: `js:2:elrond:${TEST_ADDRESS}:`,
         seedIdentifier: `${TEST_ADDRESS}`,
-        name: "Elrond 1",
+        name: "Multiversx 1",
         derivationMode: "",
         index: 0,
         freshAddress: `${TEST_ADDRESS}`,
@@ -37,7 +37,7 @@ const elrond: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        currencyId: "elrond",
+        currencyId: "multiversx",
         lastSyncDate: "",
         balance: "299569965",
         subAccounts: [
@@ -58,7 +58,7 @@ const elrond: CurrenciesData<Transaction> = {
         {
           name: "recipient and sender must not be the same",
           transaction: fromTransactionRaw({
-            family: "elrond",
+            family: "multiversx",
             recipient: `${TEST_ADDRESS}`,
             amount: "100000000",
             mode: "send",
@@ -76,7 +76,7 @@ const elrond: CurrenciesData<Transaction> = {
         {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
-            family: "elrond",
+            family: "multiversx",
             recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             amount: "1000000000000000000000000",
             mode: "send",
@@ -93,7 +93,7 @@ const elrond: CurrenciesData<Transaction> = {
         {
           name: "Not enough balance (ESDT transfer)",
           transaction: fromTransactionRaw({
-            family: "elrond",
+            family: "multiversx",
             recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             amount: "1000000000000000000000000",
             mode: "send",
@@ -111,7 +111,7 @@ const elrond: CurrenciesData<Transaction> = {
         {
           name: "Send max",
           transaction: fromTransactionRaw({
-            family: "elrond",
+            family: "multiversx",
             recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             useAllAmount: true,
             amount: "0",
@@ -135,11 +135,11 @@ const elrond: CurrenciesData<Transaction> = {
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    elrond,
+    multiversx,
   },
 };
 
-describe("Elrond bridge", () => {
+describe("MultiversX bridge", () => {
   test.todo(
     "This is an empty test to make jest command pass. Remove it once there is a real test.",
   );

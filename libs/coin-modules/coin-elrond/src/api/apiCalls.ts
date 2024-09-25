@@ -3,12 +3,12 @@ import { SignedOperation } from "@ledgerhq/types-live/src";
 import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {
   ESDTToken,
-  ElrondApiTransaction,
-  ElrondDelegation,
-  ElrondProvider,
-  ElrondTransactionAction,
-  ElrondTransactionMode,
-  ElrondTransferOptions,
+  MultiversxApiTransaction,
+  MultiversxDelegation,
+  MultiversxProvider,
+  MultiversxTransactionAction,
+  MultiversxTransactionMode,
+  MultiversxTransferOptions,
   NetworkInfo,
 } from "../types";
 import { MultiversXAccount } from "./dtos/multiversx-account";
@@ -36,7 +36,7 @@ interface BlockRoundResponse {
   round: number;
 }
 
-const decodeTransactionMode = (action?: ElrondTransactionAction): string => {
+const decodeTransactionMode = (action?: MultiversxTransactionAction): string => {
   if (!action) {
     return "send";
   }
@@ -54,7 +54,7 @@ const decodeTransactionMode = (action?: ElrondTransactionAction): string => {
   return mode;
 };
 
-export default class ElrondApi {
+export default class MultiversxApi {
   private API_URL: string;
   private DELEGATION_API_URL: string;
 
@@ -78,8 +78,8 @@ export default class ElrondApi {
     };
   }
 
-  async getProviders(): Promise<ElrondProvider[]> {
-    const { data: providers } = await network<ElrondProvider[]>({
+  async getProviders(): Promise<MultiversxProvider[]> {
+    const { data: providers } = await network<MultiversxProvider[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/providers`,
     });
@@ -135,22 +135,22 @@ export default class ElrondApi {
     return hash;
   }
 
-  async getHistory(addr: string, startAt: number): Promise<ElrondApiTransaction[]> {
+  async getHistory(addr: string, startAt: number): Promise<MultiversxApiTransaction[]> {
     const { data: transactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
     });
 
-    let allTransactions: ElrondApiTransaction[] = [];
+    let allTransactions: MultiversxApiTransaction[] = [];
     let from = 0;
     while (from < transactionsCount) {
-      const { data: transactions } = await network<ElrondApiTransaction[]>({
+      const { data: transactions } = await network<MultiversxApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       for (const transaction of transactions) {
-        transaction.mode = decodeTransactionMode(transaction.action) as ElrondTransactionMode;
+        transaction.mode = decodeTransactionMode(transaction.action) as MultiversxTransactionMode;
       }
 
       allTransactions = [...allTransactions, ...transactions];
@@ -161,8 +161,8 @@ export default class ElrondApi {
     return allTransactions;
   }
 
-  async getAccountDelegations(addr: string): Promise<ElrondDelegation[]> {
-    const { data: delegations } = await network<ElrondDelegation[]>({
+  async getAccountDelegations(addr: string): Promise<MultiversxDelegation[]> {
+    const { data: delegations } = await network<MultiversxDelegation[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/accounts/${addr}/delegations`,
     });
@@ -174,16 +174,16 @@ export default class ElrondApi {
     addr: string,
     token: string,
     startAt: number,
-  ): Promise<ElrondApiTransaction[]> {
+  ): Promise<MultiversxApiTransaction[]> {
     const { data: tokenTransactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
     });
 
-    let allTokenTransactions: ElrondApiTransaction[] = [];
+    let allTokenTransactions: MultiversxApiTransaction[] = [];
     let from = 0;
     while (from < tokenTransactionsCount) {
-      const { data: tokenTransactions } = await network<ElrondApiTransaction[]>({
+      const { data: tokenTransactions } = await network<MultiversxApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
       });
@@ -194,7 +194,7 @@ export default class ElrondApi {
     }
 
     for (const esdtTransaction of allTokenTransactions) {
-      esdtTransaction.transfer = ElrondTransferOptions.esdt;
+      esdtTransaction.transfer = MultiversxTransferOptions.esdt;
     }
 
     return allTokenTransactions;
