@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -58,6 +59,11 @@ public class ReactHIDModule extends ReactContextBaseJavaModule {
                         .emit(event, buildMapFromDevice(device));
             }
         };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getReactApplicationContext().registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            return;
+        }
+
         getReactApplicationContext().registerReceiver(receiver, filter);
     }
 
@@ -213,7 +219,12 @@ public class ReactHIDModule extends ReactContextBaseJavaModule {
                 unregisterReceiver(this);
             }
         };
-        getReactApplicationContext().registerReceiver(receiver, intFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getReactApplicationContext().registerReceiver(receiver, intFilter, Context.RECEIVER_NOT_EXPORTED);
+            return;
+        }
+
+        getReactApplicationContext().registerReceiver(receiver, intFilter, Context.RECEIVER_NOT_EXPORTED);
     }
 
     private void unregisterReceiver(BroadcastReceiver receiver) {
