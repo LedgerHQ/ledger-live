@@ -8,7 +8,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
-import { ListProvider } from "./type";
+import { ListProvider } from "./types";
 
 type Props = {
   provider: ListProvider;

@@ -7,7 +7,7 @@ import React, { useCallback } from "react";
 import { useAnalytics } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
-import { ListProvider } from "./type";
+import { ListProvider } from "./types";
 
 interface Props {
   providers: ListProvider[];
