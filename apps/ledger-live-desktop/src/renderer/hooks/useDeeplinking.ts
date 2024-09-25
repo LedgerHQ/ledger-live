@@ -19,6 +19,7 @@ import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "../actions/walletSync";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -315,8 +316,9 @@ export function useDeepLinkHandler() {
           }
           break;
         case "wc": {
+          const wcPathname = `/platform/${WC_ID}`;
           // Only prevent requests if already on the wallet connect live-app
-          if (location.pathname === "/platform/ledger-wallet-connect") {
+          if (location.pathname === wcPathname) {
             try {
               // Prevent a request from updating the live-app url and reloading it
               if (!query.uri || new URL(query.uri).searchParams.get("requestId")) {
@@ -327,7 +329,7 @@ export function useDeepLinkHandler() {
             }
           }
           setTrackingSource("deeplink");
-          navigate("/platform/ledger-wallet-connect", query);
+          navigate(wcPathname, query);
 
           break;
         }
