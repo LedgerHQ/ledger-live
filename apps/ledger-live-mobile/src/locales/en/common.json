@@ -477,17 +477,17 @@
       "title": "Sorry, no account was found",
       "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
-    "ElrondDecimalsLimitReached": {
+    "MultiversXDecimalsLimitReached": {
       "title": "Maximum decimals limit reached",
       "description": "Please make sure that the amount provided has 18 decimals."
     },
-    "ElrondMinDelegatedAmountError": {
+    "MultiversXMinDelegatedAmountError": {
       "title": "Delegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError": {
+    "MultiversXMinUndelegatedAmountError": {
       "title": "Undelegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError": {
+    "MultiversXDelegationBelowMinimumError": {
       "title": "Remaining delegation can't be less than {{formattedAmount}}"
     },
     "NotEnoughVTHO": {

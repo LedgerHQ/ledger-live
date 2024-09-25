@@ -5721,17 +5721,17 @@
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "小数点以下の最大桁数に達しました",
       "description" : "指定された量の小数点以下が18桁であることをご確認ください。"
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
     },
     "NotEnoughEGLDForFees" : {
