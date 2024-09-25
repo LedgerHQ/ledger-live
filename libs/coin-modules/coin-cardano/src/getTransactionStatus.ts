@@ -5,6 +5,7 @@ import {
   InvalidAddress,
   AmountRequired,
   NotEnoughBalance,
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
@@ -27,7 +28,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
-import { CARDANO_MAX_SUPPLY } from "./constants";
+import { CARDANO_MAX_SUPPLY, MAX_FEES_THROW, MAX_FEES_WARN } from "./constants";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -51,15 +52,25 @@ export const getTransactionStatus: AccountBridge<
     });
   }
 
+  let txStatus: TransactionStatus;
+
   if (transaction.mode === "send") {
-    return getSendTransactionStatus(account, transaction);
+    txStatus = await getSendTransactionStatus(account, transaction);
   } else if (transaction.mode === "delegate") {
-    return getDelegateTransactionStatus(account, transaction);
+    txStatus = await getDelegateTransactionStatus(account, transaction);
   } else if (transaction.mode === "undelegate") {
-    return getUndelegateTransactionStatus(account, transaction);
+    txStatus = await getUndelegateTransactionStatus(account, transaction);
   } else {
     throw new Error("Invalid transaction mode");
   }
+
+  if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
+    txStatus.errors.feeTooHigh = new FeeTooHigh();
+  } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
+    txStatus.warnings.feeTooHigh = new FeeTooHigh();
+  }
+
+  return txStatus;
 };
 
 async function getSendTransactionStatus(
