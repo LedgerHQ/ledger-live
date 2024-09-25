@@ -5916,7 +5916,6 @@
         "status": "Status",
         "active": "Active",
         "inactive": "Inactive",
-        "rewards": "Rewards",
         "pending": "Pending",
         "available": "Withdrawable"
       },
