@@ -217,7 +217,7 @@ export const getStakingPositions = async (
   const activeDelegatedStakeBalance = await account.getActiveDelegatedStakeBalance();
 
   const stakingPositions = await Promise.all(
-    activeDelegatedStakeBalance.stakedValidators.map(async ({ validatorId, amount: rawTotal }) => {
+    activeDelegatedStakeBalance.stakedValidators.map(async ({ validatorId }) => {
       const contract = new nearAPI.Contract(account, validatorId, {
         viewMethods: [
           "get_account_staked_balance",
