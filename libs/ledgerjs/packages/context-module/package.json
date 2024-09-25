@@ -2,6 +2,7 @@
   "name": "@ledgerhq/context-module",
   "version": "0.1.1",
   "description": "Ledger context module",
+  "private": true,
   "files": [
     "./lib"
   ],
