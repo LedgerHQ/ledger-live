@@ -55,6 +55,7 @@ import {
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
+import { useSyncNFTsWithAccounts } from "./hooks/useSyncNFTsWithAccounts";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -200,12 +201,15 @@ export default function Default() {
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
 
+  useSyncNFTsWithAccounts();
+
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
   const isNftReworkedEnabled = nftReworked?.enabled;
+
   useEffect(() => {
     if (
       !isLocked &&
