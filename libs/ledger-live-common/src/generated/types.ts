@@ -41,12 +41,6 @@ import type {
   TransactionStatusRaw as cosmosTransactionStatusRaw,
 } from "@ledgerhq/coin-cosmos/types/index";
 import type {
-  Transaction as elrondTransaction,
-  TransactionRaw as elrondTransactionRaw,
-  TransactionStatus as elrondTransactionStatus,
-  TransactionStatusRaw as elrondTransactionStatusRaw,
-} from "@ledgerhq/coin-elrond/types";
-import type {
   Transaction as evmTransaction,
   TransactionRaw as evmTransactionRaw,
   TransactionStatus as evmTransactionStatus,
@@ -76,6 +70,12 @@ import type {
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
+import type {
+  Transaction as multiversxTransaction,
+  TransactionRaw as multiversxTransactionRaw,
+  TransactionStatus as multiversxTransactionStatus,
+  TransactionStatusRaw as multiversxTransactionStatusRaw,
+} from "@ledgerhq/coin-multiversx/types";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -145,12 +145,12 @@ export type Transaction =
   | casperTransaction
   | celoTransaction
   | cosmosTransaction
-  | elrondTransaction
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
+  | multiversxTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -170,12 +170,12 @@ export type TransactionRaw =
   | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
-  | elrondTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
+  | multiversxTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -195,12 +195,12 @@ export type TransactionStatus =
   | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
-  | elrondTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
+  | multiversxTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -220,12 +220,12 @@ export type TransactionStatusRaw =
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
-  | elrondTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
