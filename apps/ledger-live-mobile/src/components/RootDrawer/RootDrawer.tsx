@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
+import * as Braze from "@braze/react-native-sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "~/const";
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
-// TODO version selector
-// import { EvmStakingDrawer } from "~/families/evm/StakingDrawer_deprecated";
 import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
+import { EvmStakingDrawer as EvmStakingDrawer_deprecated } from "~/families/evm/StakingDrawer_deprecated";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
 import { InitialDrawerID, RootDrawerProps } from "./types";
 
@@ -30,11 +30,22 @@ export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[])
     .filter((drawer): drawer is InitialDrawerID => !!drawer);
 }
 
+function StakeModalVersionWrapper() {
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const x = await Braze.getFeatureFlag("earn-use-latest-stake-modal");
+      setEnabled(Boolean(x?.enabled));
+    })();
+  }, []);
+  return enabled ? <EvmStakingDrawer /> : <EvmStakingDrawer_deprecated />;
+}
+
 export function RootDrawerSelector() {
   const { drawer } = useRootDrawerContext();
   switch (drawer.id) {
     case "EvmStakingDrawer":
-      return <EvmStakingDrawer />;
+      return <StakeModalVersionWrapper />;
     case InitialDrawerID.PTXServicesAppleDrawerKey:
       return <PTXServicesAppleWarning />;
     default:

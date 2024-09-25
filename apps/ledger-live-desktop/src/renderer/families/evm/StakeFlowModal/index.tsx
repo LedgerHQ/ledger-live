@@ -36,7 +36,7 @@ const descending = (a: EthStakingProvider, b: EthStakingProvider) => (b?.min ?? 
 type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
 
-interface Props {
+export interface Props {
   account: Account;
   /** Analytics source */
   source?: string;
@@ -45,7 +45,7 @@ interface Props {
 
 const MODAL_WIDTH = 500;
 
-const StakingModal = ({ account, hasCheckbox, source }: Props) => {
+export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -227,4 +227,4 @@ const StakingModal = ({ account, hasCheckbox, source }: Props) => {
   );
 };
 
-export default StakingModal;
+export default StakeModal;
