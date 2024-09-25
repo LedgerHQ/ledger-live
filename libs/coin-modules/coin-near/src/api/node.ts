@@ -248,12 +248,10 @@ export const getStakingPositions = async (
         available = unstaked;
         pending = new BigNumber(0);
       }
-      let rewards = new BigNumber(0);
 
       const staked = new BigNumber(rawStaked);
       available = new BigNumber(available);
       pending = new BigNumber(pending);
-      rewards = new BigNumber(rawTotal || "0").minus(staked);
 
       const stakingThreshold = getYoctoThreshold();
 
@@ -271,7 +269,6 @@ export const getStakingPositions = async (
         staked,
         available,
         pending,
-        rewards: rewards.gt(0) ? rewards : new BigNumber(0),
         validatorId,
       };
     }),
