@@ -56,6 +56,7 @@ export const buildSignOperation =
           erc20: true,
           nft: isNFTActive(account.currency),
           domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
+          uniswapV3: true,
         };
         const loadConfig: LoadConfig = {
           cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
