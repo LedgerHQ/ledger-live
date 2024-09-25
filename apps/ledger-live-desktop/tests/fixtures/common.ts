@@ -1,5 +1,6 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import fsPromises from "fs/promises";
+import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -16,9 +17,9 @@ type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
-  userdata: string;
+  userdata?: string;
   userdataDestinationPath: string;
-  userdataOriginalFile: string;
+  userdataOriginalFile?: string;
   userdataFile: string;
   env: Record<string, string>;
   electronApp: ElectronApplication;
@@ -53,7 +54,7 @@ export const test = base.extend<TestFixtures>({
     await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    await use(path.join(__dirname, "../userdata/", `${userdata}.json`));
+    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
@@ -63,7 +64,6 @@ export const test = base.extend<TestFixtures>({
     {
       lang,
       theme,
-      userdata,
       userdataDestinationPath,
       userdataOriginalFile,
       env,
@@ -77,9 +77,16 @@ export const test = base.extend<TestFixtures>({
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
-    if (userdata) {
-      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
-    }
+    const userData = {
+      data: {
+        settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
+      },
+    };
+    const testUserData = userdataOriginalFile
+      ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
+      : {};
+    merge(userData, testUserData);
+    await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     let device: any | undefined;
 
