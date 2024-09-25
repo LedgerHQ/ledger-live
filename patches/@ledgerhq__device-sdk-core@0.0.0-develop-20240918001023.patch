@@ -1,5 +1,5 @@
 diff --git a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
-index 49eb94c6e2bb109fe3641a39bf22a96252bba387..c28e5785f152d6205c1e48b06533ec1afa2b0129 100644
+index 49eb94c6e2bb109fe3641a39bf22a96252bba387..8f8e5a4bbb509ced07a07c85d4781d4196772d06 100644
 --- a/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
 +++ b/lib/cjs/src/internal/usb/transport/WebUsbHidTransport.js
 @@ -106,9 +106,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
@@ -21,7 +21,7 @@ index 49eb94c6e2bb109fe3641a39bf22a96252bba387..c28e5785f152d6205c1e48b06533ec1a
 +                        let deviceModels = this.deviceModelDataSource.filterDeviceModels({
 +                            usbProductId,
 +                          });
-+            
++
 +                          if (deviceModels.length === 0) {
 +                            deviceModels = this.deviceModelDataSource.filterDeviceModels({
 +                              legacyUsbProductId: usbProductId,
@@ -47,8 +47,45 @@ index 49eb94c6e2bb109fe3641a39bf22a96252bba387..c28e5785f152d6205c1e48b06533ec1a
      /**
       * Disconnect from a HID USB device and delete its handlers
       */
+diff --git a/lib/esm/src/internal/usb/transport/UsbHidDeviceConnection.js b/lib/esm/src/internal/usb/transport/UsbHidDeviceConnection.js
+index b1585f120151974525a270f2f82c126cf88d6af2..440576bc2e036c18ace7c61c97addebb812d9609 100644
+--- a/lib/esm/src/internal/usb/transport/UsbHidDeviceConnection.js
++++ b/lib/esm/src/internal/usb/transport/UsbHidDeviceConnection.js
+@@ -73,6 +73,9 @@ let UsbHidDeviceConnection = class UsbHidDeviceConnection {
+             });
+             try {
+                 await this._device.sendReport(0, frame.getRawData());
++                this._logger.debug("Sent Frame", {
++                    data: { frame: frame.getRawData() },
++                });
+             }
+             catch (error) {
+                 this._logger.error("Error sending frame", { data: { error } });
+@@ -103,6 +106,7 @@ let UsbHidDeviceConnection = class UsbHidDeviceConnection {
+         });
+     }
+     setupWaitForReconnection() {
++
+         return new Promise((resolve) => {
+             this._settleReconnectionPromise = Maybe.of({
+                 resolve: () => resolve(Right(undefined)),
+@@ -111,12 +115,14 @@ let UsbHidDeviceConnection = class UsbHidDeviceConnection {
+         });
+     }
+     reconnected() {
++        this._logger.debug("Reconnected");
+         this._settleReconnectionPromise.ifJust((promise) => {
+             promise.resolve();
+             this._settleReconnectionPromise = Maybe.zero();
+         });
+     }
+     disconnect() {
++        this._logger.debug("Disconnect");
+         this._settleReconnectionPromise.ifJust((promise) => {
+             promise.reject(new ReconnectionFailedError());
+             this._settleReconnectionPromise = Maybe.zero();
 diff --git a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
-index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..db6f4144c90b5a2e08507f5b6c5b2c11a163539e 100644
+index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..89b236194cd9fb43687fdd9b8c2863561c4a181f 100644
 --- a/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
 +++ b/lib/esm/src/internal/usb/transport/WebUsbHidTransport.js
 @@ -80,9 +80,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
@@ -70,7 +107,7 @@ index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..db6f4144c90b5a2e08507f5b6c5b2c11
 +                        let deviceModels = this.deviceModelDataSource.filterDeviceModels({
 +                            usbProductId,
 +                          });
-+            
++
 +                          if (deviceModels.length === 0) {
 +                            deviceModels = this.deviceModelDataSource.filterDeviceModels({
 +                              legacyUsbProductId: usbProductId,
@@ -96,3 +133,27 @@ index 2eeeb0a65552a7ebcda97f5942f629b46be7b73e..db6f4144c90b5a2e08507f5b6c5b2c11
      /**
       * Disconnect from a HID USB device and delete its handlers
       */
+@@ -280,6 +293,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+             typeof event.device.productId === "number");
+     }
+     _handleDisconnection(device, callback) {
++        this._logger.debug("handleDisconnection", { data: { device } });
+         const usbProductId = this.getHidUsbProductId(device.productId);
+         const maybeDisconnectHandler = Maybe.fromNullable(this._disconnectionHandlersByHidId.get(usbProductId));
+         maybeDisconnectHandler.map(callback);
+@@ -289,6 +303,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+      * @param event
+      */
+     handleDeviceDisconnectionEvent(event) {
++
+         if (!this.isHIDConnectionEvent(event)) {
+             this._logger.error("Invalid event", { data: { event } });
+             return;
+@@ -308,6 +323,7 @@ let WebUsbHidTransport = class WebUsbHidTransport {
+      * @param event
+      */
+     handleDeviceConnectionEvent(event) {
++        this._logger.debug("handleDeviceConnectionEvent", { data: { event } });
+         if (!this.isHIDConnectionEvent(event)) {
+             this._logger.error("Invalid event", { data: { event } });
+             return;

@@ -15,7 +15,7 @@ overrides:
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
-pnpmfileChecksum: 4e52zoicqeeexy4qjhfyfgrzxq
+pnpmfileChecksum: 7df57yt7xoam5hq2etgyufdgvm
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
@@ -24,9 +24,6 @@ patchedDependencies:
   '@hashgraph/sdk@2.14.2':
     hash: ftpe7kgiykw2quxzn7vgiqumd4
     path: patches/@hashgraph__sdk@2.14.2.patch
-  '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023':
-    hash: ezrx2xjnwu6bcqtoxg4mvfkpha
-    path: patches/@ledgerhq__device-sdk-core@0.0.0-develop-20240918001023.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
@@ -279,9 +276,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
-      '@ledgerhq/device-sdk-core':
-        specifier: 0.0.0-develop-20240918001023
-        version: 0.0.0-develop-20240918001023(patch_hash=ezrx2xjnwu6bcqtoxg4mvfkpha)
+      '@ledgerhq/device-management-kit':
+        specifier: file:/Users/valentin.dealmeida/projects/live/device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz
+        version: file:../device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -10631,8 +10628,9 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023':
-    resolution: {integrity: sha512-eFuJDJkM+wqWTZNMvbhW9+16WnFurfdSN6mI0j6kFX8yQ2RQ+ksyyXYrYhkrXSI2G6RbE5KER1eVfDAmanGc7w==}
+  '@ledgerhq/device-management-kit@file:../device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz':
+    resolution: {integrity: sha512-CcTcGoTCInuES2ire2WX9Ct6LwRG+KOvv4nFURYcLPsqiFJ5BdRNOBHiU3xJ7rP10eYNu1Qj5Hf2lpzJ6bIEFg==, tarball: file:../device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz}
+    version: 0.3.0
 
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
@@ -30409,8 +30407,8 @@ packages:
   xstate@4.38.3:
     resolution: {integrity: sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw==}
 
-  xstate@5.18.1:
-    resolution: {integrity: sha512-m02IqcCQbaE/kBQLunwub/5i8epvkD2mFutnL17Oeg1eXTShe1sRF4D5mhv1dlaFO4vbW5gRGRhraeAD5c938g==}
+  xstate@5.18.2:
+    resolution: {integrity: sha512-hab5VOe29D0agy8/7dH1lGw+7kilRQyXwpaChoMu4fe6rDP+nsHYhDYKfS2O4iXE7myA98TW6qMEudj/8NXEkA==}
 
   xstream@11.14.0:
     resolution: {integrity: sha512-1bLb+kKKtKPbgTK6i/BaoAn03g47PpFstlbe1BA+y3pNS/LfvcaghS5BFf9+EE1J+KwSQsEpfJvFN5GqFtiNmw==}
@@ -37132,10 +37130,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/device-sdk-core@0.0.0-develop-20240918001023(patch_hash=ezrx2xjnwu6bcqtoxg4mvfkpha)':
+  '@ledgerhq/device-management-kit@file:../device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz':
     dependencies:
       '@sentry/minimal': 6.19.7
-      '@statelyai/inspect': 0.4.0(xstate@5.18.1)
+      '@statelyai/inspect': 0.4.0(xstate@5.18.2)
       axios: 1.7.7
       inversify: 6.0.2
       inversify-logger-middleware: 3.1.0
@@ -37144,7 +37142,7 @@ snapshots:
       rxjs: 7.8.1
       semver: 7.6.3
       uuid: 10.0.0
-      xstate: 5.18.1
+      xstate: 5.18.2
     transitivePeerDependencies:
       - ws
 
@@ -41273,7 +41271,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@statelyai/inspect@0.4.0(xstate@5.18.1)':
+  '@statelyai/inspect@0.4.0(xstate@5.18.2)':
     dependencies:
       fast-safe-stringify: 2.1.1
       isomorphic-ws: 5.0.0
@@ -41281,7 +41279,7 @@ snapshots:
       safe-stable-stringify: 2.4.3
       superjson: 1.13.3
       uuid: 9.0.1
-      xstate: 5.18.1
+      xstate: 5.18.2
     transitivePeerDependencies:
       - ws
 
@@ -66994,7 +66992,7 @@ snapshots:
 
   xstate@4.38.3: {}
 
-  xstate@5.18.1: {}
+  xstate@5.18.2: {}
 
   xstream@11.14.0:
     dependencies:

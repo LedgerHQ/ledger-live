@@ -57,7 +57,7 @@
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
-    "@ledgerhq/device-sdk-core": "0.0.0-develop-20240918001023",
+    "@ledgerhq/device-management-kit": "file:/Users/valentin.dealmeida/projects/live/device-sdk-ts/packages/ledgerhq-device-management-kit-0.3.0.tgz",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

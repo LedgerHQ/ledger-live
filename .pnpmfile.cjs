@@ -289,7 +289,7 @@ function readPackage(pkg, context) {
       }),
 
       // DEVICE SDK
-      addDependencies("@ledgerhq/device-sdk-core", {
+      addDependencies("@ledgerhq/device-management-kit", {
         "@statelyai/inspect": "*",
       }),
     ],

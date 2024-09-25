@@ -7,7 +7,7 @@ import {
   type DeviceSessionState,
   DeviceStatus,
   LogLevel,
-} from "@ledgerhq/device-sdk-core";
+} from "@ledgerhq/device-management-kit";
 import { BehaviorSubject, firstValueFrom } from "rxjs";
 
 const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Debug)).build();
@@ -96,8 +96,14 @@ export class DeviceManagementKitTransport extends Transport {
           this.emit("disconnect");
         }
       },
+      error: error => {
+        console.error("[SDKTransport][listenToDisconnect] error", error);
+        this.emit("disconnect");
+        subscription.unsubscribe();
+      },
       complete: () => {
         console.log("[SDKTransport][listenToDisconnect] complete");
+        this.emit("disconnect");
         subscription.unsubscribe();
       },
     });
