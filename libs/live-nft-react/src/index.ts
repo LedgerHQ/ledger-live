@@ -8,3 +8,4 @@ export * from "./hooks/useFetchOrdinals";
 export * from "./hooks/helpers/ordinals";
 export * from "./hooks/useCheckNftAccount";
 export * from "./hooks/helpers/index";
+export * from "./supported";

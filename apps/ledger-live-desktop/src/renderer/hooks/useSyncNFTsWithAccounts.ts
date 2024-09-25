@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useHideSpamCollection } from "./useHideSpamCollection";
-import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, supportedChains, useCheckNftAccount } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 import { accountsSelector, orderedVisibleNftsSelector } from "../reducers/accounts";
@@ -42,7 +42,6 @@ export function useSyncNFTsWithAccounts() {
 
   const { enabled, hideSpamCollection } = useHideSpamCollection();
 
-  const chains = ["ethereum", "polygon"];
   const accounts = useSelector(accountsSelector);
   const nftsOwned = useSelector(orderedVisibleNftsSelector, isEqual);
 
@@ -81,7 +80,7 @@ export function useSyncNFTsWithAccounts() {
   useCheckNftAccount({
     addresses: groupToFetch.join(","),
     nftsOwned,
-    chains,
+    chains: supportedChains,
     threshold,
     action: hideSpamCollection,
     enabled,
