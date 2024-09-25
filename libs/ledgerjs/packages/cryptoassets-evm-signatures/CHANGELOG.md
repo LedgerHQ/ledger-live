@@ -1,4 +1,4 @@
-# @ledgerhq/cryptoassets
+# @ledgerhq/cryptoassets-evm-signatures
 
 ## 13.4.0
 
