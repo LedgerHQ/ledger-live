@@ -1,11 +1,12 @@
 import axios from "axios";
-import { getTransactionHash, transactionData, transactionContracts } from "./fixtures/utils";
+import { getSerializedTransaction, transactionData, transactionContracts } from "./fixtures/utils";
 import { ERC1155_CLEAR_SIGNED_SELECTORS, ERC721_CLEAR_SIGNED_SELECTORS } from "../src/utils";
 import partialPluginResponse from "./fixtures/REST/Paraswap-Plugin.json";
 import * as contractServices from "../src/services/ledger/contracts";
 import { getLoadConfig } from "../src/services/ledger/loadConfig";
 import * as erc20Services from "../src/services/ledger/erc20";
 import * as nftServices from "../src/services/ledger/nfts";
+import * as uniswapModule from "../src/modules/Uniswap";
 import { ResolutionConfig } from "../src/services/types";
 import { ledgerService } from "../src/Eth";
 
@@ -14,6 +15,7 @@ const resolutionConfig: ResolutionConfig = {
   nft: true,
   erc20: true,
   externalPlugins: true,
+  uniswapV3: true,
 };
 
 jest.mock("axios");
@@ -23,6 +25,8 @@ jest.spyOn(nftServices, "loadNftPlugin");
 jest.spyOn(nftServices, "getNFTInfo");
 jest.spyOn(erc20Services, "findERC20SignaturesInfo");
 jest.spyOn(erc20Services, "byContractAddressAndChainId");
+jest.spyOn(uniswapModule, "loadInfosForUniswap");
+jest.spyOn(uniswapModule, "getCommandsAndTokensFromUniswapCalldata");
 
 describe("Ledger Service", () => {
   describe("Transaction resolution", () => {
@@ -34,7 +38,7 @@ describe("Ledger Service", () => {
       it("should resolve an ERC20 approve", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async () => null);
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc20,
           transactionData.erc20.approve,
         );
@@ -63,7 +67,7 @@ describe("Ledger Service", () => {
       it("should resolve an ERC20 transfer", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async () => null);
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc20,
           transactionData.erc20.transfer,
         );
@@ -92,7 +96,7 @@ describe("Ledger Service", () => {
       it("should not resolve an approve with a non ERC20 or NFT contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async () => null);
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.random,
           transactionData.erc20.approve,
         );
@@ -119,7 +123,7 @@ describe("Ledger Service", () => {
       it("should not resolve a transfer with a non ERC20 or NFT contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async () => null);
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.random,
           transactionData.erc20.transfer,
         );
@@ -177,7 +181,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.APPROVE),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc721,
           transactionData.erc721.approve,
         );
@@ -207,7 +211,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc721,
           transactionData.erc721.setApprovalForAll,
         );
@@ -237,7 +241,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc721,
           transactionData.erc721.transferFrom,
         );
@@ -267,7 +271,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc721,
           transactionData.erc721.safeTransferFrom,
         );
@@ -297,7 +301,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc721,
           transactionData.erc721.safeTransferFromWithData,
         );
@@ -327,7 +331,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc20,
           transactionData.erc721.safeTransferFrom,
         );
@@ -357,7 +361,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.random,
           transactionData.erc721.safeTransferFrom,
         );
@@ -415,7 +419,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc1155,
           transactionData.erc1155.setApprovalForAll,
         );
@@ -445,7 +449,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc1155,
           transactionData.erc1155.safeTransferFrom,
         );
@@ -475,7 +479,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc1155,
           transactionData.erc1155.safeBatchTransferFrom,
         );
@@ -505,7 +509,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.erc20,
           transactionData.erc1155.safeTransferFrom,
         );
@@ -535,7 +539,7 @@ describe("Ledger Service", () => {
           nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
-        const txHash = getTransactionHash(
+        const txHash = getSerializedTransaction(
           transactionContracts.random,
           transactionData.erc1155.safeTransferFrom,
         );
@@ -571,7 +575,7 @@ describe("Ledger Service", () => {
             return null;
           });
 
-          const txHash = getTransactionHash(
+          const txHash = getSerializedTransaction(
             transactionContracts.paraswap,
             transactionData.paraswap.simpleSwap,
           );
@@ -613,7 +617,7 @@ describe("Ledger Service", () => {
             return null;
           });
 
-          const txHash = getTransactionHash(
+          const txHash = getSerializedTransaction(
             transactionContracts.paraswap,
             transactionData.paraswap.swapOnUniswapV2Fork,
           );
@@ -644,6 +648,87 @@ describe("Ledger Service", () => {
           expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
           expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
         });
+      });
+    });
+
+    describe("UNISWAP", () => {
+      it("should resolve a Uniswap universal router transaction (permit2>swap-out-v3>unwrap)", async () => {
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementation(async () => null);
+
+        const txHash = getSerializedTransaction(
+          transactionContracts.uniswapUniversaRouter,
+          transactionData.uniswap["permit2>swap-out-v3>unwrap"],
+        );
+        const resolution = await ledgerService.resolveTransaction(
+          txHash,
+          loadConfig,
+          resolutionConfig,
+        );
+
+        expect(resolution).toEqual({
+          domains: [],
+          erc20Tokens: [
+            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
+            "0354424f55747be9f9f5beb232ad59fe7af013b81d95fd5e0000001200000001304402200c4b2625ab03d6fd63b720f71317d7a9cac3f34a847e377f5b75b47e36459be002201fdc4ae8f67ef84a0c0e2a0758658b6e42d78668747ef4f87adf80012d96a698",
+            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
+          ],
+          nfts: [],
+          externalPlugin: [
+            {
+              payload:
+                "07556e69737761703fc91a3afd70395cd496c647d5a6cc9d4b2b7fad3593564c3044022014391e8f355867a57fe88f6a5a4dbcb8bf8f888a9db3ff3449caf72d120396bd02200c13d9c3f79400fe0aa0434ac54d59b79503c9964a4abc3e8cd22763e0242935",
+              signature: "",
+            },
+          ],
+          plugin: [],
+        });
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(0);
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(3);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(3);
+        expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
+        expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
+        expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
+        expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
+      });
+      it("should resolve a Uniswap universal router transaction (wrap>swap-in-v3)", async () => {
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementation(async () => null);
+
+        const txHash = getSerializedTransaction(
+          transactionContracts.uniswapUniversaRouter,
+          transactionData.uniswap["wrap>swap-in-v3"],
+        );
+        const resolution = await ledgerService.resolveTransaction(
+          txHash,
+          loadConfig,
+          resolutionConfig,
+        );
+
+        expect(resolution).toEqual({
+          domains: [],
+          erc20Tokens: [
+            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
+            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
+            "0354424f55747be9f9f5beb232ad59fe7af013b81d95fd5e0000001200000001304402200c4b2625ab03d6fd63b720f71317d7a9cac3f34a847e377f5b75b47e36459be002201fdc4ae8f67ef84a0c0e2a0758658b6e42d78668747ef4f87adf80012d96a698",
+          ],
+          nfts: [],
+          externalPlugin: [
+            {
+              payload:
+                "07556e69737761703fc91a3afd70395cd496c647d5a6cc9d4b2b7fad3593564c3044022014391e8f355867a57fe88f6a5a4dbcb8bf8f888a9db3ff3449caf72d120396bd02200c13d9c3f79400fe0aa0434ac54d59b79503c9964a4abc3e8cd22763e0242935",
+              signature: "",
+            },
+          ],
+          plugin: [],
+        });
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(0);
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(3);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(3);
+        expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
+        expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
+        expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
+        expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
       });
     });
   });
