@@ -25,7 +25,10 @@ function matchCorrespondingIcon(
   });
 }
 
-export function getInscriptionsData(inscriptions: SimpleHashNft[]) {
+export function getInscriptionsData(
+  inscriptions: SimpleHashNft[],
+  onInscriptionClick: (inscription: SimpleHashNft) => void,
+) {
   const inscriptionsWithIcons = matchCorrespondingIcon(inscriptions);
   return inscriptionsWithIcons.map(item => ({
     tokenName: item.name || item.contract.name || "",
@@ -39,9 +42,6 @@ export function getInscriptionsData(inscriptions: SimpleHashNft[]) {
       contentType: item.extra_metadata?.ordinal_details?.content_type,
       mediaType: "image",
     },
-    onClick: () => {
-      console.log(`you clicked on : \x1b[32m${item.name}\x1b[0m inscription`);
-    },
-    // it does nothing for now but it will be used for the next PR with the drawer
+    onClick: () => onInscriptionClick(item),
   }));
 }
