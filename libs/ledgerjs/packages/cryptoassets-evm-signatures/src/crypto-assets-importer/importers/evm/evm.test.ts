@@ -35,7 +35,7 @@ describe("import EVM Token", () => {
   it("should output the file in the correct format", async () => {
     const mockedFs = (fs.writeFile = jest.fn());
 
-    await importTokenByChainId(".", 1, ['ethereum/erc20/usd__coin']);
+    await importTokenByChainId(".", 1, ["ethereum/erc20/usd__coin"]);
 
     expect(mockedFs).toHaveBeenNthCalledWith(
       1,

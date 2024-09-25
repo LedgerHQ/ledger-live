@@ -91,8 +91,6 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
 export const fetchTokensOrderedByMarketCap = async (): Promise<{
   tokens: string[];
 }> => {
-  const { data } = await axios.get<string[]>(
-    `${LEDGER_COUNTERVALUES_API}/v3/supported/crypto`,
-  );
+  const { data } = await axios.get<string[]>(`${LEDGER_COUNTERVALUES_API}/v3/supported/crypto`);
   return { tokens: data };
 };
