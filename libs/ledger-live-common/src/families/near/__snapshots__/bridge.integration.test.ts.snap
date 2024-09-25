@@ -18,7 +18,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
         {
           "available": "10000000000000000001",
           "pending": "0",
-          "rewards": "10000000000000000001",
           "staked": "0",
           "validatorId": "figment.poolv1.near",
         },
