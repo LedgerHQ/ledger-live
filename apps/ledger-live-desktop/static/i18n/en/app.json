@@ -6595,6 +6595,8 @@
   "ordinals": {
     "inscriptions": {
       "seeMore": "See more inscriptions",
+      "empty": "To add Inscriptions, simply send them to your Bitcoin address.",
+      "receive": "Receive Inscription",
       "discoveryDrawer": {
         "title": "Discover Ordinals",
         "description": "Do you know that you may own valuable rare sats and inscriptions?",
@@ -6603,11 +6605,12 @@
       }
     },
     "rareSats": {
+      "empty": "To add Rare Sats, simply send them to your Bitcoin address.",
+      "receive": "Receive Rare Sat",
       "title": "Rare Sats",
       "table": {
         "type": "Sat Type / Amount",
-        "year": "Year",
-        "utxo": "UTXO size"
+        "year": "Year"
       },
       "rareSat": {
         "description": {

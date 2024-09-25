@@ -550,8 +550,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://zkevm-rpc.com",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://api-zkevm.polygonscan.com/api",
+        type: "blockscout",
+        uri: "https://zkevm.blockscout.com/api",
       },
     },
   },
@@ -566,8 +566,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://developer-access-mainnet.base.org",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://api.basescan.org/api",
+        type: "blockscout",
+        uri: "https://base.blockscout.com/api",
       },
     },
   },
