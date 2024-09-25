@@ -1,14 +1,14 @@
 import { ExchangeProviderNameAndSignature } from ".";
 import network from "@ledgerhq/live-network";
 
-type ProvidersDataResponse = {
+export type ProvidersDataResponse = {
   name: string;
   signature: string;
   public_key: string;
   public_key_curve: string;
 }[];
 
-function transformData(
+export function transformData(
   providersData: ProvidersDataResponse,
 ): Record<string, ExchangeProviderNameAndSignature> {
   const transformed = {};
