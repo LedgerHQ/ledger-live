@@ -9,6 +9,7 @@ export type BaseTabsProps = {
   activeColor?: string;
   activeBg?: string;
   disabled?: boolean;
+  size?: "small" | "medium";
 };
 
 export type TabItemProps = Partial<BaseTabsProps> & {
@@ -19,7 +20,6 @@ export type TabItemProps = Partial<BaseTabsProps> & {
   activeColor?: string;
   activeBg?: string;
   disabled?: boolean;
-  size?: "small" | "medium";
 };
 
 export type TabsProps = BaseTabsProps & {
@@ -29,15 +29,13 @@ export type TabsProps = BaseTabsProps & {
 };
 
 export const TabsContainer = styled(FlexBox).attrs({
-  // Avoid conflict with styled-system's size property by nulling size and renaming it
-  size: undefined,
   flexDirection: "row",
   alignItems: "stretch",
 })`
   width: 100%;
 `;
 
-const TemplateTabsGroup = (props: TabsProps): React.ReactElement => {
+const TemplateTabsGroup = ({ size, ...props }: TabsProps): React.ReactElement => {
   const { labels, activeIndex, onChange, Item } = props;
   return (
     <TabsContainer {...props}>
@@ -45,6 +43,7 @@ const TemplateTabsGroup = (props: TabsProps): React.ReactElement => {
         <Item
           key={index}
           {...props}
+          size={size}
           label={label}
           index={index}
           isActive={index === activeIndex}

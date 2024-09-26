@@ -25,10 +25,10 @@ export const ChipTab = ({
   return (
     <TabBox isActive={isActive} onPress={onPress} disabled={disabled} size={size}>
       <Text
-        variant={"small"}
-        fontWeight={"semiBold"}
+        variant="small"
+        fontWeight="semiBold"
         color={isActive ? "palette.neutral.c100" : "palette.neutral.c80"}
-        textAlign={"center"}
+        textAlign="center"
       >
         {label}
       </Text>
