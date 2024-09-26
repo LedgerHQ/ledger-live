@@ -1,5 +1,14 @@
 ## 34.5.0-next.4
 
+## 34.8.1-nightly.2
+
+### Patch Changes
+
+- [#7817](https://github.com/LedgerHQ/ledger-live/pull/7817) [`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: update default explorer for local base & zkevm config, update evm bridge test
+
+- Updated dependencies [[`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c)]:
+  - @ledgerhq/coin-evm@2.3.0-nightly.1
+
 ## 34.8.1-nightly.1
 
 ### Patch Changes

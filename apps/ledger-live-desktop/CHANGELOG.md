@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.87.0-nightly.5
+
+### Patch Changes
+
+- [#7881](https://github.com/LedgerHQ/ledger-live/pull/7881) [`c55d0b3`](https://github.com/LedgerHQ/ledger-live/commit/c55d0b356beb03698e3cca04db0e9522ece46440) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add ui for empty rare sats and inscriptions. Add error message from Error when inscriptions / rare sats can't load. Add dumy drawer for inscriptions
+
+- Updated dependencies [[`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c)]:
+  - @ledgerhq/live-common@34.8.1-nightly.2
+  - @ledgerhq/coin-evm@2.3.0-nightly.1
+
 ## 2.87.0-nightly.4
 
 ### Patch Changes

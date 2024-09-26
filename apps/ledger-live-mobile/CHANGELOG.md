@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.50.0-nightly.6
+
+### Patch Changes
+
+- [#7868](https://github.com/LedgerHQ/ledger-live/pull/7868) [`4847469`](https://github.com/LedgerHQ/ledger-live/commit/4847469680cdfdf6fde5b638aa51ecd3e4e71551) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add change address disclaimer for utxos accounts
+
+- Updated dependencies [[`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c)]:
+  - @ledgerhq/live-common@34.8.1-nightly.2
+  - @ledgerhq/coin-evm@2.3.0-nightly.1
+
 ## 3.50.0-nightly.5
 
 ### Patch Changes
