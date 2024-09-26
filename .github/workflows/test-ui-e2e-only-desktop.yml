@@ -298,6 +298,8 @@ jobs:
               }],
             };
 
+            fs.writeFileSync("summary-ui-e2e-desktop.json", JSON.stringify(output), "utf-8");
+
             if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
 
             const slackPayload = {
@@ -344,7 +346,10 @@ jobs:
               ]
             };
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
-
+      - name: Push report to summary
+        run: |
+          echo "## UI E2E results" >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.workspace }}/summary-ui-e2e-desktop.json >> $GITHUB_STEP_SUMMARY
       - name: Print Slack Payload Content
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         run: cat ${{ github.workspace }}/payload-slack-content.json

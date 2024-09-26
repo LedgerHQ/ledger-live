@@ -15,3 +15,6 @@ if (!process.env.IS_INTERNAL_PROCESS) {
   // Internal thread (coins, hardware)
   require("./internal");
 }
+
+// eslint-disable-next-line no-console
+console.log("Ledger Live Desktop");
