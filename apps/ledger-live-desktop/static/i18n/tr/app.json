@@ -145,7 +145,8 @@
     "add" : "Ekle",
     "or" : "VEYA",
     "clearAll" : "Tümünü temizle",
-    "buyLedger" : "Ledger satın alın"
+    "buyLedger" : "Ledger satın alın",
+    "quote" : "Teklif"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -859,6 +860,9 @@
       "continue" : "Devam"
     }
   },
+  "card" : {
+    "backToCard" : "tüm kartlar"
+  },
   "lend" : {
     "title" : "Kripto borç verin",
     "tabs" : {
@@ -1526,7 +1530,8 @@
     "messageIfSkipped" : "{{name}} adresiniz Ledger cihazınızda doğrulanmadı. Güvenlik için lütfen doğrulayın.",
     "showQrCode" : "Karekodu Göster",
     "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
-    "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
+    "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
+    "utxoWarning" : "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1868,8 +1873,8 @@
       "targetAccount" : "Hedef Hesap"
     },
     "sell" : {
-      "notice" : "Göndermeden önce cihazınızdaki Satış bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-      "confirm" : "Satış işlemini onayla"
+      "notice" : "Göndermeden önce cihazınızdaki bilgileri doğrulayın. Adresler güvenli bir şekilde aktarılır ve böylece onları doğrulamak zorunda kalmazsınız.",
+      "confirm" : "İşlemi onayla"
     },
     "fund" : {
       "notice" : "Göndermeden önce cihazınızdaki Fon bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır ve böylece onları doğrulamak zorunda kalmazsınız.",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "Sat",
-    "titleCrypto" : "{{currency}} sat"
+    "titleCrypto" : "{{currency}} sat",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "İşlem başarıyla yayımlandı",
+        "description" : "İşleminiz onaylanmak üzere ağa gönderildi. Lütfen işleminizin onaylanmasını ve sağlayıcı tarafından işleme alınmasını bekleyin."
+      }
+    }
   },
   "receive" : {
     "title" : "Al",
@@ -3979,7 +3990,7 @@
       "stock" : "Bölgesel piyasa göstergesi",
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Uygulama verilerinizi kolayca güvence altına alın ve birden çok Ledger Live oturumunu senkronize edin.",
+      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -4005,6 +4016,16 @@
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash Araçları",
+          "description" : "SimpleHash kullanan bazı faydalı araçlar sağlar",
+          "cta" : "Aç",
+          "tabs" : {
+            "spam" : "Spam İhbarı",
+            "refresh" : "Metaverileri Yenile",
+            "check" : "Spam Puanı"
+          }
+        },
         "debugSpamNft" : {
           "report" : "İhbar et",
           "contractAddress" : "Sözleşme Adresi",
@@ -4064,8 +4085,38 @@
         },
         "back" : "Geri dön"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync Hata Ayıklayıcısı",
+        "description" : "Belirli bir LedgerSync akışı başlatmanıza veya LedgerSync'in güncel durumunu kontrol etmenize olanak sağlar",
+        "cta" : "Aç",
+        "modal" : {
+          "check" : {
+            "title" : "Denetçi",
+            "trustchain" : {
+              "name" : "Trustchain Kimliği: ",
+              "emptyId" : "Boş Kimlik",
+              "applicationPath" : "Uygulama yolu: ",
+              "emptyApplicationPath" : "Boş Uygulama yolu",
+              "cloudSyncVersion" : "Bulut senkronizasyonu sürümü: ",
+              "lastSyncInfo" : "Son senkronizasyon bilgileri: ",
+              "uniported" : "İçe aktarılmayan hesaplar: "
+            },
+            "copied" : "Metin panoya kopyalandı!",
+            "export" : "Dışa aktar"
+          },
+          "generator" : {
+            "title" : "Oluşturucu",
+            "flow" : "Bir Akış seçin",
+            "step" : "Bir Adım seçin",
+            "instance" : "Üye Oluştur",
+            "cta" : "Uygula"
+          }
+        }
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
+      "mockAppUpdate" : "Test uygulama güncellemesi",
+      "mockAppUpdateDesc" : "My Ledger'da mevcut uygulama güncellemelerini göster, aynı uygulama sürümü yeniden yüklenecektir",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "Ağ log'larını etkinleştir",
           "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger Sync'i Test Edin",
-          "description" : "Belirli bir Ledger Sync akışını başlatmanızı sağlar",
-          "cta" : "Test et",
-          "modal" : {
-            "flow" : "Bir Akış seçin",
-            "step" : "Bir Adım seçin",
-            "instance" : "Üye Oluştur",
-            "cta" : "Uygula"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHash Araçları",
-          "description" : "SimpleHash kullanan bazı faydalı araçlar sağlar",
-          "cta" : "Aç",
-          "tabs" : {
-            "spam" : "Spam İhbarı",
-            "refresh" : "Metaverileri Yenile",
-            "check" : "Spam Puanı"
-          }
         }
       }
     },
@@ -5544,6 +5574,13 @@
       "title" : "Miktarı ve ücretleri hesaplamak mümkün değil",
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Token transferi için geçersiz alıcı; token transferi için desteklenen hesap türleri şunlardır: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Üzgünüz, ücret tahmini başarısız oldu",
+      "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "Kurun Süresi Doldu",
-      "description" : "Kurun süresi dolduğundan takas işlemi tamamlanamadı. Lütfen kurları yenileyin ve takas işleminizi yeniden deneyin."
+      "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
     },
     "PayinExtraIdError" : {
       "message" : "Takas için gerekli extraId eksik"
     },
     "SwapGenericAPIError" : {
       "title" : "Bir hata oluştu",
-      "description" : "Takas işlemi gerçekleştirilemedi. Lütfen tekrar deneyin veya destek ekibiyle iletişime geçin."
+      "description" : "İşlem başarısız. Lütfen tekrar deneyin."
     },
     "TimeoutError" : {
       "title" : "Üzgünüz, sunucunun yanıt vermesi çok uzun sürdü",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "Artık senkronize değil"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "Artık senkronize değilsiniz",
+      "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
+    },
+    "TrustchainNotFound" : {
+      "title" : "Verileriniz alınırken bir sorun oluştu",
+      "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Lütfen {{appName}} uygulamasını açın",
@@ -5777,7 +5825,7 @@
       "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
     },
     "MaxFeeTooLow" : {
-      "title" : "Ücret üst limiti, önerilen değerden düşük"
+      "title" : "Ücret, önerilen değerden düşük"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
@@ -6159,6 +6207,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "Bitcoin altyapımızla ilgili olarak bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyin."
+    },
+    "TonExcessFee" : {
+      "title" : "Bir token transferi oluşturur. İşlem ücreti olarak 0,1 TON ödersiniz ve fazlası size iade edilir."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Ücretlerin hesaplanması için ana hesapta (TON) yeterli miktarda fon yok. Gerekli minimum bakiye 0,1 TON'dur."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 TON'dur."
+    },
+    "BackupAppDataError" : {
+      "title" : "Uygulama verileri yedeklenirken hata oluştu"
+    },
+    "RestoreAppDataError" : {
+      "title" : "Uygulama verileri geri yüklenirken hata oluştu"
+    },
+    "DeleteAppDataError" : {
+      "title" : "Uygulama verileri silinirken hata oluştu"
+    },
+    "PinNotSet" : {
+      "title" : "PIN kodu belirlenmedi"
     }
   },
   "cryptoOrg" : {
@@ -6354,25 +6423,27 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "close" : "Kapat",
     "activate" : {
-      "title" : "Hesaplarınızı tüm platformlar genelinde senkronize edin",
-      "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
-      "cta" : "Hesaplarınızı senkronize edin"
+      "title" : "Turn on Ledger Sync for this computer?",
+      "description" : "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+      "cta" : "Turn on Ledger Sync",
+      "alreadySync" : "I already turned it on",
+      "learnMore" : "How does Ledger Sync work?"
     },
-    "alreadySync" : "Zaten bir anahtar oluşturdunuz mu?",
     "manage" : {
       "cta" : "Yönet",
       "synchronize" : {
-        "label" : "Senkronize et",
-        "description" : "Sorunsuz bir deneyim için uygulama verilerini başka bir Ledger Live uygulamasıyla senkronize edin."
+        "label" : "Sync with another Ledger Live app",
+        "description" : "Sync your Ledger Live crypto accounts across different phones and computers."
       },
       "backup" : {
-        "label" : "Anahtarı Yönet",
-        "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin."
+        "label" : "Delete sync",
+        "description" : "Your synched crypto accounts across different Ledger Live apps will stop synching."
       },
       "instance" : {
-        "label" : "1 senkronize oturum",
-        "label_other" : "{{count}} senkronize oturum",
+        "label" : "1 Ledger Live app synched",
+        "label_other" : "{{count}} Ledger Live apps synched",
         "cta" : "Yönet"
       }
     },
@@ -6386,50 +6457,51 @@
       "description" : "Lütfen daha sonra tekrar deneyin.",
       "cta" : "Tekrar dene",
       "fetching" : "Verileriniz alınırken bir sorun oluştu.",
-      "ledgerSyncDown" : "Ledger Sync şu anda kullanılamıyor.<br/>Bunun varlıklarınız üzerinde hiçbir etkisi yoktur."
+      "ledgerSyncDown" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
     },
     "unsecuredError" : {
-      "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
-      "description" : "Şifreleme anahtarınızı oluşturmak için kullandığınız Ledger cihazını lütfen bağlayın.",
-      "info" : "Ledger cihazınızı kaybettiyseniz endişelenmeyin! Anahtarınızı yine de silebilirsiniz. Bunu yaptığınızda hem verileriniz silinir hem de hâlihazırda senkronize edilmiş tüm oturumlarınızın senkronizasyonu kaldırılır.",
+      "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
+      "description" : "If you don’t have the same Ledger device, select “Delete sync” instead.",
       "cta" : "Başka Ledger bağla",
-      "ctaDelete" : "Şifreleme anahtarımı sil"
+      "ctaDelete" : "Delete sync"
+    },
+    "alreadySecureError" : {
+      "title" : "Bu uygulama bu Ledger cihazı tarafından zaten güvence altına alınıyor",
+      "description" : "Yeni bir yedekleme oluşturmayı deniyorsanız, lütfen diğer şifreleme anahtarını oluşturmak için kullandığınız Ledger cihazını bağlayın.",
+      "cta" : "Anladım"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "Senkronizasyon için bu Ledger cihazını kullanamazsınız",
+      "description" : "İki uygulamayı yine de senkronize etmek istiyorsanız lütfen anahtarınızı silip tekrar deneyin.",
+      "cta" : "Delete sync"
     },
     "autoRemoveError" : {
-      "title" : "Mevcut oturumu kaldıramazsınız",
-      "description" : "Güvenlik nedeniyle şu anda kullandığınız oturumu, şifreleme anahtarını silmeden kaldıramazsınız.",
-      "info" : "Şifreleme anahtarınızı sildiğinizde cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Ancak bu işlem, fonlarınızı etkilemez. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+      "title" : "You can’t remove this computer while you’re using it",
+      "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync' instead.",
       "cta" : "Anladım",
-      "ctaDelete" : "Şifreleme anahtarımı sil"
+      "ctaDelete" : "Delete sync"
     },
     "success" : {
       "backup" : {
-        "title" : "Başarılı",
-        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz."
+        "title" : "Ledger Sync turned on for Ledger Live on this computer"
       },
       "synch" : {
-        "title" : "Senkronizasyon başarılı!",
-        "desc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir."
+        "title" : "Sync successful!",
+        "desc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers. "
       },
       "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
       "close" : "Kapat"
     },
     "manageBackup" : {
-      "title" : "Anahtarınızı yönetin",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "Verilerinizi silin",
-          "description" : "Tüm senkronize veriler silinecektir."
-        }
-      },
       "deleteBackup" : {
-        "title" : "Şifreleme anahtarınızı gerçekten de silmek istiyor musunuz?",
-        "description" : "Sil düğmesine tıkladığınızda cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Bu eylemin fonlarınızı etkilemeyeceğinden emin olabilirsiniz. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
-        "delete" : "Sil",
-        "cancel" : "İptal et"
+        "title" : "Sure you want to delete sync?",
+        "description" : "Your crypto accounts across Ledger Live apps on different phones and computers will stop being in sync. This does not impact your funds in any way. ",
+        "delete" : "Yes, delete",
+        "cancel" : "Keep sync"
       },
       "deleteBackupSuccess" : {
-        "title" : "Cihazlarınızın senkronizasyonu kaldırıldı ve anahtarınız silindi"
+        "title" : "Your Ledger Live apps are no longer synched",
+        "description" : "You can turn on sync anytime"
       },
       "deleteBackupError" : {
         "title" : "Bir hata oluştu"
@@ -6440,7 +6512,7 @@
         "title" : "Senkronizasyon yönteminizi seçin",
         "description" : "Doğrudan Ledger cihazınızla veya Ledger Live'da bir karekodu okutarak senkronize etmeyi seçebilirsiniz.",
         "scan" : {
-          "title" : "Bir karekodu okutun",
+          "title" : "Karekodu görüntüleyin",
           "description" : "Bir karekodu okutarak senkronize edin"
         },
         "connectDevice" : {
@@ -6449,29 +6521,106 @@
         }
       },
       "qrCode" : {
-        "title" : "Senkronize et",
-        "hint" : "İki ayrı Ledger Live masaüstü sürümünü senkronize etmeye mi çalışıyorsunuz? Buraya tıklayın.",
-        "description" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
-        "steps" : {
-          "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-          "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronize Et</0> > <0>Karekodu Göster</0> adımlarını izleyin",
-          "step3" : "Yükleyici %100 olana kadar karekodu tarayın."
+        "title" : "Sync your Ledger Live apps",
+        "options" : {
+          "mobile" : "Sync with phone",
+          "desktop" : "Sync with computer"
+        },
+        "mobile" : {
+          "description" : "Sync with the Ledger Live app on another phone",
+          "steps" : {
+            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
+            "step3" : "Karekodu okutun"
+          }
+        },
+        "desktop" : {
+          "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+          "steps" : {
+            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
+            "step3" : "Ledger'ınızı bağlayın"
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "Sync not detected",
+        "description" : "Turn on Ledger Sync on either this Ledger Live or the one you’re syncing with",
+        "cta" : "Turn on Ledger Sync"
+      },
       "pinCode" : {
-        "title" : "Kodu girin",
-        "description" : "Senkronize etmek istediğiniz diğer Ledger Live uygulamasında görüntülenen kodu yazın."
+        "title" : "Your Ledger Sync code",
+        "description" : "To sync your crypto accounts across both Ledger Live apps, enter this code in Ledger Live on your phone.",
+        "error" : {
+          "title" : "The codes don’t match",
+          "description" : "Girdiğiniz kodun, diğer Ledger Live oturumunda gösterilen kodla aynı olduğundan emin olun."
+        }
       }
     },
     "manageInstances" : {
-      "title" : "Senkronize oturumları yönet",
+      "title" : "Ledger Live is synched across",
       "remove" : "Kaldır",
-      "deleteInstanceSuccess" : "{{instanceName}} oturumunuz artık senkronize değil",
+      "deleteInstanceSuccess" : "Your Ledger Live app on {{instanceName}} is no longer connected to Ledger Sync",
       "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
       "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "Daha fazla inscription görün",
+      "empty" : "To add Inscriptions, simply send them to your Bitcoin address.",
+      "receive" : "Receive Inscription",
+      "discoveryDrawer" : {
+        "title" : "Discover Ordinals",
+        "description" : "Do you know that you may own valuable rare sats and inscriptions?",
+        "learnMore" : "Learn more",
+        "protectTitle" : "Protect your ordinals assets",
+        "protectDescription" : "Exclude your Ordinals assets from your transactions."
+      }
+    },
+    "rareSats" : {
+      "empty" : "To add Rare Sats, simply send them to your Bitcoin address.",
+      "receive" : "Receive Rare Sat",
+      "title" : "Nadir Sat'lar",
+      "table" : {
+        "type" : "Sat Türü / Miktarı",
+        "year" : "Yıl"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "İlk satoshi olan Alpha ile her bitcoin'in doğuşuna adım atın. Bu etiket, bir bitcoin biriminin doğuşunu temsil eder.",
+          "black_epic" : "Yaklaşık olarak dört yılda bir gerçekleşen ve Bitcoin madencilik ödülünün yarıya düşürüldüğü her yarılanma etkinliğindeki en son satoshi.",
+          "black_legendary" : "Black Legendary için Açıklama Yok",
+          "black_mythic" : "Black Mythic için Açıklama Yok",
+          "black_rare" : "Her madencilik zorluğunu düzenleme döneminin sonundaki en son satoshi'yi ifade eder.",
+          "black_uncommon" : "Yaklaşık olarak dört yılda bir gerçekleşen ve Bitcoin madencilik ödülünün yarıya düşürüldüğü her yarılanma etkinliğindeki en son satoshi.",
+          "block_9" : "9. Blok, Bitcoin'in geçmişinde özel bir yere sahiptir. İlk oluşturulan bloklardan biri olan bu blokta yer alan satoshi'ler, dolaşımdaki en eski sat'lardan bazılarıdır. Bu sat'ların, Bitcoin'in piyasaya sürülmesinden sonraki başlangıç dönemi ile somut bir bağlantısı vardır.",
+          "block_9_450x" : "9. Blokun ilk bitcoin'indeki sat'ların vurgulandığı Blok 9 450x ile geçmişe yolculuk edin. Bu etiket, Bitcoin'in geçmişindeki büyüleyici bir bölümü açığa çıkarmaktadır.",
+          "block_78" : "78. Blok, Bitcoin'in tarihinde çok önemli bir yere sahiptir. Hal Finney tarafından oluşturulan bu blok, esrarengiz Satoshi Nakamoto dışındaki bir kişinin blok zincirinin büyümesine katkıda bulunduğu ilk bloktur.",
+          "block_286" : "Satoshi Nakamoto tarafından yapılan ikinci Bitcoin işlemindeki satoshi'leri temsil eden 286. Blokun önemini keşfedin. Bu sat'lar Bitcoin'in esrarengiz yaratıcısının ağırlığını taşımakta ve gizemli kökeninin hikâyesine katkıda bulunmaktadır.",
+          "block_666" : "666. Blok için Açıklama Yok",
+          "common" : "Common için Açıklama Yok",
+          "epic" : "Bitcoin ağında dört yılda bir madencilik ödüllerinin yarıya düşürüldüğü bir \"yarılanma\" etkinliği gerçekleşir. Her bir yarılanma epoch'undaki (devrindeki) ilk sat \"Epic\" olarak etiketlenir ve Bitcoin'in ekonomik modelinde önemli bir anı temsil eder.",
+          "first_tx" : "12 Ocak 2009'da Satoshi Nakamoto'nun bilgisayar bilimcisi Hal Finney'ye 10 Bitcoin göndermesiyle birlikte tarih yazılmıştır. Bu, gerçekleştirilen ilk Bitcoin işlemidir. Bu ikonik işlemden kaynaklanan sat'lar \"First Transaction\" (İlk İşlem) etiketini taşır ve Bitcoin'in eşler arası borsasının doğuşunu simgeler.",
+          "hitman" : "Hitman için Açıklama Yok",
+          "jpeg" : "JPEG'in geçmişine yolculuk edin, çünkü bu satoshi'ler 24 Şubat 2010'da bir resim karşılığında yapılan ilk Bitcoin takasıyla bağlantılı olabilir. Bir inovasyon hikâyesini anlatan bu etiket, Bitcoin'in ilk geleneksel olmayan işlem ve takas girişimlerini sergiler.",
+          "legacy" : "Legacy için Açıklama Yok",
+          "legendary" : "Legendary için Açıklama Yok",
+          "mythic" : "Mythic için Açıklama Yok",
+          "nakamoto" : "Bitcoin'in Satoshi Nakamoto takma adlı yaratıcısının gizemi henüz çözülmemiştir. Bizzat Nakamoto tarafından çıkarılan sat'lar bu etiketi taşımakta ve koleksiyoncular tarafından yoğun talep görmektedir.",
+          "omega" : "Son satoshi olan Omega ile her bitcoin'in şairane sonunu deneyimleyin. Bir Bitcoin birimindeki son satoshi olun.",
+          "paliblock" : "PaliBlock Palindrome için Açıklama Yok",
+          "palindrome" : "Numarası hem normal hem de tersten okunduğunda aynı olan sat'lar \"Palindrome\" olarak işaretlenir. Örneğin, 12321 veya 45654 numaralı bir sat gibi. Bu benzersiz sayısal özellikler, etiketli sat'lara bir nadirlik ve ilginçlik katmanı ekler.",
+          "palinception" : "Her bir satoshi'nin palindrome'ların bir palindrome'unu oluşturduğu büyüleyici tek tip iç içe geçmiş palindrome'lar dünyasına dalın. Çok detaylı bir şekilde yapılandırılmış bu sat'lar, birbirinin ayna görüntüsü olan rakamlardan oluşan büyüleyici bir doku oluşturur.",
+          "pizza" : "Bitcoin topluluğundaki en ikonik hikâyelerden biri de bir programcının 22 Mayıs 2010'da iki Papa John's pizzası için 10.000 Bitcoin ödemesidir. Genellikle Bitcoin'in değerindeki ani yükselişi anlatmak için bu olaydan bahsedilir. Bu efsanevi işlemdeki sat'lar \"Pizza\" etiketini taşır.",
+          "rare" : "Bitcoin ağı, kabaca her on dakikada bir blok eklenmesini sağlamak için madencilik zorluğunu düzenli aralıklarla ayarlar. Böyle bir ayarlama dönemindeki ilk sat \"Rare\" (Nadir) olarak işaretlenir. Bu, ağın güvenliğinin ve mutabakat mekanizmalarının sürekli gelişen doğasını yansıtır. ",
+          "uncommon" : "Bu etiket, her bloktaki ilk satoshi'ye verilir. Yeni bir blokun Bitcoin blok zincirine yaklaşık olarak 10 dakikada bir eklendiği dikkate alındığında, bu sat'lar bu zaman aralığının tam başlangıcını simgeler.",
+          "vintage" : "İlk 1.000 blok, Bitcoin'in şafağını temsil eder. Bu dönemde oluşturulan sat'lar \"Vintage\" (Bağ Bozumu) olarak anılır."
+        }
+      }
     }
   }
 }
