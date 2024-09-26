@@ -2,6 +2,10 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { OnboardingPage } from "../../page/onboarding.page";
 
+test.use({
+  settings: { hasSeenAnalyticsOptInPrompt: false },
+});
+
 enum Nano {
   nanoX = "nanoX",
   nanoS = "nanoS",
