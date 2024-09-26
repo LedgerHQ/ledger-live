@@ -97,6 +97,12 @@ export class AddAccountModal extends Modal {
     await this.loadingSpinner.waitFor({ state: "hidden" });
   }
 
+  @step("click `Add Accounts` button - mocked tests")
+  async addAccountsMocked() {
+    await this.addAccountsButton.click();
+    await expect(this.successAddLabel).toBeVisible();
+  }
+
   @step("Click `Add Accounts` button")
   async addAccounts() {
     if (await this.deselectAllButton.isVisible()) {
