@@ -10,8 +10,7 @@ import { LiveApp } from "~/screens/Platform";
 import { uriSelector } from "~/reducers/walletconnect";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { WalletConnectLiveAppNavigatorParamList } from "./types/WalletConnectLiveAppNavigator";
-
-const PLATFORM = "ledger-wallet-connect";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 const options = {
   headerBackImage: () => (
@@ -48,7 +47,7 @@ export default function WalletConnectLiveAppNavigator() {
                 key: _props.route.key,
                 name: ScreenName.PlatformApp,
                 params: {
-                  platform: PLATFORM,
+                  platform: WC_ID,
                   uri: uri || _props.route.params?.uri,
                   requestId: _props.route.params?.requestId,
                   sessionTopic: _props.route.params?.sessionTopic,
