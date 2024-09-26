@@ -18,6 +18,7 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
+  settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
   userdataFile: string;
@@ -41,6 +42,7 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
+  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
@@ -66,6 +68,7 @@ export const test = base.extend<TestFixtures>({
       theme,
       userdataDestinationPath,
       userdataOriginalFile,
+      settings,
       env,
       featureFlags,
       simulateCamera,
@@ -77,15 +80,10 @@ export const test = base.extend<TestFixtures>({
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
-    const userData = {
-      data: {
-        settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
-      },
-    };
-    const testUserData = userdataOriginalFile
+    const fileUserData = userdataOriginalFile
       ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
-    merge(userData, testUserData);
+    const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     let device: any | undefined;
