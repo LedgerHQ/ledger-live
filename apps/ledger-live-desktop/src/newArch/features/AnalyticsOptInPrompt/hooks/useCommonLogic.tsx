@@ -61,8 +61,13 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     () =>
       isEntryPointIncludedInFlagParams &&
       lldAnalyticsOptInPromptFlag?.enabled &&
-      !hasSeenAnalyticsOptInPrompt,
-    [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, isEntryPointIncludedInFlagParams],
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
+    [
+      lldAnalyticsOptInPromptFlag,
+      hasSeenAnalyticsOptInPrompt,
+      entryPoint,
+      isEntryPointIncludedInFlagParams,
+    ],
   );
 
   const onSubmit = () => {
