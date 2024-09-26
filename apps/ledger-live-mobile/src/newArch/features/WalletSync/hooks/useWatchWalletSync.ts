@@ -27,7 +27,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { State } from "~/reducers/types";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
-import { latestDistantStateSelector } from "~/reducers/wallet";
+import { latestDistantStateSelector, latestDistantVersionSelector } from "~/reducers/wallet";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
@@ -80,6 +80,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),

@@ -24,7 +24,10 @@ import {
   WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
-import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
+import {
+  latestDistantStateSelector,
+  latestDistantVersionSelector,
+} from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
@@ -80,6 +83,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),

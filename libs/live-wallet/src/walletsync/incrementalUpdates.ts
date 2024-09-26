@@ -8,12 +8,14 @@ export function makeSaveNewUpdate<S>({
   ctx,
   getState,
   latestDistantStateSelector,
+  latestDistantVersionSelector,
   localStateSelector,
   saveUpdate,
 }: {
   ctx: WalletSyncDataManagerResolutionContext;
   getState: () => S;
   latestDistantStateSelector: (state: S) => DistantState | null;
+  latestDistantVersionSelector: (state: S) => number;
   localStateSelector: (state: S) => LocalState;
   saveUpdate: (
     data: DistantState | null,
@@ -27,6 +29,7 @@ export function makeSaveNewUpdate<S>({
       case "new-data": {
         // we resolve incoming distant state changes
         const state = getState();
+        const latestVersion = latestDistantVersionSelector(state);
         const latest = latestDistantStateSelector(state);
         const local = localStateSelector(state);
         const data = event.data;
@@ -40,6 +43,9 @@ export function makeSaveNewUpdate<S>({
           log("walletsync", "resolved. changes applied.");
         } else {
           log("walletsync", "resolved. no changes to apply.");
+        }
+        if (event.version !== latestVersion) {
+          await saveUpdate(data, event.version, null);
         }
         break;
       }
