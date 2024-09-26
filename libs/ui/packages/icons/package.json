@@ -43,7 +43,6 @@
   },
   "scripts": {
     "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy && tsc --noEmit false && node scripts/transpile",
-    "prepublishOnly": "pnpm run build",
     "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy",
     "unimported": "unimported"
   },

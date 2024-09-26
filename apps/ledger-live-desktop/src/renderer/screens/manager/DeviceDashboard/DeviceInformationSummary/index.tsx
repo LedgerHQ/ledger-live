@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import StorageBar from "./StorageBar";
 import StorageInfo from "./StorageInfo";
 import { DeviceIllustration } from "./DeviceIllustration";
+import { useDeviceSessionState } from "~/renderer/hooks/device-sdk-provider/useDeviceSdk";
 
 const Separator = styled.div`
   height: 1px;
@@ -85,6 +86,7 @@ const DeviceInformationSummary = ({
   setHasCustomLockScreen,
 }: Props) => {
   const navigationLocked = useSelector(isNavigationLocked);
+  const deviceSessionState = useDeviceSessionState();
 
   return (
     <Card p={20} mb={4} data-testid="device-storage-card">
@@ -107,6 +109,11 @@ const DeviceInformationSummary = ({
                 onRefreshDeviceInfo={onRefreshDeviceInfo}
                 disabled={navigationLocked}
               />
+            </Box>
+            <Box horizontal alignItems="center">
+              <Text variant="h5Inter" fontSize={4} color="neutral.c70">
+                Status: {deviceSessionState?.deviceStatus}
+              </Text>
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt={1}>
               <Flex flexDirection="row" alignItems="center">
