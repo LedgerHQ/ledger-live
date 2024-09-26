@@ -32,9 +32,9 @@ export function EvmStakingDrawer() {
 
   const has32Eth = drawer.props.has32Eth ?? false;
 
-  const listProvidersSorted: ListProvider[] = ethStakingProviders.params!.listProvider.sort(
-    has32Eth ? descending : ascending,
-  );
+  const listProvidersSorted: ListProvider[] = ethStakingProviders
+    .params!.listProvider.filter(x => !x.disabled)
+    .sort(has32Eth ? descending : ascending);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>

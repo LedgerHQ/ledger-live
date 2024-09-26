@@ -97,7 +97,9 @@ export function EthStakingModalBody({
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
-  const listProvidersSorted = listProviders.sort(hasMinValidatorEth ? descending : ascending);
+  const listProvidersSorted = listProviders
+    .filter(x => !x.disabled)
+    .sort(hasMinValidatorEth ? descending : ascending);
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
