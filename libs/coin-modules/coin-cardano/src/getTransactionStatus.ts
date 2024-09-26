@@ -5,7 +5,6 @@ import {
   InvalidAddress,
   AmountRequired,
   NotEnoughBalance,
-  FeeTooHigh,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
@@ -20,6 +19,7 @@ import {
   CardanoStakeKeyDepositError,
   CardanoMinAmountError,
   CardanoNotEnoughFunds,
+  CardanoFeeTooHigh,
 } from "./errors";
 import type {
   CardanoAccount,
@@ -65,9 +65,9 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
-    txStatus.errors.feeTooHigh = new FeeTooHigh();
+    throw new CardanoFeeTooHigh();
   } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
-    txStatus.warnings.feeTooHigh = new FeeTooHigh();
+    txStatus.warnings.feeTooHigh = new CardanoFeeTooHigh();
   }
 
   return txStatus;

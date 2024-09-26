@@ -789,6 +789,10 @@
     "CardanoStakeKeyDepositError": {
       "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
     },
+    "CardanoFeeTooHigh": {
+      "title": "Network fees seems higher than usual",
+      "description": "Please resync your account and try again or contact Ledger Support"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
