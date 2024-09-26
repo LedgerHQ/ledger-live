@@ -8,4 +8,4 @@ import { urls } from "~/utils/urls";
  */
 
 export const getURLFeesInfo = (operation: Operation): getURLFeesInfoReturnType =>
-  operation.fee.isGreaterThan(200000) ? urls.elrondStaking : undefined;
+  operation.fee.isGreaterThan(200000) ? urls.multiversxStaking : undefined;

@@ -7,11 +7,11 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import ValidatorItem from "./ValidatorItem";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
 import {
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
   Transaction,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -41,8 +41,8 @@ const SeeAllButton = styled.div<{
   }
 `;
 type Props = {
-  account: ElrondAccount;
-  validators: Array<ElrondProvider>;
+  account: MultiversxAccount;
+  validators: Array<MultiversxProvider>;
   onSelectValidator: (recipient: string) => void;
   transaction: Transaction;
 };
@@ -57,7 +57,7 @@ const ValidatorList = (props: Props) => {
       providers.filter(provider =>
         transaction.recipient
           ? provider.contract === transaction.recipient
-          : provider.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
+          : provider.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
       ),
     [providers, transaction.recipient],
   );
@@ -65,11 +65,11 @@ const ValidatorList = (props: Props) => {
     (contract: string) =>
       transaction.recipient
         ? contract === transaction.recipient
-        : contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
+        : contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
     [transaction.recipient],
   );
   const renderItem = useCallback(
-    (props: ElrondProvider & { disabled: boolean }) =>
+    (props: MultiversxProvider & { disabled: boolean }) =>
       props ? (
         <ValidatorItem
           unit={unit}

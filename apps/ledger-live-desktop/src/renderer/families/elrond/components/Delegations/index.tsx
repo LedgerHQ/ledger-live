@@ -5,13 +5,13 @@ import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import {
-  ElrondProvider,
-  ElrondAccount as AccountType,
+  MultiversxProvider,
+  MultiversxAccount as AccountType,
 } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface Props {
   delegations: Array<DelegationType>;
-  validators: Array<ElrondProvider>;
+  validators: Array<MultiversxProvider>;
   account: AccountType;
 }
 const Delegations = (props: Props) => {

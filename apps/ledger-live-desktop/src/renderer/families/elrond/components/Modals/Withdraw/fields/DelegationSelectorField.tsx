@@ -8,7 +8,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { UnbondingType } from "~/renderer/families/elrond/types";
 import { Option as FilterOption } from "react-select/src/filters";
 
@@ -19,7 +19,7 @@ type EnhancedUnbonding = UnbondingType & {
   disabled: boolean;
 };
 export interface Props {
-  onChange: (validator: ElrondProvider) => void;
+  onChange: (validator: MultiversxProvider) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   bridge: AccountBridge<Transaction>;
   transaction?: Transaction;

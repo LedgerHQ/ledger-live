@@ -12,7 +12,10 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import { ElrondTransactionMode, Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  MultiversxTransactionMode,
+  Transaction,
+} from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -37,7 +40,7 @@ const StepClaimRewards = (props: StepProps) => {
     [bridge, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
-    (mode: ElrondTransactionMode) => {
+    (mode: MultiversxTransactionMode) => {
       updateClaimRewards({
         ...transaction,
         mode,
@@ -46,7 +49,7 @@ const StepClaimRewards = (props: StepProps) => {
     [updateClaimRewards, transaction],
   );
   const onDelegationChange = useCallback(
-    // @ts-expect-error the expected type should be ElrondProvider | null
+    // @ts-expect-error the expected type should be MultiversxProvider | null
     // however if we do that, there is no `delegation` key on validator halp
     validator => {
       updateClaimRewards({

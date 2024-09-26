@@ -4,7 +4,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { NavigationType } from "../../../../../types";
 import type { DrawerPropsType } from "../types";
 import type { Action, IconProps } from "~/components/DelegationDrawer";
@@ -22,7 +22,7 @@ import { rgba } from "../../../../../../../colors";
 
 const useDrawerActions = (
   data: DrawerPropsType["data"],
-  account: ElrondAccount,
+  account: MultiversxAccount,
   onClose: DrawerPropsType["onClose"],
 ) => {
   const navigation: StackNavigationProp<NavigationType> = useNavigation();

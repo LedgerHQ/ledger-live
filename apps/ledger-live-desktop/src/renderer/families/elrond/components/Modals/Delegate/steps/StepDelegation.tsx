@@ -14,8 +14,8 @@ import { StepProps } from "../types";
 const StepDelegation = (props: StepProps) => {
   const { account, onUpdateTransaction, transaction, error, validators } = props;
   invariant(account && transaction, "account and transaction required");
-  const { elrondResources } = account;
-  invariant(elrondResources, "elrondResources required");
+  const { multiversxResources } = account;
+  invariant(multiversxResources, "multiversxResources required");
   const bridge = getAccountBridge(account);
   const onSelectValidator = (recipient: string) =>
     onUpdateTransaction(

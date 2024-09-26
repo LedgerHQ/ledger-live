@@ -8,4 +8,4 @@ import { urls } from "~/utils/urls";
  */
 
 export const getURLWhatIsThis = (operation: Operation): getURLWhatIsThisReturnType =>
-  !["IN", "OUT"].includes(operation.type) ? urls.elrondStaking : undefined;
+  !["IN", "OUT"].includes(operation.type) ? urls.multiversxStaking : undefined;

@@ -2,21 +2,21 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SubAccount } from "@ledgerhq/types-live";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 const AccountHeaderManageActions = (props: {
-  account: ElrondAccount | SubAccount;
-  parentAccount?: ElrondAccount | null;
+  account: MultiversxAccount | SubAccount;
+  parentAccount?: MultiversxAccount | null;
   source?: string;
 }) => {
   const { account, source } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const validators = useElrondRandomizedValidators();
+  const validators = useMultiversxRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
     () => account.type === "Account" && hasMinimumDelegableBalance(account),
@@ -24,8 +24,8 @@ const AccountHeaderManageActions = (props: {
   );
 
   const hasDelegations =
-    account.type === "Account" && account.elrondResources
-      ? account.elrondResources.delegations.length > 0
+    account.type === "Account" && account.multiversxResources
+      ? account.multiversxResources.delegations.length > 0
       : false;
 
   const onClick = useCallback(() => {

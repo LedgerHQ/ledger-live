@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
+import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
-import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/types";
 import type { DetailsPropsType } from "./types";
 
 import Section from "~/screens/OperationDetails/Section";
@@ -29,7 +29,7 @@ const Details = (props: DetailsPropsType) => {
 
   const { extra } = operation;
   const contract = operation && operation.contract ? operation.contract : "";
-  const data: ElrondPreloadData = useElrondPreloadData();
+  const data: MultiversxPreloadData = useMultiversxPreloadData();
   const validator = data.validators.find(validator => contract === validator.contract);
 
   const name = validator ? validator.identity.name || validator.contract : "";

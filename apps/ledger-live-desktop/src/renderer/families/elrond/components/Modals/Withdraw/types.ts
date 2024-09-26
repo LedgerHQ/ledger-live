@@ -4,8 +4,8 @@ import { Operation } from "@ledgerhq/types-live";
 import { Step } from "~/renderer/components/Stepper";
 import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import {
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
@@ -15,7 +15,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account: ElrondAccount;
+  account: MultiversxAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
@@ -35,7 +35,7 @@ export type StepProps = {
   setSigned: (assigned: boolean) => void;
   bridgePending: boolean;
   contract?: string;
-  validators?: Array<ElrondProvider>;
+  validators?: Array<MultiversxProvider>;
   delegations?: Array<DelegationType>;
 };
 export type St = Step<StepId, StepProps>;

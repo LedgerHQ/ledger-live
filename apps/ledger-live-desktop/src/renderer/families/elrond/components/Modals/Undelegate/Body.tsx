@@ -19,27 +19,27 @@ import { useSteps } from "./steps";
 import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import {
   Transaction,
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/types-devices";
 import { DelegationType } from "../../../types";
 
 export type Data = {
-  account: ElrondAccount;
+  account: MultiversxAccount;
   contract: string;
-  validators: Array<ElrondProvider>;
+  validators: Array<MultiversxProvider>;
   amount: string;
   delegations: Array<DelegationType>;
 };
 interface OwnProps {
-  account: ElrondAccount;
+  account: MultiversxAccount;
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (step: StepId) => void;
   contract: string;
-  validators: Array<ElrondProvider>;
+  validators: Array<MultiversxProvider>;
   amount: string;
   delegations: Array<DelegationType>;
 }

@@ -1,24 +1,24 @@
 import {
-  ElrondProvider,
-  ElrondAccount,
-  ElrondOperation,
+  MultiversxProvider,
+  MultiversxAccount,
+  MultiversxOperation,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { LLDCoinFamily } from "../types";
 
-export type ElrondFamily = LLDCoinFamily<
-  ElrondAccount,
+export type MultiversxFamily = LLDCoinFamily<
+  MultiversxAccount,
   Transaction,
   TransactionStatus,
-  ElrondOperation
+  MultiversxOperation
 >;
 
 export interface UnbondingType {
   amount: string;
   seconds: number;
   contract?: string;
-  validator?: ElrondProvider;
+  validator?: MultiversxProvider;
 }
 
 export interface DelegationType {
@@ -28,5 +28,5 @@ export interface DelegationType {
   userActiveStake: string;
   userUnBondable: string;
   userUndelegatedList: Array<UnbondingType>;
-  validator?: ElrondProvider;
+  validator?: MultiversxProvider;
 }

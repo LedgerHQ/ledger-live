@@ -1,21 +1,21 @@
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
-  ElrondAccount,
+  MultiversxAccount,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import type { ScreenName } from "~/const";
 import type { DelegationType } from "../../../types";
 
-export type ElrondClaimRewardsFlowParamList = {
+export type MultiversxClaimRewardsFlowParamList = {
   [ScreenName.ElrondClaimRewardsValidator]: {
     delegations: DelegationType[];
-    account: ElrondAccount;
+    account: MultiversxAccount;
   };
   [ScreenName.ElrondClaimRewardsMethod]: {
     transaction?: Transaction;
-    account: ElrondAccount;
+    account: MultiversxAccount;
     recipient: string;
     value: string;
     name: string;

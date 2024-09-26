@@ -16,13 +16,13 @@ const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
 
 /**
- * Elrond API
+ * Multiversx API
  *
  * @example
- * import Elrond from "@ledgerhq/hw-app-elrond";
- * const elrond = new Elrond(transport)
+ * import Multiversx from "@ledgerhq/hw-app-elrond";
+ * const multiversx = new Multiversx(transport)
  */
-export default class Elrond {
+export default class Multiversx {
   transport: Transport;
 
   constructor(transport: Transport, scrambleKey = "eGLD") {
@@ -42,11 +42,11 @@ export default class Elrond {
   }
 
   /**
-   * Get Elrond app configuration.
+   * Get Multiversx app configuration.
    *
    * @return an object with a contractData, accountIndex, addressIndex, version
    * @example
-   * const result = await elrond.getAppConfiguration();
+   * const result = await multiversx.getAppConfiguration();
    * const { contractData, accountIndex, addressIndex, version } = result;
    */
   async getAppConfiguration(): Promise<any> {
@@ -67,13 +67,13 @@ export default class Elrond {
   }
 
   /**
-   * Get Elrond address for a given BIP 32 path.
+   * Get Multiversx address for a given BIP 32 path.
    *
    * @param path a path in BIP 32 format
    * @param boolDisplay optionally enable or not the display
    * @return an object with a address
    * @example
-   * const result = await elrond.getAddress("44'/508'/0'/0'/0'");
+   * const result = await multiversx.getAddress("44'/508'/0'/0'/0'");
    * const { publicKey, address } = result;
    */
   async getAddress(
@@ -104,13 +104,13 @@ export default class Elrond {
   }
 
   /**
-   * Set Elrond address for a given BIP 32 path.
+   * Set Multiversx address for a given BIP 32 path.
    *
    * @param path a path in BIP 32 format
    * @param display optionally enable or not the display
    * @return an object with a address
    * @example
-   * const result = await elrond.setAddress("44'/508'/0'/0/0");
+   * const result = await multiversx.setAddress("44'/508'/0'/0/0");
    * result : Buffer;
    */
   async setAddress(path: string, display?: boolean) {

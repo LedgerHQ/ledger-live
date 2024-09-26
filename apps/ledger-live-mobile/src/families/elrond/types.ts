@@ -1,9 +1,9 @@
-import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface UnbondingType {
   amount: string;
   seconds: number;
-  validator?: ElrondProvider;
+  validator?: MultiversxProvider;
 }
 
 export interface DelegationType {
@@ -13,7 +13,7 @@ export interface DelegationType {
   userActiveStake: string;
   userUnBondable: string;
   userUndelegatedList: UnbondingType[];
-  validator?: ElrondProvider;
+  validator?: MultiversxProvider;
 }
 
 export interface NavigationType {

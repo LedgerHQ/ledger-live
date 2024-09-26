@@ -2,9 +2,12 @@ import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
-import type { ElrondProvider, ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type {
+  MultiversxProvider,
+  MultiversxAccount,
+} from "@ledgerhq/live-common/families/elrond/types";
 import type { BodyPropsType, WithBodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
@@ -17,17 +20,17 @@ import Drawer from "./components/Drawer";
 import styles from "./styles";
 
 /*
- * Create a higher order component that will return null if there are no resources for Elrond staking.
+ * Create a higher order component that will return null if there are no resources for Multiversx staking.
  */
 
 const withBody = (Component: FC<BodyPropsType>) => (props: WithBodyPropsType) => {
-  const account = props.account as ElrondAccount;
+  const account = props.account as MultiversxAccount;
 
   /*
-   * Return nothing if there isn't any data for the "elrondResources" key.
+   * Return nothing if there isn't any data for the "multiversxResources" key.
    */
 
-  if (!account.elrondResources) {
+  if (!account.multiversxResources) {
     return null;
   }
 
@@ -51,14 +54,14 @@ const Body = (props: BodyPropsType) => {
 
   const [drawer, setDrawer] = useState<DrawerPropsType["data"] | false>();
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
-    account.elrondResources ? account.elrondResources.delegations : [],
+    account.multiversxResources ? account.multiversxResources.delegations : [],
   );
 
   /*
    * Randomize the list of the memoized validators..
    */
 
-  const validators = useElrondRandomizedValidators();
+  const validators = useMultiversxRandomizedValidators();
 
   /*
    * Call the drawer callback and populate the state with the given data, thus activating it.
@@ -74,7 +77,7 @@ const Body = (props: BodyPropsType) => {
    */
 
   const findValidator = useCallback(
-    (contract: string): ElrondProvider | undefined =>
+    (contract: string): MultiversxProvider | undefined =>
       validators.find(validator => validator.contract === contract),
     [validators],
   );
@@ -84,11 +87,15 @@ const Body = (props: BodyPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+    setDelegationResources(
+      account.multiversxResources ? account.multiversxResources.delegations : [],
+    );
 
     return () =>
-      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
-  }, [account.elrondResources]);
+      setDelegationResources(
+        account.multiversxResources ? account.multiversxResources.delegations : [],
+      );
+  }, [account.multiversxResources]);
 
   /*
    * Sort the delegations by amount, by transforming the given amount into a denominated value, assign the validator, and filter by rewards or stake.

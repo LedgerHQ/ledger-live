@@ -20,20 +20,20 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import Track from "~/renderer/analytics/Track";
 import logger from "~/renderer/logger";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps, St, StepId } from "./types";
 import {
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
   Transaction,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
-  account: ElrondAccount;
-  validators?: Array<ElrondProvider>;
+  account: MultiversxAccount;
+  validators?: Array<MultiversxProvider>;
   delegations?: Array<DelegationType>;
   source?: string;
 };
@@ -92,8 +92,8 @@ const Body = (props: Props) => {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const defaultValidator: ElrondProvider | undefined = params.validators?.find(
-    validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
+  const defaultValidator: MultiversxProvider | undefined = params.validators?.find(
+    validator => validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
   );
   const { account, source = "Account Page" } = params;
   const {

@@ -23,16 +23,16 @@ import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps, St, StepId } from "./types";
 import {
-  ElrondAccount,
+  MultiversxAccount,
   Transaction,
-  ElrondProvider,
+  MultiversxProvider,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
-  account: ElrondAccount;
+  account: MultiversxAccount;
   delegations?: Array<DelegationType>;
-  validators?: Array<ElrondProvider>;
+  validators?: Array<MultiversxProvider>;
   contract?: string;
 };
 interface OwnProps {

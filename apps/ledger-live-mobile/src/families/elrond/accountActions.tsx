@@ -2,7 +2,7 @@ import {
   hasMinimumDelegableBalance,
   randomizeProviders,
 } from "@ledgerhq/live-common/families/elrond/helpers";
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -10,7 +10,7 @@ import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
-import { getCurrentElrondPreloadData } from "@ledgerhq/coin-elrond/preload";
+import { getCurrentMultiversxPreloadData } from "@ledgerhq/coin-elrond/preload";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -19,7 +19,7 @@ import { NavigatorName, ScreenName } from "~/const";
  */
 
 export interface getActionsType {
-  account: ElrondAccount;
+  account: MultiversxAccount;
   parentAccount?: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }
@@ -39,20 +39,20 @@ const getMainActions = ({
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
    */
-  const preloaded = getCurrentElrondPreloadData();
+  const preloaded = getCurrentMultiversxPreloadData();
   const validators = randomizeProviders(preloaded.validators);
 
   const isFirstTimeFlow =
-    account.elrondResources && account.elrondResources.delegations.length === 0;
+    account.multiversxResources && account.multiversxResources.delegations.length === 0;
   const screen = isFirstTimeFlow
     ? ScreenName.ElrondDelegationStarted
     : ScreenName.ElrondDelegationValidator;
 
   /*
-   * Return an empty array if "elrondResources" doesn't exist.
+   * Return an empty array if "multiversxResources" doesn't exist.
    */
 
-  if (!account.elrondResources) {
+  if (!account.multiversxResources) {
     return [];
   }
 

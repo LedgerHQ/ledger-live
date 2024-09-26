@@ -112,7 +112,7 @@ const Delegations = (props: DelegationsPropsType) => {
       <AccountDelegationInfo
         title={t("account.delegation.info.title")}
         image={<IlluRewards style={styles.illustration} />}
-        infoUrl={urls.elrondStaking}
+        infoUrl={urls.multiversxStaking}
         infoTitle={t("elrond.delegation.info")}
         onPress={onDelegate}
         ctaTitle={t("account.delegation.info.cta")}

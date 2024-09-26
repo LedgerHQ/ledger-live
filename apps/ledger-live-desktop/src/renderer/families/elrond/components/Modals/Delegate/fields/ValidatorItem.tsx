@@ -13,17 +13,17 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import {
-  ELROND_EXPLORER_URL,
-  ELROND_LEDGER_VALIDATOR_ADDRESS,
+  MULTIVERSX_EXPLORER_URL,
+  MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 export type Recipient = {
   address: string;
 };
-export type ValidatorItemType = ElrondProvider & {
-  account: ElrondAccount;
+export type ValidatorItemType = MultiversxProvider & {
+  account: MultiversxAccount;
   onSelectValidator: (recipient: string) => void;
   disabled: boolean;
   active: boolean;
@@ -56,14 +56,14 @@ const ValidatorItem = (props: ValidatorItemType) => {
   } = props;
   const onExternalLink = useCallback((address: string) => {
     openURL(
-      address === ELROND_LEDGER_VALIDATOR_ADDRESS
+      address === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS
         ? urls.ledgerValidator
-        : `${ELROND_EXPLORER_URL}/providers/${address}`,
+        : `${MULTIVERSX_EXPLORER_URL}/providers/${address}`,
     );
   }, []);
   const icon = useMemo(
     () =>
-      contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? (
+      contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS ? (
         <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
       ) : (
         <FirstLetterIcon label={identity.name || contract} />
