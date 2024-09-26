@@ -393,3 +393,8 @@ export const setHasSeenOrdinalsDiscoveryDrawer = (payload: boolean) => ({
   type: "SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER",
   payload,
 });
+
+export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
+  type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
+  payload,
+});
