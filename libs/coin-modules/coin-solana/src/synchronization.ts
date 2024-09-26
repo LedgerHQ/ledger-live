@@ -542,7 +542,7 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
 
   const parsedIxs = instructions
     .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo");
+    .filter(({ program }) => program !== "spl-memo" && program !== "unknown");
 
   if (parsedIxs.length === 3) {
     const [first, second, third] = parsedIxs;
@@ -636,7 +636,7 @@ function getTokenAccOperationType({
   const { instructions } = tx.message;
   const [mainIx, ...otherIxs] = instructions
     .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo");
+    .filter(({ program }) => program !== "spl-memo" && program !== "unknown");
 
   if (mainIx !== undefined && otherIxs.length === 0) {
     switch (mainIx.program) {
