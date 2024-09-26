@@ -29,7 +29,7 @@ declare module "storyly-web" {
   interface StorylyOptions {
     layout: "classic" | "modern";
     token: string;
-    lang?: Language /* TODO: delete it in LIVE-14102 and replace it with locale*/;
+    locale?: LanguagePrefixed;
     segments?: string[];
     props?: StorylyStyleProps;
   }
