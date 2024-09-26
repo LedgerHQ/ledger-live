@@ -28,6 +28,7 @@ export type Data = {
   startWithWarning?: boolean;
   receiveTokenMode?: boolean;
   receiveNFTMode?: boolean;
+  receiveOrdinalMode?: boolean;
   eventType?: string;
   isFromPostOnboardingEntryPoint?: boolean;
 };
@@ -58,6 +59,7 @@ export type StepProps = {
   token: TokenCurrency | undefined | null;
   receiveTokenMode: boolean;
   receiveNFTMode: boolean;
+  receiveOrdinalMode: boolean;
   closeModal: () => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
@@ -208,6 +210,7 @@ const Body = ({
     disabledSteps,
     receiveTokenMode: !!params.receiveTokenMode,
     receiveNFTMode: !!params.receiveNFTMode,
+    receiveOrdinalMode: !!params.receiveOrdinalMode,
     hideBreadcrumb,
     token,
     isAddressVerified,
