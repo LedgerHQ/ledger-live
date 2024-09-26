@@ -217,7 +217,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
 test.describe("Check invalid address input error", () => {
   const transactionInvalidAddress = new Transaction(
     Account.ETH_1,
-    Account.BTC_1,
+    Account.BTC_NATIVE_SEGWIT_1,
     "0.00001",
     Fee.MEDIUM,
   );

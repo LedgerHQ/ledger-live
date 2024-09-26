@@ -4,7 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
 const accounts = [
-  { account: Account.BTC_1, xrayTicket: "B2CQA-2548" },
+  { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
   { account: Account.ETH_1, xrayTicket: "B2CQA-2551" },
   { account: Account.SOL_1, xrayTicket: "B2CQA-2553" },
   { account: Account.XRP_1, xrayTicket: "B2CQA-2557" },
