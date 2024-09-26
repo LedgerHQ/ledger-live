@@ -37,7 +37,6 @@ export const useStoryly = (
     ref.current?.init({
       layout: "classic",
       token: storyly.params?.stories[instanceId].token || "",
-      lang: language,
       segments: [`lang_${language}`],
       props: { ...props, ...options?.styleProps },
     });
@@ -59,7 +58,7 @@ export const useStoryly = (
    * Change `lang` and `segments` based on the app language
    */
   useLayoutEffect(() => {
-    ref.current?.setLang({ language: language });
+    ref.current?.setLang({ language });
     ref.current?.setSegments([`lang_${language}`]);
   }, [language]);
 
