@@ -16,6 +16,12 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
 
 jest.mock("@ledgerhq/cryptoassets/data/eip712", () => v1);
 jest.mock("@ledgerhq/cryptoassets/data/eip712_v2", () => v2);
+jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
+  signatures: {
+    1: "AAAAZwRVU0RDoLhpkcYhizbB0Z1KLp6wzjYG60gAAAAGAAAAATBEAiBT0S5lTL5ipustFl3sP7dsPLF2QWaAyaXg3iWQsLnNigIgUEdqFpFVhGEAxiwzjHZ5FC0GD/VU92W8nBjTHrsy42AAAABoBFdFVEjAKqo5siP+jQoOXE8n6tkIPHVswgAAABIAAAABMEUCIQDGNSQY0A9zJrjwtmxxxdCfMG4OzgBJPLqeqOoXe0pI7QIgZGYxocaD2s6sFSA355FC7owyjNN8g6eOy4BeE44/Ovc=",
+    137: "AAAAZwRVU0RDJ5G8ofLeRmHtiKMMmaepRJqoQXQAAAAGAAAAiTBEAiBjxSGrC/C4mPSUtg6cVMGpgokwZmVNpdnc0rkfhL2c1gIgD+CqcDL9MWCffzbolbi1oWATL/5P3F1YWPvrLGaLG00AAABnBFdFVEh86yP9a8Ct1Z5irCVXgnDP8bn2GQAAABIAAACJMEQCIFBR0vbDO+KtsBq864UEM6P8+6U9jtZ80MCzRJi9MCpsAiAiSy+Re8z4tNPMwJh778qv04NadWUdQK8kfzY2EkC+WgAAAGkGV01BVElDDVALHY6O8x4hyZ0duaZETTrfEnAAAAASAAAAiTBEAiAzUzhabCGosL5APk2DKlMgGkrJxI8WmHeZ0xNKbrSHGQIgQIeT1ugsoIZD7J/5HZf6WmJ9yG/CRdvi88LrccoM9Bc=",
+  },
+}));
 nock.disableNetConnect();
 
 describe("EIP712", () => {
@@ -25,8 +31,8 @@ describe("EIP712", () => {
       nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.0.0"), "utf-8");
     });
 
-    test("should sign correctly the 0.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "0-filtered"), "utf-8");
+    it("should sign correctly the 0.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "0-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "0"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -37,14 +43,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "8a540510e13b0f2b11a451275716d29e08caad07e89a1c84964782fb5e1ad788",
-        s: "64a0de235b270fbe81e8e40688f4a9f9ad9d283d690552c9331d7773ceafa513",
+        r: "b1a7312afb06c47b56d25475bdfdf37d907c84e6c1143825f85136062e941ff7",
+        s: "759c2298e0dba1792facd2e579eda48109e4640f4227575bf60db9b06f6e78c8",
         v: 28,
       });
     });
 
-    test("should sign correctly the 1.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "1-filtered"), "utf-8");
+    it("should sign correctly the 1.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "1-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "1"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -55,14 +61,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
+        r: "ea66f747173762715751c889fea8722acac3fc35db2c226d37a2e58815398f64",
+        s: "52d8ba9153de9255da220ffd36762c0b027701a3b5110f0a765f94b16a9dfb55",
         v: 28,
-        r: "66ab3c335fa92801af51551371a95a898a6d862bae2087e0d4074cedb48f9d93",
-        s: "71aac1298822efc8b86b5d4618e7b0b91d73813b150645118414f40d06b2465a",
       });
     });
 
-    test("should sign correctly the 2.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "2-filtered"), "utf-8");
+    it("should sign correctly the 2.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "2-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "2"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -73,14 +79,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "5e729ca9970c6436cfb23d50b93c5674aa87adeed4010d89a8e9926732e012fa",
-        s: "5bb260889e3bacdb322c46343bc38366b0456d36b16a452317f1361cd9ed9e9b",
-        v: 28,
+        r: "1539547ae7cf8ebcd3eabfb57cd2b1fb7775ce757c3f4a307c7425d35b7bfff7",
+        s: "47248cb61e554c1f90af6331d9c9e51cbb8655667514194f509abe097a032319",
+        v: 27,
       });
     });
 
-    test("should sign correctly the 3.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "3-filtered"), "utf-8");
+    it("should sign correctly the 3.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "3-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "3"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -91,14 +97,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "a032f358f76041e239d34a449d859742d79ede0705e294552e68c6f6345cd9a6",
-        s: "5d14e1607eca346db7a1b4ded81c8dcc82821a8f2ceb24803b611095cf68d320",
-        v: 28,
+        r: "5677fec212710c03127cc58c2b0ce31885f6147bc807cdd94de1343c1396d452",
+        s: "6624ddd7e50c1185f91d80ce4ef7adc96adb8c73e74cd8cb5087a44d3a134c8f",
+        v: 27,
       });
     });
 
-    test("should sign correctly the 4.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "4-filtered"), "utf-8");
+    it("should sign correctly the 4.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "4-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "4"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -109,14 +115,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "c5de7830122a8f8cb769bc22b5c1a1ff56e5afa820125b6d67ac681361409946",
-        s: "1bf9da83833f445e80a5aa1b04afe62b66f8210cf4ce77281d98dc9596af3294",
-        v: 27,
+        r: "341bca1c0dfd805d4befc21500084424dbe559c7aafd78d8fb461c0c76dfea1d",
+        s: "33ebb7b6fe0691961cd8b263faac20ecbbdcaef3febb57eb76614cad629080ea",
+        v: 28,
       });
     });
 
-    test("should sign correctly the 5.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "5-filtered"), "utf-8");
+    it("should sign correctly the 5.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "5-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "5"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -127,14 +133,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "23c178dc4b78a8c6b6fc87c295927673b22862f7fbabebbeaa9b546e47c241a3",
-        s: "3efa002b0409d9538ad73638baa7dbe4d2dd760f278c84fbce81ff2c06dee3d5",
+        r: "e42c7fad36f615a566be673ecbd0542f83addf76ffa97af30acda06b3443ceca",
+        s: "72ca3cd5b3c9790e2a199c9d03342db7be374794d8bbffa2c4cb2aa1a16389e1",
         v: 28,
       });
     });
 
-    test("should sign correctly the 6.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "6-filtered"), "utf-8");
+    it("should sign correctly the 6.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "6-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "6"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -145,14 +151,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "0e178627d230e134ade95f4d828050bb5906d42605c085d9512ca0cb80efa3b0",
-        s: "20e280cee0a50fa349a1d95708419f29ae03d34d25edd71a5faffdcfe7935251",
+        r: "d10f6b61205cf5c5ec45735d7f7186afb7e454212102883caf9b6fd2ebdf9fd3",
+        s: "2d9c1af9ded7ddb0237c0b67b6a1a2c98fc73af8ff0bf6c43b356a79bbc929f3",
         v: 27,
       });
     });
 
-    test("should sign correctly the 7.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "7-filtered"), "utf-8");
+    it("should sign correctly the 7.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "7-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "7"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -163,14 +169,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "9d94c45d9fed0c7804c8acae6a51c1f955e26f9b97dbb0bb086ec432f6890c05",
-        s: "63484ac40b7cf6d71f6764625a6eb5204554efc16fcb4990011ae9801dd5362d",
+        r: "df9e8b6b94a196b5b5608d8a83ad5479f050bbdfb301d4d3f4e2bfb30497fd44",
+        s: "1bd7074ce7035305a091b2f9994854fec0ceb2b11cf2620b93b76c1723029f6f",
         v: 27,
       });
     });
 
-    test("should sign correctly the 8.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "8-filtered"), "utf-8");
+    it("should sign correctly the 8.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "8-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "8"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -181,14 +187,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "72cd1152bbd5513ebfc9cd2550395de96597bcfde23e79650caae9197f4da51a",
-        s: "630f3daba6843aa7cb4f14af72648c0a40e1a96bb33e9f46288333b00662cac7",
-        v: 27,
+        r: "59adf8ab1d0e87d2623747eac10d5ef23d0145d7f30e2960cba3503b28add2d3",
+        s: "109f81625ca7a9bb448fa58325b2f08d7f7141b14a20e363d7ea10a9483b780d",
+        v: 28,
       });
     });
 
-    test("should sign correctly the 9.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "9-filtered"), "utf-8");
+    it("should sign correctly the 9.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "9-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "9"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -199,14 +205,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "b1e40db9bd432986de0013a55d0564a1bfc232fb25b3c3da19db3d867df2d551",
-        s: "6941ad66c0ec9100f3676a4f61761509c1345fe73df16d84053420008c8d73b7",
+        r: "87698ac1d846331b4b393417353dd20c60b9401a407d76db52fb9e45844aab30",
+        s: "11b09b38be74fbf2cb5851470d4f70bf0cccaf1bea00ff28e16ca914deba15ce",
         v: 28,
       });
     });
 
-    test("should sign correctly the 10.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "10-filtered"), "utf-8");
+    it("should sign correctly the 10.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "10-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "10"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -217,14 +223,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "bd1a1bd027e9922fba0b5f298791c70074c4fa5564b024833e885872cc6a187c",
-        s: "256485b3fba419e3454006353d2de19390f0c2fc11dc819cf297bc3b7aa6a005",
-        v: 27,
+        r: "aaa9e17e5cb7d8a7d0ecc832a883254599909d8123d846aa6f3f63f47ab78704",
+        s: "2b7e6adaeb26906e6577efa04c1733a19169ee2747020b73f8f309ca8c2ccc1f",
+        v: 28,
       });
     });
 
-    test("should sign correctly the 11.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "11-filtered"), "utf-8");
+    it("should sign correctly the 11.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "11-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "11"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -235,14 +241,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "d0259bc5208c369532c6161486d7533966d382fc725bcb781a190c0f1a53f771",
-        s: "7ebbf21c5569d2d2a480615d529b431d3b0dfce863f723d21e3370e860a8965c",
+        r: "cce2e63aaac6a5f9a74684d8fdddcbc7f3b27aa17235bfab89226821ead933b6",
+        s: "3f3c93977abcc3f8cc9a3dc1ecc02dbca14aca1a6ecb2fb6ca3d7c713ace1ec4",
         v: 28,
       });
     });
 
-    test("should sign correctly the 12.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "12-filtered"), "utf-8");
+    it("should sign correctly the 12.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "12-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "12"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -253,14 +259,14 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "4aef3aaff62fa0731f4e661c4dbb92a48f8c12d7225219fad74b55ef2ad0045b",
-        s: "46d7e01804c33a99c4dc7dd7b2ac5e63d07ee4641b01cd3a598cc91d74bbe3e0",
-        v: 28,
+        r: "7be1671577753c13bfd1da8b234b6df8484daf47351c2366637fd291dd4aa4d9",
+        s: "1a7ffbb01dc8a64e9ee97d19b8f154e9eecbe0b1bfb9dcfa781a65e474573963",
+        v: 27,
       });
     });
 
-    test("should sign correctly the 13.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "13-filtered"), "utf-8");
+    it("should sign correctly the 13.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "13-filtered-v1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "13"), "utf-8").then(JSON.parse);
 
       const transport = await openTransportReplayer(
@@ -271,21 +277,49 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "daf758e25d9d7769adcab19c4d64953983d29fb44041e0ba4263a9d4686a3de3",
-        s: "03c52a566b18568ba71576e768ed321a6a90605365fe9766387db3bd24bebe96",
+        r: "fde9bc1860bae0b867b66176ca654578530edf97771c714cc7bb146943443ef3",
+        s: "06f92884f1de6fe75c4a650b0fe88d0c185af9943a95dc1c4b3045ae0f81edfe",
         v: 28,
       });
     });
 
-    test.skip("should sign correctly the 14.json but there is no filters for it", () => {
-      // no filters for this one
+    it("should sign correctly the 14.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "14-filtered-v1"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "14"), "utf-8").then(JSON.parse);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+      );
+
+      const eth = new Eth(transport);
+      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+      expect(result).toEqual({
+        r: "55ad4a9295fd8e64082f751f19f158db34de2a9072c0b348483ca4a303cf0cb0",
+        s: "69d732a52e29963a23d7c6ca032e46ae452cc2e3d9487952567ae4bffd14e237",
+        v: 28,
+      });
     });
 
-    test.skip("should sign correctly the 14bis.json but there is no filters for it", () => {
-      // no filters for this one
+    it("should sign correctly the 14bis.json sample message and have the same APDUs as 14.json", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "14-filtered-v1"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "14bis"), "utf-8").then(JSON.parse);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+      );
+
+      const eth = new Eth(transport);
+      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+      expect(result).toEqual({
+        r: "55ad4a9295fd8e64082f751f19f158db34de2a9072c0b348483ca4a303cf0cb0",
+        s: "69d732a52e29963a23d7c6ca032e46ae452cc2e3d9487952567ae4bffd14e237",
+        v: 28,
+      });
     });
 
-    test("should sign correctly the 15-permit.json sample message", async () => {
+    it("should sign correctly the 15-permit.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "15-filtered-v1"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "15-permit"), "utf-8")
@@ -305,7 +339,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 16-permit2.json sample message", async () => {
+    it("should sign correctly the 16-permit2.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "16-filtered-v1"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "16-permit2"), "utf-8")
@@ -325,7 +359,7 @@ describe("EIP712", () => {
       });
     });
 
-    test.skip("should sign correctly the 17-uniswapx.json sample message", async () => {
+    it("should sign correctly the 17-uniswapx.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "17-filtered-v1"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
@@ -339,13 +373,13 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "daf758e25d9d7769adcab19c4d64953983d29fb44041e0ba4263a9d4686a3de3",
-        s: "03c52a566b18568ba71576e768ed321a6a90605365fe9766387db3bd24bebe96",
-        v: 28,
+        r: "63e951154de94e9f81ecefa38c0f11c2e4a9bfbaa3524b6c9744161211d6cc3b",
+        s: "62480171ceb1f39f2c41ff06a2ecd483c0faaaf459063b278c09803b8bef3e4d",
+        v: 27,
       });
     });
 
-    test("should sign correctly the 18-1inch-fusion.json sample message", async () => {
+    it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "18-filtered-v1"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")
@@ -372,7 +406,7 @@ describe("EIP712", () => {
       nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.11.1"), "utf-8");
     });
 
-    test("should sign correctly the 15-permit.json sample message", async () => {
+    it("should sign correctly the 15-permit.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "15-filtered-v2"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "15-permit"), "utf-8")
@@ -392,7 +426,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 16-permit2.json sample message", async () => {
+    it("should sign correctly the 16-permit2.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "16-filtered-v2"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "16-permit2"), "utf-8")
@@ -412,7 +446,7 @@ describe("EIP712", () => {
       });
     });
 
-    test.skip("should sign correctly the 17-uniswapx.json sample message", async () => {
+    it("should sign correctly the 17-uniswapx.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "17-filtered-v2"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
@@ -426,13 +460,13 @@ describe("EIP712", () => {
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
-        r: "daf758e25d9d7769adcab19c4d64953983d29fb44041e0ba4263a9d4686a3de3",
-        s: "03c52a566b18568ba71576e768ed321a6a90605365fe9766387db3bd24bebe96",
-        v: 28,
+        r: "63e951154de94e9f81ecefa38c0f11c2e4a9bfbaa3524b6c9744161211d6cc3b",
+        s: "62480171ceb1f39f2c41ff06a2ecd483c0faaaf459063b278c09803b8bef3e4d",
+        v: 27,
       });
     });
 
-    test("should sign correctly the 18-1inch-fusion.json sample message", async () => {
+    it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "18-filtered-v2"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")
