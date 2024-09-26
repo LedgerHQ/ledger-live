@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { openURL } from "~/renderer/linking";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 
-import { StorylyRef } from "storyly-web";
+import { StorylyRef, Story } from "storyly-web";
 interface StorylyProviderProps {
   children: ReactNode;
 }
@@ -44,19 +44,19 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
     storylyRef.current?.init({
       layout: "classic",
       token: token,
-      events: {
-        closeStoryGroup: clear,
-        actionClicked: story => {
-          if (story?.media?.actionUrl) {
-            openURL(story.media.actionUrl);
-            storylyRef.current?.close?.();
-            dispatch(closeAllModal());
-            setDrawer();
-            dispatch(closeInformationCenter());
-          }
-        },
-      },
     });
+
+    storylyRef.current?.on("actionClicked", (story: Story) => {
+      if (!story.actionUrl) return;
+      openURL(story.actionUrl as string);
+      storylyRef.current?.close?.();
+      dispatch(closeAllModal());
+      setDrawer();
+      dispatch(closeInformationCenter());
+    });
+
+    storylyRef.current?.on("closeStoryGroup", clear);
+
     storylyRef.current?.openStory({ group: query?.g, story: query?.s, playMode: query?.play });
   }, [params, token, query, dispatch, setDrawer]);
 
