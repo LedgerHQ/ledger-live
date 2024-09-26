@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
 import Text from "~/renderer/components/Text";
@@ -20,11 +20,11 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { DelegationType, ElrondFamily, UnbondingType } from "~/renderer/families/elrond/types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { DelegationType, MultiversxFamily, UnbondingType } from "~/renderer/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface DelegationPropsType {
-  account: ElrondAccount;
+  account: MultiversxAccount;
 }
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -37,9 +37,9 @@ const Wrapper = styled(Box).attrs(() => ({
 /* eslint-disable react/display-name */
 const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
-  const validators = useElrondRandomizedValidators();
+  const validators = useMultiversxRandomizedValidators();
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
-    account.elrondResources ? account.elrondResources.delegations : [],
+    account.multiversxResources ? account.multiversxResources.delegations : [],
   );
 
   const dispatch = useDispatch();
@@ -96,10 +96,14 @@ const Delegation = (props: DelegationPropsType) => {
     [delegationResources, findValidator],
   );
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+    setDelegationResources(
+      account.multiversxResources ? account.multiversxResources.delegations : [],
+    );
     return () =>
-      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
-  }, [account.elrondResources]);
+      setDelegationResources(
+        account.multiversxResources ? account.multiversxResources.delegations : [],
+      );
+  }, [account.multiversxResources]);
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_ELROND_REWARDS_INFO", {
@@ -215,7 +219,7 @@ const Delegation = (props: DelegationPropsType) => {
               <Box mt={2}>
                 <LinkWithExternalIcon
                   label={<Trans i18nKey="elrond.delegation.emptyState.info" />}
-                  onClick={() => openURL(urls.elrondStaking)}
+                  onClick={() => openURL(urls.multiversxStaking)}
                 />
               </Box>
             </Box>
@@ -251,7 +255,7 @@ const Delegation = (props: DelegationPropsType) => {
   );
 };
 
-const EarnRewards: ElrondFamily["AccountBodyHeader"] = ({ account }) => {
+const EarnRewards: MultiversxFamily["AccountBodyHeader"] = ({ account }) => {
   return account.type === "Account" ? <Delegation account={account} /> : null;
 };
 

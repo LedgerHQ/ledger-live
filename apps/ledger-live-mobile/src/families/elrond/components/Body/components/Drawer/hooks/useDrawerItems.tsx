@@ -4,7 +4,7 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { FieldType } from "~/components/DelegationDrawer";
 import type { DrawerPropsType, DrawerStatusType } from "../types";
 
@@ -20,7 +20,7 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
  * Handle the hook declaration.
  */
 
-const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) => {
+const useDrawerItems = (data: DrawerPropsType["data"], account: MultiversxAccount) => {
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 

@@ -15,7 +15,7 @@ import {
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
 import { DelegationType } from "./types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -26,23 +26,27 @@ interface BalanceType {
   amount: BigNumber;
 }
 
-const Summary = (props: { account: ElrondAccount }) => {
+const Summary = (props: { account: MultiversxAccount }) => {
   const { account } = props;
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState(
-    account.elrondResources ? account.elrondResources.delegations : [],
+    account.multiversxResources ? account.multiversxResources.delegations : [],
   );
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
-    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+    setDelegationResources(
+      account.multiversxResources ? account.multiversxResources.delegations : [],
+    );
     return () => {
       setBalance(account.spendableBalance);
-      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+      setDelegationResources(
+        account.multiversxResources ? account.multiversxResources.delegations : [],
+      );
     };
-  }, [account.elrondResources, account.spendableBalance]);
+  }, [account.multiversxResources, account.spendableBalance]);
   const delegations = useMemo(
     (): BigNumber =>
       delegationsResources.reduce(
@@ -110,7 +114,7 @@ const Summary = (props: { account: ElrondAccount }) => {
   );
 };
 
-function AccountBalanceSummaryFooter({ account }: { account: ElrondAccount | SubAccount }) {
+function AccountBalanceSummaryFooter({ account }: { account: MultiversxAccount | SubAccount }) {
   if (account.type !== "Account") return null;
   return <Summary account={account} />;
 }

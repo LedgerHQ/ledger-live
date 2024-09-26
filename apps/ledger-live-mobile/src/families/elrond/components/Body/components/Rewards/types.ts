@@ -1,7 +1,7 @@
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/Multiversx/types";
 import type { DelegationType } from "../../../../types";
 
 export interface RewardsPropsType {
-  account: ElrondAccount;
+  account: MultiversxAccount;
   delegations: DelegationType[];
 }

@@ -5,11 +5,11 @@ import ToggleButton from "~/renderer/components/ToggleButton";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
-import { ElrondTransactionMode } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxTransactionMode } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface Props {
   mode: string;
-  onChange: (mode: ElrondTransactionMode) => void;
+  onChange: (mode: MultiversxTransactionMode) => void;
 }
 const options = [
   {

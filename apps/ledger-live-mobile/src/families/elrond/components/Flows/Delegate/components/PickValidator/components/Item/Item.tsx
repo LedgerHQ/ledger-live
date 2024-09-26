@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
@@ -43,7 +43,7 @@ const Item = (props: ItemPropsType) => {
     <Touchable event="DelegationFlowChosevalidator" onPress={() => onSelect(item)}>
       <View style={styles.validator}>
         <Circle crop={true} size={32}>
-          {ELROND_LEDGER_VALIDATOR_ADDRESS === item.contract ? (
+          {MULTIVERSX_LEDGER_VALIDATOR_ADDRESS === item.contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon label={name || "-"} round={true} size={32} fontSize={24} />

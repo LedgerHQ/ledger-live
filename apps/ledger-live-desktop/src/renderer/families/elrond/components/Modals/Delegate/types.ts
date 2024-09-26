@@ -3,10 +3,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import {
-  ElrondAccount,
+  MultiversxAccount,
   Transaction,
   TransactionStatus,
-  ElrondProvider,
+  MultiversxProvider,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { Step } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
@@ -16,7 +16,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: ElrondAccount;
+  account?: MultiversxAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
@@ -32,7 +32,7 @@ export type StepProps = {
   onOperationBroadcasted: (operation: Operation) => void;
   setSigned: (assigned: boolean) => void;
   bridgePending: boolean;
-  validators: Array<ElrondProvider>;
+  validators: Array<MultiversxProvider>;
   delegations: Array<DelegationType>;
 };
 export type St = Step<StepId, StepProps>;

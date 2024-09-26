@@ -15,9 +15,9 @@ import PickMethod from "./components/PickMethod";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import type { ElrondClaimRewardsFlowParamList } from "./types";
+import type { MultiversxClaimRewardsFlowParamList } from "./types";
 
-const Stack = createStackNavigator<ElrondClaimRewardsFlowParamList>();
+const Stack = createStackNavigator<MultiversxClaimRewardsFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,

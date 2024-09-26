@@ -4,11 +4,11 @@ import Unbonding from "~/renderer/families/elrond/components/Unbondings/componen
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import { UnbondingType } from "~/renderer/families/elrond/types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 interface UnbondingsType {
   unbondings: Array<UnbondingType>;
-  account: ElrondAccount;
+  account: MultiversxAccount;
 }
 const Unbondings = (props: UnbondingsType) => {
   const { unbondings, account } = props;

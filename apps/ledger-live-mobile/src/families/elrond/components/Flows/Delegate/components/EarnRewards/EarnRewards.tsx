@@ -41,7 +41,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
    */
 
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.elrondStaking);
+    Linking.openURL(urls.multiversxStaking);
   }, []);
 
   /*

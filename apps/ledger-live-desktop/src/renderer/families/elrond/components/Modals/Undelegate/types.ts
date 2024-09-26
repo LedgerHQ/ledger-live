@@ -1,6 +1,6 @@
 import {
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
@@ -16,8 +16,8 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account: ElrondAccount;
-  validators: ElrondProvider[];
+  account: MultiversxAccount;
+  validators: MultiversxProvider[];
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;

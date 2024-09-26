@@ -48,8 +48,8 @@ const PickMethod = (props: PickMethodPropsType) => {
   const methods = [TransactionMethodEnum.claimRewards, TransactionMethodEnum.reDelegateRewards];
 
   const currentDelegation = useMemo(
-    () => account.elrondResources.delegations.find(delegation => recipient === delegation.contract),
-    [account.elrondResources.delegations, recipient],
+    () => account.multiversxResources.delegations.find(delegation => recipient === delegation.contract),
+    [account.multiversxResources.delegations, recipient],
   );
 
   /*

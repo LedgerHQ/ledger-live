@@ -381,7 +381,7 @@ function convertElrondESDTTokens([
   name,
 ]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
-  const parentCurrency = getCryptoCurrencyById("elrond");
+  const parentCurrency = getCryptoCurrencyById("multiversx");
 
   return {
     type: "TokenCurrency",

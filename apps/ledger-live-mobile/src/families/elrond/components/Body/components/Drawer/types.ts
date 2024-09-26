@@ -1,13 +1,16 @@
-import type { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type {
+  MultiversxAccount,
+  MultiversxProvider,
+} from "@ledgerhq/live-common/families/elrond/types";
 import type BigNumber from "bignumber.js";
 
 export interface DrawerPropsType {
   onClose: () => void;
-  account: ElrondAccount;
+  account: MultiversxAccount;
   data: {
     type: string;
     amount: BigNumber;
-    validator: ElrondProvider;
+    validator: MultiversxProvider;
     claimableRewards?: string | BigNumber;
     seconds?: number;
   };

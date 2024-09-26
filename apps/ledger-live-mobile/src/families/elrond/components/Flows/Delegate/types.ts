@@ -2,36 +2,36 @@ import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
-  ElrondAccount,
-  ElrondProvider,
+  MultiversxAccount,
+  MultiversxProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import type { ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
-export type ElrondDelegationFlowParamList = {
+export type MultiversxDelegationFlowParamList = {
   [ScreenName.ElrondDelegationStarted]: {
-    validators: ElrondProvider[];
-    account: ElrondAccount;
+    validators: MultiversxProvider[];
+    account: MultiversxAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidator]: {
-    validators: ElrondProvider[];
-    account: ElrondAccount;
+    validators: MultiversxProvider[];
+    account: MultiversxAccount;
     transaction?: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
     skipStartedStep?: boolean;
   };
   [ScreenName.ElrondDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
-    validators: ElrondProvider[];
-    account: ElrondAccount;
+    validators: MultiversxProvider[];
+    account: MultiversxAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationAmount]: {
     transaction: Transaction;
-    validators: ElrondProvider[];
-    account: ElrondAccount;
+    validators: MultiversxProvider[];
+    account: MultiversxAccount;
     validatorName: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
@@ -40,7 +40,7 @@ export type ElrondDelegationFlowParamList = {
     parentId?: string;
     transaction?: Transaction | null | undefined;
     status?: TransactionStatus;
-    validators: ElrondProvider[];
+    validators: MultiversxProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationConnectDevice]: {
@@ -55,7 +55,7 @@ export type ElrondDelegationFlowParamList = {
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
-    validators: ElrondProvider[];
+    validators: MultiversxProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidationError]: {
@@ -70,7 +70,7 @@ export type ElrondDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
-    validators: ElrondProvider[];
+    validators: MultiversxProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

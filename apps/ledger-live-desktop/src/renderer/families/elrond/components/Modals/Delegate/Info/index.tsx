@@ -8,12 +8,12 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType } from "~/renderer/families/elrond/types";
-import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export interface Props {
-  account: ElrondAccount;
-  validators: Array<ElrondProvider>;
+  account: MultiversxAccount;
+  validators: Array<MultiversxProvider>;
   delegations?: Array<DelegationType>;
 }
 const ElrondEarnRewardsInfoModal = (props: Props) => {
@@ -30,9 +30,9 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
     );
   }, [account, dispatch, validators, delegations]);
 
-  const elrondUrl = useLocalizedUrl(urls.elrondStaking);
+  const multiversxUrl = useLocalizedUrl(urls.multiversxStaking);
   const onLearnMore = () => {
-    openURL(elrondUrl);
+    openURL(multiversxUrl);
   };
   return (
     <EarnRewardsInfoModal

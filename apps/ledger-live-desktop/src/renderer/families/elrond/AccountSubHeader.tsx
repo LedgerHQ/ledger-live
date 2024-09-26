@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { Trans, useTranslation } from "react-i18next";
 import { SubAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import AccountSubHeaderDrawer from "~/renderer/components/AccountSubHeader/Accou
 import Alert from "~/renderer/components/Alert";
 
 export interface AccountSubHeaderPropsType {
-  account: ElrondAccount | SubAccount;
+  account: MultiversxAccount | SubAccount;
 }
 
 const CardContent = styled(Box)`
@@ -43,8 +43,8 @@ const AccountSubHeader = ({ account }: AccountSubHeaderPropsType) => {
   const { t } = useTranslation();
 
   const isGuarded =
-    account.type === "Account" && account.elrondResources
-      ? account.elrondResources.isGuarded
+    account.type === "Account" && account.multiversxResources
+      ? account.multiversxResources.isGuarded
       : false;
 
   const openDrawer = () => {

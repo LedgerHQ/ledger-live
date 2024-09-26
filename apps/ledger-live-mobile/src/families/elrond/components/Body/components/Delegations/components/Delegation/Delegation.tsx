@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
@@ -70,7 +70,7 @@ const Delegation = (props: DelegationPropsType) => {
         <View style={styles.icon}>
           {validator && (
             <Circle crop={true} size={42}>
-              {ELROND_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
+              {MULTIVERSX_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
                 <FirstLetterIcon label={name || "-"} round={true} size={42} fontSize={24} />

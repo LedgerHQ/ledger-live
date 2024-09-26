@@ -2,12 +2,12 @@
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
-  ELROND_EXPLORER_URL,
-  ELROND_LEDGER_VALIDATOR_ADDRESS,
+  MULTIVERSX_EXPLORER_URL,
+  MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { ElrondProvider, ElrondOperation } from "@ledgerhq/live-common/families/elrond/types";
+import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
+import { MultiversxProvider, MultiversxOperation } from "@ledgerhq/live-common/families/elrond/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
@@ -33,32 +33,32 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const getURLFeesInfo = ({ op }: { op: Operation; currencyId: string }): string | undefined => {
   if (op.fee.gt(200000)) {
-    return urls.elrondStaking;
+    return urls.multiversxStaking;
   }
 };
 const getURLWhatIsThis = ({ op }: { op: Operation; currencyId: string }): string | undefined => {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return urls.elrondStaking;
+    return urls.multiversxStaking;
   }
 };
 
 const redirectAddress = (address: string) => () => {
   openURL(
-    address === ELROND_LEDGER_VALIDATOR_ADDRESS
+    address === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS
       ? urls.ledgerValidator
-      : `${ELROND_EXPLORER_URL}/providers/${address}`,
+      : `${MULTIVERSX_EXPLORER_URL}/providers/${address}`,
   );
 };
 
 type OperationDetailsDelegationProps = {
   account: Account;
   isTransactionField?: boolean;
-  operation: ElrondOperation;
+  operation: MultiversxOperation;
 };
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
-  const { validators } = useElrondPreloadData();
-  const formattedValidator: ElrondProvider | undefined = validators.find(
+  const { validators } = useMultiversxPreloadData();
+  const formattedValidator: MultiversxProvider | undefined = validators.find(
     v => v.contract === operation.contract,
   );
 
@@ -101,12 +101,12 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   );
 };
 
-const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, ElrondOperation>) => {
+const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, MultiversxOperation>) => {
   const { type, account, operation } = props;
   const unit = useAccountUnit(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { validators } = useElrondPreloadData();
+  const { validators } = useMultiversxPreloadData();
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -224,7 +224,7 @@ const UndelegateAmountCell = ({
   operation,
   currency,
   unit,
-}: AmountCellExtraProps<ElrondOperation>) => {
+}: AmountCellExtraProps<MultiversxOperation>) => {
   return !operation.extra.amount || operation.extra.amount?.isZero() ? null : (
     <Fragment>
       <FormattedVal

@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { DelegationType } from "../../types";
 import type { SummaryPropsType, ItemType } from "./types";
 
@@ -28,7 +28,7 @@ const withSummary = (Component: FC<SummaryPropsType>) => (props: SummaryPropsTyp
 const Summary = (props: SummaryPropsType) => {
   const { t } = useTranslation();
 
-  const account = props.account as ElrondAccount;
+  const account = props.account as MultiversxAccount;
   const unit = useAccountUnit(account);
 
   /*
@@ -38,7 +38,7 @@ const Summary = (props: SummaryPropsType) => {
   const [data, setData] = useState<ItemType["modal"][]>([]);
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState<DelegationType[]>(
-    account.elrondResources ? account.elrondResources.delegations : [],
+    account.multiversxResources ? account.multiversxResources.delegations : [],
   );
 
   /*
@@ -47,13 +47,17 @@ const Summary = (props: SummaryPropsType) => {
 
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
-    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+    setDelegationResources(
+      account.multiversxResources ? account.multiversxResources.delegations : [],
+    );
 
     return () => {
       setBalance(account.spendableBalance);
-      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+      setDelegationResources(
+        account.multiversxResources ? account.multiversxResources.delegations : [],
+      );
     };
-  }, [account.elrondResources, account.spendableBalance]);
+  }, [account.multiversxResources, account.spendableBalance]);
 
   /*
    * Format the three data items by denominating the value and filtering out zero resources.

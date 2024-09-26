@@ -16,13 +16,13 @@ import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/b
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import {
-  ELROND_EXPLORER_URL,
-  ELROND_LEDGER_VALIDATOR_ADDRESS,
+  MULTIVERSX_EXPLORER_URL,
+  MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import {
-  ElrondProvider,
-  ElrondAccount as AccountType,
+  MultiversxProvider,
+  MultiversxAccount as AccountType,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { ModalsData } from "~/renderer/families/elrond/modals";
 import Discreet from "~/renderer/components/Discreet";
@@ -45,7 +45,7 @@ interface DropDownItemType {
   parameters: {
     account: AccountType;
     contract: string;
-    validators: Array<ElrondProvider>;
+    validators: Array<MultiversxProvider>;
     delegations: Array<DelegationType>;
     amount?: string;
   };
@@ -54,7 +54,7 @@ interface DropDownItemType {
 type Props = DelegationType & {
   account: AccountType;
   delegations: Array<DelegationType>;
-  validators: Array<ElrondProvider>;
+  validators: Array<MultiversxProvider>;
 };
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
@@ -148,10 +148,10 @@ const Delegation = (props: Props) => {
       <Column
         strong={true}
         clickable={true}
-        onClick={() => openURL(`${ELROND_EXPLORER_URL}/providers/${contract}`)}
+        onClick={() => openURL(`${MULTIVERSX_EXPLORER_URL}/providers/${contract}`)}
       >
         <Box mr={2}>
-          {contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? (
+          {contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS ? (
             <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
           ) : (
             <FirstLetterIcon label={name} />

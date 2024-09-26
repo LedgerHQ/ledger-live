@@ -13,7 +13,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import BigNumber from "bignumber.js";
 
 import Icon from "react-native-vector-icons/Feather";
-import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Button from "~/components/Button";
@@ -52,7 +52,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const defaultValidator = useMemo(
-    () => validators.find(validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS),
+    () => validators.find(validator => validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS),
     [validators],
   );
 
@@ -267,7 +267,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
               <Animated.View style={{ transform }}>
                 <Circle crop size={64}>
                   {chosenValidator ? (
-                    ELROND_LEDGER_VALIDATOR_ADDRESS === chosenValidator.contract ? (
+                    MULTIVERSX_LEDGER_VALIDATOR_ADDRESS === chosenValidator.contract ? (
                       <LedgerLogo size={64 * 0.7} color={colors.text} />
                     ) : (
                       <FirstLetterIcon
