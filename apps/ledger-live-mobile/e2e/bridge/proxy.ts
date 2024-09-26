@@ -29,7 +29,7 @@ interface ProxyOptions {
   speculosApiPort: string;
 }
 
-export async function startProxy(speculosApiPort?: string, proxyPort?: string): Promise<string> {
+export async function startProxy(proxyPort?: string, speculosApiPort?: string): Promise<string> {
   if (!proxyPort) proxyPort = (await findFreePort()).toString();
   if (!speculosApiPort) speculosApiPort = getEnv("SPECULOS_API_PORT").toString();
   invariant(speculosApiPort, "E2E Proxy : speculosApiPort is not defined");

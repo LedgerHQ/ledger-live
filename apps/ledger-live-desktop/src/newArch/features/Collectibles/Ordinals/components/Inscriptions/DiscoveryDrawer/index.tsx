@@ -1,6 +1,7 @@
 import React from "react";
 import DiscoveryDrawerHeader from "./Header";
-import { Button, CryptoIcon, Flex, Link, Text } from "@ledgerhq/react-ui";
+import ProtectBox from "./ProtectBox";
+import { Button, CryptoIcon, Flex, Text } from "@ledgerhq/react-ui";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import { space } from "@ledgerhq/react-ui/styles/theme";
@@ -17,7 +18,6 @@ const DiscoveryDrawer = ({ isOpen, onClose }: Props) => {
   const { t } = useTranslation();
   const learnMoreUrl = urls.whatAreOrdinals;
   const onButtonClick = () => openURL(learnMoreUrl);
-  const onLinkClick = () => onClose();
 
   return (
     <SideDrawer
@@ -51,14 +51,12 @@ const DiscoveryDrawer = ({ isOpen, onClose }: Props) => {
         >
           {t("ordinals.inscriptions.discoveryDrawer.description")}
         </Text>
-        <Button variant="main" mb={space[8]} onClick={onButtonClick}>
+        <Button variant="main" mb={space[14]} onClick={onButtonClick}>
           <Text variant="bodyLineHeight" fontSize={16} color="neutral.c00" textAlign="center">
             {t("ordinals.inscriptions.discoveryDrawer.learnMore")}
           </Text>
         </Button>
-        <Link mb={space[8]} size="large" onClick={onLinkClick}>
-          {t("ordinals.inscriptions.discoveryDrawer.viewCoinControl")}
-        </Link>
+        <ProtectBox />
       </Flex>
     </SideDrawer>
   );

@@ -6601,7 +6601,8 @@
         "title": "Discover Ordinals",
         "description": "Do you know that you may own valuable rare sats and inscriptions?",
         "learnMore": "Learn more",
-        "viewCoinControl": "View coin control"
+        "protectTitle": "Protect your ordinals assets",
+        "protectDescription": "Exclude your Ordinals assets from your transactions."
       }
     },
     "rareSats": {

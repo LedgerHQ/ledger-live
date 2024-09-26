@@ -30,6 +30,7 @@ const VariantBFooter = ({ clickOptions }: VariantBFooterProps) => {
           {t("analyticsOptInPrompt.variantB.refuse")}
         </Button>
         <Button
+          data-testid="accept-analytics-button"
           variant={"main"}
           size={"large"}
           borderRadius={48}
