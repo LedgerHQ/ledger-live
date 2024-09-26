@@ -31,7 +31,7 @@ type Props = {
 };
 
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
-  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES").split(",");
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const accounts = useSelector(accountsSelector);

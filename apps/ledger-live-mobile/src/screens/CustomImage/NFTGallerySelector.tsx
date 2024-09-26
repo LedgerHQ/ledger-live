@@ -29,7 +29,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device, deviceModelId } = params;
 
-  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES").split(",");
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
   const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
