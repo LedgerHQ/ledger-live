@@ -125,7 +125,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationValidator, {
+    navigation.navigate(ScreenName.MultiversxDelegationValidator, {
       account,
       validators,
       transaction: bridge.updateTransaction(transaction, { amount }),

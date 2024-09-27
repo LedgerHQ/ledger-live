@@ -135,7 +135,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationSelectDevice, {
+    navigation.navigate(ScreenName.MultiversxDelegationSelectDevice, {
       accountId: account.id,
       transaction,
       status,
@@ -150,7 +150,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   const onChangeAmount = useCallback(() => {
     if (transaction) {
-      navigation.navigate(ScreenName.ElrondDelegationAmount, {
+      navigation.navigate(ScreenName.MultiversxDelegationAmount, {
         account,
         validators,
         transaction,
@@ -164,7 +164,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const onChangeValidator = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationValidatorList, {
+    navigation.navigate(ScreenName.MultiversxDelegationValidatorList, {
       account,
       validators,
       transaction,

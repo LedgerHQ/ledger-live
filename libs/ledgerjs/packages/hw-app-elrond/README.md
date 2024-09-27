@@ -6,20 +6,20 @@
 
 ## @ledgerhq/hw-app-elrond
 
-Ledger Hardware Wallet Elrond JavaScript bindings.
+Ledger Hardware Wallet Multiversx JavaScript bindings.
 
-***
+---
 
 ## Are you adding Ledger support to your software wallet?
 
-You may be using this package to communicate with the Elrond Nano App.
+You may be using this package to communicate with the Multiversx Nano App.
 
 For a smooth and quick integration:
 
-*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
-***
+---
 
 ## API
 
@@ -27,42 +27,42 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [Elrond](#elrond)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAppConfiguration](#getappconfiguration)
-        *   [Examples](#examples-1)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-2)
-    *   [setAddress](#setaddress)
-        *   [Parameters](#parameters-2)
-        *   [Examples](#examples-3)
+- [Multiversx](#multiversx)
+  - [Parameters](#parameters)
+  - [Examples](#examples)
+  - [getAppConfiguration](#getappconfiguration)
+    - [Examples](#examples-1)
+  - [getAddress](#getaddress)
+    - [Parameters](#parameters-1)
+    - [Examples](#examples-2)
+  - [setAddress](#setaddress)
+    - [Parameters](#parameters-2)
+    - [Examples](#examples-3)
 
-### Elrond
+### Multiversx
 
-Elrond API
+Multiversx API
 
 #### Parameters
 
-*   `transport` **Transport**&#x20;
-*   `scrambleKey`   (optional, default `"eGLD"`)
+- `transport` **Transport**&#x20;
+- `scrambleKey` (optional, default `"eGLD"`)
 
 #### Examples
 
 ```javascript
-import Elrond from "@ledgerhq/hw-app-elrond";
-const elrond = new Elrond(transport)
+import Multiversx from "@ledgerhq/hw-app-elrond";
+const multiversx = new Multiversx(transport);
 ```
 
 #### getAppConfiguration
 
-Get Elrond app configuration.
+Get Multiversx app configuration.
 
 ##### Examples
 
 ```javascript
-const result = await elrond.getAppConfiguration();
+const result = await multiversx.getAppConfiguration();
 const { contractData, accountIndex, addressIndex, version } = result;
 ```
 
@@ -70,17 +70,17 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### getAddress
 
-Get Elrond address for a given BIP 32 path.
+Get Multiversx address for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
 
 ##### Examples
 
 ```javascript
-const result = await elrond.getAddress("44'/508'/0'/0'/0'");
+const result = await multiversx.getAddress("44'/508'/0'/0'/0'");
 const { publicKey, address } = result;
 ```
 
@@ -88,18 +88,18 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### setAddress
 
-Set Elrond address for a given BIP 32 path.
+Set Multiversx address for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
 
 ##### Examples
 
 ```javascript
-const result = await elrond.setAddress("44'/508'/0'/0/0");
-result : Buffer;
+const result = await multiversx.setAddress("44'/508'/0'/0/0");
+result: Buffer;
 ```
 
 Returns **any** an object with a address

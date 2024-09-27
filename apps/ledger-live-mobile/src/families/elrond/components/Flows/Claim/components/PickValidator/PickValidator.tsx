@@ -56,7 +56,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const onSelect = useCallback(
     (validator: onSelectType["validator"], value: onSelectType["value"]) => {
       if (validator) {
-        navigation.navigate(ScreenName.ElrondClaimRewardsMethod, {
+        navigation.navigate(ScreenName.MultiversxClaimRewardsMethod, {
           value,
           account,
           recipient: validator.contract,

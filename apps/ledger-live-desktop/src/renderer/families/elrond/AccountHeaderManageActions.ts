@@ -34,7 +34,7 @@ const AccountHeaderManageActions = (props: {
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
     } else if (hasDelegations) {
       dispatch(
-        openModal("MODAL_ELROND_DELEGATE", {
+        openModal("MODAL_MULTIVERSX_DELEGATE", {
           account,
           validators,
           source,
@@ -42,7 +42,7 @@ const AccountHeaderManageActions = (props: {
       );
     } else {
       dispatch(
-        openModal("MODAL_ELROND_REWARDS_INFO", {
+        openModal("MODAL_MULTIVERSX_REWARDS_INFO", {
           account,
           validators,
         }),

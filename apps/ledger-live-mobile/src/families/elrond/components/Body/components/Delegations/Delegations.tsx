@@ -46,10 +46,10 @@ const Delegations = (props: DelegationsPropsType) => {
   const onDelegate = useCallback(() => {
     const screen =
       delegations.length === 0
-        ? ScreenName.ElrondDelegationStarted
-        : ScreenName.ElrondDelegationValidator;
+        ? ScreenName.MultiversxDelegationStarted
+        : ScreenName.MultiversxDelegationValidator;
 
-    navigation.navigate(NavigatorName.ElrondDelegationFlow, {
+    navigation.navigate(NavigatorName.MultiversxDelegationFlow, {
       screen,
       params: { validators, account },
     });

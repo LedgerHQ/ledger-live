@@ -1,6 +1,6 @@
 import type { MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { ElrondDelegationFlowParamList } from "../../types";
+import type { MultiversxDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";
 
 export interface onSelectType {
@@ -9,6 +9,6 @@ export interface onSelectType {
 }
 
 export type PickValidatorPropsType = StackNavigatorProps<
-  ElrondDelegationFlowParamList,
-  ScreenName.ElrondDelegationValidatorList
+  MultiversxDelegationFlowParamList,
+  ScreenName.MultiversxDelegationValidatorList
 >;

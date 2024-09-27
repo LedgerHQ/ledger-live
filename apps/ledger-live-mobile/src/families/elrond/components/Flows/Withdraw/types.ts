@@ -10,18 +10,18 @@ import type {
 import type { ScreenName } from "~/const";
 
 export type MultiversxWithdrawFlowParamList = {
-  [ScreenName.ElrondWithdrawFunds]: {
+  [ScreenName.MultiversxWithdrawFunds]: {
     account: MultiversxAccount;
     validator: MultiversxProvider;
     amount: BigNumber;
   };
-  [ScreenName.ElrondWithdrawSelectDevice]: {
+  [ScreenName.MultiversxWithdrawSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.ElrondWithdrawConnectDevice]: {
+  [ScreenName.MultiversxWithdrawConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -34,13 +34,13 @@ export type MultiversxWithdrawFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.ElrondWithdrawValidationError]: {
+  [ScreenName.MultiversxWithdrawValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.ElrondWithdrawValidationSuccess]: {
+  [ScreenName.MultiversxWithdrawValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

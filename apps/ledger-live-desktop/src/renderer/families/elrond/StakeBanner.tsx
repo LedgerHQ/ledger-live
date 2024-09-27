@@ -71,7 +71,7 @@ const StakeBanner: React.FC<{ account: MultiversxAccount }> = ({ account }) => {
       }));
 
       dispatch(
-        openModal("MODAL_ELROND_UNDELEGATE", {
+        openModal("MODAL_MULTIVERSX_UNDELEGATE", {
           account,
           contract: bannerState.worstDelegation.contract,
           validators: multiversxPreloadData.validators,
@@ -81,7 +81,7 @@ const StakeBanner: React.FC<{ account: MultiversxAccount }> = ({ account }) => {
       );
     } else {
       dispatch(
-        openModal("MODAL_ELROND_DELEGATE", {
+        openModal("MODAL_MULTIVERSX_DELEGATE", {
           account,
           validators: multiversxPreloadData.validators,
           delegations: account.multiversxResources.delegations,

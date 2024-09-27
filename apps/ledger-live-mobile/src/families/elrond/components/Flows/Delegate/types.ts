@@ -10,32 +10,32 @@ import type { ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 export type MultiversxDelegationFlowParamList = {
-  [ScreenName.ElrondDelegationStarted]: {
+  [ScreenName.MultiversxDelegationStarted]: {
     validators: MultiversxProvider[];
     account: MultiversxAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationValidator]: {
+  [ScreenName.MultiversxDelegationValidator]: {
     validators: MultiversxProvider[];
     account: MultiversxAccount;
     transaction?: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
     skipStartedStep?: boolean;
   };
-  [ScreenName.ElrondDelegationValidatorList]: {
+  [ScreenName.MultiversxDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
     validators: MultiversxProvider[];
     account: MultiversxAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationAmount]: {
+  [ScreenName.MultiversxDelegationAmount]: {
     transaction: Transaction;
     validators: MultiversxProvider[];
     account: MultiversxAccount;
     validatorName: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationSelectDevice]: {
+  [ScreenName.MultiversxDelegationSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction | null | undefined;
@@ -43,7 +43,7 @@ export type MultiversxDelegationFlowParamList = {
     validators: MultiversxProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationConnectDevice]: {
+  [ScreenName.MultiversxDelegationConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -58,14 +58,14 @@ export type MultiversxDelegationFlowParamList = {
     validators: MultiversxProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationValidationError]: {
+  [ScreenName.MultiversxDelegationValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.ElrondDelegationValidationSuccess]: {
+  [ScreenName.MultiversxDelegationValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

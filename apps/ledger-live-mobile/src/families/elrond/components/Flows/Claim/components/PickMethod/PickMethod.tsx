@@ -115,7 +115,7 @@ const PickMethod = (props: PickMethodPropsType) => {
 
   const onNext = useCallback(() => {
     navigation.navigate(
-      ScreenName.ElrondClaimRewardsSelectDevice,
+      ScreenName.MultiversxClaimRewardsSelectDevice,
       Object.assign(route.params, {
         transaction,
         accountId: account.id,

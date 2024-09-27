@@ -89,16 +89,19 @@ type Props =
   | StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationConnectDevice>
   | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationConnectDevice>
   | StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsConnectDevice>
-  | StackNavigatorProps<MultiversxDelegationFlowParamList, ScreenName.ElrondDelegationConnectDevice>
+  | StackNavigatorProps<
+      MultiversxDelegationFlowParamList,
+      ScreenName.MultiversxDelegationConnectDevice
+    >
   | StackNavigatorProps<
       MultiversxUndelegationFlowParamList,
-      ScreenName.ElrondUndelegationConnectDevice
+      ScreenName.MultiversxUndelegationConnectDevice
     >
   | StackNavigatorProps<
       MultiversxClaimRewardsFlowParamList,
-      ScreenName.ElrondClaimRewardsConnectDevice
+      ScreenName.MultiversxClaimRewardsConnectDevice
     >
-  | StackNavigatorProps<MultiversxWithdrawFlowParamList, ScreenName.ElrondWithdrawConnectDevice>
+  | StackNavigatorProps<MultiversxWithdrawFlowParamList, ScreenName.MultiversxWithdrawConnectDevice>
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>

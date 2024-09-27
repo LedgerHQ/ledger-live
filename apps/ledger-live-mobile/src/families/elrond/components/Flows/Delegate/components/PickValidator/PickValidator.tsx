@@ -41,7 +41,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const onSelect = useCallback(
     (validator: onSelectType["validator"]) => {
       if (validator) {
-        navigation.navigate(ScreenName.ElrondDelegationValidator, {
+        navigation.navigate(ScreenName.MultiversxDelegationValidator, {
           account,
           validators,
           transaction: bridge.updateTransaction(transaction, {

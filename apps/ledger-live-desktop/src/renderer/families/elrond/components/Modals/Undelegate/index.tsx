@@ -12,7 +12,7 @@ const UndelegationModal = () => {
   const isModalLocked = ["device", "confirmation"].includes(stepId);
   return (
     <Modal
-      name="MODAL_ELROND_UNDELEGATE"
+      name="MODAL_MULTIVERSX_UNDELEGATE"
       centered={true}
       onHide={onHide}
       preventBackdropClick={isModalLocked}

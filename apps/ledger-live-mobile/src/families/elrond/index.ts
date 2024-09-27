@@ -1,6 +1,11 @@
-import * as ElrondClaimRewardsFlow from "./components/Flows/Claim";
-import * as ElrondDelegationFlow from "./components/Flows/Delegate";
-import * as ElrondUndelegationFlow from "./components/Flows/Undelegate";
-import * as ElrondWithdrawFlow from "./components/Flows/Withdraw";
+import * as MultiversxClaimRewardsFlow from "./components/Flows/Claim";
+import * as MultiversxDelegationFlow from "./components/Flows/Delegate";
+import * as MultiversxUndelegationFlow from "./components/Flows/Undelegate";
+import * as MultiversxWithdrawFlow from "./components/Flows/Withdraw";
 
-export { ElrondClaimRewardsFlow, ElrondDelegationFlow, ElrondUndelegationFlow, ElrondWithdrawFlow };
+export {
+  MultiversxClaimRewardsFlow,
+  MultiversxDelegationFlow,
+  MultiversxUndelegationFlow,
+  MultiversxWithdrawFlow,
+};

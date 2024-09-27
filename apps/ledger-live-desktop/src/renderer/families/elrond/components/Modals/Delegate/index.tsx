@@ -23,7 +23,7 @@ class DelegationModal extends PureComponent<Data, State> {
     const isModalLocked = ["amount", "connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_ELROND_DELEGATE"
+        name="MODAL_MULTIVERSX_DELEGATE"
         centered={true}
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}

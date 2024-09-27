@@ -4,11 +4,11 @@ import { fromAccountRaw, getAccountCurrency } from "../../account";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { elrond1 } from "./datasets/elrond1";
+import { multiversx1 } from "./datasets/multiversx1";
 import { firstValueFrom } from "rxjs";
 
 describe("ESDT tokens sync functionality", () => {
-  const account = fromAccountRaw(elrond1);
+  const account = fromAccountRaw(multiversx1);
   const localCache = {};
   const cache = makeBridgeCacheSystem({
     saveData(c, d) {
@@ -23,7 +23,7 @@ describe("ESDT tokens sync functionality", () => {
 
   test("initial raw account contains no token accounts", async () => {
     await cache.prepareCurrency(account.currency);
-    expect(elrond1.subAccounts?.length).toBeFalsy();
+    expect(multiversx1.subAccounts?.length).toBeFalsy();
   });
 
   test("sync finds tokens", async () => {
@@ -40,7 +40,7 @@ describe("ESDT tokens sync functionality", () => {
     // Contains a known token
     expect(
       (synced.subAccounts as SubAccount[]).find(
-        a => getAccountCurrency(a)?.id === "elrond/esdt/4d45582d343535633537",
+        a => getAccountCurrency(a)?.id === "multiversx/esdt/4d45582d343535633537",
       ),
     ).toBeTruthy();
   });

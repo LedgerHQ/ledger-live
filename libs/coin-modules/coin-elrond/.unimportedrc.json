@@ -8,7 +8,7 @@
   ],
   "ignoreUnimported": [
     "src/cli-transaction.ts",
-    "src/datasets/elrond1.ts",
+    "src/datasets/multiversx1.ts",
     "src/deviceTransactionConfig.ts",
     "src/formatters.ts",
     "src/helpers/denominate.ts",

@@ -1,9 +1,9 @@
 import { AccountRaw } from "@ledgerhq/types-live";
 
-export const elrond1: AccountRaw = {
-  id: "js:2:elrond:erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk:",
+export const multiversx1: AccountRaw = {
+  id: "js:2:multiversx:erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk:",
   seedIdentifier: "erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk",
-  name: "Elrond 1",
+  name: "Multiversx 1",
   derivationMode: "",
   index: 0,
   freshAddress: "erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk",
