@@ -15,12 +15,16 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import Unbondings from "~/renderer/families/elrond/components/Unbondings";
-import Delegations from "~/renderer/families/elrond/components/Delegations";
+import Unbondings from "~/renderer/families/multiversx/components/Unbondings";
+import Delegations from "~/renderer/families/multiversx/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { DelegationType, MultiversxFamily, UnbondingType } from "~/renderer/families/elrond/types";
+import {
+  DelegationType,
+  MultiversxFamily,
+  UnbondingType,
+} from "~/renderer/families/multiversx/types";
 import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface DelegationPropsType {

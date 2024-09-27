@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
-import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
-import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { TableLine } from "~/renderer/families/multiversx/blocks/Delegation";
+import Delegation from "~/renderer/families/multiversx/components/Delegations/components/Delegation";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxProvider,
   MultiversxAccount as AccountType,

@@ -2,7 +2,7 @@ import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { Step } from "~/renderer/components/Stepper";
-import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
+import { DelegationType, UnbondingType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxAccount,
   MultiversxProvider,

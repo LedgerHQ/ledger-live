@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {

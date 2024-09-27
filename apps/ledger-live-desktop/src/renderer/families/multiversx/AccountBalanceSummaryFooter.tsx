@@ -13,7 +13,7 @@ import {
   Balance,
   Title,
   TitleWrapper,
-} from "~/renderer/families/elrond/blocks/Summary";
+} from "~/renderer/families/multiversx/blocks/Summary";
 import { DelegationType } from "./types";
 import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { SubAccount } from "@ledgerhq/types-live";

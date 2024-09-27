@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { MultiversxProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import { UnbondingType } from "~/renderer/families/elrond/types";
+import { UnbondingType } from "~/renderer/families/multiversx/types";
 import { Option as FilterOption } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
