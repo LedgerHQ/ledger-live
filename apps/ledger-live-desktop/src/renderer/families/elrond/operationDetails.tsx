@@ -7,7 +7,10 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { MultiversxProvider, MultiversxOperation } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  MultiversxProvider,
+  MultiversxOperation,
+} from "@ledgerhq/live-common/families/elrond/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";

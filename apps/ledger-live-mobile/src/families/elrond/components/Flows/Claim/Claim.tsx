@@ -45,7 +45,7 @@ const Claim = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsValidator}
+        name={ScreenName.MultiversxClaimRewardsValidator}
         component={PickValidator}
         options={{
           headerTitle: () => (
@@ -69,7 +69,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsMethod}
+        name={ScreenName.MultiversxClaimRewardsMethod}
         component={PickMethod}
         options={{
           headerTitle: () => <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />,
@@ -77,7 +77,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsSelectDevice}
+        name={ScreenName.MultiversxClaimRewardsSelectDevice}
         component={ClaimRewardsSelectDevice}
         options={{
           headerTitle: () => (
@@ -93,7 +93,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsConnectDevice}
+        name={ScreenName.MultiversxClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
           headerLeft: undefined,
@@ -111,7 +111,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsValidationError}
+        name={ScreenName.MultiversxClaimRewardsValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -120,7 +120,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondClaimRewardsValidationSuccess}
+        name={ScreenName.MultiversxClaimRewardsValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

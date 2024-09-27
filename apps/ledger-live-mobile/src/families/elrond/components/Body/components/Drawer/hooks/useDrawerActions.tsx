@@ -37,8 +37,8 @@ const useDrawerActions = (
 
   const onCollectRwards = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.ElrondClaimRewardsFlow, {
-      screen: ScreenName.ElrondClaimRewardsMethod,
+    navigation.navigate(NavigatorName.MultiversxClaimRewardsFlow, {
+      screen: ScreenName.MultiversxClaimRewardsMethod,
       params: {
         account,
         value: claimableRewards,
@@ -54,8 +54,8 @@ const useDrawerActions = (
 
   const onWithdrawFunds = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.ElrondWithdrawFlow, {
-      screen: ScreenName.ElrondWithdrawFunds,
+    navigation.navigate(NavigatorName.MultiversxWithdrawFlow, {
+      screen: ScreenName.MultiversxWithdrawFunds,
       params: { account, amount, validator },
     });
   }, [validator, account, navigation, onClose, amount]);
@@ -66,8 +66,8 @@ const useDrawerActions = (
 
   const onUndelegation = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.ElrondUndelegationFlow, {
-      screen: ScreenName.ElrondUndelegationAmount,
+    navigation.navigate(NavigatorName.MultiversxUndelegationFlow, {
+      screen: ScreenName.MultiversxUndelegationAmount,
       params: { account, validator, amount: new BigNumber(amount) },
     });
   }, [validator, account, navigation, onClose, amount]);

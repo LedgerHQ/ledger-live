@@ -262,10 +262,10 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "elrond",
+    "id": "multiversx",
     "ticker": "EGLD",
     "name": "MultiversX",
-    "family": "elrond",
+    "family": "multiversx",
     "color": "#23F7DD",
     "decimals": 18
   },

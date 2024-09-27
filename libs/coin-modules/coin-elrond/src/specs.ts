@@ -28,7 +28,7 @@ const currency = getCryptoCurrencyById("multiversx");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 const maxAccounts = 6;
 
-const ELROND_MIN_ACTIVATION_SAFE = new BigNumber(10000);
+const MULTIVERSX_MIN_ACTIVATION_SAFE = new BigNumber(10000);
 const UNCAPPED_PROVIDER = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlhllllsr0pd0j";
 
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
@@ -156,7 +156,7 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
 }
 
 const multiversx: AppSpec<Transaction> = {
-  name: "Elrond",
+  name: "Multiversx",
   currency: getCryptoCurrencyById("multiversx"),
   appQuery: {
     model: DeviceModelId.nanoS,
@@ -182,12 +182,12 @@ const multiversx: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
 
-        if (!sibling.used && amount.lt(ELROND_MIN_ACTIVATION_SAFE)) {
+        if (!sibling.used && amount.lt(MULTIVERSX_MIN_ACTIVATION_SAFE)) {
           invariant(
-            account.spendableBalance.gt(ELROND_MIN_ACTIVATION_SAFE),
+            account.spendableBalance.gt(MULTIVERSX_MIN_ACTIVATION_SAFE),
             "send is too low to activate account",
           );
-          amount = ELROND_MIN_ACTIVATION_SAFE;
+          amount = MULTIVERSX_MIN_ACTIVATION_SAFE;
         }
 
         return {
@@ -217,7 +217,7 @@ const multiversx: AppSpec<Transaction> = {
 
         if (!sibling.used) {
           invariant(
-            account.spendableBalance.gt(ELROND_MIN_ACTIVATION_SAFE),
+            account.spendableBalance.gt(MULTIVERSX_MIN_ACTIVATION_SAFE),
             "send is too low to activate account",
           );
         }

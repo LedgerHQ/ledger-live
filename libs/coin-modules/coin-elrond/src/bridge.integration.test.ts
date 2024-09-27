@@ -13,7 +13,7 @@ const multiversx: CurrenciesData<Transaction> = {
   ],
   scanAccounts: [
     {
-      name: "elrond seed 1",
+      name: "multiversx seed 1",
       apdus: `
     => ed030000080000000080000000
     <= 3e6572643176676670336737617a716a783477736d7474373036376d306c3632763370736d717a7232346a36787679776a32746c7a3067657376797a7371329000
@@ -27,7 +27,7 @@ const multiversx: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: `js:2:elrond:${TEST_ADDRESS}:`,
+        id: `js:2:multiversx:${TEST_ADDRESS}:`,
         seedIdentifier: `${TEST_ADDRESS}`,
         name: "Multiversx 1",
         derivationMode: "",
@@ -43,12 +43,12 @@ const multiversx: CurrenciesData<Transaction> = {
         subAccounts: [
           {
             // MEX account
-            id: `js:2:elrond:${TEST_ADDRESS}:+4d45582d343535633537`,
+            id: `js:2:multiversx:${TEST_ADDRESS}:+4d45582d343535633537`,
             balance: "100",
             spendableBalance: "100",
             type: "TokenAccountRaw",
-            tokenId: "elrond/esdt/4d45582d343535633537",
-            parentId: `js:2:elrond:${TEST_ADDRESS}:`,
+            tokenId: "multiversx/esdt/4d45582d343535633537",
+            parentId: `js:2:multiversx:${TEST_ADDRESS}:`,
             operations: [],
             pendingOperations: [],
           },
@@ -99,7 +99,7 @@ const multiversx: CurrenciesData<Transaction> = {
             mode: "send",
             fees: null,
             gasLimit: 50000000,
-            subAccountId: `js:2:elrond:${TEST_ADDRESS}:+4d45582d343535633537`,
+            subAccountId: `js:2:multiversx:${TEST_ADDRESS}:+4d45582d343535633537`,
           }),
           expectedStatus: {
             errors: {

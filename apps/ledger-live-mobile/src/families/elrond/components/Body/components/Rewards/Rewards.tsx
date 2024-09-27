@@ -37,8 +37,8 @@ const Rewards = (props: RewardsPropsType) => {
 
   const onCollect = useCallback(
     () =>
-      navigation.navigate(NavigatorName.ElrondClaimRewardsFlow, {
-        screen: ScreenName.ElrondClaimRewardsValidator,
+      navigation.navigate(NavigatorName.MultiversxClaimRewardsFlow, {
+        screen: ScreenName.MultiversxClaimRewardsValidator,
         params: { account, delegations },
       }),
     [navigation, account, delegations],

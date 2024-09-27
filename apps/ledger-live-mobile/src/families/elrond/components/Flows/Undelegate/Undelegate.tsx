@@ -12,12 +12,12 @@ import PickAmount from "./components/PickAmount";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import ElrondUndelegationSelectDevice from "~/screens/SelectDevice";
-import ElrondUndelegationConnectDevice from "~/screens/ConnectDevice";
+import MultiversxUndelegationSelectDevice from "~/screens/SelectDevice";
+import MultiversxUndelegationConnectDevice from "~/screens/ConnectDevice";
 
-import type { ElrondUndelegationFlowParamList } from "./types";
+import type { MultiversxUndelegationFlowParamList } from "./types";
 
-const Stack = createStackNavigator<ElrondUndelegationFlowParamList>();
+const Stack = createStackNavigator<MultiversxUndelegationFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -45,7 +45,7 @@ const Undelegate = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.ElrondUndelegationAmount}
+        name={ScreenName.MultiversxUndelegationAmount}
         component={PickAmount}
         options={props => ({
           headerTitle: () => (
@@ -58,8 +58,8 @@ const Undelegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondUndelegationSelectDevice}
-        component={ElrondUndelegationSelectDevice}
+        name={ScreenName.MultiversxUndelegationSelectDevice}
+        component={MultiversxUndelegationSelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
@@ -74,8 +74,8 @@ const Undelegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondUndelegationConnectDevice}
-        component={ElrondUndelegationConnectDevice}
+        name={ScreenName.MultiversxUndelegationConnectDevice}
+        component={MultiversxUndelegationConnectDevice}
         options={{
           headerLeft: undefined,
           gestureEnabled: false,
@@ -92,7 +92,7 @@ const Undelegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondUndelegationValidationError}
+        name={ScreenName.MultiversxUndelegationValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -101,7 +101,7 @@ const Undelegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondUndelegationValidationSuccess}
+        name={ScreenName.MultiversxUndelegationValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

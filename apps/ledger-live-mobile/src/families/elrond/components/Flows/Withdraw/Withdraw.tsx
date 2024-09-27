@@ -15,9 +15,9 @@ import WithdrawFunds from "./components/WithdrawFunds";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import type { ElrondWithdrawFlowParamList } from "./types";
+import type { MultiversxWithdrawFlowParamList } from "./types";
 
-const Stack = createStackNavigator<ElrondWithdrawFlowParamList>();
+const Stack = createStackNavigator<MultiversxWithdrawFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -45,7 +45,7 @@ const Withdraw = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.ElrondWithdrawFunds}
+        name={ScreenName.MultiversxWithdrawFunds}
         component={WithdrawFunds}
         options={{
           headerTitle: () => <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />,
@@ -53,7 +53,7 @@ const Withdraw = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondWithdrawSelectDevice}
+        name={ScreenName.MultiversxWithdrawSelectDevice}
         component={WithdrawSelectDevice}
         options={{
           headerTitle: () => (
@@ -69,7 +69,7 @@ const Withdraw = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondWithdrawConnectDevice}
+        name={ScreenName.MultiversxWithdrawConnectDevice}
         component={WithdrawConnectDevice}
         options={{
           headerLeft: undefined,
@@ -87,7 +87,7 @@ const Withdraw = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondWithdrawValidationError}
+        name={ScreenName.MultiversxWithdrawValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -96,7 +96,7 @@ const Withdraw = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondWithdrawValidationSuccess}
+        name={ScreenName.MultiversxWithdrawValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

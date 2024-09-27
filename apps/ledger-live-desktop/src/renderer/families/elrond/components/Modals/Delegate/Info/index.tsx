@@ -16,13 +16,13 @@ export interface Props {
   validators: Array<MultiversxProvider>;
   delegations?: Array<DelegationType>;
 }
-const ElrondEarnRewardsInfoModal = (props: Props) => {
+const MultiversxEarnRewardsInfoModal = (props: Props) => {
   const { account, validators, delegations } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
     dispatch(
-      openModal("MODAL_ELROND_DELEGATE", {
+      openModal("MODAL_MULTIVERSX_DELEGATE", {
         account,
         validators,
         delegations,
@@ -36,7 +36,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
   };
   return (
     <EarnRewardsInfoModal
-      name="MODAL_ELROND_REWARDS_INFO"
+      name="MODAL_MULTIVERSX_REWARDS_INFO"
       onNext={onNext}
       description={t("elrond.delegation.flow.steps.starter.description")}
       bullets={Array.from({
@@ -45,7 +45,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
       additional={
         <WarnBox>{t("elrond.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
-      currency="elrond"
+      currency="multiversx"
       footerLeft={
         <LinkWithExternalIcon
           label={t("elrond.delegation.emptyState.info")}
@@ -55,4 +55,4 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
     />
   );
 };
-export default ElrondEarnRewardsInfoModal;
+export default MultiversxEarnRewardsInfoModal;

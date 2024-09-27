@@ -24,7 +24,7 @@ class WithdrawModal extends PureComponent<Data, State> {
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_ELROND_WITHDRAW"
+        name="MODAL_MULTIVERSX_WITHDRAW"
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}

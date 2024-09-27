@@ -24,7 +24,7 @@ class ClaimRewardsModal extends PureComponent<Data, State> {
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_ELROND_CLAIM_REWARDS"
+        name="MODAL_MULTIVERSX_CLAIM_REWARDS"
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}

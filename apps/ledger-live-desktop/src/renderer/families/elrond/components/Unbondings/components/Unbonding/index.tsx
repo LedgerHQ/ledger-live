@@ -66,7 +66,7 @@ const Unbonding = (
   };
   const onWithdraw = useCallback(() => {
     dispatch(
-      openModal("MODAL_ELROND_WITHDRAW", {
+      openModal("MODAL_MULTIVERSX_WITHDRAW", {
         account,
         unbondings,
         contract,

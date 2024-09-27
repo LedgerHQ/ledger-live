@@ -18,14 +18,14 @@ import ValidationSuccess from "./components/ValidationSuccess";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 
-import type { ElrondDelegationFlowParamList } from "./types";
+import type { MultiversxDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 const options = {
   headerShown: false,
 };
 
-const Stack = createStackNavigator<ElrondDelegationFlowParamList>();
+const Stack = createStackNavigator<MultiversxDelegationFlowParamList>();
 
 /*
  * Handle the component declaration.
@@ -49,7 +49,7 @@ const Delegate = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.ElrondDelegationStarted}
+        name={ScreenName.MultiversxDelegationStarted}
         component={EarnRewards}
         options={{
           headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
@@ -57,7 +57,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationValidator}
+        name={ScreenName.MultiversxDelegationValidator}
         component={SetDelegation}
         options={{
           gestureEnabled: false,
@@ -74,7 +74,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationValidatorList}
+        name={ScreenName.MultiversxDelegationValidatorList}
         component={PickValidator}
         options={{
           gestureEnabled: false,
@@ -83,7 +83,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationAmount}
+        name={ScreenName.MultiversxDelegationAmount}
         component={PickAmount}
         options={props => ({
           headerTitle: () => (
@@ -96,7 +96,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationSelectDevice}
+        name={ScreenName.MultiversxDelegationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
@@ -112,7 +112,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationConnectDevice}
+        name={ScreenName.MultiversxDelegationConnectDevice}
         component={ConnectDevice}
         options={{
           headerLeft: undefined,
@@ -130,7 +130,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationValidationError}
+        name={ScreenName.MultiversxDelegationValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -139,7 +139,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.ElrondDelegationValidationSuccess}
+        name={ScreenName.MultiversxDelegationValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

@@ -4,9 +4,9 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
-import { ElrondFamily } from "./types";
+import { MultiversxFamily } from "./types";
 
-const family: ElrondFamily = {
+const family: MultiversxFamily = {
   operationDetails,
   accountHeaderManageActions,
   AccountBodyHeader,

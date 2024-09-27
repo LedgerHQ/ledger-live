@@ -9,24 +9,24 @@ import type { ScreenName } from "~/const";
 import type { DelegationType } from "../../../types";
 
 export type MultiversxClaimRewardsFlowParamList = {
-  [ScreenName.ElrondClaimRewardsValidator]: {
+  [ScreenName.MultiversxClaimRewardsValidator]: {
     delegations: DelegationType[];
     account: MultiversxAccount;
   };
-  [ScreenName.ElrondClaimRewardsMethod]: {
+  [ScreenName.MultiversxClaimRewardsMethod]: {
     transaction?: Transaction;
     account: MultiversxAccount;
     recipient: string;
     value: string;
     name: string;
   };
-  [ScreenName.ElrondClaimRewardsSelectDevice]: {
+  [ScreenName.MultiversxClaimRewardsSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.ElrondClaimRewardsConnectDevice]: {
+  [ScreenName.MultiversxClaimRewardsConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -39,13 +39,13 @@ export type MultiversxClaimRewardsFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.ElrondClaimRewardsValidationError]: {
+  [ScreenName.MultiversxClaimRewardsValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.ElrondClaimRewardsValidationSuccess]: {
+  [ScreenName.MultiversxClaimRewardsValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

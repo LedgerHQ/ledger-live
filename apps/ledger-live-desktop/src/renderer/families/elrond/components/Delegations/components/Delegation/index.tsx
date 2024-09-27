@@ -59,7 +59,7 @@ type Props = DelegationType & {
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
-    {item.key === "MODAL_ELROND_CLAIM_REWARDS" && item.divider && <Divider />}
+    {item.key === "MODAL_MULTIVERSX_CLAIM_REWARDS" && item.divider && <Divider />}
 
     <ToolTip
       content={item.tooltip}
@@ -98,7 +98,7 @@ const Delegation = (props: Props) => {
     const items = [] as DropDownItemType[];
     if (BigNumber(userActiveStake).gt(0)) {
       items.push({
-        key: "MODAL_ELROND_UNDELEGATE",
+        key: "MODAL_MULTIVERSX_UNDELEGATE",
         label: "elrond.delegation.undelegate",
         parameters: {
           account,
@@ -111,7 +111,7 @@ const Delegation = (props: Props) => {
     }
     if (BigNumber(claimableRewards).gt(0)) {
       items.push({
-        key: "MODAL_ELROND_CLAIM_REWARDS",
+        key: "MODAL_MULTIVERSX_CLAIM_REWARDS",
         label: "elrond.delegation.reward",
         divider: BigNumber(userActiveStake).gt(0),
         parameters: {

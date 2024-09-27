@@ -5,7 +5,7 @@ import type { ScreenName } from "~/const";
 
 export type PickValidatorPropsType = StackNavigatorProps<
   MultiversxClaimRewardsFlowParamList,
-  ScreenName.ElrondClaimRewardsValidator
+  ScreenName.MultiversxClaimRewardsValidator
 >;
 
 export interface onSelectType {

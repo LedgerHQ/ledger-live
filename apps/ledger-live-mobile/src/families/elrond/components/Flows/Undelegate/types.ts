@@ -10,19 +10,19 @@ import type {
 import type { ScreenName } from "~/const";
 
 export type MultiversxUndelegationFlowParamList = {
-  [ScreenName.ElrondUndelegationAmount]: {
+  [ScreenName.MultiversxUndelegationAmount]: {
     amount: BigNumber;
     validator: MultiversxProvider;
     account: MultiversxAccount;
     transaction: Transaction;
   };
-  [ScreenName.ElrondUndelegationSelectDevice]: {
+  [ScreenName.MultiversxUndelegationSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.ElrondUndelegationConnectDevice]: {
+  [ScreenName.MultiversxUndelegationConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -35,13 +35,13 @@ export type MultiversxUndelegationFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.ElrondUndelegationValidationError]: {
+  [ScreenName.MultiversxUndelegationValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.ElrondUndelegationValidationSuccess]: {
+  [ScreenName.MultiversxUndelegationValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

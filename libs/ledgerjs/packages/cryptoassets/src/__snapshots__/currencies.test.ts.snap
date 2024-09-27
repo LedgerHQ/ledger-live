@@ -7,6 +7,7 @@ exports[`all USDT are countervalue enabled 1`] = `
   "bsc/bep20/tether_usd_wormhole_0x524bc91dc82d6b90ef29f76a3ecaabafffd490bc",
   "elrond/esdt/555344542d663863303863",
   "ethereum/erc20/usd_tether__erc20_",
+  "multiversx/esdt/555344542d663863303863",
   "polygon/erc20/(pos)_tether_usd",
   "ton/jetton/eqcxe6mutqjkfngfarotkot1lzbdiix1kcixrv7nw2id_sds",
   "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",

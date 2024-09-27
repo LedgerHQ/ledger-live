@@ -47,8 +47,8 @@ const getMainActions = ({
   const isFirstTimeFlow =
     account.multiversxResources && account.multiversxResources.delegations.length === 0;
   const screen = isFirstTimeFlow
-    ? ScreenName.ElrondDelegationStarted
-    : ScreenName.ElrondDelegationValidator;
+    ? ScreenName.MultiversxDelegationStarted
+    : ScreenName.MultiversxDelegationValidator;
 
   /*
    * Return an empty array if "multiversxResources" doesn't exist.
@@ -63,7 +63,7 @@ const getMainActions = ({
    */
   const navigationParams: NavigationParamsType = delegationEnabled
     ? [
-        NavigatorName.ElrondDelegationFlow,
+        NavigatorName.MultiversxDelegationFlow,
         {
           screen,
           params: {
@@ -91,7 +91,7 @@ const getMainActions = ({
       Icon: IconsLegacy.CoinsMedium,
       navigationParams,
       eventProperties: {
-        currency: "ELROND",
+        currency: "MULTIVERSX",
       },
     },
   ];

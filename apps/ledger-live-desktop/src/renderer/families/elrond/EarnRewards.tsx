@@ -106,7 +106,7 @@ const Delegation = (props: DelegationPropsType) => {
   }, [account.multiversxResources]);
   const onEarnRewards = useCallback(() => {
     dispatch(
-      openModal("MODAL_ELROND_REWARDS_INFO", {
+      openModal("MODAL_MULTIVERSX_REWARDS_INFO", {
         account,
         validators,
         delegations,
@@ -116,7 +116,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onDelegate = useCallback(() => {
     if (validators) {
       dispatch(
-        openModal("MODAL_ELROND_DELEGATE", {
+        openModal("MODAL_MULTIVERSX_DELEGATE", {
           account,
           validators,
           delegations,
@@ -127,7 +127,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onClaimRewards = useCallback(() => {
     if (validators && delegations) {
       dispatch(
-        openModal("MODAL_ELROND_CLAIM_REWARDS", {
+        openModal("MODAL_MULTIVERSX_CLAIM_REWARDS", {
           account,
           validators,
           delegations,
