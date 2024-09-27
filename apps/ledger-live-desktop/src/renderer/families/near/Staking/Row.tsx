@@ -88,7 +88,6 @@ export function Row({
     validatorId,
     staked,
     formattedAmount,
-    formattedRewards,
     formattedPending,
     formattedAvailable,
     validator,
@@ -149,11 +148,6 @@ export function Row({
       <Column>
         <Ellipsis>
           <Discreet>{formattedAmount}</Discreet>
-        </Ellipsis>
-      </Column>
-      <Column>
-        <Ellipsis>
-          <Discreet>{formattedRewards}</Discreet>
         </Ellipsis>
       </Column>
       <Column>
