@@ -16,17 +16,13 @@ on:
         description: The base branch to merge the head into when checking out the code
         required: false
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
 jobs:
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -105,7 +101,7 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
   report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
