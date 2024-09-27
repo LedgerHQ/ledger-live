@@ -12,19 +12,24 @@ import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 import Text from "~/renderer/components/Text";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
+import {
+  Ellipsis,
+  Column,
+  Wrapper,
+  Divider,
+} from "~/renderer/families/multiversx/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxProvider,
   MultiversxAccount as AccountType,
 } from "@ledgerhq/live-common/families/elrond/types";
-import { ModalsData } from "~/renderer/families/elrond/modals";
+import { ModalsData } from "~/renderer/families/multiversx/modals";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
