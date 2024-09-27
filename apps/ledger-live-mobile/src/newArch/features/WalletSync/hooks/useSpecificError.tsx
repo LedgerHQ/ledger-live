@@ -68,7 +68,7 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
   };
 
   const onCreate = (props: AnalyticsProps) => {
-    onClickTrack({ button: AnalyticsButton.CreateYourKey, ...props });
+    onClickTrack({ button: AnalyticsButton.SyncYourAccounts, ...props });
   };
 
   const ContinueWihtoutSync = (props: AnalyticsProps) => {
@@ -82,7 +82,6 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       description: t(
         "walletSync.walletSyncActivated.synchronizedInstances.unsecuredError.description",
       ),
-      info: t("walletSync.walletSyncActivated.synchronizedInstances.unsecuredError.info"),
       cta: t("walletSync.walletSyncActivated.synchronizedInstances.unsecuredError.cta"),
       ctaSecondary: t(
         "walletSync.walletSyncActivated.synchronizedInstances.unsecuredError.ctaDelete",
@@ -104,7 +103,6 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       description: t(
         "walletSync.walletSyncActivated.synchronizedInstances.autoRemoveError.description",
       ),
-      info: t("walletSync.walletSyncActivated.synchronizedInstances.autoRemoveError.info"),
       cta: t("walletSync.walletSyncActivated.synchronizedInstances.autoRemoveError.cta"),
       ctaSecondary: t(
         "walletSync.walletSyncActivated.synchronizedInstances.autoRemoveError.ctaDelete",
@@ -166,6 +164,7 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.title"),
       description: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.description"),
+      info: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.info"),
       cta: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.cta"),
       analyticsPage: AnalyticsPage.ScanAttemptWithDifferentBackups,
       buttonType: "main" as ButtonProps["type"],
@@ -190,6 +189,7 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.qrCode.unbackedOnboarding.title"),
       description: t("walletSync.synchronize.qrCode.unbackedOnboarding.description"),
+      info: t("walletSync.synchronize.qrCode.unbackedOnboarding.info"),
       cta: t("walletSync.synchronize.qrCode.unbackedOnboarding.cta"),
       ctaSecondary: t("walletSync.synchronize.qrCode.unbackedOnboarding.cancel"),
       analyticsPage: AnalyticsPage.OnBoardingQRCodeNoBackup,
@@ -210,6 +210,8 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
     [ErrorReason.NO_BACKUP_ONBOARDING_DEVICE]: {
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.unbackedOnboarding.title"),
+      description: t("walletSync.synchronize.unbackedOnboarding.description"),
+      info: t("walletSync.synchronize.unbackedOnboarding.info"),
       cta: t("walletSync.synchronize.unbackedOnboarding.cta"),
       ctaSecondary: t("walletSync.synchronize.unbackedOnboarding.cancel"),
       analyticsPage: AnalyticsPage.OnBoardingDeviceNoBackup,

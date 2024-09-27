@@ -52,11 +52,3 @@ export type ExtraMetadata = {
   animation_original_url: string | null;
   metadata_original_url: string | null;
 };
-
-export type Sat = {
-  extra_metadata: ExtraMetadata;
-};
-
-export type MockedRareSat = {
-  nfts: Sat[];
-};

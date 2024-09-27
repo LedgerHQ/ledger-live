@@ -296,6 +296,7 @@ export type EarnState = {
   infoModal: {
     message?: string;
     messageTitle?: string;
+    learnMoreLink?: string;
   };
 };
 

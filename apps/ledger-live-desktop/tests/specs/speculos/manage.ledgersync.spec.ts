@@ -27,8 +27,10 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectSyncAccountsButtonExist();
 
       await app.ledgerSync.syncAccounts();
-      await app.speculos.confirmOperationOnDevice("Log in to");
-      await app.speculos.confirmOperationOnDevice("Enable");
+      await app.speculos.clickNextUntilText("Make sure");
+      await app.speculos.confirmOperationOnDevice("Connect with");
+      await app.speculos.clickNextUntilText("Your crypto accounts");
+      await app.speculos.confirmOperationOnDevice("Turn on sync?");
       await app.ledgerSync.expectSynchronizationSuccess();
       await app.ledgerSync.closeLedgerSync();
 

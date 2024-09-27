@@ -175,7 +175,7 @@ export interface TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: GetOrCreateTrustchainCallbacks,
     topic?: Uint8Array,
-    currentTrustchainId?: string,
+    currentTrustchain?: Trustchain,
   ): Promise<TrustchainResult>;
 
   /**

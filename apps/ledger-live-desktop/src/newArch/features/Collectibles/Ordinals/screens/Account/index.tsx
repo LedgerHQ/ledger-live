@@ -1,20 +1,33 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/react-ui";
 import Inscriptions from "../../components/Inscriptions";
 import RareSats from "../../components/RareSats";
-import { Flex } from "@ledgerhq/react-ui";
+import DiscoveryDrawer from "../../components/Inscriptions/DiscoveryDrawer";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
+import { useBitcoinAccountModel } from "./useBitcoinAccountModel";
 
-type Props = {
-  account: Account;
-};
+type ViewProps = ReturnType<typeof useBitcoinAccountModel>;
 
-const OrdinalsAccount: React.FC<Props> = ({ account }) => {
-  return (
-    <Flex mb={50} width="100%" flexDirection="column" rowGap={40}>
-      <Inscriptions account={account} />
-      <RareSats />
-    </Flex>
-  );
-};
+interface Props {
+  account: BitcoinAccount;
+}
+
+const View: React.FC<ViewProps> = ({
+  inscriptions,
+  rest,
+  rareSats,
+  isDrawerOpen,
+  handleDrawerClose,
+}) => (
+  <Flex mb={50} width="100%" flexDirection="column" rowGap={40}>
+    <Inscriptions inscriptions={inscriptions} {...rest} />
+    <RareSats rareSats={rareSats} {...rest} />
+    <DiscoveryDrawer isOpen={isDrawerOpen} onClose={handleDrawerClose} />
+  </Flex>
+);
+
+const OrdinalsAccount: React.FC<Props> = ({ account }) => (
+  <View {...useBitcoinAccountModel({ account })} />
+);
 
 export default OrdinalsAccount;

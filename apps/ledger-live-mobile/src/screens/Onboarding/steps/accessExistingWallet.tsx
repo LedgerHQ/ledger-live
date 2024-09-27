@@ -91,12 +91,12 @@ function AccessExistingWallet() {
                   title: t("onboarding.welcomeBackStep.walletSync"),
                   event: "button_clicked",
                   eventProperties: {
-                    button: AnalyticsButton.SyncWithAnotherLedgerLive,
+                    button: AnalyticsButton.UseLedgerSync,
                     page: AnalyticsPage.OnboardingAccessExistingWallet,
                   },
                   testID: "Existing Wallet | Wallet Sync",
                   onPress: openDrawer,
-                  icon: <Icons.QrCode color={colors.primary.c80} />,
+                  icon: <Icons.Refresh color={colors.primary.c80} />,
                 },
               ]
             : [
@@ -115,7 +115,7 @@ function AccessExistingWallet() {
       />
 
       <ActivationDrawer
-        startingStep={Steps.Activation}
+        startingStep={Steps.ChooseSyncMethod}
         isOpen={isDrawerVisible}
         handleClose={closeDrawer}
       />

@@ -42,41 +42,23 @@ describe("ManageYourBackup", () => {
 
     await user.click(row);
 
-    await waitFor(() =>
-      expect(screen.getByTestId("walletSync-manage-backup-delete")).toBeDefined(),
-    );
-    const deleteCard = screen.getByTestId("walletSync-manage-backup-delete");
-    await user.click(deleteCard);
-
-    await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
-    );
-
     // First we cancel the deletion
-    const cancelButton = screen.getByRole("button", { name: "Cancel" });
+    const cancelButton = screen.getByRole("button", { name: "Keep sync" });
     expect(cancelButton).toBeDefined();
 
     await user.click(cancelButton);
 
-    await waitFor(() => expect(screen.getByText("Manage your key")).toBeDefined());
-    expect(screen.getByTestId("walletSync-manage-backup-delete")).toBeDefined();
-
-    // go back to confirmation screen
-    await user.click(screen.getByTestId("walletSync-manage-backup-delete"));
-    await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
-    );
+    await waitFor(() => expect(row).toBeDefined());
+    await user.click(screen.getByText(/Delete sync/i));
 
     // Then we do the deletion
-    const deleteButton = screen.getByRole("button", { name: "Delete" });
+    const deleteButton = screen.getByRole("button", { name: "Yes, delete" });
     expect(deleteButton).toBeDefined();
     await user.click(deleteButton);
 
     //Success message
     await waitFor(() =>
-      expect(
-        screen.getByText("Your devices have been unsynchronized and your key has been deleted"),
-      ).toBeDefined(),
+      expect(screen.getByText("Your Ledger Live apps are no longer synched")).toBeDefined(),
     );
   });
 });

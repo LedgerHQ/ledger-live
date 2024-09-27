@@ -2,6 +2,7 @@ import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
 import { convertKeyPairToLiveCredentials } from "../sdk";
 import { crypto } from "@ledgerhq/hw-trustchain";
+import { ScannedInvalidQrCode, ScannedOldImportQrCode } from "../errors";
 
 describe("Trustchain QR Code", () => {
   let server;
@@ -82,5 +83,56 @@ describe("Trustchain QR Code", () => {
       expect.any(Function),
     );
     expect(res).toEqual(trustchain);
+  });
+  test("invalid qr code scanned", async () => {
+    const trustchain = {
+      rootId: "test-root-id",
+      walletSyncEncryptionKey: "test-wallet-sync-encryption-key",
+      applicationPath: "m/0'/16'/0'",
+    };
+    const addMember = jest.fn(() => Promise.resolve(trustchain));
+    const memberCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
+    const memberName = "foo";
+
+    const onRequestQRCodeInput = jest.fn();
+
+    const scannedUrl = "https://example.com";
+
+    const candidateP = createQRCodeCandidateInstance({
+      memberCredentials,
+      memberName,
+      initialTrustchainId: undefined,
+      addMember,
+      scannedUrl,
+      onRequestQRCodeInput,
+    });
+
+    await expect(candidateP).rejects.toThrow(new ScannedInvalidQrCode());
+  });
+  test("old accounts export qr code scanned", async () => {
+    const trustchain = {
+      rootId: "test-root-id",
+      walletSyncEncryptionKey: "test-wallet-sync-encryption-key",
+      applicationPath: "m/0'/16'/0'",
+    };
+    const addMember = jest.fn(() => Promise.resolve(trustchain));
+    const memberCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
+    const memberName = "foo";
+
+    const onRequestQRCodeInput = jest.fn();
+
+    const scannedUrl =
+      "ZAADAAIAAAAEd2JXMpuoYdzvkNzFTlmQLPcGf2LSjDOgqaB3nQoZqlimcCX6HNkescWKyT1DCGuwO7IesD7oYg+fdZPkiIfFL3V9swfZRePkaNN09IjXsWLsim9hK/qi/RC1/ofX3hYNKUxUAgYVVG82WKXIk47siWfUlRZsCYSAARQ6ASpUgidPjMHaOMK6w53wTZplwo7Zjv1HrIyKwr3Ci8OmrFye5g==";
+
+    const candidateP = createQRCodeCandidateInstance({
+      memberCredentials,
+      memberName,
+      initialTrustchainId: undefined,
+      addMember,
+      scannedUrl,
+      onRequestQRCodeInput,
+    });
+
+    await expect(candidateP).rejects.toThrow(new ScannedOldImportQrCode());
   });
 });

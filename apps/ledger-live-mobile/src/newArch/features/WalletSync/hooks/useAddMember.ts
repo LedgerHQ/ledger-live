@@ -61,7 +61,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
             onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
           },
           undefined,
-          trustchainRef?.current?.rootId,
+          trustchainRef.current ?? undefined,
         );
         if (trustchainResult) {
           transitionToNextScreen(trustchainResult);

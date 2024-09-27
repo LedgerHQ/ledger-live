@@ -64,6 +64,7 @@ export const INITIAL_TEST = (state: State) => ({
         params: {
           environment: "STAGING",
           watchConfig: {},
+          learnMoreLink: "https://www.ledger.com",
         },
       },
     },

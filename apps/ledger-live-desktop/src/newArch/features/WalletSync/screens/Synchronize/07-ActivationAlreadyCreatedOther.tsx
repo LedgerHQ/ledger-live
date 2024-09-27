@@ -13,9 +13,9 @@ export default function AlreadyCreatedOtherSeedStep() {
   const { onClickTrack } = useLedgerSyncAnalytics();
 
   const deleteKey = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.DeleteBackup }));
     onClickTrack({
-      button: "Delete my encryption key",
+      button: "Delete sync",
       page: AnalyticsPage.AlreadySecuredOtherSeed,
     });
   };

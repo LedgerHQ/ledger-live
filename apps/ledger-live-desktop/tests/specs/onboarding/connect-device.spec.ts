@@ -25,8 +25,7 @@ test.describe.parallel("Onboarding", () => {
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
         await onboardingPage.hoverDevice(Nano.nanoS);
-        await new Promise(r => setTimeout(r, 300)); // wait for the animation to finish
-        await expect(page).toHaveScreenshot("v3-device-selection.png");
+        await expect(page).toHaveScreenshot("v3-device-selection.png", { animations: "disabled" });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {

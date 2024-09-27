@@ -29,6 +29,7 @@ export const lldWalletSyncFeatureFlag = {
         initialTimeout: 5000,
         userIntentDebounce: 1000,
       },
+      learnMoreLink: "https://www.ledger.com",
     },
   },
 };

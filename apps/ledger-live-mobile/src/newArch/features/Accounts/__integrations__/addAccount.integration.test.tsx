@@ -40,11 +40,11 @@ describe("AddAccount", () => {
     });
     // Wait for the drawer to open
     await expect(await screen.findByText(/add another account/i));
-    await expect(await screen.findByText(/add with your ledger/i));
-    await expect(await screen.findByText(/import via another ledger live app/i));
+    await expect(await screen.findByText(/Use your Ledger device/i));
+    await expect(await screen.findByText(/Use Ledger Sync/i));
     // On press add with another ledger live app
     await act(async () => {
-      await user.press(await screen.getByText(/add with your ledger/i));
+      await user.press(await screen.getByText(/Use your Ledger device/i));
     });
     await expect(await screen.findByText(/crypto asset/i)).toBeVisible();
     // On click back
@@ -88,11 +88,11 @@ describe("AddAccount", () => {
     });
     // Wait for the drawer to open
     await expect(await screen.findByText(/add another account/i));
-    await expect(await screen.findByText(/add with your ledger/i));
-    await expect(await screen.findByText(/import via another ledger live app/i));
+    await expect(await screen.findByText(/Use your Ledger device/i));
+    await expect(await screen.findByText(/Use Ledger Sync/i));
     // On press add with wallet sync
     await act(async () => {
-      await user.press(await screen.getByText(/import via another ledger live app/i));
+      await user.press(await screen.getByText(/Use Ledger Sync/i));
     });
     await expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
     await expect(await screen.findByText(/Scan a QR code/i));
@@ -118,7 +118,7 @@ describe("AddAccount", () => {
     await user.press(addAssetButton);
     // Wait for the drawer to open
     await expect(await screen.findByText(/add another account/i));
-    await expect(await screen.findByText(/add with your ledger/i));
+    await expect(await screen.findByText(/Use your Ledger device/i));
     await expect(await screen.findByText(/import from desktop/i));
     // On press add from desktop
     await user.press(await screen.getByText(/import from desktop/i));

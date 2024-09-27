@@ -15,6 +15,7 @@ export type SendAmountFieldsProps = {
   trackProperties?: Record<string, unknown>;
   transactionToUpdate?: Transaction;
   disableSlowStrategy?: boolean;
+  disableEditGasLimit?: boolean;
 };
 
 const AmountRelatedField = (props: SendAmountFieldsProps) => {

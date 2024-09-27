@@ -42,7 +42,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
     onClickTrack({
-      button: "Already synced a Ledger Live app?",
+      button: "I already turned it on",
       page: AnalyticsPage.Activation,
       flow: AnalyticsFlow,
     });
@@ -51,7 +51,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
   const goToCreateBackup = () => {
     goToNextScene();
     onClickTrack({
-      button: "Sync your accounts",
+      button: "Turn on Ledger Sync",
       page: AnalyticsPage.Activation,
       flow: AnalyticsFlow,
     });
@@ -90,7 +90,6 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
       paddingX="64px"
       alignItems="center"
       justifyContent="center"
-      rowGap="48px"
     >
       {getStep()}
     </Flex>

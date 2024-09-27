@@ -15,7 +15,7 @@ import CustomImage from "~/renderer/screens/customImage";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
 import { safeList } from "LLD/features/Collectibles/utils/useSafeList";
-import { ItemType } from "LLD/features/Collectibles/types/Links";
+import { ItemType } from "~/newArch/features/Collectibles/types/enum/Links";
 
 const linksPerCurrency: Record<
   string,

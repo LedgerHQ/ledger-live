@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.5.2",
+  "version": "24.6.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -30,6 +30,8 @@
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",

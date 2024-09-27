@@ -27,11 +27,20 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
     goBack,
   }));
 
-  const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
+  const {
+    currentStep,
+    goToNextScene,
+    goToPreviousScene,
+    goToWelcomeScreenWalletSync,
+    currentFlow,
+  } = useFlows();
   const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goBack = () => {
-    if (currentStep === FlowOptions[Flow.Synchronize].steps[1]) {
+    if (
+      currentStep === FlowOptions[Flow.Synchronize].steps[1] ||
+      (currentFlow === Flow.Synchronize && currentStep === Step.SynchronizeWithQRCode)
+    ) {
       goToWelcomeScreenWalletSync();
     } else {
       goToPreviousScene();

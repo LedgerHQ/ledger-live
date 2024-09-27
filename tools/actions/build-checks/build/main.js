@@ -1,44 +1,10 @@
 "use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __knownSymbol = (name, symbol) => {
-  return (symbol = Symbol[name]) ? symbol : Symbol.for("Symbol." + name);
-};
-var __pow = Math.pow;
-var __defNormalProp = (obj2, key, value) => key in obj2 ? __defProp(obj2, key, { enumerable: true, configurable: true, writable: true, value }) : obj2[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var __restKey = (key) => typeof key === "symbol" ? key : key + "";
-var __objRest = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -66,108 +32,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __publicField = (obj2, key, value) => {
-  __defNormalProp(obj2, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-var __accessCheck = (obj2, member, msg) => {
-  if (!member.has(obj2))
-    throw TypeError("Cannot " + msg);
-};
-var __privateIn = (member, obj2) => {
-  if (Object(obj2) !== obj2)
-    throw TypeError('Cannot use the "in" operator on this value');
-  return member.has(obj2);
-};
-var __privateGet = (obj2, member, getter) => {
-  __accessCheck(obj2, member, "read from private field");
-  return getter ? getter.call(obj2) : member.get(obj2);
-};
-var __privateAdd = (obj2, member, value) => {
-  if (member.has(obj2))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj2) : member.set(obj2, value);
-};
-var __privateSet = (obj2, member, value, setter) => {
-  __accessCheck(obj2, member, "write to private field");
-  setter ? setter.call(obj2, value) : member.set(obj2, value);
-  return value;
-};
-var __privateMethod = (obj2, member, method) => {
-  __accessCheck(obj2, member, "access private method");
-  return method;
-};
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
-var __await = function(promise, isYieldStar) {
-  this[0] = promise;
-  this[1] = isYieldStar;
-};
-var __asyncGenerator = (__this, __arguments, generator) => {
-  var resume = (k, v, yes, no) => {
-    try {
-      var x = generator[k](v), isAwait = (v = x.value) instanceof __await, done = x.done;
-      Promise.resolve(isAwait ? v[0] : v).then((y) => isAwait ? resume(k === "return" ? k : "next", v[1] ? { done: y.done, value: y.value } : y, yes, no) : yes({ value: y, done })).catch((e) => resume("throw", e, yes, no));
-    } catch (e) {
-      no(e);
-    }
-  };
-  var method = (k) => it[k] = (x) => new Promise((yes, no) => resume(k, x, yes, no));
-  var it = {};
-  return generator = generator.apply(__this, __arguments), it[__knownSymbol("asyncIterator")] = () => it, method("next"), method("throw"), method("return"), it;
-};
-var __yieldStar = (value) => {
-  var obj2 = value[__knownSymbol("asyncIterator")];
-  var isAwait = false;
-  var method;
-  var it = {};
-  if (obj2 == null) {
-    obj2 = value[__knownSymbol("iterator")]();
-    method = (k) => it[k] = (x) => obj2[k](x);
-  } else {
-    obj2 = obj2.call(value);
-    method = (k) => it[k] = (v) => {
-      if (isAwait) {
-        isAwait = false;
-        if (k === "throw")
-          throw v;
-        return v;
-      }
-      isAwait = true;
-      return {
-        done: false,
-        value: new __await(new Promise((resolve) => {
-          var x = obj2[k](v);
-          if (!(x instanceof Object))
-            throw TypeError("Object expected");
-          resolve(x);
-        }), 1)
-      };
-    };
-  }
-  return it[__knownSymbol("iterator")] = () => it, method("next"), "throw" in obj2 ? method("throw") : it.throw = (x) => {
-    throw x;
-  }, "return" in obj2 && method("return"), it;
-};
-var __forAwait = (obj2, it, method) => (it = obj2[__knownSymbol("asyncIterator")]) ? it.call(obj2) : (obj2 = obj2[__knownSymbol("iterator")](), it = {}, method = (key, fn) => (fn = obj2[key]) && (it[key] = (arg) => new Promise((yes, no, done) => (arg = fn.call(obj2, arg), done = arg.done, Promise.resolve(arg.value).then((value) => yes({ value, done }), no)))), method("next"), method("return"), it);
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/utils.js
 var require_utils = __commonJS({
@@ -723,7 +587,7 @@ var require_proxy = __commonJS({
       if (proxyVar) {
         try {
           return new URL(proxyVar);
-        } catch (_a2) {
+        } catch (_a) {
           if (!proxyVar.startsWith("http://") && !proxyVar.startsWith("https://"))
             return new URL(`http://${proxyVar}`);
         }
@@ -1553,24 +1417,10 @@ var require_util = __commonJS({
         bytesRead: socket.bytesRead
       };
     }
-    function convertIterableToBuffer(iterable) {
-      return __asyncGenerator(this, null, function* () {
-        try {
-          for (var iter = __forAwait(iterable), more, temp, error; more = !(temp = yield new __await(iter.next())).done; more = false) {
-            const chunk = temp.value;
-            yield Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-          }
-        } catch (temp) {
-          error = [temp];
-        } finally {
-          try {
-            more && (temp = iter.return) && (yield new __await(temp.call(iter)));
-          } finally {
-            if (error)
-              throw error[0];
-          }
-        }
-      });
+    async function* convertIterableToBuffer(iterable) {
+      for await (const chunk of iterable) {
+        yield Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      }
     }
     var ReadableStream2;
     function ReadableStreamFrom(iterable) {
@@ -1583,29 +1433,23 @@ var require_util = __commonJS({
       let iterator2;
       return new ReadableStream2(
         {
-          start() {
-            return __async(this, null, function* () {
-              iterator2 = iterable[Symbol.asyncIterator]();
-            });
+          async start() {
+            iterator2 = iterable[Symbol.asyncIterator]();
           },
-          pull(controller) {
-            return __async(this, null, function* () {
-              const { done, value } = yield iterator2.next();
-              if (done) {
-                queueMicrotask(() => {
-                  controller.close();
-                });
-              } else {
-                const buf = Buffer.isBuffer(value) ? value : Buffer.from(value);
-                controller.enqueue(new Uint8Array(buf));
-              }
-              return controller.desiredSize > 0;
-            });
+          async pull(controller) {
+            const { done, value } = await iterator2.next();
+            if (done) {
+              queueMicrotask(() => {
+                controller.close();
+              });
+            } else {
+              const buf = Buffer.isBuffer(value) ? value : Buffer.from(value);
+              controller.enqueue(new Uint8Array(buf));
+            }
+            return controller.desiredSize > 0;
           },
-          cancel(reason) {
-            return __async(this, null, function* () {
-              yield iterator2.return();
-            });
+          async cancel(reason) {
+            await iterator2.return();
           }
         },
         0
@@ -2379,7 +2223,7 @@ var require_decodeText = __commonJS({
         if (textDecoders.has(exports2.toString())) {
           try {
             return textDecoders.get(exports2).decode(data);
-          } catch (e) {
+          } catch {
           }
         }
         return typeof data === "string" ? data : data.toString();
@@ -3711,14 +3555,14 @@ var require_main = __commonJS({
       if (typeof opts.headers["content-type"] !== "string") {
         throw new TypeError("Missing Content-Type-header.");
       }
-      const _a2 = opts, {
-        headers
-      } = _a2, streamOptions = __objRest(_a2, [
-        "headers"
-      ]);
-      this.opts = __spreadValues({
-        autoDestroy: false
-      }, streamOptions);
+      const {
+        headers,
+        ...streamOptions
+      } = opts;
+      this.opts = {
+        autoDestroy: false,
+        ...streamOptions
+      };
       WritableStream.call(this, this.opts);
       this._done = false;
       this._parser = this.getParserByHeaders(headers);
@@ -3726,10 +3570,9 @@ var require_main = __commonJS({
     }
     inherits2(Busboy, WritableStream);
     Busboy.prototype.emit = function(ev) {
-      var _a2;
       if (ev === "finish") {
         if (!this._done) {
-          (_a2 = this._parser) == null ? void 0 : _a2.end();
+          this._parser?.end();
           return;
         } else if (this._finished) {
           return;
@@ -3917,8 +3760,7 @@ var require_constants = __commonJS({
       ""
     ];
     var subresourceSet = new Set(subresource);
-    var _a2;
-    var DOMException2 = (_a2 = globalThis.DOMException) != null ? _a2 : (() => {
+    var DOMException2 = globalThis.DOMException ?? (() => {
       try {
         atob("~");
       } catch (err) {
@@ -3926,23 +3768,20 @@ var require_constants = __commonJS({
       }
     })();
     var channel;
-    var _a3;
-    var structuredClone = (_a3 = globalThis.structuredClone) != null ? _a3 : (
-      // https://github.com/nodejs/node/blob/b27ae24dcc4251bad726d9d84baf678d1f707fed/lib/internal/structured_clone.js
-      // structuredClone was added in v17.0.0, but fetch supports v16.8
-      function structuredClone2(value, options = void 0) {
-        if (arguments.length === 0) {
-          throw new TypeError("missing argument");
-        }
-        if (!channel) {
-          channel = new MessageChannel2();
-        }
-        channel.port1.unref();
-        channel.port2.unref();
-        channel.port1.postMessage(value, options == null ? void 0 : options.transfer);
-        return receiveMessageOnPort(channel.port2).message;
+    var structuredClone = globalThis.structuredClone ?? // https://github.com/nodejs/node/blob/b27ae24dcc4251bad726d9d84baf678d1f707fed/lib/internal/structured_clone.js
+    // structuredClone was added in v17.0.0, but fetch supports v16.8
+    function structuredClone2(value, options = void 0) {
+      if (arguments.length === 0) {
+        throw new TypeError("missing argument");
       }
-    );
+      if (!channel) {
+        channel = new MessageChannel2();
+      }
+      channel.port1.unref();
+      channel.port2.unref();
+      channel.port1.postMessage(value, options?.transfer);
+      return receiveMessageOnPort(channel.port2).message;
+    };
     module2.exports = {
       DOMException: DOMException2,
       structuredClone,
@@ -4020,7 +3859,7 @@ var require_util2 = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     function responseURL(response) {
       const urlList = response.urlList;
@@ -4051,8 +3890,7 @@ var require_util2 = __commonJS({
       return "allowed";
     }
     function isErrorLike(object) {
-      var _a2, _b;
-      return object instanceof Error || (((_a2 = object == null ? void 0 : object.constructor) == null ? void 0 : _a2.name) === "Error" || ((_b = object == null ? void 0 : object.constructor) == null ? void 0 : _b.name) === "DOMException");
+      return object instanceof Error || (object?.constructor?.name === "Error" || object?.constructor?.name === "DOMException");
     }
     function isValidReasonPhrase(statusText) {
       for (let i = 0; i < statusText.length; ++i) {
@@ -4113,9 +3951,8 @@ var require_util2 = __commonJS({
       return true;
     }
     function setRequestReferrerPolicyOnRedirect(request2, actualResponse) {
-      var _a2;
       const { headersList } = actualResponse;
-      const policyHeader = ((_a2 = headersList.get("referrer-policy")) != null ? _a2 : "").split(",");
+      const policyHeader = (headersList.get("referrer-policy") ?? "").split(",");
       let policy = "";
       if (policyHeader.length > 0) {
         for (let i = policyHeader.length; i !== 0; i--) {
@@ -4178,12 +4015,11 @@ var require_util2 = __commonJS({
       return performance2.now();
     }
     function createOpaqueTimingInfo(timingInfo) {
-      var _a2, _b;
       return {
-        startTime: (_a2 = timingInfo.startTime) != null ? _a2 : 0,
+        startTime: timingInfo.startTime ?? 0,
         redirectStartTime: 0,
         redirectEndTime: 0,
-        postRedirectStartTime: (_b = timingInfo.startTime) != null ? _b : 0,
+        postRedirectStartTime: timingInfo.startTime ?? 0,
         finalServiceWorkerStartTime: 0,
         finalNetworkResponseStartTime: 0,
         finalNetworkRequestStartTime: 0,
@@ -4324,7 +4160,7 @@ var require_util2 = __commonJS({
       }
       return false;
     }
-    var parseHashWithOptions = new RegExp("((?<algo>sha256|sha384|sha512)-(?<hash>[A-z0-9+/]{1}.*={0,2}))( +[\\x21-\\x7e]?)?", "i");
+    var parseHashWithOptions = /((?<algo>sha256|sha384|sha512)-(?<hash>[A-z0-9+/]{1}.*={0,2}))( +[\x21-\x7e]?)?/i;
     function parseMetadata(metadata) {
       const result = [];
       let empty = true;
@@ -4387,8 +4223,7 @@ var require_util2 = __commonJS({
     };
     Object.setPrototypeOf(normalizeMethodRecord, null);
     function normalizeMethod(method) {
-      var _a2;
-      return (_a2 = normalizeMethodRecord[method.toLowerCase()]) != null ? _a2 : method;
+      return normalizeMethodRecord[method.toLowerCase()] ?? method;
     }
     function serializeJavascriptValueToJSONString(value) {
       const result = JSON.stringify(value);
@@ -4447,24 +4282,22 @@ var require_util2 = __commonJS({
       }
       return { value: result, done: false };
     }
-    function fullyReadBody(body, processBody, processBodyError) {
-      return __async(this, null, function* () {
-        const successSteps = processBody;
-        const errorSteps = processBodyError;
-        let reader;
-        try {
-          reader = body.stream.getReader();
-        } catch (e) {
-          errorSteps(e);
-          return;
-        }
-        try {
-          const result = yield readAllBytes(reader);
-          successSteps(result);
-        } catch (e) {
-          errorSteps(e);
-        }
-      });
+    async function fullyReadBody(body, processBody, processBodyError) {
+      const successSteps = processBody;
+      const errorSteps = processBodyError;
+      let reader;
+      try {
+        reader = body.stream.getReader();
+      } catch (e) {
+        errorSteps(e);
+        return;
+      }
+      try {
+        const result = await readAllBytes(reader);
+        successSteps(result);
+      } catch (e) {
+        errorSteps(e);
+      }
     }
     var ReadableStream2 = globalThis.ReadableStream;
     function isReadableStreamLike(stream) {
@@ -4495,22 +4328,20 @@ var require_util2 = __commonJS({
       }
       return input;
     }
-    function readAllBytes(reader) {
-      return __async(this, null, function* () {
-        const bytes = [];
-        let byteLength = 0;
-        while (true) {
-          const { done, value: chunk } = yield reader.read();
-          if (done) {
-            return Buffer.concat(bytes, byteLength);
-          }
-          if (!isUint8Array(chunk)) {
-            throw new TypeError("Received non-Uint8Array chunk");
-          }
-          bytes.push(chunk);
-          byteLength += chunk.length;
+    async function readAllBytes(reader) {
+      const bytes = [];
+      let byteLength = 0;
+      while (true) {
+        const { done, value: chunk } = await reader.read();
+        if (done) {
+          return Buffer.concat(bytes, byteLength);
         }
-      });
+        if (!isUint8Array(chunk)) {
+          throw new TypeError("Received non-Uint8Array chunk");
+        }
+        bytes.push(chunk);
+        byteLength += chunk.length;
+      }
     }
     function urlIsLocal(url) {
       assert("protocol" in url);
@@ -4621,17 +4452,18 @@ var require_webidl = __commonJS({
       });
     };
     webidl.brandCheck = function(V, I, opts = void 0) {
-      if ((opts == null ? void 0 : opts.strict) !== false && !(V instanceof I)) {
+      if (opts?.strict !== false && !(V instanceof I)) {
         throw new TypeError("Illegal invocation");
       } else {
-        return (V == null ? void 0 : V[Symbol.toStringTag]) === I.prototype[Symbol.toStringTag];
+        return V?.[Symbol.toStringTag] === I.prototype[Symbol.toStringTag];
       }
     };
     webidl.argumentLengthCheck = function({ length }, min, ctx) {
       if (length < min) {
-        throw webidl.errors.exception(__spreadValues({
-          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`
-        }, ctx));
+        throw webidl.errors.exception({
+          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`,
+          ...ctx
+        });
       }
     };
     webidl.illegalConstructor = function() {
@@ -4728,14 +4560,13 @@ var require_webidl = __commonJS({
     };
     webidl.sequenceConverter = function(converter) {
       return (V) => {
-        var _a2;
         if (webidl.util.Type(V) !== "Object") {
           throw webidl.errors.exception({
             header: "Sequence",
             message: `Value of type ${webidl.util.Type(V)} is not an Object.`
           });
         }
-        const method = (_a2 = V == null ? void 0 : V[Symbol.iterator]) == null ? void 0 : _a2.call(V);
+        const method = V?.[Symbol.iterator]?.();
         const seq = [];
         if (method === void 0 || typeof method.next !== "function") {
           throw webidl.errors.exception({
@@ -4774,7 +4605,7 @@ var require_webidl = __commonJS({
         const keys = Reflect.ownKeys(O);
         for (const key of keys) {
           const desc = Reflect.getOwnPropertyDescriptor(O, key);
-          if (desc == null ? void 0 : desc.enumerable) {
+          if (desc?.enumerable) {
             const typedKey = keyConverter(key);
             const typedValue = valueConverter(O[key]);
             result[typedKey] = typedValue;
@@ -4819,7 +4650,7 @@ var require_webidl = __commonJS({
           let value = dictionary[key];
           const hasDefault = hasOwn(options, "defaultValue");
           if (hasDefault && value !== null) {
-            value = value != null ? value : defaultValue;
+            value = value ?? defaultValue;
           }
           if (required || hasDefault || value !== void 0) {
             value = converter(value);
@@ -5306,10 +5137,9 @@ var require_file = __commonJS({
     };
     var FileLike = class _FileLike {
       constructor(blobLike, fileName, options = {}) {
-        var _a2;
         const n = fileName;
         const t = options.type;
-        const d = (_a2 = options.lastModified) != null ? _a2 : Date.now();
+        const d = options.lastModified ?? Date.now();
         this[kState] = {
           blobLike,
           name: n,
@@ -5448,7 +5278,7 @@ var require_formdata = __commonJS({
     var { File: UndiciFile, FileLike, isFileLike } = require_file();
     var { webidl } = require_webidl();
     var { Blob: Blob2, File: NativeFile } = require("buffer");
-    var File = NativeFile != null ? NativeFile : UndiciFile;
+    var File = NativeFile ?? UndiciFile;
     var FormData = class _FormData {
       constructor(form) {
         if (form !== void 0) {
@@ -5621,7 +5451,7 @@ var require_body = __commonJS({
     var { File: UndiciFile } = require_file();
     var { parseMIMEType, serializeAMimeType } = require_dataURL();
     var ReadableStream2 = globalThis.ReadableStream;
-    var File = NativeFile != null ? NativeFile : UndiciFile;
+    var File = NativeFile ?? UndiciFile;
     var textEncoder = new TextEncoder();
     var textDecoder = new TextDecoder();
     function extractBody(object, keepalive = false) {
@@ -5634,15 +5464,12 @@ var require_body = __commonJS({
       } else if (isBlobLike(object)) {
         stream = object.stream();
       } else {
-        let _a2;
         stream = new ReadableStream2({
-          pull(controller) {
-            return __async(this, null, function* () {
-              controller.enqueue(
-                typeof source === "string" ? textEncoder.encode(source) : source
-              );
-              queueMicrotask(() => readableStreamClose(controller));
-            });
+          async pull(controller) {
+            controller.enqueue(
+              typeof source === "string" ? textEncoder.encode(source) : source
+            );
+            queueMicrotask(() => readableStreamClose(controller));
           },
           start() {
           },
@@ -5702,16 +5529,14 @@ Content-Type: ${value.type || "application/octet-stream"}\r
           length = null;
         }
         source = object;
-        action = function() {
-          return __asyncGenerator(this, null, function* () {
-            for (const part of blobParts) {
-              if (part.stream) {
-                yield* __yieldStar(part.stream());
-              } else {
-                yield part;
-              }
+        action = async function* () {
+          for (const part of blobParts) {
+            if (part.stream) {
+              yield* part.stream();
+            } else {
+              yield part;
             }
-          });
+          }
         };
         type = "multipart/form-data; boundary=" + boundary;
       } else if (isBlobLike(object)) {
@@ -5735,33 +5560,26 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         length = Buffer.byteLength(source);
       }
       if (action != null) {
-        let _b;
         let iterator2;
         stream = new ReadableStream2({
-          start() {
-            return __async(this, null, function* () {
-              iterator2 = action(object)[Symbol.asyncIterator]();
-            });
+          async start() {
+            iterator2 = action(object)[Symbol.asyncIterator]();
           },
-          pull(controller) {
-            return __async(this, null, function* () {
-              const { value, done } = yield iterator2.next();
-              if (done) {
-                queueMicrotask(() => {
-                  controller.close();
-                });
-              } else {
-                if (!isErrored(stream)) {
-                  controller.enqueue(new Uint8Array(value));
-                }
+          async pull(controller) {
+            const { value, done } = await iterator2.next();
+            if (done) {
+              queueMicrotask(() => {
+                controller.close();
+              });
+            } else {
+              if (!isErrored(stream)) {
+                controller.enqueue(new Uint8Array(value));
               }
-              return controller.desiredSize > 0;
-            });
+            }
+            return controller.desiredSize > 0;
           },
-          cancel(reason) {
-            return __async(this, null, function* () {
-              yield iterator2.return();
-            });
+          async cancel(reason) {
+            await iterator2.return();
           },
           type: void 0
         });
@@ -5790,24 +5608,22 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         source: body.source
       };
     }
-    function consumeBody(body) {
-      return __asyncGenerator(this, null, function* () {
-        if (body) {
-          if (isUint8Array(body)) {
-            yield body;
-          } else {
-            const stream = body.stream;
-            if (util.isDisturbed(stream)) {
-              throw new TypeError("The body has already been consumed.");
-            }
-            if (stream.locked) {
-              throw new TypeError("The stream is locked.");
-            }
-            stream[kBodyUsed] = true;
-            yield* __yieldStar(stream);
+    async function* consumeBody(body) {
+      if (body) {
+        if (isUint8Array(body)) {
+          yield body;
+        } else {
+          const stream = body.stream;
+          if (util.isDisturbed(stream)) {
+            throw new TypeError("The body has already been consumed.");
           }
+          if (stream.locked) {
+            throw new TypeError("The stream is locked.");
+          }
+          stream[kBodyUsed] = true;
+          yield* stream;
         }
-      });
+      }
     }
     function throwIfAborted(state) {
       if (state.aborted) {
@@ -5838,116 +5654,89 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         json() {
           return specConsumeBody(this, parseJSONFromBytes, instance);
         },
-        formData() {
-          return __async(this, null, function* () {
-            webidl.brandCheck(this, instance);
-            throwIfAborted(this[kState]);
-            const contentType = this.headers.get("Content-Type");
-            if (/multipart\/form-data/.test(contentType)) {
-              const headers = {};
-              for (const [key, value] of this.headers)
-                headers[key.toLowerCase()] = value;
-              const responseFormData = new FormData();
-              let busboy;
-              try {
-                busboy = new Busboy({
-                  headers,
-                  preservePath: true
-                });
-              } catch (err) {
-                throw new DOMException2(`${err}`, "AbortError");
-              }
-              busboy.on("field", (name, value) => {
-                responseFormData.append(name, value);
+        async formData() {
+          webidl.brandCheck(this, instance);
+          throwIfAborted(this[kState]);
+          const contentType = this.headers.get("Content-Type");
+          if (/multipart\/form-data/.test(contentType)) {
+            const headers = {};
+            for (const [key, value] of this.headers)
+              headers[key.toLowerCase()] = value;
+            const responseFormData = new FormData();
+            let busboy;
+            try {
+              busboy = new Busboy({
+                headers,
+                preservePath: true
               });
-              busboy.on("file", (name, value, filename, encoding, mimeType) => {
-                const chunks = [];
-                if (encoding === "base64" || encoding.toLowerCase() === "base64") {
-                  let base64chunk = "";
-                  value.on("data", (chunk) => {
-                    base64chunk += chunk.toString().replace(/[\r\n]/gm, "");
-                    const end = base64chunk.length - base64chunk.length % 4;
-                    chunks.push(Buffer.from(base64chunk.slice(0, end), "base64"));
-                    base64chunk = base64chunk.slice(end);
-                  });
-                  value.on("end", () => {
-                    chunks.push(Buffer.from(base64chunk, "base64"));
-                    responseFormData.append(name, new File(chunks, filename, { type: mimeType }));
-                  });
-                } else {
-                  value.on("data", (chunk) => {
-                    chunks.push(chunk);
-                  });
-                  value.on("end", () => {
-                    responseFormData.append(name, new File(chunks, filename, { type: mimeType }));
-                  });
-                }
-              });
-              const busboyResolve = new Promise((resolve, reject) => {
-                busboy.on("finish", resolve);
-                busboy.on("error", (err) => reject(new TypeError(err)));
-              });
-              if (this.body !== null)
-                try {
-                  for (var iter = __forAwait(consumeBody(this[kState].body)), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-                    const chunk = temp.value;
-                    busboy.write(chunk);
-                  }
-                } catch (temp) {
-                  error = [temp];
-                } finally {
-                  try {
-                    more && (temp = iter.return) && (yield temp.call(iter));
-                  } finally {
-                    if (error)
-                      throw error[0];
-                  }
-                }
-              busboy.end();
-              yield busboyResolve;
-              return responseFormData;
-            } else if (/application\/x-www-form-urlencoded/.test(contentType)) {
-              let entries;
-              try {
-                let text = "";
-                const streamingDecoder = new TextDecoder("utf-8", { ignoreBOM: true });
-                try {
-                  for (var iter2 = __forAwait(consumeBody(this[kState].body)), more2, temp2, error2; more2 = !(temp2 = yield iter2.next()).done; more2 = false) {
-                    const chunk = temp2.value;
-                    if (!isUint8Array(chunk)) {
-                      throw new TypeError("Expected Uint8Array chunk");
-                    }
-                    text += streamingDecoder.decode(chunk, { stream: true });
-                  }
-                } catch (temp2) {
-                  error2 = [temp2];
-                } finally {
-                  try {
-                    more2 && (temp2 = iter2.return) && (yield temp2.call(iter2));
-                  } finally {
-                    if (error2)
-                      throw error2[0];
-                  }
-                }
-                text += streamingDecoder.decode();
-                entries = new URLSearchParams(text);
-              } catch (err) {
-                throw Object.assign(new TypeError(), { cause: err });
-              }
-              const formData = new FormData();
-              for (const [name, value] of entries) {
-                formData.append(name, value);
-              }
-              return formData;
-            } else {
-              yield Promise.resolve();
-              throwIfAborted(this[kState]);
-              throw webidl.errors.exception({
-                header: `${instance.name}.formData`,
-                message: "Could not parse content as FormData."
-              });
+            } catch (err) {
+              throw new DOMException2(`${err}`, "AbortError");
             }
-          });
+            busboy.on("field", (name, value) => {
+              responseFormData.append(name, value);
+            });
+            busboy.on("file", (name, value, filename, encoding, mimeType) => {
+              const chunks = [];
+              if (encoding === "base64" || encoding.toLowerCase() === "base64") {
+                let base64chunk = "";
+                value.on("data", (chunk) => {
+                  base64chunk += chunk.toString().replace(/[\r\n]/gm, "");
+                  const end = base64chunk.length - base64chunk.length % 4;
+                  chunks.push(Buffer.from(base64chunk.slice(0, end), "base64"));
+                  base64chunk = base64chunk.slice(end);
+                });
+                value.on("end", () => {
+                  chunks.push(Buffer.from(base64chunk, "base64"));
+                  responseFormData.append(name, new File(chunks, filename, { type: mimeType }));
+                });
+              } else {
+                value.on("data", (chunk) => {
+                  chunks.push(chunk);
+                });
+                value.on("end", () => {
+                  responseFormData.append(name, new File(chunks, filename, { type: mimeType }));
+                });
+              }
+            });
+            const busboyResolve = new Promise((resolve, reject) => {
+              busboy.on("finish", resolve);
+              busboy.on("error", (err) => reject(new TypeError(err)));
+            });
+            if (this.body !== null)
+              for await (const chunk of consumeBody(this[kState].body))
+                busboy.write(chunk);
+            busboy.end();
+            await busboyResolve;
+            return responseFormData;
+          } else if (/application\/x-www-form-urlencoded/.test(contentType)) {
+            let entries;
+            try {
+              let text = "";
+              const streamingDecoder = new TextDecoder("utf-8", { ignoreBOM: true });
+              for await (const chunk of consumeBody(this[kState].body)) {
+                if (!isUint8Array(chunk)) {
+                  throw new TypeError("Expected Uint8Array chunk");
+                }
+                text += streamingDecoder.decode(chunk, { stream: true });
+              }
+              text += streamingDecoder.decode();
+              entries = new URLSearchParams(text);
+            } catch (err) {
+              throw Object.assign(new TypeError(), { cause: err });
+            }
+            const formData = new FormData();
+            for (const [name, value] of entries) {
+              formData.append(name, value);
+            }
+            return formData;
+          } else {
+            await Promise.resolve();
+            throwIfAborted(this[kState]);
+            throw webidl.errors.exception({
+              header: `${instance.name}.formData`,
+              message: "Could not parse content as FormData."
+            });
+          }
         }
       };
       return methods;
@@ -5955,29 +5744,27 @@ Content-Type: ${value.type || "application/octet-stream"}\r
     function mixinBody(prototype) {
       Object.assign(prototype.prototype, bodyMixinMethods(prototype));
     }
-    function specConsumeBody(object, convertBytesToJSValue, instance) {
-      return __async(this, null, function* () {
-        webidl.brandCheck(object, instance);
-        throwIfAborted(object[kState]);
-        if (bodyUnusable(object[kState].body)) {
-          throw new TypeError("Body is unusable");
+    async function specConsumeBody(object, convertBytesToJSValue, instance) {
+      webidl.brandCheck(object, instance);
+      throwIfAborted(object[kState]);
+      if (bodyUnusable(object[kState].body)) {
+        throw new TypeError("Body is unusable");
+      }
+      const promise = createDeferredPromise();
+      const errorSteps = (error) => promise.reject(error);
+      const successSteps = (data) => {
+        try {
+          promise.resolve(convertBytesToJSValue(data));
+        } catch (e) {
+          errorSteps(e);
         }
-        const promise = createDeferredPromise();
-        const errorSteps = (error) => promise.reject(error);
-        const successSteps = (data) => {
-          try {
-            promise.resolve(convertBytesToJSValue(data));
-          } catch (e) {
-            errorSteps(e);
-          }
-        };
-        if (object[kState].body == null) {
-          successSteps(new Uint8Array());
-          return promise.promise;
-        }
-        yield fullyReadBody(object[kState].body, successSteps, errorSteps);
+      };
+      if (object[kState].body == null) {
+        successSteps(new Uint8Array());
         return promise.promise;
-      });
+      }
+      await fullyReadBody(object[kState].body, successSteps, errorSteps);
+      return promise.promise;
     }
     function bodyUnusable(body) {
       return body != null && (body.stream.locked || util.isDisturbed(body.stream));
@@ -6036,7 +5823,7 @@ var require_request = __commonJS({
       channels.headers = diagnosticsChannel.channel("undici:request:headers");
       channels.trailers = diagnosticsChannel.channel("undici:request:trailers");
       channels.error = diagnosticsChannel.channel("undici:request:error");
-    } catch (e) {
+    } catch {
       channels.create = { hasSubscribers: false };
       channels.bodySent = { hasSubscribers: false };
       channels.headers = { hasSubscribers: false };
@@ -6281,7 +6068,7 @@ var require_request = __commonJS({
       }
       static [kHTTP2BuildRequest](origin, opts, handler2) {
         const headers = opts.headers;
-        opts = __spreadProps(__spreadValues({}, opts), { headers: null });
+        opts = { ...opts, headers: null };
         const request2 = new _Request(origin, opts, handler2);
         request2.headers = {};
         if (Array.isArray(headers)) {
@@ -6632,12 +6419,11 @@ var require_connect = __commonJS({
         }
       };
     }
-    function buildConnector(_a2) {
-      var _b = _a2, { allowH2, maxCachedSessions, socketPath, timeout } = _b, opts = __objRest(_b, ["allowH2", "maxCachedSessions", "socketPath", "timeout"]);
+    function buildConnector({ allowH2, maxCachedSessions, socketPath, timeout, ...opts }) {
       if (maxCachedSessions != null && (!Number.isInteger(maxCachedSessions) || maxCachedSessions < 0)) {
         throw new InvalidArgumentError("maxCachedSessions must be a positive integer or zero");
       }
-      const options = __spreadValues({ path: socketPath }, opts);
+      const options = { path: socketPath, ...opts };
       const sessionCache = new SessionCache(maxCachedSessions == null ? 100 : maxCachedSessions);
       timeout = timeout == null ? 1e4 : timeout;
       allowH2 = allowH2 != null ? allowH2 : false;
@@ -6651,9 +6437,10 @@ var require_connect = __commonJS({
           const sessionKey = servername || hostname;
           const session = sessionCache.get(sessionKey) || null;
           assert(sessionKey);
-          socket = tls.connect(__spreadProps(__spreadValues({
-            highWaterMark: 16384
-          }, options), {
+          socket = tls.connect({
+            highWaterMark: 16384,
+            // TLS in node can't have bigger HWM anyway...
+            ...options,
             servername,
             session,
             localAddress,
@@ -6663,19 +6450,20 @@ var require_connect = __commonJS({
             // upgrade socket connection
             port: port || 443,
             host: hostname
-          }));
+          });
           socket.on("session", function(session2) {
             sessionCache.set(sessionKey, session2);
           });
         } else {
           assert(!httpSocket, "httpSocket can only be sent on TLS update");
-          socket = net.connect(__spreadProps(__spreadValues({
-            highWaterMark: 64 * 1024
-          }, options), {
+          socket = net.connect({
+            highWaterMark: 64 * 1024,
+            // Same as nodejs fs streams.
+            ...options,
             localAddress,
             port: port || 80,
             host: hostname
-          }));
+          });
         }
         if (options.keepAlive == null || options.keepAlive) {
           const keepAliveInitialDelay = options.keepAliveInitialDelay === void 0 ? 6e4 : options.keepAliveInitialDelay;
@@ -7086,12 +6874,10 @@ var require_RedirectHandler = __commonJS({
         this[kBody] = body;
         this[kBodyUsed] = false;
       }
-      [Symbol.asyncIterator]() {
-        return __asyncGenerator(this, null, function* () {
-          assert(!this[kBodyUsed], "disturbed");
-          this[kBodyUsed] = true;
-          yield* __yieldStar(this[kBody]);
-        });
+      async *[Symbol.asyncIterator]() {
+        assert(!this[kBodyUsed], "disturbed");
+        this[kBodyUsed] = true;
+        yield* this[kBody];
       }
     };
     var RedirectHandler = class {
@@ -7103,7 +6889,7 @@ var require_RedirectHandler = __commonJS({
         this.dispatch = dispatch;
         this.location = null;
         this.abort = null;
-        this.opts = __spreadProps(__spreadValues({}, opts), { maxRedirections: 0 });
+        this.opts = { ...opts, maxRedirections: 0 };
         this.maxRedirections = maxRedirections;
         this.handler = handler2;
         this.history = [];
@@ -7225,7 +7011,7 @@ var require_redirectInterceptor = __commonJS({
             return dispatch(opts, handler2);
           }
           const redirectHandler = new RedirectHandler(dispatch, maxRedirections, opts, handler2);
-          opts = __spreadProps(__spreadValues({}, opts), { maxRedirections: 0 });
+          opts = { ...opts, maxRedirections: 0 };
           return dispatch(opts, redirectHandler);
         };
       };
@@ -7332,7 +7118,7 @@ var require_client = __commonJS({
     var http2;
     try {
       http2 = require("http2");
-    } catch (e) {
+    } catch {
       http2 = { constants: {} };
     }
     var {
@@ -7356,7 +7142,7 @@ var require_client = __commonJS({
       channels.beforeConnect = diagnosticsChannel.channel("undici:client:beforeConnect");
       channels.connectError = diagnosticsChannel.channel("undici:client:connectError");
       channels.connected = diagnosticsChannel.channel("undici:client:connected");
-    } catch (e) {
+    } catch {
       channels.sendHeaders = { hasSubscribers: false };
       channels.beforeConnect = { hasSubscribers: false };
       channels.connectError = { hasSubscribers: false };
@@ -7463,12 +7249,15 @@ var require_client = __commonJS({
           throw new InvalidArgumentError("maxConcurrentStreams must be a possitive integer, greater than 0");
         }
         if (typeof connect2 !== "function") {
-          connect2 = buildConnector(__spreadValues(__spreadValues(__spreadProps(__spreadValues({}, tls), {
+          connect2 = buildConnector({
+            ...tls,
             maxCachedSessions,
             allowH2,
             socketPath,
-            timeout: connectTimeout
-          }), util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0), connect2));
+            timeout: connectTimeout,
+            ...util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0,
+            ...connect2
+          });
         }
         this[kInterceptors] = interceptors && interceptors.Client && Array.isArray(interceptors.Client) ? interceptors.Client : [createRedirectInterceptor({ maxRedirections })];
         this[kUrl] = util.parseOrigin(url);
@@ -7551,44 +7340,40 @@ var require_client = __commonJS({
         }
         return this[kNeedDrain] < 2;
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          return new Promise((resolve) => {
-            if (!this[kSize]) {
-              resolve(null);
-            } else {
-              this[kClosedResolve] = resolve;
-            }
-          });
+      async [kClose]() {
+        return new Promise((resolve) => {
+          if (!this[kSize]) {
+            resolve(null);
+          } else {
+            this[kClosedResolve] = resolve;
+          }
         });
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          return new Promise((resolve) => {
-            const requests = this[kQueue].splice(this[kPendingIdx]);
-            for (let i = 0; i < requests.length; i++) {
-              const request2 = requests[i];
-              errorRequest(this, request2, err);
+      async [kDestroy](err) {
+        return new Promise((resolve) => {
+          const requests = this[kQueue].splice(this[kPendingIdx]);
+          for (let i = 0; i < requests.length; i++) {
+            const request2 = requests[i];
+            errorRequest(this, request2, err);
+          }
+          const callback = () => {
+            if (this[kClosedResolve]) {
+              this[kClosedResolve]();
+              this[kClosedResolve] = null;
             }
-            const callback = () => {
-              if (this[kClosedResolve]) {
-                this[kClosedResolve]();
-                this[kClosedResolve] = null;
-              }
-              resolve();
-            };
-            if (this[kHTTP2Session] != null) {
-              util.destroy(this[kHTTP2Session], err);
-              this[kHTTP2Session] = null;
-              this[kHTTP2SessionState] = null;
-            }
-            if (!this[kSocket]) {
-              queueMicrotask(callback);
-            } else {
-              util.destroy(this[kSocket].on("close", callback), err);
-            }
-            resume(this);
-          });
+            resolve();
+          };
+          if (this[kHTTP2Session] != null) {
+            util.destroy(this[kHTTP2Session], err);
+            this[kHTTP2Session] = null;
+            this[kHTTP2SessionState] = null;
+          }
+          if (!this[kSocket]) {
+            queueMicrotask(callback);
+          } else {
+            util.destroy(this[kSocket].on("close", callback), err);
+          }
+          resume(this);
         });
       }
     };
@@ -7638,56 +7423,54 @@ var require_client = __commonJS({
     var constants = require_constants2();
     var createRedirectInterceptor = require_redirectInterceptor();
     var EMPTY_BUF = Buffer.alloc(0);
-    function lazyllhttp() {
-      return __async(this, null, function* () {
-        const llhttpWasmData = process.env.JEST_WORKER_ID ? require_llhttp_wasm() : void 0;
-        let mod;
-        try {
-          mod = yield WebAssembly.compile(Buffer.from(require_llhttp_simd_wasm(), "base64"));
-        } catch (e) {
-          mod = yield WebAssembly.compile(Buffer.from(llhttpWasmData || require_llhttp_wasm(), "base64"));
-        }
-        return yield WebAssembly.instantiate(mod, {
-          env: {
-            /* eslint-disable camelcase */
-            wasm_on_url: (p, at, len) => {
-              return 0;
-            },
-            wasm_on_status: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onStatus(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_message_begin: (p) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onMessageBegin() || 0;
-            },
-            wasm_on_header_field: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onHeaderField(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_header_value: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onHeaderValue(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0;
-            },
-            wasm_on_body: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onBody(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_message_complete: (p) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onMessageComplete() || 0;
-            }
-            /* eslint-enable camelcase */
+    async function lazyllhttp() {
+      const llhttpWasmData = process.env.JEST_WORKER_ID ? require_llhttp_wasm() : void 0;
+      let mod;
+      try {
+        mod = await WebAssembly.compile(Buffer.from(require_llhttp_simd_wasm(), "base64"));
+      } catch (e) {
+        mod = await WebAssembly.compile(Buffer.from(llhttpWasmData || require_llhttp_wasm(), "base64"));
+      }
+      return await WebAssembly.instantiate(mod, {
+        env: {
+          /* eslint-disable camelcase */
+          wasm_on_url: (p, at, len) => {
+            return 0;
+          },
+          wasm_on_status: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onStatus(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_message_begin: (p) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onMessageBegin() || 0;
+          },
+          wasm_on_header_field: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onHeaderField(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_header_value: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onHeaderValue(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0;
+          },
+          wasm_on_body: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onBody(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_message_complete: (p) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onMessageComplete() || 0;
           }
-        });
+          /* eslint-enable camelcase */
+        }
       });
     }
     var llhttpInstance = null;
@@ -8132,21 +7915,97 @@ var require_client = __commonJS({
       client.emit("disconnect", client[kUrl], [client], err);
       resume(client);
     }
-    function connect(client) {
-      return __async(this, null, function* () {
-        assert(!client[kConnecting]);
-        assert(!client[kSocket]);
-        let { host, hostname, protocol, port } = client[kUrl];
-        if (hostname[0] === "[") {
-          const idx = hostname.indexOf("]");
-          assert(idx !== -1);
-          const ip = hostname.substring(1, idx);
-          assert(net.isIP(ip));
-          hostname = ip;
+    async function connect(client) {
+      assert(!client[kConnecting]);
+      assert(!client[kSocket]);
+      let { host, hostname, protocol, port } = client[kUrl];
+      if (hostname[0] === "[") {
+        const idx = hostname.indexOf("]");
+        assert(idx !== -1);
+        const ip = hostname.substring(1, idx);
+        assert(net.isIP(ip));
+        hostname = ip;
+      }
+      client[kConnecting] = true;
+      if (channels.beforeConnect.hasSubscribers) {
+        channels.beforeConnect.publish({
+          connectParams: {
+            host,
+            hostname,
+            protocol,
+            port,
+            servername: client[kServerName],
+            localAddress: client[kLocalAddress]
+          },
+          connector: client[kConnector]
+        });
+      }
+      try {
+        const socket = await new Promise((resolve, reject) => {
+          client[kConnector]({
+            host,
+            hostname,
+            protocol,
+            port,
+            servername: client[kServerName],
+            localAddress: client[kLocalAddress]
+          }, (err, socket2) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(socket2);
+            }
+          });
+        });
+        if (client.destroyed) {
+          util.destroy(socket.on("error", () => {
+          }), new ClientDestroyedError());
+          return;
         }
-        client[kConnecting] = true;
-        if (channels.beforeConnect.hasSubscribers) {
-          channels.beforeConnect.publish({
+        client[kConnecting] = false;
+        assert(socket);
+        const isH2 = socket.alpnProtocol === "h2";
+        if (isH2) {
+          if (!h2ExperimentalWarned) {
+            h2ExperimentalWarned = true;
+            process.emitWarning("H2 support is experimental, expect them to change at any time.", {
+              code: "UNDICI-H2"
+            });
+          }
+          const session = http2.connect(client[kUrl], {
+            createConnection: () => socket,
+            peerMaxConcurrentStreams: client[kHTTP2SessionState].maxConcurrentStreams
+          });
+          client[kHTTPConnVersion] = "h2";
+          session[kClient] = client;
+          session[kSocket] = socket;
+          session.on("error", onHttp2SessionError);
+          session.on("frameError", onHttp2FrameError);
+          session.on("end", onHttp2SessionEnd);
+          session.on("goaway", onHTTP2GoAway);
+          session.on("close", onSocketClose);
+          session.unref();
+          client[kHTTP2Session] = session;
+          socket[kHTTP2Session] = session;
+        } else {
+          if (!llhttpInstance) {
+            llhttpInstance = await llhttpPromise;
+            llhttpPromise = null;
+          }
+          socket[kNoRef] = false;
+          socket[kWriting] = false;
+          socket[kReset] = false;
+          socket[kBlocking] = false;
+          socket[kParser] = new Parser(client, socket, llhttpInstance);
+        }
+        socket[kCounter] = 0;
+        socket[kMaxRequests] = client[kMaxRequests];
+        socket[kClient] = client;
+        socket[kError] = null;
+        socket.on("error", onSocketError).on("readable", onSocketReadable).on("end", onSocketEnd).on("close", onSocketClose);
+        client[kSocket] = socket;
+        if (channels.connected.hasSubscribers) {
+          channels.connected.publish({
             connectParams: {
               host,
               hostname,
@@ -8155,120 +8014,42 @@ var require_client = __commonJS({
               servername: client[kServerName],
               localAddress: client[kLocalAddress]
             },
-            connector: client[kConnector]
+            connector: client[kConnector],
+            socket
           });
         }
-        try {
-          const socket = yield new Promise((resolve, reject) => {
-            client[kConnector]({
+        client.emit("connect", client[kUrl], [client]);
+      } catch (err) {
+        if (client.destroyed) {
+          return;
+        }
+        client[kConnecting] = false;
+        if (channels.connectError.hasSubscribers) {
+          channels.connectError.publish({
+            connectParams: {
               host,
               hostname,
               protocol,
               port,
               servername: client[kServerName],
               localAddress: client[kLocalAddress]
-            }, (err, socket2) => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(socket2);
-              }
-            });
+            },
+            connector: client[kConnector],
+            error: err
           });
-          if (client.destroyed) {
-            util.destroy(socket.on("error", () => {
-            }), new ClientDestroyedError());
-            return;
-          }
-          client[kConnecting] = false;
-          assert(socket);
-          const isH2 = socket.alpnProtocol === "h2";
-          if (isH2) {
-            if (!h2ExperimentalWarned) {
-              h2ExperimentalWarned = true;
-              process.emitWarning("H2 support is experimental, expect them to change at any time.", {
-                code: "UNDICI-H2"
-              });
-            }
-            const session = http2.connect(client[kUrl], {
-              createConnection: () => socket,
-              peerMaxConcurrentStreams: client[kHTTP2SessionState].maxConcurrentStreams
-            });
-            client[kHTTPConnVersion] = "h2";
-            session[kClient] = client;
-            session[kSocket] = socket;
-            session.on("error", onHttp2SessionError);
-            session.on("frameError", onHttp2FrameError);
-            session.on("end", onHttp2SessionEnd);
-            session.on("goaway", onHTTP2GoAway);
-            session.on("close", onSocketClose);
-            session.unref();
-            client[kHTTP2Session] = session;
-            socket[kHTTP2Session] = session;
-          } else {
-            if (!llhttpInstance) {
-              llhttpInstance = yield llhttpPromise;
-              llhttpPromise = null;
-            }
-            socket[kNoRef] = false;
-            socket[kWriting] = false;
-            socket[kReset] = false;
-            socket[kBlocking] = false;
-            socket[kParser] = new Parser(client, socket, llhttpInstance);
-          }
-          socket[kCounter] = 0;
-          socket[kMaxRequests] = client[kMaxRequests];
-          socket[kClient] = client;
-          socket[kError] = null;
-          socket.on("error", onSocketError).on("readable", onSocketReadable).on("end", onSocketEnd).on("close", onSocketClose);
-          client[kSocket] = socket;
-          if (channels.connected.hasSubscribers) {
-            channels.connected.publish({
-              connectParams: {
-                host,
-                hostname,
-                protocol,
-                port,
-                servername: client[kServerName],
-                localAddress: client[kLocalAddress]
-              },
-              connector: client[kConnector],
-              socket
-            });
-          }
-          client.emit("connect", client[kUrl], [client]);
-        } catch (err) {
-          if (client.destroyed) {
-            return;
-          }
-          client[kConnecting] = false;
-          if (channels.connectError.hasSubscribers) {
-            channels.connectError.publish({
-              connectParams: {
-                host,
-                hostname,
-                protocol,
-                port,
-                servername: client[kServerName],
-                localAddress: client[kLocalAddress]
-              },
-              connector: client[kConnector],
-              error: err
-            });
-          }
-          if (err.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
-            assert(client[kRunning] === 0);
-            while (client[kPending] > 0 && client[kQueue][client[kPendingIdx]].servername === client[kServerName]) {
-              const request2 = client[kQueue][client[kPendingIdx]++];
-              errorRequest(client, request2, err);
-            }
-          } else {
-            onError(client, err);
-          }
-          client.emit("connectionError", client[kUrl], [client], err);
         }
-        resume(client);
-      });
+        if (err.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
+          assert(client[kRunning] === 0);
+          while (client[kPending] > 0 && client[kQueue][client[kPendingIdx]].servername === client[kServerName]) {
+            const request2 = client[kQueue][client[kPendingIdx]++];
+            errorRequest(client, request2, err);
+          }
+        } else {
+          onError(client, err);
+        }
+        client.emit("connectionError", client[kUrl], [client], err);
+      }
+      resume(client);
     }
     function emitDrain(client) {
       client[kNeedDrain] = 0;
@@ -8581,7 +8362,7 @@ upgrade: ${upgrade}\r
       }
       ++h2State.openStreams;
       stream.once("response", (headers2) => {
-        const _a2 = headers2, { [HTTP2_HEADER_STATUS]: statusCode } = _a2, realHeaders = __objRest(_a2, [__restKey(HTTP2_HEADER_STATUS)]);
+        const { [HTTP2_HEADER_STATUS]: statusCode, ...realHeaders } = headers2;
         if (request2.onHeaders(Number(statusCode), realHeaders, stream.resume.bind(stream), "") === false) {
           stream.pause();
         }
@@ -8759,121 +8540,93 @@ upgrade: ${upgrade}\r
       }
       socket.on("drain", onDrain).on("error", onFinished);
     }
-    function writeBlob(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength === body.size, "blob body must have content length");
-        const isH2 = client[kHTTPConnVersion] === "h2";
-        try {
-          if (contentLength != null && contentLength !== body.size) {
-            throw new RequestContentLengthMismatchError();
-          }
-          const buffer = Buffer.from(yield body.arrayBuffer());
-          if (isH2) {
-            h2stream.cork();
-            h2stream.write(buffer);
-            h2stream.uncork();
-          } else {
-            socket.cork();
-            socket.write(`${header}content-length: ${contentLength}\r
+    async function writeBlob({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength === body.size, "blob body must have content length");
+      const isH2 = client[kHTTPConnVersion] === "h2";
+      try {
+        if (contentLength != null && contentLength !== body.size) {
+          throw new RequestContentLengthMismatchError();
+        }
+        const buffer = Buffer.from(await body.arrayBuffer());
+        if (isH2) {
+          h2stream.cork();
+          h2stream.write(buffer);
+          h2stream.uncork();
+        } else {
+          socket.cork();
+          socket.write(`${header}content-length: ${contentLength}\r
 \r
 `, "latin1");
-            socket.write(buffer);
-            socket.uncork();
-          }
-          request2.onBodySent(buffer);
-          request2.onRequestSent();
-          if (!expectsPayload) {
-            socket[kReset] = true;
-          }
-          resume(client);
-        } catch (err) {
-          util.destroy(isH2 ? h2stream : socket, err);
+          socket.write(buffer);
+          socket.uncork();
         }
-      });
+        request2.onBodySent(buffer);
+        request2.onRequestSent();
+        if (!expectsPayload) {
+          socket[kReset] = true;
+        }
+        resume(client);
+      } catch (err) {
+        util.destroy(isH2 ? h2stream : socket, err);
+      }
     }
-    function writeIterable(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
-        let callback = null;
-        function onDrain() {
-          if (callback) {
-            const cb = callback;
-            callback = null;
-            cb();
-          }
+    async function writeIterable({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
+      let callback = null;
+      function onDrain() {
+        if (callback) {
+          const cb = callback;
+          callback = null;
+          cb();
         }
-        const waitForDrain = () => new Promise((resolve, reject) => {
-          assert(callback === null);
-          if (socket[kError]) {
-            reject(socket[kError]);
-          } else {
-            callback = resolve;
-          }
-        });
-        if (client[kHTTPConnVersion] === "h2") {
-          h2stream.on("close", onDrain).on("drain", onDrain);
-          try {
-            try {
-              for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-                const chunk = temp.value;
-                if (socket[kError]) {
-                  throw socket[kError];
-                }
-                const res = h2stream.write(chunk);
-                request2.onBodySent(chunk);
-                if (!res) {
-                  yield waitForDrain();
-                }
-              }
-            } catch (temp) {
-              error = [temp];
-            } finally {
-              try {
-                more && (temp = iter.return) && (yield temp.call(iter));
-              } finally {
-                if (error)
-                  throw error[0];
-              }
-            }
-          } catch (err) {
-            h2stream.destroy(err);
-          } finally {
-            request2.onRequestSent();
-            h2stream.end();
-            h2stream.off("close", onDrain).off("drain", onDrain);
-          }
-          return;
-        }
-        socket.on("close", onDrain).on("drain", onDrain);
-        const writer = new AsyncWriter({ socket, request: request2, contentLength, client, expectsPayload, header });
-        try {
-          try {
-            for (var iter2 = __forAwait(body), more2, temp2, error2; more2 = !(temp2 = yield iter2.next()).done; more2 = false) {
-              const chunk = temp2.value;
-              if (socket[kError]) {
-                throw socket[kError];
-              }
-              if (!writer.write(chunk)) {
-                yield waitForDrain();
-              }
-            }
-          } catch (temp2) {
-            error2 = [temp2];
-          } finally {
-            try {
-              more2 && (temp2 = iter2.return) && (yield temp2.call(iter2));
-            } finally {
-              if (error2)
-                throw error2[0];
-            }
-          }
-          writer.end();
-        } catch (err) {
-          writer.destroy(err);
-        } finally {
-          socket.off("close", onDrain).off("drain", onDrain);
+      }
+      const waitForDrain = () => new Promise((resolve, reject) => {
+        assert(callback === null);
+        if (socket[kError]) {
+          reject(socket[kError]);
+        } else {
+          callback = resolve;
         }
       });
+      if (client[kHTTPConnVersion] === "h2") {
+        h2stream.on("close", onDrain).on("drain", onDrain);
+        try {
+          for await (const chunk of body) {
+            if (socket[kError]) {
+              throw socket[kError];
+            }
+            const res = h2stream.write(chunk);
+            request2.onBodySent(chunk);
+            if (!res) {
+              await waitForDrain();
+            }
+          }
+        } catch (err) {
+          h2stream.destroy(err);
+        } finally {
+          request2.onRequestSent();
+          h2stream.end();
+          h2stream.off("close", onDrain).off("drain", onDrain);
+        }
+        return;
+      }
+      socket.on("close", onDrain).on("drain", onDrain);
+      const writer = new AsyncWriter({ socket, request: request2, contentLength, client, expectsPayload, header });
+      try {
+        for await (const chunk of body) {
+          if (socket[kError]) {
+            throw socket[kError];
+          }
+          if (!writer.write(chunk)) {
+            await waitForDrain();
+          }
+        }
+        writer.end();
+      } catch (err) {
+        writer.destroy(err);
+      } finally {
+        socket.off("close", onDrain).off("drain", onDrain);
+      }
     }
     var AsyncWriter = class {
       constructor({ socket, request: request2, contentLength, client, expectsPayload, header }) {
@@ -9174,28 +8927,24 @@ var require_pool_base = __commonJS({
       get stats() {
         return this[kStats];
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          if (this[kQueue].isEmpty()) {
-            return Promise.all(this[kClients].map((c) => c.close()));
-          } else {
-            return new Promise((resolve) => {
-              this[kClosedResolve] = resolve;
-            });
-          }
-        });
+      async [kClose]() {
+        if (this[kQueue].isEmpty()) {
+          return Promise.all(this[kClients].map((c) => c.close()));
+        } else {
+          return new Promise((resolve) => {
+            this[kClosedResolve] = resolve;
+          });
+        }
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          while (true) {
-            const item = this[kQueue].shift();
-            if (!item) {
-              break;
-            }
-            item.handler.onError(err);
+      async [kDestroy](err) {
+        while (true) {
+          const item = this[kQueue].shift();
+          if (!item) {
+            break;
           }
-          return Promise.all(this[kClients].map((c) => c.destroy(err)));
-        });
+          item.handler.onError(err);
+        }
+        return Promise.all(this[kClients].map((c) => c.destroy(err)));
       }
       [kDispatch](opts, handler2) {
         const dispatcher = this[kGetDispatcher]();
@@ -9267,30 +9016,19 @@ var require_pool = __commonJS({
       return new Client(origin, opts);
     }
     var Pool = class extends PoolBase {
-      constructor(origin, _a2 = {}) {
-        var _b = _a2, {
-          connections,
-          factory = defaultFactory,
-          connect,
-          connectTimeout,
-          tls,
-          maxCachedSessions,
-          socketPath,
-          autoSelectFamily,
-          autoSelectFamilyAttemptTimeout,
-          allowH2
-        } = _b, options = __objRest(_b, [
-          "connections",
-          "factory",
-          "connect",
-          "connectTimeout",
-          "tls",
-          "maxCachedSessions",
-          "socketPath",
-          "autoSelectFamily",
-          "autoSelectFamilyAttemptTimeout",
-          "allowH2"
-        ]);
+      constructor(origin, {
+        connections,
+        factory = defaultFactory,
+        connect,
+        connectTimeout,
+        tls,
+        maxCachedSessions,
+        socketPath,
+        autoSelectFamily,
+        autoSelectFamilyAttemptTimeout,
+        allowH2,
+        ...options
+      } = {}) {
         super();
         if (connections != null && (!Number.isFinite(connections) || connections < 0)) {
           throw new InvalidArgumentError("invalid connections");
@@ -9302,18 +9040,21 @@ var require_pool = __commonJS({
           throw new InvalidArgumentError("connect must be a function or an object");
         }
         if (typeof connect !== "function") {
-          connect = buildConnector(__spreadValues(__spreadValues(__spreadProps(__spreadValues({}, tls), {
+          connect = buildConnector({
+            ...tls,
             maxCachedSessions,
             allowH2,
             socketPath,
-            timeout: connectTimeout
-          }), util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0), connect));
+            timeout: connectTimeout,
+            ...util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0,
+            ...connect
+          });
         }
         this[kInterceptors] = options.interceptors && options.interceptors.Pool && Array.isArray(options.interceptors.Pool) ? options.interceptors.Pool : [];
         this[kConnections] = connections || null;
         this[kUrl] = util.parseOrigin(origin);
-        this[kOptions] = __spreadProps(__spreadValues({}, util.deepClone(options)), { connect, allowH2 });
-        this[kOptions].interceptors = options.interceptors ? __spreadValues({}, options.interceptors) : void 0;
+        this[kOptions] = { ...util.deepClone(options), connect, allowH2 };
+        this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
         this[kFactory] = factory;
       }
       [kGetDispatcher]() {
@@ -9368,8 +9109,7 @@ var require_balanced_pool = __commonJS({
       return new Pool(origin, opts);
     }
     var BalancedPool = class extends PoolBase {
-      constructor(upstreams = [], _a2 = {}) {
-        var _b = _a2, { factory = defaultFactory } = _b, opts = __objRest(_b, ["factory"]);
+      constructor(upstreams = [], { factory = defaultFactory, ...opts } = {}) {
         super();
         this[kOptions] = opts;
         this[kIndex] = -1;
@@ -9535,8 +9275,7 @@ var require_agent = __commonJS({
       return opts && opts.connections === 1 ? new Client(origin, opts) : new Pool(origin, opts);
     }
     var Agent = class extends DispatcherBase {
-      constructor(_a2 = {}) {
-        var _b = _a2, { factory = defaultFactory, maxRedirections = 0, connect } = _b, options = __objRest(_b, ["factory", "maxRedirections", "connect"]);
+      constructor({ factory = defaultFactory, maxRedirections = 0, connect, ...options } = {}) {
         super();
         if (typeof factory !== "function") {
           throw new InvalidArgumentError("factory must be a function.");
@@ -9548,11 +9287,11 @@ var require_agent = __commonJS({
           throw new InvalidArgumentError("maxRedirections must be a positive number");
         }
         if (connect && typeof connect !== "function") {
-          connect = __spreadValues({}, connect);
+          connect = { ...connect };
         }
         this[kInterceptors] = options.interceptors && options.interceptors.Agent && Array.isArray(options.interceptors.Agent) ? options.interceptors.Agent : [createRedirectInterceptor({ maxRedirections })];
-        this[kOptions] = __spreadProps(__spreadValues({}, util.deepClone(options)), { connect });
-        this[kOptions].interceptors = options.interceptors ? __spreadValues({}, options.interceptors) : void 0;
+        this[kOptions] = { ...util.deepClone(options), connect };
+        this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
         this[kMaxRedirections] = maxRedirections;
         this[kFactory] = factory;
         this[kClients] = /* @__PURE__ */ new Map();
@@ -9605,29 +9344,25 @@ var require_agent = __commonJS({
         }
         return dispatcher.dispatch(opts, handler2);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          const closePromises = [];
-          for (const ref of this[kClients].values()) {
-            const client = ref.deref();
-            if (client) {
-              closePromises.push(client.close());
-            }
+      async [kClose]() {
+        const closePromises = [];
+        for (const ref of this[kClients].values()) {
+          const client = ref.deref();
+          if (client) {
+            closePromises.push(client.close());
           }
-          yield Promise.all(closePromises);
-        });
+        }
+        await Promise.all(closePromises);
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          const destroyPromises = [];
-          for (const ref of this[kClients].values()) {
-            const client = ref.deref();
-            if (client) {
-              destroyPromises.push(client.destroy(err));
-            }
+      async [kDestroy](err) {
+        const destroyPromises = [];
+        for (const ref of this[kClients].values()) {
+          const client = ref.deref();
+          if (client) {
+            destroyPromises.push(client.destroy(err));
           }
-          yield Promise.all(destroyPromises);
-        });
+        }
+        await Promise.all(destroyPromises);
       }
     };
     module2.exports = Agent;
@@ -9718,34 +9453,24 @@ var require_readable = __commonJS({
         return super.push(chunk);
       }
       // https://fetch.spec.whatwg.org/#dom-body-text
-      text() {
-        return __async(this, null, function* () {
-          return consume(this, "text");
-        });
+      async text() {
+        return consume(this, "text");
       }
       // https://fetch.spec.whatwg.org/#dom-body-json
-      json() {
-        return __async(this, null, function* () {
-          return consume(this, "json");
-        });
+      async json() {
+        return consume(this, "json");
       }
       // https://fetch.spec.whatwg.org/#dom-body-blob
-      blob() {
-        return __async(this, null, function* () {
-          return consume(this, "blob");
-        });
+      async blob() {
+        return consume(this, "blob");
       }
       // https://fetch.spec.whatwg.org/#dom-body-arraybuffer
-      arrayBuffer() {
-        return __async(this, null, function* () {
-          return consume(this, "arrayBuffer");
-        });
+      async arrayBuffer() {
+        return consume(this, "arrayBuffer");
       }
       // https://fetch.spec.whatwg.org/#dom-body-formdata
-      formData() {
-        return __async(this, null, function* () {
-          throw new NotSupportedError();
-        });
+      async formData() {
+        throw new NotSupportedError();
       }
       // https://fetch.spec.whatwg.org/#dom-body-bodyused
       get bodyUsed() {
@@ -9804,30 +9529,28 @@ var require_readable = __commonJS({
     function isUnusable(self2) {
       return util.isDisturbed(self2) || isLocked(self2);
     }
-    function consume(stream, type) {
-      return __async(this, null, function* () {
-        if (isUnusable(stream)) {
-          throw new TypeError("unusable");
-        }
-        assert(!stream[kConsume]);
-        return new Promise((resolve, reject) => {
-          stream[kConsume] = {
-            type,
-            stream,
-            resolve,
-            reject,
-            length: 0,
-            body: []
-          };
-          stream.on("error", function(err) {
-            consumeFinish(this[kConsume], err);
-          }).on("close", function() {
-            if (this[kConsume].body !== null) {
-              consumeFinish(this[kConsume], new RequestAbortedError());
-            }
-          });
-          process.nextTick(consumeStart, stream[kConsume]);
+    async function consume(stream, type) {
+      if (isUnusable(stream)) {
+        throw new TypeError("unusable");
+      }
+      assert(!stream[kConsume]);
+      return new Promise((resolve, reject) => {
+        stream[kConsume] = {
+          type,
+          stream,
+          resolve,
+          reject,
+          length: 0,
+          body: []
+        };
+        stream.on("error", function(err) {
+          consumeFinish(this[kConsume], err);
+        }).on("close", function() {
+          if (this[kConsume].body !== null) {
+            consumeFinish(this[kConsume], new RequestAbortedError());
+          }
         });
+        process.nextTick(consumeStart, stream[kConsume]);
       });
     }
     function consumeStart(consume2) {
@@ -9907,50 +9630,36 @@ var require_util3 = __commonJS({
       ResponseStatusCodeError
     } = require_errors();
     var { toUSVString } = require_util();
-    function getResolveErrorBodyCallback(_0) {
-      return __async(this, arguments, function* ({ callback, body, contentType, statusCode, statusMessage, headers }) {
-        assert(body);
-        let chunks = [];
-        let limit = 0;
-        try {
-          for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-            const chunk = temp.value;
-            chunks.push(chunk);
-            limit += chunk.length;
-            if (limit > 128 * 1024) {
-              chunks = null;
-              break;
-            }
-          }
-        } catch (temp) {
-          error = [temp];
-        } finally {
-          try {
-            more && (temp = iter.return) && (yield temp.call(iter));
-          } finally {
-            if (error)
-              throw error[0];
-          }
+    async function getResolveErrorBodyCallback({ callback, body, contentType, statusCode, statusMessage, headers }) {
+      assert(body);
+      let chunks = [];
+      let limit = 0;
+      for await (const chunk of body) {
+        chunks.push(chunk);
+        limit += chunk.length;
+        if (limit > 128 * 1024) {
+          chunks = null;
+          break;
         }
-        if (statusCode === 204 || !contentType || !chunks) {
-          process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers));
+      }
+      if (statusCode === 204 || !contentType || !chunks) {
+        process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers));
+        return;
+      }
+      try {
+        if (contentType.startsWith("application/json")) {
+          const payload = JSON.parse(toUSVString(Buffer.concat(chunks)));
+          process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers, payload));
           return;
         }
-        try {
-          if (contentType.startsWith("application/json")) {
-            const payload = JSON.parse(toUSVString(Buffer.concat(chunks)));
-            process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers, payload));
-            return;
-          }
-          if (contentType.startsWith("text/")) {
-            const payload = toUSVString(Buffer.concat(chunks));
-            process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers, payload));
-            return;
-          }
-        } catch (err) {
+        if (contentType.startsWith("text/")) {
+          const payload = toUSVString(Buffer.concat(chunks));
+          process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers, payload));
+          return;
         }
-        process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers));
-      });
+      } catch (err) {
+      }
+      process.nextTick(callback, new ResponseStatusCodeError(`Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`, statusCode, headers));
     }
     module2.exports = { getResolveErrorBodyCallback };
   }
@@ -10522,7 +10231,7 @@ var require_api_pipeline = __commonJS({
     function pipeline(opts, handler2) {
       try {
         const pipelineHandler = new PipelineHandler(opts, handler2);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), { body: pipelineHandler.req }), pipelineHandler);
+        this.dispatch({ ...opts, body: pipelineHandler.req }, pipelineHandler);
         return pipelineHandler.ret;
       } catch (err) {
         return new PassThrough().destroy(err);
@@ -10605,10 +10314,11 @@ var require_api_upgrade = __commonJS({
       }
       try {
         const upgradeHandler = new UpgradeHandler(opts, callback);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), {
+        this.dispatch({
+          ...opts,
           method: opts.method || "GET",
           upgrade: opts.protocol || "Websocket"
-        }), upgradeHandler);
+        }, upgradeHandler);
       } catch (err) {
         if (typeof callback !== "function") {
           throw err;
@@ -10695,7 +10405,7 @@ var require_api_connect = __commonJS({
       }
       try {
         const connectHandler = new ConnectHandler(opts, callback);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), { method: "CONNECT" }), connectHandler);
+        this.dispatch({ ...opts, method: "CONNECT" }, connectHandler);
       } catch (err) {
         if (typeof callback !== "function") {
           throw err;
@@ -10900,8 +10610,8 @@ var require_mock_utils = __commonJS({
     }
     function addMockDispatch(mockDispatches, key, data) {
       const baseData = { timesInvoked: 0, times: 1, persist: false, consumed: false };
-      const replyData = typeof data === "function" ? { callback: data } : __spreadValues({}, data);
-      const newMockDispatch = __spreadProps(__spreadValues(__spreadValues({}, baseData), key), { pending: true, data: __spreadValues({ error: null }, replyData) });
+      const replyData = typeof data === "function" ? { callback: data } : { ...data };
+      const newMockDispatch = { ...baseData, ...key, pending: true, data: { error: null, ...replyData } };
       mockDispatches.push(newMockDispatch);
       return newMockDispatch;
     }
@@ -10936,33 +10646,19 @@ var require_mock_utils = __commonJS({
     function getStatusText(statusCode) {
       return STATUS_CODES[statusCode] || "unknown";
     }
-    function getResponse(body) {
-      return __async(this, null, function* () {
-        const buffers = [];
-        try {
-          for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-            const data = temp.value;
-            buffers.push(data);
-          }
-        } catch (temp) {
-          error = [temp];
-        } finally {
-          try {
-            more && (temp = iter.return) && (yield temp.call(iter));
-          } finally {
-            if (error)
-              throw error[0];
-          }
-        }
-        return Buffer.concat(buffers).toString("utf8");
-      });
+    async function getResponse(body) {
+      const buffers = [];
+      for await (const data of body) {
+        buffers.push(data);
+      }
+      return Buffer.concat(buffers).toString("utf8");
     }
     function mockDispatch(opts, handler2) {
       const key = buildKey(opts);
       const mockDispatch2 = getMockDispatch(this[kDispatches], key);
       mockDispatch2.timesInvoked++;
       if (mockDispatch2.data.callback) {
-        mockDispatch2.data = __spreadValues(__spreadValues({}, mockDispatch2.data), mockDispatch2.data.callback(opts));
+        mockDispatch2.data = { ...mockDispatch2.data, ...mockDispatch2.data.callback(opts) };
       }
       const { data: { statusCode, data, headers, trailers, error }, delay: delay2, persist } = mockDispatch2;
       const { timesInvoked, times } = mockDispatch2;
@@ -10982,7 +10678,7 @@ var require_mock_utils = __commonJS({
       }
       function handleReply(mockDispatches, _data = data) {
         const optsHeaders = Array.isArray(opts.headers) ? buildHeadersFromArray(opts.headers) : opts.headers;
-        const body = typeof _data === "function" ? _data(__spreadProps(__spreadValues({}, opts), { headers: optsHeaders })) : _data;
+        const body = typeof _data === "function" ? _data({ ...opts, headers: optsHeaders }) : _data;
         if (isPromise(body)) {
           body.then((newData) => handleReply(mockDispatches, newData));
           return;
@@ -11039,7 +10735,7 @@ var require_mock_utils = __commonJS({
     }
     function buildMockOptions(opts) {
       if (opts) {
-        const _a2 = opts, { agent } = _a2, mockOptions = __objRest(_a2, ["agent"]);
+        const { agent, ...mockOptions } = opts;
         return mockOptions;
       }
     }
@@ -11140,8 +10836,8 @@ var require_mock_interceptor = __commonJS({
       createMockScopeDispatchData(statusCode, data, responseOptions = {}) {
         const responseData = getResponseData2(data);
         const contentLength = this[kContentLength] ? { "content-length": responseData.length } : {};
-        const headers = __spreadValues(__spreadValues(__spreadValues({}, this[kDefaultHeaders]), contentLength), responseOptions.headers);
-        const trailers = __spreadValues(__spreadValues({}, this[kDefaultTrailers]), responseOptions.trailers);
+        const headers = { ...this[kDefaultHeaders], ...contentLength, ...responseOptions.headers };
+        const trailers = { ...this[kDefaultTrailers], ...responseOptions.trailers };
         return { statusCode, data, headers, trailers };
       }
       validateReplyParameters(statusCode, data, responseOptions) {
@@ -11167,7 +10863,9 @@ var require_mock_interceptor = __commonJS({
             }
             const { statusCode: statusCode2, data: data2 = "", responseOptions: responseOptions2 = {} } = resolvedData;
             this.validateReplyParameters(statusCode2, data2, responseOptions2);
-            return __spreadValues({}, this.createMockScopeDispatchData(statusCode2, data2, responseOptions2));
+            return {
+              ...this.createMockScopeDispatchData(statusCode2, data2, responseOptions2)
+            };
           };
           const newMockDispatch2 = addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback);
           return new MockScope(newMockDispatch2);
@@ -11264,12 +10962,10 @@ var require_mock_client = __commonJS({
       intercept(opts) {
         return new MockInterceptor(opts, this[kDispatches]);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield promisify(this[kOriginalClose])();
-          this[kConnected] = 0;
-          this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
-        });
+      async [kClose]() {
+        await promisify(this[kOriginalClose])();
+        this[kConnected] = 0;
+        this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
     };
     module2.exports = MockClient;
@@ -11319,12 +11015,10 @@ var require_mock_pool = __commonJS({
       intercept(opts) {
         return new MockInterceptor(opts, this[kDispatches]);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield promisify(this[kOriginalClose])();
-          this[kConnected] = 0;
-          this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
-        });
+      async [kClose]() {
+        await promisify(this[kOriginalClose])();
+        this[kConnected] = 0;
+        this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
     };
     module2.exports = MockPool;
@@ -11356,7 +11050,7 @@ var require_pluralizer = __commonJS({
         const one = count === 1;
         const keys = one ? singulars : plurals;
         const noun = one ? this.singular : this.plural;
-        return __spreadProps(__spreadValues({}, keys), { count, noun });
+        return { ...keys, count, noun };
       }
     };
   }
@@ -11458,11 +11152,9 @@ var require_mock_agent = __commonJS({
         this.get(opts.origin);
         return this[kAgent].dispatch(opts, handler2);
       }
-      close() {
-        return __async(this, null, function* () {
-          yield this[kAgent].close();
-          this[kClients].clear();
-        });
+      async close() {
+        await this[kAgent].close();
+        this[kClients].clear();
       }
       deactivate() {
         this[kIsMockActive] = false;
@@ -11523,7 +11215,7 @@ var require_mock_agent = __commonJS({
       }
       pendingInterceptors() {
         const mockAgentClients = this[kClients];
-        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope.deref()[kDispatches].map((dispatch) => __spreadProps(__spreadValues({}, dispatch), { origin }))).filter(({ pending }) => pending);
+        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope.deref()[kDispatches].map((dispatch) => ({ ...dispatch, origin }))).filter(({ pending }) => pending);
       }
       assertNoPendingInterceptors({ pendingInterceptorsFormatter = new PendingInterceptorsFormatter() } = {}) {
         const pending = this.pendingInterceptors();
@@ -11607,24 +11299,26 @@ var require_proxy_agent = __commonJS({
         } else if (username && password) {
           this[kProxyHeaders]["proxy-authorization"] = `Basic ${Buffer.from(`${decodeURIComponent(username)}:${decodeURIComponent(password)}`).toString("base64")}`;
         }
-        const connect = buildConnector(__spreadValues({}, opts.proxyTls));
-        this[kConnectEndpoint] = buildConnector(__spreadValues({}, opts.requestTls));
+        const connect = buildConnector({ ...opts.proxyTls });
+        this[kConnectEndpoint] = buildConnector({ ...opts.requestTls });
         this[kClient] = clientFactory(resolvedUrl, { connect });
-        this[kAgent] = new Agent(__spreadProps(__spreadValues({}, opts), {
-          connect: (opts2, callback) => __async(this, null, function* () {
+        this[kAgent] = new Agent({
+          ...opts,
+          connect: async (opts2, callback) => {
             let requestedHost = opts2.host;
             if (!opts2.port) {
               requestedHost += `:${defaultProtocolPort(opts2.protocol)}`;
             }
             try {
-              const { socket, statusCode } = yield this[kClient].connect({
+              const { socket, statusCode } = await this[kClient].connect({
                 origin,
                 port,
                 path: requestedHost,
                 signal: opts2.signal,
-                headers: __spreadProps(__spreadValues({}, this[kProxyHeaders]), {
+                headers: {
+                  ...this[kProxyHeaders],
                   host
-                })
+                }
               });
               if (statusCode !== 200) {
                 socket.on("error", () => {
@@ -11641,37 +11335,35 @@ var require_proxy_agent = __commonJS({
               } else {
                 servername = opts2.servername;
               }
-              this[kConnectEndpoint](__spreadProps(__spreadValues({}, opts2), { servername, httpSocket: socket }), callback);
+              this[kConnectEndpoint]({ ...opts2, servername, httpSocket: socket }, callback);
             } catch (err) {
               callback(err);
             }
-          })
-        }));
+          }
+        });
       }
       dispatch(opts, handler2) {
         const { host } = new URL3(opts.origin);
         const headers = buildHeaders(opts.headers);
         throwIfProxyAuthIsSent(headers);
         return this[kAgent].dispatch(
-          __spreadProps(__spreadValues({}, opts), {
-            headers: __spreadProps(__spreadValues({}, headers), {
+          {
+            ...opts,
+            headers: {
+              ...headers,
               host
-            })
-          }),
+            }
+          },
           handler2
         );
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield this[kAgent].close();
-          yield this[kClient].close();
-        });
+      async [kClose]() {
+        await this[kAgent].close();
+        await this[kClient].close();
       }
-      [kDestroy]() {
-        return __async(this, null, function* () {
-          yield this[kAgent].destroy();
-          yield this[kClient].destroy();
-        });
+      async [kDestroy]() {
+        await this[kAgent].destroy();
+        await this[kClient].destroy();
       }
     };
     function buildHeaders(headers) {
@@ -11709,7 +11401,7 @@ var require_RetryHandler = __commonJS({
     }
     var RetryHandler = class _RetryHandler {
       constructor(opts, handlers) {
-        const _a2 = opts, { retryOptions } = _a2, dispatchOpts = __objRest(_a2, ["retryOptions"]);
+        const { retryOptions, ...dispatchOpts } = opts;
         const {
           // Retry scoped
           retry: retryFn,
@@ -11722,27 +11414,27 @@ var require_RetryHandler = __commonJS({
           errorCodes,
           retryAfter,
           statusCodes
-        } = retryOptions != null ? retryOptions : {};
+        } = retryOptions ?? {};
         this.dispatch = handlers.dispatch;
         this.handler = handlers.handler;
         this.opts = dispatchOpts;
         this.abort = null;
         this.aborted = false;
         this.retryOpts = {
-          retry: retryFn != null ? retryFn : _RetryHandler[kRetryHandlerDefaultRetry],
-          retryAfter: retryAfter != null ? retryAfter : true,
-          maxTimeout: maxTimeout != null ? maxTimeout : 30 * 1e3,
+          retry: retryFn ?? _RetryHandler[kRetryHandlerDefaultRetry],
+          retryAfter: retryAfter ?? true,
+          maxTimeout: maxTimeout ?? 30 * 1e3,
           // 30s,
-          timeout: minTimeout != null ? minTimeout : 500,
+          timeout: minTimeout ?? 500,
           // .5s
-          timeoutFactor: timeoutFactor != null ? timeoutFactor : 2,
-          maxRetries: maxRetries != null ? maxRetries : 5,
+          timeoutFactor: timeoutFactor ?? 2,
+          maxRetries: maxRetries ?? 5,
           // What errors we should retry
-          methods: methods != null ? methods : ["GET", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"],
+          methods: methods ?? ["GET", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"],
           // Indicates which errors to retry
-          statusCodes: statusCodes != null ? statusCodes : [500, 502, 503, 504, 429],
+          statusCodes: statusCodes ?? [500, 502, 503, 504, 429],
           // List of errors to retry
-          errorCodes: errorCodes != null ? errorCodes : [
+          errorCodes: errorCodes ?? [
             "ECONNRESET",
             "ECONNREFUSED",
             "ENOTFOUND",
@@ -11823,7 +11515,7 @@ var require_RetryHandler = __commonJS({
           retryAfterHeader = Number(retryAfterHeader);
           retryAfterHeader = isNaN(retryAfterHeader) ? calculateRetryAfterHeader(retryAfterHeader) : retryAfterHeader * 1e3;
         }
-        const retryTimeout = retryAfterHeader > 0 ? Math.min(retryAfterHeader, maxTimeout) : Math.min(currentTimeout * __pow(timeoutFactor, counter), maxTimeout);
+        const retryTimeout = retryAfterHeader > 0 ? Math.min(retryAfterHeader, maxTimeout) : Math.min(currentTimeout * timeoutFactor ** counter, maxTimeout);
         state.currentTimeout = retryTimeout;
         setTimeout(() => cb(null), retryTimeout);
       }
@@ -11934,21 +11626,22 @@ var require_RetryHandler = __commonJS({
           err,
           {
             state: { counter: this.retryCount++, currentTimeout: this.retryAfter },
-            opts: __spreadValues({ retryOptions: this.retryOpts }, this.opts)
+            opts: { retryOptions: this.retryOpts, ...this.opts }
           },
           onRetry.bind(this)
         );
         function onRetry(err2) {
-          var _a2;
           if (err2 != null || this.aborted || isDisturbed(this.opts.body)) {
             return this.handler.onError(err2);
           }
           if (this.start !== 0) {
-            this.opts = __spreadProps(__spreadValues({}, this.opts), {
-              headers: __spreadProps(__spreadValues({}, this.opts.headers), {
-                range: `bytes=${this.start}-${(_a2 = this.end) != null ? _a2 : ""}`
-              })
-            });
+            this.opts = {
+              ...this.opts,
+              headers: {
+                ...this.opts.headers,
+                range: `bytes=${this.start}-${this.end ?? ""}`
+              }
+            };
           }
           try {
             this.dispatch(this.opts, this);
@@ -12101,9 +11794,9 @@ var require_headers = __commonJS({
       return headers[kHeadersList].append(name, value);
     }
     var HeadersList = class _HeadersList {
+      /** @type {[string, string][]|null} */
+      cookies = null;
       constructor(init) {
-        /** @type {[string, string][]|null} */
-        __publicField(this, "cookies", null);
         if (init instanceof _HeadersList) {
           this[kHeadersMap] = new Map(init[kHeadersMap]);
           this[kHeadersSortedMap] = init[kHeadersSortedMap];
@@ -12125,7 +11818,6 @@ var require_headers = __commonJS({
       }
       // https://fetch.spec.whatwg.org/#concept-header-list-append
       append(name, value) {
-        var _a2;
         this[kHeadersSortedMap] = null;
         const lowercaseName = name.toLowerCase();
         const exists = this[kHeadersMap].get(lowercaseName);
@@ -12139,7 +11831,7 @@ var require_headers = __commonJS({
           this[kHeadersMap].set(lowercaseName, { name, value });
         }
         if (lowercaseName === "set-cookie") {
-          (_a2 = this.cookies) != null ? _a2 : this.cookies = [];
+          this.cookies ??= [];
           this.cookies.push(value);
         }
       }
@@ -12529,10 +12221,9 @@ var require_response = __commonJS({
       }
       // Returns response’s URL, if it has one; otherwise the empty string.
       get url() {
-        var _a2;
         webidl.brandCheck(this, _Response);
         const urlList = this[kState].urlList;
-        const url = (_a2 = urlList[urlList.length - 1]) != null ? _a2 : null;
+        const url = urlList[urlList.length - 1] ?? null;
         if (url === null) {
           return "";
         }
@@ -12619,14 +12310,14 @@ var require_response = __commonJS({
           response.type
         );
       }
-      const newResponse = makeResponse(__spreadProps(__spreadValues({}, response), { body: null }));
+      const newResponse = makeResponse({ ...response, body: null });
       if (response.body != null) {
         newResponse.body = cloneBody(response.body);
       }
       return newResponse;
     }
     function makeResponse(init) {
-      return __spreadProps(__spreadValues({
+      return {
         aborted: false,
         rangeRequested: false,
         timingAllowPassed: false,
@@ -12635,11 +12326,11 @@ var require_response = __commonJS({
         status: 200,
         timingInfo: null,
         cacheState: "",
-        statusText: ""
-      }, init), {
+        statusText: "",
+        ...init,
         headersList: init.headersList ? new HeadersList(init.headersList) : new HeadersList(),
         urlList: init.urlList ? [...init.urlList] : []
-      });
+      };
     }
     function makeNetworkError(reason) {
       const isError2 = isErrorLike(reason);
@@ -12651,9 +12342,10 @@ var require_response = __commonJS({
       });
     }
     function makeFilteredResponse(response, state) {
-      state = __spreadValues({
-        internalResponse: response
-      }, state);
+      state = {
+        internalResponse: response,
+        ...state
+      };
       return new Proxy(response, {
         get(target, p) {
           return p in state ? state[p] : target[p];
@@ -12762,7 +12454,7 @@ var require_response = __commonJS({
       if (V instanceof ReadableStream2) {
         return webidl.converters.ReadableStream(V);
       }
-      if (V == null ? void 0 : V[Symbol.asyncIterator]) {
+      if (V?.[Symbol.asyncIterator]) {
         return V;
       }
       return webidl.converters.XMLHttpRequestBodyInit(V);
@@ -12835,7 +12527,6 @@ var require_request2 = __commonJS({
     var Request = class _Request {
       // https://fetch.spec.whatwg.org/#dom-request
       constructor(input, init = {}) {
-        var _a2, _b, _c;
         if (input === kConstruct) {
           return;
         }
@@ -12846,8 +12537,7 @@ var require_request2 = __commonJS({
           settingsObject: {
             baseUrl: getGlobalOrigin(),
             get origin() {
-              var _a3;
-              return (_a3 = this.baseUrl) == null ? void 0 : _a3.origin;
+              return this.baseUrl?.origin;
             },
             policyContainer: makePolicyContainer()
           }
@@ -12877,7 +12567,7 @@ var require_request2 = __commonJS({
         }
         const origin = this[kRealm].settingsObject.origin;
         let window2 = "client";
-        if (((_b = (_a2 = request2.window) == null ? void 0 : _a2.constructor) == null ? void 0 : _b.name) === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
+        if (request2.window?.constructor?.name === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
           window2 = request2.window;
         }
         if (init.window != null) {
@@ -13006,7 +12696,7 @@ var require_request2 = __commonJS({
           if (forbiddenMethodsSet.has(method.toUpperCase())) {
             throw new TypeError(`'${method}' HTTP method is unsupported.`);
           }
-          method = (_c = normalizeMethodRecord[method]) != null ? _c : normalizeMethod(method);
+          method = normalizeMethodRecord[method] ?? normalizeMethod(method);
           request2.method = method;
         }
         if (init.signal !== void 0) {
@@ -13039,7 +12729,7 @@ var require_request2 = __commonJS({
               } else if (getEventListeners(signal, "abort").length >= defaultMaxListeners) {
                 setMaxListeners(100, signal);
               }
-            } catch (e) {
+            } catch {
             }
             util.addAbortListener(signal, abort);
             requestFinalizer.register(ac, { signal, abort });
@@ -13085,7 +12775,7 @@ var require_request2 = __commonJS({
             this[kHeaders].append("content-type", contentType);
           }
         }
-        const inputOrInitBody = initBody != null ? initBody : inputBody;
+        const inputOrInitBody = initBody ?? inputBody;
         if (inputOrInitBody != null && inputOrInitBody.source == null) {
           if (initBody != null && init.duplex == null) {
             throw new TypeError("RequestInit: duplex option is required when sending a body.");
@@ -13236,9 +12926,8 @@ var require_request2 = __commonJS({
       }
       // Returns a clone of request.
       clone() {
-        var _a2;
         webidl.brandCheck(this, _Request);
-        if (this.bodyUsed || ((_a2 = this.body) == null ? void 0 : _a2.locked)) {
+        if (this.bodyUsed || this.body?.locked) {
           throw new TypeError("unusable");
         }
         const clonedRequest = cloneRequest(this[kState]);
@@ -13266,7 +12955,7 @@ var require_request2 = __commonJS({
     };
     mixinBody(Request);
     function makeRequest(init) {
-      const request2 = __spreadProps(__spreadValues({
+      const request2 = {
         method: "GET",
         localURLsOnly: false,
         unsafeRequest: false,
@@ -13301,15 +12990,15 @@ var require_request2 = __commonJS({
         responseTainting: "basic",
         preventNoCacheCacheControlHeaderModification: false,
         done: false,
-        timingAllowFailed: false
-      }, init), {
+        timingAllowFailed: false,
+        ...init,
         headersList: init.headersList ? new HeadersList(init.headersList) : new HeadersList()
-      });
+      };
       request2.url = request2.urlList[0];
       return request2;
     }
     function cloneRequest(request2) {
-      const newRequest = makeRequest(__spreadProps(__spreadValues({}, request2), { body: null }));
+      const newRequest = makeRequest({ ...request2, body: null });
       if (request2.body != null) {
         newRequest.body = cloneBody(request2.body);
       }
@@ -13513,17 +13202,15 @@ var require_fetch = __commonJS({
         this.setMaxListeners(21);
       }
       terminate(reason) {
-        var _a2;
         if (this.state !== "ongoing") {
           return;
         }
         this.state = "terminated";
-        (_a2 = this.connection) == null ? void 0 : _a2.destroy(reason);
+        this.connection?.destroy(reason);
         this.emit("terminated", reason);
       }
       // https://fetch.spec.whatwg.org/#fetch-controller-abort
       abort(error) {
-        var _a2;
         if (this.state !== "ongoing") {
           return;
         }
@@ -13532,12 +13219,11 @@ var require_fetch = __commonJS({
           error = new DOMException2("The operation was aborted.", "AbortError");
         }
         this.serializedAbortReason = error;
-        (_a2 = this.connection) == null ? void 0 : _a2.destroy(error);
+        this.connection?.destroy(error);
         this.emit("terminated", error);
       }
     };
     function fetch2(input, init = {}) {
-      var _a2, _b;
       webidl.argumentLengthCheck(arguments, 1, { header: "globalThis.fetch" });
       const p = createDeferredPromise();
       let requestObject;
@@ -13553,7 +13239,7 @@ var require_fetch = __commonJS({
         return p.promise;
       }
       const globalObject2 = request2.client.globalObject;
-      if (((_a2 = globalObject2 == null ? void 0 : globalObject2.constructor) == null ? void 0 : _a2.name) === "ServiceWorkerGlobalScope") {
+      if (globalObject2?.constructor?.name === "ServiceWorkerGlobalScope") {
         request2.serviceWorkers = "none";
       }
       let responseObject = null;
@@ -13596,17 +13282,16 @@ var require_fetch = __commonJS({
         request: request2,
         processResponseEndOfBody: handleFetchDone,
         processResponse,
-        dispatcher: (_b = init.dispatcher) != null ? _b : getGlobalDispatcher()
+        dispatcher: init.dispatcher ?? getGlobalDispatcher()
         // undici
       });
       return p.promise;
     }
     function finalizeAndReportTiming(response, initiatorType = "other") {
-      var _a2;
       if (response.type === "error" && response.aborted) {
         return;
       }
-      if (!((_a2 = response.urlList) == null ? void 0 : _a2.length)) {
+      if (!response.urlList?.length) {
         return;
       }
       const originalURL = response.urlList[0];
@@ -13640,12 +13325,11 @@ var require_fetch = __commonJS({
       }
     }
     function abortFetch(p, request2, responseObject, error) {
-      var _a2, _b;
       if (!error) {
         error = new DOMException2("The operation was aborted.", "AbortError");
       }
       p.reject(error);
-      if (request2.body != null && isReadable((_a2 = request2.body) == null ? void 0 : _a2.stream)) {
+      if (request2.body != null && isReadable(request2.body?.stream)) {
         request2.body.stream.cancel(error).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -13657,7 +13341,7 @@ var require_fetch = __commonJS({
         return;
       }
       const response = responseObject[kState];
-      if (response.body != null && isReadable((_b = response.body) == null ? void 0 : _b.stream)) {
+      if (response.body != null && isReadable(response.body?.stream)) {
         response.body.stream.cancel(error).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -13677,7 +13361,6 @@ var require_fetch = __commonJS({
       dispatcher
       // undici
     }) {
-      var _a2, _b, _c, _d;
       let taskDestination = null;
       let crossOriginIsolatedCapability = false;
       if (request2.client != null) {
@@ -13702,10 +13385,10 @@ var require_fetch = __commonJS({
       };
       assert(!request2.body || request2.body.stream);
       if (request2.window === "client") {
-        request2.window = ((_c = (_b = (_a2 = request2.client) == null ? void 0 : _a2.globalObject) == null ? void 0 : _b.constructor) == null ? void 0 : _c.name) === "Window" ? request2.client : "no-window";
+        request2.window = request2.client?.globalObject?.constructor?.name === "Window" ? request2.client : "no-window";
       }
       if (request2.origin === "client") {
-        request2.origin = (_d = request2.client) == null ? void 0 : _d.origin;
+        request2.origin = request2.client?.origin;
       }
       if (request2.policyContainer === "client") {
         if (request2.client != null) {
@@ -13732,107 +13415,104 @@ var require_fetch = __commonJS({
       });
       return fetchParams.controller;
     }
-    function mainFetch(fetchParams, recursive = false) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let response = null;
-        if (request2.localURLsOnly && !urlIsLocal(requestCurrentURL(request2))) {
-          response = makeNetworkError("local URLs only");
-        }
-        tryUpgradeRequestToAPotentiallyTrustworthyURL(request2);
-        if (requestBadPort(request2) === "blocked") {
-          response = makeNetworkError("bad port");
-        }
-        if (request2.referrerPolicy === "") {
-          request2.referrerPolicy = request2.policyContainer.referrerPolicy;
-        }
-        if (request2.referrer !== "no-referrer") {
-          request2.referrer = determineRequestsReferrer(request2);
-        }
-        if (response === null) {
-          response = yield (() => __async(this, null, function* () {
-            const currentURL = requestCurrentURL(request2);
-            if (
-              // - request’s current URL’s origin is same origin with request’s origin,
-              //   and request’s response tainting is "basic"
-              sameOrigin(currentURL, request2.url) && request2.responseTainting === "basic" || // request’s current URL’s scheme is "data"
-              currentURL.protocol === "data:" || // - request’s mode is "navigate" or "websocket"
-              (request2.mode === "navigate" || request2.mode === "websocket")
-            ) {
-              request2.responseTainting = "basic";
-              return yield schemeFetch(fetchParams);
-            }
-            if (request2.mode === "same-origin") {
-              return makeNetworkError('request mode cannot be "same-origin"');
-            }
-            if (request2.mode === "no-cors") {
-              if (request2.redirect !== "follow") {
-                return makeNetworkError(
-                  'redirect mode cannot be "follow" for "no-cors" request'
-                );
-              }
-              request2.responseTainting = "opaque";
-              return yield schemeFetch(fetchParams);
-            }
-            if (!urlIsHttpHttpsScheme(requestCurrentURL(request2))) {
-              return makeNetworkError("URL scheme must be a HTTP(S) scheme");
-            }
-            request2.responseTainting = "cors";
-            return yield httpFetch(fetchParams);
-          }))();
-        }
-        if (recursive) {
-          return response;
-        }
-        if (response.status !== 0 && !response.internalResponse) {
-          if (request2.responseTainting === "cors") {
+    async function mainFetch(fetchParams, recursive = false) {
+      const request2 = fetchParams.request;
+      let response = null;
+      if (request2.localURLsOnly && !urlIsLocal(requestCurrentURL(request2))) {
+        response = makeNetworkError("local URLs only");
+      }
+      tryUpgradeRequestToAPotentiallyTrustworthyURL(request2);
+      if (requestBadPort(request2) === "blocked") {
+        response = makeNetworkError("bad port");
+      }
+      if (request2.referrerPolicy === "") {
+        request2.referrerPolicy = request2.policyContainer.referrerPolicy;
+      }
+      if (request2.referrer !== "no-referrer") {
+        request2.referrer = determineRequestsReferrer(request2);
+      }
+      if (response === null) {
+        response = await (async () => {
+          const currentURL = requestCurrentURL(request2);
+          if (
+            // - request’s current URL’s origin is same origin with request’s origin,
+            //   and request’s response tainting is "basic"
+            sameOrigin(currentURL, request2.url) && request2.responseTainting === "basic" || // request’s current URL’s scheme is "data"
+            currentURL.protocol === "data:" || // - request’s mode is "navigate" or "websocket"
+            (request2.mode === "navigate" || request2.mode === "websocket")
+          ) {
+            request2.responseTainting = "basic";
+            return await schemeFetch(fetchParams);
           }
-          if (request2.responseTainting === "basic") {
-            response = filterResponse(response, "basic");
-          } else if (request2.responseTainting === "cors") {
-            response = filterResponse(response, "cors");
-          } else if (request2.responseTainting === "opaque") {
-            response = filterResponse(response, "opaque");
-          } else {
-            assert(false);
+          if (request2.mode === "same-origin") {
+            return makeNetworkError('request mode cannot be "same-origin"');
           }
+          if (request2.mode === "no-cors") {
+            if (request2.redirect !== "follow") {
+              return makeNetworkError(
+                'redirect mode cannot be "follow" for "no-cors" request'
+              );
+            }
+            request2.responseTainting = "opaque";
+            return await schemeFetch(fetchParams);
+          }
+          if (!urlIsHttpHttpsScheme(requestCurrentURL(request2))) {
+            return makeNetworkError("URL scheme must be a HTTP(S) scheme");
+          }
+          request2.responseTainting = "cors";
+          return await httpFetch(fetchParams);
+        })();
+      }
+      if (recursive) {
+        return response;
+      }
+      if (response.status !== 0 && !response.internalResponse) {
+        if (request2.responseTainting === "cors") {
         }
-        let internalResponse = response.status === 0 ? response : response.internalResponse;
-        if (internalResponse.urlList.length === 0) {
-          internalResponse.urlList.push(...request2.urlList);
+        if (request2.responseTainting === "basic") {
+          response = filterResponse(response, "basic");
+        } else if (request2.responseTainting === "cors") {
+          response = filterResponse(response, "cors");
+        } else if (request2.responseTainting === "opaque") {
+          response = filterResponse(response, "opaque");
+        } else {
+          assert(false);
         }
-        if (!request2.timingAllowFailed) {
-          response.timingAllowPassed = true;
+      }
+      let internalResponse = response.status === 0 ? response : response.internalResponse;
+      if (internalResponse.urlList.length === 0) {
+        internalResponse.urlList.push(...request2.urlList);
+      }
+      if (!request2.timingAllowFailed) {
+        response.timingAllowPassed = true;
+      }
+      if (response.type === "opaque" && internalResponse.status === 206 && internalResponse.rangeRequested && !request2.headers.contains("range")) {
+        response = internalResponse = makeNetworkError();
+      }
+      if (response.status !== 0 && (request2.method === "HEAD" || request2.method === "CONNECT" || nullBodyStatus.includes(internalResponse.status))) {
+        internalResponse.body = null;
+        fetchParams.controller.dump = true;
+      }
+      if (request2.integrity) {
+        const processBodyError = (reason) => fetchFinale(fetchParams, makeNetworkError(reason));
+        if (request2.responseTainting === "opaque" || response.body == null) {
+          processBodyError(response.error);
+          return;
         }
-        if (response.type === "opaque" && internalResponse.status === 206 && internalResponse.rangeRequested && !request2.headers.contains("range")) {
-          response = internalResponse = makeNetworkError();
-        }
-        if (response.status !== 0 && (request2.method === "HEAD" || request2.method === "CONNECT" || nullBodyStatus.includes(internalResponse.status))) {
-          internalResponse.body = null;
-          fetchParams.controller.dump = true;
-        }
-        if (request2.integrity) {
-          const processBodyError = (reason) => fetchFinale(fetchParams, makeNetworkError(reason));
-          if (request2.responseTainting === "opaque" || response.body == null) {
-            processBodyError(response.error);
+        const processBody = (bytes) => {
+          if (!bytesMatch(bytes, request2.integrity)) {
+            processBodyError("integrity mismatch");
             return;
           }
-          const processBody = (bytes) => {
-            if (!bytesMatch(bytes, request2.integrity)) {
-              processBodyError("integrity mismatch");
-              return;
-            }
-            response.body = safelyExtractBody(bytes)[0];
-            fetchFinale(fetchParams, response);
-          };
-          yield fullyReadBody(response.body, processBody, processBodyError);
-        } else {
+          response.body = safelyExtractBody(bytes)[0];
           fetchFinale(fetchParams, response);
-        }
-      });
+        };
+        await fullyReadBody(response.body, processBody, processBodyError);
+      } else {
+        fetchFinale(fetchParams, response);
+      }
     }
     function schemeFetch(fetchParams) {
-      var _a2;
       if (isCancelled(fetchParams) && fetchParams.request.redirectCount === 0) {
         return Promise.resolve(makeAppropriateNetworkError(fetchParams));
       }
@@ -13857,7 +13537,7 @@ var require_fetch = __commonJS({
           const bodyWithType = safelyExtractBody(blobURLEntryObject);
           const body = bodyWithType[0];
           const length = isomorphicEncode(`${body.length}`);
-          const type = (_a2 = bodyWithType[1]) != null ? _a2 : "";
+          const type = bodyWithType[1] ?? "";
           const response = makeResponse({
             statusText: "OK",
             headersList: [
@@ -13950,51 +13630,49 @@ var require_fetch = __commonJS({
         return Promise.resolve();
       }
     }
-    function httpFetch(fetchParams) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let response = null;
-        let actualResponse = null;
-        const timingInfo = fetchParams.timingInfo;
-        if (request2.serviceWorkers === "all") {
+    async function httpFetch(fetchParams) {
+      const request2 = fetchParams.request;
+      let response = null;
+      let actualResponse = null;
+      const timingInfo = fetchParams.timingInfo;
+      if (request2.serviceWorkers === "all") {
+      }
+      if (response === null) {
+        if (request2.redirect === "follow") {
+          request2.serviceWorkers = "none";
         }
-        if (response === null) {
-          if (request2.redirect === "follow") {
-            request2.serviceWorkers = "none";
-          }
-          actualResponse = response = yield httpNetworkOrCacheFetch(fetchParams);
-          if (request2.responseTainting === "cors" && corsCheck(request2, response) === "failure") {
-            return makeNetworkError("cors failure");
-          }
-          if (TAOCheck(request2, response) === "failure") {
-            request2.timingAllowFailed = true;
-          }
+        actualResponse = response = await httpNetworkOrCacheFetch(fetchParams);
+        if (request2.responseTainting === "cors" && corsCheck(request2, response) === "failure") {
+          return makeNetworkError("cors failure");
         }
-        if ((request2.responseTainting === "opaque" || response.type === "opaque") && crossOriginResourcePolicyCheck(
-          request2.origin,
-          request2.client,
-          request2.destination,
-          actualResponse
-        ) === "blocked") {
-          return makeNetworkError("blocked");
+        if (TAOCheck(request2, response) === "failure") {
+          request2.timingAllowFailed = true;
         }
-        if (redirectStatusSet.has(actualResponse.status)) {
-          if (request2.redirect !== "manual") {
-            fetchParams.controller.connection.destroy();
-          }
-          if (request2.redirect === "error") {
-            response = makeNetworkError("unexpected redirect");
-          } else if (request2.redirect === "manual") {
-            response = actualResponse;
-          } else if (request2.redirect === "follow") {
-            response = yield httpRedirectFetch(fetchParams, response);
-          } else {
-            assert(false);
-          }
+      }
+      if ((request2.responseTainting === "opaque" || response.type === "opaque") && crossOriginResourcePolicyCheck(
+        request2.origin,
+        request2.client,
+        request2.destination,
+        actualResponse
+      ) === "blocked") {
+        return makeNetworkError("blocked");
+      }
+      if (redirectStatusSet.has(actualResponse.status)) {
+        if (request2.redirect !== "manual") {
+          fetchParams.controller.connection.destroy();
         }
-        response.timingInfo = timingInfo;
-        return response;
-      });
+        if (request2.redirect === "error") {
+          response = makeNetworkError("unexpected redirect");
+        } else if (request2.redirect === "manual") {
+          response = actualResponse;
+        } else if (request2.redirect === "follow") {
+          response = await httpRedirectFetch(fetchParams, response);
+        } else {
+          assert(false);
+        }
+      }
+      response.timingInfo = timingInfo;
+      return response;
     }
     function httpRedirectFetch(fetchParams, response) {
       const request2 = fetchParams.request;
@@ -14055,456 +13733,424 @@ var require_fetch = __commonJS({
       setRequestReferrerPolicyOnRedirect(request2, actualResponse);
       return mainFetch(fetchParams, true);
     }
-    function httpNetworkOrCacheFetch(fetchParams, isAuthenticationFetch = false, isNewConnectionFetch = false) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let httpFetchParams = null;
-        let httpRequest = null;
-        let response = null;
-        const httpCache = null;
-        const revalidatingFlag = false;
-        if (request2.window === "no-window" && request2.redirect === "error") {
-          httpFetchParams = fetchParams;
-          httpRequest = request2;
+    async function httpNetworkOrCacheFetch(fetchParams, isAuthenticationFetch = false, isNewConnectionFetch = false) {
+      const request2 = fetchParams.request;
+      let httpFetchParams = null;
+      let httpRequest = null;
+      let response = null;
+      const httpCache = null;
+      const revalidatingFlag = false;
+      if (request2.window === "no-window" && request2.redirect === "error") {
+        httpFetchParams = fetchParams;
+        httpRequest = request2;
+      } else {
+        httpRequest = makeRequest(request2);
+        httpFetchParams = { ...fetchParams };
+        httpFetchParams.request = httpRequest;
+      }
+      const includeCredentials = request2.credentials === "include" || request2.credentials === "same-origin" && request2.responseTainting === "basic";
+      const contentLength = httpRequest.body ? httpRequest.body.length : null;
+      let contentLengthHeaderValue = null;
+      if (httpRequest.body == null && ["POST", "PUT"].includes(httpRequest.method)) {
+        contentLengthHeaderValue = "0";
+      }
+      if (contentLength != null) {
+        contentLengthHeaderValue = isomorphicEncode(`${contentLength}`);
+      }
+      if (contentLengthHeaderValue != null) {
+        httpRequest.headersList.append("content-length", contentLengthHeaderValue);
+      }
+      if (contentLength != null && httpRequest.keepalive) {
+      }
+      if (httpRequest.referrer instanceof URL) {
+        httpRequest.headersList.append("referer", isomorphicEncode(httpRequest.referrer.href));
+      }
+      appendRequestOriginHeader(httpRequest);
+      appendFetchMetadata(httpRequest);
+      if (!httpRequest.headersList.contains("user-agent")) {
+        httpRequest.headersList.append("user-agent", typeof esbuildDetection === "undefined" ? "undici" : "node");
+      }
+      if (httpRequest.cache === "default" && (httpRequest.headersList.contains("if-modified-since") || httpRequest.headersList.contains("if-none-match") || httpRequest.headersList.contains("if-unmodified-since") || httpRequest.headersList.contains("if-match") || httpRequest.headersList.contains("if-range"))) {
+        httpRequest.cache = "no-store";
+      }
+      if (httpRequest.cache === "no-cache" && !httpRequest.preventNoCacheCacheControlHeaderModification && !httpRequest.headersList.contains("cache-control")) {
+        httpRequest.headersList.append("cache-control", "max-age=0");
+      }
+      if (httpRequest.cache === "no-store" || httpRequest.cache === "reload") {
+        if (!httpRequest.headersList.contains("pragma")) {
+          httpRequest.headersList.append("pragma", "no-cache");
+        }
+        if (!httpRequest.headersList.contains("cache-control")) {
+          httpRequest.headersList.append("cache-control", "no-cache");
+        }
+      }
+      if (httpRequest.headersList.contains("range")) {
+        httpRequest.headersList.append("accept-encoding", "identity");
+      }
+      if (!httpRequest.headersList.contains("accept-encoding")) {
+        if (urlHasHttpsScheme(requestCurrentURL(httpRequest))) {
+          httpRequest.headersList.append("accept-encoding", "br, gzip, deflate");
         } else {
-          httpRequest = makeRequest(request2);
-          httpFetchParams = __spreadValues({}, fetchParams);
-          httpFetchParams.request = httpRequest;
+          httpRequest.headersList.append("accept-encoding", "gzip, deflate");
         }
-        const includeCredentials = request2.credentials === "include" || request2.credentials === "same-origin" && request2.responseTainting === "basic";
-        const contentLength = httpRequest.body ? httpRequest.body.length : null;
-        let contentLengthHeaderValue = null;
-        if (httpRequest.body == null && ["POST", "PUT"].includes(httpRequest.method)) {
-          contentLengthHeaderValue = "0";
+      }
+      httpRequest.headersList.delete("host");
+      if (includeCredentials) {
+      }
+      if (httpCache == null) {
+        httpRequest.cache = "no-store";
+      }
+      if (httpRequest.mode !== "no-store" && httpRequest.mode !== "reload") {
+      }
+      if (response == null) {
+        if (httpRequest.mode === "only-if-cached") {
+          return makeNetworkError("only if cached");
         }
-        if (contentLength != null) {
-          contentLengthHeaderValue = isomorphicEncode(`${contentLength}`);
+        const forwardResponse = await httpNetworkFetch(
+          httpFetchParams,
+          includeCredentials,
+          isNewConnectionFetch
+        );
+        if (!safeMethodsSet.has(httpRequest.method) && forwardResponse.status >= 200 && forwardResponse.status <= 399) {
         }
-        if (contentLengthHeaderValue != null) {
-          httpRequest.headersList.append("content-length", contentLengthHeaderValue);
-        }
-        if (contentLength != null && httpRequest.keepalive) {
-        }
-        if (httpRequest.referrer instanceof URL) {
-          httpRequest.headersList.append("referer", isomorphicEncode(httpRequest.referrer.href));
-        }
-        appendRequestOriginHeader(httpRequest);
-        appendFetchMetadata(httpRequest);
-        if (!httpRequest.headersList.contains("user-agent")) {
-          httpRequest.headersList.append("user-agent", typeof esbuildDetection === "undefined" ? "undici" : "node");
-        }
-        if (httpRequest.cache === "default" && (httpRequest.headersList.contains("if-modified-since") || httpRequest.headersList.contains("if-none-match") || httpRequest.headersList.contains("if-unmodified-since") || httpRequest.headersList.contains("if-match") || httpRequest.headersList.contains("if-range"))) {
-          httpRequest.cache = "no-store";
-        }
-        if (httpRequest.cache === "no-cache" && !httpRequest.preventNoCacheCacheControlHeaderModification && !httpRequest.headersList.contains("cache-control")) {
-          httpRequest.headersList.append("cache-control", "max-age=0");
-        }
-        if (httpRequest.cache === "no-store" || httpRequest.cache === "reload") {
-          if (!httpRequest.headersList.contains("pragma")) {
-            httpRequest.headersList.append("pragma", "no-cache");
-          }
-          if (!httpRequest.headersList.contains("cache-control")) {
-            httpRequest.headersList.append("cache-control", "no-cache");
-          }
-        }
-        if (httpRequest.headersList.contains("range")) {
-          httpRequest.headersList.append("accept-encoding", "identity");
-        }
-        if (!httpRequest.headersList.contains("accept-encoding")) {
-          if (urlHasHttpsScheme(requestCurrentURL(httpRequest))) {
-            httpRequest.headersList.append("accept-encoding", "br, gzip, deflate");
-          } else {
-            httpRequest.headersList.append("accept-encoding", "gzip, deflate");
-          }
-        }
-        httpRequest.headersList.delete("host");
-        if (includeCredentials) {
-        }
-        if (httpCache == null) {
-          httpRequest.cache = "no-store";
-        }
-        if (httpRequest.mode !== "no-store" && httpRequest.mode !== "reload") {
+        if (revalidatingFlag && forwardResponse.status === 304) {
         }
         if (response == null) {
-          if (httpRequest.mode === "only-if-cached") {
-            return makeNetworkError("only if cached");
-          }
-          const forwardResponse = yield httpNetworkFetch(
-            httpFetchParams,
-            includeCredentials,
-            isNewConnectionFetch
-          );
-          if (!safeMethodsSet.has(httpRequest.method) && forwardResponse.status >= 200 && forwardResponse.status <= 399) {
-          }
-          if (revalidatingFlag && forwardResponse.status === 304) {
-          }
-          if (response == null) {
-            response = forwardResponse;
-          }
+          response = forwardResponse;
         }
-        response.urlList = [...httpRequest.urlList];
-        if (httpRequest.headersList.contains("range")) {
-          response.rangeRequested = true;
+      }
+      response.urlList = [...httpRequest.urlList];
+      if (httpRequest.headersList.contains("range")) {
+        response.rangeRequested = true;
+      }
+      response.requestIncludesCredentials = includeCredentials;
+      if (response.status === 407) {
+        if (request2.window === "no-window") {
+          return makeNetworkError();
         }
-        response.requestIncludesCredentials = includeCredentials;
-        if (response.status === 407) {
-          if (request2.window === "no-window") {
-            return makeNetworkError();
-          }
-          if (isCancelled(fetchParams)) {
-            return makeAppropriateNetworkError(fetchParams);
-          }
-          return makeNetworkError("proxy authentication required");
+        if (isCancelled(fetchParams)) {
+          return makeAppropriateNetworkError(fetchParams);
         }
-        if (
-          // response’s status is 421
-          response.status === 421 && // isNewConnectionFetch is false
-          !isNewConnectionFetch && // request’s body is null, or request’s body is non-null and request’s body’s source is non-null
-          (request2.body == null || request2.body.source != null)
-        ) {
-          if (isCancelled(fetchParams)) {
-            return makeAppropriateNetworkError(fetchParams);
-          }
-          fetchParams.controller.connection.destroy();
-          response = yield httpNetworkOrCacheFetch(
-            fetchParams,
-            isAuthenticationFetch,
-            true
-          );
+        return makeNetworkError("proxy authentication required");
+      }
+      if (
+        // response’s status is 421
+        response.status === 421 && // isNewConnectionFetch is false
+        !isNewConnectionFetch && // request’s body is null, or request’s body is non-null and request’s body’s source is non-null
+        (request2.body == null || request2.body.source != null)
+      ) {
+        if (isCancelled(fetchParams)) {
+          return makeAppropriateNetworkError(fetchParams);
         }
-        if (isAuthenticationFetch) {
-        }
-        return response;
-      });
+        fetchParams.controller.connection.destroy();
+        response = await httpNetworkOrCacheFetch(
+          fetchParams,
+          isAuthenticationFetch,
+          true
+        );
+      }
+      if (isAuthenticationFetch) {
+      }
+      return response;
     }
-    function httpNetworkFetch(fetchParams, includeCredentials = false, forceNewConnection = false) {
-      return __async(this, null, function* () {
-        assert(!fetchParams.controller.connection || fetchParams.controller.connection.destroyed);
-        fetchParams.controller.connection = {
-          abort: null,
-          destroyed: false,
-          destroy(err) {
-            var _a3;
-            if (!this.destroyed) {
-              this.destroyed = true;
-              (_a3 = this.abort) == null ? void 0 : _a3.call(this, err != null ? err : new DOMException2("The operation was aborted.", "AbortError"));
-            }
+    async function httpNetworkFetch(fetchParams, includeCredentials = false, forceNewConnection = false) {
+      assert(!fetchParams.controller.connection || fetchParams.controller.connection.destroyed);
+      fetchParams.controller.connection = {
+        abort: null,
+        destroyed: false,
+        destroy(err) {
+          if (!this.destroyed) {
+            this.destroyed = true;
+            this.abort?.(err ?? new DOMException2("The operation was aborted.", "AbortError"));
+          }
+        }
+      };
+      const request2 = fetchParams.request;
+      let response = null;
+      const timingInfo = fetchParams.timingInfo;
+      const httpCache = null;
+      if (httpCache == null) {
+        request2.cache = "no-store";
+      }
+      const newConnection = forceNewConnection ? "yes" : "no";
+      if (request2.mode === "websocket") {
+      } else {
+      }
+      let requestBody = null;
+      if (request2.body == null && fetchParams.processRequestEndOfBody) {
+        queueMicrotask(() => fetchParams.processRequestEndOfBody());
+      } else if (request2.body != null) {
+        const processBodyChunk = async function* (bytes) {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          yield bytes;
+          fetchParams.processRequestBodyChunkLength?.(bytes.byteLength);
+        };
+        const processEndOfBody = () => {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          if (fetchParams.processRequestEndOfBody) {
+            fetchParams.processRequestEndOfBody();
           }
         };
-        const request2 = fetchParams.request;
-        let response = null;
-        const timingInfo = fetchParams.timingInfo;
-        const httpCache = null;
-        if (httpCache == null) {
-          request2.cache = "no-store";
-        }
-        const newConnection = forceNewConnection ? "yes" : "no";
-        if (request2.mode === "websocket") {
-        } else {
-        }
-        let requestBody = null;
-        if (request2.body == null && fetchParams.processRequestEndOfBody) {
-          queueMicrotask(() => fetchParams.processRequestEndOfBody());
-        } else if (request2.body != null) {
-          const processBodyChunk = function(bytes) {
-            return __asyncGenerator(this, null, function* () {
-              var _a3;
-              if (isCancelled(fetchParams)) {
-                return;
-              }
-              yield bytes;
-              (_a3 = fetchParams.processRequestBodyChunkLength) == null ? void 0 : _a3.call(fetchParams, bytes.byteLength);
-            });
-          };
-          const processEndOfBody = () => {
-            if (isCancelled(fetchParams)) {
-              return;
-            }
-            if (fetchParams.processRequestEndOfBody) {
-              fetchParams.processRequestEndOfBody();
-            }
-          };
-          const processBodyError = (e) => {
-            if (isCancelled(fetchParams)) {
-              return;
-            }
-            if (e.name === "AbortError") {
-              fetchParams.controller.abort();
-            } else {
-              fetchParams.controller.terminate(e);
-            }
-          };
-          requestBody = function() {
-            return __asyncGenerator(this, null, function* () {
-              try {
-                try {
-                  for (var iter = __forAwait(request2.body.stream), more, temp, error; more = !(temp = yield new __await(iter.next())).done; more = false) {
-                    const bytes = temp.value;
-                    yield* __yieldStar(processBodyChunk(bytes));
-                  }
-                } catch (temp) {
-                  error = [temp];
-                } finally {
-                  try {
-                    more && (temp = iter.return) && (yield new __await(temp.call(iter)));
-                  } finally {
-                    if (error)
-                      throw error[0];
-                  }
-                }
-                processEndOfBody();
-              } catch (err) {
-                processBodyError(err);
-              }
-            });
-          }();
-        }
-        try {
-          const { body, status, statusText, headersList, socket } = yield dispatch({ body: requestBody });
-          if (socket) {
-            response = makeResponse({ status, statusText, headersList, socket });
+        const processBodyError = (e) => {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          if (e.name === "AbortError") {
+            fetchParams.controller.abort();
           } else {
-            const iterator2 = body[Symbol.asyncIterator]();
-            fetchParams.controller.next = () => iterator2.next();
-            response = makeResponse({ status, statusText, headersList });
+            fetchParams.controller.terminate(e);
           }
-        } catch (err) {
-          if (err.name === "AbortError") {
-            fetchParams.controller.connection.destroy();
-            return makeAppropriateNetworkError(fetchParams, err);
-          }
-          return makeNetworkError(err);
-        }
-        const pullAlgorithm = () => {
-          fetchParams.controller.resume();
         };
-        const cancelAlgorithm = (reason) => {
-          fetchParams.controller.abort(reason);
-        };
-        if (!ReadableStream2) {
-          ReadableStream2 = require("stream/web").ReadableStream;
-        }
-        const stream = new ReadableStream2(
-          {
-            start(controller) {
-              return __async(this, null, function* () {
-                fetchParams.controller.controller = controller;
-              });
-            },
-            pull(controller) {
-              return __async(this, null, function* () {
-                yield pullAlgorithm(controller);
-              });
-            },
-            cancel(reason) {
-              return __async(this, null, function* () {
-                yield cancelAlgorithm(reason);
-              });
+        requestBody = async function* () {
+          try {
+            for await (const bytes of request2.body.stream) {
+              yield* processBodyChunk(bytes);
             }
+            processEndOfBody();
+          } catch (err) {
+            processBodyError(err);
+          }
+        }();
+      }
+      try {
+        const { body, status, statusText, headersList, socket } = await dispatch({ body: requestBody });
+        if (socket) {
+          response = makeResponse({ status, statusText, headersList, socket });
+        } else {
+          const iterator2 = body[Symbol.asyncIterator]();
+          fetchParams.controller.next = () => iterator2.next();
+          response = makeResponse({ status, statusText, headersList });
+        }
+      } catch (err) {
+        if (err.name === "AbortError") {
+          fetchParams.controller.connection.destroy();
+          return makeAppropriateNetworkError(fetchParams, err);
+        }
+        return makeNetworkError(err);
+      }
+      const pullAlgorithm = () => {
+        fetchParams.controller.resume();
+      };
+      const cancelAlgorithm = (reason) => {
+        fetchParams.controller.abort(reason);
+      };
+      if (!ReadableStream2) {
+        ReadableStream2 = require("stream/web").ReadableStream;
+      }
+      const stream = new ReadableStream2(
+        {
+          async start(controller) {
+            fetchParams.controller.controller = controller;
+          },
+          async pull(controller) {
+            await pullAlgorithm(controller);
+          },
+          async cancel(reason) {
+            await cancelAlgorithm(reason);
+          }
+        },
+        {
+          highWaterMark: 0,
+          size() {
+            return 1;
+          }
+        }
+      );
+      response.body = { stream };
+      fetchParams.controller.on("terminated", onAborted);
+      fetchParams.controller.resume = async () => {
+        while (true) {
+          let bytes;
+          let isFailure;
+          try {
+            const { done, value } = await fetchParams.controller.next();
+            if (isAborted(fetchParams)) {
+              break;
+            }
+            bytes = done ? void 0 : value;
+          } catch (err) {
+            if (fetchParams.controller.ended && !timingInfo.encodedBodySize) {
+              bytes = void 0;
+            } else {
+              bytes = err;
+              isFailure = true;
+            }
+          }
+          if (bytes === void 0) {
+            readableStreamClose(fetchParams.controller.controller);
+            finalizeResponse(fetchParams, response);
+            return;
+          }
+          timingInfo.decodedBodySize += bytes?.byteLength ?? 0;
+          if (isFailure) {
+            fetchParams.controller.terminate(bytes);
+            return;
+          }
+          fetchParams.controller.controller.enqueue(new Uint8Array(bytes));
+          if (isErrored(stream)) {
+            fetchParams.controller.terminate();
+            return;
+          }
+          if (!fetchParams.controller.controller.desiredSize) {
+            return;
+          }
+        }
+      };
+      function onAborted(reason) {
+        if (isAborted(fetchParams)) {
+          response.aborted = true;
+          if (isReadable(stream)) {
+            fetchParams.controller.controller.error(
+              fetchParams.controller.serializedAbortReason
+            );
+          }
+        } else {
+          if (isReadable(stream)) {
+            fetchParams.controller.controller.error(new TypeError("terminated", {
+              cause: isErrorLike(reason) ? reason : void 0
+            }));
+          }
+        }
+        fetchParams.controller.connection.destroy();
+      }
+      return response;
+      async function dispatch({ body }) {
+        const url = requestCurrentURL(request2);
+        const agent = fetchParams.controller.dispatcher;
+        return new Promise((resolve, reject) => agent.dispatch(
+          {
+            path: url.pathname + url.search,
+            origin: url.origin,
+            method: request2.method,
+            body: fetchParams.controller.dispatcher.isMockActive ? request2.body && (request2.body.source || request2.body.stream) : body,
+            headers: request2.headersList.entries,
+            maxRedirections: 0,
+            upgrade: request2.mode === "websocket" ? "websocket" : void 0
           },
           {
-            highWaterMark: 0,
-            size() {
-              return 1;
-            }
-          }
-        );
-        response.body = { stream };
-        fetchParams.controller.on("terminated", onAborted);
-        fetchParams.controller.resume = () => __async(this, null, function* () {
-          var _a3;
-          while (true) {
-            let bytes;
-            let isFailure;
-            try {
-              const { done, value } = yield fetchParams.controller.next();
-              if (isAborted(fetchParams)) {
-                break;
-              }
-              bytes = done ? void 0 : value;
-            } catch (err) {
-              if (fetchParams.controller.ended && !timingInfo.encodedBodySize) {
-                bytes = void 0;
+            body: null,
+            abort: null,
+            onConnect(abort) {
+              const { connection } = fetchParams.controller;
+              if (connection.destroyed) {
+                abort(new DOMException2("The operation was aborted.", "AbortError"));
               } else {
-                bytes = err;
-                isFailure = true;
+                fetchParams.controller.on("terminated", abort);
+                this.abort = connection.abort = abort;
               }
-            }
-            if (bytes === void 0) {
-              readableStreamClose(fetchParams.controller.controller);
-              finalizeResponse(fetchParams, response);
-              return;
-            }
-            timingInfo.decodedBodySize += (_a3 = bytes == null ? void 0 : bytes.byteLength) != null ? _a3 : 0;
-            if (isFailure) {
-              fetchParams.controller.terminate(bytes);
-              return;
-            }
-            fetchParams.controller.controller.enqueue(new Uint8Array(bytes));
-            if (isErrored(stream)) {
-              fetchParams.controller.terminate();
-              return;
-            }
-            if (!fetchParams.controller.controller.desiredSize) {
-              return;
-            }
-          }
-        });
-        function onAborted(reason) {
-          if (isAborted(fetchParams)) {
-            response.aborted = true;
-            if (isReadable(stream)) {
-              fetchParams.controller.controller.error(
-                fetchParams.controller.serializedAbortReason
-              );
-            }
-          } else {
-            if (isReadable(stream)) {
-              fetchParams.controller.controller.error(new TypeError("terminated", {
-                cause: isErrorLike(reason) ? reason : void 0
-              }));
-            }
-          }
-          fetchParams.controller.connection.destroy();
-        }
-        return response;
-        function dispatch(_0) {
-          return __async(this, arguments, function* ({ body }) {
-            const url = requestCurrentURL(request2);
-            const agent = fetchParams.controller.dispatcher;
-            return new Promise((resolve, reject) => agent.dispatch(
-              {
-                path: url.pathname + url.search,
-                origin: url.origin,
-                method: request2.method,
-                body: fetchParams.controller.dispatcher.isMockActive ? request2.body && (request2.body.source || request2.body.stream) : body,
-                headers: request2.headersList.entries,
-                maxRedirections: 0,
-                upgrade: request2.mode === "websocket" ? "websocket" : void 0
-              },
-              {
-                body: null,
-                abort: null,
-                onConnect(abort) {
-                  const { connection } = fetchParams.controller;
-                  if (connection.destroyed) {
-                    abort(new DOMException2("The operation was aborted.", "AbortError"));
-                  } else {
-                    fetchParams.controller.on("terminated", abort);
-                    this.abort = connection.abort = abort;
+            },
+            onHeaders(status, headersList, resume, statusText) {
+              if (status < 200) {
+                return;
+              }
+              let codings = [];
+              let location = "";
+              const headers = new Headers();
+              if (Array.isArray(headersList)) {
+                for (let n = 0; n < headersList.length; n += 2) {
+                  const key = headersList[n + 0].toString("latin1");
+                  const val = headersList[n + 1].toString("latin1");
+                  if (key.toLowerCase() === "content-encoding") {
+                    codings = val.toLowerCase().split(",").map((x) => x.trim());
+                  } else if (key.toLowerCase() === "location") {
+                    location = val;
                   }
-                },
-                onHeaders(status, headersList, resume, statusText) {
-                  if (status < 200) {
-                    return;
+                  headers[kHeadersList].append(key, val);
+                }
+              } else {
+                const keys = Object.keys(headersList);
+                for (const key of keys) {
+                  const val = headersList[key];
+                  if (key.toLowerCase() === "content-encoding") {
+                    codings = val.toLowerCase().split(",").map((x) => x.trim()).reverse();
+                  } else if (key.toLowerCase() === "location") {
+                    location = val;
                   }
-                  let codings = [];
-                  let location = "";
-                  const headers = new Headers();
-                  if (Array.isArray(headersList)) {
-                    for (let n = 0; n < headersList.length; n += 2) {
-                      const key = headersList[n + 0].toString("latin1");
-                      const val = headersList[n + 1].toString("latin1");
-                      if (key.toLowerCase() === "content-encoding") {
-                        codings = val.toLowerCase().split(",").map((x) => x.trim());
-                      } else if (key.toLowerCase() === "location") {
-                        location = val;
-                      }
-                      headers[kHeadersList].append(key, val);
-                    }
-                  } else {
-                    const keys = Object.keys(headersList);
-                    for (const key of keys) {
-                      const val = headersList[key];
-                      if (key.toLowerCase() === "content-encoding") {
-                        codings = val.toLowerCase().split(",").map((x) => x.trim()).reverse();
-                      } else if (key.toLowerCase() === "location") {
-                        location = val;
-                      }
-                      headers[kHeadersList].append(key, val);
-                    }
-                  }
-                  this.body = new Readable2({ read: resume });
-                  const decoders = [];
-                  const willFollow = request2.redirect === "follow" && location && redirectStatusSet.has(status);
-                  if (request2.method !== "HEAD" && request2.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
-                    for (const coding of codings) {
-                      if (coding === "x-gzip" || coding === "gzip") {
-                        decoders.push(zlib.createGunzip({
-                          // Be less strict when decoding compressed responses, since sometimes
-                          // servers send slightly invalid responses that are still accepted
-                          // by common browsers.
-                          // Always using Z_SYNC_FLUSH is what cURL does.
-                          flush: zlib.constants.Z_SYNC_FLUSH,
-                          finishFlush: zlib.constants.Z_SYNC_FLUSH
-                        }));
-                      } else if (coding === "deflate") {
-                        decoders.push(zlib.createInflate());
-                      } else if (coding === "br") {
-                        decoders.push(zlib.createBrotliDecompress());
-                      } else {
-                        decoders.length = 0;
-                        break;
-                      }
-                    }
-                  }
-                  resolve({
-                    status,
-                    statusText,
-                    headersList: headers[kHeadersList],
-                    body: decoders.length ? pipeline(this.body, ...decoders, () => {
-                    }) : this.body.on("error", () => {
-                    })
-                  });
-                  return true;
-                },
-                onData(chunk) {
-                  if (fetchParams.controller.dump) {
-                    return;
-                  }
-                  const bytes = chunk;
-                  timingInfo.encodedBodySize += bytes.byteLength;
-                  return this.body.push(bytes);
-                },
-                onComplete() {
-                  if (this.abort) {
-                    fetchParams.controller.off("terminated", this.abort);
-                  }
-                  fetchParams.controller.ended = true;
-                  this.body.push(null);
-                },
-                onError(error) {
-                  var _a3;
-                  if (this.abort) {
-                    fetchParams.controller.off("terminated", this.abort);
-                  }
-                  (_a3 = this.body) == null ? void 0 : _a3.destroy(error);
-                  fetchParams.controller.terminate(error);
-                  reject(error);
-                },
-                onUpgrade(status, headersList, socket) {
-                  if (status !== 101) {
-                    return;
-                  }
-                  const headers = new Headers();
-                  for (let n = 0; n < headersList.length; n += 2) {
-                    const key = headersList[n + 0].toString("latin1");
-                    const val = headersList[n + 1].toString("latin1");
-                    headers[kHeadersList].append(key, val);
-                  }
-                  resolve({
-                    status,
-                    statusText: STATUS_CODES[status],
-                    headersList: headers[kHeadersList],
-                    socket
-                  });
-                  return true;
+                  headers[kHeadersList].append(key, val);
                 }
               }
-            ));
-          });
-        }
-      });
+              this.body = new Readable2({ read: resume });
+              const decoders = [];
+              const willFollow = request2.redirect === "follow" && location && redirectStatusSet.has(status);
+              if (request2.method !== "HEAD" && request2.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
+                for (const coding of codings) {
+                  if (coding === "x-gzip" || coding === "gzip") {
+                    decoders.push(zlib.createGunzip({
+                      // Be less strict when decoding compressed responses, since sometimes
+                      // servers send slightly invalid responses that are still accepted
+                      // by common browsers.
+                      // Always using Z_SYNC_FLUSH is what cURL does.
+                      flush: zlib.constants.Z_SYNC_FLUSH,
+                      finishFlush: zlib.constants.Z_SYNC_FLUSH
+                    }));
+                  } else if (coding === "deflate") {
+                    decoders.push(zlib.createInflate());
+                  } else if (coding === "br") {
+                    decoders.push(zlib.createBrotliDecompress());
+                  } else {
+                    decoders.length = 0;
+                    break;
+                  }
+                }
+              }
+              resolve({
+                status,
+                statusText,
+                headersList: headers[kHeadersList],
+                body: decoders.length ? pipeline(this.body, ...decoders, () => {
+                }) : this.body.on("error", () => {
+                })
+              });
+              return true;
+            },
+            onData(chunk) {
+              if (fetchParams.controller.dump) {
+                return;
+              }
+              const bytes = chunk;
+              timingInfo.encodedBodySize += bytes.byteLength;
+              return this.body.push(bytes);
+            },
+            onComplete() {
+              if (this.abort) {
+                fetchParams.controller.off("terminated", this.abort);
+              }
+              fetchParams.controller.ended = true;
+              this.body.push(null);
+            },
+            onError(error) {
+              if (this.abort) {
+                fetchParams.controller.off("terminated", this.abort);
+              }
+              this.body?.destroy(error);
+              fetchParams.controller.terminate(error);
+              reject(error);
+            },
+            onUpgrade(status, headersList, socket) {
+              if (status !== 101) {
+                return;
+              }
+              const headers = new Headers();
+              for (let n = 0; n < headersList.length; n += 2) {
+                const key = headersList[n + 0].toString("latin1");
+                const val = headersList[n + 1].toString("latin1");
+                headers[kHeadersList].append(key, val);
+              }
+              resolve({
+                status,
+                statusText: STATUS_CODES[status],
+                headersList: headers[kHeadersList],
+                socket
+              });
+              return true;
+            }
+          }
+        ));
+      }
     }
     module2.exports = {
       fetch: fetch2,
@@ -14539,7 +14185,7 @@ var require_progressevent = __commonJS({
     var ProgressEvent = class _ProgressEvent extends Event {
       constructor(type, eventInitDict = {}) {
         type = webidl.converters.DOMString(type);
-        eventInitDict = webidl.converters.ProgressEventInit(eventInitDict != null ? eventInitDict : {});
+        eventInitDict = webidl.converters.ProgressEventInit(eventInitDict ?? {});
         super(type, eventInitDict);
         this[kState] = {
           lengthComputable: eventInitDict.lengthComputable,
@@ -14919,10 +14565,10 @@ var require_util4 = __commonJS({
       const bytes = [];
       let chunkPromise = reader.read();
       let isFirstChunk = true;
-      (() => __async(this, null, function* () {
+      (async () => {
         while (!fr[kAborted]) {
           try {
-            const { done, value } = yield chunkPromise;
+            const { done, value } = await chunkPromise;
             if (isFirstChunk && !fr[kAborted]) {
               queueMicrotask(() => {
                 fireAProgressEvent("loadstart", fr);
@@ -14973,7 +14619,7 @@ var require_util4 = __commonJS({
             break;
           }
         }
-      }))();
+      })();
     }
     function fireAProgressEvent(e, reader) {
       const event = new ProgressEvent(e, {
@@ -15388,329 +15034,292 @@ var require_cache = __commonJS({
     var { urlIsHttpHttpsScheme, createDeferredPromise, readAllBytes } = require_util2();
     var assert = require("assert");
     var { getGlobalDispatcher } = require_global2();
-    var _relevantRequestResponseList, _batchCacheOperations, batchCacheOperations_fn, _queryCache, queryCache_fn, _requestMatchesCachedItem, requestMatchesCachedItem_fn;
-    var _Cache = class _Cache {
+    var Cache = class _Cache {
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
+       * @type {requestResponseList}
+       */
+      #relevantRequestResponseList;
       constructor() {
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#batch-cache-operations-algorithm
-         * @param {CacheBatchOperation[]} operations
-         * @returns {requestResponseList}
-         */
-        __privateAdd(this, _batchCacheOperations);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#query-cache
-         * @param {any} requestQuery
-         * @param {import('../../types/cache').CacheQueryOptions} options
-         * @param {requestResponseList} targetStorage
-         * @returns {requestResponseList}
-         */
-        __privateAdd(this, _queryCache);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#request-matches-cached-item-algorithm
-         * @param {any} requestQuery
-         * @param {any} request
-         * @param {any | null} response
-         * @param {import('../../types/cache').CacheQueryOptions | undefined} options
-         * @returns {boolean}
-         */
-        __privateAdd(this, _requestMatchesCachedItem);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
-         * @type {requestResponseList}
-         */
-        __privateAdd(this, _relevantRequestResponseList, void 0);
         if (arguments[0] !== kConstruct) {
           webidl.illegalConstructor();
         }
-        __privateSet(this, _relevantRequestResponseList, arguments[1]);
+        this.#relevantRequestResponseList = arguments[1];
       }
-      match(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.match" });
+      async match(request2, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.match" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        const p = await this.matchAll(request2, options);
+        if (p.length === 0) {
+          return;
+        }
+        return p[0];
+      }
+      async matchAll(request2 = void 0, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        if (request2 !== void 0)
           request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          const p = yield this.matchAll(request2, options);
-          if (p.length === 0) {
-            return;
-          }
-          return p[0];
-        });
-      }
-      matchAll() {
-        return __async(this, arguments, function* (request2 = void 0, options = {}) {
-          var _a2, _b;
-          webidl.brandCheck(this, _Cache);
-          if (request2 !== void 0)
-            request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          let r = null;
-          if (request2 !== void 0) {
-            if (request2 instanceof Request) {
-              r = request2[kState];
-              if (r.method !== "GET" && !options.ignoreMethod) {
-                return [];
-              }
-            } else if (typeof request2 === "string") {
-              r = new Request(request2)[kState];
-            }
-          }
-          const responses = [];
-          if (request2 === void 0) {
-            for (const requestResponse of __privateGet(this, _relevantRequestResponseList)) {
-              responses.push(requestResponse[1]);
-            }
-          } else {
-            const requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, r, options);
-            for (const requestResponse of requestResponses) {
-              responses.push(requestResponse[1]);
-            }
-          }
-          const responseList = [];
-          for (const response of responses) {
-            const responseObject = new Response((_b = (_a2 = response.body) == null ? void 0 : _a2.source) != null ? _b : null);
-            const body = responseObject[kState].body;
-            responseObject[kState] = response;
-            responseObject[kState].body = body;
-            responseObject[kHeaders][kHeadersList] = response.headersList;
-            responseObject[kHeaders][kGuard] = "immutable";
-            responseList.push(responseObject);
-          }
-          return Object.freeze(responseList);
-        });
-      }
-      add(_0) {
-        return __async(this, arguments, function* (request2) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.add" });
-          request2 = webidl.converters.RequestInfo(request2);
-          const requests = [request2];
-          const responseArrayPromise = this.addAll(requests);
-          return yield responseArrayPromise;
-        });
-      }
-      addAll(_0) {
-        return __async(this, arguments, function* (requests) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.addAll" });
-          requests = webidl.converters["sequence<RequestInfo>"](requests);
-          const responsePromises = [];
-          const requestList = [];
-          for (const request2 of requests) {
-            if (typeof request2 === "string") {
-              continue;
-            }
-            const r = request2[kState];
-            if (!urlIsHttpHttpsScheme(r.url) || r.method !== "GET") {
-              throw webidl.errors.exception({
-                header: "Cache.addAll",
-                message: "Expected http/s scheme when method is not GET."
-              });
-            }
-          }
-          const fetchControllers = [];
-          for (const request2 of requests) {
-            const r = new Request(request2)[kState];
-            if (!urlIsHttpHttpsScheme(r.url)) {
-              throw webidl.errors.exception({
-                header: "Cache.addAll",
-                message: "Expected http/s scheme."
-              });
-            }
-            r.initiator = "fetch";
-            r.destination = "subresource";
-            requestList.push(r);
-            const responsePromise = createDeferredPromise();
-            fetchControllers.push(fetching({
-              request: r,
-              dispatcher: getGlobalDispatcher(),
-              processResponse(response) {
-                if (response.type === "error" || response.status === 206 || response.status < 200 || response.status > 299) {
-                  responsePromise.reject(webidl.errors.exception({
-                    header: "Cache.addAll",
-                    message: "Received an invalid status code or the request failed."
-                  }));
-                } else if (response.headersList.contains("vary")) {
-                  const fieldValues = getFieldValues(response.headersList.get("vary"));
-                  for (const fieldValue of fieldValues) {
-                    if (fieldValue === "*") {
-                      responsePromise.reject(webidl.errors.exception({
-                        header: "Cache.addAll",
-                        message: "invalid vary field value"
-                      }));
-                      for (const controller of fetchControllers) {
-                        controller.abort();
-                      }
-                      return;
-                    }
-                  }
-                }
-              },
-              processResponseEndOfBody(response) {
-                if (response.aborted) {
-                  responsePromise.reject(new DOMException("aborted", "AbortError"));
-                  return;
-                }
-                responsePromise.resolve(response);
-              }
-            }));
-            responsePromises.push(responsePromise.promise);
-          }
-          const p = Promise.all(responsePromises);
-          const responses = yield p;
-          const operations = [];
-          let index = 0;
-          for (const response of responses) {
-            const operation = {
-              type: "put",
-              // 7.3.2
-              request: requestList[index],
-              // 7.3.3
-              response
-              // 7.3.4
-            };
-            operations.push(operation);
-            index++;
-          }
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          try {
-            __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
-          }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve(void 0);
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
-        });
-      }
-      put(_0, _1) {
-        return __async(this, arguments, function* (request2, response) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 2, { header: "Cache.put" });
-          request2 = webidl.converters.RequestInfo(request2);
-          response = webidl.converters.Response(response);
-          let innerRequest = null;
-          if (request2 instanceof Request) {
-            innerRequest = request2[kState];
-          } else {
-            innerRequest = new Request(request2)[kState];
-          }
-          if (!urlIsHttpHttpsScheme(innerRequest.url) || innerRequest.method !== "GET") {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Expected an http/s scheme when method is not GET"
-            });
-          }
-          const innerResponse = response[kState];
-          if (innerResponse.status === 206) {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Got 206 status"
-            });
-          }
-          if (innerResponse.headersList.contains("vary")) {
-            const fieldValues = getFieldValues(innerResponse.headersList.get("vary"));
-            for (const fieldValue of fieldValues) {
-              if (fieldValue === "*") {
-                throw webidl.errors.exception({
-                  header: "Cache.put",
-                  message: "Got * vary field value"
-                });
-              }
-            }
-          }
-          if (innerResponse.body && (isDisturbed(innerResponse.body.stream) || innerResponse.body.stream.locked)) {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Response body is locked or disturbed"
-            });
-          }
-          const clonedResponse = cloneResponse(innerResponse);
-          const bodyReadPromise = createDeferredPromise();
-          if (innerResponse.body != null) {
-            const stream = innerResponse.body.stream;
-            const reader = stream.getReader();
-            readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
-          } else {
-            bodyReadPromise.resolve(void 0);
-          }
-          const operations = [];
-          const operation = {
-            type: "put",
-            // 14.
-            request: innerRequest,
-            // 15.
-            response: clonedResponse
-            // 16.
-          };
-          operations.push(operation);
-          const bytes = yield bodyReadPromise.promise;
-          if (clonedResponse.body != null) {
-            clonedResponse.body.source = bytes;
-          }
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          try {
-            __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
-          }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve();
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
-        });
-      }
-      delete(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.delete" });
-          request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          let r = null;
+        options = webidl.converters.CacheQueryOptions(options);
+        let r = null;
+        if (request2 !== void 0) {
           if (request2 instanceof Request) {
             r = request2[kState];
             if (r.method !== "GET" && !options.ignoreMethod) {
-              return false;
+              return [];
             }
-          } else {
-            assert(typeof request2 === "string");
+          } else if (typeof request2 === "string") {
             r = new Request(request2)[kState];
           }
-          const operations = [];
-          const operation = {
-            type: "delete",
+        }
+        const responses = [];
+        if (request2 === void 0) {
+          for (const requestResponse of this.#relevantRequestResponseList) {
+            responses.push(requestResponse[1]);
+          }
+        } else {
+          const requestResponses = this.#queryCache(r, options);
+          for (const requestResponse of requestResponses) {
+            responses.push(requestResponse[1]);
+          }
+        }
+        const responseList = [];
+        for (const response of responses) {
+          const responseObject = new Response(response.body?.source ?? null);
+          const body = responseObject[kState].body;
+          responseObject[kState] = response;
+          responseObject[kState].body = body;
+          responseObject[kHeaders][kHeadersList] = response.headersList;
+          responseObject[kHeaders][kGuard] = "immutable";
+          responseList.push(responseObject);
+        }
+        return Object.freeze(responseList);
+      }
+      async add(request2) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.add" });
+        request2 = webidl.converters.RequestInfo(request2);
+        const requests = [request2];
+        const responseArrayPromise = this.addAll(requests);
+        return await responseArrayPromise;
+      }
+      async addAll(requests) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.addAll" });
+        requests = webidl.converters["sequence<RequestInfo>"](requests);
+        const responsePromises = [];
+        const requestList = [];
+        for (const request2 of requests) {
+          if (typeof request2 === "string") {
+            continue;
+          }
+          const r = request2[kState];
+          if (!urlIsHttpHttpsScheme(r.url) || r.method !== "GET") {
+            throw webidl.errors.exception({
+              header: "Cache.addAll",
+              message: "Expected http/s scheme when method is not GET."
+            });
+          }
+        }
+        const fetchControllers = [];
+        for (const request2 of requests) {
+          const r = new Request(request2)[kState];
+          if (!urlIsHttpHttpsScheme(r.url)) {
+            throw webidl.errors.exception({
+              header: "Cache.addAll",
+              message: "Expected http/s scheme."
+            });
+          }
+          r.initiator = "fetch";
+          r.destination = "subresource";
+          requestList.push(r);
+          const responsePromise = createDeferredPromise();
+          fetchControllers.push(fetching({
             request: r,
-            options
+            dispatcher: getGlobalDispatcher(),
+            processResponse(response) {
+              if (response.type === "error" || response.status === 206 || response.status < 200 || response.status > 299) {
+                responsePromise.reject(webidl.errors.exception({
+                  header: "Cache.addAll",
+                  message: "Received an invalid status code or the request failed."
+                }));
+              } else if (response.headersList.contains("vary")) {
+                const fieldValues = getFieldValues(response.headersList.get("vary"));
+                for (const fieldValue of fieldValues) {
+                  if (fieldValue === "*") {
+                    responsePromise.reject(webidl.errors.exception({
+                      header: "Cache.addAll",
+                      message: "invalid vary field value"
+                    }));
+                    for (const controller of fetchControllers) {
+                      controller.abort();
+                    }
+                    return;
+                  }
+                }
+              }
+            },
+            processResponseEndOfBody(response) {
+              if (response.aborted) {
+                responsePromise.reject(new DOMException("aborted", "AbortError"));
+                return;
+              }
+              responsePromise.resolve(response);
+            }
+          }));
+          responsePromises.push(responsePromise.promise);
+        }
+        const p = Promise.all(responsePromises);
+        const responses = await p;
+        const operations = [];
+        let index = 0;
+        for (const response of responses) {
+          const operation = {
+            type: "put",
+            // 7.3.2
+            request: requestList[index],
+            // 7.3.3
+            response
+            // 7.3.4
           };
           operations.push(operation);
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          let requestResponses;
-          try {
-            requestResponses = __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
+          index++;
+        }
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        try {
+          this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve(void 0);
+          } else {
+            cacheJobPromise.reject(errorData);
           }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve(!!(requestResponses == null ? void 0 : requestResponses.length));
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
         });
+        return cacheJobPromise.promise;
+      }
+      async put(request2, response) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 2, { header: "Cache.put" });
+        request2 = webidl.converters.RequestInfo(request2);
+        response = webidl.converters.Response(response);
+        let innerRequest = null;
+        if (request2 instanceof Request) {
+          innerRequest = request2[kState];
+        } else {
+          innerRequest = new Request(request2)[kState];
+        }
+        if (!urlIsHttpHttpsScheme(innerRequest.url) || innerRequest.method !== "GET") {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Expected an http/s scheme when method is not GET"
+          });
+        }
+        const innerResponse = response[kState];
+        if (innerResponse.status === 206) {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Got 206 status"
+          });
+        }
+        if (innerResponse.headersList.contains("vary")) {
+          const fieldValues = getFieldValues(innerResponse.headersList.get("vary"));
+          for (const fieldValue of fieldValues) {
+            if (fieldValue === "*") {
+              throw webidl.errors.exception({
+                header: "Cache.put",
+                message: "Got * vary field value"
+              });
+            }
+          }
+        }
+        if (innerResponse.body && (isDisturbed(innerResponse.body.stream) || innerResponse.body.stream.locked)) {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Response body is locked or disturbed"
+          });
+        }
+        const clonedResponse = cloneResponse(innerResponse);
+        const bodyReadPromise = createDeferredPromise();
+        if (innerResponse.body != null) {
+          const stream = innerResponse.body.stream;
+          const reader = stream.getReader();
+          readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
+        } else {
+          bodyReadPromise.resolve(void 0);
+        }
+        const operations = [];
+        const operation = {
+          type: "put",
+          // 14.
+          request: innerRequest,
+          // 15.
+          response: clonedResponse
+          // 16.
+        };
+        operations.push(operation);
+        const bytes = await bodyReadPromise.promise;
+        if (clonedResponse.body != null) {
+          clonedResponse.body.source = bytes;
+        }
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        try {
+          this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve();
+          } else {
+            cacheJobPromise.reject(errorData);
+          }
+        });
+        return cacheJobPromise.promise;
+      }
+      async delete(request2, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.delete" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        let r = null;
+        if (request2 instanceof Request) {
+          r = request2[kState];
+          if (r.method !== "GET" && !options.ignoreMethod) {
+            return false;
+          }
+        } else {
+          assert(typeof request2 === "string");
+          r = new Request(request2)[kState];
+        }
+        const operations = [];
+        const operation = {
+          type: "delete",
+          request: r,
+          options
+        };
+        operations.push(operation);
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        let requestResponses;
+        try {
+          requestResponses = this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve(!!requestResponses?.length);
+          } else {
+            cacheJobPromise.reject(errorData);
+          }
+        });
+        return cacheJobPromise.promise;
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#dom-cache-keys
@@ -15718,170 +15327,183 @@ var require_cache = __commonJS({
        * @param {import('../../types/cache').CacheQueryOptions} options
        * @returns {readonly Request[]}
        */
-      keys() {
-        return __async(this, arguments, function* (request2 = void 0, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          if (request2 !== void 0)
-            request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          let r = null;
-          if (request2 !== void 0) {
-            if (request2 instanceof Request) {
-              r = request2[kState];
-              if (r.method !== "GET" && !options.ignoreMethod) {
-                return [];
-              }
-            } else if (typeof request2 === "string") {
-              r = new Request(request2)[kState];
-            }
-          }
-          const promise = createDeferredPromise();
-          const requests = [];
-          if (request2 === void 0) {
-            for (const requestResponse of __privateGet(this, _relevantRequestResponseList)) {
-              requests.push(requestResponse[0]);
-            }
-          } else {
-            const requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, r, options);
-            for (const requestResponse of requestResponses) {
-              requests.push(requestResponse[0]);
-            }
-          }
-          queueMicrotask(() => {
-            const requestList = [];
-            for (const request3 of requests) {
-              const requestObject = new Request("https://a");
-              requestObject[kState] = request3;
-              requestObject[kHeaders][kHeadersList] = request3.headersList;
-              requestObject[kHeaders][kGuard] = "immutable";
-              requestObject[kRealm] = request3.client;
-              requestList.push(requestObject);
-            }
-            promise.resolve(Object.freeze(requestList));
-          });
-          return promise.promise;
-        });
-      }
-    };
-    _relevantRequestResponseList = new WeakMap();
-    _batchCacheOperations = new WeakSet();
-    batchCacheOperations_fn = function(operations) {
-      const cache = __privateGet(this, _relevantRequestResponseList);
-      const backupCache = [...cache];
-      const addedItems = [];
-      const resultList = [];
-      try {
-        for (const operation of operations) {
-          if (operation.type !== "delete" && operation.type !== "put") {
-            throw webidl.errors.exception({
-              header: "Cache.#batchCacheOperations",
-              message: 'operation type does not match "delete" or "put"'
-            });
-          }
-          if (operation.type === "delete" && operation.response != null) {
-            throw webidl.errors.exception({
-              header: "Cache.#batchCacheOperations",
-              message: "delete operation should not have an associated response"
-            });
-          }
-          if (__privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request, operation.options, addedItems).length) {
-            throw new DOMException("???", "InvalidStateError");
-          }
-          let requestResponses;
-          if (operation.type === "delete") {
-            requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request, operation.options);
-            if (requestResponses.length === 0) {
+      async keys(request2 = void 0, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        if (request2 !== void 0)
+          request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        let r = null;
+        if (request2 !== void 0) {
+          if (request2 instanceof Request) {
+            r = request2[kState];
+            if (r.method !== "GET" && !options.ignoreMethod) {
               return [];
             }
-            for (const requestResponse of requestResponses) {
-              const idx = cache.indexOf(requestResponse);
-              assert(idx !== -1);
-              cache.splice(idx, 1);
-            }
-          } else if (operation.type === "put") {
-            if (operation.response == null) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "put operation should have an associated response"
-              });
-            }
-            const r = operation.request;
-            if (!urlIsHttpHttpsScheme(r.url)) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "expected http or https scheme"
-              });
-            }
-            if (r.method !== "GET") {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "not get method"
-              });
-            }
-            if (operation.options != null) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "options must not be defined"
-              });
-            }
-            requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request);
-            for (const requestResponse of requestResponses) {
-              const idx = cache.indexOf(requestResponse);
-              assert(idx !== -1);
-              cache.splice(idx, 1);
-            }
-            cache.push([operation.request, operation.response]);
-            addedItems.push([operation.request, operation.response]);
+          } else if (typeof request2 === "string") {
+            r = new Request(request2)[kState];
           }
-          resultList.push([operation.request, operation.response]);
+        }
+        const promise = createDeferredPromise();
+        const requests = [];
+        if (request2 === void 0) {
+          for (const requestResponse of this.#relevantRequestResponseList) {
+            requests.push(requestResponse[0]);
+          }
+        } else {
+          const requestResponses = this.#queryCache(r, options);
+          for (const requestResponse of requestResponses) {
+            requests.push(requestResponse[0]);
+          }
+        }
+        queueMicrotask(() => {
+          const requestList = [];
+          for (const request3 of requests) {
+            const requestObject = new Request("https://a");
+            requestObject[kState] = request3;
+            requestObject[kHeaders][kHeadersList] = request3.headersList;
+            requestObject[kHeaders][kGuard] = "immutable";
+            requestObject[kRealm] = request3.client;
+            requestList.push(requestObject);
+          }
+          promise.resolve(Object.freeze(requestList));
+        });
+        return promise.promise;
+      }
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#batch-cache-operations-algorithm
+       * @param {CacheBatchOperation[]} operations
+       * @returns {requestResponseList}
+       */
+      #batchCacheOperations(operations) {
+        const cache = this.#relevantRequestResponseList;
+        const backupCache = [...cache];
+        const addedItems = [];
+        const resultList = [];
+        try {
+          for (const operation of operations) {
+            if (operation.type !== "delete" && operation.type !== "put") {
+              throw webidl.errors.exception({
+                header: "Cache.#batchCacheOperations",
+                message: 'operation type does not match "delete" or "put"'
+              });
+            }
+            if (operation.type === "delete" && operation.response != null) {
+              throw webidl.errors.exception({
+                header: "Cache.#batchCacheOperations",
+                message: "delete operation should not have an associated response"
+              });
+            }
+            if (this.#queryCache(operation.request, operation.options, addedItems).length) {
+              throw new DOMException("???", "InvalidStateError");
+            }
+            let requestResponses;
+            if (operation.type === "delete") {
+              requestResponses = this.#queryCache(operation.request, operation.options);
+              if (requestResponses.length === 0) {
+                return [];
+              }
+              for (const requestResponse of requestResponses) {
+                const idx = cache.indexOf(requestResponse);
+                assert(idx !== -1);
+                cache.splice(idx, 1);
+              }
+            } else if (operation.type === "put") {
+              if (operation.response == null) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "put operation should have an associated response"
+                });
+              }
+              const r = operation.request;
+              if (!urlIsHttpHttpsScheme(r.url)) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "expected http or https scheme"
+                });
+              }
+              if (r.method !== "GET") {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "not get method"
+                });
+              }
+              if (operation.options != null) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "options must not be defined"
+                });
+              }
+              requestResponses = this.#queryCache(operation.request);
+              for (const requestResponse of requestResponses) {
+                const idx = cache.indexOf(requestResponse);
+                assert(idx !== -1);
+                cache.splice(idx, 1);
+              }
+              cache.push([operation.request, operation.response]);
+              addedItems.push([operation.request, operation.response]);
+            }
+            resultList.push([operation.request, operation.response]);
+          }
+          return resultList;
+        } catch (e) {
+          this.#relevantRequestResponseList.length = 0;
+          this.#relevantRequestResponseList = backupCache;
+          throw e;
+        }
+      }
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#query-cache
+       * @param {any} requestQuery
+       * @param {import('../../types/cache').CacheQueryOptions} options
+       * @param {requestResponseList} targetStorage
+       * @returns {requestResponseList}
+       */
+      #queryCache(requestQuery, options, targetStorage) {
+        const resultList = [];
+        const storage = targetStorage ?? this.#relevantRequestResponseList;
+        for (const requestResponse of storage) {
+          const [cachedRequest, cachedResponse] = requestResponse;
+          if (this.#requestMatchesCachedItem(requestQuery, cachedRequest, cachedResponse, options)) {
+            resultList.push(requestResponse);
+          }
         }
         return resultList;
-      } catch (e) {
-        __privateGet(this, _relevantRequestResponseList).length = 0;
-        __privateSet(this, _relevantRequestResponseList, backupCache);
-        throw e;
       }
-    };
-    _queryCache = new WeakSet();
-    queryCache_fn = function(requestQuery, options, targetStorage) {
-      const resultList = [];
-      const storage = targetStorage != null ? targetStorage : __privateGet(this, _relevantRequestResponseList);
-      for (const requestResponse of storage) {
-        const [cachedRequest, cachedResponse] = requestResponse;
-        if (__privateMethod(this, _requestMatchesCachedItem, requestMatchesCachedItem_fn).call(this, requestQuery, cachedRequest, cachedResponse, options)) {
-          resultList.push(requestResponse);
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#request-matches-cached-item-algorithm
+       * @param {any} requestQuery
+       * @param {any} request
+       * @param {any | null} response
+       * @param {import('../../types/cache').CacheQueryOptions | undefined} options
+       * @returns {boolean}
+       */
+      #requestMatchesCachedItem(requestQuery, request2, response = null, options) {
+        const queryURL = new URL(requestQuery.url);
+        const cachedURL = new URL(request2.url);
+        if (options?.ignoreSearch) {
+          cachedURL.search = "";
+          queryURL.search = "";
         }
-      }
-      return resultList;
-    };
-    _requestMatchesCachedItem = new WeakSet();
-    requestMatchesCachedItem_fn = function(requestQuery, request2, response = null, options) {
-      const queryURL = new URL(requestQuery.url);
-      const cachedURL = new URL(request2.url);
-      if (options == null ? void 0 : options.ignoreSearch) {
-        cachedURL.search = "";
-        queryURL.search = "";
-      }
-      if (!urlEquals(queryURL, cachedURL, true)) {
-        return false;
-      }
-      if (response == null || (options == null ? void 0 : options.ignoreVary) || !response.headersList.contains("vary")) {
+        if (!urlEquals(queryURL, cachedURL, true)) {
+          return false;
+        }
+        if (response == null || options?.ignoreVary || !response.headersList.contains("vary")) {
+          return true;
+        }
+        const fieldValues = getFieldValues(response.headersList.get("vary"));
+        for (const fieldValue of fieldValues) {
+          if (fieldValue === "*") {
+            return false;
+          }
+          const requestValue = request2.headersList.get(fieldValue);
+          const queryValue = requestQuery.headersList.get(fieldValue);
+          if (requestValue !== queryValue) {
+            return false;
+          }
+        }
         return true;
       }
-      const fieldValues = getFieldValues(response.headersList.get("vary"));
-      for (const fieldValue of fieldValues) {
-        if (fieldValue === "*") {
-          return false;
-        }
-        const requestValue = request2.headersList.get(fieldValue);
-        const queryValue = requestQuery.headersList.get(fieldValue);
-        if (requestValue !== queryValue) {
-          return false;
-        }
-      }
-      return true;
     };
-    var Cache = _Cache;
     Object.defineProperties(Cache.prototype, {
       [Symbol.toStringTag]: {
         value: "Cache",
@@ -15938,100 +15560,87 @@ var require_cachestorage = __commonJS({
     var { Cache } = require_cache();
     var { webidl } = require_webidl();
     var { kEnumerableProperty } = require_util();
-    var _caches;
-    var _CacheStorage = class _CacheStorage {
+    var CacheStorage = class _CacheStorage {
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-name-to-cache-map
+       * @type {Map<string, import('./cache').requestResponseList}
+       */
+      #caches = /* @__PURE__ */ new Map();
       constructor() {
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-name-to-cache-map
-         * @type {Map<string, import('./cache').requestResponseList}
-         */
-        __privateAdd(this, _caches, /* @__PURE__ */ new Map());
         if (arguments[0] !== kConstruct) {
           webidl.illegalConstructor();
         }
       }
-      match(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.match" });
-          request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.MultiCacheQueryOptions(options);
-          if (options.cacheName != null) {
-            if (__privateGet(this, _caches).has(options.cacheName)) {
-              const cacheList = __privateGet(this, _caches).get(options.cacheName);
-              const cache = new Cache(kConstruct, cacheList);
-              return yield cache.match(request2, options);
-            }
-          } else {
-            for (const cacheList of __privateGet(this, _caches).values()) {
-              const cache = new Cache(kConstruct, cacheList);
-              const response = yield cache.match(request2, options);
-              if (response !== void 0) {
-                return response;
-              }
+      async match(request2, options = {}) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.match" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.MultiCacheQueryOptions(options);
+        if (options.cacheName != null) {
+          if (this.#caches.has(options.cacheName)) {
+            const cacheList = this.#caches.get(options.cacheName);
+            const cache = new Cache(kConstruct, cacheList);
+            return await cache.match(request2, options);
+          }
+        } else {
+          for (const cacheList of this.#caches.values()) {
+            const cache = new Cache(kConstruct, cacheList);
+            const response = await cache.match(request2, options);
+            if (response !== void 0) {
+              return response;
             }
           }
-        });
+        }
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-has
        * @param {string} cacheName
        * @returns {Promise<boolean>}
        */
-      has(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.has" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          return __privateGet(this, _caches).has(cacheName);
-        });
+      async has(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.has" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        return this.#caches.has(cacheName);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#dom-cachestorage-open
        * @param {string} cacheName
        * @returns {Promise<Cache>}
        */
-      open(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.open" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          if (__privateGet(this, _caches).has(cacheName)) {
-            const cache2 = __privateGet(this, _caches).get(cacheName);
-            return new Cache(kConstruct, cache2);
-          }
-          const cache = [];
-          __privateGet(this, _caches).set(cacheName, cache);
-          return new Cache(kConstruct, cache);
-        });
+      async open(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.open" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        if (this.#caches.has(cacheName)) {
+          const cache2 = this.#caches.get(cacheName);
+          return new Cache(kConstruct, cache2);
+        }
+        const cache = [];
+        this.#caches.set(cacheName, cache);
+        return new Cache(kConstruct, cache);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-delete
        * @param {string} cacheName
        * @returns {Promise<boolean>}
        */
-      delete(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.delete" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          return __privateGet(this, _caches).delete(cacheName);
-        });
+      async delete(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.delete" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        return this.#caches.delete(cacheName);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-keys
        * @returns {string[]}
        */
-      keys() {
-        return __async(this, null, function* () {
-          webidl.brandCheck(this, _CacheStorage);
-          const keys = __privateGet(this, _caches).keys();
-          return [...keys];
-        });
+      async keys() {
+        webidl.brandCheck(this, _CacheStorage);
+        const keys = this.#caches.keys();
+        return [...keys];
       }
     };
-    _caches = new WeakMap();
-    var CacheStorage = _CacheStorage;
     Object.defineProperties(CacheStorage.prototype, {
       [Symbol.toStringTag]: {
         value: "CacheStorage",
@@ -16260,13 +15869,13 @@ var require_parse = __commonJS({
       if (name.length + value.length > maxNameValuePairSize) {
         return null;
       }
-      return __spreadValues({
+      return {
         name,
-        value
-      }, parseUnparsedAttributes(unparsedAttributes));
+        value,
+        ...parseUnparsedAttributes(unparsedAttributes)
+      };
     }
     function parseUnparsedAttributes(unparsedAttributes, cookieAttributeList = {}) {
-      var _a2;
       if (unparsedAttributes.length === 0) {
         return cookieAttributeList;
       }
@@ -16349,7 +15958,7 @@ var require_parse = __commonJS({
         }
         cookieAttributeList.sameSite = enforcement;
       } else {
-        (_a2 = cookieAttributeList.unparsed) != null ? _a2 : cookieAttributeList.unparsed = [];
+        cookieAttributeList.unparsed ??= [];
         cookieAttributeList.unparsed.push(`${attributeName}=${attributeValue}`);
       }
       return parseUnparsedAttributes(unparsedAttributes, cookieAttributeList);
@@ -16388,11 +15997,12 @@ var require_cookies = __commonJS({
       webidl.brandCheck(headers, Headers, { strict: false });
       name = webidl.converters.DOMString(name);
       attributes = webidl.converters.DeleteCookieAttributes(attributes);
-      setCookie(headers, __spreadValues({
+      setCookie(headers, {
         name,
         value: "",
-        expires: /* @__PURE__ */ new Date(0)
-      }, attributes));
+        expires: /* @__PURE__ */ new Date(0),
+        ...attributes
+      });
     }
     function getSetCookies(headers) {
       webidl.argumentLengthCheck(arguments, 1, { header: "getSetCookies" });
@@ -16512,7 +16122,7 @@ var require_constants4 = __commonJS({
       PING: 9,
       PONG: 10
     };
-    var maxUnsigned16Bit = __pow(2, 16) - 1;
+    var maxUnsigned16Bit = 2 ** 16 - 1;
     var parserStates = {
       INFO: 0,
       PAYLOADLENGTH_16: 2,
@@ -16556,38 +16166,37 @@ var require_events = __commonJS({
     var { webidl } = require_webidl();
     var { kEnumerableProperty } = require_util();
     var { MessagePort } = require("worker_threads");
-    var _eventInit;
-    var _MessageEvent = class _MessageEvent extends Event {
+    var MessageEvent = class _MessageEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict = {}) {
         webidl.argumentLengthCheck(arguments, 1, { header: "MessageEvent constructor" });
         type = webidl.converters.DOMString(type);
         eventInitDict = webidl.converters.MessageEventInit(eventInitDict);
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit, void 0);
-        __privateSet(this, _eventInit, eventInitDict);
+        this.#eventInit = eventInitDict;
       }
       get data() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).data;
+        return this.#eventInit.data;
       }
       get origin() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).origin;
+        return this.#eventInit.origin;
       }
       get lastEventId() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).lastEventId;
+        return this.#eventInit.lastEventId;
       }
       get source() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).source;
+        return this.#eventInit.source;
       }
       get ports() {
         webidl.brandCheck(this, _MessageEvent);
-        if (!Object.isFrozen(__privateGet(this, _eventInit).ports)) {
-          Object.freeze(__privateGet(this, _eventInit).ports);
+        if (!Object.isFrozen(this.#eventInit.ports)) {
+          Object.freeze(this.#eventInit.ports);
         }
-        return __privateGet(this, _eventInit).ports;
+        return this.#eventInit.ports;
       }
       initMessageEvent(type, bubbles = false, cancelable = false, data = null, origin = "", lastEventId = "", source = null, ports = []) {
         webidl.brandCheck(this, _MessageEvent);
@@ -16603,66 +16212,58 @@ var require_events = __commonJS({
         });
       }
     };
-    _eventInit = new WeakMap();
-    var MessageEvent = _MessageEvent;
-    var _eventInit2;
-    var _CloseEvent = class _CloseEvent extends Event {
+    var CloseEvent = class _CloseEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict = {}) {
         webidl.argumentLengthCheck(arguments, 1, { header: "CloseEvent constructor" });
         type = webidl.converters.DOMString(type);
         eventInitDict = webidl.converters.CloseEventInit(eventInitDict);
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit2, void 0);
-        __privateSet(this, _eventInit2, eventInitDict);
+        this.#eventInit = eventInitDict;
       }
       get wasClean() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).wasClean;
+        return this.#eventInit.wasClean;
       }
       get code() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).code;
+        return this.#eventInit.code;
       }
       get reason() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).reason;
+        return this.#eventInit.reason;
       }
     };
-    _eventInit2 = new WeakMap();
-    var CloseEvent = _CloseEvent;
-    var _eventInit3;
-    var _ErrorEvent = class _ErrorEvent extends Event {
+    var ErrorEvent = class _ErrorEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict) {
         webidl.argumentLengthCheck(arguments, 1, { header: "ErrorEvent constructor" });
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit3, void 0);
         type = webidl.converters.DOMString(type);
-        eventInitDict = webidl.converters.ErrorEventInit(eventInitDict != null ? eventInitDict : {});
-        __privateSet(this, _eventInit3, eventInitDict);
+        eventInitDict = webidl.converters.ErrorEventInit(eventInitDict ?? {});
+        this.#eventInit = eventInitDict;
       }
       get message() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).message;
+        return this.#eventInit.message;
       }
       get filename() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).filename;
+        return this.#eventInit.filename;
       }
       get lineno() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).lineno;
+        return this.#eventInit.lineno;
       }
       get colno() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).colno;
+        return this.#eventInit.colno;
       }
       get error() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).error;
+        return this.#eventInit.error;
       }
     };
-    _eventInit3 = new WeakMap();
-    var ErrorEvent = _ErrorEvent;
     Object.defineProperties(MessageEvent.prototype, {
       [Symbol.toStringTag]: {
         value: "MessageEvent",
@@ -16829,7 +16430,7 @@ var require_util7 = __commonJS({
       if (type === opcodes.TEXT) {
         try {
           dataForEvent = new TextDecoder("utf-8", { fatal: true }).decode(data);
-        } catch (e) {
+        } catch {
           failWebsocketConnection(ws, "Received invalid UTF-8 in text frame.");
           return;
         }
@@ -16869,7 +16470,7 @@ var require_util7 = __commonJS({
     function failWebsocketConnection(ws, reason) {
       const { [kController]: controller, [kResponse]: response } = ws;
       controller.abort();
-      if ((response == null ? void 0 : response.socket) && !response.socket.destroyed) {
+      if (response?.socket && !response.socket.destroyed) {
         response.socket.destroy();
       }
       if (reason) {
@@ -16917,10 +16518,9 @@ var require_connection = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     function establishWebSocketConnection(url, protocols, ws, onEstablish, options) {
-      var _a2;
       const requestURL = url;
       requestURL.protocol = url.protocol === "ws:" ? "http:" : "https:";
       const request2 = makeRequest({
@@ -16946,9 +16546,8 @@ var require_connection = __commonJS({
       const controller = fetching({
         request: request2,
         useParallelQueue: true,
-        dispatcher: (_a2 = options.dispatcher) != null ? _a2 : getGlobalDispatcher(),
+        dispatcher: options.dispatcher ?? getGlobalDispatcher(),
         processResponse(response) {
-          var _a3, _b;
           if (response.type === "error" || response.status !== 101) {
             failWebsocketConnection(ws, "Received network error or non-101 status code.");
             return;
@@ -16957,11 +16556,11 @@ var require_connection = __commonJS({
             failWebsocketConnection(ws, "Server did not respond with sent protocols.");
             return;
           }
-          if (((_a3 = response.headersList.get("Upgrade")) == null ? void 0 : _a3.toLowerCase()) !== "websocket") {
+          if (response.headersList.get("Upgrade")?.toLowerCase() !== "websocket") {
             failWebsocketConnection(ws, 'Server did not set Upgrade header to "websocket".');
             return;
           }
-          if (((_b = response.headersList.get("Connection")) == null ? void 0 : _b.toLowerCase()) !== "upgrade") {
+          if (response.headersList.get("Connection")?.toLowerCase() !== "upgrade") {
             failWebsocketConnection(ws, 'Server did not set Connection header to "upgrade".');
             return;
           }
@@ -17002,14 +16601,13 @@ var require_connection = __commonJS({
       }
     }
     function onSocketClose() {
-      var _a2;
       const { ws } = this;
       const wasClean = ws[kSentClose] && ws[kReceivedClose];
       let code = 1005;
       let reason = "";
       const result = ws[kByteParser].closingInfo;
       if (result) {
-        code = (_a2 = result.code) != null ? _a2 : 1005;
+        code = result.code ?? 1005;
         reason = result.reason;
       } else if (!ws[kSentClose]) {
         code = 1006;
@@ -17050,7 +16648,7 @@ var require_frame = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     var WebsocketFrameSend = class {
       /**
@@ -17061,8 +16659,7 @@ var require_frame = __commonJS({
         this.maskKey = crypto4.randomBytes(4);
       }
       createFrame(opcode) {
-        var _a2, _b;
-        const bodyLength = (_b = (_a2 = this.frameData) == null ? void 0 : _a2.byteLength) != null ? _b : 0;
+        const bodyLength = this.frameData?.byteLength ?? 0;
         let payloadLength = bodyLength;
         let offset = 6;
         if (bodyLength > maxUnsigned16Bit) {
@@ -17113,15 +16710,14 @@ var require_receiver = __commonJS({
     var channels = {};
     channels.ping = diagnosticsChannel.channel("undici:websocket:ping");
     channels.pong = diagnosticsChannel.channel("undici:websocket:pong");
-    var _buffers, _byteOffset, _state, _info, _fragments;
     var ByteParser = class extends Writable {
+      #buffers = [];
+      #byteOffset = 0;
+      #state = parserStates.INFO;
+      #info = {};
+      #fragments = [];
       constructor(ws) {
         super();
-        __privateAdd(this, _buffers, []);
-        __privateAdd(this, _byteOffset, 0);
-        __privateAdd(this, _state, parserStates.INFO);
-        __privateAdd(this, _info, {});
-        __privateAdd(this, _fragments, []);
         this.ws = ws;
       }
       /**
@@ -17129,8 +16725,8 @@ var require_receiver = __commonJS({
        * @param {() => void} callback
        */
       _write(chunk, _, callback) {
-        __privateGet(this, _buffers).push(chunk);
-        __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) + chunk.length);
+        this.#buffers.push(chunk);
+        this.#byteOffset += chunk.length;
         this.run(callback);
       }
       /**
@@ -17139,46 +16735,45 @@ var require_receiver = __commonJS({
        * or not enough bytes are buffered to parse.
        */
       run(callback) {
-        var _a2, _b;
         while (true) {
-          if (__privateGet(this, _state) === parserStates.INFO) {
-            if (__privateGet(this, _byteOffset) < 2) {
+          if (this.#state === parserStates.INFO) {
+            if (this.#byteOffset < 2) {
               return callback();
             }
             const buffer = this.consume(2);
-            __privateGet(this, _info).fin = (buffer[0] & 128) !== 0;
-            __privateGet(this, _info).opcode = buffer[0] & 15;
-            (_b = (_a2 = __privateGet(this, _info)).originalOpcode) != null ? _b : _a2.originalOpcode = __privateGet(this, _info).opcode;
-            __privateGet(this, _info).fragmented = !__privateGet(this, _info).fin && __privateGet(this, _info).opcode !== opcodes.CONTINUATION;
-            if (__privateGet(this, _info).fragmented && __privateGet(this, _info).opcode !== opcodes.BINARY && __privateGet(this, _info).opcode !== opcodes.TEXT) {
+            this.#info.fin = (buffer[0] & 128) !== 0;
+            this.#info.opcode = buffer[0] & 15;
+            this.#info.originalOpcode ??= this.#info.opcode;
+            this.#info.fragmented = !this.#info.fin && this.#info.opcode !== opcodes.CONTINUATION;
+            if (this.#info.fragmented && this.#info.opcode !== opcodes.BINARY && this.#info.opcode !== opcodes.TEXT) {
               failWebsocketConnection(this.ws, "Invalid frame type was fragmented.");
               return;
             }
             const payloadLength = buffer[1] & 127;
             if (payloadLength <= 125) {
-              __privateGet(this, _info).payloadLength = payloadLength;
-              __privateSet(this, _state, parserStates.READ_DATA);
+              this.#info.payloadLength = payloadLength;
+              this.#state = parserStates.READ_DATA;
             } else if (payloadLength === 126) {
-              __privateSet(this, _state, parserStates.PAYLOADLENGTH_16);
+              this.#state = parserStates.PAYLOADLENGTH_16;
             } else if (payloadLength === 127) {
-              __privateSet(this, _state, parserStates.PAYLOADLENGTH_64);
+              this.#state = parserStates.PAYLOADLENGTH_64;
             }
-            if (__privateGet(this, _info).fragmented && payloadLength > 125) {
+            if (this.#info.fragmented && payloadLength > 125) {
               failWebsocketConnection(this.ws, "Fragmented frame exceeded 125 bytes.");
               return;
-            } else if ((__privateGet(this, _info).opcode === opcodes.PING || __privateGet(this, _info).opcode === opcodes.PONG || __privateGet(this, _info).opcode === opcodes.CLOSE) && payloadLength > 125) {
+            } else if ((this.#info.opcode === opcodes.PING || this.#info.opcode === opcodes.PONG || this.#info.opcode === opcodes.CLOSE) && payloadLength > 125) {
               failWebsocketConnection(this.ws, "Payload length for control frame exceeded 125 bytes.");
               return;
-            } else if (__privateGet(this, _info).opcode === opcodes.CLOSE) {
+            } else if (this.#info.opcode === opcodes.CLOSE) {
               if (payloadLength === 1) {
                 failWebsocketConnection(this.ws, "Received close frame with a 1-byte body.");
                 return;
               }
               const body = this.consume(payloadLength);
-              __privateGet(this, _info).closeInfo = this.parseCloseBody(false, body);
+              this.#info.closeInfo = this.parseCloseBody(false, body);
               if (!this.ws[kSentClose]) {
                 const body2 = Buffer.allocUnsafe(2);
-                body2.writeUInt16BE(__privateGet(this, _info).closeInfo.code, 0);
+                body2.writeUInt16BE(this.#info.closeInfo.code, 0);
                 const closeFrame = new WebsocketFrameSend(body2);
                 this.ws[kResponse].socket.write(
                   closeFrame.createFrame(opcodes.CLOSE),
@@ -17193,7 +16788,7 @@ var require_receiver = __commonJS({
               this.ws[kReceivedClose] = true;
               this.end();
               return;
-            } else if (__privateGet(this, _info).opcode === opcodes.PING) {
+            } else if (this.#info.opcode === opcodes.PING) {
               const body = this.consume(payloadLength);
               if (!this.ws[kReceivedClose]) {
                 const frame = new WebsocketFrameSend(body);
@@ -17204,63 +16799,63 @@ var require_receiver = __commonJS({
                   });
                 }
               }
-              __privateSet(this, _state, parserStates.INFO);
-              if (__privateGet(this, _byteOffset) > 0) {
+              this.#state = parserStates.INFO;
+              if (this.#byteOffset > 0) {
                 continue;
               } else {
                 callback();
                 return;
               }
-            } else if (__privateGet(this, _info).opcode === opcodes.PONG) {
+            } else if (this.#info.opcode === opcodes.PONG) {
               const body = this.consume(payloadLength);
               if (channels.pong.hasSubscribers) {
                 channels.pong.publish({
                   payload: body
                 });
               }
-              if (__privateGet(this, _byteOffset) > 0) {
+              if (this.#byteOffset > 0) {
                 continue;
               } else {
                 callback();
                 return;
               }
             }
-          } else if (__privateGet(this, _state) === parserStates.PAYLOADLENGTH_16) {
-            if (__privateGet(this, _byteOffset) < 2) {
+          } else if (this.#state === parserStates.PAYLOADLENGTH_16) {
+            if (this.#byteOffset < 2) {
               return callback();
             }
             const buffer = this.consume(2);
-            __privateGet(this, _info).payloadLength = buffer.readUInt16BE(0);
-            __privateSet(this, _state, parserStates.READ_DATA);
-          } else if (__privateGet(this, _state) === parserStates.PAYLOADLENGTH_64) {
-            if (__privateGet(this, _byteOffset) < 8) {
+            this.#info.payloadLength = buffer.readUInt16BE(0);
+            this.#state = parserStates.READ_DATA;
+          } else if (this.#state === parserStates.PAYLOADLENGTH_64) {
+            if (this.#byteOffset < 8) {
               return callback();
             }
             const buffer = this.consume(8);
             const upper = buffer.readUInt32BE(0);
-            if (upper > __pow(2, 31) - 1) {
+            if (upper > 2 ** 31 - 1) {
               failWebsocketConnection(this.ws, "Received payload length > 2^31 bytes.");
               return;
             }
             const lower = buffer.readUInt32BE(4);
-            __privateGet(this, _info).payloadLength = (upper << 8) + lower;
-            __privateSet(this, _state, parserStates.READ_DATA);
-          } else if (__privateGet(this, _state) === parserStates.READ_DATA) {
-            if (__privateGet(this, _byteOffset) < __privateGet(this, _info).payloadLength) {
+            this.#info.payloadLength = (upper << 8) + lower;
+            this.#state = parserStates.READ_DATA;
+          } else if (this.#state === parserStates.READ_DATA) {
+            if (this.#byteOffset < this.#info.payloadLength) {
               return callback();
-            } else if (__privateGet(this, _byteOffset) >= __privateGet(this, _info).payloadLength) {
-              const body = this.consume(__privateGet(this, _info).payloadLength);
-              __privateGet(this, _fragments).push(body);
-              if (!__privateGet(this, _info).fragmented || __privateGet(this, _info).fin && __privateGet(this, _info).opcode === opcodes.CONTINUATION) {
-                const fullMessage = Buffer.concat(__privateGet(this, _fragments));
-                websocketMessageReceived(this.ws, __privateGet(this, _info).originalOpcode, fullMessage);
-                __privateSet(this, _info, {});
-                __privateGet(this, _fragments).length = 0;
+            } else if (this.#byteOffset >= this.#info.payloadLength) {
+              const body = this.consume(this.#info.payloadLength);
+              this.#fragments.push(body);
+              if (!this.#info.fragmented || this.#info.fin && this.#info.opcode === opcodes.CONTINUATION) {
+                const fullMessage = Buffer.concat(this.#fragments);
+                websocketMessageReceived(this.ws, this.#info.originalOpcode, fullMessage);
+                this.#info = {};
+                this.#fragments.length = 0;
               }
-              __privateSet(this, _state, parserStates.INFO);
+              this.#state = parserStates.INFO;
             }
           }
-          if (__privateGet(this, _byteOffset) > 0) {
+          if (this.#byteOffset > 0) {
             continue;
           } else {
             callback();
@@ -17274,33 +16869,33 @@ var require_receiver = __commonJS({
        * @returns {Buffer|null}
        */
       consume(n) {
-        if (n > __privateGet(this, _byteOffset)) {
+        if (n > this.#byteOffset) {
           return null;
         } else if (n === 0) {
           return emptyBuffer;
         }
-        if (__privateGet(this, _buffers)[0].length === n) {
-          __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) - __privateGet(this, _buffers)[0].length);
-          return __privateGet(this, _buffers).shift();
+        if (this.#buffers[0].length === n) {
+          this.#byteOffset -= this.#buffers[0].length;
+          return this.#buffers.shift();
         }
         const buffer = Buffer.allocUnsafe(n);
         let offset = 0;
         while (offset !== n) {
-          const next = __privateGet(this, _buffers)[0];
+          const next = this.#buffers[0];
           const { length } = next;
           if (length + offset === n) {
-            buffer.set(__privateGet(this, _buffers).shift(), offset);
+            buffer.set(this.#buffers.shift(), offset);
             break;
           } else if (length + offset > n) {
             buffer.set(next.subarray(0, n - offset), offset);
-            __privateGet(this, _buffers)[0] = next.subarray(n - offset);
+            this.#buffers[0] = next.subarray(n - offset);
             break;
           } else {
-            buffer.set(__privateGet(this, _buffers).shift(), offset);
+            buffer.set(this.#buffers.shift(), offset);
             offset += next.length;
           }
         }
-        __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) - n);
+        this.#byteOffset -= n;
         return buffer;
       }
       parseCloseBody(onlyCode, data) {
@@ -17323,20 +16918,15 @@ var require_receiver = __commonJS({
         }
         try {
           reason = new TextDecoder("utf-8", { fatal: true }).decode(reason);
-        } catch (e) {
+        } catch {
           return null;
         }
         return { code, reason };
       }
       get closingInfo() {
-        return __privateGet(this, _info).closeInfo;
+        return this.#info.closeInfo;
       }
     };
-    _buffers = new WeakMap();
-    _byteOffset = new WeakMap();
-    _state = new WeakMap();
-    _info = new WeakMap();
-    _fragments = new WeakMap();
     module2.exports = {
       ByteParser
     };
@@ -17369,27 +16959,22 @@ var require_websocket = __commonJS({
     var { getGlobalDispatcher } = require_global2();
     var { types } = require("util");
     var experimentalWarned = false;
-    var _events, _bufferedAmount, _protocol, _extensions, _onConnectionEstablished, onConnectionEstablished_fn;
-    var _WebSocket = class _WebSocket extends EventTarget {
+    var WebSocket = class _WebSocket extends EventTarget {
+      #events = {
+        open: null,
+        error: null,
+        close: null,
+        message: null
+      };
+      #bufferedAmount = 0;
+      #protocol = "";
+      #extensions = "";
       /**
        * @param {string} url
        * @param {string|string[]} protocols
        */
       constructor(url, protocols = []) {
         super();
-        /**
-         * @see https://websockets.spec.whatwg.org/#feedback-from-the-protocol
-         */
-        __privateAdd(this, _onConnectionEstablished);
-        __privateAdd(this, _events, {
-          open: null,
-          error: null,
-          close: null,
-          message: null
-        });
-        __privateAdd(this, _bufferedAmount, 0);
-        __privateAdd(this, _protocol, "");
-        __privateAdd(this, _extensions, "");
         webidl.argumentLengthCheck(arguments, 1, { header: "WebSocket constructor" });
         if (!experimentalWarned) {
           experimentalWarned = true;
@@ -17435,7 +17020,7 @@ var require_websocket = __commonJS({
           urlRecord,
           protocols,
           this,
-          (response) => __privateMethod(this, _onConnectionEstablished, onConnectionEstablished_fn).call(this, response),
+          (response) => this.#onConnectionEstablished(response),
           options
         );
         this[kReadyState] = _WebSocket.CONNECTING;
@@ -17515,25 +17100,25 @@ var require_websocket = __commonJS({
           const value = Buffer.from(data);
           const frame = new WebsocketFrameSend(value);
           const buffer = frame.createFrame(opcodes.TEXT);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+          this.#bufferedAmount += value.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+            this.#bufferedAmount -= value.byteLength;
           });
         } else if (types.isArrayBuffer(data)) {
           const value = Buffer.from(data);
           const frame = new WebsocketFrameSend(value);
           const buffer = frame.createFrame(opcodes.BINARY);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+          this.#bufferedAmount += value.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+            this.#bufferedAmount -= value.byteLength;
           });
         } else if (ArrayBuffer.isView(data)) {
           const ab = Buffer.from(data, data.byteOffset, data.byteLength);
           const frame = new WebsocketFrameSend(ab);
           const buffer = frame.createFrame(opcodes.BINARY);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + ab.byteLength);
+          this.#bufferedAmount += ab.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - ab.byteLength);
+            this.#bufferedAmount -= ab.byteLength;
           });
         } else if (isBlobLike(data)) {
           const frame = new WebsocketFrameSend();
@@ -17541,9 +17126,9 @@ var require_websocket = __commonJS({
             const value = Buffer.from(ab);
             frame.frameData = value;
             const buffer = frame.createFrame(opcodes.BINARY);
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+            this.#bufferedAmount += value.byteLength;
             socket.write(buffer, () => {
-              __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+              this.#bufferedAmount -= value.byteLength;
             });
           });
         }
@@ -17554,7 +17139,7 @@ var require_websocket = __commonJS({
       }
       get bufferedAmount() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _bufferedAmount);
+        return this.#bufferedAmount;
       }
       get url() {
         webidl.brandCheck(this, _WebSocket);
@@ -17562,74 +17147,74 @@ var require_websocket = __commonJS({
       }
       get extensions() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _extensions);
+        return this.#extensions;
       }
       get protocol() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _protocol);
+        return this.#protocol;
       }
       get onopen() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).open;
+        return this.#events.open;
       }
       set onopen(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).open) {
-          this.removeEventListener("open", __privateGet(this, _events).open);
+        if (this.#events.open) {
+          this.removeEventListener("open", this.#events.open);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).open = fn;
+          this.#events.open = fn;
           this.addEventListener("open", fn);
         } else {
-          __privateGet(this, _events).open = null;
+          this.#events.open = null;
         }
       }
       get onerror() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).error;
+        return this.#events.error;
       }
       set onerror(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).error) {
-          this.removeEventListener("error", __privateGet(this, _events).error);
+        if (this.#events.error) {
+          this.removeEventListener("error", this.#events.error);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).error = fn;
+          this.#events.error = fn;
           this.addEventListener("error", fn);
         } else {
-          __privateGet(this, _events).error = null;
+          this.#events.error = null;
         }
       }
       get onclose() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).close;
+        return this.#events.close;
       }
       set onclose(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).close) {
-          this.removeEventListener("close", __privateGet(this, _events).close);
+        if (this.#events.close) {
+          this.removeEventListener("close", this.#events.close);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).close = fn;
+          this.#events.close = fn;
           this.addEventListener("close", fn);
         } else {
-          __privateGet(this, _events).close = null;
+          this.#events.close = null;
         }
       }
       get onmessage() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).message;
+        return this.#events.message;
       }
       set onmessage(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).message) {
-          this.removeEventListener("message", __privateGet(this, _events).message);
+        if (this.#events.message) {
+          this.removeEventListener("message", this.#events.message);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).message = fn;
+          this.#events.message = fn;
           this.addEventListener("message", fn);
         } else {
-          __privateGet(this, _events).message = null;
+          this.#events.message = null;
         }
       }
       get binaryType() {
@@ -17644,32 +17229,29 @@ var require_websocket = __commonJS({
           this[kBinaryType] = type;
         }
       }
-    };
-    _events = new WeakMap();
-    _bufferedAmount = new WeakMap();
-    _protocol = new WeakMap();
-    _extensions = new WeakMap();
-    _onConnectionEstablished = new WeakSet();
-    onConnectionEstablished_fn = function(response) {
-      this[kResponse] = response;
-      const parser2 = new ByteParser(this);
-      parser2.on("drain", function onParserDrain() {
-        this.ws[kResponse].socket.resume();
-      });
-      response.socket.ws = this;
-      this[kByteParser] = parser2;
-      this[kReadyState] = states.OPEN;
-      const extensions = response.headersList.get("sec-websocket-extensions");
-      if (extensions !== null) {
-        __privateSet(this, _extensions, extensions);
+      /**
+       * @see https://websockets.spec.whatwg.org/#feedback-from-the-protocol
+       */
+      #onConnectionEstablished(response) {
+        this[kResponse] = response;
+        const parser2 = new ByteParser(this);
+        parser2.on("drain", function onParserDrain() {
+          this.ws[kResponse].socket.resume();
+        });
+        response.socket.ws = this;
+        this[kByteParser] = parser2;
+        this[kReadyState] = states.OPEN;
+        const extensions = response.headersList.get("sec-websocket-extensions");
+        if (extensions !== null) {
+          this.#extensions = extensions;
+        }
+        const protocol = response.headersList.get("sec-websocket-protocol");
+        if (protocol !== null) {
+          this.#protocol = protocol;
+        }
+        fireEvent("open", this);
       }
-      const protocol = response.headersList.get("sec-websocket-protocol");
-      if (protocol !== null) {
-        __privateSet(this, _protocol, protocol);
-      }
-      fireEvent("open", this);
     };
-    var WebSocket = _WebSocket;
     WebSocket.CONNECTING = WebSocket.prototype.CONNECTING = states.CONNECTING;
     WebSocket.OPEN = WebSocket.prototype.OPEN = states.OPEN;
     WebSocket.CLOSING = WebSocket.prototype.CLOSING = states.CLOSING;
@@ -17784,7 +17366,7 @@ var require_undici = __commonJS({
     try {
       require("crypto");
       hasCrypto = true;
-    } catch (e) {
+    } catch {
       hasCrypto = false;
     }
     Object.assign(Dispatcher.prototype, api);
@@ -17831,31 +17413,30 @@ var require_undici = __commonJS({
         if (agent) {
           throw new InvalidArgumentError("unsupported opts.agent. Did you mean opts.client?");
         }
-        return fn.call(dispatcher, __spreadProps(__spreadValues({}, opts), {
+        return fn.call(dispatcher, {
+          ...opts,
           origin: url.origin,
           path: url.search ? `${url.pathname}${url.search}` : url.pathname,
           method: opts.method || (opts.body ? "PUT" : "GET")
-        }), handler2);
+        }, handler2);
       };
     }
     module2.exports.setGlobalDispatcher = setGlobalDispatcher;
     module2.exports.getGlobalDispatcher = getGlobalDispatcher;
     if (util.nodeMajor > 16 || util.nodeMajor === 16 && util.nodeMinor >= 8) {
       let fetchImpl = null;
-      module2.exports.fetch = function fetch2(_0) {
-        return __async(this, arguments, function* (resource) {
-          if (!fetchImpl) {
-            fetchImpl = require_fetch().fetch;
+      module2.exports.fetch = async function fetch2(resource) {
+        if (!fetchImpl) {
+          fetchImpl = require_fetch().fetch;
+        }
+        try {
+          return await fetchImpl(...arguments);
+        } catch (err) {
+          if (typeof err === "object") {
+            Error.captureStackTrace(err, this);
           }
-          try {
-            return yield fetchImpl(...arguments);
-          } catch (err) {
-            if (typeof err === "object") {
-              Error.captureStackTrace(err, this);
-            }
-            throw err;
-          }
-        });
+          throw err;
+        }
       };
       module2.exports.Headers = require_headers().Headers;
       module2.exports.Response = require_response().Response;
@@ -18683,7 +18264,7 @@ var require_oidc_utils = __commonJS({
         return runtimeUrl;
       }
       static getCall(id_token_url) {
-        var _a2;
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = _OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
@@ -18693,7 +18274,7 @@ var require_oidc_utils = __commonJS({
  
         Error Message: ${error.message}`);
           });
-          const id_token = (_a2 = res.result) === null || _a2 === void 0 ? void 0 : _a2.value;
+          const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
           if (!id_token) {
             throw new Error("Response json body do not have ID Token field");
           }
@@ -18781,7 +18362,7 @@ var require_summary = __commonJS({
           }
           try {
             yield access(pathFromEnv, fs_1.constants.R_OK | fs_1.constants.W_OK);
-          } catch (_a2) {
+          } catch (_a) {
             throw new Error(`Unable to access summary file: '${pathFromEnv}'. Check if the file has correct read/write permissions.`);
           }
           this._filePath = pathFromEnv;
@@ -19308,7 +18889,7 @@ var require_context = __commonJS({
        * Hydrate the context from the environment
        */
       constructor() {
-        var _a2, _b, _c;
+        var _a, _b, _c;
         this.payload = {};
         if (process.env.GITHUB_EVENT_PATH) {
           if ((0, fs_1.existsSync)(process.env.GITHUB_EVENT_PATH)) {
@@ -19327,7 +18908,7 @@ var require_context = __commonJS({
         this.job = process.env.GITHUB_JOB;
         this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
         this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
-        this.apiUrl = (_a2 = process.env.GITHUB_API_URL) !== null && _a2 !== void 0 ? _a2 : `https://api.github.com`;
+        this.apiUrl = (_a = process.env.GITHUB_API_URL) !== null && _a !== void 0 ? _a : `https://api.github.com`;
         this.serverUrl = (_b = process.env.GITHUB_SERVER_URL) !== null && _b !== void 0 ? _b : `https://github.com`;
         this.graphqlUrl = (_c = process.env.GITHUB_GRAPHQL_URL) !== null && _c !== void 0 ? _c : `https://api.github.com/graphql`;
       }
@@ -19604,7 +19185,7 @@ var require_errors2 = __commonJS({
     };
     var SecureProxyConnectionError = class extends UndiciError {
       constructor(cause, message, options) {
-        super(message, __spreadValues({ cause }, options != null ? options : {}));
+        super(message, { cause, ...options ?? {} });
         this.name = "SecureProxyConnectionError";
         this.message = message || "Secure Proxy Connection failed";
         this.code = "UND_ERR_PRX_TLS";
@@ -19762,22 +19343,22 @@ var require_tree = __commonJS({
       headerNameLowerCasedRecord
     } = require_constants5();
     var TstNode = class _TstNode {
+      /** @type {any} */
+      value = null;
+      /** @type {null | TstNode} */
+      left = null;
+      /** @type {null | TstNode} */
+      middle = null;
+      /** @type {null | TstNode} */
+      right = null;
+      /** @type {number} */
+      code;
       /**
        * @param {string} key
        * @param {any} value
        * @param {number} index
        */
       constructor(key, value, index) {
-        /** @type {any} */
-        __publicField(this, "value", null);
-        /** @type {null | TstNode} */
-        __publicField(this, "left", null);
-        /** @type {null | TstNode} */
-        __publicField(this, "middle", null);
-        /** @type {null | TstNode} */
-        __publicField(this, "right", null);
-        /** @type {number} */
-        __publicField(this, "code");
         if (index === void 0 || index >= key.length) {
           throw new TypeError("Unreachable");
         }
@@ -19860,10 +19441,8 @@ var require_tree = __commonJS({
       }
     };
     var TernarySearchTree = class {
-      constructor() {
-        /** @type {TstNode | null} */
-        __publicField(this, "node", null);
-      }
+      /** @type {TstNode | null} */
+      node = null;
       /**
        * @param {string} key
        * @param {any} value
@@ -19880,8 +19459,7 @@ var require_tree = __commonJS({
        * @return {any}
        */
       lookup(key) {
-        var _a2, _b, _c;
-        return (_c = (_b = (_a2 = this.node) == null ? void 0 : _a2.search(key)) == null ? void 0 : _b.value) != null ? _c : null;
+        return this.node?.search(key)?.value ?? null;
       }
     };
     var tree = new TernarySearchTree();
@@ -20025,11 +19603,10 @@ var require_util8 = __commonJS({
       return null;
     }
     function isDestroyed(body) {
-      var _a2;
-      return body && !!(body.destroyed || body[kDestroyed] || ((_a2 = stream.isDestroyed) == null ? void 0 : _a2.call(stream, body)));
+      return body && !!(body.destroyed || body[kDestroyed] || stream.isDestroyed?.(body));
     }
     function isReadableAborted(stream2) {
-      const state = stream2 == null ? void 0 : stream2._readableState;
+      const state = stream2?._readableState;
       return isDestroyed(stream2) && state && !state.endEmitted;
     }
     function destroy(stream2, err) {
@@ -20056,12 +19633,10 @@ var require_util8 = __commonJS({
       return m ? parseInt(m[1], 10) * 1e3 : null;
     }
     function headerNameToString(value) {
-      var _a2, _b;
-      return typeof value === "string" ? (_a2 = headerNameLowerCasedRecord[value]) != null ? _a2 : value.toLowerCase() : (_b = tree.lookup(value)) != null ? _b : value.toString("latin1").toLowerCase();
+      return typeof value === "string" ? headerNameLowerCasedRecord[value] ?? value.toLowerCase() : tree.lookup(value) ?? value.toString("latin1").toLowerCase();
     }
     function bufferToLowerCasedHeaderName(value) {
-      var _a2;
-      return (_a2 = tree.lookup(value)) != null ? _a2 : value.toString("latin1").toLowerCase();
+      return tree.lookup(value) ?? value.toString("latin1").toLowerCase();
     }
     function parseHeaders(headers, obj2) {
       if (!Array.isArray(headers))
@@ -20175,33 +19750,26 @@ var require_util8 = __commonJS({
       let iterator2;
       return new ReadableStream(
         {
-          start() {
-            return __async(this, null, function* () {
-              iterator2 = iterable[Symbol.asyncIterator]();
-            });
+          async start() {
+            iterator2 = iterable[Symbol.asyncIterator]();
           },
-          pull(controller) {
-            return __async(this, null, function* () {
-              const { done, value } = yield iterator2.next();
-              if (done) {
-                queueMicrotask(() => {
-                  var _a3;
-                  controller.close();
-                  (_a3 = controller.byobRequest) == null ? void 0 : _a3.respond(0);
-                });
-              } else {
-                const buf = Buffer.isBuffer(value) ? value : Buffer.from(value);
-                if (buf.byteLength) {
-                  controller.enqueue(new Uint8Array(buf));
-                }
+          async pull(controller) {
+            const { done, value } = await iterator2.next();
+            if (done) {
+              queueMicrotask(() => {
+                controller.close();
+                controller.byobRequest?.respond(0);
+              });
+            } else {
+              const buf = Buffer.isBuffer(value) ? value : Buffer.from(value);
+              if (buf.byteLength) {
+                controller.enqueue(new Uint8Array(buf));
               }
-              return controller.desiredSize > 0;
-            });
+            }
+            return controller.desiredSize > 0;
           },
-          cancel(reason) {
-            return __async(this, null, function* () {
-              yield iterator2.return();
-            });
+          async cancel(reason) {
+            await iterator2.return();
           },
           type: "bytes"
         }
@@ -20689,8 +20257,7 @@ var require_request3 = __commonJS({
         }
       }
       onResponseStarted() {
-        var _a2, _b;
-        return (_b = (_a2 = this[kHandler]).onResponseStarted) == null ? void 0 : _b.call(_a2);
+        return this[kHandler].onResponseStarted?.();
       }
       onHeaders(statusCode, headers, resume, statusText) {
         assert(!this.aborted);
@@ -20865,27 +20432,24 @@ var require_dispatcher2 = __commonJS({
         return new ComposedDispatcher(this, dispatch);
       }
     };
-    var _dispatcher, _dispatch;
     var ComposedDispatcher = class extends Dispatcher {
+      #dispatcher = null;
+      #dispatch = null;
       constructor(dispatcher, dispatch) {
         super();
-        __privateAdd(this, _dispatcher, null);
-        __privateAdd(this, _dispatch, null);
-        __privateSet(this, _dispatcher, dispatcher);
-        __privateSet(this, _dispatch, dispatch);
+        this.#dispatcher = dispatcher;
+        this.#dispatch = dispatch;
       }
       dispatch(...args) {
-        __privateGet(this, _dispatch).call(this, ...args);
+        this.#dispatch(...args);
       }
       close(...args) {
-        return __privateGet(this, _dispatcher).close(...args);
+        return this.#dispatcher.close(...args);
       }
       destroy(...args) {
-        return __privateGet(this, _dispatcher).destroy(...args);
+        return this.#dispatcher.destroy(...args);
       }
     };
-    _dispatcher = new WeakMap();
-    _dispatch = new WeakMap();
     module2.exports = Dispatcher;
   }
 });
@@ -21111,12 +20675,11 @@ var require_connect2 = __commonJS({
         }
       };
     }
-    function buildConnector(_a2) {
-      var _b = _a2, { allowH2, maxCachedSessions, socketPath, timeout } = _b, opts = __objRest(_b, ["allowH2", "maxCachedSessions", "socketPath", "timeout"]);
+    function buildConnector({ allowH2, maxCachedSessions, socketPath, timeout, ...opts }) {
       if (maxCachedSessions != null && (!Number.isInteger(maxCachedSessions) || maxCachedSessions < 0)) {
         throw new InvalidArgumentError("maxCachedSessions must be a positive integer or zero");
       }
-      const options = __spreadValues({ path: socketPath }, opts);
+      const options = { path: socketPath, ...opts };
       const sessionCache = new SessionCache(maxCachedSessions == null ? 100 : maxCachedSessions);
       timeout = timeout == null ? 1e4 : timeout;
       allowH2 = allowH2 != null ? allowH2 : false;
@@ -21130,9 +20693,10 @@ var require_connect2 = __commonJS({
           const sessionKey = servername || hostname;
           const session = sessionCache.get(sessionKey) || null;
           assert(sessionKey);
-          socket = tls.connect(__spreadProps(__spreadValues({
-            highWaterMark: 16384
-          }, options), {
+          socket = tls.connect({
+            highWaterMark: 16384,
+            // TLS in node can't have bigger HWM anyway...
+            ...options,
             servername,
             session,
             localAddress,
@@ -21142,19 +20706,20 @@ var require_connect2 = __commonJS({
             // upgrade socket connection
             port: port || 443,
             host: hostname
-          }));
+          });
           socket.on("session", function(session2) {
             sessionCache.set(sessionKey, session2);
           });
         } else {
           assert(!httpSocket, "httpSocket can only be sent on TLS update");
-          socket = net.connect(__spreadProps(__spreadValues({
-            highWaterMark: 64 * 1024
-          }, options), {
+          socket = net.connect({
+            highWaterMark: 64 * 1024,
+            // Same as nodejs fs streams.
+            ...options,
             localAddress,
             port: port || 80,
             host: hostname
-          }));
+          });
         }
         if (options.keepAlive == null || options.keepAlive) {
           const keepAliveInitialDelay = options.keepAliveInitialDelay === void 0 ? 6e4 : options.keepAliveInitialDelay;
@@ -21248,7 +20813,7 @@ var require_timers2 = __commonJS({
       }
     }
     function refreshTimeout() {
-      if (fastNowTimeout == null ? void 0 : fastNowTimeout.refresh) {
+      if (fastNowTimeout?.refresh) {
         fastNowTimeout.refresh();
       } else {
         clearTimeout(fastNowTimeout);
@@ -22244,21 +21809,22 @@ var require_webidl2 = __commonJS({
       });
     };
     webidl.brandCheck = function(V, I, opts = void 0) {
-      if ((opts == null ? void 0 : opts.strict) !== false) {
+      if (opts?.strict !== false) {
         if (!(V instanceof I)) {
           throw new TypeError("Illegal invocation");
         }
       } else {
-        if ((V == null ? void 0 : V[Symbol.toStringTag]) !== I.prototype[Symbol.toStringTag]) {
+        if (V?.[Symbol.toStringTag] !== I.prototype[Symbol.toStringTag]) {
           throw new TypeError("Illegal invocation");
         }
       }
     };
     webidl.argumentLengthCheck = function({ length }, min, ctx) {
       if (length < min) {
-        throw webidl.errors.exception(__spreadValues({
-          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`
-        }, ctx));
+        throw webidl.errors.exception({
+          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`,
+          ...ctx
+        });
       }
     };
     webidl.illegalConstructor = function() {
@@ -22368,14 +21934,13 @@ var require_webidl2 = __commonJS({
     };
     webidl.sequenceConverter = function(converter) {
       return (V, Iterable) => {
-        var _a2;
         if (webidl.util.Type(V) !== "Object") {
           throw webidl.errors.exception({
             header: "Sequence",
             message: `Value of type ${webidl.util.Type(V)} is not an Object.`
           });
         }
-        const method = typeof Iterable === "function" ? Iterable() : (_a2 = V == null ? void 0 : V[Symbol.iterator]) == null ? void 0 : _a2.call(V);
+        const method = typeof Iterable === "function" ? Iterable() : V?.[Symbol.iterator]?.();
         const seq = [];
         if (method === void 0 || typeof method.next !== "function") {
           throw webidl.errors.exception({
@@ -22414,7 +21979,7 @@ var require_webidl2 = __commonJS({
         const keys = Reflect.ownKeys(O);
         for (const key of keys) {
           const desc = Reflect.getOwnPropertyDescriptor(O, key);
-          if (desc == null ? void 0 : desc.enumerable) {
+          if (desc?.enumerable) {
             const typedKey = keyConverter(key);
             const typedValue = valueConverter(O[key]);
             result[typedKey] = typedValue;
@@ -22459,7 +22024,7 @@ var require_webidl2 = __commonJS({
           let value = dictionary[key];
           const hasDefault = Object.hasOwn(options, "defaultValue");
           if (hasDefault && value !== null) {
-            value = value != null ? value : defaultValue;
+            value = value ?? defaultValue;
           }
           if (required || hasDefault || value !== void 0) {
             value = converter(value);
@@ -22594,13 +22159,13 @@ var require_webidl2 = __commonJS({
     };
     webidl.converters.BufferSource = function(V, opts = {}) {
       if (types.isAnyArrayBuffer(V)) {
-        return webidl.converters.ArrayBuffer(V, __spreadProps(__spreadValues({}, opts), { allowShared: false }));
+        return webidl.converters.ArrayBuffer(V, { ...opts, allowShared: false });
       }
       if (types.isTypedArray(V)) {
-        return webidl.converters.TypedArray(V, V.constructor, __spreadProps(__spreadValues({}, opts), { allowShared: false }));
+        return webidl.converters.TypedArray(V, V.constructor, { ...opts, allowShared: false });
       }
       if (types.isDataView(V)) {
-        return webidl.converters.DataView(V, opts, __spreadProps(__spreadValues({}, opts), { allowShared: false }));
+        return webidl.converters.DataView(V, opts, { ...opts, allowShared: false });
       }
       throw new TypeError(`Could not convert ${webidl.util.Stringify(V)} to a BufferSource.`);
     };
@@ -22637,7 +22202,7 @@ var require_util9 = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     function responseURL(response) {
       const urlList = response.urlList;
@@ -22686,8 +22251,7 @@ var require_util9 = __commonJS({
       return "allowed";
     }
     function isErrorLike(object) {
-      var _a2, _b;
-      return object instanceof Error || (((_a2 = object == null ? void 0 : object.constructor) == null ? void 0 : _a2.name) === "Error" || ((_b = object == null ? void 0 : object.constructor) == null ? void 0 : _b.name) === "DOMException");
+      return object instanceof Error || (object?.constructor?.name === "Error" || object?.constructor?.name === "DOMException");
     }
     function isValidReasonPhrase(statusText) {
       for (let i = 0; i < statusText.length; ++i) {
@@ -22711,9 +22275,8 @@ var require_util9 = __commonJS({
       return true;
     }
     function setRequestReferrerPolicyOnRedirect(request2, actualResponse) {
-      var _a2;
       const { headersList } = actualResponse;
-      const policyHeader = ((_a2 = headersList.get("referrer-policy", true)) != null ? _a2 : "").split(",");
+      const policyHeader = (headersList.get("referrer-policy", true) ?? "").split(",");
       let policy = "";
       if (policyHeader.length > 0) {
         for (let i = policyHeader.length; i !== 0; i--) {
@@ -22776,14 +22339,14 @@ var require_util9 = __commonJS({
       return timestamp;
     }
     function clampAndCoarsenConnectionTimingInfo(connectionTimingInfo, defaultStartTime, crossOriginIsolatedCapability) {
-      if (!(connectionTimingInfo == null ? void 0 : connectionTimingInfo.startTime) || connectionTimingInfo.startTime < defaultStartTime) {
+      if (!connectionTimingInfo?.startTime || connectionTimingInfo.startTime < defaultStartTime) {
         return {
           domainLookupStartTime: defaultStartTime,
           domainLookupEndTime: defaultStartTime,
           connectionStartTime: defaultStartTime,
           connectionEndTime: defaultStartTime,
           secureConnectionStartTime: defaultStartTime,
-          ALPNNegotiatedProtocol: connectionTimingInfo == null ? void 0 : connectionTimingInfo.ALPNNegotiatedProtocol
+          ALPNNegotiatedProtocol: connectionTimingInfo?.ALPNNegotiatedProtocol
         };
       }
       return {
@@ -22799,12 +22362,11 @@ var require_util9 = __commonJS({
       return coarsenTime(performance2.now(), crossOriginIsolatedCapability);
     }
     function createOpaqueTimingInfo(timingInfo) {
-      var _a2, _b;
       return {
-        startTime: (_a2 = timingInfo.startTime) != null ? _a2 : 0,
+        startTime: timingInfo.startTime ?? 0,
         redirectStartTime: 0,
         redirectEndTime: 0,
-        postRedirectStartTime: (_b = timingInfo.startTime) != null ? _b : 0,
+        postRedirectStartTime: timingInfo.startTime ?? 0,
         finalServiceWorkerStartTime: 0,
         finalNetworkResponseStartTime: 0,
         finalNetworkRequestStartTime: 0,
@@ -22946,7 +22508,7 @@ var require_util9 = __commonJS({
       }
       return false;
     }
-    var parseHashWithOptions = new RegExp("(?<algo>sha256|sha384|sha512)-(?<hash>[A-Za-z0-9+/]+={0,2}(?=\\s|$))( +[!-~]*)?", "i");
+    var parseHashWithOptions = /(?<algo>sha256|sha384|sha512)-(?<hash>[A-Za-z0-9+/]+={0,2}(?=\s|$))( +[!-~]*)?/i;
     function parseMetadata(metadata) {
       const result = [];
       let empty = true;
@@ -23007,15 +22569,15 @@ var require_util9 = __commonJS({
       put: "PUT",
       PUT: "PUT"
     };
-    var normalizeMethodRecord = __spreadProps(__spreadValues({}, normalizeMethodRecordBase), {
+    var normalizeMethodRecord = {
+      ...normalizeMethodRecordBase,
       patch: "patch",
       PATCH: "PATCH"
-    });
+    };
     Object.setPrototypeOf(normalizeMethodRecordBase, null);
     Object.setPrototypeOf(normalizeMethodRecord, null);
     function normalizeMethod(method) {
-      var _a2;
-      return (_a2 = normalizeMethodRecordBase[method.toLowerCase()]) != null ? _a2 : method;
+      return normalizeMethodRecordBase[method.toLowerCase()] ?? method;
     }
     function serializeJavascriptValueToJSONString(value) {
       const result = JSON.stringify(value);
@@ -23027,32 +22589,31 @@ var require_util9 = __commonJS({
     }
     var esIteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()));
     function createIterator(name, kInternalIterator, keyIndex = 0, valueIndex = 1) {
-      var _target, _kind, _index;
       class FastIterableIterator {
+        /** @type {any} */
+        #target;
+        /** @type {'key' | 'value' | 'key+value'} */
+        #kind;
+        /** @type {number} */
+        #index;
         /**
          * @see https://webidl.spec.whatwg.org/#dfn-default-iterator-object
          * @param {unknown} target
          * @param {'key' | 'value' | 'key+value'} kind
          */
         constructor(target, kind) {
-          /** @type {any} */
-          __privateAdd(this, _target, void 0);
-          /** @type {'key' | 'value' | 'key+value'} */
-          __privateAdd(this, _kind, void 0);
-          /** @type {number} */
-          __privateAdd(this, _index, void 0);
-          __privateSet(this, _target, target);
-          __privateSet(this, _kind, kind);
-          __privateSet(this, _index, 0);
+          this.#target = target;
+          this.#kind = kind;
+          this.#index = 0;
         }
         next() {
-          if (typeof this !== "object" || this === null || !__privateIn(_target, this)) {
+          if (typeof this !== "object" || this === null || !(#target in this)) {
             throw new TypeError(
               `'next' called on an object that does not implement interface ${name} Iterator.`
             );
           }
-          const index = __privateGet(this, _index);
-          const values = __privateGet(this, _target)[kInternalIterator];
+          const index = this.#index;
+          const values = this.#target[kInternalIterator];
           const len = values.length;
           if (index >= len) {
             return {
@@ -23061,9 +22622,9 @@ var require_util9 = __commonJS({
             };
           }
           const { [keyIndex]: key, [valueIndex]: value } = values[index];
-          __privateSet(this, _index, index + 1);
+          this.#index = index + 1;
           let result;
-          switch (__privateGet(this, _kind)) {
+          switch (this.#kind) {
             case "key":
               result = key;
               break;
@@ -23080,9 +22641,6 @@ var require_util9 = __commonJS({
           };
         }
       }
-      _target = new WeakMap();
-      _kind = new WeakMap();
-      _index = new WeakMap();
       delete FastIterableIterator.prototype.constructor;
       Object.setPrototypeOf(FastIterableIterator.prototype, esIteratorPrototype);
       Object.defineProperties(FastIterableIterator.prototype, {
@@ -23146,42 +22704,40 @@ var require_util9 = __commonJS({
           }
         }
       };
-      return Object.defineProperties(object.prototype, __spreadProps(__spreadValues({}, properties), {
+      return Object.defineProperties(object.prototype, {
+        ...properties,
         [Symbol.iterator]: {
           writable: true,
           enumerable: false,
           configurable: true,
           value: properties.entries.value
         }
-      }));
-    }
-    function fullyReadBody(body, processBody, processBodyError) {
-      return __async(this, null, function* () {
-        const successSteps = processBody;
-        const errorSteps = processBodyError;
-        let reader;
-        try {
-          reader = body.stream.getReader();
-        } catch (e) {
-          errorSteps(e);
-          return;
-        }
-        try {
-          const result = yield readAllBytes(reader);
-          successSteps(result);
-        } catch (e) {
-          errorSteps(e);
-        }
       });
+    }
+    async function fullyReadBody(body, processBody, processBodyError) {
+      const successSteps = processBody;
+      const errorSteps = processBodyError;
+      let reader;
+      try {
+        reader = body.stream.getReader();
+      } catch (e) {
+        errorSteps(e);
+        return;
+      }
+      try {
+        const result = await readAllBytes(reader);
+        successSteps(result);
+      } catch (e) {
+        errorSteps(e);
+      }
     }
     function isReadableStreamLike(stream) {
       return stream instanceof ReadableStream || stream[Symbol.toStringTag] === "ReadableStream" && typeof stream.tee === "function";
     }
     function readableStreamClose(controller) {
-      var _a2;
       try {
         controller.close();
-        (_a2 = controller.byobRequest) == null ? void 0 : _a2.respond(0);
+        controller.byobRequest?.respond(0);
       } catch (err) {
         if (!err.message.includes("Controller is already closed") && !err.message.includes("ReadableStream is already closed")) {
           throw err;
@@ -23194,22 +22750,20 @@ var require_util9 = __commonJS({
       }
       return input;
     }
-    function readAllBytes(reader) {
-      return __async(this, null, function* () {
-        const bytes = [];
-        let byteLength = 0;
-        while (true) {
-          const { done, value: chunk } = yield reader.read();
-          if (done) {
-            return Buffer.concat(bytes, byteLength);
-          }
-          if (!isUint8Array(chunk)) {
-            throw new TypeError("Received non-Uint8Array chunk");
-          }
-          bytes.push(chunk);
-          byteLength += chunk.length;
+    async function readAllBytes(reader) {
+      const bytes = [];
+      let byteLength = 0;
+      while (true) {
+        const { done, value: chunk } = await reader.read();
+        if (done) {
+          return Buffer.concat(bytes, byteLength);
         }
-      });
+        if (!isUint8Array(chunk)) {
+          throw new TypeError("Received non-Uint8Array chunk");
+        }
+        bytes.push(chunk);
+        byteLength += chunk.length;
+      }
     }
     function urlIsLocal(url) {
       assert("protocol" in url);
@@ -23536,10 +23090,9 @@ var require_file2 = __commonJS({
     };
     var FileLike = class _FileLike {
       constructor(blobLike, fileName, options = {}) {
-        var _a2;
         const n = fileName;
         const t = options.type;
-        const d = (_a2 = options.lastModified) != null ? _a2 : Date.now();
+        const d = options.lastModified ?? Date.now();
         this[kState] = {
           blobLike,
           name: n,
@@ -23676,7 +23229,7 @@ var require_formdata2 = __commonJS({
     var { webidl } = require_webidl2();
     var { File: NativeFile } = require("buffer");
     var nodeUtil = require("util");
-    var File = NativeFile != null ? NativeFile : UndiciFile;
+    var File = NativeFile ?? UndiciFile;
     var FormData = class _FormData {
       constructor(form) {
         if (form !== void 0) {
@@ -23754,7 +23307,6 @@ var require_formdata2 = __commonJS({
         }
       }
       [nodeUtil.inspect.custom](depth, options) {
-        var _a2, _b;
         const state = this[kState].reduce((a, b) => {
           if (a[b.name]) {
             if (Array.isArray(a[b.name])) {
@@ -23767,8 +23319,8 @@ var require_formdata2 = __commonJS({
           }
           return a;
         }, { __proto__: null });
-        (_a2 = options.depth) != null ? _a2 : options.depth = depth;
-        (_b = options.colors) != null ? _b : options.colors = true;
+        options.depth ??= depth;
+        options.colors ??= true;
         const output = nodeUtil.formatWithOptions(options, state);
         return `FormData ${output.slice(output.indexOf("]") + 2)}`;
       }
@@ -23817,8 +23369,7 @@ var require_formdata_parser = __commonJS({
     var { makeEntry } = require_formdata2();
     var assert = require("assert");
     var { File: NodeFile } = require("buffer");
-    var _a2, _b;
-    var File = (_b = (_a2 = globalThis.File) != null ? _a2 : NodeFile) != null ? _b : UndiciFile;
+    var File = globalThis.File ?? NodeFile ?? UndiciFile;
     var formDataNameBuffer = Buffer.from('form-data; name="');
     var filenameBuffer = Buffer.from("; filename");
     var dd = Buffer.from("--");
@@ -23905,7 +23456,7 @@ var require_formdata_parser = __commonJS({
         }
         let value;
         if (filename !== null) {
-          contentType != null ? contentType : contentType = "text/plain";
+          contentType ??= "text/plain";
           if (!isAsciiString(contentType)) {
             contentType = "";
           }
@@ -24097,16 +23648,13 @@ var require_body2 = __commonJS({
       } else if (isBlobLike(object)) {
         stream = object.stream();
       } else {
-        let _a2;
         stream = new ReadableStream({
-          pull(controller) {
-            return __async(this, null, function* () {
-              const buffer = typeof source === "string" ? textEncoder.encode(source) : source;
-              if (buffer.byteLength) {
-                controller.enqueue(buffer);
-              }
-              queueMicrotask(() => readableStreamClose(controller));
-            });
+          async pull(controller) {
+            const buffer = typeof source === "string" ? textEncoder.encode(source) : source;
+            if (buffer.byteLength) {
+              controller.enqueue(buffer);
+            }
+            queueMicrotask(() => readableStreamClose(controller));
           },
           start() {
           },
@@ -24166,16 +23714,14 @@ Content-Type: ${value.type || "application/octet-stream"}\r
           length = null;
         }
         source = object;
-        action = function() {
-          return __asyncGenerator(this, null, function* () {
-            for (const part of blobParts) {
-              if (part.stream) {
-                yield* __yieldStar(part.stream());
-              } else {
-                yield part;
-              }
+        action = async function* () {
+          for (const part of blobParts) {
+            if (part.stream) {
+              yield* part.stream();
+            } else {
+              yield part;
             }
-          });
+          }
         };
         type = `multipart/form-data; boundary=${boundary}`;
       } else if (isBlobLike(object)) {
@@ -24199,38 +23745,30 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         length = Buffer.byteLength(source);
       }
       if (action != null) {
-        let _b;
         let iterator2;
         stream = new ReadableStream({
-          start() {
-            return __async(this, null, function* () {
-              iterator2 = action(object)[Symbol.asyncIterator]();
-            });
+          async start() {
+            iterator2 = action(object)[Symbol.asyncIterator]();
           },
-          pull(controller) {
-            return __async(this, null, function* () {
-              const { value, done } = yield iterator2.next();
-              if (done) {
-                queueMicrotask(() => {
-                  var _a2;
-                  controller.close();
-                  (_a2 = controller.byobRequest) == null ? void 0 : _a2.respond(0);
-                });
-              } else {
-                if (!isErrored(stream)) {
-                  const buffer = new Uint8Array(value);
-                  if (buffer.byteLength) {
-                    controller.enqueue(buffer);
-                  }
+          async pull(controller) {
+            const { value, done } = await iterator2.next();
+            if (done) {
+              queueMicrotask(() => {
+                controller.close();
+                controller.byobRequest?.respond(0);
+              });
+            } else {
+              if (!isErrored(stream)) {
+                const buffer = new Uint8Array(value);
+                if (buffer.byteLength) {
+                  controller.enqueue(buffer);
                 }
               }
-              return controller.desiredSize > 0;
-            });
+            }
+            return controller.desiredSize > 0;
           },
-          cancel(reason) {
-            return __async(this, null, function* () {
-              yield iterator2.return();
-            });
+          async cancel(reason) {
+            await iterator2.return();
           },
           type: "bytes"
         });
@@ -24318,29 +23856,27 @@ Content-Type: ${value.type || "application/octet-stream"}\r
     function mixinBody(prototype) {
       Object.assign(prototype.prototype, bodyMixinMethods(prototype));
     }
-    function consumeBody(object, convertBytesToJSValue, instance) {
-      return __async(this, null, function* () {
-        webidl.brandCheck(object, instance);
-        throwIfAborted(object[kState]);
-        if (bodyUnusable(object[kState].body)) {
-          throw new TypeError("Body is unusable");
+    async function consumeBody(object, convertBytesToJSValue, instance) {
+      webidl.brandCheck(object, instance);
+      throwIfAborted(object[kState]);
+      if (bodyUnusable(object[kState].body)) {
+        throw new TypeError("Body is unusable");
+      }
+      const promise = createDeferredPromise();
+      const errorSteps = (error) => promise.reject(error);
+      const successSteps = (data) => {
+        try {
+          promise.resolve(convertBytesToJSValue(data));
+        } catch (e) {
+          errorSteps(e);
         }
-        const promise = createDeferredPromise();
-        const errorSteps = (error) => promise.reject(error);
-        const successSteps = (data) => {
-          try {
-            promise.resolve(convertBytesToJSValue(data));
-          } catch (e) {
-            errorSteps(e);
-          }
-        };
-        if (object[kState].body == null) {
-          successSteps(new Uint8Array());
-          return promise.promise;
-        }
-        yield fullyReadBody(object[kState].body, successSteps, errorSteps);
+      };
+      if (object[kState].body == null) {
+        successSteps(new Uint8Array());
         return promise.promise;
-      });
+      }
+      await fullyReadBody(object[kState].body, successSteps, errorSteps);
+      return promise.promise;
     }
     function bodyUnusable(body) {
       return body != null && (body.stream.locked || util.isDisturbed(body.stream));
@@ -24424,69 +23960,65 @@ var require_client_h1 = __commonJS({
     var FastBuffer = Buffer[Symbol.species];
     var extractBody;
     function addListener(obj2, name, listener) {
-      var _a2;
-      const listeners = (_a2 = obj2[kListeners]) != null ? _a2 : obj2[kListeners] = [];
+      const listeners = obj2[kListeners] ??= [];
       listeners.push([name, listener]);
       obj2.on(name, listener);
       return obj2;
     }
     function removeAllListeners(obj2) {
-      var _a2;
-      for (const [name, listener] of (_a2 = obj2[kListeners]) != null ? _a2 : []) {
+      for (const [name, listener] of obj2[kListeners] ?? []) {
         obj2.removeListener(name, listener);
       }
       obj2[kListeners] = null;
     }
-    function lazyllhttp() {
-      return __async(this, null, function* () {
-        const llhttpWasmData = process.env.JEST_WORKER_ID ? require_llhttp_wasm2() : void 0;
-        let mod;
-        try {
-          mod = yield WebAssembly.compile(require_llhttp_simd_wasm2());
-        } catch (e) {
-          mod = yield WebAssembly.compile(llhttpWasmData || require_llhttp_wasm2());
-        }
-        return yield WebAssembly.instantiate(mod, {
-          env: {
-            /* eslint-disable camelcase */
-            wasm_on_url: (p, at, len) => {
-              return 0;
-            },
-            wasm_on_status: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onStatus(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_message_begin: (p) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onMessageBegin() || 0;
-            },
-            wasm_on_header_field: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onHeaderField(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_header_value: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onHeaderValue(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0;
-            },
-            wasm_on_body: (p, at, len) => {
-              assert.strictEqual(currentParser.ptr, p);
-              const start = at - currentBufferPtr + currentBufferRef.byteOffset;
-              return currentParser.onBody(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
-            },
-            wasm_on_message_complete: (p) => {
-              assert.strictEqual(currentParser.ptr, p);
-              return currentParser.onMessageComplete() || 0;
-            }
-            /* eslint-enable camelcase */
+    async function lazyllhttp() {
+      const llhttpWasmData = process.env.JEST_WORKER_ID ? require_llhttp_wasm2() : void 0;
+      let mod;
+      try {
+        mod = await WebAssembly.compile(require_llhttp_simd_wasm2());
+      } catch (e) {
+        mod = await WebAssembly.compile(llhttpWasmData || require_llhttp_wasm2());
+      }
+      return await WebAssembly.instantiate(mod, {
+        env: {
+          /* eslint-disable camelcase */
+          wasm_on_url: (p, at, len) => {
+            return 0;
+          },
+          wasm_on_status: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onStatus(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_message_begin: (p) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onMessageBegin() || 0;
+          },
+          wasm_on_header_field: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onHeaderField(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_header_value: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onHeaderValue(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0;
+          },
+          wasm_on_body: (p, at, len) => {
+            assert.strictEqual(currentParser.ptr, p);
+            const start = at - currentBufferPtr + currentBufferRef.byteOffset;
+            return currentParser.onBody(new FastBuffer(currentBufferRef.buffer, start, len)) || 0;
+          },
+          wasm_on_message_complete: (p) => {
+            assert.strictEqual(currentParser.ptr, p);
+            return currentParser.onMessageComplete() || 0;
           }
-        });
+          /* eslint-enable camelcase */
+        }
       });
     }
     var llhttpInstance = null;
@@ -24869,114 +24401,112 @@ var require_client_h1 = __commonJS({
         util.destroy(socket, new InformationalError("socket idle timeout"));
       }
     }
-    function connectH1(client, socket) {
-      return __async(this, null, function* () {
-        client[kSocket] = socket;
-        if (!llhttpInstance) {
-          llhttpInstance = yield llhttpPromise;
-          llhttpPromise = null;
+    async function connectH1(client, socket) {
+      client[kSocket] = socket;
+      if (!llhttpInstance) {
+        llhttpInstance = await llhttpPromise;
+        llhttpPromise = null;
+      }
+      socket[kNoRef] = false;
+      socket[kWriting] = false;
+      socket[kReset] = false;
+      socket[kBlocking] = false;
+      socket[kParser] = new Parser(client, socket, llhttpInstance);
+      addListener(socket, "error", function(err) {
+        const parser2 = this[kParser];
+        assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
+        if (err.code === "ECONNRESET" && parser2.statusCode && !parser2.shouldKeepAlive) {
+          parser2.onMessageComplete();
+          return;
         }
-        socket[kNoRef] = false;
-        socket[kWriting] = false;
-        socket[kReset] = false;
-        socket[kBlocking] = false;
-        socket[kParser] = new Parser(client, socket, llhttpInstance);
-        addListener(socket, "error", function(err) {
-          const parser2 = this[kParser];
-          assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
-          if (err.code === "ECONNRESET" && parser2.statusCode && !parser2.shouldKeepAlive) {
+        this[kError] = err;
+        this[kClient][kOnError](err);
+      });
+      addListener(socket, "readable", function() {
+        const parser2 = this[kParser];
+        if (parser2) {
+          parser2.readMore();
+        }
+      });
+      addListener(socket, "end", function() {
+        const parser2 = this[kParser];
+        if (parser2.statusCode && !parser2.shouldKeepAlive) {
+          parser2.onMessageComplete();
+          return;
+        }
+        util.destroy(this, new SocketError("other side closed", util.getSocketInfo(this)));
+      });
+      addListener(socket, "close", function() {
+        const client2 = this[kClient];
+        const parser2 = this[kParser];
+        if (parser2) {
+          if (!this[kError] && parser2.statusCode && !parser2.shouldKeepAlive) {
             parser2.onMessageComplete();
-            return;
           }
-          this[kError] = err;
-          this[kClient][kOnError](err);
-        });
-        addListener(socket, "readable", function() {
-          const parser2 = this[kParser];
-          if (parser2) {
-            parser2.readMore();
-          }
-        });
-        addListener(socket, "end", function() {
-          const parser2 = this[kParser];
-          if (parser2.statusCode && !parser2.shouldKeepAlive) {
-            parser2.onMessageComplete();
-            return;
-          }
-          util.destroy(this, new SocketError("other side closed", util.getSocketInfo(this)));
-        });
-        addListener(socket, "close", function() {
-          const client2 = this[kClient];
-          const parser2 = this[kParser];
-          if (parser2) {
-            if (!this[kError] && parser2.statusCode && !parser2.shouldKeepAlive) {
-              parser2.onMessageComplete();
-            }
-            this[kParser].destroy();
-            this[kParser] = null;
-          }
-          const err = this[kError] || new SocketError("closed", util.getSocketInfo(this));
-          client2[kSocket] = null;
-          client2[kHTTPContext] = null;
-          if (client2.destroyed) {
-            assert(client2[kPending] === 0);
-            const requests = client2[kQueue].splice(client2[kRunningIdx]);
-            for (let i = 0; i < requests.length; i++) {
-              const request2 = requests[i];
-              errorRequest(client2, request2, err);
-            }
-          } else if (client2[kRunning] > 0 && err.code !== "UND_ERR_INFO") {
-            const request2 = client2[kQueue][client2[kRunningIdx]];
-            client2[kQueue][client2[kRunningIdx]++] = null;
+          this[kParser].destroy();
+          this[kParser] = null;
+        }
+        const err = this[kError] || new SocketError("closed", util.getSocketInfo(this));
+        client2[kSocket] = null;
+        client2[kHTTPContext] = null;
+        if (client2.destroyed) {
+          assert(client2[kPending] === 0);
+          const requests = client2[kQueue].splice(client2[kRunningIdx]);
+          for (let i = 0; i < requests.length; i++) {
+            const request2 = requests[i];
             errorRequest(client2, request2, err);
           }
-          client2[kPendingIdx] = client2[kRunningIdx];
-          assert(client2[kRunning] === 0);
-          client2.emit("disconnect", client2[kUrl], [client2], err);
-          client2[kResume]();
-        });
-        let closed = false;
-        socket.on("close", () => {
-          closed = true;
-        });
-        return {
-          version: "h1",
-          defaultPipelining: 1,
-          write(...args) {
-            return writeH1(client, ...args);
-          },
-          resume() {
-            resumeH1(client);
-          },
-          destroy(err, callback) {
-            if (closed) {
-              queueMicrotask(callback);
-            } else {
-              socket.destroy(err).on("close", callback);
-            }
-          },
-          get destroyed() {
-            return socket.destroyed;
-          },
-          busy(request2) {
-            if (socket[kWriting] || socket[kReset] || socket[kBlocking]) {
+        } else if (client2[kRunning] > 0 && err.code !== "UND_ERR_INFO") {
+          const request2 = client2[kQueue][client2[kRunningIdx]];
+          client2[kQueue][client2[kRunningIdx]++] = null;
+          errorRequest(client2, request2, err);
+        }
+        client2[kPendingIdx] = client2[kRunningIdx];
+        assert(client2[kRunning] === 0);
+        client2.emit("disconnect", client2[kUrl], [client2], err);
+        client2[kResume]();
+      });
+      let closed = false;
+      socket.on("close", () => {
+        closed = true;
+      });
+      return {
+        version: "h1",
+        defaultPipelining: 1,
+        write(...args) {
+          return writeH1(client, ...args);
+        },
+        resume() {
+          resumeH1(client);
+        },
+        destroy(err, callback) {
+          if (closed) {
+            queueMicrotask(callback);
+          } else {
+            socket.destroy(err).on("close", callback);
+          }
+        },
+        get destroyed() {
+          return socket.destroyed;
+        },
+        busy(request2) {
+          if (socket[kWriting] || socket[kReset] || socket[kBlocking]) {
+            return true;
+          }
+          if (request2) {
+            if (client[kRunning] > 0 && !request2.idempotent) {
               return true;
             }
-            if (request2) {
-              if (client[kRunning] > 0 && !request2.idempotent) {
-                return true;
-              }
-              if (client[kRunning] > 0 && (request2.upgrade || request2.method === "CONNECT")) {
-                return true;
-              }
-              if (client[kRunning] > 0 && util.bodyLength(request2.body) !== 0 && (util.isStream(request2.body) || util.isAsyncIterable(request2.body) || util.isFormDataLike(request2.body))) {
-                return true;
-              }
+            if (client[kRunning] > 0 && (request2.upgrade || request2.method === "CONNECT")) {
+              return true;
             }
-            return false;
+            if (client[kRunning] > 0 && util.bodyLength(request2.body) !== 0 && (util.isStream(request2.body) || util.isAsyncIterable(request2.body) || util.isFormDataLike(request2.body))) {
+              return true;
+            }
           }
-        };
-      });
+          return false;
+        }
+      };
     }
     function resumeH1(client) {
       const socket = client[kSocket];
@@ -25035,7 +24565,7 @@ var require_client_h1 = __commonJS({
         body.read(0);
       }
       const bodyLength = util.bodyLength(body);
-      contentLength = bodyLength != null ? bodyLength : contentLength;
+      contentLength = bodyLength ?? contentLength;
       if (contentLength === null) {
         contentLength = request2.contentLength;
       }
@@ -25155,7 +24685,6 @@ upgrade: ${upgrade}\r
       return true;
     }
     function writeStream({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-      var _a2, _b, _c;
       assert(contentLength !== 0 || client[kRunning] === 0, "stream body cannot be pipelined");
       let finished = false;
       const writer = new AsyncWriter({ socket, request: request2, contentLength, client, expectsPayload, header });
@@ -25215,89 +24744,73 @@ upgrade: ${upgrade}\r
         body.resume();
       }
       socket.on("drain", onDrain).on("error", onFinished);
-      if ((_a2 = body.errorEmitted) != null ? _a2 : body.errored) {
+      if (body.errorEmitted ?? body.errored) {
         setImmediate(() => onFinished(body.errored));
-      } else if ((_b = body.endEmitted) != null ? _b : body.readableEnded) {
+      } else if (body.endEmitted ?? body.readableEnded) {
         setImmediate(() => onFinished(null));
       }
-      if ((_c = body.closeEmitted) != null ? _c : body.closed) {
+      if (body.closeEmitted ?? body.closed) {
         setImmediate(onClose);
       }
     }
-    function writeBlob(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength === body.size, "blob body must have content length");
-        try {
-          if (contentLength != null && contentLength !== body.size) {
-            throw new RequestContentLengthMismatchError();
-          }
-          const buffer = Buffer.from(yield body.arrayBuffer());
-          socket.cork();
-          socket.write(`${header}content-length: ${contentLength}\r
+    async function writeBlob({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength === body.size, "blob body must have content length");
+      try {
+        if (contentLength != null && contentLength !== body.size) {
+          throw new RequestContentLengthMismatchError();
+        }
+        const buffer = Buffer.from(await body.arrayBuffer());
+        socket.cork();
+        socket.write(`${header}content-length: ${contentLength}\r
 \r
 `, "latin1");
-          socket.write(buffer);
-          socket.uncork();
-          request2.onBodySent(buffer);
-          request2.onRequestSent();
-          if (!expectsPayload) {
-            socket[kReset] = true;
-          }
-          client[kResume]();
-        } catch (err) {
-          util.destroy(socket, err);
+        socket.write(buffer);
+        socket.uncork();
+        request2.onBodySent(buffer);
+        request2.onRequestSent();
+        if (!expectsPayload) {
+          socket[kReset] = true;
         }
-      });
+        client[kResume]();
+      } catch (err) {
+        util.destroy(socket, err);
+      }
     }
-    function writeIterable(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
-        let callback = null;
-        function onDrain() {
-          if (callback) {
-            const cb = callback;
-            callback = null;
-            cb();
-          }
+    async function writeIterable({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
+      let callback = null;
+      function onDrain() {
+        if (callback) {
+          const cb = callback;
+          callback = null;
+          cb();
         }
-        const waitForDrain = () => new Promise((resolve, reject) => {
-          assert(callback === null);
-          if (socket[kError]) {
-            reject(socket[kError]);
-          } else {
-            callback = resolve;
-          }
-        });
-        socket.on("close", onDrain).on("drain", onDrain);
-        const writer = new AsyncWriter({ socket, request: request2, contentLength, client, expectsPayload, header });
-        try {
-          try {
-            for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-              const chunk = temp.value;
-              if (socket[kError]) {
-                throw socket[kError];
-              }
-              if (!writer.write(chunk)) {
-                yield waitForDrain();
-              }
-            }
-          } catch (temp) {
-            error = [temp];
-          } finally {
-            try {
-              more && (temp = iter.return) && (yield temp.call(iter));
-            } finally {
-              if (error)
-                throw error[0];
-            }
-          }
-          writer.end();
-        } catch (err) {
-          writer.destroy(err);
-        } finally {
-          socket.off("close", onDrain).off("drain", onDrain);
+      }
+      const waitForDrain = () => new Promise((resolve, reject) => {
+        assert(callback === null);
+        if (socket[kError]) {
+          reject(socket[kError]);
+        } else {
+          callback = resolve;
         }
       });
+      socket.on("close", onDrain).on("drain", onDrain);
+      const writer = new AsyncWriter({ socket, request: request2, contentLength, client, expectsPayload, header });
+      try {
+        for await (const chunk of body) {
+          if (socket[kError]) {
+            throw socket[kError];
+          }
+          if (!writer.write(chunk)) {
+            await waitForDrain();
+          }
+        }
+        writer.end();
+      } catch (err) {
+        writer.destroy(err);
+      } finally {
+        socket.off("close", onDrain).off("drain", onDrain);
+      }
     }
     var AsyncWriter = class {
       constructor({ socket, request: request2, contentLength, client, expectsPayload, header }) {
@@ -25445,7 +24958,7 @@ var require_client_h2 = __commonJS({
     var http2;
     try {
       http2 = require("http2");
-    } catch (e) {
+    } catch {
       http2 = { constants: {} };
     }
     var {
@@ -25459,80 +24972,78 @@ var require_client_h2 = __commonJS({
         HTTP2_HEADER_STATUS
       }
     } = http2;
-    function connectH2(client, socket) {
-      return __async(this, null, function* () {
-        client[kSocket] = socket;
-        if (!h2ExperimentalWarned) {
-          h2ExperimentalWarned = true;
-          process.emitWarning("H2 support is experimental, expect them to change at any time.", {
-            code: "UNDICI-H2"
-          });
-        }
-        const session = http2.connect(client[kUrl], {
-          createConnection: () => socket,
-          peerMaxConcurrentStreams: client[kMaxConcurrentStreams]
+    async function connectH2(client, socket) {
+      client[kSocket] = socket;
+      if (!h2ExperimentalWarned) {
+        h2ExperimentalWarned = true;
+        process.emitWarning("H2 support is experimental, expect them to change at any time.", {
+          code: "UNDICI-H2"
         });
-        session[kOpenStreams] = 0;
-        session[kClient] = client;
-        session[kSocket] = socket;
-        session.on("error", onHttp2SessionError);
-        session.on("frameError", onHttp2FrameError);
-        session.on("end", onHttp2SessionEnd);
-        session.on("goaway", onHTTP2GoAway);
-        session.on("close", function() {
-          const { [kClient]: client2 } = this;
-          const err = this[kError] || new SocketError("closed", util.getSocketInfo(this));
-          client2[kSocket] = null;
-          assert(client2[kPending] === 0);
-          const requests = client2[kQueue].splice(client2[kRunningIdx]);
-          for (let i = 0; i < requests.length; i++) {
-            const request2 = requests[i];
-            errorRequest(client2, request2, err);
-          }
-          client2[kPendingIdx] = client2[kRunningIdx];
-          assert(client2[kRunning] === 0);
-          client2.emit("disconnect", client2[kUrl], [client2], err);
-          client2[kResume]();
-        });
-        session.unref();
-        client[kHTTP2Session] = session;
-        socket[kHTTP2Session] = session;
-        socket.on("error", function(err) {
-          assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
-          this[kError] = err;
-          this[kClient][kOnError](err);
-        });
-        socket.on("end", function() {
-          util.destroy(this, new SocketError("other side closed", util.getSocketInfo(this)));
-        });
-        let closed = false;
-        socket.on("close", () => {
-          closed = true;
-        });
-        return {
-          version: "h2",
-          defaultPipelining: Infinity,
-          write(...args) {
-            writeH2(client, ...args);
-          },
-          resume() {
-          },
-          destroy(err, callback) {
-            session.destroy(err);
-            if (closed) {
-              queueMicrotask(callback);
-            } else {
-              socket.destroy(err).on("close", callback);
-            }
-          },
-          get destroyed() {
-            return socket.destroyed;
-          },
-          busy() {
-            return false;
-          }
-        };
+      }
+      const session = http2.connect(client[kUrl], {
+        createConnection: () => socket,
+        peerMaxConcurrentStreams: client[kMaxConcurrentStreams]
       });
+      session[kOpenStreams] = 0;
+      session[kClient] = client;
+      session[kSocket] = socket;
+      session.on("error", onHttp2SessionError);
+      session.on("frameError", onHttp2FrameError);
+      session.on("end", onHttp2SessionEnd);
+      session.on("goaway", onHTTP2GoAway);
+      session.on("close", function() {
+        const { [kClient]: client2 } = this;
+        const err = this[kError] || new SocketError("closed", util.getSocketInfo(this));
+        client2[kSocket] = null;
+        assert(client2[kPending] === 0);
+        const requests = client2[kQueue].splice(client2[kRunningIdx]);
+        for (let i = 0; i < requests.length; i++) {
+          const request2 = requests[i];
+          errorRequest(client2, request2, err);
+        }
+        client2[kPendingIdx] = client2[kRunningIdx];
+        assert(client2[kRunning] === 0);
+        client2.emit("disconnect", client2[kUrl], [client2], err);
+        client2[kResume]();
+      });
+      session.unref();
+      client[kHTTP2Session] = session;
+      socket[kHTTP2Session] = session;
+      socket.on("error", function(err) {
+        assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
+        this[kError] = err;
+        this[kClient][kOnError](err);
+      });
+      socket.on("end", function() {
+        util.destroy(this, new SocketError("other side closed", util.getSocketInfo(this)));
+      });
+      let closed = false;
+      socket.on("close", () => {
+        closed = true;
+      });
+      return {
+        version: "h2",
+        defaultPipelining: Infinity,
+        write(...args) {
+          writeH2(client, ...args);
+        },
+        resume() {
+        },
+        destroy(err, callback) {
+          session.destroy(err);
+          if (closed) {
+            queueMicrotask(callback);
+          } else {
+            socket.destroy(err).on("close", callback);
+          }
+        },
+        get destroyed() {
+          return socket.destroyed;
+        },
+        busy() {
+          return false;
+        }
+      };
     }
     function onHttp2SessionError(err) {
       assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
@@ -25694,7 +25205,7 @@ var require_client_h2 = __commonJS({
       }
       ++session[kOpenStreams];
       stream.once("response", (headers2) => {
-        const _a2 = headers2, { [HTTP2_HEADER_STATUS]: statusCode } = _a2, realHeaders = __objRest(_a2, [__restKey(HTTP2_HEADER_STATUS)]);
+        const { [HTTP2_HEADER_STATUS]: statusCode, ...realHeaders } = headers2;
         request2.onResponseStarted();
         if (request2.onHeaders(Number(statusCode), realHeaders, stream.resume.bind(stream), "") === false) {
           stream.pause();
@@ -25706,8 +25217,7 @@ var require_client_h2 = __commonJS({
         });
       });
       stream.once("end", () => {
-        var _a2;
-        if (((_a2 = stream.state) == null ? void 0 : _a2.state) == null || stream.state.state < 6) {
+        if (stream.state?.state == null || stream.state.state < 6) {
           request2.onComplete([]);
           return;
         }
@@ -25825,79 +25335,63 @@ var require_client_h2 = __commonJS({
         request2.onBodySent(chunk);
       }
     }
-    function writeBlob(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength === body.size, "blob body must have content length");
-        try {
-          if (contentLength != null && contentLength !== body.size) {
-            throw new RequestContentLengthMismatchError();
-          }
-          const buffer = Buffer.from(yield body.arrayBuffer());
-          h2stream.cork();
-          h2stream.write(buffer);
-          h2stream.uncork();
-          request2.onBodySent(buffer);
-          request2.onRequestSent();
-          if (!expectsPayload) {
-            socket[kReset] = true;
-          }
-          client[kResume]();
-        } catch (err) {
-          util.destroy(h2stream);
+    async function writeBlob({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength === body.size, "blob body must have content length");
+      try {
+        if (contentLength != null && contentLength !== body.size) {
+          throw new RequestContentLengthMismatchError();
         }
-      });
+        const buffer = Buffer.from(await body.arrayBuffer());
+        h2stream.cork();
+        h2stream.write(buffer);
+        h2stream.uncork();
+        request2.onBodySent(buffer);
+        request2.onRequestSent();
+        if (!expectsPayload) {
+          socket[kReset] = true;
+        }
+        client[kResume]();
+      } catch (err) {
+        util.destroy(h2stream);
+      }
     }
-    function writeIterable(_0) {
-      return __async(this, arguments, function* ({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
-        assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
-        let callback = null;
-        function onDrain() {
-          if (callback) {
-            const cb = callback;
-            callback = null;
-            cb();
-          }
+    async function writeIterable({ h2stream, body, client, request: request2, socket, contentLength, header, expectsPayload }) {
+      assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
+      let callback = null;
+      function onDrain() {
+        if (callback) {
+          const cb = callback;
+          callback = null;
+          cb();
         }
-        const waitForDrain = () => new Promise((resolve, reject) => {
-          assert(callback === null);
-          if (socket[kError]) {
-            reject(socket[kError]);
-          } else {
-            callback = resolve;
-          }
-        });
-        h2stream.on("close", onDrain).on("drain", onDrain);
-        try {
-          try {
-            for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-              const chunk = temp.value;
-              if (socket[kError]) {
-                throw socket[kError];
-              }
-              const res = h2stream.write(chunk);
-              request2.onBodySent(chunk);
-              if (!res) {
-                yield waitForDrain();
-              }
-            }
-          } catch (temp) {
-            error = [temp];
-          } finally {
-            try {
-              more && (temp = iter.return) && (yield temp.call(iter));
-            } finally {
-              if (error)
-                throw error[0];
-            }
-          }
-        } catch (err) {
-          h2stream.destroy(err);
-        } finally {
-          request2.onRequestSent();
-          h2stream.end();
-          h2stream.off("close", onDrain).off("drain", onDrain);
+      }
+      const waitForDrain = () => new Promise((resolve, reject) => {
+        assert(callback === null);
+        if (socket[kError]) {
+          reject(socket[kError]);
+        } else {
+          callback = resolve;
         }
       });
+      h2stream.on("close", onDrain).on("drain", onDrain);
+      try {
+        for await (const chunk of body) {
+          if (socket[kError]) {
+            throw socket[kError];
+          }
+          const res = h2stream.write(chunk);
+          request2.onBodySent(chunk);
+          if (!res) {
+            await waitForDrain();
+          }
+        }
+      } catch (err) {
+        h2stream.destroy(err);
+      } finally {
+        request2.onRequestSent();
+        h2stream.end();
+        h2stream.off("close", onDrain).off("drain", onDrain);
+      }
     }
     module2.exports = connectH2;
   }
@@ -25919,12 +25413,10 @@ var require_redirect_handler = __commonJS({
         this[kBody] = body;
         this[kBodyUsed] = false;
       }
-      [Symbol.asyncIterator]() {
-        return __asyncGenerator(this, null, function* () {
-          assert(!this[kBodyUsed], "disturbed");
-          this[kBodyUsed] = true;
-          yield* __yieldStar(this[kBody]);
-        });
+      async *[Symbol.asyncIterator]() {
+        assert(!this[kBodyUsed], "disturbed");
+        this[kBodyUsed] = true;
+        yield* this[kBody];
       }
     };
     var RedirectHandler = class {
@@ -25936,7 +25428,7 @@ var require_redirect_handler = __commonJS({
         this.dispatch = dispatch;
         this.location = null;
         this.abort = null;
-        this.opts = __spreadProps(__spreadValues({}, opts), { maxRedirections: 0 });
+        this.opts = { ...opts, maxRedirections: 0 };
         this.maxRedirections = maxRedirections;
         this.handler = handler2;
         this.history = [];
@@ -26077,7 +25569,7 @@ var require_redirect_interceptor = __commonJS({
             return dispatch(opts, handler2);
           }
           const redirectHandler = new RedirectHandler(dispatch, maxRedirections, opts, handler2);
-          opts = __spreadProps(__spreadValues({}, opts), { maxRedirections: 0 });
+          opts = { ...opts, maxRedirections: 0 };
           return dispatch(opts, redirectHandler);
         };
       };
@@ -26150,8 +25642,7 @@ var require_client2 = __commonJS({
     var deprecatedInterceptorWarned = false;
     var kClosedResolve = Symbol("kClosedResolve");
     function getPipelining(client) {
-      var _a2, _b, _c;
-      return (_c = (_b = client[kPipelining]) != null ? _b : (_a2 = client[kHTTPContext]) == null ? void 0 : _a2.defaultPipelining) != null ? _c : 1;
+      return client[kPipelining] ?? client[kHTTPContext]?.defaultPipelining ?? 1;
     }
     var Client = class extends DispatcherBase {
       /**
@@ -26254,14 +25745,17 @@ var require_client2 = __commonJS({
           throw new InvalidArgumentError("maxConcurrentStreams must be a positive integer, greater than 0");
         }
         if (typeof connect2 !== "function") {
-          connect2 = buildConnector(__spreadValues(__spreadValues(__spreadProps(__spreadValues({}, tls), {
+          connect2 = buildConnector({
+            ...tls,
             maxCachedSessions,
             allowH2,
             socketPath,
-            timeout: connectTimeout
-          }), util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0), connect2));
+            timeout: connectTimeout,
+            ...util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0,
+            ...connect2
+          });
         }
-        if ((interceptors == null ? void 0 : interceptors.Client) && Array.isArray(interceptors.Client)) {
+        if (interceptors?.Client && Array.isArray(interceptors.Client)) {
           this[kInterceptors] = interceptors.Client;
           if (!deprecatedInterceptorWarned) {
             deprecatedInterceptorWarned = true;
@@ -26321,9 +25815,8 @@ var require_client2 = __commonJS({
         return !!this[kHTTPContext] && !this[kConnecting] && !this[kHTTPContext].destroyed;
       }
       get [kBusy]() {
-        var _a2;
         return Boolean(
-          ((_a2 = this[kHTTPContext]) == null ? void 0 : _a2.busy(null)) || this[kSize] >= (getPipelining(this) || 1) || this[kPending] > 0
+          this[kHTTPContext]?.busy(null) || this[kSize] >= (getPipelining(this) || 1) || this[kPending] > 0
         );
       }
       /* istanbul ignore: only used for test */
@@ -26347,40 +25840,36 @@ var require_client2 = __commonJS({
         }
         return this[kNeedDrain] < 2;
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          return new Promise((resolve) => {
-            if (this[kSize]) {
-              this[kClosedResolve] = resolve;
-            } else {
-              resolve(null);
-            }
-          });
+      async [kClose]() {
+        return new Promise((resolve) => {
+          if (this[kSize]) {
+            this[kClosedResolve] = resolve;
+          } else {
+            resolve(null);
+          }
         });
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          return new Promise((resolve) => {
-            const requests = this[kQueue].splice(this[kPendingIdx]);
-            for (let i = 0; i < requests.length; i++) {
-              const request2 = requests[i];
-              errorRequest(this, request2, err);
+      async [kDestroy](err) {
+        return new Promise((resolve) => {
+          const requests = this[kQueue].splice(this[kPendingIdx]);
+          for (let i = 0; i < requests.length; i++) {
+            const request2 = requests[i];
+            errorRequest(this, request2, err);
+          }
+          const callback = () => {
+            if (this[kClosedResolve]) {
+              this[kClosedResolve]();
+              this[kClosedResolve] = null;
             }
-            const callback = () => {
-              if (this[kClosedResolve]) {
-                this[kClosedResolve]();
-                this[kClosedResolve] = null;
-              }
-              resolve(null);
-            };
-            if (this[kHTTPContext]) {
-              this[kHTTPContext].destroy(err, callback);
-              this[kHTTPContext] = null;
-            } else {
-              queueMicrotask(callback);
-            }
-            this[kResume]();
-          });
+            resolve(null);
+          };
+          if (this[kHTTPContext]) {
+            this[kHTTPContext].destroy(err, callback);
+            this[kHTTPContext] = null;
+          } else {
+            queueMicrotask(callback);
+          }
+          this[kResume]();
         });
       }
     };
@@ -26396,118 +25885,115 @@ var require_client2 = __commonJS({
         assert(client[kSize] === 0);
       }
     }
-    function connect(client) {
-      return __async(this, null, function* () {
-        var _a2, _b, _c;
-        assert(!client[kConnecting]);
-        assert(!client[kHTTPContext]);
-        let { host, hostname, protocol, port } = client[kUrl];
-        if (hostname[0] === "[") {
-          const idx = hostname.indexOf("]");
-          assert(idx !== -1);
-          const ip = hostname.substring(1, idx);
-          assert(net.isIP(ip));
-          hostname = ip;
+    async function connect(client) {
+      assert(!client[kConnecting]);
+      assert(!client[kHTTPContext]);
+      let { host, hostname, protocol, port } = client[kUrl];
+      if (hostname[0] === "[") {
+        const idx = hostname.indexOf("]");
+        assert(idx !== -1);
+        const ip = hostname.substring(1, idx);
+        assert(net.isIP(ip));
+        hostname = ip;
+      }
+      client[kConnecting] = true;
+      if (channels.beforeConnect.hasSubscribers) {
+        channels.beforeConnect.publish({
+          connectParams: {
+            host,
+            hostname,
+            protocol,
+            port,
+            version: client[kHTTPContext]?.version,
+            servername: client[kServerName],
+            localAddress: client[kLocalAddress]
+          },
+          connector: client[kConnector]
+        });
+      }
+      try {
+        const socket = await new Promise((resolve, reject) => {
+          client[kConnector]({
+            host,
+            hostname,
+            protocol,
+            port,
+            servername: client[kServerName],
+            localAddress: client[kLocalAddress]
+          }, (err, socket2) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(socket2);
+            }
+          });
+        });
+        if (client.destroyed) {
+          util.destroy(socket.on("error", () => {
+          }), new ClientDestroyedError());
+          return;
         }
-        client[kConnecting] = true;
-        if (channels.beforeConnect.hasSubscribers) {
-          channels.beforeConnect.publish({
+        assert(socket);
+        try {
+          client[kHTTPContext] = socket.alpnProtocol === "h2" ? await connectH2(client, socket) : await connectH1(client, socket);
+        } catch (err) {
+          socket.destroy().on("error", () => {
+          });
+          throw err;
+        }
+        client[kConnecting] = false;
+        socket[kCounter] = 0;
+        socket[kMaxRequests] = client[kMaxRequests];
+        socket[kClient] = client;
+        socket[kError] = null;
+        if (channels.connected.hasSubscribers) {
+          channels.connected.publish({
             connectParams: {
               host,
               hostname,
               protocol,
               port,
-              version: (_a2 = client[kHTTPContext]) == null ? void 0 : _a2.version,
+              version: client[kHTTPContext]?.version,
               servername: client[kServerName],
               localAddress: client[kLocalAddress]
             },
-            connector: client[kConnector]
+            connector: client[kConnector],
+            socket
           });
         }
-        try {
-          const socket = yield new Promise((resolve, reject) => {
-            client[kConnector]({
+        client.emit("connect", client[kUrl], [client]);
+      } catch (err) {
+        if (client.destroyed) {
+          return;
+        }
+        client[kConnecting] = false;
+        if (channels.connectError.hasSubscribers) {
+          channels.connectError.publish({
+            connectParams: {
               host,
               hostname,
               protocol,
               port,
+              version: client[kHTTPContext]?.version,
               servername: client[kServerName],
               localAddress: client[kLocalAddress]
-            }, (err, socket2) => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(socket2);
-              }
-            });
+            },
+            connector: client[kConnector],
+            error: err
           });
-          if (client.destroyed) {
-            util.destroy(socket.on("error", () => {
-            }), new ClientDestroyedError());
-            return;
-          }
-          assert(socket);
-          try {
-            client[kHTTPContext] = socket.alpnProtocol === "h2" ? yield connectH2(client, socket) : yield connectH1(client, socket);
-          } catch (err) {
-            socket.destroy().on("error", () => {
-            });
-            throw err;
-          }
-          client[kConnecting] = false;
-          socket[kCounter] = 0;
-          socket[kMaxRequests] = client[kMaxRequests];
-          socket[kClient] = client;
-          socket[kError] = null;
-          if (channels.connected.hasSubscribers) {
-            channels.connected.publish({
-              connectParams: {
-                host,
-                hostname,
-                protocol,
-                port,
-                version: (_b = client[kHTTPContext]) == null ? void 0 : _b.version,
-                servername: client[kServerName],
-                localAddress: client[kLocalAddress]
-              },
-              connector: client[kConnector],
-              socket
-            });
-          }
-          client.emit("connect", client[kUrl], [client]);
-        } catch (err) {
-          if (client.destroyed) {
-            return;
-          }
-          client[kConnecting] = false;
-          if (channels.connectError.hasSubscribers) {
-            channels.connectError.publish({
-              connectParams: {
-                host,
-                hostname,
-                protocol,
-                port,
-                version: (_c = client[kHTTPContext]) == null ? void 0 : _c.version,
-                servername: client[kServerName],
-                localAddress: client[kLocalAddress]
-              },
-              connector: client[kConnector],
-              error: err
-            });
-          }
-          if (err.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
-            assert(client[kRunning] === 0);
-            while (client[kPending] > 0 && client[kQueue][client[kPendingIdx]].servername === client[kServerName]) {
-              const request2 = client[kQueue][client[kPendingIdx]++];
-              errorRequest(client, request2, err);
-            }
-          } else {
-            onError(client, err);
-          }
-          client.emit("connectionError", client[kUrl], [client], err);
         }
-        client[kResume]();
-      });
+        if (err.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
+          assert(client[kRunning] === 0);
+          while (client[kPending] > 0 && client[kQueue][client[kPendingIdx]].servername === client[kServerName]) {
+            const request2 = client[kQueue][client[kPendingIdx]++];
+            errorRequest(client, request2, err);
+          }
+        } else {
+          onError(client, err);
+        }
+        client.emit("connectionError", client[kUrl], [client], err);
+      }
+      client[kResume]();
     }
     function emitDrain(client) {
       client[kNeedDrain] = 0;
@@ -26527,7 +26013,6 @@ var require_client2 = __commonJS({
       }
     }
     function _resume(client, sync) {
-      var _a2;
       while (true) {
         if (client.destroyed) {
           assert(client[kPending] === 0);
@@ -26564,7 +26049,7 @@ var require_client2 = __commonJS({
             return;
           }
           client[kServerName] = request2.servername;
-          (_a2 = client[kHTTPContext]) == null ? void 0 : _a2.destroy(new InformationalError("servername changed"));
+          client[kHTTPContext]?.destroy(new InformationalError("servername changed"));
         }
         if (client[kConnecting]) {
           return;
@@ -26779,28 +26264,24 @@ var require_pool_base2 = __commonJS({
       get stats() {
         return this[kStats];
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          if (this[kQueue].isEmpty()) {
-            return Promise.all(this[kClients].map((c) => c.close()));
-          } else {
-            return new Promise((resolve) => {
-              this[kClosedResolve] = resolve;
-            });
-          }
-        });
+      async [kClose]() {
+        if (this[kQueue].isEmpty()) {
+          return Promise.all(this[kClients].map((c) => c.close()));
+        } else {
+          return new Promise((resolve) => {
+            this[kClosedResolve] = resolve;
+          });
+        }
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          while (true) {
-            const item = this[kQueue].shift();
-            if (!item) {
-              break;
-            }
-            item.handler.onError(err);
+      async [kDestroy](err) {
+        while (true) {
+          const item = this[kQueue].shift();
+          if (!item) {
+            break;
           }
-          return Promise.all(this[kClients].map((c) => c.destroy(err)));
-        });
+          item.handler.onError(err);
+        }
+        return Promise.all(this[kClients].map((c) => c.destroy(err)));
       }
       [kDispatch](opts, handler2) {
         const dispatcher = this[kGetDispatcher]();
@@ -26872,31 +26353,19 @@ var require_pool2 = __commonJS({
       return new Client(origin, opts);
     }
     var Pool = class extends PoolBase {
-      constructor(origin, _a2 = {}) {
-        var _b = _a2, {
-          connections,
-          factory = defaultFactory,
-          connect,
-          connectTimeout,
-          tls,
-          maxCachedSessions,
-          socketPath,
-          autoSelectFamily,
-          autoSelectFamilyAttemptTimeout,
-          allowH2
-        } = _b, options = __objRest(_b, [
-          "connections",
-          "factory",
-          "connect",
-          "connectTimeout",
-          "tls",
-          "maxCachedSessions",
-          "socketPath",
-          "autoSelectFamily",
-          "autoSelectFamilyAttemptTimeout",
-          "allowH2"
-        ]);
-        var _a3;
+      constructor(origin, {
+        connections,
+        factory = defaultFactory,
+        connect,
+        connectTimeout,
+        tls,
+        maxCachedSessions,
+        socketPath,
+        autoSelectFamily,
+        autoSelectFamilyAttemptTimeout,
+        allowH2,
+        ...options
+      } = {}) {
         super();
         if (connections != null && (!Number.isFinite(connections) || connections < 0)) {
           throw new InvalidArgumentError("invalid connections");
@@ -26908,18 +26377,21 @@ var require_pool2 = __commonJS({
           throw new InvalidArgumentError("connect must be a function or an object");
         }
         if (typeof connect !== "function") {
-          connect = buildConnector(__spreadValues(__spreadValues(__spreadProps(__spreadValues({}, tls), {
+          connect = buildConnector({
+            ...tls,
             maxCachedSessions,
             allowH2,
             socketPath,
-            timeout: connectTimeout
-          }), util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0), connect));
+            timeout: connectTimeout,
+            ...util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : void 0,
+            ...connect
+          });
         }
-        this[kInterceptors] = ((_a3 = options.interceptors) == null ? void 0 : _a3.Pool) && Array.isArray(options.interceptors.Pool) ? options.interceptors.Pool : [];
+        this[kInterceptors] = options.interceptors?.Pool && Array.isArray(options.interceptors.Pool) ? options.interceptors.Pool : [];
         this[kConnections] = connections || null;
         this[kUrl] = util.parseOrigin(origin);
-        this[kOptions] = __spreadProps(__spreadValues({}, util.deepClone(options)), { connect, allowH2 });
-        this[kOptions].interceptors = options.interceptors ? __spreadValues({}, options.interceptors) : void 0;
+        this[kOptions] = { ...util.deepClone(options), connect, allowH2 };
+        this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
         this[kFactory] = factory;
       }
       [kGetDispatcher]() {
@@ -26975,9 +26447,7 @@ var require_balanced_pool2 = __commonJS({
       return new Pool(origin, opts);
     }
     var BalancedPool = class extends PoolBase {
-      constructor(upstreams = [], _a2 = {}) {
-        var _b = _a2, { factory = defaultFactory } = _b, opts = __objRest(_b, ["factory"]);
-        var _a3;
+      constructor(upstreams = [], { factory = defaultFactory, ...opts } = {}) {
         super();
         this[kOptions] = opts;
         this[kIndex] = -1;
@@ -26990,7 +26460,7 @@ var require_balanced_pool2 = __commonJS({
         if (typeof factory !== "function") {
           throw new InvalidArgumentError("factory must be a function.");
         }
-        this[kInterceptors] = ((_a3 = opts.interceptors) == null ? void 0 : _a3.BalancedPool) && Array.isArray(opts.interceptors.BalancedPool) ? opts.interceptors.BalancedPool : [];
+        this[kInterceptors] = opts.interceptors?.BalancedPool && Array.isArray(opts.interceptors.BalancedPool) ? opts.interceptors.BalancedPool : [];
         this[kFactory] = factory;
         for (const upstream of upstreams) {
           this.addUpstream(upstream);
@@ -27099,9 +26569,7 @@ var require_agent2 = __commonJS({
       return opts && opts.connections === 1 ? new Client(origin, opts) : new Pool(origin, opts);
     }
     var Agent = class extends DispatcherBase {
-      constructor(_a2 = {}) {
-        var _b = _a2, { factory = defaultFactory, maxRedirections = 0, connect } = _b, options = __objRest(_b, ["factory", "maxRedirections", "connect"]);
-        var _a3;
+      constructor({ factory = defaultFactory, maxRedirections = 0, connect, ...options } = {}) {
         super();
         if (typeof factory !== "function") {
           throw new InvalidArgumentError("factory must be a function.");
@@ -27113,11 +26581,11 @@ var require_agent2 = __commonJS({
           throw new InvalidArgumentError("maxRedirections must be a positive number");
         }
         if (connect && typeof connect !== "function") {
-          connect = __spreadValues({}, connect);
+          connect = { ...connect };
         }
-        this[kInterceptors] = ((_a3 = options.interceptors) == null ? void 0 : _a3.Agent) && Array.isArray(options.interceptors.Agent) ? options.interceptors.Agent : [createRedirectInterceptor({ maxRedirections })];
-        this[kOptions] = __spreadProps(__spreadValues({}, util.deepClone(options)), { connect });
-        this[kOptions].interceptors = options.interceptors ? __spreadValues({}, options.interceptors) : void 0;
+        this[kInterceptors] = options.interceptors?.Agent && Array.isArray(options.interceptors.Agent) ? options.interceptors.Agent : [createRedirectInterceptor({ maxRedirections })];
+        this[kOptions] = { ...util.deepClone(options), connect };
+        this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
         this[kMaxRedirections] = maxRedirections;
         this[kFactory] = factory;
         this[kClients] = /* @__PURE__ */ new Map();
@@ -27155,25 +26623,21 @@ var require_agent2 = __commonJS({
         }
         return dispatcher.dispatch(opts, handler2);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          const closePromises = [];
-          for (const client of this[kClients].values()) {
-            closePromises.push(client.close());
-          }
-          this[kClients].clear();
-          yield Promise.all(closePromises);
-        });
+      async [kClose]() {
+        const closePromises = [];
+        for (const client of this[kClients].values()) {
+          closePromises.push(client.close());
+        }
+        this[kClients].clear();
+        await Promise.all(closePromises);
       }
-      [kDestroy](err) {
-        return __async(this, null, function* () {
-          const destroyPromises = [];
-          for (const client of this[kClients].values()) {
-            destroyPromises.push(client.destroy(err));
-          }
-          this[kClients].clear();
-          yield Promise.all(destroyPromises);
-        });
+      async [kDestroy](err) {
+        const destroyPromises = [];
+        for (const client of this[kClients].values()) {
+          destroyPromises.push(client.destroy(err));
+        }
+        this[kClients].clear();
+        await Promise.all(destroyPromises);
       }
     };
     module2.exports = Agent;
@@ -27203,16 +26667,9 @@ var require_proxy_agent2 = __commonJS({
     function defaultFactory(origin, opts) {
       return new Pool(origin, opts);
     }
-    var _getUrl, getUrl_fn;
     var ProxyAgent = class extends DispatcherBase {
       constructor(opts) {
-        var _a2;
         super();
-        /**
-         * @param {import('../types/proxy-agent').ProxyAgent.Options | string | URL} opts
-         * @returns {URL}
-         */
-        __privateAdd(this, _getUrl);
         if (!opts || typeof opts === "object" && !(opts instanceof URL3) && !opts.uri) {
           throw new InvalidArgumentError("Proxy uri is mandatory");
         }
@@ -27220,10 +26677,10 @@ var require_proxy_agent2 = __commonJS({
         if (typeof clientFactory !== "function") {
           throw new InvalidArgumentError("Proxy opts.clientFactory must be a function.");
         }
-        const url = __privateMethod(this, _getUrl, getUrl_fn).call(this, opts);
+        const url = this.#getUrl(opts);
         const { href, origin, port, protocol, username, password, hostname: proxyHostname } = url;
         this[kProxy] = { uri: href, protocol };
-        this[kInterceptors] = ((_a2 = opts.interceptors) == null ? void 0 : _a2.ProxyAgent) && Array.isArray(opts.interceptors.ProxyAgent) ? opts.interceptors.ProxyAgent : [];
+        this[kInterceptors] = opts.interceptors?.ProxyAgent && Array.isArray(opts.interceptors.ProxyAgent) ? opts.interceptors.ProxyAgent : [];
         this[kRequestTls] = opts.requestTls;
         this[kProxyTls] = opts.proxyTls;
         this[kProxyHeaders] = opts.headers || {};
@@ -27236,26 +26693,27 @@ var require_proxy_agent2 = __commonJS({
         } else if (username && password) {
           this[kProxyHeaders]["proxy-authorization"] = `Basic ${Buffer.from(`${decodeURIComponent(username)}:${decodeURIComponent(password)}`).toString("base64")}`;
         }
-        const connect = buildConnector(__spreadValues({}, opts.proxyTls));
-        this[kConnectEndpoint] = buildConnector(__spreadValues({}, opts.requestTls));
+        const connect = buildConnector({ ...opts.proxyTls });
+        this[kConnectEndpoint] = buildConnector({ ...opts.requestTls });
         this[kClient] = clientFactory(url, { connect });
-        this[kAgent] = new Agent(__spreadProps(__spreadValues({}, opts), {
-          connect: (opts2, callback) => __async(this, null, function* () {
-            var _a3;
+        this[kAgent] = new Agent({
+          ...opts,
+          connect: async (opts2, callback) => {
             let requestedHost = opts2.host;
             if (!opts2.port) {
               requestedHost += `:${defaultProtocolPort(opts2.protocol)}`;
             }
             try {
-              const { socket, statusCode } = yield this[kClient].connect({
+              const { socket, statusCode } = await this[kClient].connect({
                 origin,
                 port,
                 path: requestedHost,
                 signal: opts2.signal,
-                headers: __spreadProps(__spreadValues({}, this[kProxyHeaders]), {
+                headers: {
+                  ...this[kProxyHeaders],
                   host: requestedHost
-                }),
-                servername: ((_a3 = this[kProxyTls]) == null ? void 0 : _a3.servername) || proxyHostname
+                },
+                servername: this[kProxyTls]?.servername || proxyHostname
               });
               if (statusCode !== 200) {
                 socket.on("error", () => {
@@ -27272,7 +26730,7 @@ var require_proxy_agent2 = __commonJS({
               } else {
                 servername = opts2.servername;
               }
-              this[kConnectEndpoint](__spreadProps(__spreadValues({}, opts2), { servername, httpSocket: socket }), callback);
+              this[kConnectEndpoint]({ ...opts2, servername, httpSocket: socket }, callback);
             } catch (err) {
               if (err.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
                 callback(new SecureProxyConnectionError(err));
@@ -27280,43 +26738,44 @@ var require_proxy_agent2 = __commonJS({
                 callback(err);
               }
             }
-          })
-        }));
+          }
+        });
       }
       dispatch(opts, handler2) {
         const { host } = new URL3(opts.origin);
         const headers = buildHeaders(opts.headers);
         throwIfProxyAuthIsSent(headers);
         return this[kAgent].dispatch(
-          __spreadProps(__spreadValues({}, opts), {
-            headers: __spreadProps(__spreadValues({}, headers), {
+          {
+            ...opts,
+            headers: {
+              ...headers,
               host
-            })
-          }),
+            }
+          },
           handler2
         );
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield this[kAgent].close();
-          yield this[kClient].close();
-        });
+      /**
+       * @param {import('../types/proxy-agent').ProxyAgent.Options | string | URL} opts
+       * @returns {URL}
+       */
+      #getUrl(opts) {
+        if (typeof opts === "string") {
+          return new URL3(opts);
+        } else if (opts instanceof URL3) {
+          return opts;
+        } else {
+          return new URL3(opts.uri);
+        }
       }
-      [kDestroy]() {
-        return __async(this, null, function* () {
-          yield this[kAgent].destroy();
-          yield this[kClient].destroy();
-        });
+      async [kClose]() {
+        await this[kAgent].close();
+        await this[kClient].close();
       }
-    };
-    _getUrl = new WeakSet();
-    getUrl_fn = function(opts) {
-      if (typeof opts === "string") {
-        return new URL3(opts);
-      } else if (opts instanceof URL3) {
-        return opts;
-      } else {
-        return new URL3(opts.uri);
+      async [kDestroy]() {
+        await this[kAgent].destroy();
+        await this[kClient].destroy();
       }
     };
     function buildHeaders(headers) {
@@ -27354,7 +26813,7 @@ var require_retry_handler = __commonJS({
     }
     var RetryHandler = class _RetryHandler {
       constructor(opts, handlers) {
-        const _a2 = opts, { retryOptions } = _a2, dispatchOpts = __objRest(_a2, ["retryOptions"]);
+        const { retryOptions, ...dispatchOpts } = opts;
         const {
           // Retry scoped
           retry: retryFn,
@@ -27367,27 +26826,27 @@ var require_retry_handler = __commonJS({
           errorCodes,
           retryAfter,
           statusCodes
-        } = retryOptions != null ? retryOptions : {};
+        } = retryOptions ?? {};
         this.dispatch = handlers.dispatch;
         this.handler = handlers.handler;
         this.opts = dispatchOpts;
         this.abort = null;
         this.aborted = false;
         this.retryOpts = {
-          retry: retryFn != null ? retryFn : _RetryHandler[kRetryHandlerDefaultRetry],
-          retryAfter: retryAfter != null ? retryAfter : true,
-          maxTimeout: maxTimeout != null ? maxTimeout : 30 * 1e3,
+          retry: retryFn ?? _RetryHandler[kRetryHandlerDefaultRetry],
+          retryAfter: retryAfter ?? true,
+          maxTimeout: maxTimeout ?? 30 * 1e3,
           // 30s,
-          minTimeout: minTimeout != null ? minTimeout : 500,
+          minTimeout: minTimeout ?? 500,
           // .5s
-          timeoutFactor: timeoutFactor != null ? timeoutFactor : 2,
-          maxRetries: maxRetries != null ? maxRetries : 5,
+          timeoutFactor: timeoutFactor ?? 2,
+          maxRetries: maxRetries ?? 5,
           // What errors we should retry
-          methods: methods != null ? methods : ["GET", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"],
+          methods: methods ?? ["GET", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"],
           // Indicates which errors to retry
-          statusCodes: statusCodes != null ? statusCodes : [500, 502, 503, 504, 429],
+          statusCodes: statusCodes ?? [500, 502, 503, 504, 429],
           // List of errors to retry
-          errorCodes: errorCodes != null ? errorCodes : [
+          errorCodes: errorCodes ?? [
             "ECONNRESET",
             "ECONNREFUSED",
             "ENOTFOUND",
@@ -27464,12 +26923,12 @@ var require_retry_handler = __commonJS({
           cb(err);
           return;
         }
-        let retryAfterHeader = headers == null ? void 0 : headers["retry-after"];
+        let retryAfterHeader = headers?.["retry-after"];
         if (retryAfterHeader) {
           retryAfterHeader = Number(retryAfterHeader);
           retryAfterHeader = Number.isNaN(retryAfterHeader) ? calculateRetryAfterHeader(retryAfterHeader) : retryAfterHeader * 1e3;
         }
-        const retryTimeout = retryAfterHeader > 0 ? Math.min(retryAfterHeader, maxTimeout) : Math.min(minTimeout * __pow(timeoutFactor, counter - 1), maxTimeout);
+        const retryTimeout = retryAfterHeader > 0 ? Math.min(retryAfterHeader, maxTimeout) : Math.min(minTimeout * timeoutFactor ** (counter - 1), maxTimeout);
         setTimeout(() => cb(null), retryTimeout);
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
@@ -27592,21 +27051,22 @@ var require_retry_handler = __commonJS({
           err,
           {
             state: { counter: this.retryCount },
-            opts: __spreadValues({ retryOptions: this.retryOpts }, this.opts)
+            opts: { retryOptions: this.retryOpts, ...this.opts }
           },
           onRetry.bind(this)
         );
         function onRetry(err2) {
-          var _a2;
           if (err2 != null || this.aborted || isDisturbed(this.opts.body)) {
             return this.handler.onError(err2);
           }
           if (this.start !== 0) {
-            this.opts = __spreadProps(__spreadValues({}, this.opts), {
-              headers: __spreadProps(__spreadValues({}, this.opts.headers), {
-                range: `bytes=${this.start}-${(_a2 = this.end) != null ? _a2 : ""}`
-              })
-            });
+            this.opts = {
+              ...this.opts,
+              headers: {
+                ...this.opts.headers,
+                range: `bytes=${this.start}-${this.end ?? ""}`
+              }
+            };
           }
           try {
             this.retryCountCheckpoint = this.retryCount;
@@ -27627,33 +27087,31 @@ var require_retry_agent = __commonJS({
     "use strict";
     var Dispatcher = require_dispatcher2();
     var RetryHandler = require_retry_handler();
-    var _agent, _options;
     var RetryAgent = class extends Dispatcher {
+      #agent = null;
+      #options = null;
       constructor(agent, options = {}) {
         super(options);
-        __privateAdd(this, _agent, null);
-        __privateAdd(this, _options, null);
-        __privateSet(this, _agent, agent);
-        __privateSet(this, _options, options);
+        this.#agent = agent;
+        this.#options = options;
       }
       dispatch(opts, handler2) {
-        const retry = new RetryHandler(__spreadProps(__spreadValues({}, opts), {
-          retryOptions: __privateGet(this, _options)
-        }), {
-          dispatch: __privateGet(this, _agent).dispatch.bind(__privateGet(this, _agent)),
+        const retry = new RetryHandler({
+          ...opts,
+          retryOptions: this.#options
+        }, {
+          dispatch: this.#agent.dispatch.bind(this.#agent),
           handler: handler2
         });
-        return __privateGet(this, _agent).dispatch(opts, retry);
+        return this.#agent.dispatch(opts, retry);
       }
       close() {
-        return __privateGet(this, _agent).close();
+        return this.#agent.close();
       }
       destroy() {
-        return __privateGet(this, _agent).destroy();
+        return this.#agent.destroy();
       }
     };
-    _agent = new WeakMap();
-    _options = new WeakMap();
     module2.exports = RetryAgent;
   }
 });
@@ -27738,34 +27196,24 @@ var require_readable2 = __commonJS({
         return super.push(chunk);
       }
       // https://fetch.spec.whatwg.org/#dom-body-text
-      text() {
-        return __async(this, null, function* () {
-          return consume(this, "text");
-        });
+      async text() {
+        return consume(this, "text");
       }
       // https://fetch.spec.whatwg.org/#dom-body-json
-      json() {
-        return __async(this, null, function* () {
-          return consume(this, "json");
-        });
+      async json() {
+        return consume(this, "json");
       }
       // https://fetch.spec.whatwg.org/#dom-body-blob
-      blob() {
-        return __async(this, null, function* () {
-          return consume(this, "blob");
-        });
+      async blob() {
+        return consume(this, "blob");
       }
       // https://fetch.spec.whatwg.org/#dom-body-arraybuffer
-      arrayBuffer() {
-        return __async(this, null, function* () {
-          return consume(this, "arrayBuffer");
-        });
+      async arrayBuffer() {
+        return consume(this, "arrayBuffer");
       }
       // https://fetch.spec.whatwg.org/#dom-body-formdata
-      formData() {
-        return __async(this, null, function* () {
-          throw new NotSupportedError();
-        });
+      async formData() {
+        throw new NotSupportedError();
       }
       // https://fetch.spec.whatwg.org/#dom-body-bodyused
       get bodyUsed() {
@@ -27782,41 +27230,37 @@ var require_readable2 = __commonJS({
         }
         return this[kBody];
       }
-      dump(opts) {
-        return __async(this, null, function* () {
-          let limit = Number.isFinite(opts == null ? void 0 : opts.limit) ? opts.limit : 128 * 1024;
-          const signal = opts == null ? void 0 : opts.signal;
-          if (signal != null && (typeof signal !== "object" || !("aborted" in signal))) {
-            throw new InvalidArgumentError("signal must be an AbortSignal");
+      async dump(opts) {
+        let limit = Number.isFinite(opts?.limit) ? opts.limit : 128 * 1024;
+        const signal = opts?.signal;
+        if (signal != null && (typeof signal !== "object" || !("aborted" in signal))) {
+          throw new InvalidArgumentError("signal must be an AbortSignal");
+        }
+        signal?.throwIfAborted();
+        if (this._readableState.closeEmitted) {
+          return null;
+        }
+        return await new Promise((resolve, reject) => {
+          if (this[kContentLength] > limit) {
+            this.destroy(new AbortError());
           }
-          signal == null ? void 0 : signal.throwIfAborted();
-          if (this._readableState.closeEmitted) {
-            return null;
-          }
-          return yield new Promise((resolve, reject) => {
-            if (this[kContentLength] > limit) {
-              this.destroy(new AbortError());
+          const onAbort = () => {
+            this.destroy(signal.reason ?? new AbortError());
+          };
+          signal?.addEventListener("abort", onAbort);
+          this.on("close", function() {
+            signal?.removeEventListener("abort", onAbort);
+            if (signal?.aborted) {
+              reject(signal.reason ?? new AbortError());
+            } else {
+              resolve(null);
             }
-            const onAbort = () => {
-              var _a2;
-              this.destroy((_a2 = signal.reason) != null ? _a2 : new AbortError());
-            };
-            signal == null ? void 0 : signal.addEventListener("abort", onAbort);
-            this.on("close", function() {
-              var _a2;
-              signal == null ? void 0 : signal.removeEventListener("abort", onAbort);
-              if (signal == null ? void 0 : signal.aborted) {
-                reject((_a2 = signal.reason) != null ? _a2 : new AbortError());
-              } else {
-                resolve(null);
-              }
-            }).on("error", noop2).on("data", function(chunk) {
-              limit -= chunk.length;
-              if (limit <= 0) {
-                this.destroy();
-              }
-            }).resume();
-          });
+          }).on("error", noop2).on("data", function(chunk) {
+            limit -= chunk.length;
+            if (limit <= 0) {
+              this.destroy();
+            }
+          }).resume();
         });
       }
     };
@@ -27826,43 +27270,40 @@ var require_readable2 = __commonJS({
     function isUnusable(self2) {
       return util.isDisturbed(self2) || isLocked(self2);
     }
-    function consume(stream, type) {
-      return __async(this, null, function* () {
-        assert(!stream[kConsume]);
-        return new Promise((resolve, reject) => {
-          var _a2;
-          if (isUnusable(stream)) {
-            const rState = stream._readableState;
-            if (rState.destroyed && rState.closeEmitted === false) {
-              stream.on("error", (err) => {
-                reject(err);
-              }).on("close", () => {
-                reject(new TypeError("unusable"));
-              });
-            } else {
-              reject((_a2 = rState.errored) != null ? _a2 : new TypeError("unusable"));
-            }
-          } else {
-            queueMicrotask(() => {
-              stream[kConsume] = {
-                type,
-                stream,
-                resolve,
-                reject,
-                length: 0,
-                body: []
-              };
-              stream.on("error", function(err) {
-                consumeFinish(this[kConsume], err);
-              }).on("close", function() {
-                if (this[kConsume].body !== null) {
-                  consumeFinish(this[kConsume], new RequestAbortedError());
-                }
-              });
-              consumeStart(stream[kConsume]);
+    async function consume(stream, type) {
+      assert(!stream[kConsume]);
+      return new Promise((resolve, reject) => {
+        if (isUnusable(stream)) {
+          const rState = stream._readableState;
+          if (rState.destroyed && rState.closeEmitted === false) {
+            stream.on("error", (err) => {
+              reject(err);
+            }).on("close", () => {
+              reject(new TypeError("unusable"));
             });
+          } else {
+            reject(rState.errored ?? new TypeError("unusable"));
           }
-        });
+        } else {
+          queueMicrotask(() => {
+            stream[kConsume] = {
+              type,
+              stream,
+              resolve,
+              reject,
+              length: 0,
+              body: []
+            };
+            stream.on("error", function(err) {
+              consumeFinish(this[kConsume], err);
+            }).on("close", function() {
+              if (this[kConsume].body !== null) {
+                consumeFinish(this[kConsume], new RequestAbortedError());
+              }
+            });
+            consumeStart(stream[kConsume]);
+          });
+        }
       });
     }
     function consumeStart(consume2) {
@@ -27958,51 +27399,37 @@ var require_util10 = __commonJS({
     } = require_errors2();
     var { chunksDecode } = require_readable2();
     var CHUNK_LIMIT = 128 * 1024;
-    function getResolveErrorBodyCallback(_0) {
-      return __async(this, arguments, function* ({ callback, body, contentType, statusCode, statusMessage, headers }) {
-        assert(body);
-        let chunks = [];
-        let length = 0;
-        try {
-          for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-            const chunk = temp.value;
-            chunks.push(chunk);
-            length += chunk.length;
-            if (length > CHUNK_LIMIT) {
-              chunks = null;
-              break;
-            }
-          }
-        } catch (temp) {
-          error = [temp];
-        } finally {
-          try {
-            more && (temp = iter.return) && (yield temp.call(iter));
-          } finally {
-            if (error)
-              throw error[0];
-          }
+    async function getResolveErrorBodyCallback({ callback, body, contentType, statusCode, statusMessage, headers }) {
+      assert(body);
+      let chunks = [];
+      let length = 0;
+      for await (const chunk of body) {
+        chunks.push(chunk);
+        length += chunk.length;
+        if (length > CHUNK_LIMIT) {
+          chunks = null;
+          break;
         }
-        const message = `Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`;
-        if (statusCode === 204 || !contentType || !chunks) {
-          queueMicrotask(() => callback(new ResponseStatusCodeError(message, statusCode, headers)));
-          return;
+      }
+      const message = `Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`;
+      if (statusCode === 204 || !contentType || !chunks) {
+        queueMicrotask(() => callback(new ResponseStatusCodeError(message, statusCode, headers)));
+        return;
+      }
+      const stackTraceLimit = Error.stackTraceLimit;
+      Error.stackTraceLimit = 0;
+      let payload;
+      try {
+        if (isContentTypeApplicationJson(contentType)) {
+          payload = JSON.parse(chunksDecode(chunks, length));
+        } else if (isContentTypeText(contentType)) {
+          payload = chunksDecode(chunks, length);
         }
-        const stackTraceLimit = Error.stackTraceLimit;
-        Error.stackTraceLimit = 0;
-        let payload;
-        try {
-          if (isContentTypeApplicationJson(contentType)) {
-            payload = JSON.parse(chunksDecode(chunks, length));
-          } else if (isContentTypeText(contentType)) {
-            payload = chunksDecode(chunks, length);
-          }
-        } catch (e) {
-        } finally {
-          Error.stackTraceLimit = stackTraceLimit;
-        }
-        queueMicrotask(() => callback(new ResponseStatusCodeError(message, statusCode, headers, payload)));
-      });
+      } catch {
+      } finally {
+        Error.stackTraceLimit = stackTraceLimit;
+      }
+      queueMicrotask(() => callback(new ResponseStatusCodeError(message, statusCode, headers, payload)));
     }
     var isContentTypeApplicationJson = (contentType) => {
       return contentType.length > 15 && contentType[11] === "/" && contentType[0] === "a" && contentType[1] === "p" && contentType[2] === "p" && contentType[3] === "l" && contentType[4] === "i" && contentType[5] === "c" && contentType[6] === "a" && contentType[7] === "t" && contentType[8] === "i" && contentType[9] === "o" && contentType[10] === "n" && contentType[12] === "j" && contentType[13] === "s" && contentType[14] === "o" && contentType[15] === "n";
@@ -28027,11 +27454,10 @@ var require_abort_signal2 = __commonJS({
     var kListener = Symbol("kListener");
     var kSignal = Symbol("kSignal");
     function abort(self2) {
-      var _a2, _b, _c;
       if (self2.abort) {
-        self2.abort((_a2 = self2[kSignal]) == null ? void 0 : _a2.reason);
+        self2.abort(self2[kSignal]?.reason);
       } else {
-        self2.onError((_c = (_b = self2[kSignal]) == null ? void 0 : _b.reason) != null ? _c : new RequestAbortedError());
+        self2.onError(self2[kSignal]?.reason ?? new RequestAbortedError());
       }
     }
     function addSignal(self2, signal) {
@@ -28215,7 +27641,7 @@ var require_api_request2 = __commonJS({
         if (typeof callback !== "function") {
           throw err;
         }
-        const opaque = opts == null ? void 0 : opts.opaque;
+        const opaque = opts?.opaque;
         queueMicrotask(() => callback(err, { opaque }));
       }
     }
@@ -28293,7 +27719,6 @@ var require_api_stream2 = __commonJS({
         this.context = context3;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        var _a2;
         const { factory, opaque, context: context3, callback, responseHeaders } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
@@ -28342,7 +27767,7 @@ var require_api_stream2 = __commonJS({
         }
         res.on("drain", resume);
         this.res = res;
-        const needDrain = res.writableNeedDrain !== void 0 ? res.writableNeedDrain : (_a2 = res._writableState) == null ? void 0 : _a2.needDrain;
+        const needDrain = res.writableNeedDrain !== void 0 ? res.writableNeedDrain : res._writableState?.needDrain;
         return needDrain !== true;
       }
       onData(chunk) {
@@ -28391,7 +27816,7 @@ var require_api_stream2 = __commonJS({
         if (typeof callback !== "function") {
           throw err;
         }
-        const opaque = opts == null ? void 0 : opts.opaque;
+        const opaque = opts?.opaque;
         queueMicrotask(() => callback(err, { opaque }));
       }
     }
@@ -28481,7 +27906,7 @@ var require_api_pipeline2 = __commonJS({
           autoDestroy: true,
           read: () => {
             const { body } = this;
-            if (body == null ? void 0 : body.resume) {
+            if (body?.resume) {
               body.resume();
             }
           },
@@ -28587,7 +28012,7 @@ var require_api_pipeline2 = __commonJS({
     function pipeline(opts, handler2) {
       try {
         const pipelineHandler = new PipelineHandler(opts, handler2);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), { body: pipelineHandler.req }), pipelineHandler);
+        this.dispatch({ ...opts, body: pipelineHandler.req }, pipelineHandler);
         return pipelineHandler.ret;
       } catch (err) {
         return new PassThrough().destroy(err);
@@ -28670,15 +28095,16 @@ var require_api_upgrade2 = __commonJS({
       }
       try {
         const upgradeHandler = new UpgradeHandler(opts, callback);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), {
+        this.dispatch({
+          ...opts,
           method: opts.method || "GET",
           upgrade: opts.protocol || "Websocket"
-        }), upgradeHandler);
+        }, upgradeHandler);
       } catch (err) {
         if (typeof callback !== "function") {
           throw err;
         }
-        const opaque = opts == null ? void 0 : opts.opaque;
+        const opaque = opts?.opaque;
         queueMicrotask(() => callback(err, { opaque }));
       }
     }
@@ -28760,12 +28186,12 @@ var require_api_connect2 = __commonJS({
       }
       try {
         const connectHandler = new ConnectHandler(opts, callback);
-        this.dispatch(__spreadProps(__spreadValues({}, opts), { method: "CONNECT" }), connectHandler);
+        this.dispatch({ ...opts, method: "CONNECT" }, connectHandler);
       } catch (err) {
         if (typeof callback !== "function") {
           throw err;
         }
-        const opaque = opts == null ? void 0 : opts.opaque;
+        const opaque = opts?.opaque;
         queueMicrotask(() => callback(err, { opaque }));
       }
     }
@@ -28966,8 +28392,8 @@ var require_mock_utils2 = __commonJS({
     }
     function addMockDispatch(mockDispatches, key, data) {
       const baseData = { timesInvoked: 0, times: 1, persist: false, consumed: false };
-      const replyData = typeof data === "function" ? { callback: data } : __spreadValues({}, data);
-      const newMockDispatch = __spreadProps(__spreadValues(__spreadValues({}, baseData), key), { pending: true, data: __spreadValues({ error: null }, replyData) });
+      const replyData = typeof data === "function" ? { callback: data } : { ...data };
+      const newMockDispatch = { ...baseData, ...key, pending: true, data: { error: null, ...replyData } };
       mockDispatches.push(newMockDispatch);
       return newMockDispatch;
     }
@@ -29012,33 +28438,19 @@ var require_mock_utils2 = __commonJS({
     function getStatusText(statusCode) {
       return STATUS_CODES[statusCode] || "unknown";
     }
-    function getResponse(body) {
-      return __async(this, null, function* () {
-        const buffers = [];
-        try {
-          for (var iter = __forAwait(body), more, temp, error; more = !(temp = yield iter.next()).done; more = false) {
-            const data = temp.value;
-            buffers.push(data);
-          }
-        } catch (temp) {
-          error = [temp];
-        } finally {
-          try {
-            more && (temp = iter.return) && (yield temp.call(iter));
-          } finally {
-            if (error)
-              throw error[0];
-          }
-        }
-        return Buffer.concat(buffers).toString("utf8");
-      });
+    async function getResponse(body) {
+      const buffers = [];
+      for await (const data of body) {
+        buffers.push(data);
+      }
+      return Buffer.concat(buffers).toString("utf8");
     }
     function mockDispatch(opts, handler2) {
       const key = buildKey(opts);
       const mockDispatch2 = getMockDispatch(this[kDispatches], key);
       mockDispatch2.timesInvoked++;
       if (mockDispatch2.data.callback) {
-        mockDispatch2.data = __spreadValues(__spreadValues({}, mockDispatch2.data), mockDispatch2.data.callback(opts));
+        mockDispatch2.data = { ...mockDispatch2.data, ...mockDispatch2.data.callback(opts) };
       }
       const { data: { statusCode, data, headers, trailers, error }, delay: delay2, persist } = mockDispatch2;
       const { timesInvoked, times } = mockDispatch2;
@@ -29058,7 +28470,7 @@ var require_mock_utils2 = __commonJS({
       }
       function handleReply(mockDispatches, _data = data) {
         const optsHeaders = Array.isArray(opts.headers) ? buildHeadersFromArray(opts.headers) : opts.headers;
-        const body = typeof _data === "function" ? _data(__spreadProps(__spreadValues({}, opts), { headers: optsHeaders })) : _data;
+        const body = typeof _data === "function" ? _data({ ...opts, headers: optsHeaders }) : _data;
         if (isPromise(body)) {
           body.then((newData) => handleReply(mockDispatches, newData));
           return;
@@ -29115,7 +28527,7 @@ var require_mock_utils2 = __commonJS({
     }
     function buildMockOptions(opts) {
       if (opts) {
-        const _a2 = opts, { agent } = _a2, mockOptions = __objRest(_a2, ["agent"]);
+        const { agent, ...mockOptions } = opts;
         return mockOptions;
       }
     }
@@ -29217,8 +28629,8 @@ var require_mock_interceptor2 = __commonJS({
       createMockScopeDispatchData(statusCode, data, responseOptions = {}) {
         const responseData = getResponseData2(data);
         const contentLength = this[kContentLength] ? { "content-length": responseData.length } : {};
-        const headers = __spreadValues(__spreadValues(__spreadValues({}, this[kDefaultHeaders]), contentLength), responseOptions.headers);
-        const trailers = __spreadValues(__spreadValues({}, this[kDefaultTrailers]), responseOptions.trailers);
+        const headers = { ...this[kDefaultHeaders], ...contentLength, ...responseOptions.headers };
+        const trailers = { ...this[kDefaultTrailers], ...responseOptions.trailers };
         return { statusCode, data, headers, trailers };
       }
       validateReplyParameters(statusCode, data, responseOptions) {
@@ -29244,7 +28656,9 @@ var require_mock_interceptor2 = __commonJS({
             }
             const { statusCode: statusCode2, data: data2 = "", responseOptions: responseOptions2 = {} } = resolvedData;
             this.validateReplyParameters(statusCode2, data2, responseOptions2);
-            return __spreadValues({}, this.createMockScopeDispatchData(statusCode2, data2, responseOptions2));
+            return {
+              ...this.createMockScopeDispatchData(statusCode2, data2, responseOptions2)
+            };
           };
           const newMockDispatch2 = addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback);
           return new MockScope(newMockDispatch2);
@@ -29341,12 +28755,10 @@ var require_mock_client2 = __commonJS({
       intercept(opts) {
         return new MockInterceptor(opts, this[kDispatches]);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield promisify(this[kOriginalClose])();
-          this[kConnected] = 0;
-          this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
-        });
+      async [kClose]() {
+        await promisify(this[kOriginalClose])();
+        this[kConnected] = 0;
+        this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
     };
     module2.exports = MockClient;
@@ -29396,12 +28808,10 @@ var require_mock_pool2 = __commonJS({
       intercept(opts) {
         return new MockInterceptor(opts, this[kDispatches]);
       }
-      [kClose]() {
-        return __async(this, null, function* () {
-          yield promisify(this[kOriginalClose])();
-          this[kConnected] = 0;
-          this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
-        });
+      async [kClose]() {
+        await promisify(this[kOriginalClose])();
+        this[kConnected] = 0;
+        this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
     };
     module2.exports = MockPool;
@@ -29433,7 +28843,7 @@ var require_pluralizer2 = __commonJS({
         const one = count === 1;
         const keys = one ? singulars : plurals;
         const noun = one ? this.singular : this.plural;
-        return __spreadProps(__spreadValues({}, keys), { count, noun });
+        return { ...keys, count, noun };
       }
     };
   }
@@ -29507,10 +28917,10 @@ var require_mock_agent2 = __commonJS({
         super(opts);
         this[kNetConnect] = true;
         this[kIsMockActive] = true;
-        if ((opts == null ? void 0 : opts.agent) && typeof opts.agent.dispatch !== "function") {
+        if (opts?.agent && typeof opts.agent.dispatch !== "function") {
           throw new InvalidArgumentError("Argument opts.agent must implement Agent");
         }
-        const agent = (opts == null ? void 0 : opts.agent) ? opts.agent : new Agent(opts);
+        const agent = opts?.agent ? opts.agent : new Agent(opts);
         this[kAgent] = agent;
         this[kClients] = agent[kClients];
         this[kOptions] = buildMockOptions(opts);
@@ -29527,11 +28937,9 @@ var require_mock_agent2 = __commonJS({
         this.get(opts.origin);
         return this[kAgent].dispatch(opts, handler2);
       }
-      close() {
-        return __async(this, null, function* () {
-          yield this[kAgent].close();
-          this[kClients].clear();
-        });
+      async close() {
+        await this[kAgent].close();
+        this[kClients].clear();
       }
       deactivate() {
         this[kIsMockActive] = false;
@@ -29591,7 +28999,7 @@ var require_mock_agent2 = __commonJS({
       }
       pendingInterceptors() {
         const mockAgentClients = this[kClients];
-        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope[kDispatches].map((dispatch) => __spreadProps(__spreadValues({}, dispatch), { origin }))).filter(({ pending }) => pending);
+        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope[kDispatches].map((dispatch) => ({ ...dispatch, origin }))).filter(({ pending }) => pending);
       }
       assertNoPendingInterceptors({ pendingInterceptorsFormatter = new PendingInterceptorsFormatter() } = {}) {
         const pending = this.pendingInterceptors();
@@ -29680,10 +29088,10 @@ var require_redirect = __commonJS({
     "use strict";
     var RedirectHandler = require_redirect_handler();
     module2.exports = (opts) => {
-      const globalMaxRedirections = opts == null ? void 0 : opts.maxRedirections;
+      const globalMaxRedirections = opts?.maxRedirections;
       return (dispatch) => {
         return function redirectInterceptor(opts2, handler2) {
-          const _a2 = opts2, { maxRedirections = globalMaxRedirections } = _a2, baseOpts = __objRest(_a2, ["maxRedirections"]);
+          const { maxRedirections = globalMaxRedirections, ...baseOpts } = opts2;
           if (!maxRedirections) {
             return dispatch(opts2, handler2);
           }
@@ -29711,7 +29119,7 @@ var require_retry = __commonJS({
           return dispatch(
             opts,
             new RetryHandler(
-              __spreadProps(__spreadValues({}, opts), { retryOptions: __spreadValues(__spreadValues({}, globalOpts), opts.retryOptions) }),
+              { ...opts, retryOptions: { ...globalOpts, ...opts.retryOptions } },
               {
                 handler: handler2,
                 dispatch
@@ -29803,9 +29211,9 @@ var require_headers2 = __commonJS({
       return a[0] < b[0] ? -1 : 1;
     }
     var HeadersList = class _HeadersList {
+      /** @type {[string, string][]|null} */
+      cookies = null;
       constructor(init) {
-        /** @type {[string, string][]|null} */
-        __publicField(this, "cookies", null);
         if (init instanceof _HeadersList) {
           this[kHeadersMap] = new Map(init[kHeadersMap]);
           this[kHeadersSortedMap] = init[kHeadersSortedMap];
@@ -29835,7 +29243,6 @@ var require_headers2 = __commonJS({
        * @param {boolean} isLowerCase
        */
       append(name, value, isLowerCase) {
-        var _a2;
         this[kHeadersSortedMap] = null;
         const lowercaseName = isLowerCase ? name : name.toLowerCase();
         const exists = this[kHeadersMap].get(lowercaseName);
@@ -29849,7 +29256,7 @@ var require_headers2 = __commonJS({
           this[kHeadersMap].set(lowercaseName, { name, value });
         }
         if (lowercaseName === "set-cookie") {
-          ((_a2 = this.cookies) != null ? _a2 : this.cookies = []).push(value);
+          (this.cookies ??= []).push(value);
         }
       }
       /**
@@ -29887,8 +29294,7 @@ var require_headers2 = __commonJS({
        * @returns {string | null}
        */
       get(name, isLowerCase) {
-        var _a2, _b;
-        return (_b = (_a2 = this[kHeadersMap].get(isLowerCase ? name : name.toLowerCase())) == null ? void 0 : _a2.value) != null ? _b : null;
+        return this[kHeadersMap].get(isLowerCase ? name : name.toLowerCase())?.value ?? null;
       }
       *[Symbol.iterator]() {
         for (const { 0: name, 1: { value } } of this[kHeadersMap]) {
@@ -30080,8 +29486,7 @@ var require_headers2 = __commonJS({
         return this[kHeadersList][kHeadersSortedMap] = headers;
       }
       [util.inspect.custom](depth, options) {
-        var _a2;
-        (_a2 = options.depth) != null ? _a2 : options.depth = depth;
+        options.depth ??= depth;
         return `Headers ${util.formatWithOptions(options, this[kHeadersList].entries)}`;
       }
     };
@@ -30228,10 +29633,9 @@ var require_response2 = __commonJS({
       }
       // Returns response’s URL, if it has one; otherwise the empty string.
       get url() {
-        var _a2;
         webidl.brandCheck(this, _Response);
         const urlList = this[kState].urlList;
-        const url = (_a2 = urlList[urlList.length - 1]) != null ? _a2 : null;
+        const url = urlList[urlList.length - 1] ?? null;
         if (url === null) {
           return "";
         }
@@ -30272,9 +29676,8 @@ var require_response2 = __commonJS({
       }
       // Returns a clone of response.
       clone() {
-        var _a2;
         webidl.brandCheck(this, _Response);
-        if (this.bodyUsed || ((_a2 = this.body) == null ? void 0 : _a2.locked)) {
+        if (this.bodyUsed || this.body?.locked) {
           throw webidl.errors.exception({
             header: "Response.clone",
             message: "Body has already been consumed."
@@ -30284,11 +29687,10 @@ var require_response2 = __commonJS({
         return fromInnerResponse(clonedResponse, this[kHeaders][kGuard], this[kRealm]);
       }
       [nodeUtil.inspect.custom](depth, options) {
-        var _a2;
         if (options.depth === null) {
           options.depth = 2;
         }
-        (_a2 = options.colors) != null ? _a2 : options.colors = true;
+        options.colors ??= true;
         const properties = {
           status: this.status,
           statusText: this.statusText,
@@ -30332,14 +29734,14 @@ var require_response2 = __commonJS({
           response.type
         );
       }
-      const newResponse = makeResponse(__spreadProps(__spreadValues({}, response), { body: null }));
+      const newResponse = makeResponse({ ...response, body: null });
       if (response.body != null) {
         newResponse.body = cloneBody(response.body);
       }
       return newResponse;
     }
     function makeResponse(init) {
-      return __spreadProps(__spreadValues({
+      return {
         aborted: false,
         rangeRequested: false,
         timingAllowPassed: false,
@@ -30348,11 +29750,11 @@ var require_response2 = __commonJS({
         status: 200,
         timingInfo: null,
         cacheState: "",
-        statusText: ""
-      }, init), {
-        headersList: (init == null ? void 0 : init.headersList) ? new HeadersList(init == null ? void 0 : init.headersList) : new HeadersList(),
-        urlList: (init == null ? void 0 : init.urlList) ? [...init.urlList] : []
-      });
+        statusText: "",
+        ...init,
+        headersList: init?.headersList ? new HeadersList(init?.headersList) : new HeadersList(),
+        urlList: init?.urlList ? [...init.urlList] : []
+      };
     }
     function makeNetworkError(reason) {
       const isError2 = isErrorLike(reason);
@@ -30371,9 +29773,10 @@ var require_response2 = __commonJS({
       );
     }
     function makeFilteredResponse(response, state) {
-      state = __spreadValues({
-        internalResponse: response
-      }, state);
+      state = {
+        internalResponse: response,
+        ...state
+      };
       return new Proxy(response, {
         get(target, p) {
           return p in state ? state[p] : target[p];
@@ -30492,7 +29895,7 @@ var require_response2 = __commonJS({
       if (V instanceof ReadableStream) {
         return webidl.converters.ReadableStream(V);
       }
-      if (V == null ? void 0 : V[Symbol.asyncIterator]) {
+      if (V?.[Symbol.asyncIterator]) {
         return V;
       }
       return webidl.converters.XMLHttpRequestBodyInit(V);
@@ -30609,7 +30012,6 @@ var require_request4 = __commonJS({
     var Request = class _Request {
       // https://fetch.spec.whatwg.org/#dom-request
       constructor(input, init = {}) {
-        var _a2, _b;
         if (input === kConstruct) {
           return;
         }
@@ -30620,8 +30022,7 @@ var require_request4 = __commonJS({
           settingsObject: {
             baseUrl: getGlobalOrigin(),
             get origin() {
-              var _a3;
-              return (_a3 = this.baseUrl) == null ? void 0 : _a3.origin;
+              return this.baseUrl?.origin;
             },
             policyContainer: makePolicyContainer()
           }
@@ -30653,7 +30054,7 @@ var require_request4 = __commonJS({
         }
         const origin = this[kRealm].settingsObject.origin;
         let window2 = "client";
-        if (((_b = (_a2 = request2.window) == null ? void 0 : _a2.constructor) == null ? void 0 : _b.name) === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
+        if (request2.window?.constructor?.name === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
           window2 = request2.window;
         }
         if (init.window != null) {
@@ -30828,7 +30229,7 @@ var require_request4 = __commonJS({
               } else if (getEventListeners(signal, "abort").length >= defaultMaxListeners) {
                 setMaxListeners(100, signal);
               }
-            } catch (e) {
+            } catch {
             }
             util.addAbortListener(signal, abort);
             requestFinalizer.register(ac, { signal, abort }, abort);
@@ -30874,7 +30275,7 @@ var require_request4 = __commonJS({
             this[kHeaders].append("content-type", contentType);
           }
         }
-        const inputOrInitBody = initBody != null ? initBody : inputBody;
+        const inputOrInitBody = initBody ?? inputBody;
         if (inputOrInitBody != null && inputOrInitBody.source == null) {
           if (initBody != null && init.duplex == null) {
             throw new TypeError("RequestInit: duplex option is required when sending a body.");
@@ -31022,9 +30423,8 @@ var require_request4 = __commonJS({
       }
       // Returns a clone of request.
       clone() {
-        var _a2;
         webidl.brandCheck(this, _Request);
-        if (this.bodyUsed || ((_a2 = this.body) == null ? void 0 : _a2.locked)) {
+        if (this.bodyUsed || this.body?.locked) {
           throw new TypeError("unusable");
         }
         const clonedRequest = cloneRequest(this[kState]);
@@ -31042,11 +30442,10 @@ var require_request4 = __commonJS({
         return fromInnerRequest(clonedRequest, ac.signal, this[kHeaders][kGuard], this[kRealm]);
       }
       [nodeUtil.inspect.custom](depth, options) {
-        var _a2;
         if (options.depth === null) {
           options.depth = 2;
         }
-        (_a2 = options.colors) != null ? _a2 : options.colors = true;
+        options.colors ??= true;
         const properties = {
           method: this.method,
           url: this.url,
@@ -31069,7 +30468,7 @@ var require_request4 = __commonJS({
     };
     mixinBody(Request);
     function makeRequest(init) {
-      const request2 = __spreadProps(__spreadValues({
+      const request2 = {
         method: "GET",
         localURLsOnly: false,
         unsafeRequest: false,
@@ -31104,15 +30503,15 @@ var require_request4 = __commonJS({
         responseTainting: "basic",
         preventNoCacheCacheControlHeaderModification: false,
         done: false,
-        timingAllowFailed: false
-      }, init), {
+        timingAllowFailed: false,
+        ...init,
         headersList: init.headersList ? new HeadersList(init.headersList) : new HeadersList()
-      });
+      };
       request2.url = request2.urlList[0];
       return request2;
     }
     function cloneRequest(request2) {
-      const newRequest = makeRequest(__spreadProps(__spreadValues({}, request2), { body: null }));
+      const newRequest = makeRequest({ ...request2, body: null });
       if (request2.body != null) {
         newRequest.body = cloneBody(request2.body);
       }
@@ -31334,17 +30733,15 @@ var require_fetch2 = __commonJS({
         this.state = "ongoing";
       }
       terminate(reason) {
-        var _a2;
         if (this.state !== "ongoing") {
           return;
         }
         this.state = "terminated";
-        (_a2 = this.connection) == null ? void 0 : _a2.destroy(reason);
+        this.connection?.destroy(reason);
         this.emit("terminated", reason);
       }
       // https://fetch.spec.whatwg.org/#fetch-controller-abort
       abort(error) {
-        var _a2;
         if (this.state !== "ongoing") {
           return;
         }
@@ -31353,12 +30750,11 @@ var require_fetch2 = __commonJS({
           error = new DOMException("The operation was aborted.", "AbortError");
         }
         this.serializedAbortReason = error;
-        (_a2 = this.connection) == null ? void 0 : _a2.destroy(error);
+        this.connection?.destroy(error);
         this.emit("terminated", error);
       }
     };
     function fetch2(input, init = void 0) {
-      var _a2;
       webidl.argumentLengthCheck(arguments, 1, { header: "globalThis.fetch" });
       const p = createDeferredPromise();
       let requestObject;
@@ -31374,7 +30770,7 @@ var require_fetch2 = __commonJS({
         return p.promise;
       }
       const globalObject2 = request2.client.globalObject;
-      if (((_a2 = globalObject2 == null ? void 0 : globalObject2.constructor) == null ? void 0 : _a2.name) === "ServiceWorkerGlobalScope") {
+      if (globalObject2?.constructor?.name === "ServiceWorkerGlobalScope") {
         request2.serviceWorkers = "none";
       }
       let responseObject = null;
@@ -31416,11 +30812,10 @@ var require_fetch2 = __commonJS({
       return p.promise;
     }
     function finalizeAndReportTiming(response, initiatorType = "other") {
-      var _a2;
       if (response.type === "error" && response.aborted) {
         return;
       }
-      if (!((_a2 = response.urlList) == null ? void 0 : _a2.length)) {
+      if (!response.urlList?.length) {
         return;
       }
       const originalURL = response.urlList[0];
@@ -31451,9 +30846,8 @@ var require_fetch2 = __commonJS({
     var markResourceTiming = nodeMajor > 18 || nodeMajor === 18 && nodeMinor >= 2 ? performance.markResourceTiming : () => {
     };
     function abortFetch(p, request2, responseObject, error) {
-      var _a2, _b;
       p.reject(error);
-      if (request2.body != null && isReadable((_a2 = request2.body) == null ? void 0 : _a2.stream)) {
+      if (request2.body != null && isReadable(request2.body?.stream)) {
         request2.body.stream.cancel(error).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -31465,7 +30859,7 @@ var require_fetch2 = __commonJS({
         return;
       }
       const response = responseObject[kState];
-      if (response.body != null && isReadable((_b = response.body) == null ? void 0 : _b.stream)) {
+      if (response.body != null && isReadable(response.body?.stream)) {
         response.body.stream.cancel(error).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -31485,7 +30879,6 @@ var require_fetch2 = __commonJS({
       dispatcher = getGlobalDispatcher()
       // undici
     }) {
-      var _a2, _b, _c, _d;
       assert(dispatcher);
       let taskDestination = null;
       let crossOriginIsolatedCapability = false;
@@ -31511,10 +30904,10 @@ var require_fetch2 = __commonJS({
       };
       assert(!request2.body || request2.body.stream);
       if (request2.window === "client") {
-        request2.window = ((_c = (_b = (_a2 = request2.client) == null ? void 0 : _a2.globalObject) == null ? void 0 : _b.constructor) == null ? void 0 : _c.name) === "Window" ? request2.client : "no-window";
+        request2.window = request2.client?.globalObject?.constructor?.name === "Window" ? request2.client : "no-window";
       }
       if (request2.origin === "client") {
-        request2.origin = (_d = request2.client) == null ? void 0 : _d.origin;
+        request2.origin = request2.client?.origin;
       }
       if (request2.policyContainer === "client") {
         if (request2.client != null) {
@@ -31541,104 +30934,102 @@ var require_fetch2 = __commonJS({
       });
       return fetchParams.controller;
     }
-    function mainFetch(fetchParams, recursive = false) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let response = null;
-        if (request2.localURLsOnly && !urlIsLocal(requestCurrentURL(request2))) {
-          response = makeNetworkError("local URLs only");
-        }
-        tryUpgradeRequestToAPotentiallyTrustworthyURL(request2);
-        if (requestBadPort(request2) === "blocked") {
-          response = makeNetworkError("bad port");
-        }
-        if (request2.referrerPolicy === "") {
-          request2.referrerPolicy = request2.policyContainer.referrerPolicy;
-        }
-        if (request2.referrer !== "no-referrer") {
-          request2.referrer = determineRequestsReferrer(request2);
-        }
-        if (response === null) {
-          response = yield (() => __async(this, null, function* () {
-            const currentURL = requestCurrentURL(request2);
-            if (
-              // - request’s current URL’s origin is same origin with request’s origin,
-              //   and request’s response tainting is "basic"
-              sameOrigin(currentURL, request2.url) && request2.responseTainting === "basic" || // request’s current URL’s scheme is "data"
-              currentURL.protocol === "data:" || // - request’s mode is "navigate" or "websocket"
-              (request2.mode === "navigate" || request2.mode === "websocket")
-            ) {
-              request2.responseTainting = "basic";
-              return yield schemeFetch(fetchParams);
-            }
-            if (request2.mode === "same-origin") {
-              return makeNetworkError('request mode cannot be "same-origin"');
-            }
-            if (request2.mode === "no-cors") {
-              if (request2.redirect !== "follow") {
-                return makeNetworkError(
-                  'redirect mode cannot be "follow" for "no-cors" request'
-                );
-              }
-              request2.responseTainting = "opaque";
-              return yield schemeFetch(fetchParams);
-            }
-            if (!urlIsHttpHttpsScheme(requestCurrentURL(request2))) {
-              return makeNetworkError("URL scheme must be a HTTP(S) scheme");
-            }
-            request2.responseTainting = "cors";
-            return yield httpFetch(fetchParams);
-          }))();
-        }
-        if (recursive) {
-          return response;
-        }
-        if (response.status !== 0 && !response.internalResponse) {
-          if (request2.responseTainting === "cors") {
+    async function mainFetch(fetchParams, recursive = false) {
+      const request2 = fetchParams.request;
+      let response = null;
+      if (request2.localURLsOnly && !urlIsLocal(requestCurrentURL(request2))) {
+        response = makeNetworkError("local URLs only");
+      }
+      tryUpgradeRequestToAPotentiallyTrustworthyURL(request2);
+      if (requestBadPort(request2) === "blocked") {
+        response = makeNetworkError("bad port");
+      }
+      if (request2.referrerPolicy === "") {
+        request2.referrerPolicy = request2.policyContainer.referrerPolicy;
+      }
+      if (request2.referrer !== "no-referrer") {
+        request2.referrer = determineRequestsReferrer(request2);
+      }
+      if (response === null) {
+        response = await (async () => {
+          const currentURL = requestCurrentURL(request2);
+          if (
+            // - request’s current URL’s origin is same origin with request’s origin,
+            //   and request’s response tainting is "basic"
+            sameOrigin(currentURL, request2.url) && request2.responseTainting === "basic" || // request’s current URL’s scheme is "data"
+            currentURL.protocol === "data:" || // - request’s mode is "navigate" or "websocket"
+            (request2.mode === "navigate" || request2.mode === "websocket")
+          ) {
+            request2.responseTainting = "basic";
+            return await schemeFetch(fetchParams);
           }
-          if (request2.responseTainting === "basic") {
-            response = filterResponse(response, "basic");
-          } else if (request2.responseTainting === "cors") {
-            response = filterResponse(response, "cors");
-          } else if (request2.responseTainting === "opaque") {
-            response = filterResponse(response, "opaque");
-          } else {
-            assert(false);
+          if (request2.mode === "same-origin") {
+            return makeNetworkError('request mode cannot be "same-origin"');
           }
+          if (request2.mode === "no-cors") {
+            if (request2.redirect !== "follow") {
+              return makeNetworkError(
+                'redirect mode cannot be "follow" for "no-cors" request'
+              );
+            }
+            request2.responseTainting = "opaque";
+            return await schemeFetch(fetchParams);
+          }
+          if (!urlIsHttpHttpsScheme(requestCurrentURL(request2))) {
+            return makeNetworkError("URL scheme must be a HTTP(S) scheme");
+          }
+          request2.responseTainting = "cors";
+          return await httpFetch(fetchParams);
+        })();
+      }
+      if (recursive) {
+        return response;
+      }
+      if (response.status !== 0 && !response.internalResponse) {
+        if (request2.responseTainting === "cors") {
         }
-        let internalResponse = response.status === 0 ? response : response.internalResponse;
-        if (internalResponse.urlList.length === 0) {
-          internalResponse.urlList.push(...request2.urlList);
+        if (request2.responseTainting === "basic") {
+          response = filterResponse(response, "basic");
+        } else if (request2.responseTainting === "cors") {
+          response = filterResponse(response, "cors");
+        } else if (request2.responseTainting === "opaque") {
+          response = filterResponse(response, "opaque");
+        } else {
+          assert(false);
         }
-        if (!request2.timingAllowFailed) {
-          response.timingAllowPassed = true;
+      }
+      let internalResponse = response.status === 0 ? response : response.internalResponse;
+      if (internalResponse.urlList.length === 0) {
+        internalResponse.urlList.push(...request2.urlList);
+      }
+      if (!request2.timingAllowFailed) {
+        response.timingAllowPassed = true;
+      }
+      if (response.type === "opaque" && internalResponse.status === 206 && internalResponse.rangeRequested && !request2.headers.contains("range", true)) {
+        response = internalResponse = makeNetworkError();
+      }
+      if (response.status !== 0 && (request2.method === "HEAD" || request2.method === "CONNECT" || nullBodyStatus.includes(internalResponse.status))) {
+        internalResponse.body = null;
+        fetchParams.controller.dump = true;
+      }
+      if (request2.integrity) {
+        const processBodyError = (reason) => fetchFinale(fetchParams, makeNetworkError(reason));
+        if (request2.responseTainting === "opaque" || response.body == null) {
+          processBodyError(response.error);
+          return;
         }
-        if (response.type === "opaque" && internalResponse.status === 206 && internalResponse.rangeRequested && !request2.headers.contains("range", true)) {
-          response = internalResponse = makeNetworkError();
-        }
-        if (response.status !== 0 && (request2.method === "HEAD" || request2.method === "CONNECT" || nullBodyStatus.includes(internalResponse.status))) {
-          internalResponse.body = null;
-          fetchParams.controller.dump = true;
-        }
-        if (request2.integrity) {
-          const processBodyError = (reason) => fetchFinale(fetchParams, makeNetworkError(reason));
-          if (request2.responseTainting === "opaque" || response.body == null) {
-            processBodyError(response.error);
+        const processBody = (bytes) => {
+          if (!bytesMatch(bytes, request2.integrity)) {
+            processBodyError("integrity mismatch");
             return;
           }
-          const processBody = (bytes) => {
-            if (!bytesMatch(bytes, request2.integrity)) {
-              processBodyError("integrity mismatch");
-              return;
-            }
-            response.body = safelyExtractBody(bytes)[0];
-            fetchFinale(fetchParams, response);
-          };
-          yield fullyReadBody(response.body, processBody, processBodyError);
-        } else {
+          response.body = safelyExtractBody(bytes)[0];
           fetchFinale(fetchParams, response);
-        }
-      });
+        };
+        await fullyReadBody(response.body, processBody, processBodyError);
+      } else {
+        fetchFinale(fetchParams, response);
+      }
     }
     function schemeFetch(fetchParams) {
       if (isCancelled(fetchParams) && fetchParams.request.redirectCount === 0) {
@@ -31738,7 +31129,6 @@ var require_fetch2 = __commonJS({
       }
     }
     function fetchFinale(fetchParams, response) {
-      var _a2;
       let timingInfo = fetchParams.timingInfo;
       const processResponseEndOfBody = () => {
         const unsafeEndTime = Date.now();
@@ -31782,11 +31172,10 @@ var require_fetch2 = __commonJS({
       if (fetchParams.processResponse != null) {
         queueMicrotask(() => fetchParams.processResponse(response));
       }
-      const internalResponse = response.type === "error" ? response : (_a2 = response.internalResponse) != null ? _a2 : response;
+      const internalResponse = response.type === "error" ? response : response.internalResponse ?? response;
       if (internalResponse.body == null) {
         processResponseEndOfBody();
       } else {
-        let _b;
         const transformStream = new TransformStream({
           start() {
           },
@@ -31798,73 +31187,67 @@ var require_fetch2 = __commonJS({
         internalResponse.body.stream.pipeThrough(transformStream);
         const byteStream = new ReadableStream({
           readableStream: transformStream.readable,
-          start() {
-            return __async(this, null, function* () {
-              this._bodyReader = this.readableStream.getReader();
-            });
+          async start() {
+            this._bodyReader = this.readableStream.getReader();
           },
-          pull(controller) {
-            return __async(this, null, function* () {
-              while (controller.desiredSize >= 0) {
-                const { done, value } = yield this._bodyReader.read();
-                if (done) {
-                  queueMicrotask(() => readableStreamClose(controller));
-                  break;
-                }
-                controller.enqueue(value);
+          async pull(controller) {
+            while (controller.desiredSize >= 0) {
+              const { done, value } = await this._bodyReader.read();
+              if (done) {
+                queueMicrotask(() => readableStreamClose(controller));
+                break;
               }
-            });
+              controller.enqueue(value);
+            }
           },
           type: "bytes"
         });
         internalResponse.body.stream = byteStream;
       }
     }
-    function httpFetch(fetchParams) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let response = null;
-        let actualResponse = null;
-        const timingInfo = fetchParams.timingInfo;
-        if (request2.serviceWorkers === "all") {
+    async function httpFetch(fetchParams) {
+      const request2 = fetchParams.request;
+      let response = null;
+      let actualResponse = null;
+      const timingInfo = fetchParams.timingInfo;
+      if (request2.serviceWorkers === "all") {
+      }
+      if (response === null) {
+        if (request2.redirect === "follow") {
+          request2.serviceWorkers = "none";
         }
-        if (response === null) {
-          if (request2.redirect === "follow") {
-            request2.serviceWorkers = "none";
-          }
-          actualResponse = response = yield httpNetworkOrCacheFetch(fetchParams);
-          if (request2.responseTainting === "cors" && corsCheck(request2, response) === "failure") {
-            return makeNetworkError("cors failure");
-          }
-          if (TAOCheck(request2, response) === "failure") {
-            request2.timingAllowFailed = true;
-          }
+        actualResponse = response = await httpNetworkOrCacheFetch(fetchParams);
+        if (request2.responseTainting === "cors" && corsCheck(request2, response) === "failure") {
+          return makeNetworkError("cors failure");
         }
-        if ((request2.responseTainting === "opaque" || response.type === "opaque") && crossOriginResourcePolicyCheck(
-          request2.origin,
-          request2.client,
-          request2.destination,
-          actualResponse
-        ) === "blocked") {
-          return makeNetworkError("blocked");
+        if (TAOCheck(request2, response) === "failure") {
+          request2.timingAllowFailed = true;
         }
-        if (redirectStatusSet.has(actualResponse.status)) {
-          if (request2.redirect !== "manual") {
-            fetchParams.controller.connection.destroy(void 0, false);
-          }
-          if (request2.redirect === "error") {
-            response = makeNetworkError("unexpected redirect");
-          } else if (request2.redirect === "manual") {
-            response = actualResponse;
-          } else if (request2.redirect === "follow") {
-            response = yield httpRedirectFetch(fetchParams, response);
-          } else {
-            assert(false);
-          }
+      }
+      if ((request2.responseTainting === "opaque" || response.type === "opaque") && crossOriginResourcePolicyCheck(
+        request2.origin,
+        request2.client,
+        request2.destination,
+        actualResponse
+      ) === "blocked") {
+        return makeNetworkError("blocked");
+      }
+      if (redirectStatusSet.has(actualResponse.status)) {
+        if (request2.redirect !== "manual") {
+          fetchParams.controller.connection.destroy(void 0, false);
         }
-        response.timingInfo = timingInfo;
-        return response;
-      });
+        if (request2.redirect === "error") {
+          response = makeNetworkError("unexpected redirect");
+        } else if (request2.redirect === "manual") {
+          response = actualResponse;
+        } else if (request2.redirect === "follow") {
+          response = await httpRedirectFetch(fetchParams, response);
+        } else {
+          assert(false);
+        }
+      }
+      response.timingInfo = timingInfo;
+      return response;
     }
     function httpRedirectFetch(fetchParams, response) {
       const request2 = fetchParams.request;
@@ -31925,464 +31308,434 @@ var require_fetch2 = __commonJS({
       setRequestReferrerPolicyOnRedirect(request2, actualResponse);
       return mainFetch(fetchParams, true);
     }
-    function httpNetworkOrCacheFetch(fetchParams, isAuthenticationFetch = false, isNewConnectionFetch = false) {
-      return __async(this, null, function* () {
-        const request2 = fetchParams.request;
-        let httpFetchParams = null;
-        let httpRequest = null;
-        let response = null;
-        const httpCache = null;
-        const revalidatingFlag = false;
-        if (request2.window === "no-window" && request2.redirect === "error") {
-          httpFetchParams = fetchParams;
-          httpRequest = request2;
+    async function httpNetworkOrCacheFetch(fetchParams, isAuthenticationFetch = false, isNewConnectionFetch = false) {
+      const request2 = fetchParams.request;
+      let httpFetchParams = null;
+      let httpRequest = null;
+      let response = null;
+      const httpCache = null;
+      const revalidatingFlag = false;
+      if (request2.window === "no-window" && request2.redirect === "error") {
+        httpFetchParams = fetchParams;
+        httpRequest = request2;
+      } else {
+        httpRequest = cloneRequest(request2);
+        httpFetchParams = { ...fetchParams };
+        httpFetchParams.request = httpRequest;
+      }
+      const includeCredentials = request2.credentials === "include" || request2.credentials === "same-origin" && request2.responseTainting === "basic";
+      const contentLength = httpRequest.body ? httpRequest.body.length : null;
+      let contentLengthHeaderValue = null;
+      if (httpRequest.body == null && ["POST", "PUT"].includes(httpRequest.method)) {
+        contentLengthHeaderValue = "0";
+      }
+      if (contentLength != null) {
+        contentLengthHeaderValue = isomorphicEncode(`${contentLength}`);
+      }
+      if (contentLengthHeaderValue != null) {
+        httpRequest.headersList.append("content-length", contentLengthHeaderValue, true);
+      }
+      if (contentLength != null && httpRequest.keepalive) {
+      }
+      if (httpRequest.referrer instanceof URL) {
+        httpRequest.headersList.append("referer", isomorphicEncode(httpRequest.referrer.href), true);
+      }
+      appendRequestOriginHeader(httpRequest);
+      appendFetchMetadata(httpRequest);
+      if (!httpRequest.headersList.contains("user-agent", true)) {
+        httpRequest.headersList.append("user-agent", defaultUserAgent);
+      }
+      if (httpRequest.cache === "default" && (httpRequest.headersList.contains("if-modified-since", true) || httpRequest.headersList.contains("if-none-match", true) || httpRequest.headersList.contains("if-unmodified-since", true) || httpRequest.headersList.contains("if-match", true) || httpRequest.headersList.contains("if-range", true))) {
+        httpRequest.cache = "no-store";
+      }
+      if (httpRequest.cache === "no-cache" && !httpRequest.preventNoCacheCacheControlHeaderModification && !httpRequest.headersList.contains("cache-control", true)) {
+        httpRequest.headersList.append("cache-control", "max-age=0", true);
+      }
+      if (httpRequest.cache === "no-store" || httpRequest.cache === "reload") {
+        if (!httpRequest.headersList.contains("pragma", true)) {
+          httpRequest.headersList.append("pragma", "no-cache", true);
+        }
+        if (!httpRequest.headersList.contains("cache-control", true)) {
+          httpRequest.headersList.append("cache-control", "no-cache", true);
+        }
+      }
+      if (httpRequest.headersList.contains("range", true)) {
+        httpRequest.headersList.append("accept-encoding", "identity", true);
+      }
+      if (!httpRequest.headersList.contains("accept-encoding", true)) {
+        if (urlHasHttpsScheme(requestCurrentURL(httpRequest))) {
+          httpRequest.headersList.append("accept-encoding", "br, gzip, deflate", true);
         } else {
-          httpRequest = cloneRequest(request2);
-          httpFetchParams = __spreadValues({}, fetchParams);
-          httpFetchParams.request = httpRequest;
+          httpRequest.headersList.append("accept-encoding", "gzip, deflate", true);
         }
-        const includeCredentials = request2.credentials === "include" || request2.credentials === "same-origin" && request2.responseTainting === "basic";
-        const contentLength = httpRequest.body ? httpRequest.body.length : null;
-        let contentLengthHeaderValue = null;
-        if (httpRequest.body == null && ["POST", "PUT"].includes(httpRequest.method)) {
-          contentLengthHeaderValue = "0";
+      }
+      httpRequest.headersList.delete("host", true);
+      if (includeCredentials) {
+      }
+      if (httpCache == null) {
+        httpRequest.cache = "no-store";
+      }
+      if (httpRequest.mode !== "no-store" && httpRequest.mode !== "reload") {
+      }
+      if (response == null) {
+        if (httpRequest.mode === "only-if-cached") {
+          return makeNetworkError("only if cached");
         }
-        if (contentLength != null) {
-          contentLengthHeaderValue = isomorphicEncode(`${contentLength}`);
+        const forwardResponse = await httpNetworkFetch(
+          httpFetchParams,
+          includeCredentials,
+          isNewConnectionFetch
+        );
+        if (!safeMethodsSet.has(httpRequest.method) && forwardResponse.status >= 200 && forwardResponse.status <= 399) {
         }
-        if (contentLengthHeaderValue != null) {
-          httpRequest.headersList.append("content-length", contentLengthHeaderValue, true);
-        }
-        if (contentLength != null && httpRequest.keepalive) {
-        }
-        if (httpRequest.referrer instanceof URL) {
-          httpRequest.headersList.append("referer", isomorphicEncode(httpRequest.referrer.href), true);
-        }
-        appendRequestOriginHeader(httpRequest);
-        appendFetchMetadata(httpRequest);
-        if (!httpRequest.headersList.contains("user-agent", true)) {
-          httpRequest.headersList.append("user-agent", defaultUserAgent);
-        }
-        if (httpRequest.cache === "default" && (httpRequest.headersList.contains("if-modified-since", true) || httpRequest.headersList.contains("if-none-match", true) || httpRequest.headersList.contains("if-unmodified-since", true) || httpRequest.headersList.contains("if-match", true) || httpRequest.headersList.contains("if-range", true))) {
-          httpRequest.cache = "no-store";
-        }
-        if (httpRequest.cache === "no-cache" && !httpRequest.preventNoCacheCacheControlHeaderModification && !httpRequest.headersList.contains("cache-control", true)) {
-          httpRequest.headersList.append("cache-control", "max-age=0", true);
-        }
-        if (httpRequest.cache === "no-store" || httpRequest.cache === "reload") {
-          if (!httpRequest.headersList.contains("pragma", true)) {
-            httpRequest.headersList.append("pragma", "no-cache", true);
-          }
-          if (!httpRequest.headersList.contains("cache-control", true)) {
-            httpRequest.headersList.append("cache-control", "no-cache", true);
-          }
-        }
-        if (httpRequest.headersList.contains("range", true)) {
-          httpRequest.headersList.append("accept-encoding", "identity", true);
-        }
-        if (!httpRequest.headersList.contains("accept-encoding", true)) {
-          if (urlHasHttpsScheme(requestCurrentURL(httpRequest))) {
-            httpRequest.headersList.append("accept-encoding", "br, gzip, deflate", true);
-          } else {
-            httpRequest.headersList.append("accept-encoding", "gzip, deflate", true);
-          }
-        }
-        httpRequest.headersList.delete("host", true);
-        if (includeCredentials) {
-        }
-        if (httpCache == null) {
-          httpRequest.cache = "no-store";
-        }
-        if (httpRequest.mode !== "no-store" && httpRequest.mode !== "reload") {
+        if (revalidatingFlag && forwardResponse.status === 304) {
         }
         if (response == null) {
-          if (httpRequest.mode === "only-if-cached") {
-            return makeNetworkError("only if cached");
-          }
-          const forwardResponse = yield httpNetworkFetch(
-            httpFetchParams,
-            includeCredentials,
-            isNewConnectionFetch
-          );
-          if (!safeMethodsSet.has(httpRequest.method) && forwardResponse.status >= 200 && forwardResponse.status <= 399) {
-          }
-          if (revalidatingFlag && forwardResponse.status === 304) {
-          }
-          if (response == null) {
-            response = forwardResponse;
-          }
+          response = forwardResponse;
         }
-        response.urlList = [...httpRequest.urlList];
-        if (httpRequest.headersList.contains("range", true)) {
-          response.rangeRequested = true;
+      }
+      response.urlList = [...httpRequest.urlList];
+      if (httpRequest.headersList.contains("range", true)) {
+        response.rangeRequested = true;
+      }
+      response.requestIncludesCredentials = includeCredentials;
+      if (response.status === 407) {
+        if (request2.window === "no-window") {
+          return makeNetworkError();
         }
-        response.requestIncludesCredentials = includeCredentials;
-        if (response.status === 407) {
-          if (request2.window === "no-window") {
-            return makeNetworkError();
-          }
-          if (isCancelled(fetchParams)) {
-            return makeAppropriateNetworkError(fetchParams);
-          }
-          return makeNetworkError("proxy authentication required");
+        if (isCancelled(fetchParams)) {
+          return makeAppropriateNetworkError(fetchParams);
         }
-        if (
-          // response’s status is 421
-          response.status === 421 && // isNewConnectionFetch is false
-          !isNewConnectionFetch && // request’s body is null, or request’s body is non-null and request’s body’s source is non-null
-          (request2.body == null || request2.body.source != null)
-        ) {
-          if (isCancelled(fetchParams)) {
-            return makeAppropriateNetworkError(fetchParams);
-          }
-          fetchParams.controller.connection.destroy();
-          response = yield httpNetworkOrCacheFetch(
-            fetchParams,
-            isAuthenticationFetch,
-            true
-          );
+        return makeNetworkError("proxy authentication required");
+      }
+      if (
+        // response’s status is 421
+        response.status === 421 && // isNewConnectionFetch is false
+        !isNewConnectionFetch && // request’s body is null, or request’s body is non-null and request’s body’s source is non-null
+        (request2.body == null || request2.body.source != null)
+      ) {
+        if (isCancelled(fetchParams)) {
+          return makeAppropriateNetworkError(fetchParams);
         }
-        if (isAuthenticationFetch) {
-        }
-        return response;
-      });
+        fetchParams.controller.connection.destroy();
+        response = await httpNetworkOrCacheFetch(
+          fetchParams,
+          isAuthenticationFetch,
+          true
+        );
+      }
+      if (isAuthenticationFetch) {
+      }
+      return response;
     }
-    function httpNetworkFetch(fetchParams, includeCredentials = false, forceNewConnection = false) {
-      return __async(this, null, function* () {
-        assert(!fetchParams.controller.connection || fetchParams.controller.connection.destroyed);
-        fetchParams.controller.connection = {
-          abort: null,
-          destroyed: false,
-          destroy(err, abort = true) {
-            var _a3;
-            if (!this.destroyed) {
-              this.destroyed = true;
-              if (abort) {
-                (_a3 = this.abort) == null ? void 0 : _a3.call(this, err != null ? err : new DOMException("The operation was aborted.", "AbortError"));
-              }
+    async function httpNetworkFetch(fetchParams, includeCredentials = false, forceNewConnection = false) {
+      assert(!fetchParams.controller.connection || fetchParams.controller.connection.destroyed);
+      fetchParams.controller.connection = {
+        abort: null,
+        destroyed: false,
+        destroy(err, abort = true) {
+          if (!this.destroyed) {
+            this.destroyed = true;
+            if (abort) {
+              this.abort?.(err ?? new DOMException("The operation was aborted.", "AbortError"));
             }
           }
+        }
+      };
+      const request2 = fetchParams.request;
+      let response = null;
+      const timingInfo = fetchParams.timingInfo;
+      const httpCache = null;
+      if (httpCache == null) {
+        request2.cache = "no-store";
+      }
+      const newConnection = forceNewConnection ? "yes" : "no";
+      if (request2.mode === "websocket") {
+      } else {
+      }
+      let requestBody = null;
+      if (request2.body == null && fetchParams.processRequestEndOfBody) {
+        queueMicrotask(() => fetchParams.processRequestEndOfBody());
+      } else if (request2.body != null) {
+        const processBodyChunk = async function* (bytes) {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          yield bytes;
+          fetchParams.processRequestBodyChunkLength?.(bytes.byteLength);
         };
-        const request2 = fetchParams.request;
-        let response = null;
-        const timingInfo = fetchParams.timingInfo;
-        const httpCache = null;
-        if (httpCache == null) {
-          request2.cache = "no-store";
-        }
-        const newConnection = forceNewConnection ? "yes" : "no";
-        if (request2.mode === "websocket") {
+        const processEndOfBody = () => {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          if (fetchParams.processRequestEndOfBody) {
+            fetchParams.processRequestEndOfBody();
+          }
+        };
+        const processBodyError = (e) => {
+          if (isCancelled(fetchParams)) {
+            return;
+          }
+          if (e.name === "AbortError") {
+            fetchParams.controller.abort();
+          } else {
+            fetchParams.controller.terminate(e);
+          }
+        };
+        requestBody = async function* () {
+          try {
+            for await (const bytes of request2.body.stream) {
+              yield* processBodyChunk(bytes);
+            }
+            processEndOfBody();
+          } catch (err) {
+            processBodyError(err);
+          }
+        }();
+      }
+      try {
+        const { body, status, statusText, headersList, socket } = await dispatch({ body: requestBody });
+        if (socket) {
+          response = makeResponse({ status, statusText, headersList, socket });
         } else {
+          const iterator2 = body[Symbol.asyncIterator]();
+          fetchParams.controller.next = () => iterator2.next();
+          response = makeResponse({ status, statusText, headersList });
         }
-        let requestBody = null;
-        if (request2.body == null && fetchParams.processRequestEndOfBody) {
-          queueMicrotask(() => fetchParams.processRequestEndOfBody());
-        } else if (request2.body != null) {
-          const processBodyChunk = function(bytes) {
-            return __asyncGenerator(this, null, function* () {
-              var _a3;
-              if (isCancelled(fetchParams)) {
+      } catch (err) {
+        if (err.name === "AbortError") {
+          fetchParams.controller.connection.destroy();
+          return makeAppropriateNetworkError(fetchParams, err);
+        }
+        return makeNetworkError(err);
+      }
+      const pullAlgorithm = async () => {
+        await fetchParams.controller.resume();
+      };
+      const cancelAlgorithm = (reason) => {
+        fetchParams.controller.abort(reason);
+      };
+      const stream = new ReadableStream(
+        {
+          async start(controller) {
+            fetchParams.controller.controller = controller;
+          },
+          async pull(controller) {
+            await pullAlgorithm(controller);
+          },
+          async cancel(reason) {
+            await cancelAlgorithm(reason);
+          },
+          type: "bytes"
+        }
+      );
+      response.body = { stream, source: null, length: null };
+      fetchParams.controller.onAborted = onAborted;
+      fetchParams.controller.on("terminated", onAborted);
+      fetchParams.controller.resume = async () => {
+        while (true) {
+          let bytes;
+          let isFailure;
+          try {
+            const { done, value } = await fetchParams.controller.next();
+            if (isAborted(fetchParams)) {
+              break;
+            }
+            bytes = done ? void 0 : value;
+          } catch (err) {
+            if (fetchParams.controller.ended && !timingInfo.encodedBodySize) {
+              bytes = void 0;
+            } else {
+              bytes = err;
+              isFailure = true;
+            }
+          }
+          if (bytes === void 0) {
+            readableStreamClose(fetchParams.controller.controller);
+            finalizeResponse(fetchParams, response);
+            return;
+          }
+          timingInfo.decodedBodySize += bytes?.byteLength ?? 0;
+          if (isFailure) {
+            fetchParams.controller.terminate(bytes);
+            return;
+          }
+          const buffer = new Uint8Array(bytes);
+          if (buffer.byteLength) {
+            fetchParams.controller.controller.enqueue(buffer);
+          }
+          if (isErrored(stream)) {
+            fetchParams.controller.terminate();
+            return;
+          }
+          if (fetchParams.controller.controller.desiredSize <= 0) {
+            return;
+          }
+        }
+      };
+      function onAborted(reason) {
+        if (isAborted(fetchParams)) {
+          response.aborted = true;
+          if (isReadable(stream)) {
+            fetchParams.controller.controller.error(
+              fetchParams.controller.serializedAbortReason
+            );
+          }
+        } else {
+          if (isReadable(stream)) {
+            fetchParams.controller.controller.error(new TypeError("terminated", {
+              cause: isErrorLike(reason) ? reason : void 0
+            }));
+          }
+        }
+        fetchParams.controller.connection.destroy();
+      }
+      return response;
+      function dispatch({ body }) {
+        const url = requestCurrentURL(request2);
+        const agent = fetchParams.controller.dispatcher;
+        return new Promise((resolve, reject) => agent.dispatch(
+          {
+            path: url.pathname + url.search,
+            origin: url.origin,
+            method: request2.method,
+            body: agent.isMockActive ? request2.body && (request2.body.source || request2.body.stream) : body,
+            headers: request2.headersList.entries,
+            maxRedirections: 0,
+            upgrade: request2.mode === "websocket" ? "websocket" : void 0
+          },
+          {
+            body: null,
+            abort: null,
+            onConnect(abort) {
+              const { connection } = fetchParams.controller;
+              timingInfo.finalConnectionTimingInfo = clampAndCoarsenConnectionTimingInfo(void 0, timingInfo.postRedirectStartTime, fetchParams.crossOriginIsolatedCapability);
+              if (connection.destroyed) {
+                abort(new DOMException("The operation was aborted.", "AbortError"));
+              } else {
+                fetchParams.controller.on("terminated", abort);
+                this.abort = connection.abort = abort;
+              }
+              timingInfo.finalNetworkRequestStartTime = coarsenedSharedCurrentTime(fetchParams.crossOriginIsolatedCapability);
+            },
+            onResponseStarted() {
+              timingInfo.finalNetworkResponseStartTime = coarsenedSharedCurrentTime(fetchParams.crossOriginIsolatedCapability);
+            },
+            onHeaders(status, rawHeaders, resume, statusText) {
+              if (status < 200) {
                 return;
               }
-              yield bytes;
-              (_a3 = fetchParams.processRequestBodyChunkLength) == null ? void 0 : _a3.call(fetchParams, bytes.byteLength);
-            });
-          };
-          const processEndOfBody = () => {
-            if (isCancelled(fetchParams)) {
-              return;
-            }
-            if (fetchParams.processRequestEndOfBody) {
-              fetchParams.processRequestEndOfBody();
-            }
-          };
-          const processBodyError = (e) => {
-            if (isCancelled(fetchParams)) {
-              return;
-            }
-            if (e.name === "AbortError") {
-              fetchParams.controller.abort();
-            } else {
-              fetchParams.controller.terminate(e);
-            }
-          };
-          requestBody = function() {
-            return __asyncGenerator(this, null, function* () {
-              try {
-                try {
-                  for (var iter = __forAwait(request2.body.stream), more, temp, error; more = !(temp = yield new __await(iter.next())).done; more = false) {
-                    const bytes = temp.value;
-                    yield* __yieldStar(processBodyChunk(bytes));
-                  }
-                } catch (temp) {
-                  error = [temp];
-                } finally {
-                  try {
-                    more && (temp = iter.return) && (yield new __await(temp.call(iter)));
-                  } finally {
-                    if (error)
-                      throw error[0];
-                  }
-                }
-                processEndOfBody();
-              } catch (err) {
-                processBodyError(err);
-              }
-            });
-          }();
-        }
-        try {
-          const { body, status, statusText, headersList, socket } = yield dispatch({ body: requestBody });
-          if (socket) {
-            response = makeResponse({ status, statusText, headersList, socket });
-          } else {
-            const iterator2 = body[Symbol.asyncIterator]();
-            fetchParams.controller.next = () => iterator2.next();
-            response = makeResponse({ status, statusText, headersList });
-          }
-        } catch (err) {
-          if (err.name === "AbortError") {
-            fetchParams.controller.connection.destroy();
-            return makeAppropriateNetworkError(fetchParams, err);
-          }
-          return makeNetworkError(err);
-        }
-        const pullAlgorithm = () => __async(this, null, function* () {
-          yield fetchParams.controller.resume();
-        });
-        const cancelAlgorithm = (reason) => {
-          fetchParams.controller.abort(reason);
-        };
-        const stream = new ReadableStream(
-          {
-            start(controller) {
-              return __async(this, null, function* () {
-                fetchParams.controller.controller = controller;
-              });
-            },
-            pull(controller) {
-              return __async(this, null, function* () {
-                yield pullAlgorithm(controller);
-              });
-            },
-            cancel(reason) {
-              return __async(this, null, function* () {
-                yield cancelAlgorithm(reason);
-              });
-            },
-            type: "bytes"
-          }
-        );
-        response.body = { stream, source: null, length: null };
-        fetchParams.controller.onAborted = onAborted;
-        fetchParams.controller.on("terminated", onAborted);
-        fetchParams.controller.resume = () => __async(this, null, function* () {
-          var _a3;
-          while (true) {
-            let bytes;
-            let isFailure;
-            try {
-              const { done, value } = yield fetchParams.controller.next();
-              if (isAborted(fetchParams)) {
-                break;
-              }
-              bytes = done ? void 0 : value;
-            } catch (err) {
-              if (fetchParams.controller.ended && !timingInfo.encodedBodySize) {
-                bytes = void 0;
-              } else {
-                bytes = err;
-                isFailure = true;
-              }
-            }
-            if (bytes === void 0) {
-              readableStreamClose(fetchParams.controller.controller);
-              finalizeResponse(fetchParams, response);
-              return;
-            }
-            timingInfo.decodedBodySize += (_a3 = bytes == null ? void 0 : bytes.byteLength) != null ? _a3 : 0;
-            if (isFailure) {
-              fetchParams.controller.terminate(bytes);
-              return;
-            }
-            const buffer = new Uint8Array(bytes);
-            if (buffer.byteLength) {
-              fetchParams.controller.controller.enqueue(buffer);
-            }
-            if (isErrored(stream)) {
-              fetchParams.controller.terminate();
-              return;
-            }
-            if (fetchParams.controller.controller.desiredSize <= 0) {
-              return;
-            }
-          }
-        });
-        function onAborted(reason) {
-          if (isAborted(fetchParams)) {
-            response.aborted = true;
-            if (isReadable(stream)) {
-              fetchParams.controller.controller.error(
-                fetchParams.controller.serializedAbortReason
-              );
-            }
-          } else {
-            if (isReadable(stream)) {
-              fetchParams.controller.controller.error(new TypeError("terminated", {
-                cause: isErrorLike(reason) ? reason : void 0
-              }));
-            }
-          }
-          fetchParams.controller.connection.destroy();
-        }
-        return response;
-        function dispatch({ body }) {
-          const url = requestCurrentURL(request2);
-          const agent = fetchParams.controller.dispatcher;
-          return new Promise((resolve, reject) => agent.dispatch(
-            {
-              path: url.pathname + url.search,
-              origin: url.origin,
-              method: request2.method,
-              body: agent.isMockActive ? request2.body && (request2.body.source || request2.body.stream) : body,
-              headers: request2.headersList.entries,
-              maxRedirections: 0,
-              upgrade: request2.mode === "websocket" ? "websocket" : void 0
-            },
-            {
-              body: null,
-              abort: null,
-              onConnect(abort) {
-                const { connection } = fetchParams.controller;
-                timingInfo.finalConnectionTimingInfo = clampAndCoarsenConnectionTimingInfo(void 0, timingInfo.postRedirectStartTime, fetchParams.crossOriginIsolatedCapability);
-                if (connection.destroyed) {
-                  abort(new DOMException("The operation was aborted.", "AbortError"));
-                } else {
-                  fetchParams.controller.on("terminated", abort);
-                  this.abort = connection.abort = abort;
-                }
-                timingInfo.finalNetworkRequestStartTime = coarsenedSharedCurrentTime(fetchParams.crossOriginIsolatedCapability);
-              },
-              onResponseStarted() {
-                timingInfo.finalNetworkResponseStartTime = coarsenedSharedCurrentTime(fetchParams.crossOriginIsolatedCapability);
-              },
-              onHeaders(status, rawHeaders, resume, statusText) {
-                if (status < 200) {
-                  return;
-                }
-                let codings = [];
-                let location = "";
-                const headersList = new HeadersList();
-                if (Array.isArray(rawHeaders)) {
-                  for (let i = 0; i < rawHeaders.length; i += 2) {
-                    headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
-                  }
-                  const contentEncoding = headersList.get("content-encoding", true);
-                  if (contentEncoding) {
-                    codings = contentEncoding.toLowerCase().split(",").map((x) => x.trim());
-                  }
-                  location = headersList.get("location", true);
-                } else {
-                  const keys = Object.keys(rawHeaders);
-                  for (let i = 0; i < keys.length; ++i) {
-                    const key = keys[i];
-                    const value = rawHeaders[key];
-                    if (key === "set-cookie") {
-                      for (let j = 0; j < value.length; ++j) {
-                        headersList.append(key, value[j], true);
-                      }
-                    } else {
-                      headersList.append(key, value, true);
-                    }
-                  }
-                  const contentEncoding = rawHeaders["content-encoding"];
-                  if (contentEncoding) {
-                    codings = contentEncoding.toLowerCase().split(",").map((x) => x.trim()).reverse();
-                  }
-                  location = rawHeaders.location;
-                }
-                this.body = new Readable2({ read: resume });
-                const decoders = [];
-                const willFollow = location && request2.redirect === "follow" && redirectStatusSet.has(status);
-                if (request2.method !== "HEAD" && request2.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
-                  for (let i = 0; i < codings.length; ++i) {
-                    const coding = codings[i];
-                    if (coding === "x-gzip" || coding === "gzip") {
-                      decoders.push(zlib.createGunzip({
-                        // Be less strict when decoding compressed responses, since sometimes
-                        // servers send slightly invalid responses that are still accepted
-                        // by common browsers.
-                        // Always using Z_SYNC_FLUSH is what cURL does.
-                        flush: zlib.constants.Z_SYNC_FLUSH,
-                        finishFlush: zlib.constants.Z_SYNC_FLUSH
-                      }));
-                    } else if (coding === "deflate") {
-                      decoders.push(createInflate());
-                    } else if (coding === "br") {
-                      decoders.push(zlib.createBrotliDecompress());
-                    } else {
-                      decoders.length = 0;
-                      break;
-                    }
-                  }
-                }
-                resolve({
-                  status,
-                  statusText,
-                  headersList,
-                  body: decoders.length ? pipeline(this.body, ...decoders, () => {
-                  }) : this.body.on("error", () => {
-                  })
-                });
-                return true;
-              },
-              onData(chunk) {
-                if (fetchParams.controller.dump) {
-                  return;
-                }
-                const bytes = chunk;
-                timingInfo.encodedBodySize += bytes.byteLength;
-                return this.body.push(bytes);
-              },
-              onComplete() {
-                if (this.abort) {
-                  fetchParams.controller.off("terminated", this.abort);
-                }
-                if (fetchParams.controller.onAborted) {
-                  fetchParams.controller.off("terminated", fetchParams.controller.onAborted);
-                }
-                fetchParams.controller.ended = true;
-                this.body.push(null);
-              },
-              onError(error) {
-                var _a3;
-                if (this.abort) {
-                  fetchParams.controller.off("terminated", this.abort);
-                }
-                (_a3 = this.body) == null ? void 0 : _a3.destroy(error);
-                fetchParams.controller.terminate(error);
-                reject(error);
-              },
-              onUpgrade(status, rawHeaders, socket) {
-                if (status !== 101) {
-                  return;
-                }
-                const headersList = new HeadersList();
+              let codings = [];
+              let location = "";
+              const headersList = new HeadersList();
+              if (Array.isArray(rawHeaders)) {
                 for (let i = 0; i < rawHeaders.length; i += 2) {
                   headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
                 }
-                resolve({
-                  status,
-                  statusText: STATUS_CODES[status],
-                  headersList,
-                  socket
-                });
-                return true;
+                const contentEncoding = headersList.get("content-encoding", true);
+                if (contentEncoding) {
+                  codings = contentEncoding.toLowerCase().split(",").map((x) => x.trim());
+                }
+                location = headersList.get("location", true);
+              } else {
+                const keys = Object.keys(rawHeaders);
+                for (let i = 0; i < keys.length; ++i) {
+                  const key = keys[i];
+                  const value = rawHeaders[key];
+                  if (key === "set-cookie") {
+                    for (let j = 0; j < value.length; ++j) {
+                      headersList.append(key, value[j], true);
+                    }
+                  } else {
+                    headersList.append(key, value, true);
+                  }
+                }
+                const contentEncoding = rawHeaders["content-encoding"];
+                if (contentEncoding) {
+                  codings = contentEncoding.toLowerCase().split(",").map((x) => x.trim()).reverse();
+                }
+                location = rawHeaders.location;
               }
+              this.body = new Readable2({ read: resume });
+              const decoders = [];
+              const willFollow = location && request2.redirect === "follow" && redirectStatusSet.has(status);
+              if (request2.method !== "HEAD" && request2.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
+                for (let i = 0; i < codings.length; ++i) {
+                  const coding = codings[i];
+                  if (coding === "x-gzip" || coding === "gzip") {
+                    decoders.push(zlib.createGunzip({
+                      // Be less strict when decoding compressed responses, since sometimes
+                      // servers send slightly invalid responses that are still accepted
+                      // by common browsers.
+                      // Always using Z_SYNC_FLUSH is what cURL does.
+                      flush: zlib.constants.Z_SYNC_FLUSH,
+                      finishFlush: zlib.constants.Z_SYNC_FLUSH
+                    }));
+                  } else if (coding === "deflate") {
+                    decoders.push(createInflate());
+                  } else if (coding === "br") {
+                    decoders.push(zlib.createBrotliDecompress());
+                  } else {
+                    decoders.length = 0;
+                    break;
+                  }
+                }
+              }
+              resolve({
+                status,
+                statusText,
+                headersList,
+                body: decoders.length ? pipeline(this.body, ...decoders, () => {
+                }) : this.body.on("error", () => {
+                })
+              });
+              return true;
+            },
+            onData(chunk) {
+              if (fetchParams.controller.dump) {
+                return;
+              }
+              const bytes = chunk;
+              timingInfo.encodedBodySize += bytes.byteLength;
+              return this.body.push(bytes);
+            },
+            onComplete() {
+              if (this.abort) {
+                fetchParams.controller.off("terminated", this.abort);
+              }
+              if (fetchParams.controller.onAborted) {
+                fetchParams.controller.off("terminated", fetchParams.controller.onAborted);
+              }
+              fetchParams.controller.ended = true;
+              this.body.push(null);
+            },
+            onError(error) {
+              if (this.abort) {
+                fetchParams.controller.off("terminated", this.abort);
+              }
+              this.body?.destroy(error);
+              fetchParams.controller.terminate(error);
+              reject(error);
+            },
+            onUpgrade(status, rawHeaders, socket) {
+              if (status !== 101) {
+                return;
+              }
+              const headersList = new HeadersList();
+              for (let i = 0; i < rawHeaders.length; i += 2) {
+                headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
+              }
+              resolve({
+                status,
+                statusText: STATUS_CODES[status],
+                headersList,
+                socket
+              });
+              return true;
             }
-          ));
-        }
-      });
+          }
+        ));
+      }
     }
     module2.exports = {
       fetch: fetch2,
@@ -32417,7 +31770,7 @@ var require_progressevent2 = __commonJS({
     var ProgressEvent = class _ProgressEvent extends Event {
       constructor(type, eventInitDict = {}) {
         type = webidl.converters.DOMString(type);
-        eventInitDict = webidl.converters.ProgressEventInit(eventInitDict != null ? eventInitDict : {});
+        eventInitDict = webidl.converters.ProgressEventInit(eventInitDict ?? {});
         super(type, eventInitDict);
         this[kState] = {
           lengthComputable: eventInitDict.lengthComputable,
@@ -32796,10 +32149,10 @@ var require_util11 = __commonJS({
       const bytes = [];
       let chunkPromise = reader.read();
       let isFirstChunk = true;
-      (() => __async(this, null, function* () {
+      (async () => {
         while (!fr[kAborted]) {
           try {
-            const { done, value } = yield chunkPromise;
+            const { done, value } = await chunkPromise;
             if (isFirstChunk && !fr[kAborted]) {
               queueMicrotask(() => {
                 fireAProgressEvent("loadstart", fr);
@@ -32850,7 +32203,7 @@ var require_util11 = __commonJS({
             break;
           }
         }
-      }))();
+      })();
     }
     function fireAProgressEvent(e, reader) {
       const event = new ProgressEvent(e, {
@@ -33260,303 +32613,266 @@ var require_cache2 = __commonJS({
     var { fetching } = require_fetch2();
     var { urlIsHttpHttpsScheme, createDeferredPromise, readAllBytes } = require_util9();
     var assert = require("assert");
-    var _relevantRequestResponseList, _batchCacheOperations, batchCacheOperations_fn, _queryCache, queryCache_fn, _requestMatchesCachedItem, requestMatchesCachedItem_fn, _internalMatchAll, internalMatchAll_fn;
-    var _Cache = class _Cache {
+    var Cache = class _Cache {
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
+       * @type {requestResponseList}
+       */
+      #relevantRequestResponseList;
       constructor() {
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#batch-cache-operations-algorithm
-         * @param {CacheBatchOperation[]} operations
-         * @returns {requestResponseList}
-         */
-        __privateAdd(this, _batchCacheOperations);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#query-cache
-         * @param {any} requestQuery
-         * @param {import('../../types/cache').CacheQueryOptions} options
-         * @param {requestResponseList} targetStorage
-         * @returns {requestResponseList}
-         */
-        __privateAdd(this, _queryCache);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#request-matches-cached-item-algorithm
-         * @param {any} requestQuery
-         * @param {any} request
-         * @param {any | null} response
-         * @param {import('../../types/cache').CacheQueryOptions | undefined} options
-         * @returns {boolean}
-         */
-        __privateAdd(this, _requestMatchesCachedItem);
-        __privateAdd(this, _internalMatchAll);
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
-         * @type {requestResponseList}
-         */
-        __privateAdd(this, _relevantRequestResponseList, void 0);
         if (arguments[0] !== kConstruct) {
           webidl.illegalConstructor();
         }
-        __privateSet(this, _relevantRequestResponseList, arguments[1]);
+        this.#relevantRequestResponseList = arguments[1];
       }
-      match(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.match" });
+      async match(request2, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.match" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        const p = this.#internalMatchAll(request2, options, 1);
+        if (p.length === 0) {
+          return;
+        }
+        return p[0];
+      }
+      async matchAll(request2 = void 0, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        if (request2 !== void 0)
           request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          const p = __privateMethod(this, _internalMatchAll, internalMatchAll_fn).call(this, request2, options, 1);
-          if (p.length === 0) {
-            return;
+        options = webidl.converters.CacheQueryOptions(options);
+        return this.#internalMatchAll(request2, options);
+      }
+      async add(request2) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.add" });
+        request2 = webidl.converters.RequestInfo(request2);
+        const requests = [request2];
+        const responseArrayPromise = this.addAll(requests);
+        return await responseArrayPromise;
+      }
+      async addAll(requests) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.addAll" });
+        const responsePromises = [];
+        const requestList = [];
+        for (let request2 of requests) {
+          if (request2 === void 0) {
+            throw webidl.errors.conversionFailed({
+              prefix: "Cache.addAll",
+              argument: "Argument 1",
+              types: ["undefined is not allowed"]
+            });
           }
-          return p[0];
-        });
-      }
-      matchAll() {
-        return __async(this, arguments, function* (request2 = void 0, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          if (request2 !== void 0)
-            request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          return __privateMethod(this, _internalMatchAll, internalMatchAll_fn).call(this, request2, options);
-        });
-      }
-      add(_0) {
-        return __async(this, arguments, function* (request2) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.add" });
           request2 = webidl.converters.RequestInfo(request2);
-          const requests = [request2];
-          const responseArrayPromise = this.addAll(requests);
-          return yield responseArrayPromise;
-        });
-      }
-      addAll(_0) {
-        return __async(this, arguments, function* (requests) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.addAll" });
-          const responsePromises = [];
-          const requestList = [];
-          for (let request2 of requests) {
-            if (request2 === void 0) {
-              throw webidl.errors.conversionFailed({
-                prefix: "Cache.addAll",
-                argument: "Argument 1",
-                types: ["undefined is not allowed"]
-              });
-            }
-            request2 = webidl.converters.RequestInfo(request2);
-            if (typeof request2 === "string") {
-              continue;
-            }
-            const r = request2[kState];
-            if (!urlIsHttpHttpsScheme(r.url) || r.method !== "GET") {
-              throw webidl.errors.exception({
-                header: "Cache.addAll",
-                message: "Expected http/s scheme when method is not GET."
-              });
-            }
+          if (typeof request2 === "string") {
+            continue;
           }
-          const fetchControllers = [];
-          for (const request2 of requests) {
-            const r = new Request(request2)[kState];
-            if (!urlIsHttpHttpsScheme(r.url)) {
-              throw webidl.errors.exception({
-                header: "Cache.addAll",
-                message: "Expected http/s scheme."
-              });
-            }
-            r.initiator = "fetch";
-            r.destination = "subresource";
-            requestList.push(r);
-            const responsePromise = createDeferredPromise();
-            fetchControllers.push(fetching({
-              request: r,
-              processResponse(response) {
-                if (response.type === "error" || response.status === 206 || response.status < 200 || response.status > 299) {
-                  responsePromise.reject(webidl.errors.exception({
-                    header: "Cache.addAll",
-                    message: "Received an invalid status code or the request failed."
-                  }));
-                } else if (response.headersList.contains("vary")) {
-                  const fieldValues = getFieldValues(response.headersList.get("vary"));
-                  for (const fieldValue of fieldValues) {
-                    if (fieldValue === "*") {
-                      responsePromise.reject(webidl.errors.exception({
-                        header: "Cache.addAll",
-                        message: "invalid vary field value"
-                      }));
-                      for (const controller of fetchControllers) {
-                        controller.abort();
-                      }
-                      return;
+          const r = request2[kState];
+          if (!urlIsHttpHttpsScheme(r.url) || r.method !== "GET") {
+            throw webidl.errors.exception({
+              header: "Cache.addAll",
+              message: "Expected http/s scheme when method is not GET."
+            });
+          }
+        }
+        const fetchControllers = [];
+        for (const request2 of requests) {
+          const r = new Request(request2)[kState];
+          if (!urlIsHttpHttpsScheme(r.url)) {
+            throw webidl.errors.exception({
+              header: "Cache.addAll",
+              message: "Expected http/s scheme."
+            });
+          }
+          r.initiator = "fetch";
+          r.destination = "subresource";
+          requestList.push(r);
+          const responsePromise = createDeferredPromise();
+          fetchControllers.push(fetching({
+            request: r,
+            processResponse(response) {
+              if (response.type === "error" || response.status === 206 || response.status < 200 || response.status > 299) {
+                responsePromise.reject(webidl.errors.exception({
+                  header: "Cache.addAll",
+                  message: "Received an invalid status code or the request failed."
+                }));
+              } else if (response.headersList.contains("vary")) {
+                const fieldValues = getFieldValues(response.headersList.get("vary"));
+                for (const fieldValue of fieldValues) {
+                  if (fieldValue === "*") {
+                    responsePromise.reject(webidl.errors.exception({
+                      header: "Cache.addAll",
+                      message: "invalid vary field value"
+                    }));
+                    for (const controller of fetchControllers) {
+                      controller.abort();
                     }
+                    return;
                   }
                 }
-              },
-              processResponseEndOfBody(response) {
-                if (response.aborted) {
-                  responsePromise.reject(new DOMException("aborted", "AbortError"));
-                  return;
-                }
-                responsePromise.resolve(response);
               }
-            }));
-            responsePromises.push(responsePromise.promise);
-          }
-          const p = Promise.all(responsePromises);
-          const responses = yield p;
-          const operations = [];
-          let index = 0;
-          for (const response of responses) {
-            const operation = {
-              type: "put",
-              // 7.3.2
-              request: requestList[index],
-              // 7.3.3
-              response
-              // 7.3.4
-            };
-            operations.push(operation);
-            index++;
-          }
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          try {
-            __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
-          }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve(void 0);
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
-        });
-      }
-      put(_0, _1) {
-        return __async(this, arguments, function* (request2, response) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 2, { header: "Cache.put" });
-          request2 = webidl.converters.RequestInfo(request2);
-          response = webidl.converters.Response(response);
-          let innerRequest = null;
-          if (request2 instanceof Request) {
-            innerRequest = request2[kState];
-          } else {
-            innerRequest = new Request(request2)[kState];
-          }
-          if (!urlIsHttpHttpsScheme(innerRequest.url) || innerRequest.method !== "GET") {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Expected an http/s scheme when method is not GET"
-            });
-          }
-          const innerResponse = response[kState];
-          if (innerResponse.status === 206) {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Got 206 status"
-            });
-          }
-          if (innerResponse.headersList.contains("vary")) {
-            const fieldValues = getFieldValues(innerResponse.headersList.get("vary"));
-            for (const fieldValue of fieldValues) {
-              if (fieldValue === "*") {
-                throw webidl.errors.exception({
-                  header: "Cache.put",
-                  message: "Got * vary field value"
-                });
+            },
+            processResponseEndOfBody(response) {
+              if (response.aborted) {
+                responsePromise.reject(new DOMException("aborted", "AbortError"));
+                return;
               }
+              responsePromise.resolve(response);
             }
-          }
-          if (innerResponse.body && (isDisturbed(innerResponse.body.stream) || innerResponse.body.stream.locked)) {
-            throw webidl.errors.exception({
-              header: "Cache.put",
-              message: "Response body is locked or disturbed"
-            });
-          }
-          const clonedResponse = cloneResponse(innerResponse);
-          const bodyReadPromise = createDeferredPromise();
-          if (innerResponse.body != null) {
-            const stream = innerResponse.body.stream;
-            const reader = stream.getReader();
-            readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
-          } else {
-            bodyReadPromise.resolve(void 0);
-          }
-          const operations = [];
+          }));
+          responsePromises.push(responsePromise.promise);
+        }
+        const p = Promise.all(responsePromises);
+        const responses = await p;
+        const operations = [];
+        let index = 0;
+        for (const response of responses) {
           const operation = {
             type: "put",
-            // 14.
-            request: innerRequest,
-            // 15.
-            response: clonedResponse
-            // 16.
+            // 7.3.2
+            request: requestList[index],
+            // 7.3.3
+            response
+            // 7.3.4
           };
           operations.push(operation);
-          const bytes = yield bodyReadPromise.promise;
-          if (clonedResponse.body != null) {
-            clonedResponse.body.source = bytes;
-          }
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          try {
-            __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
-          }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve();
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
-        });
-      }
-      delete(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          webidl.argumentLengthCheck(arguments, 1, { header: "Cache.delete" });
-          request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          let r = null;
-          if (request2 instanceof Request) {
-            r = request2[kState];
-            if (r.method !== "GET" && !options.ignoreMethod) {
-              return false;
-            }
+          index++;
+        }
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        try {
+          this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve(void 0);
           } else {
-            assert(typeof request2 === "string");
-            r = new Request(request2)[kState];
+            cacheJobPromise.reject(errorData);
           }
-          const operations = [];
-          const operation = {
-            type: "delete",
-            request: r,
-            options
-          };
-          operations.push(operation);
-          const cacheJobPromise = createDeferredPromise();
-          let errorData = null;
-          let requestResponses;
-          try {
-            requestResponses = __privateMethod(this, _batchCacheOperations, batchCacheOperations_fn).call(this, operations);
-          } catch (e) {
-            errorData = e;
-          }
-          queueMicrotask(() => {
-            if (errorData === null) {
-              cacheJobPromise.resolve(!!(requestResponses == null ? void 0 : requestResponses.length));
-            } else {
-              cacheJobPromise.reject(errorData);
-            }
-          });
-          return cacheJobPromise.promise;
         });
+        return cacheJobPromise.promise;
+      }
+      async put(request2, response) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 2, { header: "Cache.put" });
+        request2 = webidl.converters.RequestInfo(request2);
+        response = webidl.converters.Response(response);
+        let innerRequest = null;
+        if (request2 instanceof Request) {
+          innerRequest = request2[kState];
+        } else {
+          innerRequest = new Request(request2)[kState];
+        }
+        if (!urlIsHttpHttpsScheme(innerRequest.url) || innerRequest.method !== "GET") {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Expected an http/s scheme when method is not GET"
+          });
+        }
+        const innerResponse = response[kState];
+        if (innerResponse.status === 206) {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Got 206 status"
+          });
+        }
+        if (innerResponse.headersList.contains("vary")) {
+          const fieldValues = getFieldValues(innerResponse.headersList.get("vary"));
+          for (const fieldValue of fieldValues) {
+            if (fieldValue === "*") {
+              throw webidl.errors.exception({
+                header: "Cache.put",
+                message: "Got * vary field value"
+              });
+            }
+          }
+        }
+        if (innerResponse.body && (isDisturbed(innerResponse.body.stream) || innerResponse.body.stream.locked)) {
+          throw webidl.errors.exception({
+            header: "Cache.put",
+            message: "Response body is locked or disturbed"
+          });
+        }
+        const clonedResponse = cloneResponse(innerResponse);
+        const bodyReadPromise = createDeferredPromise();
+        if (innerResponse.body != null) {
+          const stream = innerResponse.body.stream;
+          const reader = stream.getReader();
+          readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
+        } else {
+          bodyReadPromise.resolve(void 0);
+        }
+        const operations = [];
+        const operation = {
+          type: "put",
+          // 14.
+          request: innerRequest,
+          // 15.
+          response: clonedResponse
+          // 16.
+        };
+        operations.push(operation);
+        const bytes = await bodyReadPromise.promise;
+        if (clonedResponse.body != null) {
+          clonedResponse.body.source = bytes;
+        }
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        try {
+          this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve();
+          } else {
+            cacheJobPromise.reject(errorData);
+          }
+        });
+        return cacheJobPromise.promise;
+      }
+      async delete(request2, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        webidl.argumentLengthCheck(arguments, 1, { header: "Cache.delete" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        let r = null;
+        if (request2 instanceof Request) {
+          r = request2[kState];
+          if (r.method !== "GET" && !options.ignoreMethod) {
+            return false;
+          }
+        } else {
+          assert(typeof request2 === "string");
+          r = new Request(request2)[kState];
+        }
+        const operations = [];
+        const operation = {
+          type: "delete",
+          request: r,
+          options
+        };
+        operations.push(operation);
+        const cacheJobPromise = createDeferredPromise();
+        let errorData = null;
+        let requestResponses;
+        try {
+          requestResponses = this.#batchCacheOperations(operations);
+        } catch (e) {
+          errorData = e;
+        }
+        queueMicrotask(() => {
+          if (errorData === null) {
+            cacheJobPromise.resolve(!!requestResponses?.length);
+          } else {
+            cacheJobPromise.reject(errorData);
+          }
+        });
+        return cacheJobPromise.promise;
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#dom-cache-keys
@@ -33564,205 +32880,217 @@ var require_cache2 = __commonJS({
        * @param {import('../../types/cache').CacheQueryOptions} options
        * @returns {Promise<readonly Request[]>}
        */
-      keys() {
-        return __async(this, arguments, function* (request2 = void 0, options = {}) {
-          webidl.brandCheck(this, _Cache);
-          if (request2 !== void 0)
-            request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.CacheQueryOptions(options);
-          let r = null;
-          if (request2 !== void 0) {
-            if (request2 instanceof Request) {
-              r = request2[kState];
-              if (r.method !== "GET" && !options.ignoreMethod) {
-                return [];
-              }
-            } else if (typeof request2 === "string") {
-              r = new Request(request2)[kState];
-            }
-          }
-          const promise = createDeferredPromise();
-          const requests = [];
-          if (request2 === void 0) {
-            for (const requestResponse of __privateGet(this, _relevantRequestResponseList)) {
-              requests.push(requestResponse[0]);
-            }
-          } else {
-            const requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, r, options);
-            for (const requestResponse of requestResponses) {
-              requests.push(requestResponse[0]);
-            }
-          }
-          queueMicrotask(() => {
-            const requestList = [];
-            for (const request3 of requests) {
-              const requestObject = fromInnerRequest(
-                request3,
-                new AbortController().signal,
-                "immutable",
-                { settingsObject: request3.client }
-              );
-              requestList.push(requestObject);
-            }
-            promise.resolve(Object.freeze(requestList));
-          });
-          return promise.promise;
-        });
-      }
-    };
-    _relevantRequestResponseList = new WeakMap();
-    _batchCacheOperations = new WeakSet();
-    batchCacheOperations_fn = function(operations) {
-      const cache = __privateGet(this, _relevantRequestResponseList);
-      const backupCache = [...cache];
-      const addedItems = [];
-      const resultList = [];
-      try {
-        for (const operation of operations) {
-          if (operation.type !== "delete" && operation.type !== "put") {
-            throw webidl.errors.exception({
-              header: "Cache.#batchCacheOperations",
-              message: 'operation type does not match "delete" or "put"'
-            });
-          }
-          if (operation.type === "delete" && operation.response != null) {
-            throw webidl.errors.exception({
-              header: "Cache.#batchCacheOperations",
-              message: "delete operation should not have an associated response"
-            });
-          }
-          if (__privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request, operation.options, addedItems).length) {
-            throw new DOMException("???", "InvalidStateError");
-          }
-          let requestResponses;
-          if (operation.type === "delete") {
-            requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request, operation.options);
-            if (requestResponses.length === 0) {
+      async keys(request2 = void 0, options = {}) {
+        webidl.brandCheck(this, _Cache);
+        if (request2 !== void 0)
+          request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.CacheQueryOptions(options);
+        let r = null;
+        if (request2 !== void 0) {
+          if (request2 instanceof Request) {
+            r = request2[kState];
+            if (r.method !== "GET" && !options.ignoreMethod) {
               return [];
             }
-            for (const requestResponse of requestResponses) {
-              const idx = cache.indexOf(requestResponse);
-              assert(idx !== -1);
-              cache.splice(idx, 1);
-            }
-          } else if (operation.type === "put") {
-            if (operation.response == null) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "put operation should have an associated response"
-              });
-            }
-            const r = operation.request;
-            if (!urlIsHttpHttpsScheme(r.url)) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "expected http or https scheme"
-              });
-            }
-            if (r.method !== "GET") {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "not get method"
-              });
-            }
-            if (operation.options != null) {
-              throw webidl.errors.exception({
-                header: "Cache.#batchCacheOperations",
-                message: "options must not be defined"
-              });
-            }
-            requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, operation.request);
-            for (const requestResponse of requestResponses) {
-              const idx = cache.indexOf(requestResponse);
-              assert(idx !== -1);
-              cache.splice(idx, 1);
-            }
-            cache.push([operation.request, operation.response]);
-            addedItems.push([operation.request, operation.response]);
+          } else if (typeof request2 === "string") {
+            r = new Request(request2)[kState];
           }
-          resultList.push([operation.request, operation.response]);
+        }
+        const promise = createDeferredPromise();
+        const requests = [];
+        if (request2 === void 0) {
+          for (const requestResponse of this.#relevantRequestResponseList) {
+            requests.push(requestResponse[0]);
+          }
+        } else {
+          const requestResponses = this.#queryCache(r, options);
+          for (const requestResponse of requestResponses) {
+            requests.push(requestResponse[0]);
+          }
+        }
+        queueMicrotask(() => {
+          const requestList = [];
+          for (const request3 of requests) {
+            const requestObject = fromInnerRequest(
+              request3,
+              new AbortController().signal,
+              "immutable",
+              { settingsObject: request3.client }
+            );
+            requestList.push(requestObject);
+          }
+          promise.resolve(Object.freeze(requestList));
+        });
+        return promise.promise;
+      }
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#batch-cache-operations-algorithm
+       * @param {CacheBatchOperation[]} operations
+       * @returns {requestResponseList}
+       */
+      #batchCacheOperations(operations) {
+        const cache = this.#relevantRequestResponseList;
+        const backupCache = [...cache];
+        const addedItems = [];
+        const resultList = [];
+        try {
+          for (const operation of operations) {
+            if (operation.type !== "delete" && operation.type !== "put") {
+              throw webidl.errors.exception({
+                header: "Cache.#batchCacheOperations",
+                message: 'operation type does not match "delete" or "put"'
+              });
+            }
+            if (operation.type === "delete" && operation.response != null) {
+              throw webidl.errors.exception({
+                header: "Cache.#batchCacheOperations",
+                message: "delete operation should not have an associated response"
+              });
+            }
+            if (this.#queryCache(operation.request, operation.options, addedItems).length) {
+              throw new DOMException("???", "InvalidStateError");
+            }
+            let requestResponses;
+            if (operation.type === "delete") {
+              requestResponses = this.#queryCache(operation.request, operation.options);
+              if (requestResponses.length === 0) {
+                return [];
+              }
+              for (const requestResponse of requestResponses) {
+                const idx = cache.indexOf(requestResponse);
+                assert(idx !== -1);
+                cache.splice(idx, 1);
+              }
+            } else if (operation.type === "put") {
+              if (operation.response == null) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "put operation should have an associated response"
+                });
+              }
+              const r = operation.request;
+              if (!urlIsHttpHttpsScheme(r.url)) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "expected http or https scheme"
+                });
+              }
+              if (r.method !== "GET") {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "not get method"
+                });
+              }
+              if (operation.options != null) {
+                throw webidl.errors.exception({
+                  header: "Cache.#batchCacheOperations",
+                  message: "options must not be defined"
+                });
+              }
+              requestResponses = this.#queryCache(operation.request);
+              for (const requestResponse of requestResponses) {
+                const idx = cache.indexOf(requestResponse);
+                assert(idx !== -1);
+                cache.splice(idx, 1);
+              }
+              cache.push([operation.request, operation.response]);
+              addedItems.push([operation.request, operation.response]);
+            }
+            resultList.push([operation.request, operation.response]);
+          }
+          return resultList;
+        } catch (e) {
+          this.#relevantRequestResponseList.length = 0;
+          this.#relevantRequestResponseList = backupCache;
+          throw e;
+        }
+      }
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#query-cache
+       * @param {any} requestQuery
+       * @param {import('../../types/cache').CacheQueryOptions} options
+       * @param {requestResponseList} targetStorage
+       * @returns {requestResponseList}
+       */
+      #queryCache(requestQuery, options, targetStorage) {
+        const resultList = [];
+        const storage = targetStorage ?? this.#relevantRequestResponseList;
+        for (const requestResponse of storage) {
+          const [cachedRequest, cachedResponse] = requestResponse;
+          if (this.#requestMatchesCachedItem(requestQuery, cachedRequest, cachedResponse, options)) {
+            resultList.push(requestResponse);
+          }
         }
         return resultList;
-      } catch (e) {
-        __privateGet(this, _relevantRequestResponseList).length = 0;
-        __privateSet(this, _relevantRequestResponseList, backupCache);
-        throw e;
       }
-    };
-    _queryCache = new WeakSet();
-    queryCache_fn = function(requestQuery, options, targetStorage) {
-      const resultList = [];
-      const storage = targetStorage != null ? targetStorage : __privateGet(this, _relevantRequestResponseList);
-      for (const requestResponse of storage) {
-        const [cachedRequest, cachedResponse] = requestResponse;
-        if (__privateMethod(this, _requestMatchesCachedItem, requestMatchesCachedItem_fn).call(this, requestQuery, cachedRequest, cachedResponse, options)) {
-          resultList.push(requestResponse);
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#request-matches-cached-item-algorithm
+       * @param {any} requestQuery
+       * @param {any} request
+       * @param {any | null} response
+       * @param {import('../../types/cache').CacheQueryOptions | undefined} options
+       * @returns {boolean}
+       */
+      #requestMatchesCachedItem(requestQuery, request2, response = null, options) {
+        const queryURL = new URL(requestQuery.url);
+        const cachedURL = new URL(request2.url);
+        if (options?.ignoreSearch) {
+          cachedURL.search = "";
+          queryURL.search = "";
         }
-      }
-      return resultList;
-    };
-    _requestMatchesCachedItem = new WeakSet();
-    requestMatchesCachedItem_fn = function(requestQuery, request2, response = null, options) {
-      const queryURL = new URL(requestQuery.url);
-      const cachedURL = new URL(request2.url);
-      if (options == null ? void 0 : options.ignoreSearch) {
-        cachedURL.search = "";
-        queryURL.search = "";
-      }
-      if (!urlEquals(queryURL, cachedURL, true)) {
-        return false;
-      }
-      if (response == null || (options == null ? void 0 : options.ignoreVary) || !response.headersList.contains("vary")) {
+        if (!urlEquals(queryURL, cachedURL, true)) {
+          return false;
+        }
+        if (response == null || options?.ignoreVary || !response.headersList.contains("vary")) {
+          return true;
+        }
+        const fieldValues = getFieldValues(response.headersList.get("vary"));
+        for (const fieldValue of fieldValues) {
+          if (fieldValue === "*") {
+            return false;
+          }
+          const requestValue = request2.headersList.get(fieldValue);
+          const queryValue = requestQuery.headersList.get(fieldValue);
+          if (requestValue !== queryValue) {
+            return false;
+          }
+        }
         return true;
       }
-      const fieldValues = getFieldValues(response.headersList.get("vary"));
-      for (const fieldValue of fieldValues) {
-        if (fieldValue === "*") {
-          return false;
-        }
-        const requestValue = request2.headersList.get(fieldValue);
-        const queryValue = requestQuery.headersList.get(fieldValue);
-        if (requestValue !== queryValue) {
-          return false;
-        }
-      }
-      return true;
-    };
-    _internalMatchAll = new WeakSet();
-    internalMatchAll_fn = function(request2, options, maxResponses = Infinity) {
-      let r = null;
-      if (request2 !== void 0) {
-        if (request2 instanceof Request) {
-          r = request2[kState];
-          if (r.method !== "GET" && !options.ignoreMethod) {
-            return [];
+      #internalMatchAll(request2, options, maxResponses = Infinity) {
+        let r = null;
+        if (request2 !== void 0) {
+          if (request2 instanceof Request) {
+            r = request2[kState];
+            if (r.method !== "GET" && !options.ignoreMethod) {
+              return [];
+            }
+          } else if (typeof request2 === "string") {
+            r = new Request(request2)[kState];
           }
-        } else if (typeof request2 === "string") {
-          r = new Request(request2)[kState];
         }
+        const responses = [];
+        if (request2 === void 0) {
+          for (const requestResponse of this.#relevantRequestResponseList) {
+            responses.push(requestResponse[1]);
+          }
+        } else {
+          const requestResponses = this.#queryCache(r, options);
+          for (const requestResponse of requestResponses) {
+            responses.push(requestResponse[1]);
+          }
+        }
+        const responseList = [];
+        for (const response of responses) {
+          const responseObject = fromInnerResponse(response, "immutable", { settingsObject: {} });
+          responseList.push(responseObject.clone());
+          if (responseList.length >= maxResponses) {
+            break;
+          }
+        }
+        return Object.freeze(responseList);
       }
-      const responses = [];
-      if (request2 === void 0) {
-        for (const requestResponse of __privateGet(this, _relevantRequestResponseList)) {
-          responses.push(requestResponse[1]);
-        }
-      } else {
-        const requestResponses = __privateMethod(this, _queryCache, queryCache_fn).call(this, r, options);
-        for (const requestResponse of requestResponses) {
-          responses.push(requestResponse[1]);
-        }
-      }
-      const responseList = [];
-      for (const response of responses) {
-        const responseObject = fromInnerResponse(response, "immutable", { settingsObject: {} });
-        responseList.push(responseObject.clone());
-        if (responseList.length >= maxResponses) {
-          break;
-        }
-      }
-      return Object.freeze(responseList);
     };
-    var Cache = _Cache;
     Object.defineProperties(Cache.prototype, {
       [Symbol.toStringTag]: {
         value: "Cache",
@@ -33819,100 +33147,87 @@ var require_cachestorage2 = __commonJS({
     var { Cache } = require_cache2();
     var { webidl } = require_webidl2();
     var { kEnumerableProperty } = require_util8();
-    var _caches;
-    var _CacheStorage = class _CacheStorage {
+    var CacheStorage = class _CacheStorage {
+      /**
+       * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-name-to-cache-map
+       * @type {Map<string, import('./cache').requestResponseList}
+       */
+      #caches = /* @__PURE__ */ new Map();
       constructor() {
-        /**
-         * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-name-to-cache-map
-         * @type {Map<string, import('./cache').requestResponseList}
-         */
-        __privateAdd(this, _caches, /* @__PURE__ */ new Map());
         if (arguments[0] !== kConstruct) {
           webidl.illegalConstructor();
         }
       }
-      match(_0) {
-        return __async(this, arguments, function* (request2, options = {}) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.match" });
-          request2 = webidl.converters.RequestInfo(request2);
-          options = webidl.converters.MultiCacheQueryOptions(options);
-          if (options.cacheName != null) {
-            if (__privateGet(this, _caches).has(options.cacheName)) {
-              const cacheList = __privateGet(this, _caches).get(options.cacheName);
-              const cache = new Cache(kConstruct, cacheList);
-              return yield cache.match(request2, options);
-            }
-          } else {
-            for (const cacheList of __privateGet(this, _caches).values()) {
-              const cache = new Cache(kConstruct, cacheList);
-              const response = yield cache.match(request2, options);
-              if (response !== void 0) {
-                return response;
-              }
+      async match(request2, options = {}) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.match" });
+        request2 = webidl.converters.RequestInfo(request2);
+        options = webidl.converters.MultiCacheQueryOptions(options);
+        if (options.cacheName != null) {
+          if (this.#caches.has(options.cacheName)) {
+            const cacheList = this.#caches.get(options.cacheName);
+            const cache = new Cache(kConstruct, cacheList);
+            return await cache.match(request2, options);
+          }
+        } else {
+          for (const cacheList of this.#caches.values()) {
+            const cache = new Cache(kConstruct, cacheList);
+            const response = await cache.match(request2, options);
+            if (response !== void 0) {
+              return response;
             }
           }
-        });
+        }
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-has
        * @param {string} cacheName
        * @returns {Promise<boolean>}
        */
-      has(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.has" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          return __privateGet(this, _caches).has(cacheName);
-        });
+      async has(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.has" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        return this.#caches.has(cacheName);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#dom-cachestorage-open
        * @param {string} cacheName
        * @returns {Promise<Cache>}
        */
-      open(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.open" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          if (__privateGet(this, _caches).has(cacheName)) {
-            const cache2 = __privateGet(this, _caches).get(cacheName);
-            return new Cache(kConstruct, cache2);
-          }
-          const cache = [];
-          __privateGet(this, _caches).set(cacheName, cache);
-          return new Cache(kConstruct, cache);
-        });
+      async open(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.open" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        if (this.#caches.has(cacheName)) {
+          const cache2 = this.#caches.get(cacheName);
+          return new Cache(kConstruct, cache2);
+        }
+        const cache = [];
+        this.#caches.set(cacheName, cache);
+        return new Cache(kConstruct, cache);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-delete
        * @param {string} cacheName
        * @returns {Promise<boolean>}
        */
-      delete(_0) {
-        return __async(this, arguments, function* (cacheName) {
-          webidl.brandCheck(this, _CacheStorage);
-          webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.delete" });
-          cacheName = webidl.converters.DOMString(cacheName);
-          return __privateGet(this, _caches).delete(cacheName);
-        });
+      async delete(cacheName) {
+        webidl.brandCheck(this, _CacheStorage);
+        webidl.argumentLengthCheck(arguments, 1, { header: "CacheStorage.delete" });
+        cacheName = webidl.converters.DOMString(cacheName);
+        return this.#caches.delete(cacheName);
       }
       /**
        * @see https://w3c.github.io/ServiceWorker/#cache-storage-keys
        * @returns {Promise<string[]>}
        */
-      keys() {
-        return __async(this, null, function* () {
-          webidl.brandCheck(this, _CacheStorage);
-          const keys = __privateGet(this, _caches).keys();
-          return [...keys];
-        });
+      async keys() {
+        webidl.brandCheck(this, _CacheStorage);
+        const keys = this.#caches.keys();
+        return [...keys];
       }
     };
-    _caches = new WeakMap();
-    var CacheStorage = _CacheStorage;
     Object.defineProperties(CacheStorage.prototype, {
       [Symbol.toStringTag]: {
         value: "CacheStorage",
@@ -34170,13 +33485,13 @@ var require_parse2 = __commonJS({
       if (name.length + value.length > maxNameValuePairSize) {
         return null;
       }
-      return __spreadValues({
+      return {
         name,
-        value
-      }, parseUnparsedAttributes(unparsedAttributes));
+        value,
+        ...parseUnparsedAttributes(unparsedAttributes)
+      };
     }
     function parseUnparsedAttributes(unparsedAttributes, cookieAttributeList = {}) {
-      var _a2;
       if (unparsedAttributes.length === 0) {
         return cookieAttributeList;
       }
@@ -34259,7 +33574,7 @@ var require_parse2 = __commonJS({
         }
         cookieAttributeList.sameSite = enforcement;
       } else {
-        (_a2 = cookieAttributeList.unparsed) != null ? _a2 : cookieAttributeList.unparsed = [];
+        cookieAttributeList.unparsed ??= [];
         cookieAttributeList.unparsed.push(`${attributeName}=${attributeValue}`);
       }
       return parseUnparsedAttributes(unparsedAttributes, cookieAttributeList);
@@ -34298,11 +33613,12 @@ var require_cookies2 = __commonJS({
       webidl.brandCheck(headers, Headers, { strict: false });
       name = webidl.converters.DOMString(name);
       attributes = webidl.converters.DeleteCookieAttributes(attributes);
-      setCookie(headers, __spreadValues({
+      setCookie(headers, {
         name,
         value: "",
-        expires: /* @__PURE__ */ new Date(0)
-      }, attributes));
+        expires: /* @__PURE__ */ new Date(0),
+        ...attributes
+      });
     }
     function getSetCookies(headers) {
       webidl.argumentLengthCheck(arguments, 1, { header: "getSetCookies" });
@@ -34405,38 +33721,37 @@ var require_events2 = __commonJS({
     var { webidl } = require_webidl2();
     var { kEnumerableProperty } = require_util8();
     var { MessagePort } = require("worker_threads");
-    var _eventInit;
-    var _MessageEvent = class _MessageEvent extends Event {
+    var MessageEvent = class _MessageEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict = {}) {
         webidl.argumentLengthCheck(arguments, 1, { header: "MessageEvent constructor" });
         type = webidl.converters.DOMString(type);
         eventInitDict = webidl.converters.MessageEventInit(eventInitDict);
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit, void 0);
-        __privateSet(this, _eventInit, eventInitDict);
+        this.#eventInit = eventInitDict;
       }
       get data() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).data;
+        return this.#eventInit.data;
       }
       get origin() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).origin;
+        return this.#eventInit.origin;
       }
       get lastEventId() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).lastEventId;
+        return this.#eventInit.lastEventId;
       }
       get source() {
         webidl.brandCheck(this, _MessageEvent);
-        return __privateGet(this, _eventInit).source;
+        return this.#eventInit.source;
       }
       get ports() {
         webidl.brandCheck(this, _MessageEvent);
-        if (!Object.isFrozen(__privateGet(this, _eventInit).ports)) {
-          Object.freeze(__privateGet(this, _eventInit).ports);
+        if (!Object.isFrozen(this.#eventInit.ports)) {
+          Object.freeze(this.#eventInit.ports);
         }
-        return __privateGet(this, _eventInit).ports;
+        return this.#eventInit.ports;
       }
       initMessageEvent(type, bubbles = false, cancelable = false, data = null, origin = "", lastEventId = "", source = null, ports = []) {
         webidl.brandCheck(this, _MessageEvent);
@@ -34452,66 +33767,58 @@ var require_events2 = __commonJS({
         });
       }
     };
-    _eventInit = new WeakMap();
-    var MessageEvent = _MessageEvent;
-    var _eventInit2;
-    var _CloseEvent = class _CloseEvent extends Event {
+    var CloseEvent = class _CloseEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict = {}) {
         webidl.argumentLengthCheck(arguments, 1, { header: "CloseEvent constructor" });
         type = webidl.converters.DOMString(type);
         eventInitDict = webidl.converters.CloseEventInit(eventInitDict);
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit2, void 0);
-        __privateSet(this, _eventInit2, eventInitDict);
+        this.#eventInit = eventInitDict;
       }
       get wasClean() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).wasClean;
+        return this.#eventInit.wasClean;
       }
       get code() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).code;
+        return this.#eventInit.code;
       }
       get reason() {
         webidl.brandCheck(this, _CloseEvent);
-        return __privateGet(this, _eventInit2).reason;
+        return this.#eventInit.reason;
       }
     };
-    _eventInit2 = new WeakMap();
-    var CloseEvent = _CloseEvent;
-    var _eventInit3;
-    var _ErrorEvent = class _ErrorEvent extends Event {
+    var ErrorEvent = class _ErrorEvent extends Event {
+      #eventInit;
       constructor(type, eventInitDict) {
         webidl.argumentLengthCheck(arguments, 1, { header: "ErrorEvent constructor" });
         super(type, eventInitDict);
-        __privateAdd(this, _eventInit3, void 0);
         type = webidl.converters.DOMString(type);
-        eventInitDict = webidl.converters.ErrorEventInit(eventInitDict != null ? eventInitDict : {});
-        __privateSet(this, _eventInit3, eventInitDict);
+        eventInitDict = webidl.converters.ErrorEventInit(eventInitDict ?? {});
+        this.#eventInit = eventInitDict;
       }
       get message() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).message;
+        return this.#eventInit.message;
       }
       get filename() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).filename;
+        return this.#eventInit.filename;
       }
       get lineno() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).lineno;
+        return this.#eventInit.lineno;
       }
       get colno() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).colno;
+        return this.#eventInit.colno;
       }
       get error() {
         webidl.brandCheck(this, _ErrorEvent);
-        return __privateGet(this, _eventInit3).error;
+        return this.#eventInit.error;
       }
     };
-    _eventInit3 = new WeakMap();
-    var ErrorEvent = _ErrorEvent;
     Object.defineProperties(MessageEvent.prototype, {
       [Symbol.toStringTag]: {
         value: "MessageEvent",
@@ -34679,7 +33986,7 @@ var require_constants9 = __commonJS({
       PING: 9,
       PONG: 10
     };
-    var maxUnsigned16Bit = __pow(2, 16) - 1;
+    var maxUnsigned16Bit = 2 ** 16 - 1;
     var parserStates = {
       INFO: 0,
       PAYLOADLENGTH_16: 2,
@@ -34748,7 +34055,7 @@ var require_util14 = __commonJS({
       if (type === opcodes.TEXT) {
         try {
           dataForEvent = new TextDecoder("utf-8", { fatal: true }).decode(data);
-        } catch (e) {
+        } catch {
           failWebsocketConnection(ws, "Received invalid UTF-8 in text frame.");
           return;
         }
@@ -34804,7 +34111,7 @@ var require_util14 = __commonJS({
     function failWebsocketConnection(ws, reason) {
       const { [kController]: controller, [kResponse]: response } = ws;
       controller.abort();
-      if ((response == null ? void 0 : response.socket) && !response.socket.destroyed) {
+      if (response?.socket && !response.socket.destroyed) {
         response.socket.destroy();
       }
       if (reason) {
@@ -34849,7 +34156,7 @@ var require_connection2 = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     function establishWebSocketConnection(url, protocols, ws, onEstablish, options) {
       const requestURL = url;
@@ -34879,7 +34186,6 @@ var require_connection2 = __commonJS({
         useParallelQueue: true,
         dispatcher: options.dispatcher,
         processResponse(response) {
-          var _a2, _b;
           if (response.type === "error" || response.status !== 101) {
             failWebsocketConnection(ws, "Received network error or non-101 status code.");
             return;
@@ -34888,11 +34194,11 @@ var require_connection2 = __commonJS({
             failWebsocketConnection(ws, "Server did not respond with sent protocols.");
             return;
           }
-          if (((_a2 = response.headersList.get("Upgrade")) == null ? void 0 : _a2.toLowerCase()) !== "websocket") {
+          if (response.headersList.get("Upgrade")?.toLowerCase() !== "websocket") {
             failWebsocketConnection(ws, 'Server did not set Upgrade header to "websocket".');
             return;
           }
-          if (((_b = response.headersList.get("Connection")) == null ? void 0 : _b.toLowerCase()) !== "upgrade") {
+          if (response.headersList.get("Connection")?.toLowerCase() !== "upgrade") {
             failWebsocketConnection(ws, 'Server did not set Connection header to "upgrade".');
             return;
           }
@@ -34936,14 +34242,13 @@ var require_connection2 = __commonJS({
       }
     }
     function onSocketClose() {
-      var _a2;
       const { ws } = this;
       const wasClean = ws[kSentClose] === sentCloseFrameState.SENT && ws[kReceivedClose];
       let code = 1005;
       let reason = "";
       const result = ws[kByteParser].closingInfo;
       if (result) {
-        code = (_a2 = result.code) != null ? _a2 : 1005;
+        code = result.code ?? 1005;
         reason = result.reason;
       } else if (ws[kSentClose] !== sentCloseFrameState.SENT) {
         code = 1006;
@@ -34984,7 +34289,7 @@ var require_frame2 = __commonJS({
     var crypto4;
     try {
       crypto4 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     var WebsocketFrameSend = class {
       /**
@@ -34995,8 +34300,7 @@ var require_frame2 = __commonJS({
         this.maskKey = crypto4.randomBytes(4);
       }
       createFrame(opcode) {
-        var _a2, _b;
-        const bodyLength = (_b = (_a2 = this.frameData) == null ? void 0 : _a2.byteLength) != null ? _b : 0;
+        const bodyLength = this.frameData?.byteLength ?? 0;
         let payloadLength = bodyLength;
         let offset = 6;
         if (bodyLength > maxUnsigned16Bit) {
@@ -35044,15 +34348,14 @@ var require_receiver2 = __commonJS({
     var { channels } = require_diagnostics();
     var { isValidStatusCode, failWebsocketConnection, websocketMessageReceived } = require_util14();
     var { WebsocketFrameSend } = require_frame2();
-    var _buffers, _byteOffset, _state, _info, _fragments;
     var ByteParser = class extends Writable {
+      #buffers = [];
+      #byteOffset = 0;
+      #state = parserStates.INFO;
+      #info = {};
+      #fragments = [];
       constructor(ws) {
         super();
-        __privateAdd(this, _buffers, []);
-        __privateAdd(this, _byteOffset, 0);
-        __privateAdd(this, _state, parserStates.INFO);
-        __privateAdd(this, _info, {});
-        __privateAdd(this, _fragments, []);
         this.ws = ws;
       }
       /**
@@ -35060,8 +34363,8 @@ var require_receiver2 = __commonJS({
        * @param {() => void} callback
        */
       _write(chunk, _, callback) {
-        __privateGet(this, _buffers).push(chunk);
-        __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) + chunk.length);
+        this.#buffers.push(chunk);
+        this.#byteOffset += chunk.length;
         this.run(callback);
       }
       /**
@@ -35070,48 +34373,47 @@ var require_receiver2 = __commonJS({
        * or not enough bytes are buffered to parse.
        */
       run(callback) {
-        var _a2, _b;
         while (true) {
-          if (__privateGet(this, _state) === parserStates.INFO) {
-            if (__privateGet(this, _byteOffset) < 2) {
+          if (this.#state === parserStates.INFO) {
+            if (this.#byteOffset < 2) {
               return callback();
             }
             const buffer = this.consume(2);
-            __privateGet(this, _info).fin = (buffer[0] & 128) !== 0;
-            __privateGet(this, _info).opcode = buffer[0] & 15;
-            (_b = (_a2 = __privateGet(this, _info)).originalOpcode) != null ? _b : _a2.originalOpcode = __privateGet(this, _info).opcode;
-            __privateGet(this, _info).fragmented = !__privateGet(this, _info).fin && __privateGet(this, _info).opcode !== opcodes.CONTINUATION;
-            if (__privateGet(this, _info).fragmented && __privateGet(this, _info).opcode !== opcodes.BINARY && __privateGet(this, _info).opcode !== opcodes.TEXT) {
+            this.#info.fin = (buffer[0] & 128) !== 0;
+            this.#info.opcode = buffer[0] & 15;
+            this.#info.originalOpcode ??= this.#info.opcode;
+            this.#info.fragmented = !this.#info.fin && this.#info.opcode !== opcodes.CONTINUATION;
+            if (this.#info.fragmented && this.#info.opcode !== opcodes.BINARY && this.#info.opcode !== opcodes.TEXT) {
               failWebsocketConnection(this.ws, "Invalid frame type was fragmented.");
               return;
             }
             const payloadLength = buffer[1] & 127;
             if (payloadLength <= 125) {
-              __privateGet(this, _info).payloadLength = payloadLength;
-              __privateSet(this, _state, parserStates.READ_DATA);
+              this.#info.payloadLength = payloadLength;
+              this.#state = parserStates.READ_DATA;
             } else if (payloadLength === 126) {
-              __privateSet(this, _state, parserStates.PAYLOADLENGTH_16);
+              this.#state = parserStates.PAYLOADLENGTH_16;
             } else if (payloadLength === 127) {
-              __privateSet(this, _state, parserStates.PAYLOADLENGTH_64);
+              this.#state = parserStates.PAYLOADLENGTH_64;
             }
-            if (__privateGet(this, _info).fragmented && payloadLength > 125) {
+            if (this.#info.fragmented && payloadLength > 125) {
               failWebsocketConnection(this.ws, "Fragmented frame exceeded 125 bytes.");
               return;
-            } else if ((__privateGet(this, _info).opcode === opcodes.PING || __privateGet(this, _info).opcode === opcodes.PONG || __privateGet(this, _info).opcode === opcodes.CLOSE) && payloadLength > 125) {
+            } else if ((this.#info.opcode === opcodes.PING || this.#info.opcode === opcodes.PONG || this.#info.opcode === opcodes.CLOSE) && payloadLength > 125) {
               failWebsocketConnection(this.ws, "Payload length for control frame exceeded 125 bytes.");
               return;
-            } else if (__privateGet(this, _info).opcode === opcodes.CLOSE) {
+            } else if (this.#info.opcode === opcodes.CLOSE) {
               if (payloadLength === 1) {
                 failWebsocketConnection(this.ws, "Received close frame with a 1-byte body.");
                 return;
               }
               const body = this.consume(payloadLength);
-              __privateGet(this, _info).closeInfo = this.parseCloseBody(body);
+              this.#info.closeInfo = this.parseCloseBody(body);
               if (this.ws[kSentClose] !== sentCloseFrameState.SENT) {
                 let body2 = emptyBuffer;
-                if (__privateGet(this, _info).closeInfo.code) {
+                if (this.#info.closeInfo.code) {
                   body2 = Buffer.allocUnsafe(2);
-                  body2.writeUInt16BE(__privateGet(this, _info).closeInfo.code, 0);
+                  body2.writeUInt16BE(this.#info.closeInfo.code, 0);
                 }
                 const closeFrame = new WebsocketFrameSend(body2);
                 this.ws[kResponse].socket.write(
@@ -35127,7 +34429,7 @@ var require_receiver2 = __commonJS({
               this.ws[kReceivedClose] = true;
               this.end();
               return;
-            } else if (__privateGet(this, _info).opcode === opcodes.PING) {
+            } else if (this.#info.opcode === opcodes.PING) {
               const body = this.consume(payloadLength);
               if (!this.ws[kReceivedClose]) {
                 const frame = new WebsocketFrameSend(body);
@@ -35138,63 +34440,63 @@ var require_receiver2 = __commonJS({
                   });
                 }
               }
-              __privateSet(this, _state, parserStates.INFO);
-              if (__privateGet(this, _byteOffset) > 0) {
+              this.#state = parserStates.INFO;
+              if (this.#byteOffset > 0) {
                 continue;
               } else {
                 callback();
                 return;
               }
-            } else if (__privateGet(this, _info).opcode === opcodes.PONG) {
+            } else if (this.#info.opcode === opcodes.PONG) {
               const body = this.consume(payloadLength);
               if (channels.pong.hasSubscribers) {
                 channels.pong.publish({
                   payload: body
                 });
               }
-              if (__privateGet(this, _byteOffset) > 0) {
+              if (this.#byteOffset > 0) {
                 continue;
               } else {
                 callback();
                 return;
               }
             }
-          } else if (__privateGet(this, _state) === parserStates.PAYLOADLENGTH_16) {
-            if (__privateGet(this, _byteOffset) < 2) {
+          } else if (this.#state === parserStates.PAYLOADLENGTH_16) {
+            if (this.#byteOffset < 2) {
               return callback();
             }
             const buffer = this.consume(2);
-            __privateGet(this, _info).payloadLength = buffer.readUInt16BE(0);
-            __privateSet(this, _state, parserStates.READ_DATA);
-          } else if (__privateGet(this, _state) === parserStates.PAYLOADLENGTH_64) {
-            if (__privateGet(this, _byteOffset) < 8) {
+            this.#info.payloadLength = buffer.readUInt16BE(0);
+            this.#state = parserStates.READ_DATA;
+          } else if (this.#state === parserStates.PAYLOADLENGTH_64) {
+            if (this.#byteOffset < 8) {
               return callback();
             }
             const buffer = this.consume(8);
             const upper = buffer.readUInt32BE(0);
-            if (upper > __pow(2, 31) - 1) {
+            if (upper > 2 ** 31 - 1) {
               failWebsocketConnection(this.ws, "Received payload length > 2^31 bytes.");
               return;
             }
             const lower = buffer.readUInt32BE(4);
-            __privateGet(this, _info).payloadLength = (upper << 8) + lower;
-            __privateSet(this, _state, parserStates.READ_DATA);
-          } else if (__privateGet(this, _state) === parserStates.READ_DATA) {
-            if (__privateGet(this, _byteOffset) < __privateGet(this, _info).payloadLength) {
+            this.#info.payloadLength = (upper << 8) + lower;
+            this.#state = parserStates.READ_DATA;
+          } else if (this.#state === parserStates.READ_DATA) {
+            if (this.#byteOffset < this.#info.payloadLength) {
               return callback();
-            } else if (__privateGet(this, _byteOffset) >= __privateGet(this, _info).payloadLength) {
-              const body = this.consume(__privateGet(this, _info).payloadLength);
-              __privateGet(this, _fragments).push(body);
-              if (!__privateGet(this, _info).fragmented || __privateGet(this, _info).fin && __privateGet(this, _info).opcode === opcodes.CONTINUATION) {
-                const fullMessage = Buffer.concat(__privateGet(this, _fragments));
-                websocketMessageReceived(this.ws, __privateGet(this, _info).originalOpcode, fullMessage);
-                __privateSet(this, _info, {});
-                __privateGet(this, _fragments).length = 0;
+            } else if (this.#byteOffset >= this.#info.payloadLength) {
+              const body = this.consume(this.#info.payloadLength);
+              this.#fragments.push(body);
+              if (!this.#info.fragmented || this.#info.fin && this.#info.opcode === opcodes.CONTINUATION) {
+                const fullMessage = Buffer.concat(this.#fragments);
+                websocketMessageReceived(this.ws, this.#info.originalOpcode, fullMessage);
+                this.#info = {};
+                this.#fragments.length = 0;
               }
-              __privateSet(this, _state, parserStates.INFO);
+              this.#state = parserStates.INFO;
             }
           }
-          if (__privateGet(this, _byteOffset) === 0) {
+          if (this.#byteOffset === 0) {
             callback();
             break;
           }
@@ -35206,33 +34508,33 @@ var require_receiver2 = __commonJS({
        * @returns {Buffer|null}
        */
       consume(n) {
-        if (n > __privateGet(this, _byteOffset)) {
+        if (n > this.#byteOffset) {
           return null;
         } else if (n === 0) {
           return emptyBuffer;
         }
-        if (__privateGet(this, _buffers)[0].length === n) {
-          __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) - __privateGet(this, _buffers)[0].length);
-          return __privateGet(this, _buffers).shift();
+        if (this.#buffers[0].length === n) {
+          this.#byteOffset -= this.#buffers[0].length;
+          return this.#buffers.shift();
         }
         const buffer = Buffer.allocUnsafe(n);
         let offset = 0;
         while (offset !== n) {
-          const next = __privateGet(this, _buffers)[0];
+          const next = this.#buffers[0];
           const { length } = next;
           if (length + offset === n) {
-            buffer.set(__privateGet(this, _buffers).shift(), offset);
+            buffer.set(this.#buffers.shift(), offset);
             break;
           } else if (length + offset > n) {
             buffer.set(next.subarray(0, n - offset), offset);
-            __privateGet(this, _buffers)[0] = next.subarray(n - offset);
+            this.#buffers[0] = next.subarray(n - offset);
             break;
           } else {
-            buffer.set(__privateGet(this, _buffers).shift(), offset);
+            buffer.set(this.#buffers.shift(), offset);
             offset += next.length;
           }
         }
-        __privateSet(this, _byteOffset, __privateGet(this, _byteOffset) - n);
+        this.#byteOffset -= n;
         return buffer;
       }
       parseCloseBody(data) {
@@ -35249,20 +34551,15 @@ var require_receiver2 = __commonJS({
         }
         try {
           reason = new TextDecoder("utf-8", { fatal: true }).decode(reason);
-        } catch (e) {
+        } catch {
           return null;
         }
         return { code, reason };
       }
       get closingInfo() {
-        return __privateGet(this, _info).closeInfo;
+        return this.#info.closeInfo;
       }
     };
-    _buffers = new WeakMap();
-    _byteOffset = new WeakMap();
-    _state = new WeakMap();
-    _info = new WeakMap();
-    _fragments = new WeakMap();
     module2.exports = {
       ByteParser
     };
@@ -35302,27 +34599,22 @@ var require_websocket2 = __commonJS({
     var { getGlobalDispatcher } = require_global4();
     var { types } = require("util");
     var experimentalWarned = false;
-    var _events, _bufferedAmount, _protocol, _extensions, _onConnectionEstablished, onConnectionEstablished_fn;
-    var _WebSocket = class _WebSocket extends EventTarget {
+    var WebSocket = class _WebSocket extends EventTarget {
+      #events = {
+        open: null,
+        error: null,
+        close: null,
+        message: null
+      };
+      #bufferedAmount = 0;
+      #protocol = "";
+      #extensions = "";
       /**
        * @param {string} url
        * @param {string|string[]} protocols
        */
       constructor(url, protocols = []) {
         super();
-        /**
-         * @see https://websockets.spec.whatwg.org/#feedback-from-the-protocol
-         */
-        __privateAdd(this, _onConnectionEstablished);
-        __privateAdd(this, _events, {
-          open: null,
-          error: null,
-          close: null,
-          message: null
-        });
-        __privateAdd(this, _bufferedAmount, 0);
-        __privateAdd(this, _protocol, "");
-        __privateAdd(this, _extensions, "");
         webidl.argumentLengthCheck(arguments, 1, { header: "WebSocket constructor" });
         if (!experimentalWarned) {
           experimentalWarned = true;
@@ -35368,7 +34660,7 @@ var require_websocket2 = __commonJS({
           urlRecord,
           protocols,
           this,
-          (response) => __privateMethod(this, _onConnectionEstablished, onConnectionEstablished_fn).call(this, response),
+          (response) => this.#onConnectionEstablished(response),
           options
         );
         this[kReadyState] = _WebSocket.CONNECTING;
@@ -35450,25 +34742,25 @@ var require_websocket2 = __commonJS({
           const value = Buffer.from(data);
           const frame = new WebsocketFrameSend(value);
           const buffer = frame.createFrame(opcodes.TEXT);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+          this.#bufferedAmount += value.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+            this.#bufferedAmount -= value.byteLength;
           });
         } else if (types.isArrayBuffer(data)) {
           const value = Buffer.from(data);
           const frame = new WebsocketFrameSend(value);
           const buffer = frame.createFrame(opcodes.BINARY);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+          this.#bufferedAmount += value.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+            this.#bufferedAmount -= value.byteLength;
           });
         } else if (ArrayBuffer.isView(data)) {
           const ab = Buffer.from(data, data.byteOffset, data.byteLength);
           const frame = new WebsocketFrameSend(ab);
           const buffer = frame.createFrame(opcodes.BINARY);
-          __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + ab.byteLength);
+          this.#bufferedAmount += ab.byteLength;
           socket.write(buffer, () => {
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - ab.byteLength);
+            this.#bufferedAmount -= ab.byteLength;
           });
         } else if (isBlobLike(data)) {
           const frame = new WebsocketFrameSend();
@@ -35476,9 +34768,9 @@ var require_websocket2 = __commonJS({
             const value = Buffer.from(ab);
             frame.frameData = value;
             const buffer = frame.createFrame(opcodes.BINARY);
-            __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) + value.byteLength);
+            this.#bufferedAmount += value.byteLength;
             socket.write(buffer, () => {
-              __privateSet(this, _bufferedAmount, __privateGet(this, _bufferedAmount) - value.byteLength);
+              this.#bufferedAmount -= value.byteLength;
             });
           });
         }
@@ -35489,7 +34781,7 @@ var require_websocket2 = __commonJS({
       }
       get bufferedAmount() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _bufferedAmount);
+        return this.#bufferedAmount;
       }
       get url() {
         webidl.brandCheck(this, _WebSocket);
@@ -35497,74 +34789,74 @@ var require_websocket2 = __commonJS({
       }
       get extensions() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _extensions);
+        return this.#extensions;
       }
       get protocol() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _protocol);
+        return this.#protocol;
       }
       get onopen() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).open;
+        return this.#events.open;
       }
       set onopen(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).open) {
-          this.removeEventListener("open", __privateGet(this, _events).open);
+        if (this.#events.open) {
+          this.removeEventListener("open", this.#events.open);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).open = fn;
+          this.#events.open = fn;
           this.addEventListener("open", fn);
         } else {
-          __privateGet(this, _events).open = null;
+          this.#events.open = null;
         }
       }
       get onerror() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).error;
+        return this.#events.error;
       }
       set onerror(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).error) {
-          this.removeEventListener("error", __privateGet(this, _events).error);
+        if (this.#events.error) {
+          this.removeEventListener("error", this.#events.error);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).error = fn;
+          this.#events.error = fn;
           this.addEventListener("error", fn);
         } else {
-          __privateGet(this, _events).error = null;
+          this.#events.error = null;
         }
       }
       get onclose() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).close;
+        return this.#events.close;
       }
       set onclose(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).close) {
-          this.removeEventListener("close", __privateGet(this, _events).close);
+        if (this.#events.close) {
+          this.removeEventListener("close", this.#events.close);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).close = fn;
+          this.#events.close = fn;
           this.addEventListener("close", fn);
         } else {
-          __privateGet(this, _events).close = null;
+          this.#events.close = null;
         }
       }
       get onmessage() {
         webidl.brandCheck(this, _WebSocket);
-        return __privateGet(this, _events).message;
+        return this.#events.message;
       }
       set onmessage(fn) {
         webidl.brandCheck(this, _WebSocket);
-        if (__privateGet(this, _events).message) {
-          this.removeEventListener("message", __privateGet(this, _events).message);
+        if (this.#events.message) {
+          this.removeEventListener("message", this.#events.message);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).message = fn;
+          this.#events.message = fn;
           this.addEventListener("message", fn);
         } else {
-          __privateGet(this, _events).message = null;
+          this.#events.message = null;
         }
       }
       get binaryType() {
@@ -35579,32 +34871,29 @@ var require_websocket2 = __commonJS({
           this[kBinaryType] = type;
         }
       }
-    };
-    _events = new WeakMap();
-    _bufferedAmount = new WeakMap();
-    _protocol = new WeakMap();
-    _extensions = new WeakMap();
-    _onConnectionEstablished = new WeakSet();
-    onConnectionEstablished_fn = function(response) {
-      this[kResponse] = response;
-      const parser2 = new ByteParser(this);
-      parser2.on("drain", function onParserDrain() {
-        this.ws[kResponse].socket.resume();
-      });
-      response.socket.ws = this;
-      this[kByteParser] = parser2;
-      this[kReadyState] = states.OPEN;
-      const extensions = response.headersList.get("sec-websocket-extensions");
-      if (extensions !== null) {
-        __privateSet(this, _extensions, extensions);
+      /**
+       * @see https://websockets.spec.whatwg.org/#feedback-from-the-protocol
+       */
+      #onConnectionEstablished(response) {
+        this[kResponse] = response;
+        const parser2 = new ByteParser(this);
+        parser2.on("drain", function onParserDrain() {
+          this.ws[kResponse].socket.resume();
+        });
+        response.socket.ws = this;
+        this[kByteParser] = parser2;
+        this[kReadyState] = states.OPEN;
+        const extensions = response.headersList.get("sec-websocket-extensions");
+        if (extensions !== null) {
+          this.#extensions = extensions;
+        }
+        const protocol = response.headersList.get("sec-websocket-protocol");
+        if (protocol !== null) {
+          this.#protocol = protocol;
+        }
+        fireEvent("open", this);
       }
-      const protocol = response.headersList.get("sec-websocket-protocol");
-      if (protocol !== null) {
-        __privateSet(this, _protocol, protocol);
-      }
-      fireEvent("open", this);
     };
-    var WebSocket = _WebSocket;
     WebSocket.CONNECTING = WebSocket.prototype.CONNECTING = states.CONNECTING;
     WebSocket.OPEN = WebSocket.prototype.OPEN = states.OPEN;
     WebSocket.CLOSING = WebSocket.prototype.CLOSING = states.CLOSING;
@@ -35733,6 +35022,34 @@ var require_eventsource_stream = __commonJS({
     var SPACE = 32;
     var EventSourceStream = class extends Transform {
       /**
+       * @type {eventSourceSettings}
+       */
+      state = null;
+      /**
+       * Leading byte-order-mark check.
+       * @type {boolean}
+       */
+      checkBOM = true;
+      /**
+       * @type {boolean}
+       */
+      crlfCheck = false;
+      /**
+       * @type {boolean}
+       */
+      eventEndCheck = false;
+      /**
+       * @type {Buffer}
+       */
+      buffer = null;
+      pos = 0;
+      event = {
+        data: void 0,
+        event: void 0,
+        id: void 0,
+        retry: void 0
+      };
+      /**
        * @param {object} options
        * @param {eventSourceSettings} options.eventSourceSettings
        * @param {Function} [options.push]
@@ -35740,34 +35057,6 @@ var require_eventsource_stream = __commonJS({
       constructor(options = {}) {
         options.readableObjectMode = true;
         super(options);
-        /**
-         * @type {eventSourceSettings}
-         */
-        __publicField(this, "state", null);
-        /**
-         * Leading byte-order-mark check.
-         * @type {boolean}
-         */
-        __publicField(this, "checkBOM", true);
-        /**
-         * @type {boolean}
-         */
-        __publicField(this, "crlfCheck", false);
-        /**
-         * @type {boolean}
-         */
-        __publicField(this, "eventEndCheck", false);
-        /**
-         * @type {Buffer}
-         */
-        __publicField(this, "buffer", null);
-        __publicField(this, "pos", 0);
-        __publicField(this, "event", {
-          data: void 0,
-          event: void 0,
-          id: void 0,
-          retry: void 0
-        });
         this.state = options.eventSourceSettings || {};
         if (options.push) {
           this.push = options.push;
@@ -35972,8 +35261,24 @@ var require_eventsource = __commonJS({
     var CLOSED = 2;
     var ANONYMOUS = "anonymous";
     var USE_CREDENTIALS = "use-credentials";
-    var _events, _url, _withCredentials, _readyState, _request, _controller, _settings, _connect, connect_fn, _reconnect, reconnect_fn;
-    var _EventSource = class _EventSource extends EventTarget {
+    var EventSource = class _EventSource extends EventTarget {
+      #events = {
+        open: null,
+        error: null,
+        message: null
+      };
+      #url = null;
+      #withCredentials = false;
+      #readyState = CONNECTING;
+      #request = null;
+      #controller = null;
+      /**
+       * @type {object}
+       * @property {string} lastEventId
+       * @property {number} reconnectionTime
+       * @property {any} reconnectionTimer
+       */
+      #settings = null;
       /**
        * Creates a new EventSource object.
        * @param {string} url
@@ -35982,29 +35287,6 @@ var require_eventsource = __commonJS({
        */
       constructor(url, eventSourceInitDict = {}) {
         super();
-        __privateAdd(this, _connect);
-        /**
-         * @see https://html.spec.whatwg.org/multipage/server-sent-events.html#sse-processing-model
-         * @returns {Promise<void>}
-         */
-        __privateAdd(this, _reconnect);
-        __privateAdd(this, _events, {
-          open: null,
-          error: null,
-          message: null
-        });
-        __privateAdd(this, _url, null);
-        __privateAdd(this, _withCredentials, false);
-        __privateAdd(this, _readyState, CONNECTING);
-        __privateAdd(this, _request, null);
-        __privateAdd(this, _controller, null);
-        /**
-         * @type {object}
-         * @property {string} lastEventId
-         * @property {number} reconnectionTime
-         * @property {any} reconnectionTimer
-         */
-        __privateAdd(this, _settings, null);
         webidl.argumentLengthCheck(arguments, 1, { header: "EventSource constructor" });
         if (!experimentalWarned) {
           experimentalWarned = true;
@@ -36014,26 +35296,26 @@ var require_eventsource = __commonJS({
         }
         url = webidl.converters.USVString(url);
         eventSourceInitDict = webidl.converters.EventSourceInitDict(eventSourceInitDict);
-        __privateSet(this, _settings, {
+        this.#settings = {
           origin: getGlobalOrigin(),
           policyContainer: {
             referrerPolicy: "no-referrer"
           },
           lastEventId: "",
           reconnectionTime: defaultReconnectionTime
-        });
+        };
         let urlRecord;
         try {
-          urlRecord = new URL(url, __privateGet(this, _settings).origin);
-          __privateGet(this, _settings).origin = urlRecord.origin;
+          urlRecord = new URL(url, this.#settings.origin);
+          this.#settings.origin = urlRecord.origin;
         } catch (e) {
           throw new DOMException(e, "SyntaxError");
         }
-        __privateSet(this, _url, urlRecord.href);
+        this.#url = urlRecord.href;
         let corsAttributeState = ANONYMOUS;
         if (eventSourceInitDict.withCredentials) {
           corsAttributeState = USE_CREDENTIALS;
-          __privateSet(this, _withCredentials, true);
+          this.#withCredentials = true;
         }
         const initRequest = {
           redirect: "follow",
@@ -36043,13 +35325,13 @@ var require_eventsource = __commonJS({
           credentials: corsAttributeState === "anonymous" ? "same-origin" : "omit",
           referrer: "no-referrer"
         };
-        initRequest.client = __privateGet(this, _settings);
+        initRequest.client = this.#settings;
         initRequest.headersList = [["accept", { name: "accept", value: "text/event-stream" }]];
         initRequest.cache = "no-store";
         initRequest.initiator = "other";
-        initRequest.urlList = [new URL(__privateGet(this, _url))];
-        __privateSet(this, _request, makeRequest(initRequest));
-        __privateMethod(this, _connect, connect_fn).call(this);
+        initRequest.urlList = [new URL(this.#url)];
+        this.#request = makeRequest(initRequest);
+        this.#connect();
       }
       /**
        * Returns the state of this EventSource object's connection. It can have the
@@ -36058,7 +35340,7 @@ var require_eventsource = __commonJS({
        * @readonly
        */
       get readyState() {
-        return __privateGet(this, _readyState);
+        return this.#readyState;
       }
       /**
        * Returns the URL providing the event stream.
@@ -36066,14 +35348,90 @@ var require_eventsource = __commonJS({
        * @returns {string}
        */
       get url() {
-        return __privateGet(this, _url);
+        return this.#url;
       }
       /**
        * Returns a boolean indicating whether the EventSource object was
        * instantiated with CORS credentials set (true), or not (false, the default).
        */
       get withCredentials() {
-        return __privateGet(this, _withCredentials);
+        return this.#withCredentials;
+      }
+      #connect() {
+        if (this.#readyState === CLOSED)
+          return;
+        this.#readyState = CONNECTING;
+        const fetchParam = {
+          request: this.#request
+        };
+        const processEventSourceEndOfBody = (response) => {
+          if (isNetworkError(response)) {
+            this.dispatchEvent(new Event("error"));
+            this.close();
+          }
+          this.#reconnect();
+        };
+        fetchParam.processResponseEndOfBody = processEventSourceEndOfBody;
+        fetchParam.processResponse = (response) => {
+          if (isNetworkError(response)) {
+            if (response.aborted) {
+              this.close();
+              this.dispatchEvent(new Event("error"));
+              return;
+            } else {
+              this.#reconnect();
+              return;
+            }
+          }
+          const contentType = response.headersList.get("content-type", true);
+          const mimeType = contentType !== null ? parseMIMEType(contentType) : "failure";
+          const contentTypeValid = mimeType !== "failure" && mimeType.essence === "text/event-stream";
+          if (response.status !== 200 || contentTypeValid === false) {
+            this.close();
+            this.dispatchEvent(new Event("error"));
+            return;
+          }
+          this.#readyState = OPEN;
+          this.dispatchEvent(new Event("open"));
+          this.#settings.origin = response.urlList[response.urlList.length - 1].origin;
+          const eventSourceStream = new EventSourceStream({
+            eventSourceSettings: this.#settings,
+            push: (event) => {
+              this.dispatchEvent(new MessageEvent(
+                event.type,
+                event.options
+              ));
+            }
+          });
+          pipeline(
+            response.body.stream,
+            eventSourceStream,
+            (error) => {
+              if (error?.aborted === false) {
+                this.close();
+                this.dispatchEvent(new Event("error"));
+              }
+            }
+          );
+        };
+        this.#controller = fetching(fetchParam);
+      }
+      /**
+       * @see https://html.spec.whatwg.org/multipage/server-sent-events.html#sse-processing-model
+       * @returns {Promise<void>}
+       */
+      async #reconnect() {
+        if (this.#readyState === CLOSED)
+          return;
+        this.#readyState = CONNECTING;
+        this.dispatchEvent(new Event("error"));
+        await delay2(this.#settings.reconnectionTime);
+        if (this.#readyState !== CONNECTING)
+          return;
+        if (this.#settings.lastEventId !== "") {
+          this.#request.headersList.set("last-event-id", this.#settings.lastEventId, true);
+        }
+        this.#connect();
       }
       /**
        * Closes the connection, if any, and sets the readyState attribute to
@@ -36081,142 +35439,58 @@ var require_eventsource = __commonJS({
        */
       close() {
         webidl.brandCheck(this, _EventSource);
-        if (__privateGet(this, _readyState) === CLOSED)
+        if (this.#readyState === CLOSED)
           return;
-        __privateSet(this, _readyState, CLOSED);
-        clearTimeout(__privateGet(this, _settings).reconnectionTimer);
-        __privateGet(this, _controller).abort();
-        if (__privateGet(this, _request)) {
-          __privateSet(this, _request, null);
+        this.#readyState = CLOSED;
+        clearTimeout(this.#settings.reconnectionTimer);
+        this.#controller.abort();
+        if (this.#request) {
+          this.#request = null;
         }
       }
       get onopen() {
-        return __privateGet(this, _events).open;
+        return this.#events.open;
       }
       set onopen(fn) {
-        if (__privateGet(this, _events).open) {
-          this.removeEventListener("open", __privateGet(this, _events).open);
+        if (this.#events.open) {
+          this.removeEventListener("open", this.#events.open);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).open = fn;
+          this.#events.open = fn;
           this.addEventListener("open", fn);
         } else {
-          __privateGet(this, _events).open = null;
+          this.#events.open = null;
         }
       }
       get onmessage() {
-        return __privateGet(this, _events).message;
+        return this.#events.message;
       }
       set onmessage(fn) {
-        if (__privateGet(this, _events).message) {
-          this.removeEventListener("message", __privateGet(this, _events).message);
+        if (this.#events.message) {
+          this.removeEventListener("message", this.#events.message);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).message = fn;
+          this.#events.message = fn;
           this.addEventListener("message", fn);
         } else {
-          __privateGet(this, _events).message = null;
+          this.#events.message = null;
         }
       }
       get onerror() {
-        return __privateGet(this, _events).error;
+        return this.#events.error;
       }
       set onerror(fn) {
-        if (__privateGet(this, _events).error) {
-          this.removeEventListener("error", __privateGet(this, _events).error);
+        if (this.#events.error) {
+          this.removeEventListener("error", this.#events.error);
         }
         if (typeof fn === "function") {
-          __privateGet(this, _events).error = fn;
+          this.#events.error = fn;
           this.addEventListener("error", fn);
         } else {
-          __privateGet(this, _events).error = null;
+          this.#events.error = null;
         }
       }
     };
-    _events = new WeakMap();
-    _url = new WeakMap();
-    _withCredentials = new WeakMap();
-    _readyState = new WeakMap();
-    _request = new WeakMap();
-    _controller = new WeakMap();
-    _settings = new WeakMap();
-    _connect = new WeakSet();
-    connect_fn = function() {
-      if (__privateGet(this, _readyState) === CLOSED)
-        return;
-      __privateSet(this, _readyState, CONNECTING);
-      const fetchParam = {
-        request: __privateGet(this, _request)
-      };
-      const processEventSourceEndOfBody = (response) => {
-        if (isNetworkError(response)) {
-          this.dispatchEvent(new Event("error"));
-          this.close();
-        }
-        __privateMethod(this, _reconnect, reconnect_fn).call(this);
-      };
-      fetchParam.processResponseEndOfBody = processEventSourceEndOfBody;
-      fetchParam.processResponse = (response) => {
-        if (isNetworkError(response)) {
-          if (response.aborted) {
-            this.close();
-            this.dispatchEvent(new Event("error"));
-            return;
-          } else {
-            __privateMethod(this, _reconnect, reconnect_fn).call(this);
-            return;
-          }
-        }
-        const contentType = response.headersList.get("content-type", true);
-        const mimeType = contentType !== null ? parseMIMEType(contentType) : "failure";
-        const contentTypeValid = mimeType !== "failure" && mimeType.essence === "text/event-stream";
-        if (response.status !== 200 || contentTypeValid === false) {
-          this.close();
-          this.dispatchEvent(new Event("error"));
-          return;
-        }
-        __privateSet(this, _readyState, OPEN);
-        this.dispatchEvent(new Event("open"));
-        __privateGet(this, _settings).origin = response.urlList[response.urlList.length - 1].origin;
-        const eventSourceStream = new EventSourceStream({
-          eventSourceSettings: __privateGet(this, _settings),
-          push: (event) => {
-            this.dispatchEvent(new MessageEvent(
-              event.type,
-              event.options
-            ));
-          }
-        });
-        pipeline(
-          response.body.stream,
-          eventSourceStream,
-          (error) => {
-            if ((error == null ? void 0 : error.aborted) === false) {
-              this.close();
-              this.dispatchEvent(new Event("error"));
-            }
-          }
-        );
-      };
-      __privateSet(this, _controller, fetching(fetchParam));
-    };
-    _reconnect = new WeakSet();
-    reconnect_fn = function() {
-      return __async(this, null, function* () {
-        if (__privateGet(this, _readyState) === CLOSED)
-          return;
-        __privateSet(this, _readyState, CONNECTING);
-        this.dispatchEvent(new Event("error"));
-        yield delay2(__privateGet(this, _settings).reconnectionTime);
-        if (__privateGet(this, _readyState) !== CONNECTING)
-          return;
-        if (__privateGet(this, _settings).lastEventId !== "") {
-          __privateGet(this, _request).headersList.set("last-event-id", __privateGet(this, _settings).lastEventId, true);
-        }
-        __privateMethod(this, _connect, connect_fn).call(this);
-      });
-    };
-    var EventSource = _EventSource;
     var constantsPropertyDescriptors = {
       CONNECTING: {
         __proto__: null,
@@ -36339,27 +35613,26 @@ var require_undici2 = __commonJS({
         if (agent) {
           throw new InvalidArgumentError("unsupported opts.agent. Did you mean opts.client?");
         }
-        return fn.call(dispatcher, __spreadProps(__spreadValues({}, opts), {
+        return fn.call(dispatcher, {
+          ...opts,
           origin: url.origin,
           path: url.search ? `${url.pathname}${url.search}` : url.pathname,
           method: opts.method || (opts.body ? "PUT" : "GET")
-        }), handler2);
+        }, handler2);
       };
     }
     module2.exports.setGlobalDispatcher = setGlobalDispatcher;
     module2.exports.getGlobalDispatcher = getGlobalDispatcher;
     var fetchImpl = require_fetch2().fetch;
-    module2.exports.fetch = function fetch2(init, options = void 0) {
-      return __async(this, null, function* () {
-        try {
-          return yield fetchImpl(init, options);
-        } catch (err) {
-          if (err && typeof err === "object") {
-            Error.captureStackTrace(err, this);
-          }
-          throw err;
+    module2.exports.fetch = async function fetch2(init, options = void 0) {
+      try {
+        return await fetchImpl(init, options);
+      } catch (err) {
+        if (err && typeof err === "object") {
+          Error.captureStackTrace(err, this);
         }
-      });
+        throw err;
+      }
     };
     module2.exports.Headers = require_headers2().Headers;
     module2.exports.Response = require_response2().Response;
@@ -36768,7 +36041,6 @@ var init_remove_undefined_properties = __esm({
 
 // ../../../node_modules/.pnpm/@octokit+endpoint@9.0.4/node_modules/@octokit/endpoint/dist-src/merge.js
 function merge(defaults, route, options) {
-  var _a2;
   if (typeof route === "string") {
     let [method, url] = route.split(" ");
     options = Object.assign(url ? { method, url } : { url: method }, options);
@@ -36780,7 +36052,7 @@ function merge(defaults, route, options) {
   removeUndefinedProperties(options.headers);
   const mergedOptions = mergeDeep(defaults || {}, options);
   if (options.url === "/graphql") {
-    if (defaults && ((_a2 = defaults.mediaType.previews) == null ? void 0 : _a2.length)) {
+    if (defaults && defaults.mediaType.previews?.length) {
       mergedOptions.mediaType.previews = defaults.mediaType.previews.filter(
         (preview) => !mergedOptions.mediaType.previews.includes(preview)
       ).concat(mergedOptions.mediaType.previews);
@@ -36992,7 +36264,6 @@ var init_url_template = __esm({
 
 // ../../../node_modules/.pnpm/@octokit+endpoint@9.0.4/node_modules/@octokit/endpoint/dist-src/parse.js
 function parse2(options) {
-  var _a2;
   let method = options.method.toUpperCase();
   let url = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
   let headers = Object.assign({}, options.headers);
@@ -37023,7 +36294,7 @@ function parse2(options) {
       ).join(",");
     }
     if (url.endsWith("/graphql")) {
-      if ((_a2 = options.mediaType.previews) == null ? void 0 : _a2.length) {
+      if (options.mediaType.previews?.length) {
         const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
         headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
           const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
@@ -37303,9 +36574,8 @@ var init_get_buffer_response = __esm({
 
 // ../../../node_modules/.pnpm/@octokit+request@8.2.0/node_modules/@octokit/request/dist-src/fetch-wrapper.js
 function fetchWrapper(requestOptions) {
-  var _a2, _b, _c;
   const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
-  const parseSuccessResponseBody = ((_a2 = requestOptions.request) == null ? void 0 : _a2.parseSuccessResponseBody) !== false;
+  const parseSuccessResponseBody = requestOptions.request?.parseSuccessResponseBody !== false;
   if (isPlainObject2(requestOptions.body) || Array.isArray(requestOptions.body)) {
     requestOptions.body = JSON.stringify(requestOptions.body);
   }
@@ -37313,7 +36583,7 @@ function fetchWrapper(requestOptions) {
   let status;
   let url;
   let { fetch: fetch2 } = globalThis;
-  if ((_b = requestOptions.request) == null ? void 0 : _b.fetch) {
+  if (requestOptions.request?.fetch) {
     fetch2 = requestOptions.request.fetch;
   }
   if (!fetch2) {
@@ -37321,12 +36591,15 @@ function fetchWrapper(requestOptions) {
       "fetch is not set. Please pass a fetch implementation as new Octokit({ request: { fetch }}). Learn more at https://github.com/octokit/octokit.js/#fetch-missing"
     );
   }
-  return fetch2(requestOptions.url, __spreadValues({
+  return fetch2(requestOptions.url, {
     method: requestOptions.method,
     body: requestOptions.body,
     headers: requestOptions.headers,
-    signal: (_c = requestOptions.request) == null ? void 0 : _c.signal
-  }, requestOptions.body && { duplex: "half" })).then((response) => __async(this, null, function* () {
+    signal: requestOptions.request?.signal,
+    // duplex must be set if request.body is ReadableStream or Async Iterables.
+    // See https://fetch.spec.whatwg.org/#dom-requestinit-duplex.
+    ...requestOptions.body && { duplex: "half" }
+  }).then(async (response) => {
     url = response.url;
     status = response.status;
     for (const keyAndValue of response.headers) {
@@ -37362,13 +36635,13 @@ function fetchWrapper(requestOptions) {
           url,
           status,
           headers,
-          data: yield getResponseData(response)
+          data: await getResponseData(response)
         },
         request: requestOptions
       });
     }
     if (status >= 400) {
-      const data = yield getResponseData(response);
+      const data = await getResponseData(response);
       const error = new RequestError(toErrorMessage(data), status, {
         response: {
           url,
@@ -37380,8 +36653,8 @@ function fetchWrapper(requestOptions) {
       });
       throw error;
     }
-    return parseSuccessResponseBody ? yield getResponseData(response) : response.body;
-  })).then((data) => {
+    return parseSuccessResponseBody ? await getResponseData(response) : response.body;
+  }).then((data) => {
     return {
       status,
       url,
@@ -37406,17 +36679,15 @@ function fetchWrapper(requestOptions) {
     });
   });
 }
-function getResponseData(response) {
-  return __async(this, null, function* () {
-    const contentType = response.headers.get("content-type");
-    if (/application\/json/.test(contentType)) {
-      return response.json().catch(() => response.text()).catch(() => "");
-    }
-    if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
-      return response.text();
-    }
-    return getBufferResponse(response);
-  });
+async function getResponseData(response) {
+  const contentType = response.headers.get("content-type");
+  if (/application\/json/.test(contentType)) {
+    return response.json().catch(() => response.text()).catch(() => "");
+  }
+  if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
+    return response.text();
+  }
+  return getBufferResponse(response);
 }
 function toErrorMessage(data) {
   if (typeof data === "string")
@@ -37606,18 +36877,16 @@ var init_dist_web3 = __esm({
 });
 
 // ../../../node_modules/.pnpm/@octokit+auth-token@4.0.0/node_modules/@octokit/auth-token/dist-src/auth.js
-function auth(token) {
-  return __async(this, null, function* () {
-    const isApp = token.split(/\./).length === 3;
-    const isInstallation = REGEX_IS_INSTALLATION_LEGACY.test(token) || REGEX_IS_INSTALLATION.test(token);
-    const isUserToServer = REGEX_IS_USER_TO_SERVER.test(token);
-    const tokenType = isApp ? "app" : isInstallation ? "installation" : isUserToServer ? "user-to-server" : "oauth";
-    return {
-      type: "token",
-      token,
-      tokenType
-    };
-  });
+async function auth(token) {
+  const isApp = token.split(/\./).length === 3;
+  const isInstallation = REGEX_IS_INSTALLATION_LEGACY.test(token) || REGEX_IS_INSTALLATION.test(token);
+  const isUserToServer = REGEX_IS_USER_TO_SERVER.test(token);
+  const tokenType = isApp ? "app" : isInstallation ? "installation" : isUserToServer ? "user-to-server" : "oauth";
+  return {
+    type: "token",
+    token,
+    tokenType
+  };
 }
 var REGEX_IS_INSTALLATION_LEGACY, REGEX_IS_INSTALLATION, REGEX_IS_USER_TO_SERVER;
 var init_auth = __esm({
@@ -37643,15 +36912,13 @@ var init_with_authorization_prefix = __esm({
 });
 
 // ../../../node_modules/.pnpm/@octokit+auth-token@4.0.0/node_modules/@octokit/auth-token/dist-src/hook.js
-function hook(token, request2, route, parameters) {
-  return __async(this, null, function* () {
-    const endpoint2 = request2.endpoint.merge(
-      route,
-      parameters
-    );
-    endpoint2.headers.authorization = withAuthorizationPrefix(token);
-    return request2(endpoint2);
-  });
+async function hook(token, request2, route, parameters) {
+  const endpoint2 = request2.endpoint.merge(
+    route,
+    parameters
+  );
+  endpoint2.headers.authorization = withAuthorizationPrefix(token);
+  return request2(endpoint2);
 }
 var init_hook = __esm({
   "../../../node_modules/.pnpm/@octokit+auth-token@4.0.0/node_modules/@octokit/auth-token/dist-src/hook.js"() {
@@ -37689,7 +36956,7 @@ var dist_web_exports = {};
 __export(dist_web_exports, {
   Octokit: () => Octokit
 });
-var import_before_after_hook, VERSION4, noop, consoleWarn, consoleError, userAgentTrail, _a, Octokit;
+var import_before_after_hook, VERSION4, noop, consoleWarn, consoleError, userAgentTrail, Octokit;
 var init_dist_web4 = __esm({
   "../../../node_modules/.pnpm/@octokit+core@5.1.0/node_modules/@octokit/core/dist-web/index.js"() {
     "use strict";
@@ -37704,7 +36971,10 @@ var init_dist_web4 = __esm({
     consoleWarn = console.warn.bind(console);
     consoleError = console.error.bind(console);
     userAgentTrail = `octokit-core.js/${VERSION4} ${getUserAgent()}`;
-    Octokit = (_a = class {
+    Octokit = class {
+      static {
+        this.VERSION = VERSION4;
+      }
       static defaults(defaults) {
         const OctokitWithDefaults = class extends this {
           constructor(...args) {
@@ -37727,6 +36997,9 @@ var init_dist_web4 = __esm({
         };
         return OctokitWithDefaults;
       }
+      static {
+        this.plugins = [];
+      }
       /**
        * Attach a plugin (or many) to your Octokit instance.
        *
@@ -37734,12 +37007,14 @@ var init_dist_web4 = __esm({
        * const API = Octokit.plugin(plugin1, plugin2, plugin3, ...)
        */
       static plugin(...newPlugins) {
-        var _a2;
         const currentPlugins = this.plugins;
-        const NewOctokit = (_a2 = class extends this {
-        }, _a2.plugins = currentPlugins.concat(
-          newPlugins.filter((plugin) => !currentPlugins.includes(plugin))
-        ), _a2);
+        const NewOctokit = class extends this {
+          static {
+            this.plugins = currentPlugins.concat(
+              newPlugins.filter((plugin) => !currentPlugins.includes(plugin))
+            );
+          }
+        };
         return NewOctokit;
       }
       constructor(options = {}) {
@@ -37780,10 +37055,8 @@ var init_dist_web4 = __esm({
         this.hook = hook2;
         if (!options.authStrategy) {
           if (!options.auth) {
-            this.auth = () => __async(this, null, function* () {
-              return {
-                type: "unauthenticated"
-              };
+            this.auth = async () => ({
+              type: "unauthenticated"
             });
           } else {
             const auth2 = createTokenAuth(options.auth);
@@ -37791,7 +37064,7 @@ var init_dist_web4 = __esm({
             this.auth = auth2;
           }
         } else {
-          const _a2 = options, { authStrategy } = _a2, otherOptions = __objRest(_a2, ["authStrategy"]);
+          const { authStrategy, ...otherOptions } = options;
           const auth2 = authStrategy(
             Object.assign(
               {
@@ -37816,7 +37089,7 @@ var init_dist_web4 = __esm({
           Object.assign(this, classConstructor.plugins[i](this, options));
         }
       }
-    }, _a.VERSION = VERSION4, _a.plugins = [], _a);
+    };
   }
 });
 
@@ -39970,9 +39243,10 @@ function restEndpointMethods(octokit) {
 }
 function legacyRestEndpointMethods(octokit) {
   const api = endpointsToMethods(octokit);
-  return __spreadProps(__spreadValues({}, api), {
+  return {
+    ...api,
     rest: api
-  });
+  };
 }
 var init_dist_src5 = __esm({
   "../../../node_modules/.pnpm/@octokit+plugin-rest-endpoint-methods@10.4.1_@octokit+core@5.1.0/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/index.js"() {
@@ -39994,9 +39268,10 @@ __export(dist_web_exports2, {
 });
 function normalizePaginatedListResponse(response) {
   if (!response.data) {
-    return __spreadProps(__spreadValues({}, response), {
+    return {
+      ...response,
       data: []
-    });
+    };
   }
   const responseNeedsNormalization = "total_count" in response.data && !("url" in response.data);
   if (!responseNeedsNormalization)
@@ -40027,30 +39302,28 @@ function iterator(octokit, route, parameters) {
   let url = options.url;
   return {
     [Symbol.asyncIterator]: () => ({
-      next() {
-        return __async(this, null, function* () {
-          if (!url)
-            return { done: true };
-          try {
-            const response = yield requestMethod({ method, url, headers });
-            const normalizedResponse = normalizePaginatedListResponse(response);
-            url = ((normalizedResponse.headers.link || "").match(
-              /<([^>]+)>;\s*rel="next"/
-            ) || [])[1];
-            return { value: normalizedResponse };
-          } catch (error) {
-            if (error.status !== 409)
-              throw error;
-            url = "";
-            return {
-              value: {
-                status: 200,
-                headers: {},
-                data: []
-              }
-            };
-          }
-        });
+      async next() {
+        if (!url)
+          return { done: true };
+        try {
+          const response = await requestMethod({ method, url, headers });
+          const normalizedResponse = normalizePaginatedListResponse(response);
+          url = ((normalizedResponse.headers.link || "").match(
+            /<([^>]+)>;\s*rel="next"/
+          ) || [])[1];
+          return { value: normalizedResponse };
+        } catch (error) {
+          if (error.status !== 409)
+            throw error;
+          url = "";
+          return {
+            value: {
+              status: 200,
+              headers: {},
+              data: []
+            }
+          };
+        }
       }
     })
   };
@@ -41330,21 +40603,21 @@ var require_stream_chain = __commonJS({
     var isMany = (o) => o && typeof o == "object" && manySymbol in o;
     var getFinalValue = (o) => o[finalSymbol];
     var getManyValues = (o) => o[manySymbol];
-    var runAsyncGenerator = (gen, stream) => __async(exports2, null, function* () {
+    var runAsyncGenerator = async (gen, stream) => {
       for (; ; ) {
         let data = gen.next();
         if (data && typeof data.then == "function") {
-          data = yield data;
+          data = await data;
         }
         if (data.done)
           break;
         let value = data.value;
         if (value && typeof value.then == "function") {
-          value = yield value;
+          value = await value;
         }
         Chain.sanitize(value, stream);
       }
-    });
+    };
     var wrapFunction = (fn) => new Transform({
       writableObjectMode: true,
       readableObjectMode: true,
@@ -50909,7 +50182,7 @@ var require_polyfills = __commonJS({
             return ret2;
           };
         } else if (fs4.futimes) {
-          fs4.lutimes = function(_a2, _b, _c, cb) {
+          fs4.lutimes = function(_a, _b, _c, cb) {
             if (cb)
               process.nextTick(cb);
           };
@@ -57466,10 +56739,9 @@ var desktopMetafilesKeys = {
 };
 var mobileMetafileKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
 function getMetafileBundleSize(metafile, slug) {
-  var _a2, _b;
   const key = desktopMetafilesKeys[slug];
   if (key in metafile) {
-    return (_b = (_a2 = metafile[key]) == null ? void 0 : _a2.outputs[`.webpack/${slug}.bundle.js`]) == null ? void 0 : _b.bytes;
+    return metafile[key]?.outputs[`.webpack/${slug}.bundle.js`]?.bytes;
   }
 }
 function getMetafileDuplicates(metafiles, slug) {
@@ -57498,54 +56770,49 @@ function getMetafileDuplicates(metafiles, slug) {
   }
   return all;
 }
-function getRecentArtifactFromBranch(octokit, name, branch, maxDays = 7) {
-  return __async(this, null, function* () {
-    const dateFrom = new Date(Date.now() - 24 * 60 * 60 * 1e3 * maxDays);
-    const artifactsByDate = [];
-    let page = 1;
-    let latestDateReached = false;
-    let res;
-    do {
-      res = yield octokit.rest.actions.listArtifactsForRepo({
-        name,
-        owner: "ledgerhq",
-        repo: "ledger-live",
-        per_page: 100,
-        page
-      });
-      res.data.artifacts.forEach((a) => {
-        var _a2;
-        if (!branch || ((_a2 = a.workflow_run) == null ? void 0 : _a2.head_branch) === branch) {
-          if (!dateFrom || a.created_at && isDateBefore(dateFrom, a.created_at)) {
-            artifactsByDate.push([a, new Date(a.created_at || 0)]);
-          } else {
-            latestDateReached = true;
-          }
+async function getRecentArtifactFromBranch(octokit, name, branch, maxDays = 7) {
+  const dateFrom = new Date(Date.now() - 24 * 60 * 60 * 1e3 * maxDays);
+  const artifactsByDate = [];
+  let page = 1;
+  let latestDateReached = false;
+  let res;
+  do {
+    res = await octokit.rest.actions.listArtifactsForRepo({
+      name,
+      owner: "ledgerhq",
+      repo: "ledger-live",
+      per_page: 100,
+      page
+    });
+    res.data.artifacts.forEach((a) => {
+      if (!branch || a.workflow_run?.head_branch === branch) {
+        if (!dateFrom || a.created_at && isDateBefore(dateFrom, a.created_at)) {
+          artifactsByDate.push([a, new Date(a.created_at || 0)]);
+        } else {
+          latestDateReached = true;
         }
-      });
-      page++;
-      yield delay(500);
-    } while (res && res.data && res.data.artifacts.length > 0 && !latestDateReached);
-    artifactsByDate.sort((a, b) => b[1].getTime() - a[1].getTime());
-    if (artifactsByDate.length === 0) {
-      return void 0;
-    }
-    return artifactsByDate[0][0];
-  });
-}
-function downloadMetafilesFromArtifact(githubToken, url, type = "desktop") {
-  return __async(this, null, function* () {
-    core.info("Downloading Metafiles: " + url);
-    const res = yield fetch(url, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        "Content-Type": "application/json"
       }
     });
-    const blob = yield res.blob();
-    const stream = import_stream.Readable.fromWeb(blob.stream());
-    return type === "desktop" ? zipStreamToDesktopMetafiles(stream) : zipStreamToMobileMetafiles(stream);
+    page++;
+    await delay(500);
+  } while (res && res.data && res.data.artifacts.length > 0 && !latestDateReached);
+  artifactsByDate.sort((a, b) => b[1].getTime() - a[1].getTime());
+  if (artifactsByDate.length === 0) {
+    return void 0;
+  }
+  return artifactsByDate[0][0];
+}
+async function downloadMetafilesFromArtifact(githubToken, url, type = "desktop") {
+  core.info("Downloading Metafiles: " + url);
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      "Content-Type": "application/json"
+    }
   });
+  const blob = await res.blob();
+  const stream = import_stream.Readable.fromWeb(blob.stream());
+  return type === "desktop" ? zipStreamToDesktopMetafiles(stream) : zipStreamToMobileMetafiles(stream);
 }
 function zipStreamToDesktopMetafiles(stream) {
   const bundles = {};
@@ -57580,77 +56847,66 @@ function zipStreamToMobileMetafiles(stream) {
     });
   });
 }
-function jsonFileToMetafiles(folder) {
-  return __async(this, null, function* () {
-    return new Promise((resolve, reject) => {
-      const files = import_fs.default.readdirSync(folder);
-      const bundles = {};
-      for (const file of files) {
-        const p = import_path.default.join(folder, file);
-        if (!import_fs.default.lstatSync(p).isFile())
-          return;
-        if (file.includes("metafile")) {
-          try {
-            const content = import_fs.default.readFileSync(p, "utf8");
-            const parsed = JSON.parse(content);
-            bundles[file] = parsed;
-          } catch (error) {
-            reject(error);
-          }
+async function jsonFileToMetafiles(folder) {
+  return new Promise((resolve, reject) => {
+    const files = import_fs.default.readdirSync(folder);
+    const bundles = {};
+    for (const file of files) {
+      const p = import_path.default.join(folder, file);
+      if (!import_fs.default.lstatSync(p).isFile())
+        return;
+      if (file.includes("metafile")) {
+        try {
+          const content = import_fs.default.readFileSync(p, "utf8");
+          const parsed = JSON.parse(content);
+          bundles[file] = parsed;
+        } catch (error) {
+          reject(error);
         }
       }
-      resolve(bundles);
-    });
-  });
-}
-function retrieveLocalMetafiles(folder) {
-  return __async(this, null, function* () {
-    return jsonFileToMetafiles(folder);
-  });
-}
-function findComment(_0) {
-  return __async(this, arguments, function* ({
-    prNumber,
-    githubToken,
-    header
-  }) {
-    const octokit = github.getOctokit(githubToken);
-    const comments = yield octokit.rest.issues.listComments({
-      issue_number: parseInt(prNumber, 10),
-      repo: "ledger-live",
-      owner: "ledgerhq"
-    });
-    return comments.data.find((c) => {
-      var _a2;
-      return (_a2 = c.body) == null ? void 0 : _a2.includes(header);
-    });
-  });
-}
-function createOrUpdateComment(_0) {
-  return __async(this, arguments, function* ({
-    body,
-    prNumber,
-    githubToken,
-    found
-  }) {
-    const octokit = github.getOctokit(githubToken);
-    if (found) {
-      core.info(`Updating comment ${found.id}`);
-      yield octokit.rest.issues.updateComment({
-        repo: "ledger-live",
-        owner: "ledgerhq",
-        comment_id: found == null ? void 0 : found.id,
-        body
-      });
-      return;
     }
-    core.info(`Creating new comment`);
-    yield octokit.rest.issues.createComment({
+    resolve(bundles);
+  });
+}
+async function retrieveLocalMetafiles(folder) {
+  return jsonFileToMetafiles(folder);
+}
+async function findComment({
+  prNumber,
+  githubToken,
+  header
+}) {
+  const octokit = github.getOctokit(githubToken);
+  const comments = await octokit.rest.issues.listComments({
+    issue_number: parseInt(prNumber, 10),
+    repo: "ledger-live",
+    owner: "ledgerhq"
+  });
+  return comments.data.find((c) => c.body?.includes(header));
+}
+async function createOrUpdateComment({
+  body,
+  prNumber,
+  githubToken,
+  found
+}) {
+  const octokit = github.getOctokit(githubToken);
+  if (found) {
+    core.info(`Updating comment ${found.id}`);
+    await octokit.rest.issues.updateComment({
       repo: "ledger-live",
       owner: "ledgerhq",
-      issue_number: parseInt(prNumber, 10),
+      comment_id: found?.id,
       body
     });
+    return;
+  }
+  core.info(`Creating new comment`);
+  await octokit.rest.issues.createComment({
+    repo: "ledger-live",
+    owner: "ledgerhq",
+    issue_number: parseInt(prNumber, 10),
+    body
   });
 }
 function replaceInComment({
@@ -57682,76 +56938,72 @@ ${comment}`;
   }
   return newComment;
 }
-function messageFormatter(_0) {
-  return __async(this, arguments, function* ({
-    currentSha,
-    referenceSha,
-    reporter,
-    found,
-    header,
-    title
-  }) {
-    const head = `${title}
+async function messageFormatter({
+  currentSha,
+  referenceSha,
+  reporter,
+  found,
+  header,
+  title
+}) {
+  const head = `${title}
 > Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
-    core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
-    const body = reporter.toMarkdown();
-    const bodyText = `${head}
+  core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
+  const body = reporter.toMarkdown();
+  const bodyText = `${head}
 
 ${body}`;
-    const allGoodText = `${head}
+  const allGoodText = `${head}
 
 \u2705 Previous issues have all been fixed.`;
-    let comment = "";
-    if (found && found.body) {
-      if (found.body.includes(title)) {
-        comment = replaceInComment({
-          title,
-          comment: reporter.isEmpty() ? allGoodText : bodyText,
-          previous: found.body
-        });
-      } else {
-        comment = `${found.body}
+  let comment = "";
+  if (found && found.body) {
+    if (found.body.includes(title)) {
+      comment = replaceInComment({
+        title,
+        comment: reporter.isEmpty() ? allGoodText : bodyText,
+        previous: found.body
+      });
+    } else {
+      comment = `${found.body}
 
 ${bodyText}`;
-      }
-      return comment;
     }
-    if (reporter.isEmpty()) {
-      core.info("Nothing to report");
-      return;
-    }
-    comment = `${header}
-
-${bodyText}`;
     return comment;
-  });
+  }
+  if (reporter.isEmpty()) {
+    core.info("Nothing to report");
+    return;
+  }
+  comment = `${header}
+
+${bodyText}`;
+  return comment;
 }
-function submitCommentToPR(_0) {
-  return __async(this, arguments, function* ({
-    reporter,
-    prNumber,
-    githubToken,
+async function submitCommentToPR({
+  reporter,
+  prNumber,
+  githubToken,
+  currentSha,
+  referenceSha,
+  title
+}) {
+  core.info("Submiting comment to PR");
+  const header = `<!-- build-checks-${prNumber} -->`;
+  core.info("Looking for existing comment");
+  const found = await findComment({ prNumber, githubToken, header });
+  const comment = await messageFormatter({
+    title,
+    header,
     currentSha,
+    reporter,
     referenceSha,
-    title
-  }) {
-    core.info("Submiting comment to PR");
-    const header = `<!-- build-checks-${prNumber} -->`;
-    core.info("Looking for existing comment");
-    const found = yield findComment({ prNumber, githubToken, header });
-    const comment = yield messageFormatter({
-      title,
-      header,
-      currentSha,
-      reporter,
-      referenceSha,
-      found
-    });
-    if (!comment)
-      return;
-    yield createOrUpdateComment({ body: comment, prNumber, githubToken, found });
+    found
   });
+  if (!comment)
+    return;
+  await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
 }
 var delay = (ms) => new Promise((f) => setTimeout(f, ms));
 function isDateBefore(a, b) {
@@ -57802,44 +57054,41 @@ function formatHash(hash) {
 }
 
 // src/desktop.ts
-function desktopChecks(_0) {
-  return __async(this, arguments, function* ({ baseBranch, octokit, githubToken, prNumber }) {
-    var _a2;
-    const latestLinux = yield getRecentArtifactFromBranch(
-      octokit,
-      "linux-js-bundle-metafiles",
-      baseBranch
-    );
-    if (!latestLinux) {
-      core2.warning(`Could not find previous metadata files from ${baseBranch}`);
-      return;
-    }
-    core2.info(`Downloading most recent artifacts from ${baseBranch}`);
-    const referenceMetafiles = yield downloadMetafilesFromArtifact(
-      githubToken,
-      latestLinux.archive_download_url,
-      "desktop"
-    );
-    core2.info(`Getting current builds metadata files`);
-    const all = yield Promise.all([
-      retrieveLocalMetafiles("linux-js-bundle-metafiles"),
-      retrieveLocalMetafiles("mac-js-bundle-metafiles"),
-      retrieveLocalMetafiles("win-js-bundle-metafiles")
-    ]);
-    const reporter = new Reporter();
-    core2.info("Doing cross platform checks...");
-    crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);
-    core2.info(`Checking agains builds metadata files from ${baseBranch}`);
-    checksAgainstReference(reporter, all[0], referenceMetafiles);
-    core2.info("Submitting comment to PR");
-    yield submitCommentToPR({
-      reporter,
-      prNumber,
-      githubToken,
-      referenceSha: (_a2 = latestLinux.workflow_run) == null ? void 0 : _a2.head_sha,
-      currentSha: github2.context.sha,
-      title: "### Desktop Bundle Checks"
-    });
+async function desktopChecks({ baseBranch, octokit, githubToken, prNumber }) {
+  const latestLinux = await getRecentArtifactFromBranch(
+    octokit,
+    "linux-js-bundle-metafiles",
+    baseBranch
+  );
+  if (!latestLinux) {
+    core2.warning(`Could not find previous metadata files from ${baseBranch}`);
+    return;
+  }
+  core2.info(`Downloading most recent artifacts from ${baseBranch}`);
+  const referenceMetafiles = await downloadMetafilesFromArtifact(
+    githubToken,
+    latestLinux.archive_download_url,
+    "desktop"
+  );
+  core2.info(`Getting current builds metadata files`);
+  const all = await Promise.all([
+    retrieveLocalMetafiles("linux-js-bundle-metafiles"),
+    retrieveLocalMetafiles("mac-js-bundle-metafiles"),
+    retrieveLocalMetafiles("win-js-bundle-metafiles")
+  ]);
+  const reporter = new Reporter();
+  core2.info("Doing cross platform checks...");
+  crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);
+  core2.info(`Checking agains builds metadata files from ${baseBranch}`);
+  checksAgainstReference(reporter, all[0], referenceMetafiles);
+  core2.info("Submitting comment to PR");
+  await submitCommentToPR({
+    reporter,
+    prNumber,
+    githubToken,
+    referenceSha: latestLinux.workflow_run?.head_sha,
+    currentSha: github2.context.sha,
+    title: "### Desktop Bundle Checks"
   });
 }
 var bundleSizeThreshold = 100 * 1024;
@@ -57929,47 +57178,43 @@ function checksAgainstReference(reporter, metafiles, reference) {
 var core3 = __toESM(require_core());
 var github3 = __toESM(require_github());
 var fs2 = __toESM(require("fs"));
-function mobileChecks(_0) {
-  return __async(this, arguments, function* ({ octokit, baseBranch, githubToken, prNumber }) {
-    var _a2;
-    const mobileMetaFile = yield getRecentArtifactFromBranch(
-      octokit,
-      "mobile.metafile.json",
-      baseBranch
-    );
-    if (!mobileMetaFile) {
-      core3.warning(`Could not find previous metafile from ${baseBranch}`);
-      return;
-    }
-    core3.info(`Downloading most recent artifacts from ${baseBranch}`);
-    const reference = yield downloadMetafilesFromArtifact(
-      githubToken,
-      mobileMetaFile.archive_download_url,
-      "mobile"
-    );
-    core3.info(`Getting current bundles metafile`);
-    const file = fs2.readFileSync("mobile.metafile.json", "utf-8");
-    const currentBundles = JSON.parse(file);
-    const reporter = new Reporter();
-    core3.info(`Checking agains builds metadata files from ${baseBranch}`);
-    checksAgainstReference2(reporter, currentBundles, reference);
-    core3.info("Submitting comment to PR");
-    yield submitCommentToPR({
-      reporter,
-      prNumber,
-      githubToken,
-      referenceSha: (_a2 = mobileMetaFile.workflow_run) == null ? void 0 : _a2.head_sha,
-      currentSha: github3.context.sha,
-      title: "### Mobile Bundle Checks"
-    });
+async function mobileChecks({ octokit, baseBranch, githubToken, prNumber }) {
+  const mobileMetaFile = await getRecentArtifactFromBranch(
+    octokit,
+    "mobile.metafile.json",
+    baseBranch
+  );
+  if (!mobileMetaFile) {
+    core3.warning(`Could not find previous metafile from ${baseBranch}`);
+    return;
+  }
+  core3.info(`Downloading most recent artifacts from ${baseBranch}`);
+  const reference = await downloadMetafilesFromArtifact(
+    githubToken,
+    mobileMetaFile.archive_download_url,
+    "mobile"
+  );
+  core3.info(`Getting current bundles metafile`);
+  const file = fs2.readFileSync("mobile.metafile.json", "utf-8");
+  const currentBundles = JSON.parse(file);
+  const reporter = new Reporter();
+  core3.info(`Checking agains builds metadata files from ${baseBranch}`);
+  checksAgainstReference2(reporter, currentBundles, reference);
+  core3.info("Submitting comment to PR");
+  await submitCommentToPR({
+    reporter,
+    prNumber,
+    githubToken,
+    referenceSha: mobileMetaFile.workflow_run?.head_sha,
+    currentSha: github3.context.sha,
+    title: "### Mobile Bundle Checks"
   });
 }
 var bundleSizeThreshold2 = 100 * 1024;
 function checksAgainstReference2(reporter, current, reference) {
   mobileMetafileKeys.forEach((slug) => {
-    var _a2, _b;
-    const ref = (_a2 = reference[slug]) == null ? void 0 : _a2.size;
-    const size = (_b = current[slug]) == null ? void 0 : _b.size;
+    const ref = reference[slug]?.size;
+    const size = current[slug]?.size;
     core3.info(`${slug} bundle size: ${formatSize(size)}`);
     if (!size) {
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
@@ -57990,30 +57235,28 @@ function checksAgainstReference2(reporter, current, reference) {
 }
 
 // src/main.ts
-function main() {
-  return __async(this, null, function* () {
-    const githubToken = core4.getInput("token");
-    const prNumber = core4.getInput("prNumber");
-    const mode = core4.getInput("mode");
-    const baseBranch = core4.getInput("baseBranch");
-    const octokit = github4.getOctokit(githubToken);
-    if (mode === "desktop") {
-      desktopChecks({
-        githubToken,
-        prNumber,
-        baseBranch,
-        octokit
-      });
-    }
-    if (mode === "mobile") {
-      mobileChecks({
-        githubToken,
-        prNumber,
-        baseBranch,
-        octokit
-      });
-    }
-  });
+async function main() {
+  const githubToken = core4.getInput("token");
+  const prNumber = core4.getInput("prNumber");
+  const mode = core4.getInput("mode");
+  const baseBranch = core4.getInput("baseBranch");
+  const octokit = github4.getOctokit(githubToken);
+  if (mode === "desktop") {
+    desktopChecks({
+      githubToken,
+      prNumber,
+      baseBranch,
+      octokit
+    });
+  }
+  if (mode === "mobile") {
+    mobileChecks({
+      githubToken,
+      prNumber,
+      baseBranch,
+      octokit
+    });
+  }
 }
 main().catch((err) => {
   core4.setFailed(err);

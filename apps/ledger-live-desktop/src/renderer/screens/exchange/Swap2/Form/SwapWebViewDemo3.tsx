@@ -4,6 +4,11 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
+import {
+  accountToWalletAPIAccount,
+  getAccountIdFromWalletAccountId,
+} from "@ledgerhq/live-common/wallet-api/converters";
+import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -24,11 +29,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { captureException } from "~/sentry/renderer";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-import BigNumber from "bignumber.js";
-import {
-  accountToWalletAPIAccount,
-  getAccountIdFromWalletAccountId,
-} from "@ledgerhq/live-common/wallet-api/converters";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
@@ -39,13 +39,17 @@ import {
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
-import { transformToBigNumbers, useGetSwapTrackingProperties } from "../utils/index";
-import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import {
+  transformToBigNumbers,
+  useGetSwapTrackingProperties,
+  useRedirectToSwapHistory,
+} from "../utils/index";
+import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -109,6 +113,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { state } = useLocation<{ defaultAccount?: AccountLike; defaultParentAccount?: Account }>();
+  const redirectToHistory = useRedirectToSwapHistory();
 
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -241,7 +246,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             FeesDrawerLiveApp,
             {
               setTransaction,
-              mainAccount: fromAccount,
+              account: fromAccount,
               parentAccount: fromParentAccount,
               status: status,
               provider: undefined,
@@ -256,6 +261,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             },
           );
         });
+      },
+      "custom.swapRedirectToHistory": () => {
+        redirectToHistory();
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
