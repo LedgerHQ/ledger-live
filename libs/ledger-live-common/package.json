@@ -180,6 +180,7 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
+    "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.5.10",
     "@ledgerhq/wallet-api-core": "^1.11.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",

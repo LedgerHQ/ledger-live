@@ -138,7 +138,7 @@ const SwapWebView = ({
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const hasSwapState = !!swapState;
-  const customPTXHandlers = usePTXCustomHandlers(manifest);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
 
   const { fromCurrency, addressFrom, addressTo } = useMemo(() => {
     const [, , fromCurrency, addressFrom] =
