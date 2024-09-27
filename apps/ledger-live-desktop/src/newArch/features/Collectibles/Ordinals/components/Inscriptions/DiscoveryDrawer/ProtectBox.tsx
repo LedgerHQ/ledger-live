@@ -4,9 +4,10 @@ import Switch from "~/renderer/components/Switch";
 import { hasProtectedOrdinalsAssetsSelector } from "~/renderer/reducers/settings";
 import { setHasProtectedOrdinalsAssets } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const ProtectBox: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasProtectedOrdinals = useSelector(hasProtectedOrdinalsAssetsSelector);
 

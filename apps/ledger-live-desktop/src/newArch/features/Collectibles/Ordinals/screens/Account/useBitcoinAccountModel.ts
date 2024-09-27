@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { setHasSeenOrdinalsDiscoveryDrawer } from "~/renderer/actions/settings";
 import { hasSeenOrdinalsDiscoveryDrawerSelector } from "~/renderer/reducers/settings";
+import { findCorrespondingSat } from "LLD/features/Collectibles/utils/findCorrespondingSat";
 
 interface Props {
   account: BitcoinAccount;
@@ -15,8 +16,13 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
   const dispatch = useDispatch();
   const hasSeenDiscoveryDrawer = useSelector(hasSeenOrdinalsDiscoveryDrawerSelector);
   const [selectedInscription, setSelectedInscription] = useState<SimpleHashNft | null>(null);
+  const [correspondingRareSat, setCorrespondingRareSat] = useState<
+    SimpleHashNft | null | undefined
+  >(null);
 
-  const { rareSats, inscriptions, ...rest } = useFetchOrdinals({ account });
+  const { rareSats, inscriptions, inscriptionsGroupedWithRareSats, ...rest } = useFetchOrdinals({
+    account,
+  });
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(!hasSeenDiscoveryDrawer);
 
@@ -40,7 +46,11 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
     );
   }, [dispatch, account]);
 
-  const onInscriptionClick = (inscription: SimpleHashNft) => setSelectedInscription(inscription);
+  const onInscriptionClick = (inscription: SimpleHashNft) => {
+    const groupedNft = findCorrespondingSat(inscriptionsGroupedWithRareSats, inscription.nft_id);
+    setCorrespondingRareSat(groupedNft?.rareSat ?? null);
+    setSelectedInscription(inscription);
+  };
 
   const onDetailsDrawerClose = () => setSelectedInscription(null);
 
@@ -50,6 +60,8 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
     rest,
     isDrawerOpen,
     selectedInscription,
+    correspondingRareSat,
+    inscriptionsGroupedWithRareSats,
     onReceive,
     handleDrawerClose,
     onInscriptionClick,

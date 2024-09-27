@@ -19,6 +19,8 @@ const View: React.FC<ViewProps> = ({
   rareSats,
   isDrawerOpen,
   selectedInscription,
+  correspondingRareSat,
+  inscriptionsGroupedWithRareSats,
   handleDrawerClose,
   onReceive,
   onInscriptionClick,
@@ -26,15 +28,21 @@ const View: React.FC<ViewProps> = ({
 }) => (
   <Flex mb={50} width="100%" flexDirection="column" rowGap={40}>
     <Inscriptions
+      {...rest}
       inscriptions={inscriptions}
       onReceive={onReceive}
       onInscriptionClick={onInscriptionClick}
-      {...rest}
+      inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
     />
     <RareSats rareSats={rareSats} onReceive={onReceive} {...rest} />
     <DiscoveryDrawer isOpen={isDrawerOpen} onClose={handleDrawerClose} />
     {selectedInscription && (
-      <InscriptionDetailsDrawer inscription={selectedInscription} onClose={onDetailsDrawerClose} />
+      <InscriptionDetailsDrawer
+        inscription={selectedInscription}
+        correspondingRareSat={correspondingRareSat}
+        onClose={onDetailsDrawerClose}
+        isLoading={rest.isLoading}
+      />
     )}
   </Flex>
 );
