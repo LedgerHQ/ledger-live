@@ -8,7 +8,8 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-const Root = (props: {
+
+const MemoField = (props: {
   account: CardanoAccount;
   transaction: Transaction;
   status: TransactionStatus;
@@ -32,7 +33,4 @@ const Root = (props: {
   );
 };
 
-export default {
-  component: Root,
-  fields: ["memo"],
-};
+export default MemoField;
