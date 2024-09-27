@@ -1,7 +1,7 @@
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxAccount,
   Transaction,

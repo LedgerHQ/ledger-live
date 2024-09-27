@@ -1,9 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import Unbonding from "~/renderer/families/elrond/components/Unbondings/components/Unbonding";
+import Unbonding from "~/renderer/families/multiversx/components/Unbondings/components/Unbonding";
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
-import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
-import { UnbondingType } from "~/renderer/families/elrond/types";
+import { TableLine } from "~/renderer/families/multiversx/blocks/Delegation";
+import { UnbondingType } from "~/renderer/families/multiversx/types";
 import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 interface UnbondingsType {

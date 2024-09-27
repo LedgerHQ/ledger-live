@@ -20,7 +20,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
   MultiversxAccount,

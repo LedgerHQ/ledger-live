@@ -9,9 +9,14 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 import { openURL } from "~/renderer/linking";
-import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";
+import {
+  Ellipsis,
+  Column,
+  Wrapper,
+  Withdraw,
+} from "~/renderer/families/multiversx/blocks/Delegation";
 import { openModal } from "~/renderer/actions/modals";
-import { UnbondingType } from "~/renderer/families/elrond/types";
+import { UnbondingType } from "~/renderer/families/multiversx/types";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,

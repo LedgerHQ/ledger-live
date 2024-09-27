@@ -22,7 +22,7 @@ import Track from "~/renderer/analytics/Track";
 import logger from "~/renderer/logger";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
   MultiversxAccount,

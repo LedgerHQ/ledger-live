@@ -8,7 +8,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/multiversx/types";
 import { Transaction, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { Option } from "react-select/src/filters";
 
