@@ -3646,6 +3646,9 @@ importers:
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
+      '@ledgerhq/wallet-api-acre-module':
+        specifier: workspace:^
+        version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
         specifier: ^1.5.10
         version: 1.5.10
@@ -6948,6 +6951,19 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
+
+  libs/wallet-api-acre-module:
+    dependencies:
+      '@ledgerhq/wallet-api-client':
+        specifier: ^1.5.10
+        version: 1.5.10
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.11.0
+        version: 1.11.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.2.5
+        version: 20.12.12
 
   tests/dummy-live-app:
     dependencies:
