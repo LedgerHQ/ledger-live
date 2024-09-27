@@ -10,14 +10,16 @@ import Loader from "../Loader";
 import Error from "../Error";
 import Item from "./Item";
 import EmptyCollection from "LLD/features/Collectibles/components/Collection/EmptyCollection";
-import { CollectibleTypeEnum } from "../../../types/enum/Collectibles";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
+import { GroupedNftOrdinals } from "@ledgerhq/live-nft-react/index";
 
 type ViewProps = ReturnType<typeof useInscriptionsModel> & {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
   onReceive: () => void;
 };
 
@@ -26,6 +28,7 @@ type Props = {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
   onReceive: () => void;
   onInscriptionClick: (inscription: SimpleHashNft) => void;
 };
@@ -36,6 +39,7 @@ const View: React.FC<ViewProps> = ({
   isError,
   inscriptions,
   error,
+  inscriptionsGroupedWithRareSats,
   onShowMore,
   onReceive,
 }) => {
@@ -55,12 +59,8 @@ const View: React.FC<ViewProps> = ({
             <Item
               key={index}
               isLoading={isLoading}
-              tokenName={item.tokenName}
-              collectionName={item.collectionName}
-              tokenIcons={item.tokenIcons}
-              media={item.media}
-              rareSatName={item.rareSatName}
-              onClick={item.onClick}
+              inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
+              {...item}
             />
           ))}
         {nothingToShow && (
@@ -84,6 +84,7 @@ const Inscriptions: React.FC<Props> = ({
   isLoading,
   isError,
   error,
+  inscriptionsGroupedWithRareSats,
   onReceive,
   onInscriptionClick,
 }) => (
@@ -92,6 +93,7 @@ const Inscriptions: React.FC<Props> = ({
     isError={isError}
     error={error}
     onReceive={onReceive}
+    inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
     {...useInscriptionsModel({ inscriptions, onInscriptionClick })}
   />
 );

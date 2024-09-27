@@ -1,4 +1,4 @@
-import { matchCorrespondingIcon, createRareSatObject } from "./helpers";
+import { matchCorrespondingIcon, createRareSatObject } from "../helpers";
 import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
 import { regroupRareSatsByContractAddress } from "@ledgerhq/live-nft-react";
 
