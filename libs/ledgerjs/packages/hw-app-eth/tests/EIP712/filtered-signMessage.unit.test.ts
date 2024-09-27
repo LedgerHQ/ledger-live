@@ -401,88 +401,142 @@ describe("EIP712", () => {
   });
 
   describe("SignEIP712Message with filters v2", () => {
-    let nanoAppVersionApdus;
-    beforeAll(async () => {
-      nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.11.1"), "utf-8");
-    });
+    describe("from version 1.11.1", () => {
+      let nanoAppVersionApdus;
+      beforeAll(async () => {
+        nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.11.1"), "utf-8");
+      });
 
-    it("should sign correctly the 15-permit.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "15-filtered-v2"), "utf-8");
-      const message = await fs
-        .readFile(getFilePath("message", "15-permit"), "utf-8")
-        .then(JSON.parse);
+      it("should sign correctly the 15-permit.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(getFilePath("apdu", "15-filtered-v2"), "utf-8");
+        const message = await fs
+          .readFile(getFilePath("message", "15-permit"), "utf-8")
+          .then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-      );
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
 
-      const eth = new Eth(transport);
-      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
-      expect(result).toEqual({
-        r: "9573c40857d73d28b43120231886cf4199b1456e00da8887a508d576b6985a6f",
-        s: "18515302ca7809f9d36b95c8ea91509b602adc3c1653be0255ac5726969307bd",
-        v: 28,
+        expect(result).toEqual({
+          r: "9573c40857d73d28b43120231886cf4199b1456e00da8887a508d576b6985a6f",
+          s: "18515302ca7809f9d36b95c8ea91509b602adc3c1653be0255ac5726969307bd",
+          v: 28,
+        });
+      });
+
+      it("should sign correctly the 16-permit2.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(getFilePath("apdu", "16-filtered-v2"), "utf-8");
+        const message = await fs
+          .readFile(getFilePath("message", "16-permit2"), "utf-8")
+          .then(JSON.parse);
+
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
+
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+        expect(result).toEqual({
+          r: "ce7c4941157899c0db37c4363c773d919c896ddef669c878e856573659bb3655",
+          s: "0fed0222b941702c2fd5611ac13ac0217ed889586a56b047b0d5bf0566edbbb7",
+          v: 27,
+        });
+      });
+
+      it("should sign correctly the 17-uniswapx.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(getFilePath("apdu", "17-filtered-v2"), "utf-8");
+        const message = await fs
+          .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
+          .then(JSON.parse);
+
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
+
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+        expect(result).toEqual({
+          r: "63e951154de94e9f81ecefa38c0f11c2e4a9bfbaa3524b6c9744161211d6cc3b",
+          s: "62480171ceb1f39f2c41ff06a2ecd483c0faaaf459063b278c09803b8bef3e4d",
+          v: 27,
+        });
+      });
+
+      it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(getFilePath("apdu", "18-filtered-v2"), "utf-8");
+        const message = await fs
+          .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")
+          .then(JSON.parse);
+
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
+
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+        expect(result).toEqual({
+          r: "6f07ba3bb7fa9369ee9b5e4cc3bdc8545d75e3527fa242a5e4d23ead9d232af8",
+          s: "412a55401fe955b996125682ad0a47277d3ce1b314ee3962956ae643b71166cb",
+          v: 27,
+        });
       });
     });
-
-    it("should sign correctly the 16-permit2.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "16-filtered-v2"), "utf-8");
-      const message = await fs
-        .readFile(getFilePath("message", "16-permit2"), "utf-8")
-        .then(JSON.parse);
-
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-      );
-
-      const eth = new Eth(transport);
-      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
-
-      expect(result).toEqual({
-        r: "ce7c4941157899c0db37c4363c773d919c896ddef669c878e856573659bb3655",
-        s: "0fed0222b941702c2fd5611ac13ac0217ed889586a56b047b0d5bf0566edbbb7",
-        v: 27,
+    describe("from version 1.12.0", () => {
+      let nanoAppVersionApdus;
+      beforeAll(async () => {
+        nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.12.0"), "utf-8");
       });
-    });
 
-    it("should sign correctly the 17-uniswapx.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "17-filtered-v2"), "utf-8");
-      const message = await fs
-        .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
-        .then(JSON.parse);
+      it("should sign correctly the 1-empty-array-1-level.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(
+          getFilePath("apdu", "1-filtered-empty-array-1-level-v2"),
+          "utf-8",
+        );
+        const message = await fs
+          .readFile(getFilePath("message", "1-empty-array-1-level"), "utf-8")
+          .then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-      );
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
 
-      const eth = new Eth(transport);
-      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
-      expect(result).toEqual({
-        r: "63e951154de94e9f81ecefa38c0f11c2e4a9bfbaa3524b6c9744161211d6cc3b",
-        s: "62480171ceb1f39f2c41ff06a2ecd483c0faaaf459063b278c09803b8bef3e4d",
-        v: 27,
+        expect(result).toEqual({
+          r: "d564c78ed10b539ca83410d9deca79fdaaa250ad53c4dc41433ba55d02a26d25",
+          s: "50d3ed7f9c66b3f2c60ffb9b6c696b8f06cd88cafe4ae8371642ab7771827c3a",
+          v: 27,
+        });
       });
-    });
 
-    it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(getFilePath("apdu", "18-filtered-v2"), "utf-8");
-      const message = await fs
-        .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")
-        .then(JSON.parse);
+      it("should sign correctly the 1-empty-array-2-levels.json sample message", async () => {
+        const apdusBuffer = await fs.readFile(
+          getFilePath("apdu", "1-filtered-empty-array-2-levels-v2"),
+          "utf-8",
+        );
+        const message = await fs
+          .readFile(getFilePath("message", "1-empty-array-2-levels"), "utf-8")
+          .then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-      );
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
+        );
 
-      const eth = new Eth(transport);
-      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+        const eth = new Eth(transport);
+        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
-      expect(result).toEqual({
-        r: "6f07ba3bb7fa9369ee9b5e4cc3bdc8545d75e3527fa242a5e4d23ead9d232af8",
-        s: "412a55401fe955b996125682ad0a47277d3ce1b314ee3962956ae643b71166cb",
-        v: 27,
+        expect(result).toEqual({
+          r: "4217052c28965d9d1cdba00a65b5d9a18c41e0ea60161cd5f3b0ccffd2d4a536",
+          s: "589c87ae016194d0981925d203d203390e6f706e270a7b4ba579a106539ade08",
+          v: 28,
+        });
       });
     });
   });
