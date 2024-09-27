@@ -50,7 +50,7 @@ runs:
 
     - uses: pnpm/action-setup@v4
       with:
-        version: 9.4.0
+        version: 9.11.0
     - name: Get pnpm store directory
       shell: bash
       run: |

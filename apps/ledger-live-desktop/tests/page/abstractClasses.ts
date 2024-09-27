@@ -16,6 +16,7 @@ export abstract class Component extends PageHolder {
         `//*[contains(text(),"${text}")]/following::span[contains(text(),"${followingText}")]`,
       )
       .first();
+  protected loadingSpinner = this.page.getByTestId("loading-spinner");
 
   async waitForPageDomContentLoadedState() {
     return await this.page.waitForLoadState("domcontentloaded");
