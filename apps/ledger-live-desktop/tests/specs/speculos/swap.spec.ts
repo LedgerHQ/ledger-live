@@ -8,7 +8,7 @@ import { Providers, Rates } from "tests/enum/Swap";
 
 const swaps = [
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_1, "0.015", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.015", Fee.MEDIUM),
   },
 ];
 

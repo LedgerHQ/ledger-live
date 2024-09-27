@@ -6,9 +6,15 @@ import { FetchNftsProps, OrdinalsChainsEnum } from "./types";
 import { NFTS_QUERY_KEY } from "../queryKeys";
 import { processOrdinals } from "./helpers/ordinals";
 
-type Result = UseInfiniteQueryResult<InfiniteData<SimpleHashResponse, unknown>, Error> & {
+export interface GroupedNftOrdinals {
+  rareSat: SimpleHashNft;
+  inscription: SimpleHashNft;
+}
+
+export type Result = UseInfiniteQueryResult<InfiniteData<SimpleHashResponse, unknown>, Error> & {
   rareSats: SimpleHashNft[];
   inscriptions: SimpleHashNft[];
+  inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
 };
 
 export function useFetchOrdinals({ addresses, threshold }: FetchNftsProps): Result {
@@ -35,6 +41,18 @@ export function useFetchOrdinals({ addresses, threshold }: FetchNftsProps): Resu
 
   const { rareSats, inscriptions } = useMemo(() => processOrdinals(nfts), [nfts]);
 
+  const inscriptionsGroupedWithRareSats: GroupedNftOrdinals[] = [];
+
+  rareSats.forEach(sat => {
+    const inscription = inscriptions.find(inscription => {
+      const location = inscription.extra_metadata?.ordinal_details?.location?.split(":")[0];
+      return location === sat.contract_address;
+    });
+    if (inscription) {
+      inscriptionsGroupedWithRareSats.push({ rareSat: sat, inscription });
+    }
+  });
+
   useEffect(() => {
     if (queryResult.hasNextPage && !queryResult.isFetchingNextPage) {
       queryResult.fetchNextPage();
@@ -45,5 +63,6 @@ export function useFetchOrdinals({ addresses, threshold }: FetchNftsProps): Resu
     ...queryResult,
     rareSats,
     inscriptions,
+    inscriptionsGroupedWithRareSats,
   };
 }

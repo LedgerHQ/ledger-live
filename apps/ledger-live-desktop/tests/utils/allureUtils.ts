@@ -30,4 +30,15 @@ export async function captureArtifacts(page: Page, testInfo: TestInfo) {
       await testInfo.attach("Test Video", { body: videoData, contentType: "video/webm" });
     }
   }
+
+  const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
+
+  await page.evaluate(filePath => {
+    window.saveLogs(filePath);
+  }, filePath);
+
+  await testInfo.attach("Test logs", {
+    path: filePath,
+    contentType: "application/json",
+  });
 }

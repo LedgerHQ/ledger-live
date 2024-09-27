@@ -1,7 +1,7 @@
-import Button from "~/renderer/components/Button";
-import { t } from "i18next";
 import React from "react";
+import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   children?: JSX.Element;
@@ -9,6 +9,7 @@ type Props = {
 };
 
 const HeaderActions: React.FC<Props> = ({ children, textKey }) => {
+  const { t } = useTranslation();
   return (
     <Button primary borderRadius={6} icon>
       <Box horizontal alignItems="center" flow={1} display={"flex"}>

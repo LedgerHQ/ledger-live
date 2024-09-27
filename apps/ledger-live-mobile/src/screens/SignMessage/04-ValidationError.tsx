@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -22,14 +22,12 @@ export default function ValidationError({ navigation, route }: Navigation) {
   const { colors } = useTheme();
   const { error, onFailHandler } = route.params;
 
-  useEffect(() => {
+  const onClose = useCallback(() => {
     if (onFailHandler && error) {
       onFailHandler(error);
     }
-  }, [onFailHandler, error]);
-  const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
-  }, [navigation]);
+  }, [error, navigation, onFailHandler]);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);

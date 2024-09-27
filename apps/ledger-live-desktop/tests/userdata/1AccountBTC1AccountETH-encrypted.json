@@ -18,7 +18,7 @@
       "loaded": true,
       "shareAnalytics": true,
       "sharePersonalizedRecommandations": false,
-      "hasSeenAnalyticsOptInPrompt": false,
+      "hasSeenAnalyticsOptInPrompt": true,
       "sentryLogs": true,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],

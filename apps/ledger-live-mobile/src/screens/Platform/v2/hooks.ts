@@ -14,6 +14,7 @@ import {
   DAPP_DISCLAIMER_ID,
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
+  WC_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -100,8 +101,6 @@ export type Disclaimer = DisclaimerRaw & {
   openApp: (manifest: AppManifest) => void;
 };
 
-const WALLET_CONNECT_LIVE_APP = "ledger-wallet-connect";
-
 function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
@@ -117,7 +116,7 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
     (manifest: AppManifest) => {
       // Navigate to the WalletConnect navigator screen instead of the discover one
       // In order to avoid issue with deeplinks opening wallet-connect multiple times
-      if (manifest.id === WALLET_CONNECT_LIVE_APP) {
+      if (manifest.id === WC_ID) {
         navigation.navigate(NavigatorName.WalletConnect, {
           screen: ScreenName.WalletConnectConnect,
           params: {},
