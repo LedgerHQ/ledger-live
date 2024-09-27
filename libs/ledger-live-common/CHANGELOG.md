@@ -1,5 +1,13 @@
 ## 34.5.0-next.4
 
+## 34.8.1-nightly.3
+
+### Patch Changes
+
+- [#7907](https://github.com/LedgerHQ/ledger-live/pull/7907) [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): allow wallet-connect live-app to open a deep-link at any time
+
+  Refactor by sharing a single constant for wallet-connect live-app manifest id
+
 ## 34.8.1-nightly.2
 
 ### Patch Changes

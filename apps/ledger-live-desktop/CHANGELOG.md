@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.87.0-nightly.6
+
+### Patch Changes
+
+- [#7910](https://github.com/LedgerHQ/ledger-live/pull/7910) [`8b3fd36`](https://github.com/LedgerHQ/ledger-live/commit/8b3fd36ff06b9777d6428c8b887fec7643d97349) Thanks [@thesan](https://github.com/thesan)! - Always skip the analytics prompt in e2e tests
+
+- [#7896](https://github.com/LedgerHQ/ledger-live/pull/7896) [`521c394`](https://github.com/LedgerHQ/ledger-live/commit/521c394f7d35f61d07b9e907b2085d329bff2cab) Thanks [@themooneer](https://github.com/themooneer)! - bump storyly version
+
+- [#7914](https://github.com/LedgerHQ/ledger-live/pull/7914) [`d3fa14f`](https://github.com/LedgerHQ/ledger-live/commit/d3fa14f536533dd961c9eb829ed4465bda5569e4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix unstable integration test
+
+- [#7907](https://github.com/LedgerHQ/ledger-live/pull/7907) [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): allow wallet-connect live-app to open a deep-link at any time
+
+  Refactor by sharing a single constant for wallet-connect live-app manifest id
+
+- [#7923](https://github.com/LedgerHQ/ledger-live/pull/7923) [`7364333`](https://github.com/LedgerHQ/ledger-live/commit/73643335439f0bad460e17fe76dea52e1578db73) Thanks [@themooneer](https://github.com/themooneer)! - storyly stories localization
+
+- [#7924](https://github.com/LedgerHQ/ledger-live/pull/7924) [`600c7b6`](https://github.com/LedgerHQ/ledger-live/commit/600c7b67afabeb951b10132e5090072c7fd46cf3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add protectBox to protect ordinals in discovery drawer
+
+- Updated dependencies [[`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0)]:
+  - @ledgerhq/live-common@34.8.1-nightly.3
+
 ## 2.87.0-nightly.5
 
 ### Patch Changes

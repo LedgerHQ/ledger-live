@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.50.0-nightly.7
+
+### Patch Changes
+
+- [#7905](https://github.com/LedgerHQ/ledger-live/pull/7905) [`f16375d`](https://github.com/LedgerHQ/ledger-live/commit/f16375ded204392f6e0e9af46e1c49362ce49561) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): only call success and fail handlers when closing the flow on LLM
+
+  Allows to properly retry the sign message without sending an error through the wallet-api
+  We also only send the success when we actually close the last success screen
+
+- [#7907](https://github.com/LedgerHQ/ledger-live/pull/7907) [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): allow wallet-connect live-app to open a deep-link at any time
+
+  Refactor by sharing a single constant for wallet-connect live-app manifest id
+
+- [#7906](https://github.com/LedgerHQ/ledger-live/pull/7906) [`b7fa1bf`](https://github.com/LedgerHQ/ledger-live/commit/b7fa1bf9c34a665a97edaabdbd8649da9c1f060d) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): wallet-connect deep-link from native app for a request would reload the page
+
+  Reloading the page would break the wallet-api flow shown when coming back to the app
+
+- [#7890](https://github.com/LedgerHQ/ledger-live/pull/7890) [`fa56035`](https://github.com/LedgerHQ/ledger-live/commit/fa56035ac15a36e5032efd9ce0036d13d4a30790) Thanks [@thesan](https://github.com/thesan)! - Always skip the analytics prompt in e2e tests
+
+- [#7872](https://github.com/LedgerHQ/ledger-live/pull/7872) [`7eb4f48`](https://github.com/LedgerHQ/ledger-live/commit/7eb4f48500d14d9ebde0374b239944cb9da9da56) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): open any deep-link from the webview on LLM
+
+  Needed for wallet-connect-live-app deep-link back to mobile dApps
+
+- Updated dependencies [[`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0)]:
+  - @ledgerhq/live-common@34.8.1-nightly.3
+
 ## 3.50.0-nightly.6
 
 ### Patch Changes
