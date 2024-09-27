@@ -1,7 +1,7 @@
 import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
-import evms from "@ledgerhq/cryptoassets/data/evm/index";
+import evms from "@ledgerhq/cryptoassets-evm-signatures/lib/data/evm/index";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { EthAppPleaseEnableContractData } from "../../src/errors";
 import SignatureCALEth from "../fixtures/SignatureCALEth";
@@ -10,7 +10,7 @@ import Eth from "../../src/Eth";
 
 const txHex =
   "f86a0e8506a2bb7d008301512c94005d1123878fc55fbd56b54c73963b234a64af3c80b844a9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000018080";
-jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
   get signatures() {
     return {
       1: SignatureCALEth,
