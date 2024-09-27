@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.51.1
+
+### Patch Changes
+
+- [#7780](https://github.com/LedgerHQ/ledger-live/pull/7780) [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag "deviceSupportEuropa" (for Ledger Flex)
+
+- [#7875](https://github.com/LedgerHQ/ledger-live/pull/7875) [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add spamFilteringTx FF
+
+- [#7825](https://github.com/LedgerHQ/ledger-live/pull/7825) [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add a field to ledger sync feature flag so we can use a dynamic learn more link
+
 ## 6.51.1-next.0
 
 ### Patch Changes

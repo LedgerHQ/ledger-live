@@ -1,5 +1,23 @@
 # @ledgerhq/live-wallet
 
+## 0.4.0
+
+### Minor Changes
+
+- [#7823](https://github.com/LedgerHQ/ledger-live/pull/7823) [`c4309b1`](https://github.com/LedgerHQ/ledger-live/commit/c4309b17f8e34e664896fd357d1eeac14e318473) Thanks [@thesan](https://github.com/thesan)! - Allow members to sync immediately after getting removed
+
+### Patch Changes
+
+- [#7800](https://github.com/LedgerHQ/ledger-live/pull/7800) [`52ae4d3`](https://github.com/LedgerHQ/ledger-live/commit/52ae4d3ea2ae52306e868923e48f4a5807a78d57) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Display relevant error when scanning old accounts export qr code or an invalid one
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/live-network@2.0.1
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/speculos-transport@0.1.6
+  - @ledgerhq/hw-transport@6.31.4
+  - @ledgerhq/hw-trustchain@0.1.6
+  - @ledgerhq/hw-transport-mocker@6.29.4
+
 ## 0.4.0-next.1
 
 ### Patch Changes

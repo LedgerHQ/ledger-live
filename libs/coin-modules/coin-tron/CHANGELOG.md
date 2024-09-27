@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tron
 
+## 0.0.6
+
+### Patch Changes
+
+- [#7762](https://github.com/LedgerHQ/ledger-live/pull/7762) [`308e787`](https://github.com/LedgerHQ/ledger-live/commit/308e787725082b517eb436a4e198595a6a0958c4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix approve operations on Tron
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0
+  - @ledgerhq/live-network@2.0.1
+  - @ledgerhq/types-live@6.51.1
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/coin-framework@0.18.1
+  - @ledgerhq/devices@8.4.4
+
 ## 0.0.6-next.1
 
 ### Patch Changes
