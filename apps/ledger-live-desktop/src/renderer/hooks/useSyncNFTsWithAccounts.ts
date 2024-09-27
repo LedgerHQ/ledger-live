@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useHideSpamCollection } from "./useHideSpamCollection";
-import { isThresholdValid, supportedChains, useCheckNftAccount } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 import { accountsSelector, orderedVisibleNftsSelector } from "../reducers/accounts";
 import isEqual from "lodash/isEqual";
+import { getEnv } from "@ledgerhq/live-env";
 
 /**
  * Represents the size of groups for batching address fetching.
@@ -35,6 +36,7 @@ const TIMER = 5 * 60 * 60 * 1000; // 5 hours = 18000000 ms
  */
 
 export function useSyncNFTsWithAccounts() {
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const threshold = isThresholdValid(Number(nftsFromSimplehashFeature?.params?.threshold))
     ? Number(nftsFromSimplehashFeature?.params?.threshold)
@@ -80,7 +82,7 @@ export function useSyncNFTsWithAccounts() {
   useCheckNftAccount({
     addresses: groupToFetch.join(","),
     nftsOwned,
-    chains: supportedChains,
+    chains: SUPPORTED_NFT_CURRENCIES,
     threshold,
     action: hideSpamCollection,
     enabled,

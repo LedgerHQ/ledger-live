@@ -20,8 +20,9 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
-import { Chain, isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 const SpinnerContainer = styled.div`
   display: flex;
@@ -69,7 +70,7 @@ const Gallery = () => {
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account?.nfts || [],
     addresses: account?.freshAddress || "",
-    chains: [account?.currency.id ?? Chain.ETHEREUM],
+    chains: [account?.currency.id ?? BlockchainEVM.Ethereum],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
