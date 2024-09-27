@@ -3,6 +3,7 @@
 ## @ledgerhq/cryptoassets-evm-signatures
 
 Ledger's material for crypto currencies, tokens and fiats. Also includes signatures required by Nano devices for these tokens.
+This is a lightweight version that only the top 100 most popular tokens (by marketcap) for every EVM chains.
 
 **DO NOT EDIT because this library is generated.**
 
@@ -10,8 +11,8 @@ Ledger's material for crypto currencies, tokens and fiats. Also includes signatu
 
 There are two modes of usage of this library.
 
-*   The all-in way: you want to have all the data available (ERC20 token loaded,...). To do this, you simply import `@ledgerhq/cryptoassets`
-*   The custom way: you can import individual data piece from `@ledgerhq/cryptoassets/data/*`. For instance, importing the ERC20 signatures can be done with `@ledgerhq/cryptoassets/data/erc20-signatures` sub module.
+*   The all-in way: you want to have all the data available (ERC20 token loaded,...). To do this, you simply import `@ledgerhq/cryptoassets-evm-signatures`
+*   The custom way: you can import individual data piece from `@ledgerhq/cryptoassets-evm-signatures/data/*`. For instance, importing the ERC20 signatures can be done with `@ledgerhq/cryptoassets/data/erc20-signatures` sub module.
 
 ## Importing CAL tokens in cryptoassets data
 
@@ -42,34 +43,32 @@ pnpm import:cal-tokens
     *   [Parameters](#parameters-6)
 *   [hasCryptoCurrencyId](#hascryptocurrencyid)
     *   [Parameters](#parameters-7)
-*   [findExchangeCurrencyConfig](#findexchangecurrencyconfig)
-    *   [Parameters](#parameters-8)
 *   [hasFiatCurrencyTicker](#hasfiatcurrencyticker)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-8)
 *   [findFiatCurrencyByTicker](#findfiatcurrencybyticker)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-9)
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-10)
 *   [listFiatCurrencies](#listfiatcurrencies)
 *   [\_\_clearObject](#__clearobject)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-11)
 *   [\_\_clearAllLists](#__clearalllists)
 *   [listTokens](#listtokens)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-12)
 *   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-13)
 *   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-14)
 *   [findTokenByTicker](#findtokenbyticker)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-15)
 *   [findTokenById](#findtokenbyid)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-16)
 *   [hasTokenId](#hastokenid)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-17)
 *   [getTokenById](#gettokenbyid)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-18)
 *   [removeTokenFromAllLists](#removetokenfromalllists)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
 *   [id](#id)
 
 ### abandonSeedAddresses
@@ -152,14 +151,6 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 *   `id` **any**&#x20;
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-### findExchangeCurrencyConfig
-
-#### Parameters
-
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **({config: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), signature: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)} | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### hasFiatCurrencyTicker
 

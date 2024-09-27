@@ -4033,9 +4033,6 @@ importers:
       axios:
         specifier: 1.7.3
         version: 1.7.3
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       invariant:
         specifier: '2'
         version: 2.2.4
@@ -4043,9 +4040,6 @@ importers:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../types-cryptoassets
-      '@types/bs58check':
-        specifier: ^2.1.0
-        version: 2.1.2
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12
