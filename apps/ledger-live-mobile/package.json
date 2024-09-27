@@ -68,8 +68,8 @@
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported",
-    "assets:replace": "zx ./scripts/replace-assets.mjs"
+    "assets:replace": "zx ./scripts/replace-assets.mjs",
+    "knip-check": "pnpm knip --directory ../.. --workspace apps/ledger-live-mobile"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",

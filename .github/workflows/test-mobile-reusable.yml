@@ -53,7 +53,7 @@ jobs:
       - name: Run linter
         run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --format="json" -o="lint-mobile.json"
       - name: check for dead code
-        run: pnpm mobile unimported
+        run: pnpm knip-check --filter="live-mobile"
         shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"

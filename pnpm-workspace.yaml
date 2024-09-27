@@ -9,3 +9,4 @@ packages:
   - "libs/ledger-live-common/tools"
   - "tools/**"
   - "docs"
+
