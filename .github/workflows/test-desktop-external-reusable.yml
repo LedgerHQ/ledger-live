@@ -9,13 +9,13 @@ on:
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
           have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
-        required: false
+        required: true
       login:
         description: The GitHub username that triggered the workflow
         required: false
-      base_ref:
-        description: The base branch to merge the head into when checking out the code
-        required: false
+      repository:
+        description: The repository to checkout the code from
+        required: true
 
 permissions:
   id-token: write
@@ -32,7 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.ref }}
+          repository: ${{ inputs.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
@@ -68,7 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.ref }}
+          repository: ${{ inputs.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
@@ -94,7 +98,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.ref }}
+          repository: ${{ inputs.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
@@ -152,7 +158,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.ref }}
+          repository: ${{ inputs.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: "download linter results"
         uses: actions/download-artifact@v4
@@ -318,22 +326,3 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
-
-  allure-report:
-    name: "Allure Reports Export on Server"
-    needs: [e2e-tests-linux]
-    runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Send Results and Generate Allure Report - Linux
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ !cancelled() }}
-        with:
-          platform: linux
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: allure-results-linux
