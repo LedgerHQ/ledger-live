@@ -21,3 +21,5 @@ export const CardanoInvalidPoolId = createCustomErrorClass("CardanoInvalidPoolId
  * Cardano warning/error for high fees
  */
 export const CardanoFeeTooHigh = createCustomErrorClass("CardanoFeeTooHigh");
+
+export const CardanoOutOfSync = createCustomErrorClass("CardanoOutOfSync");

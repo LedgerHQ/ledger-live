@@ -6,7 +6,14 @@ import {
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { RewardAddress } from "@stricahq/typhonjs/dist/address";
-import { getAccountStakeCredential, getBaseAddress, getTTL, mergeTokens, isTestnet } from "./logic";
+import {
+  getAccountStakeCredential,
+  getBaseAddress,
+  getTTL,
+  mergeTokens,
+  isTestnet,
+  isProtocolParamsValid,
+} from "./logic";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { getNetworkParameters } from "./networks";
 import {
@@ -18,6 +25,7 @@ import {
   Transaction,
 } from "./types";
 import { CARDANO_MAX_SUPPLY } from "./constants";
+import { CardanoOutOfSync } from "./errors";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   const address = TyphonUtils.getAddressFromHex(
@@ -366,6 +374,10 @@ export const buildTransaction = async (
 ): Promise<TyphonTransaction> => {
   const cardanoResources = account.cardanoResources as CardanoResources;
   const protocolParams = cardanoResources.protocolParams;
+
+  if (!isProtocolParamsValid(account.cardanoResources.protocolParams)) {
+    throw new CardanoOutOfSync();
+  }
 
   const typhonTx = new TyphonTransaction({
     protocolParams: {
