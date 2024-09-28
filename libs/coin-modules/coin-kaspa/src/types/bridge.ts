@@ -49,6 +49,7 @@ export type KaspaTransactionCommonRaw = TransactionCommonRaw & {
   fees: BigNumber | null | undefined;
   rbf: boolean;
 };
+
 export type KaspaTransactionStatusCommon = TransactionStatusCommon & {
   later: "maybe";
 };
