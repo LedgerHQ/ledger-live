@@ -13,6 +13,7 @@ import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
 import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -24,7 +25,8 @@ const Separator = styled.div`
 
 function StepSummary(props: StepProps) {
   const { account, transaction, status, error } = props;
-  const { estimatedFees, errors } = status;
+  const { estimatedFees, errors, warnings } = status;
+  const { feeTooHigh } = warnings;
   const displayError = errors.amount?.message ? errors.amount : "";
 
   const accountUnit = useMaybeAccountUnit(account);
@@ -72,7 +74,7 @@ function StepSummary(props: StepProps) {
           </Text>
           <Box>
             <FormattedVal
-              color={"palette.text.shade80"}
+              color={feeTooHigh ? "warning" : "palette.text.shade80"}
               disableRounding
               unit={accountUnit}
               alwaysShowValue
@@ -83,7 +85,7 @@ function StepSummary(props: StepProps) {
             />
             <Box textAlign="right">
               <CounterValue
-                color={"palette.text.shade60"}
+                color={feeTooHigh ? "warning" : "palette.text.shade60"}
                 fontSize={3}
                 currency={feesCurrency}
                 value={estimatedFees}
@@ -93,6 +95,20 @@ function StepSummary(props: StepProps) {
             </Box>
           </Box>
         </Box>
+        {feeTooHigh ? (
+          <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+            <IconExclamationCircle size={10} />
+            <Text
+              ff="Inter|Medium"
+              fontSize={2}
+              style={{
+                marginLeft: "5px",
+              }}
+            >
+              <TranslatedError error={feeTooHigh} />
+            </Text>
+          </Box>
+        ) : null}
       </FromToWrapper>
       {displayError ? (
         <Box grow>
