@@ -114,9 +114,11 @@ export function StepSummaryFooter({
   onClose,
 }: StepProps) {
   const { errors } = status;
-  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
+  const { feeTooHigh } = errors;
+  const canNext = Object.keys(errors).length === 0 && !bridgePending && transaction;
   return (
-    <>
+    <Box flex={1}>
+      {feeTooHigh ? <ErrorBanner error={feeTooHigh} /> : null}
       <Box horizontal justifyContent="flex-end" flow={2} grow>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />
@@ -130,6 +132,6 @@ export function StepSummaryFooter({
           <Trans i18nKey="common.continue" />
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }
