@@ -1,5 +1,15 @@
 ## 34.5.0-next.4
 
+## 34.8.1-nightly.4
+
+### Patch Changes
+
+- [#7900](https://github.com/LedgerHQ/ledger-live/pull/7900) [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818) Thanks [@qperrot](https://github.com/qperrot)! - remove rewards feature from near
+
+- Updated dependencies [[`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818)]:
+  - @ledgerhq/live-nft@0.4.6-nightly.2
+  - @ledgerhq/coin-near@0.5.6-nightly.1
+
 ## 34.8.1-nightly.3
 
 ### Patch Changes

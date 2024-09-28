@@ -1,5 +1,11 @@
 # @ledgerhq/coin-near
 
+## 0.5.6-nightly.1
+
+### Patch Changes
+
+- [#7900](https://github.com/LedgerHQ/ledger-live/pull/7900) [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818) Thanks [@qperrot](https://github.com/qperrot)! - remove rewards feature from near
+
 ## 0.5.6-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.50.0-nightly.8
+
+### Patch Changes
+
+- [#7900](https://github.com/LedgerHQ/ledger-live/pull/7900) [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818) Thanks [@qperrot](https://github.com/qperrot)! - remove rewards feature from near
+
+- [#7928](https://github.com/LedgerHQ/ledger-live/pull/7928) [`d304a32`](https://github.com/LedgerHQ/ledger-live/commit/d304a32aff3d4ace2ccb4487bb9fe4821814e067) Thanks [@thesan](https://github.com/thesan)! - Run tests files at `e2e/specs/*.spec.ts`
+
+- Updated dependencies [[`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818)]:
+  - @ledgerhq/live-nft@0.4.6-nightly.2
+  - @ledgerhq/live-common@34.8.1-nightly.4
+  - @ledgerhq/live-nft-react@0.4.6-nightly.2
+
 ## 3.50.0-nightly.7
 
 ### Patch Changes

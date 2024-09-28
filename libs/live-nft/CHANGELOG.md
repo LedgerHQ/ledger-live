@@ -1,5 +1,11 @@
 # @ledgerhq/live-nft
 
+## 0.4.6-nightly.2
+
+### Patch Changes
+
+- [#7908](https://github.com/LedgerHQ/ledger-live/pull/7908) [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add detail drawers for inscriptions of ordinals protocol
+
 ## 0.4.6-nightly.1
 
 ### Patch Changes
