@@ -1,40 +1,14 @@
 import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
-import { IconProps } from "LLD/features/Collectibles/types/Collection";
-import { mappingKeysWithIconAndName } from "../Icons";
-import { MappingKeys } from "LLD/features/Collectibles/types/Ordinals";
-
-function matchCorrespondingIcon(
-  rareSats: SimpleHashNft[],
-): Array<SimpleHashNft & { icons: Array<({ size, color, style }: IconProps) => JSX.Element> }> {
-  return rareSats.map(rareSat => {
-    const iconKeys: string[] = [];
-    const rarity = rareSat.extra_metadata?.ordinal_details?.sat_rarity?.toLowerCase();
-
-    if (rarity && rarity !== "common") {
-      iconKeys.push(rarity.replace(" ", "_"));
-    }
-
-    const icons = iconKeys
-      .map(
-        iconKey =>
-          mappingKeysWithIconAndName[iconKey as keyof typeof mappingKeysWithIconAndName]?.icon,
-      )
-      .filter(Boolean) as Array<({ size, color, style }: IconProps) => JSX.Element>;
-
-    return { ...rareSat, icons };
-  });
-}
+import { createRareSatObject, matchCorrespondingIcon } from "../helpers";
 
 export function getInscriptionsData(
   inscriptions: SimpleHashNft[],
   onInscriptionClick: (inscription: SimpleHashNft) => void,
 ) {
-  const inscriptionsWithIcons = matchCorrespondingIcon(inscriptions);
-  return inscriptionsWithIcons.map(item => ({
+  return inscriptions.map(item => ({
     tokenName: item.name || item.contract.name || "",
+    nftId: item.nft_id,
     collectionName: item.collection.name,
-    tokenIcons: item.icons,
-    rareSatName: [item.extra_metadata?.ordinal_details?.sat_rarity] as MappingKeys[],
     media: {
       uri: item.image_url || item.previews?.image_small_url,
       isLoading: false,
@@ -44,4 +18,10 @@ export function getInscriptionsData(
     },
     onClick: () => onInscriptionClick(item),
   }));
+}
+
+export function processRareSat(inscription: SimpleHashNft) {
+  const matchedRareSatsIcons = matchCorrespondingIcon(inscription);
+  const rareSatObject = createRareSatObject({ rareSat: matchedRareSatsIcons });
+  return rareSatObject.rareSat[0];
 }
