@@ -60,19 +60,19 @@ describe("kaspa", () => {
     });
 
     it("getAddress", async () => {
-        //  41043ea871c991c44813682009a305acd933a0f17639bb55ffac026e2ece932bc059cd355b236a8fd1a3d8facf90eb1d3cd35da0d3445f03d35d98b06262fb3f8c07201df0f4f890d6996f9e0fcc823591fde79e50cbdc1221d026e817622ec55187ae
-        //  kaspa:qql2suwfj8zysymgyqy6xpdvmye6putk8xa4tlavqfhzan5n90q9jzvah3j0y
+        //  4104600d27e2c82127e38ee0b7317e45c8f683a47f5075d14b6b379d26ed81b08815e6f942844f514018b4e7de02cf6582e1ed65f1960d39dca389409fb439d13594208f3ddd2b84a83d9db8a7375a59bd1ec69be7ed57882eb9abef694761171f2af7
+        //  kaspa:qpsq6flzeqsj0cuwuzmnzlj9ermg8frl2p6azjmtx7wjdmvpkzyp24kndspxw
 
         const transport = await openTransportReplayer(
             RecordStore.fromString(`
                   => e005010015058000002c8001b207800000000000000000000000
-                  <= 41043ea871c991c44813682009a305acd933a0f17639bb55ffac026e2ece932bc059cd355b236a8fd1a3d8facf90eb1d3cd35da0d3445f03d35d98b06262fb3f8c07201df0f4f890d6996f9e0fcc823591fde79e50cbdc1221d026e817622ec55187ae9000
+                  <= 4104600d27e2c82127e38ee0b7317e45c8f683a47f5075d14b6b379d26ed81b08815e6f942844f514018b4e7de02cf6582e1ed65f1960d39dca389409fb439d13594208f3ddd2b84a83d9db8a7375a59bd1ec69be7ed57882eb9abef694761171f2af79000
               `)
         );
         const kaspa = new Kaspa(transport);
         const address = (await kaspa.getAddress("44'/111111'/0'/0/0", true)).address;
 
-        expect(address).toEqual("kaspa:qql2suwfj8zysymgyqy6xpdvmye6putk8xa4tlavqfhzan5n90q9jzvah3j0y");
+        expect(address).toEqual("kaspa:qpsq6flzeqsj0cuwuzmnzlj9ermg8frl2p6azjmtx7wjdmvpkzyp24kndspxw");
     });
 
     // it("signTransaction with simple data", async () => {

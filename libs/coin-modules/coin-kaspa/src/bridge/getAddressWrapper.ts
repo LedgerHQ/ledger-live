@@ -1,6 +1,6 @@
 import { DeviceAppVerifyNotSupported, StatusCodes, UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { Result, GetAddressOptions } from "../derivation";
+import type { GetAddressOptions, Result } from "../derivation";
 
 export type GetAddressFn = (deviceId: string, addressOpt: GetAddressOptions) => Promise<Result>;
 
