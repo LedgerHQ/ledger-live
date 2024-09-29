@@ -4033,9 +4033,6 @@ importers:
       axios:
         specifier: 1.7.3
         version: 1.7.3
-      invariant:
-        specifier: '2'
-        version: 2.2.4
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
