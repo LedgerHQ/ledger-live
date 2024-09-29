@@ -2,7 +2,6 @@ import path from "path";
 import fs from "fs/promises";
 import { existsSync } from "fs";
 import { fetchTokensFromCALService, fetchTokensOrderedByMarketCap } from "../../fetch";
-import { cryptocurrenciesById } from "../../../currencies";
 import { getErc20DescriptorsAndSignatures } from "../../utils";
 
 const LIMIT_TOKENS_BY_CHAIN = 100;
@@ -86,10 +85,11 @@ export const importEVMTokens = async (outputDir: string) => {
   console.log("Importing evm tokens... --------");
   const { tokens } = await fetchTokensOrderedByMarketCap();
 
-  const supportedChainIds = Object.values(cryptocurrenciesById)
-    .filter(cryptocurrency => cryptocurrency.ethereumLikeInfo?.chainId)
-    .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId)
-    .sort((a, b) => a - b);
+  const supportedChainIds = [
+    1, 10, 14, 19, 25, 30, 40, 42, 56, 57, 61, 106, 137, 199, 246, 250, 288, 592, 1088, 1101, 1284,
+    1285, 1442, 8217, 8453, 17000, 42161, 43114, 59141, 59144, 81457, 84532, 421614, 534351, 534352,
+    11155111, 11155420, 168587773, 245022934,
+  ];
 
   await Promise.allSettled(
     supportedChainIds.map(chainId => importTokenByChainId(outputDir, chainId, tokens)),
