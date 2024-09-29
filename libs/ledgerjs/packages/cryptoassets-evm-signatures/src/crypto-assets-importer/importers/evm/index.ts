@@ -6,6 +6,13 @@ import { getErc20DescriptorsAndSignatures } from "../../utils";
 
 const LIMIT_TOKENS_BY_CHAIN = 100;
 
+const mustHaveForTests = [
+  "0xe41d2489571d322189246dafa5ebde1f4699f498",
+  "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+  "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+];
+
 const chainNames = new Map<number, string>();
 export const importTokenByChainId = async (
   outputDir: string,
@@ -43,7 +50,9 @@ export const importTokenByChainId = async (
       console.warn(`no chainName found for chainId: ${chainId}`);
     }
     const tokensFiltered = tokens.filter((token: any) => {
-      return topTokensByMarketCap.includes(token.id);
+      return (
+        topTokensByMarketCap.includes(token.id) || mustHaveForTests.includes(token.contract_address)
+      );
     });
 
     const { erc20, erc20Signatures } = getErc20DescriptorsAndSignatures(tokensFiltered, chainId);
