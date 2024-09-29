@@ -3303,9 +3303,9 @@ importers:
 
   libs/evm-tools:
     dependencies:
-      '@ledgerhq/cryptoassets':
+      '@ledgerhq/cryptoassets-evm-signatures':
         specifier: workspace:^
-        version: link:../ledgerjs/packages/cryptoassets
+        version: link:../ledgerjs/packages/cryptoassets-evm-signatures
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
