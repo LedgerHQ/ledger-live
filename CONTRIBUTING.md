@@ -57,7 +57,7 @@ The rule of thumb is to **always favour rebasing** as long as your branch does n
 For instance:
 
 - bugfix branches that are small and self-contained should always get rebased on top of develop
-- feature branches that have merge commit from other branches (sub-features) should merge their target into them to be kept up to date
+- feature branches that have merged commit from other branches (sub-features) should merge their target into them to be kept up to date
 
 **⚠️ Important: do not rebase a branch that is waiting for translations from a third party service.**
 
