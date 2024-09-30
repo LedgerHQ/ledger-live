@@ -205,6 +205,12 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
+  static readonly NEAR_1 = new Account(
+    Currency.NEAR,
+    "NEAR 1",
+    "70b2982a31cfcffc773145d2143392612bb83a22926c912e2ce3ec0634f637e2",
+  );
+
   static readonly ETH_USDT_1 = new Account(
     Currency.ETH_USDT,
     "Ethereum 1",
