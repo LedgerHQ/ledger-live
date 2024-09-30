@@ -40,6 +40,7 @@ import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingH
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
+import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -56,8 +57,6 @@ const QRCodeWrapper = styled.div`
   background: white;
 `;
 
-const UTXOFamily = ["bitcoin", "bitcoin_cash", "dash", "dogecoin", "litecoin", "zcash", "cardano"];
-
 const Receive1ShareAddress = ({
   account,
   name,
@@ -69,7 +68,7 @@ const Receive1ShareAddress = ({
   address: string;
   showQRCodeModal: () => void;
 }) => {
-  const isUTXOCompliant = UTXOFamily.includes(account.currency.id);
+  const isUTXOCompliantCurrency = isUTXOCompliant(account.currency.family);
   return (
     <>
       <Box horizontal alignItems="center" flow={2} mb={4}>
@@ -99,7 +98,7 @@ const Receive1ShareAddress = ({
       </Box>
       <ReadOnlyAddressField address={address} />
 
-      {isUTXOCompliant && (
+      {isUTXOCompliantCurrency && (
         <Box mt={3}>
           <UTXOAddressAlert />
         </Box>

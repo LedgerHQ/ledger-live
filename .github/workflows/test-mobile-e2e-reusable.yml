@@ -32,6 +32,11 @@ on:
         description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
         required: false
         type: string
+      speculos_tests:
+        description: Run Speculos tests
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -173,6 +178,8 @@ jobs:
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
+      COINAPPS: ${{ github.workspace }}/coin-apps
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
@@ -255,12 +262,22 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
+      - name: Setup Speculos image and Coin Apps
+        if: ${{ inputs.speculos_tests }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
       - name: Generate single file Allure report
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file

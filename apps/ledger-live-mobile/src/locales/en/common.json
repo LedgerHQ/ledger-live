@@ -3158,6 +3158,7 @@
         }
       },
       "receiveConfirmation": {
+        "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid.",
         "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
@@ -5916,7 +5917,6 @@
         "status": "Status",
         "active": "Active",
         "inactive": "Inactive",
-        "rewards": "Rewards",
         "pending": "Pending",
         "available": "Withdrawable"
       },

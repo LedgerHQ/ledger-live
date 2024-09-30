@@ -16,6 +16,10 @@ export function isTokenCurrency(currency: Currency): currency is TokenCurrency {
   return currency.type === "TokenCurrency";
 }
 
+export function isUTXOCompliant(currencyFamilly: string): boolean {
+  return currencyFamilly === "bitcoin" || currencyFamilly === "cardano";
+}
+
 export function listCurrencies(includeTokens: boolean): CryptoOrTokenCurrency[] {
   const currencies = listSupportedCurrencies();
 

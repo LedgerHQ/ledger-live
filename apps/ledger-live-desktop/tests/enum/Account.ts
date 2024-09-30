@@ -7,13 +7,13 @@ export class Account {
     public readonly address: string,
   ) {}
 
-  static readonly BTC_1 = new Account(
+  static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
     "bc1qx7f9plgr8msjatkv0dw2ne8gguwfjqr6xyjp50",
   );
 
-  static readonly BTC_2 = new Account(
+  static readonly BTC_NATIVE_SEGWIT_2 = new Account(
     Currency.BTC,
     "Bitcoin 2",
     "bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r",

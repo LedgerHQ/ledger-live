@@ -183,7 +183,10 @@ export async function launchSpeculos(appName: string) {
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
   setEnv("SPECULOS_API_PORT", speculosApiPort);
 
-  const proxyAddress = await startProxy();
+  const proxyPort = await findFreePort();
+  await device.reverseTcpPort(proxyPort);
+  await startProxy(proxyPort.toString());
+  const proxyAddress = `localhost:${proxyPort}`;
   speculosDevices.push([proxyAddress, speculosDevice]);
   console.warn(`Speculos started on ${proxyAddress}`);
   return proxyAddress;

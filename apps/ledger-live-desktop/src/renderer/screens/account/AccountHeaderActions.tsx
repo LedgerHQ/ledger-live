@@ -39,6 +39,7 @@ import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -137,7 +138,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       initialAccountId: mainAccount.id,
     };
     history.push({
-      pathname: "/platform/ledger-wallet-connect",
+      pathname: `/platform/${WC_ID}`,
       state: params,
     });
   }, [mainAccount.id, history]);

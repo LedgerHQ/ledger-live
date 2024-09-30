@@ -5,21 +5,28 @@ import { InscriptionsItemProps } from "LLD/features/Collectibles/types/Inscripti
 
 type Props = {
   inscriptions: SimpleHashNft[];
+  onInscriptionClick: (inscription: SimpleHashNft) => void;
 };
 
-export const useInscriptionsModel = ({ inscriptions }: Props) => {
-  const [displayShowMore, setDisplayShowMore] = useState(false);
-  const [displayedObjects, setDisplayedObjects] = useState<InscriptionsItemProps[]>([]);
-
+export const useInscriptionsModel = ({ inscriptions, onInscriptionClick }: Props) => {
   const items: InscriptionsItemProps[] = useMemo(
-    () => getInscriptionsData(inscriptions),
-    [inscriptions],
+    () => getInscriptionsData(inscriptions, onInscriptionClick),
+    [inscriptions, onInscriptionClick],
   );
 
+  const initialDisplayedObjects = items.slice(0, 3);
+  const initialDisplayShowMore = items.length > 3;
+
+  const [displayShowMore, setDisplayShowMore] = useState(initialDisplayShowMore);
+  const [displayedObjects, setDisplayedObjects] =
+    useState<InscriptionsItemProps[]>(initialDisplayedObjects);
+
   useEffect(() => {
-    if (items.length > 3) setDisplayShowMore(true);
-    setDisplayedObjects(items.slice(0, 3));
-  }, [items]);
+    if (displayedObjects.length === 0) {
+      if (items.length > 3) setDisplayShowMore(true);
+      setDisplayedObjects(items.slice(0, 3));
+    }
+  }, [items, displayedObjects.length]);
 
   const onShowMore = () => {
     setDisplayedObjects(prevDisplayedObjects => {

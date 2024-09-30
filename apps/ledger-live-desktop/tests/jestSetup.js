@@ -1,16 +1,22 @@
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { server } from "./server";
+import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 
 global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
 
-beforeAll(() => server.listen());
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest(request, print) {
+      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
+        return;
+      }
+      print.warning();
+    },
+  }),
+);
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-server.events.on("request:start", ({ request }) => {
-  console.log("MSW intercepted:", request.method, request.url);
-});
 
 jest.mock("src/sentry/install", () => ({
   init: jest.fn(),
