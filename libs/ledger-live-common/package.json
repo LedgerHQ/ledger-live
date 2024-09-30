@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.8.0",
+  "version": "34.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -203,7 +203,7 @@
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",
-    "axios": "1.7.3",
+    "axios": "1.7.7",
     "bech32": "^1.1.3",
     "big-integer": "^1.6.51",
     "bignumber.js": "^9.1.2",

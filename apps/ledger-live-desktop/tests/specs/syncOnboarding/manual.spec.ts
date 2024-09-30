@@ -2,8 +2,10 @@ import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
 import { OnboardingPage } from "../../page/onboarding.page";
 import { DeviceModelId } from "@ledgerhq/devices";
+
 test.use({
   env: { MOCK_NO_BYPASS: "1" },
+  settings: { hasSeenAnalyticsOptInPrompt: false },
 });
 
 const modelIds = [

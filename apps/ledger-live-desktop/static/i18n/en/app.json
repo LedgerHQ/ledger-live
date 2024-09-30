@@ -6601,7 +6601,26 @@
         "title": "Discover Ordinals",
         "description": "Do you know that you may own valuable rare sats and inscriptions?",
         "learnMore": "Learn more",
-        "viewCoinControl": "View coin control"
+        "protectTitle": "Protect your ordinals assets",
+        "protectDescription": "Exclude your Ordinals assets from your transactions."
+      },
+      "detailsDrawer": {
+        "description": "Description",
+        "collectionName": "Collection Name",
+        "inscriptionId": "Inscription ID",
+        "inscriptionNumber": "Inscription number",
+        "mintedTo": "Minted to",
+        "genesisTx": "Genesis transaction",
+        "blockNumber": "Block Number",
+        "contentType": "Content type",
+        "createdDate": "Created date",
+        "satribute": "Sat Rarity",
+        "satNumber": "Sat number",
+        "satName": "Sat name",
+        "location": "Location",
+        "outputValue": "Output value",
+        "storedOnChain": "Stored On-Chain",
+        "hide": "Hide"
       }
     },
     "rareSats": {

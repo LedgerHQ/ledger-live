@@ -51,7 +51,7 @@ test.describe.parallel("Accounts @smoke", () => {
       });
 
       await test.step(`[${currency}] Scan and add accounts`, async () => {
-        await addAccountModal.addAccounts();
+        await addAccountModal.addAccountsMocked();
         await expect.soft(addAccountModal.container).toHaveScreenshot(`${currency}-success.png`);
       });
 

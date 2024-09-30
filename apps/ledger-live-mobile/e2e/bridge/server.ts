@@ -2,6 +2,7 @@ import { Server, WebSocket } from "ws";
 import path from "path";
 import fs from "fs";
 import net from "net";
+import merge from "lodash/merge";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
@@ -83,7 +84,9 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   const { data } = JSON.parse(f.toString());
 
-  await postMessage({ type: "importSettings", id: uniqueId(), payload: data.settings });
+  const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
+  const settings = merge(defaultSettings, data.settings);
+  await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
   navigate(NavigatorName.Base);
 
