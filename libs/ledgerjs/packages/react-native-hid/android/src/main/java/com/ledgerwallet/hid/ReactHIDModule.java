@@ -224,7 +224,7 @@ public class ReactHIDModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        getReactApplicationContext().registerReceiver(receiver, intFilter, Context.RECEIVER_NOT_EXPORTED);
+        getReactApplicationContext().registerReceiver(receiver, intFilter);
     }
 
     private void unregisterReceiver(BroadcastReceiver receiver) {
