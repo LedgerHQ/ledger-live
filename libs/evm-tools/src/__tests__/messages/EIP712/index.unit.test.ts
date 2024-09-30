@@ -13,7 +13,9 @@ const CAL = jest.requireActual("../../fixtures/CAL").default;
 
 jest.mock("axios");
 jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712", () => require("../../fixtures/CAL"));
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2", () => require("../../fixtures/CAL"));
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2", () =>
+  require("../../fixtures/CAL"),
+);
 
 describe("evm-tools", () => {
   describe("message", () => {
