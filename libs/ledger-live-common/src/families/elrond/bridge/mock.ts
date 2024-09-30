@@ -2,7 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
-import type { MultiversxAccount, Transaction } from "@ledgerhq/coin-elrond/types";
+import type { MultiversxAccount, Transaction } from "@ledgerhq/coin-multiversx/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
@@ -14,7 +14,7 @@ import {
 } from "../../../bridge/mockHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-elrond/serialization";
+import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-multiversx/serialization";
 
 const receive = makeAccountBridgeReceive();
 

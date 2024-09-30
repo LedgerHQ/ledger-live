@@ -3,8 +3,8 @@ import { useState, useMemo, useEffect } from "react";
 import {
   getCurrentMultiversxPreloadData,
   getMultiversxPreloadDataUpdates,
-} from "@ledgerhq/coin-elrond/preload";
-import { randomizeProviders } from "@ledgerhq/coin-elrond/helpers/randomizeProviders";
+} from "@ledgerhq/coin-multiversx/preload";
+import { randomizeProviders } from "@ledgerhq/coin-multiversx/helpers/randomizeProviders";
 import type { MultiversxProvider } from "./types";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS, MIN_DELEGATION_AMOUNT } from "./constants";
 

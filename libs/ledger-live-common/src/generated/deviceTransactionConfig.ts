@@ -9,7 +9,7 @@ import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
-import elrond from "@ledgerhq/coin-elrond/deviceTransactionConfig";
+import elrond from "@ledgerhq/coin-multiversx/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";

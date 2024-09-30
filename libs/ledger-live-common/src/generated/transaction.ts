@@ -10,7 +10,7 @@ import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
 import cosmos from "@ledgerhq/coin-cosmos/transaction";
-import elrond from "@ledgerhq/coin-elrond/transaction";
+import elrond from "@ledgerhq/coin-multiversx/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
 import near from "@ledgerhq/coin-near/transaction";

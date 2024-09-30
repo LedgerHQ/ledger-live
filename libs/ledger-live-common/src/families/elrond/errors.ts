@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-elrond/errors";
+export * from "@ledgerhq/coin-multiversx/errors";
