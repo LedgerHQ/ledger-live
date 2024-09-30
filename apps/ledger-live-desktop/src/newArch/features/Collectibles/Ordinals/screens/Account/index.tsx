@@ -7,7 +7,9 @@ import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { useBitcoinAccountModel } from "./useBitcoinAccountModel";
 import InscriptionDetailsDrawer from "../../components/Inscriptions/DetailsDrawer";
 
-type ViewProps = ReturnType<typeof useBitcoinAccountModel>;
+type ViewProps = ReturnType<typeof useBitcoinAccountModel> & {
+  account: BitcoinAccount;
+};
 
 interface Props {
   account: BitcoinAccount;
@@ -21,6 +23,7 @@ const View: React.FC<ViewProps> = ({
   selectedInscription,
   correspondingRareSat,
   inscriptionsGroupedWithRareSats,
+  account,
   handleDrawerClose,
   onReceive,
   onInscriptionClick,
@@ -42,13 +45,14 @@ const View: React.FC<ViewProps> = ({
         correspondingRareSat={correspondingRareSat}
         onClose={onDetailsDrawerClose}
         isLoading={rest.isLoading}
+        account={account}
       />
     )}
   </Flex>
 );
 
 const OrdinalsAccount: React.FC<Props> = ({ account }) => (
-  <View {...useBitcoinAccountModel({ account })} />
+  <View {...useBitcoinAccountModel({ account })} account={account} />
 );
 
 export default OrdinalsAccount;
