@@ -336,7 +336,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
-          hideLoader
         />
       </SwapWebAppWrapper>
     </>
