@@ -1,32 +1,43 @@
 import { useEffect, useMemo, useState } from "react";
-import { Account } from "@ledgerhq/types-live";
-import { InscriptionsItemProps } from "./index";
-import { mockedItems as InscriptionsMocked } from "LLD/features/Collectibles/__integration__/mockedInscriptions";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
+import { getInscriptionsData } from "./helpers";
+import { InscriptionsItemProps } from "LLD/features/Collectibles/types/Inscriptions";
+
 type Props = {
-  account: Account;
+  inscriptions: SimpleHashNft[];
+  onInscriptionClick: (inscription: SimpleHashNft) => void;
 };
 
-export const useInscriptionsModel = ({ account }: Props) => {
-  const [displayShowMore, setDisplayShowMore] = useState(false);
-  const [displayedObjects, setDisplayedObjects] = useState<InscriptionsItemProps[]>([]);
+export const useInscriptionsModel = ({ inscriptions, onInscriptionClick }: Props) => {
+  const items: InscriptionsItemProps[] = useMemo(
+    () => getInscriptionsData(inscriptions, onInscriptionClick),
+    [inscriptions, onInscriptionClick],
+  );
 
-  const mockedItems: InscriptionsItemProps[] = useMemo(() => [...InscriptionsMocked], []);
+  const initialDisplayedObjects = items.slice(0, 3);
+  const initialDisplayShowMore = items.length > 3;
+
+  const [displayShowMore, setDisplayShowMore] = useState(initialDisplayShowMore);
+  const [displayedObjects, setDisplayedObjects] =
+    useState<InscriptionsItemProps[]>(initialDisplayedObjects);
 
   useEffect(() => {
-    if (mockedItems.length > 3) setDisplayShowMore(true);
-    setDisplayedObjects(mockedItems.slice(0, 3));
-  }, [mockedItems]);
+    if (displayedObjects.length === 0) {
+      if (items.length > 3) setDisplayShowMore(true);
+      setDisplayedObjects(items.slice(0, 3));
+    }
+  }, [items, displayedObjects.length]);
 
   const onShowMore = () => {
     setDisplayedObjects(prevDisplayedObjects => {
       const newDisplayedObjects = [
         ...prevDisplayedObjects,
-        ...mockedItems.slice(prevDisplayedObjects.length, prevDisplayedObjects.length + 3),
+        ...items.slice(prevDisplayedObjects.length, prevDisplayedObjects.length + 3),
       ];
-      if (newDisplayedObjects.length === mockedItems.length) setDisplayShowMore(false);
+      if (newDisplayedObjects.length === items.length) setDisplayShowMore(false);
       return newDisplayedObjects;
     });
   };
 
-  return { account, displayedObjects, displayShowMore, onShowMore };
+  return { inscriptions: displayedObjects, displayShowMore, onShowMore };
 };

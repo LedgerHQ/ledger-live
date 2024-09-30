@@ -1,80 +1,101 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
-import { Box, Flex } from "@ledgerhq/react-ui";
+import { Box, Flex, Icons } from "@ledgerhq/react-ui";
 import { useInscriptionsModel } from "./useInscriptionsModel";
 import TableContainer from "~/renderer/components/TableContainer";
 import TableHeader from "LLD/features/Collectibles/components/Collection/TableHeader";
-import { OrdinalsRowProps, TableHeaderTitleKey } from "LLD/features/Collectibles/types/Collection";
-import TableRow from "LLD/features/Collectibles/components/Collection/TableRow";
+import { TableHeaderTitleKey } from "LLD/features/Collectibles/types/Collection";
 import ShowMore from "LLD/features/Collectibles/components/Collection/ShowMore";
-import { MediaProps } from "LLD/features/Collectibles/types/Media";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
+import Loader from "../Loader";
+import Error from "../Error";
+import Item from "./Item";
+import EmptyCollection from "LLD/features/Collectibles/components/Collection/EmptyCollection";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
+import Button from "~/renderer/components/Button";
+import { useTranslation } from "react-i18next";
+import { GroupedNftOrdinals } from "@ledgerhq/live-nft-react/index";
 
-type ViewProps = ReturnType<typeof useInscriptionsModel>;
+type ViewProps = ReturnType<typeof useInscriptionsModel> & {
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
+  onReceive: () => void;
+};
 
 type Props = {
-  account: Account;
-};
-
-export type InscriptionsItemProps = {
+  inscriptions: SimpleHashNft[];
   isLoading: boolean;
-  tokenName: string;
-  collectionName: string;
-  tokenIcons: OrdinalsRowProps["tokenIcons"];
-  media: MediaProps;
-  onClick: () => void;
+  isError: boolean;
+  error: Error | null;
+  inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
+  onReceive: () => void;
+  onInscriptionClick: (inscription: SimpleHashNft) => void;
 };
 
-const Item: React.FC<InscriptionsItemProps> = ({
+const View: React.FC<ViewProps> = ({
+  displayShowMore,
   isLoading,
-  tokenName,
-  collectionName,
-  tokenIcons,
-  media,
-  onClick,
+  isError,
+  inscriptions,
+  error,
+  inscriptionsGroupedWithRareSats,
+  onShowMore,
+  onReceive,
 }) => {
-  return (
-    <TableRow
-      isLoading={isLoading}
-      tokenName={tokenName}
-      collectionName={collectionName}
-      tokenIcons={tokenIcons}
-      media={media}
-      onClick={onClick}
-    />
-  );
-};
+  const { t } = useTranslation();
+  const hasInscriptions = inscriptions.length > 0 && !isError;
+  const nothingToShow = !hasInscriptions && !isLoading && !isError;
+  const hasError = isError && error;
 
-function View({ displayedObjects, displayShowMore, onShowMore }: ViewProps) {
   return (
     <Box>
-      <TableContainer id="oridinals-inscriptions">
+      <TableContainer id="ordinals-inscriptions">
         <TableHeader titleKey={TableHeaderTitleKey.Inscriptions} />
-        {/** titlekey doesn't need to be translated so we keep it hard coded  */}
-        {displayedObjects ? (
-          displayedObjects.map((item, index) => (
+        {isLoading && <Loader />}
+        {hasError && <Error error={error} />}
+        {hasInscriptions &&
+          inscriptions.map((item, index) => (
             <Item
               key={index}
-              isLoading={item.isLoading}
-              tokenName={item.tokenName}
-              collectionName={item.collectionName}
-              tokenIcons={item.tokenIcons}
-              media={item.media}
-              onClick={item.onClick}
+              isLoading={isLoading}
+              inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
+              {...item}
             />
-          ))
-        ) : (
-          <Flex justifyContent={"center"} my={12}>
-            {"NOTHING TO SHOW"}
-          </Flex>
+          ))}
+        {nothingToShow && (
+          <EmptyCollection collectionType={CollectibleTypeEnum.Inscriptions}>
+            <Button small primary onClick={onReceive} icon>
+              <Flex alignItems={"center"}>
+                <Icons.ArrowDown size="XS" />
+                <Box>{t("ordinals.inscriptions.receive")}</Box>
+              </Flex>
+            </Button>
+          </EmptyCollection>
         )}
-        {displayShowMore && <ShowMore onShowMore={onShowMore} />}
+        {displayShowMore && !isError && <ShowMore onShowMore={onShowMore} isInscriptions />}
       </TableContainer>
     </Box>
   );
-}
-
-const Inscriptions: React.FC<Props> = ({ account }: Props) => {
-  return <View {...useInscriptionsModel({ account })} />;
 };
+
+const Inscriptions: React.FC<Props> = ({
+  inscriptions,
+  isLoading,
+  isError,
+  error,
+  inscriptionsGroupedWithRareSats,
+  onReceive,
+  onInscriptionClick,
+}) => (
+  <View
+    isLoading={isLoading}
+    isError={isError}
+    error={error}
+    onReceive={onReceive}
+    inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
+    {...useInscriptionsModel({ inscriptions, onInscriptionClick })}
+  />
+);
 
 export default Inscriptions;

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -67,7 +67,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.7.3",
+    "axios": "1.7.7",
     "eip55": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

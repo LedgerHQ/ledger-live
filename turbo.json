@@ -1,7 +1,51 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "globalDependencies": ["turbo.json"],
-  "pipeline": {
+  "globalEnv": [
+    "ANDROID_HOME",
+    "ANDROID_KEYSTORE_FILE",
+    "ANDROID_KEYSTORE_PASS",
+    "ANDROID_KEY_ALIAS",
+    "ANDROID_KEY_PASS",
+    "ANDROID_SDK_ROOT",
+    "ANALYTICS_TOKEN",
+    "APPLECONNECT_API_KEY_CONTENT",
+    "APPLECONNECT_API_KEY_ID",
+    "APPLECONNECT_API_ISSUER_ID",
+    "APPLEID",
+    "APPLEID_PASSWORD",
+    "APP_IDENTIFIER",
+    "APP_NAME",
+    "AZURE_APP_ID",
+    "AZURE_SECRET",
+    "BRAZE_ANDROID_API_KEY",
+    "BRAZE_API_KEY",
+    "BRAZE_CUSTOM_ENDPOINT",
+    "BRAZE_IOS_API_KEY",
+    "CI_KEYCHAIN_PASSWORD",
+    "DEVELOPER_TEAM_ID",
+    "ENVFILE",
+    "FASTLANE_PASSWORD",
+    "FIREBASE_API_KEY",
+    "FIREBASE_APP_ID",
+    "FIREBASE_AUTH_DOMAIN",
+    "FIREBASE_MESSAGING_SENDER_ID",
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_STORAGE_BUCKET",
+    "GENERATE_METAFILES",
+    "GH_TOKEN",
+    "GIT_REPO_URL",
+    "GIT_REPO_USER",
+    "MATCH_PASSWORD",
+    "MY_APP_BUNDLE_ID",
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_ENVIRONMENT",
+    "SENTRY_PROJECT",
+    "SHORT_BUNDLE_ID",
+    "SUPPLY_UPLOAD_MAX_RETRIES"
+  ],
+  "ui": "tui",
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
@@ -24,7 +68,8 @@
     },
     "start": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "unimported": {
       "cache": false

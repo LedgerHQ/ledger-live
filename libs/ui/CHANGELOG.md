@@ -1,5 +1,29 @@
 # ui
 
+## 0.3.0
+
+### Minor Changes
+
+- [#7842](https://github.com/LedgerHQ/ledger-live/pull/7842) [`b884689`](https://github.com/LedgerHQ/ledger-live/commit/b8846898343260f51f9b7b544df5f0dd7641115d) Thanks [@KVNLS](https://github.com/KVNLS)! - Fixed e2e testing and next build issues on ci workflows
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#7842](https://github.com/LedgerHQ/ledger-live/pull/7842) [`b884689`](https://github.com/LedgerHQ/ledger-live/commit/b8846898343260f51f9b7b544df5f0dd7641115d) Thanks [@KVNLS](https://github.com/KVNLS)! - Fixed e2e testing and next build issues on ci workflows
+
+## 0.2.2
+
+### Patch Changes
+
+- [#7734](https://github.com/LedgerHQ/ledger-live/pull/7734) [`255f035`](https://github.com/LedgerHQ/ledger-live/commit/255f035b8415eb09683f959e37593e1969f5911c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rare satoshis icons to ui package and a mapping inside LLD to use them
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- [#7734](https://github.com/LedgerHQ/ledger-live/pull/7734) [`255f035`](https://github.com/LedgerHQ/ledger-live/commit/255f035b8415eb09683f959e37593e1969f5911c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rare satoshis icons to ui package and a mapping inside LLD to use them
+
 ## 0.2.1
 
 ### Patch Changes

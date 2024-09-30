@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
@@ -14,18 +14,11 @@ import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalyti
 
 const messageLog = "Follow Steps on device";
 
-export enum Scene {
-  Manage,
-  Confirm,
-}
-
 export type HookResult = {
   isDrawerVisible: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
   handleClose: () => void;
-  onClickDelete: () => void;
-  scene: Scene;
   onClickConfirm: () => Promise<void>;
   deleteMutation: UseMutationResult<void, Error, void, unknown>;
   handleCancel: () => void;
@@ -38,16 +31,6 @@ export const useManageKeyDrawer = () => {
 
   const dispatch = useDispatch();
 
-  const [scene, setScene] = useState(Scene.Manage);
-
-  const onClickDelete = () => {
-    track("button_clicked", {
-      button: AnalyticsButton.DeleteKey,
-      page: AnalyticsPage.ManageBackup,
-    });
-    setScene(Scene.Confirm);
-  };
-
   const openDrawer = useCallback(() => {
     dispatch(setWallectSyncManageKeyDrawer(true));
 
@@ -55,7 +38,6 @@ export const useManageKeyDrawer = () => {
   }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
-    setScene(Scene.Manage);
     dispatch(setWallectSyncManageKeyDrawer(false));
     logDrawer(messageLog, "close");
   }, [dispatch]);
@@ -74,7 +56,7 @@ export const useManageKeyDrawer = () => {
   const handleCancel = () => {
     closeDrawer();
     track("button_clicked", {
-      button: AnalyticsButton.Cancel,
+      button: AnalyticsButton.Keep,
       page: AnalyticsPage.ConfirmDeleteBackup,
     });
   };
@@ -94,11 +76,9 @@ export const useManageKeyDrawer = () => {
     isDrawerVisible,
     openDrawer,
     closeDrawer,
-    handleClose,
-    onClickDelete,
-    scene,
     onClickConfirm,
     deleteMutation,
     handleCancel,
+    handleClose,
   };
 };

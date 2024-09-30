@@ -1,3 +1,5 @@
+import { ERC20Token } from "../../types";
+
 import ethereum_tokens from "./1/erc20.json";
 import optimism_tokens from "./10/erc20.json";
 import cronos_tokens from "./25/erc20.json";
@@ -94,70 +96,38 @@ import optimism_sepolia_signatures from "./11155420/erc20-signatures.json";
 import blast_sepolia_signatures from "./168587773/erc20-signatures.json";
 import neon_evm_signatures from "./245022934/erc20-signatures.json";
 
-import ethereum_signatures_hash from "./1/erc20-signatures-hash.json";
-import optimism_signatures_hash from "./10/erc20-signatures-hash.json";
-import cronos_signatures_hash from "./25/erc20-signatures-hash.json";
-import rsk_signatures_hash from "./30/erc20-signatures-hash.json";
-import telos_evm_signatures_hash from "./40/erc20-signatures-hash.json";
-import bsc_signatures_hash from "./56/erc20-signatures-hash.json";
-import syscoin_signatures_hash from "./57/erc20-signatures-hash.json";
-import velas_evm_signatures_hash from "./106/erc20-signatures-hash.json";
-import polygon_signatures_hash from "./137/erc20-signatures-hash.json";
-import bittorrent_signatures_hash from "./199/erc20-signatures-hash.json";
-import energy_web_signatures_hash from "./246/erc20-signatures-hash.json";
-import fantom_signatures_hash from "./250/erc20-signatures-hash.json";
-import astar_signatures_hash from "./592/erc20-signatures-hash.json";
-import metis_signatures_hash from "./1088/erc20-signatures-hash.json";
-import polygon_zk_evm_signatures_hash from "./1101/erc20-signatures-hash.json";
-import moonbeam_signatures_hash from "./1284/erc20-signatures-hash.json";
-import polygon_zk_evm_testnet_signatures_hash from "./1442/erc20-signatures-hash.json";
-import klaytn_signatures_hash from "./8217/erc20-signatures-hash.json";
-import base_signatures_hash from "./8453/erc20-signatures-hash.json";
-import arbitrum_signatures_hash from "./42161/erc20-signatures-hash.json";
-import avalanche_c_chain_signatures_hash from "./43114/erc20-signatures-hash.json";
-import linea_signatures_hash from "./59144/erc20-signatures-hash.json";
-import blast_signatures_hash from "./81457/erc20-signatures-hash.json";
-import base_sepolia_signatures_hash from "./84532/erc20-signatures-hash.json";
-import arbitrum_sepolia_signatures_hash from "./421614/erc20-signatures-hash.json";
-import scroll_sepolia_signatures_hash from "./534351/erc20-signatures-hash.json";
-import scroll_signatures_hash from "./534352/erc20-signatures-hash.json";
-import ethereum_sepolia_signatures_hash from "./11155111/erc20-signatures-hash.json";
-import optimism_sepolia_signatures_hash from "./11155420/erc20-signatures-hash.json";
-import blast_sepolia_signatures_hash from "./168587773/erc20-signatures-hash.json";
-import neon_evm_signatures_hash from "./245022934/erc20-signatures-hash.json";
-
 export const tokens = {
-  1: ethereum_tokens,
-  10: optimism_tokens,
-  25: cronos_tokens,
-  30: rsk_tokens,
-  40: telos_evm_tokens,
-  56: bsc_tokens,
-  57: syscoin_tokens,
-  106: velas_evm_tokens,
-  137: polygon_tokens,
-  199: bittorrent_tokens,
-  246: energy_web_tokens,
-  250: fantom_tokens,
-  592: astar_tokens,
-  1088: metis_tokens,
-  1101: polygon_zk_evm_tokens,
-  1284: moonbeam_tokens,
-  1442: polygon_zk_evm_testnet_tokens,
-  8217: klaytn_tokens,
-  8453: base_tokens,
-  42161: arbitrum_tokens,
-  43114: avalanche_c_chain_tokens,
-  59144: linea_tokens,
-  81457: blast_tokens,
-  84532: base_sepolia_tokens,
-  421614: arbitrum_sepolia_tokens,
-  534351: scroll_sepolia_tokens,
-  534352: scroll_tokens,
-  11155111: ethereum_sepolia_tokens,
-  11155420: optimism_sepolia_tokens,
-  168587773: blast_sepolia_tokens,
-  245022934: neon_evm_tokens,
+  1: ethereum_tokens as ERC20Token[],
+  10: optimism_tokens as ERC20Token[],
+  25: cronos_tokens as ERC20Token[],
+  30: rsk_tokens as ERC20Token[],
+  40: telos_evm_tokens as ERC20Token[],
+  56: bsc_tokens as ERC20Token[],
+  57: syscoin_tokens as ERC20Token[],
+  106: velas_evm_tokens as ERC20Token[],
+  137: polygon_tokens as ERC20Token[],
+  199: bittorrent_tokens as ERC20Token[],
+  246: energy_web_tokens as ERC20Token[],
+  250: fantom_tokens as ERC20Token[],
+  592: astar_tokens as ERC20Token[],
+  1088: metis_tokens as ERC20Token[],
+  1101: polygon_zk_evm_tokens as ERC20Token[],
+  1284: moonbeam_tokens as ERC20Token[],
+  1442: polygon_zk_evm_testnet_tokens as ERC20Token[],
+  8217: klaytn_tokens as ERC20Token[],
+  8453: base_tokens as ERC20Token[],
+  42161: arbitrum_tokens as ERC20Token[],
+  43114: avalanche_c_chain_tokens as ERC20Token[],
+  59144: linea_tokens as ERC20Token[],
+  81457: blast_tokens as ERC20Token[],
+  84532: base_sepolia_tokens as ERC20Token[],
+  421614: arbitrum_sepolia_tokens as ERC20Token[],
+  534351: scroll_sepolia_tokens as ERC20Token[],
+  534352: scroll_tokens as ERC20Token[],
+  11155111: ethereum_sepolia_tokens as ERC20Token[],
+  11155420: optimism_sepolia_tokens as ERC20Token[],
+  168587773: blast_sepolia_tokens as ERC20Token[],
+  245022934: neon_evm_tokens as ERC20Token[],
 };
 
 export const signatures = {
@@ -228,43 +198,8 @@ export const hashes = {
   245022934: neon_evm_tokens_hash,
 };
 
-export const signatureHashes = {
-  1: ethereum_signatures_hash,
-  10: optimism_signatures_hash,
-  25: cronos_signatures_hash,
-  30: rsk_signatures_hash,
-  40: telos_evm_signatures_hash,
-  56: bsc_signatures_hash,
-  57: syscoin_signatures_hash,
-  106: velas_evm_signatures_hash,
-  137: polygon_signatures_hash,
-  199: bittorrent_signatures_hash,
-  246: energy_web_signatures_hash,
-  250: fantom_signatures_hash,
-  592: astar_signatures_hash,
-  1088: metis_signatures_hash,
-  1101: polygon_zk_evm_signatures_hash,
-  1284: moonbeam_signatures_hash,
-  1442: polygon_zk_evm_testnet_signatures_hash,
-  8217: klaytn_signatures_hash,
-  8453: base_signatures_hash,
-  42161: arbitrum_signatures_hash,
-  43114: avalanche_c_chain_signatures_hash,
-  59144: linea_signatures_hash,
-  81457: blast_signatures_hash,
-  84532: base_sepolia_signatures_hash,
-  421614: arbitrum_sepolia_signatures_hash,
-  534351: scroll_sepolia_signatures_hash,
-  534352: scroll_signatures_hash,
-  11155111: ethereum_sepolia_signatures_hash,
-  11155420: optimism_sepolia_signatures_hash,
-  168587773: blast_sepolia_signatures_hash,
-  245022934: neon_evm_signatures_hash,
-};
-
 export default {
   tokens,
   signatures,
   hashes,
-  signatureHashes,
 };

@@ -26,10 +26,10 @@ export function convertToAppExchangePartnerKey(
   };
 }
 
-export const getProviderConfig = (
+export const getProviderConfig = async (
   exchangeType: ExchangeTypes,
   providerName: string,
-): ExchangeProviderNameAndSignature => {
+): Promise<ExchangeProviderNameAndSignature> => {
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProvider) {
     return testProvider;
   }
@@ -41,7 +41,7 @@ export const getProviderConfig = (
 
     case ExchangeTypes.Sell:
     case ExchangeTypes.SellNg:
-      return getSellProvider(providerName.toLowerCase());
+      return await getSellProvider(providerName.toLowerCase());
 
     default:
       throw new Error(`Unknown partner ${providerName} type`);

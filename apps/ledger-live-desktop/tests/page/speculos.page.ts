@@ -6,6 +6,7 @@ import {
   pressRightUntil,
   verifyAddress as assertAddressesEquality,
   verifyAmount,
+  verifySwapFeesAmount,
   waitFor,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
@@ -13,6 +14,9 @@ import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";
 import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Currency } from "tests/enum/Currency";
+import { Swap } from "tests/models/Swap";
+import { AppInfos } from "tests/enum/AppInfos";
+import { extractNumberFromString } from "tests/utils/textParserUtils";
 
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness")
@@ -50,6 +54,36 @@ export class SpeculosPage extends AppPage {
   @step("Press right on the device until specified text appears, then confirm the operation")
   async confirmOperationOnDevice(text: string) {
     await pressRightUntil(text);
+    await pressBoth();
+  }
+
+  @step("Press right on the device until specified text appears")
+  async clickNextUntilText(text: string) {
+    await pressRightUntil(text);
+  }
+
+  @step("Verify swap amounts")
+  async verifyAmountsAndRejectSwap(swap: Swap) {
+    const { sendPattern } = AppInfos.EXCHANGE;
+    if (!sendPattern) {
+      return;
+    }
+    const sendAmountScreen = await pressRightUntil(sendPattern[0]);
+    expect(
+      verifyAmount(`${swap.accountToDebit.currency.ticker} ${swap.amount}`, sendAmountScreen),
+    ).toBeTruthy();
+    const getAmountScreen = await pressRightUntil(sendPattern[1]);
+    expect(
+      verifyAmount(
+        `${swap.accountToCredit.currency.ticker} ${extractNumberFromString(swap.amountToReceive)}`,
+        getAmountScreen,
+      ),
+    ).toBeTruthy();
+    const feesAmountScreen = await pressRightUntil(sendPattern[2]);
+    expect(
+      verifySwapFeesAmount(extractNumberFromString(swap.feesAmount), feesAmountScreen),
+    ).toBeTruthy();
+    await pressRightUntil(DeviceLabels.REJECT);
     await pressBoth();
   }
 }

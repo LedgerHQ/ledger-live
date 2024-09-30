@@ -5,6 +5,7 @@ import { TrackScreen } from "~/analytics";
 type Props = {
   title: string;
   desc?: string;
+  info?: string | React.JSX.Element;
   mainButton: {
     label: string;
     onPress: () => void;
@@ -13,7 +14,7 @@ type Props = {
   analyticsPage: string;
 };
 
-export function ErrorComponent({ title, desc, mainButton, analyticsPage }: Props) {
+export function ErrorComponent({ title, desc, info, mainButton, analyticsPage }: Props) {
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" pb={7}>
@@ -30,6 +31,14 @@ export function ErrorComponent({ title, desc, mainButton, analyticsPage }: Props
             {desc}
           </Text>
         )}
+        {info &&
+          (info instanceof String ? (
+            <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" mt={4}>
+              {info}
+            </Text>
+          ) : (
+            <>{info}</>
+          ))}
       </Flex>
       <Flex mt={8}>
         <Button type="main" outline={mainButton.outline} onPress={mainButton.onPress}>

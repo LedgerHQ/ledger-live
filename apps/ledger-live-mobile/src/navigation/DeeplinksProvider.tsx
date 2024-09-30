@@ -459,7 +459,7 @@ export const DeeplinksProvider = ({
             ) {
               const uri = isWalletConnectUrl(url) ? url : new URL(url).searchParams.get("uri");
               // Only update for a connection not a request
-              if (uri && !new URL(uri).searchParams.get("requestId")) {
+              if (uri && uri !== "wc:" && !new URL(uri).searchParams.get("requestId")) {
                 // TODO use wallet-api to push event instead of reloading the webview
                 dispatch(setWallectConnectUri(uri));
               }
@@ -515,6 +515,10 @@ export const DeeplinksProvider = ({
             });
           }
           const platform = pathname.split("/")[1];
+
+          if (isStorylyLink(url.toString())) {
+            storylyContext.setUrl(url.toString());
+          }
 
           if (hostname === "earn") {
             if (searchParams.get("action") === "info-modal") {

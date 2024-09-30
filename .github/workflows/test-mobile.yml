@@ -2,12 +2,6 @@ name: "@Mobile • Test App"
 run-name: "@Mobile • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
   workflow_dispatch:
     inputs:
       ref:
@@ -30,6 +24,7 @@ concurrency:
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
 
 jobs:
   test-mobile:

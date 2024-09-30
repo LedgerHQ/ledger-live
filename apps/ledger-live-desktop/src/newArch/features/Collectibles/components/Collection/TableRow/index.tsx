@@ -3,11 +3,7 @@ import { Media, Skeleton } from "../../index";
 import { Box, Text } from "@ledgerhq/react-ui";
 import { rgba } from "~/renderer/styles/helpers";
 import styled from "styled-components";
-import {
-  isNFTRow,
-  isOrdinalsRow,
-  isRareSatsRow,
-} from "LLD/features/Collectibles/utils/typeGuardsChecker";
+import { isNFTRow, isOrdinalsRow } from "LLD/features/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/features/Collectibles/types/Collection";
 import TokenTitle from "./TokenTitle";
 import IconContainer from "./IconContainer";
@@ -28,12 +24,7 @@ const Container = styled(Box)`
 
 const TableRow: React.FC<Props> = props => {
   const mediaBox = () => {
-    return (
-      <>
-        {(isNFTRow(props) || isOrdinalsRow(props)) && <Media size={32} {...props.media} />}
-        {isRareSatsRow(props) && null}
-      </>
-    );
+    return <>{(isNFTRow(props) || isOrdinalsRow(props)) && <Media size={32} {...props.media} />}</>;
   };
 
   const nftCount = () => {
@@ -47,7 +38,7 @@ const TableRow: React.FC<Props> = props => {
           </Skeleton>
         )}
         {isOrdinalsRow(props) && props.tokenIcons.length != 0 && (
-          <IconContainer icons={props.tokenIcons} />
+          <IconContainer icons={props.tokenIcons} iconNames={props.rareSatName} />
         )}
       </>
     );

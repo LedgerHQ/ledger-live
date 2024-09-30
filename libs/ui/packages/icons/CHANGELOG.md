@@ -1,5 +1,21 @@
 # @ledgerhq/icons-ui
 
+## 0.7.3
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
+## 0.7.3-next.0
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
 ## 0.7.2
 
 ### Patch Changes

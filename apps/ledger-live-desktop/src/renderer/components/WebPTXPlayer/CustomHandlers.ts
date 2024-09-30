@@ -14,11 +14,14 @@ import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/U
 import { WebviewProps } from "../Web3AppWebview/types";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
+import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
   const dispatch = useDispatch();
   const accounts = useSelector(flattenAccountsSelector);
   const { setDrawer } = React.useContext(context);
+
+  const { isOpen: isDrawerOpen } = useSelector(platformAppDrawerStateSelector);
 
   const tracking = useMemo(
     () =>
@@ -81,12 +84,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
             );
           },
           "custom.exchange.error": ({ error }) => {
-            dispatch(closePlatformAppDrawer());
-            setDrawer(WebviewErrorDrawer, error);
+            if (!isDrawerOpen) {
+              dispatch(closePlatformAppDrawer());
+              setDrawer(WebviewErrorDrawer, error);
+            }
             return Promise.resolve();
           },
         },
       }),
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer, isDrawerOpen]);
 }

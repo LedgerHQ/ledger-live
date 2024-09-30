@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   walletSync: {
     ...initialStateWalletSync,
     flow: Flow.ManageBackup,
-    step: Step.ManageBackup,
+    step: Step.DeleteBackup,
   },
 };
 
@@ -25,15 +25,11 @@ describe("useFlows", () => {
       result.current.goToNextScene();
     });
     expect(result.current.currentStep).toBe(Object.values(steps)[1]);
-    act(() => {
-      result.current.goToNextScene();
-    });
-    expect(result.current.currentStep).toBe(Object.values(steps)[2]);
 
     act(() => {
       result.current.goToPreviousScene();
     });
-    expect(result.current.currentStep).toBe(Object.values(steps)[1]);
+    expect(result.current.currentStep).toBe(Object.values(steps)[0]);
   });
 
   it("should reset Flow and Step", async () => {

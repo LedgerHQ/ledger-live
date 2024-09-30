@@ -28,10 +28,19 @@ export default function CustomError({ route }: CustomErrorPropsProps) {
         <Text variant="body" textAlign={"center"}>
           {t("errors.CustomError.description")}
 
-          <Trans
-            i18nKey="errors.CustomError.errorCode"
-            values={{ errorCode: error?.cause.swapCode }}
-          />
+          {error && "cause" in error && error.cause?.swapCode && (
+            <Trans
+              i18nKey="errors.CustomError.errorCode"
+              values={{ errorCode: error.cause.swapCode }}
+            />
+          )}
+
+          {error && "message" in error && error.message && (
+            <Trans
+              i18nKey="errors.CustomError.errorMessage"
+              values={{ errorMessage: error.message }}
+            />
+          )}
         </Text>
       </Flex>
     </SafeAreaView>

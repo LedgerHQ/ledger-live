@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.8.1",
+  "version": "0.9.1",
   "private": true,
   "browser": {
     "fs": false,
@@ -43,7 +43,7 @@
     "eslint-config-next": "13.5.6",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "next": "14.2.8",
+    "next": "14.2.12",
     "prop-types": "^15.8.1",
     "qrcode": "^1.4.4",
     "re-resizable": "^6.9.11",

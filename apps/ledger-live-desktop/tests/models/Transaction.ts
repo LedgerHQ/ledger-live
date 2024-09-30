@@ -3,9 +3,9 @@ import { Account } from "../enum/Account";
 
 export class Transaction {
   constructor(
-    public readonly accountToDebit: Account,
-    public readonly accountToCredit: Account,
-    public readonly amount: string,
-    public readonly speed: Fee,
+    public accountToDebit: Account,
+    public accountToCredit: Account,
+    public amount: string,
+    public speed: Fee,
   ) {}
 }

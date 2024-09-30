@@ -3,11 +3,12 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";
 import { closeInformationCenter } from "~/renderer/actions/UI";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openURL } from "~/renderer/linking";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 
-import { StorylyRef } from "storyly-web";
+import { StorylyRef, Story } from "storyly-web";
+import { languageSelector } from "~/renderer/reducers/settings";
 interface StorylyProviderProps {
   children: ReactNode;
 }
@@ -37,6 +38,9 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   const storylyRef = useRef<StorylyRef>(null);
 
   const { params } = useFeature("storyly") || {};
+
+  const language = useSelector(languageSelector);
+
   const stories = params?.stories;
 
   useEffect(() => {
@@ -44,21 +48,27 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
     storylyRef.current?.init({
       layout: "classic",
       token: token,
-      events: {
-        closeStoryGroup: clear,
-        actionClicked: story => {
-          if (story?.media?.actionUrl) {
-            openURL(story.media.actionUrl);
-            storylyRef.current?.close?.();
-            dispatch(closeAllModal());
-            setDrawer();
-            dispatch(closeInformationCenter());
-          }
-        },
-      },
     });
+
+    storylyRef.current?.on("actionClicked", (story: Story) => {
+      if (!story.actionUrl) return;
+      openURL(story.actionUrl as string);
+      storylyRef.current?.close?.();
+      dispatch(closeAllModal());
+      setDrawer();
+      dispatch(closeInformationCenter());
+    });
+
+    storylyRef.current?.on("closeStoryGroup", clear);
+
     storylyRef.current?.openStory({ group: query?.g, story: query?.s, playMode: query?.play });
   }, [params, token, query, dispatch, setDrawer]);
+
+  useEffect(() => {
+    if (language) {
+      storylyRef.current?.setLang({ language });
+    }
+  }, [language]);
 
   useEffect(() => {
     if (url) {

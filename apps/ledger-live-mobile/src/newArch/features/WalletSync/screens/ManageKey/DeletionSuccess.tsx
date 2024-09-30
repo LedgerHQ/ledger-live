@@ -26,6 +26,7 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
   return (
     <Success
       title={t("walletSync.walletSyncActivated.manageKey.success")}
+      desc={t("walletSync.walletSyncActivated.manageKey.successHint")}
       secondaryButton={{
         label: t("walletSync.success.close"),
         onPress: close,

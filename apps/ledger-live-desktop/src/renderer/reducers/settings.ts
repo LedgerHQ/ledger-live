@@ -113,6 +113,8 @@ export type SettingsState = {
   dismissedContentCards: { [key: string]: number };
   anonymousBrazeId: string | null;
   starredMarketCoins: string[];
+  hasSeenOrdinalsDiscoveryDrawer: boolean;
+  hasProtectedOrdinalsAssets: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -169,6 +171,8 @@ export const INITIAL_STATE: SettingsState = {
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
   lastSeenDevice: null,
+  hasSeenOrdinalsDiscoveryDrawer: false,
+  hasProtectedOrdinalsAssets: false,
   devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
@@ -261,6 +265,8 @@ type HandlersPayloads = {
 
   MARKET_ADD_STARRED_COINS: string;
   MARKET_REMOVE_STARRED_COINS: string;
+  SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: boolean;
+  SET_HAS_PROTECTED_ORDINALS_ASSETS: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -456,6 +462,14 @@ const handlers: SettingsHandlers = {
   MARKET_REMOVE_STARRED_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasSeenOrdinalsDiscoveryDrawer: payload,
+  }),
+  SET_HAS_PROTECTED_ORDINALS_ASSETS: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasProtectedOrdinalsAssets: payload,
   }),
 };
 
@@ -797,3 +811,7 @@ export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymo
 export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+export const hasSeenOrdinalsDiscoveryDrawerSelector = (state: State) =>
+  state.settings.hasSeenOrdinalsDiscoveryDrawer;
+export const hasProtectedOrdinalsAssetsSelector = (state: State) =>
+  state.settings.hasProtectedOrdinalsAssets;

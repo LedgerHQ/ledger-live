@@ -121,7 +121,7 @@ libs/ledger-live-common/src/device/                                @ledgerhq/liv
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
-libs/speculos-transport/                                           @ledgerhq/live-devices
+libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software

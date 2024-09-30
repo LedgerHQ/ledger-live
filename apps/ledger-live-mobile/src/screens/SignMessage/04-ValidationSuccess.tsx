@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -25,14 +25,13 @@ export default function ValidationSuccess({
   const { t } = useTranslation();
   const { signature, onConfirmationHandler } = route.params;
 
-  useEffect(() => {
+  const onClose = useCallback(() => {
     if (onConfirmationHandler && signature) {
       onConfirmationHandler(signature);
     }
-  }, [onConfirmationHandler, signature]);
-  const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
-  }, [navigation]);
+  }, [navigation, onConfirmationHandler, signature]);
+
   return (
     <View
       style={[
