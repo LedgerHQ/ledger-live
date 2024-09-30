@@ -1,8 +1,8 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-elrond/bridge/js";
-import makeCliTools from "@ledgerhq/coin-elrond/cli-transaction";
-import multiversxResolver from "@ledgerhq/coin-elrond/hw-getAddress";
+import { createBridges } from "@ledgerhq/coin-multiversx/bridge/js";
+import makeCliTools from "@ledgerhq/coin-multiversx/cli-transaction";
+import multiversxResolver from "@ledgerhq/coin-multiversx/hw-getAddress";
 import { MultiversxAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-elrond/types";
 import Multiversx from "@ledgerhq/hw-app-elrond";
 import Transport from "@ledgerhq/hw-transport";

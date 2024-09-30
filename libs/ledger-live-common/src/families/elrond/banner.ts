@@ -1,7 +1,7 @@
 import type { MultiversxAccount, MultiversxProvider } from "./types";
 import { MultiversxDelegation, MultiversxPreloadData } from "./types";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "./constants";
-import { hasMinimumDelegableBalance } from "@ledgerhq/coin-elrond/helpers/hasMinimumDelegableBalance";
+import { hasMinimumDelegableBalance } from "@ledgerhq/coin-multiversx/helpers/hasMinimumDelegableBalance";
 
 interface AccountBannerHiddenState {
   bannerType: "hidden";

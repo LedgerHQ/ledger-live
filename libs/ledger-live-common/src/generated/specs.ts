@@ -4,7 +4,7 @@ import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
-import elrond from "@ledgerhq/coin-elrond/specs";
+import elrond from "@ledgerhq/coin-multiversx/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
 import filecoin from "@ledgerhq/coin-filecoin/specs";

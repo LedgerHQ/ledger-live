@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-elrond/constants";
+export * from "@ledgerhq/coin-multiversx/constants";
