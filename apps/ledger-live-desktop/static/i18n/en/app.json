@@ -6473,8 +6473,7 @@
     },
     "loading": {
       "title": "Hang tight...",
-      "activation": "Your data is being end-to-end encrypted... ",
-      "synch": "We are updating the synched instances..."
+      "activation": "This can take up to 30 seconds.\nPlease stay on this screen."
     },
     "error": {
       "title": "Something went wrong",
