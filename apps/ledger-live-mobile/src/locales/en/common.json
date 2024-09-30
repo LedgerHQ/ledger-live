@@ -6776,7 +6776,7 @@
     "loading": {
       "title": "Hang tight...",
       "activation": "Your data is being end-to-end encrypted... ",
-      "synch": "We are updating the synched instances..."
+      "synch": "You can close this page and continue using the app while we sync your accounts in the background."
     },
     "success": {
       "sync": "Sync successful",
