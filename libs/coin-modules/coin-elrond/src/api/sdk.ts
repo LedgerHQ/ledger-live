@@ -34,11 +34,11 @@ import {
 } from "../constants";
 import { MultiversXAccount } from "./dtos/multiversx-account";
 const api = new MultiversxApi(
-  getEnv("ELROND_API_ENDPOINT"),
-  getEnv("ELROND_DELEGATION_API_ENDPOINT"),
+  getEnv("MULTIVERSX_API_ENDPOINT"),
+  getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
 );
 
-const proxy = new ApiNetworkProvider(getEnv("ELROND_API_ENDPOINT"));
+const proxy = new ApiNetworkProvider(getEnv("MULTIVERSX_API_ENDPOINT"));
 
 /**
  * Get account balances and nonce
