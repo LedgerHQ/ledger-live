@@ -2643,8 +2643,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
-        specifier: 0.4.6
-        version: 0.4.6(@solana/web3.js@1.91.6)
+        specifier: 0.3.9
+        version: 0.3.9(@solana/web3.js@1.91.6)
       '@solana/web3.js':
         specifier: 1.91.6
         version: 1.91.6
@@ -13144,51 +13144,11 @@ packages:
     resolution: {integrity: sha512-E1ImOIAD1tBZFRdjeM4/pzTiTApC0AOBGwyAMS4fwIodCWArzJ3DWdoh8cKxeFM2fElkxBh2Aqts1BPC373rHA==}
     engines: {node: '>=5.10'}
 
-  '@solana/codecs-core@2.0.0-preview.2':
-    resolution: {integrity: sha512-gLhCJXieSCrAU7acUJjbXl+IbGnqovvxQLlimztPoGgfLQ1wFYu+XJswrEVQqknZYK1pgxpxH3rZ+OKFs0ndQg==}
-
-  '@solana/codecs-data-structures@2.0.0-preview.2':
-    resolution: {integrity: sha512-Xf5vIfromOZo94Q8HbR04TbgTwzigqrKII0GjYr21K7rb3nba4hUW2ir8kguY7HWFBcjHGlU5x3MevKBOLp3Zg==}
-
-  '@solana/codecs-numbers@2.0.0-preview.2':
-    resolution: {integrity: sha512-aLZnDTf43z4qOnpTcDsUVy1Ci9im1Md8thWipSWbE+WM9ojZAx528oAql+Cv8M8N+6ALKwgVRhPZkto6E59ARw==}
-
-  '@solana/codecs-strings@2.0.0-preview.2':
-    resolution: {integrity: sha512-EgBwY+lIaHHgMJIqVOGHfIfpdmmUDNoNO/GAUGeFPf+q0dF+DtwhJPEMShhzh64X2MeCZcmSO6Kinx0Bvmmz2g==}
-    peerDependencies:
-      fastestsmallesttextencoderdecoder: ^1.0.22
-
-  '@solana/codecs@2.0.0-preview.2':
-    resolution: {integrity: sha512-4HHzCD5+pOSmSB71X6w9ptweV48Zj1Vqhe732+pcAQ2cMNnN0gMPMdDq7j3YwaZDZ7yrILVV/3+HTnfT77t2yA==}
-
-  '@solana/errors@2.0.0-preview.2':
-    resolution: {integrity: sha512-H2DZ1l3iYF5Rp5pPbJpmmtCauWeQXRJapkDg8epQ8BJ7cA2Ut/QEtC3CMmw/iMTcuS6uemFNLcWvlOfoQhvQuA==}
-    hasBin: true
-
-  '@solana/options@2.0.0-preview.2':
-    resolution: {integrity: sha512-FAHqEeH0cVsUOTzjl5OfUBw2cyT8d5Oekx4xcn5hn+NyPAfQJgM3CEThzgRD6Q/4mM5pVUnND3oK/Mt1RzSE/w==}
-
-  '@solana/spl-token-group@0.0.4':
-    resolution: {integrity: sha512-7+80nrEMdUKlK37V6kOe024+T7J4nNss0F8LQ9OOPYdWCCfJmsGUzVx2W3oeizZR4IHM6N4yC9v1Xqwc3BTPWw==}
+  '@solana/spl-token@0.3.9':
+    resolution: {integrity: sha512-1EXHxKICMnab35MvvY/5DBc/K/uQAOJCYnDZXw83McCAYUAfi+rwq6qfd6MmITmSTEhcfBcl/zYxmW/OSN0RmA==}
     engines: {node: '>=16'}
     peerDependencies:
-      '@solana/web3.js': ^1.91.6
-
-  '@solana/spl-token-metadata@0.1.4':
-    resolution: {integrity: sha512-N3gZ8DlW6NWDV28+vCCDJoTqaCZiF/jDUnk3o8GRkAFzHObiR60Bs1gXHBa8zCPdvOwiG6Z3dg5pg7+RW6XNsQ==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.91.6
-
-  '@solana/spl-token@0.4.6':
-    resolution: {integrity: sha512-1nCnUqfHVtdguFciVWaY/RKcQz1IF4b31jnKgAmjU9QVN1q7dRUkTEWJZgTYIEtsULjVnC9jRqlhgGN39WbKKA==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.91.6
-
-  '@solana/spl-type-length-value@0.1.0':
-    resolution: {integrity: sha512-JBMGB0oR4lPttOZ5XiUGyvylwLQjt1CPJa6qQ5oM+MBCndfjz2TKKkw0eATlLLcYmq1jBVsNlJ2cD6ns2GR7lA==}
-    engines: {node: '>=16'}
+      '@solana/web3.js': ^1.47.4
 
   '@solana/web3.js@1.91.6':
     resolution: {integrity: sha512-dm20nN6HQvXToo+kM51nxHdtaa2wMSRdeK37p+WIWESfeiVHqV8XbV4XnWupq6ngt5vIckhGFG7ZnTBxUgLzDA==}
@@ -16476,9 +16436,6 @@ packages:
 
   axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
-
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
   axios@1.7.3:
     resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
@@ -41127,80 +41084,16 @@ snapshots:
     dependencies:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@solana/codecs-core@2.0.0-preview.2':
-    dependencies:
-      '@solana/errors': 2.0.0-preview.2
-
-  '@solana/codecs-data-structures@2.0.0-preview.2':
-    dependencies:
-      '@solana/codecs-core': 2.0.0-preview.2
-      '@solana/codecs-numbers': 2.0.0-preview.2
-      '@solana/errors': 2.0.0-preview.2
-
-  '@solana/codecs-numbers@2.0.0-preview.2':
-    dependencies:
-      '@solana/codecs-core': 2.0.0-preview.2
-      '@solana/errors': 2.0.0-preview.2
-
-  '@solana/codecs-strings@2.0.0-preview.2':
-    dependencies:
-      '@solana/codecs-core': 2.0.0-preview.2
-      '@solana/codecs-numbers': 2.0.0-preview.2
-      '@solana/errors': 2.0.0-preview.2
-
-  '@solana/codecs@2.0.0-preview.2':
-    dependencies:
-      '@solana/codecs-core': 2.0.0-preview.2
-      '@solana/codecs-data-structures': 2.0.0-preview.2
-      '@solana/codecs-numbers': 2.0.0-preview.2
-      '@solana/codecs-strings': 2.0.0-preview.2
-      '@solana/options': 2.0.0-preview.2
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-
-  '@solana/errors@2.0.0-preview.2':
-    dependencies:
-      chalk: 5.3.0
-      commander: 12.0.0
-
-  '@solana/options@2.0.0-preview.2':
-    dependencies:
-      '@solana/codecs-core': 2.0.0-preview.2
-      '@solana/codecs-numbers': 2.0.0-preview.2
-
-  '@solana/spl-token-group@0.0.4(@solana/web3.js@1.91.6)':
-    dependencies:
-      '@solana/codecs': 2.0.0-preview.2
-      '@solana/spl-type-length-value': 0.1.0
-      '@solana/web3.js': 1.91.6
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-
-  '@solana/spl-token-metadata@0.1.4(@solana/web3.js@1.91.6)':
-    dependencies:
-      '@solana/codecs': 2.0.0-preview.2
-      '@solana/spl-type-length-value': 0.1.0
-      '@solana/web3.js': 1.91.6
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-
-  '@solana/spl-token@0.4.6(@solana/web3.js@1.91.6)':
+  '@solana/spl-token@0.3.9(@solana/web3.js@1.91.6)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/spl-token-group': 0.0.4(@solana/web3.js@1.91.6)
-      '@solana/spl-token-metadata': 0.1.4(@solana/web3.js@1.91.6)
       '@solana/web3.js': 1.91.6
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - fastestsmallesttextencoderdecoder
       - utf-8-validate
-
-  '@solana/spl-type-length-value@0.1.0':
-    dependencies:
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@solana/web3.js@1.91.6':
     dependencies:
@@ -46548,10 +46441,6 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.6
 
-  axios@0.26.1:
-    dependencies:
-      follow-redirects: 1.15.6
-
   axios@1.7.3:
     dependencies:
       follow-redirects: 1.15.6
@@ -50268,8 +50157,8 @@ snapshots:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
       eslint-plugin-react: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
@@ -50326,23 +50215,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
-    dependencies:
-      debug: 4.3.4
-      enhanced-resolve: 5.16.0
-      eslint: 8.57.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
-      fast-glob: 3.3.2
-      get-tsconfig: 4.7.5
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-
   eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
     dependencies:
       debug: 4.3.4
@@ -50384,17 +50256,6 @@ snapshots:
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
-    dependencies:
-      debug: 3.2.7
-    optionalDependencies:
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -50482,33 +50343,6 @@ snapshots:
       tsconfig-paths: 3.15.0
     optionalDependencies:
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
-    dependencies:
-      array-includes: 3.1.8
-      array.prototype.findlastindex: 1.2.5
-      array.prototype.flat: 1.3.2
-      array.prototype.flatmap: 1.3.2
-      debug: 3.2.7
-      doctrine: 2.1.0
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
-      hasown: 2.0.2
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-      minimatch: 3.1.2
-      object.fromentries: 2.0.8
-      object.groupby: 1.0.3
-      object.values: 1.2.0
-      semver: 6.3.1
-      tsconfig-paths: 3.15.0
-    optionalDependencies:
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -51332,12 +51166,12 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
-  expo-font@11.4.0(67hrxnryf4ycl5nhvln5laaykq):
+  expo-font@11.4.0(hxmq25pkdf6fvmayb5kzqynb3q):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(tw2cl75ufjodqrrf2cewclqsqi)
+      expo-asset: 8.10.1(expo-constants@14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       react: 18.2.0
@@ -51462,7 +51296,7 @@ snapshots:
       expo-asset: 8.10.1(tw2cl75ufjodqrrf2cewclqsqi)
       expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-file-system: 15.4.5(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-font: 11.4.0(67hrxnryf4ycl5nhvln5laaykq)
+      expo-font: 11.4.0(hxmq25pkdf6fvmayb5kzqynb3q)
       expo-keep-awake: 12.3.0(tw2cl75ufjodqrrf2cewclqsqi)
       expo-modules-autolinking: 1.5.1(55fu4l7dolnnxrys6pt2pnhfne)
       fbemitter: 3.0.0
