@@ -222,6 +222,7 @@ export async function createSpeculosDevice(
           "40000",
         ]),
   ];
+  console.log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 
