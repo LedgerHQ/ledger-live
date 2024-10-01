@@ -104,6 +104,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
               "parentId" in defaultAccount && defaultAccount.parentId
                 ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
                 : null,
+            from: history.location.pathname,
           },
         });
       }

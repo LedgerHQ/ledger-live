@@ -27,6 +27,10 @@ export function latestDistantStateSelector(state: State): DistantState | null {
   return walletSyncStateSelector(walletSelector(state)).data;
 }
 
+export function latestDistantVersionSelector(state: State): number {
+  return walletSyncStateSelector(walletSelector(state)).version;
+}
+
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,
 ): string | undefined => {

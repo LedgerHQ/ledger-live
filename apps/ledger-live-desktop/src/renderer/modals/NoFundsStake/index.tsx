@@ -92,6 +92,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
         defaultCurrency: currency,
         defaultAccount: account,
         defaultParentAccount: parentAccount,
+        from: history.location.pathname,
       },
     });
   }, [currency, account, parentAccount, history, dispatch]);
