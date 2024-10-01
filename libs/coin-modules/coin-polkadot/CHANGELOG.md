@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 1.3.0-nightly.0
+
+### Minor Changes
+
+- [#7812](https://github.com/LedgerHQ/ledger-live/pull/7812) [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot code cleanup
+
 ## 1.2.2
 
 ### Patch Changes

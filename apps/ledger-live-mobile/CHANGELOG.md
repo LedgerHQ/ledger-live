@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.50.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901)]:
+  - @ledgerhq/native-ui@0.24.1-nightly.0
+  - @ledgerhq/icons-ui@0.7.4-nightly.0
+  - @ledgerhq/trustchain@0.4.1-nightly.0
+  - @ledgerhq/live-common@34.10.0-nightly.0
+  - @ledgerhq/live-wallet@0.6.2-nightly.0
+
 ## 3.50.0
 
 ### Minor Changes

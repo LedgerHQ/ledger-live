@@ -1,5 +1,18 @@
 ## 34.5.0-next.4
 
+## 34.10.0-nightly.0
+
+### Minor Changes
+
+- [#7812](https://github.com/LedgerHQ/ledger-live/pull/7812) [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot code cleanup
+
+### Patch Changes
+
+- Updated dependencies [[`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901)]:
+  - @ledgerhq/hw-app-polkadot@6.32.0-nightly.0
+  - @ledgerhq/coin-polkadot@1.3.0-nightly.0
+  - @ledgerhq/live-wallet@0.6.2-nightly.0
+
 ## 34.9.0
 
 ### Minor Changes

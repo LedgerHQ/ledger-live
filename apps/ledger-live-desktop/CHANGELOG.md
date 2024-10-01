@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.87.1-nightly.0
+
+### Patch Changes
+
+- [#7950](https://github.com/LedgerHQ/ledger-live/pull/7950) [`7c12a08`](https://github.com/LedgerHQ/ledger-live/commit/7c12a08a610edeceb3961155aca98384dafcdbf9) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Shows swap loader
+
+- Updated dependencies [[`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901)]:
+  - @ledgerhq/react-ui@0.16.1-nightly.0
+  - @ledgerhq/trustchain@0.4.1-nightly.0
+  - @ledgerhq/live-common@34.10.0-nightly.0
+  - @ledgerhq/live-wallet@0.6.2-nightly.0
+
 ## 2.87.0
 
 ### Minor Changes
