@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-
-import * as Braze from "@braze/react-native-sdk";
+import Braze from "@braze/react-native-sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
 import { NavigatorName } from "~/const";
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
 import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";

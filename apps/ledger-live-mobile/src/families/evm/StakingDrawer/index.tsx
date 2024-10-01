@@ -1,20 +1,24 @@
+import Braze from "@braze/react-native-sdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Linking, TouchableOpacity } from "react-native";
+import { useStore } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { Track } from "~/analytics";
+import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
+import { trackingEnabledSelector } from "~/reducers/settings";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
-import { Linking, TouchableOpacity } from "react-native";
 
 type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
 
 const INFO_ICON_CONTAINER_SIZE = 40;
+const BUTTON_CLICKED_TRACK_EVENT = "button_clicked";
 
 // compare functions for sorting providers list based on minimum required stake
 const ascending = (a: ListProvider, b: ListProvider) => (a?.min || 0) - (b?.min || 0);
@@ -53,8 +57,8 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
   const { isOpen, onModalHide, onClose } = useRootDrawerContext();
 
   const { t } = useTranslation();
-
   const { theme: themeName, colors } = useTheme();
+  const store = useStore();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selected = OPTION_VALUES[selectedIndex];
@@ -71,6 +75,17 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
         .filter(x => !x.disabled && (selected === "all" || selected === x.category)),
     [has32Eth, providers, selected],
   );
+
+  useEffect(() => {
+    if (!trackingEnabledSelector(store.getState())) {
+      return;
+    }
+    const data = {
+      button: `filter_${selected}`,
+    };
+    track(BUTTON_CLICKED_TRACK_EVENT, data);
+    Braze.logCustomEvent(BUTTON_CLICKED_TRACK_EVENT, data);
+  }, [selected, store]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>

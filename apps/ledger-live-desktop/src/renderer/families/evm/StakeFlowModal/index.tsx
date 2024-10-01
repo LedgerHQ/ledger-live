@@ -6,16 +6,21 @@ import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Modal from "~/renderer/components/Modal";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
 import { EthStakingModalBody } from "./EthStakingModalBody";
+import * as braze from "@braze/web-sdk";
+import { useStore } from "react-redux";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
-const SCROLL_WIDTH = "18px";
+const SCROLL_WIDTH = 18;
 const SHADOW_HEIGHT = 30;
+const BUTTON_CLICKED_TRACK_EVENT = "button_clicked";
 
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
@@ -38,13 +43,13 @@ interface IsScrollable {
 
 const ScrollableContainer = styled(Box)<IsScrollable>(
   ({ theme, isScrollable }) => `
-  padding: 0px ${isScrollable ? 20 - theme.overflow.trackSize : 20}px 0px 20px;
+  padding: 0px ${isScrollable ? 20 - SCROLL_WIDTH : 20}px 0px 20px;
   flex: 1;
   ${isScrollable ? theme.overflow.y : "overflow: hidden"};
 
 
   ::-webkit-scrollbar {
-    width: ${SCROLL_WIDTH};
+    width: ${SCROLL_WIDTH}px;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -66,8 +71,8 @@ const Header = styled(Box)<IsScrollable>(
             position: absolute;
             top: 100%;
             left: 0;
-            right: ${SCROLL_WIDTH};
-            height: ${SHADOW_HEIGHT};
+            right: ${SCROLL_WIDTH}px;
+            height: ${SHADOW_HEIGHT}px;
             background: linear-gradient(to bottom, ${theme.colors.background.main}, transparent);
             z-index: 1;
             pointer-events: none;
@@ -90,8 +95,8 @@ const Footer = styled(Box)<IsScrollable>(
               position: absolute;
               bottom: 100%;
               left: 0;
-              right: ${SCROLL_WIDTH};
-              height: ${SHADOW_HEIGHT};
+              right: ${SCROLL_WIDTH}px;
+              height: ${SHADOW_HEIGHT}px;
               background: linear-gradient(to top, ${theme.colors.background.main}, transparent);
               z-index: 1;
               pointer-events: none;
@@ -122,6 +127,7 @@ const MODAL_WIDTH = 500;
 export const StakeModal = ({ account, source }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const store = useStore();
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
@@ -149,6 +155,17 @@ export const StakeModal = ({ account, source }: Props) => {
         (scrollableContainerRef.current?.clientHeight ?? 0),
     );
   }, [selected, setIsScrollable]);
+
+  useEffect(() => {
+    if (!trackingEnabledSelector(store.getState())) {
+      return;
+    }
+    const data = {
+      button: `filter_${selected}`,
+    };
+    track(BUTTON_CLICKED_TRACK_EVENT, data);
+    braze.logCustomEvent(BUTTON_CLICKED_TRACK_EVENT, data);
+  }, [store, selected]);
 
   if (!ethStakingProviders?.enabled) {
     return null;
