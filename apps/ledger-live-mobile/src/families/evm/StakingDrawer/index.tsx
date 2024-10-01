@@ -77,16 +77,22 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
       <Track onMount event="ETH Stake Modal" />
       <Flex height="100%" rowGap={24}>
         <Flex rowGap={16} alignItems="center">
-          <Text variant="h4" textAlign="center">
+          <Text variant="h3Inter" textAlign="center" fontWeight="semiBold" fontSize={24}>
             {t("stake.ethereum.title")}
           </Text>
           <ChipTabs
             labels={OPTION_LABELS}
             size="small"
+            activeBg={colors.primary.c80}
+            activeColor={colors.neutral.c00}
+            inactiveColor={colors.neutral.c100}
+            gap={8}
+            inactiveBg={colors.neutral.c40}
             activeIndex={selectedIndex}
             onChange={setSelectedIndex}
+            stretchItems={false}
           />
-          <Text variant="body" lineHeight="21px" color="neutral.c70" textAlign="center">
+          <Text variant="body" color="neutral.c80" minHeight={52} textAlign="center">
             {t(`stake.ethereum.category.${selected}.description`)}
           </Text>
         </Flex>

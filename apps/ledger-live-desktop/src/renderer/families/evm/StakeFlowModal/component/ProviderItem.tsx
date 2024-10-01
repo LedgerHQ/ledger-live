@@ -42,7 +42,7 @@ function StakingIcon({ icon }: { icon?: string }) {
   if (iconType === "provider") {
     return (
       <Flex>
-        <ProviderIcon name={iconName} size="L" />
+        <ProviderIcon name={iconName} size="M" />
       </Flex>
     );
   }
@@ -81,12 +81,12 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
 
   return (
     <Container
-      p={2}
-      borderRadius={2}
-      onClick={handleClick}
       alignItems="center"
-      columnGap={2}
+      borderRadius={2}
+      columnGap={4}
       data-testid={`stake-provider-container-${provider.id}`}
+      onClick={handleClick}
+      p={3}
     >
       <StakingIcon icon={provider.icon} />
       <Flex alignItems="flex-start" flex={2} flexDirection="column">

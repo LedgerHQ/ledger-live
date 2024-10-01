@@ -6665,19 +6665,19 @@
         },
         "liquid": {
           "name": "Liquid",
-          "description": "Stake ETH and receive rewards in liquid token you will still be able to trade and participate in DeFi activities."
+          "description": "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
         },
         "protocol": {
           "name": "Protocol",
-          "description": "Stake a batch of 32 ETH and receive full node rewards in ETH."
+          "description": "You can stake a batch of 32 ETH and get full node rewards in ETH."
         },
         "pooling": {
           "name": "Pooling",
-          "description": "You can stake ETH, get rewards in liquid tokens, and trade them freely while staying active in DeFi."
+          "description": "You can join a pool to stake any amount of ETH and get rewards."
         },
         "restaking": {
           "name": "Restaking",
-          "description": "Restake your liquid token to earn additional rewards."
+          "description": "You can restake your liquid token to get additional rewards."
         }
       },
       "how_it_works": "How ETH staking works",
