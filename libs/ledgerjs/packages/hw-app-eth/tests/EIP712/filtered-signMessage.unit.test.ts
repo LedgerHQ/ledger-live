@@ -14,7 +14,7 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
   }
 };
 
-jest.mock("@ledgerhq/cryptoassats-evm-signatures/data/eip712", () => v1);
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712", () => v1);
 jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2", () => v2);
 jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
   signatures: {
