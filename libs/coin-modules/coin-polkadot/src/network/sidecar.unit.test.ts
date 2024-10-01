@@ -31,7 +31,6 @@ describe("getAccount", () => {
       metadataHash: {
         url: "",
       },
-      runtimeUpgraded: false,
     }));
 
     mockServer.listen();
@@ -112,7 +111,6 @@ describe("getRegistry", () => {
       metadataHash: {
         url: "",
       },
-      runtimeUpgraded: false,
     }));
 
     mockServer.listen();

@@ -1,6 +1,12 @@
 # ui
 
-## 0.3.0-nightly.0
+## 0.3.0
+
+### Minor Changes
+
+- [#7842](https://github.com/LedgerHQ/ledger-live/pull/7842) [`b884689`](https://github.com/LedgerHQ/ledger-live/commit/b8846898343260f51f9b7b544df5f0dd7641115d) Thanks [@KVNLS](https://github.com/KVNLS)! - Fixed e2e testing and next build issues on ci workflows
+
+## 0.3.0-next.0
 
 ### Minor Changes
 

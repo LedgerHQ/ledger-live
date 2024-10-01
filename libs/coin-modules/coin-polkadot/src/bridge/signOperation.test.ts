@@ -5,6 +5,7 @@ import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } fr
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
 import { createRegistryAndExtrinsics } from "../network/common";
+
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
@@ -12,27 +13,26 @@ import {
 } from "../network/sidecar.fixture";
 import coinConfig from "../config";
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
+const mockRegistry = jest
+  .fn()
+  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
+const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
   class: "WHATEVER",
   partialFee: "155099814",
 });
-const mockRegistry = jest
-  .fn()
-  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
-const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
-
-jest.mock("../network/sidecar", () => ({
-  getRegistry: () => mockRegistry(),
-  paymentInfo: (args: any) => mockPaymentInfo(args),
-  getTransactionParams: () => mockTransactionParams(),
-}));
-
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
-
 describe("signOperation", () => {
   // Global setup
+  jest.setTimeout(20000);
+  jest.mock("../network/sidecar", () => ({
+    getRegistry: () => mockRegistry(),
+    paymentInfo: (args: any) => mockPaymentInfo(args),
+    getTransactionParams: () => mockTransactionParams(),
+    fetchTransactionMaterial: () => fixtureTxMaterialWithMetadata,
+  }));
   const fakeSignature = u8aConcat(new Uint8Array([1]), new Uint8Array(64).fill(0x42));
   const fakeSigner = {
     getAddress: jest.fn(),
@@ -59,12 +59,11 @@ describe("signOperation", () => {
           electionStatusThreshold: 25,
         },
         metadataShortener: {
-          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
         },
         metadataHash: {
-          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         },
-        runtimeUpgraded: false,
       };
     });
   });
