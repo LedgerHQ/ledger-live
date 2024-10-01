@@ -77,26 +77,22 @@ export function StepDelegationFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const { feeTooHigh } = errors;
   const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;
 
   return (
-    <Box flex={1}>
-      {feeTooHigh ? <ErrorBanner error={feeTooHigh} /> : null}
-      <Box horizontal justifyContent="flex-end" flow={2} grow>
-        <AccountFooter account={account} status={status} />
-        <Button mr={1} secondary onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
-        <Button
-          id="delegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("summary")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
+    <Box horizontal justifyContent="flex-end" flow={2} grow>
+      <AccountFooter account={account} status={status} />
+      <Button mr={1} secondary onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="delegate-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("summary")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
     </Box>
   );
 }

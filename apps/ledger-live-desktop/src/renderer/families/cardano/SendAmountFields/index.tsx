@@ -1,5 +1,4 @@
 import React from "react";
-import Box from "~/renderer/components/Box";
 import {
   CardanoAccount,
   Transaction,
@@ -7,7 +6,6 @@ import {
 } from "@ledgerhq/live-common/families/cardano/types";
 
 import MemoField from "./MemoField";
-import FeeTooHighErrorField from "./FeeTooHighErrorField";
 
 const Root = (props: {
   account: CardanoAccount;
@@ -17,10 +15,9 @@ const Root = (props: {
   trackProperties?: Record<string, unknown>;
 }) => {
   return (
-    <Box>
+    <>
       <MemoField {...props} />
-      <FeeTooHighErrorField {...props} />
-    </Box>
+    </>
   );
 };
 
