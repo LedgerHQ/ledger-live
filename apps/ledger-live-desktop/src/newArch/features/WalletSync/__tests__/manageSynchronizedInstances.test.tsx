@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen } from "tests/testUtils";
 import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
 import { INSTANCES } from "./shared";
 
@@ -48,9 +48,7 @@ describe("manageSynchronizedInstances", () => {
     const button = screen.getByRole("button", { name: "Manage" });
     await user.click(button);
 
-    const row = screen.getByTestId("walletSync-manage-instances");
-
-    await waitFor(() => expect(row).toBeDefined());
+    const row = await screen.findByTestId("walletSync-manage-instances");
 
     expect(screen.getByText("2 Ledger Live apps synched")).toBeDefined();
 
@@ -58,7 +56,7 @@ describe("manageSynchronizedInstances", () => {
 
     //Manage Synch Instances Step
 
-    await waitFor(() => expect(screen.getByText("Ledger Live is synched across")).toBeDefined());
+    expect(await screen.findByText("Ledger Live is synched across")).toBeDefined();
 
     const instance = screen.getByTestId("walletSync-manage-instance-currentInstance");
     expect(instance).toBeDefined();
