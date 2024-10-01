@@ -19,7 +19,7 @@ const SW_CANCEL = 0x6986;
  * Multiversx API
  *
  * @example
- * import Multiversx from "@ledgerhq/hw-app-elrond";
+ * import Multiversx from "@ledgerhq/hw-app-multiversx";
  * const multiversx = new Multiversx(transport)
  */
 export default class Multiversx {
