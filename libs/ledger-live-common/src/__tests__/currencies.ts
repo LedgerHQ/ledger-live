@@ -12,7 +12,11 @@ import {
 } from "../currencies";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 
-test("erc20 are all consistent with those on ledgerjs side", () => {
+/*
+  skipped because ledgerjs data is now lighter (from the POV of hw-app-eth)
+  (using cryptoassets-evm-signatures instead of cryptoassets)
+*/
+test.skip("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({
     withDelisted: true,

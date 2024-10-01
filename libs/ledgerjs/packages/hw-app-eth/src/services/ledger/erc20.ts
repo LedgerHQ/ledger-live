@@ -1,6 +1,6 @@
 import axios from "axios";
 import { log } from "@ledgerhq/logs";
-import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
+import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets-evm-signatures/data/evm/index";
 import { getLoadConfig } from "./loadConfig";
 import { LoadConfig } from "../types";
 
