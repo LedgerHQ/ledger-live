@@ -39,10 +39,10 @@ import type { CosmosDelegationFlowParamList } from "~/families/cosmos/Delegation
 import type { CosmosRedelegationFlowParamList } from "~/families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "~/families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "~/families/cosmos/ClaimRewardsFlow/types";
-import type { MultiversxDelegationFlowParamList } from "~/families/elrond/components/Flows/Delegate/types";
-import type { MultiversxUndelegationFlowParamList } from "~/families/elrond/components/Flows/Undelegate/types";
-import type { MultiversxClaimRewardsFlowParamList } from "~/families/elrond/components/Flows/Claim/types";
-import type { MultiversxWithdrawFlowParamList } from "~/families/elrond/components/Flows/Withdraw/types";
+import type { MultiversxDelegationFlowParamList } from "~/families/multiversx/components/Flows/Delegate/types";
+import type { MultiversxUndelegationFlowParamList } from "~/families/multiversx/components/Flows/Undelegate/types";
+import type { MultiversxClaimRewardsFlowParamList } from "~/families/multiversx/components/Flows/Claim/types";
+import type { MultiversxWithdrawFlowParamList } from "~/families/multiversx/components/Flows/Withdraw/types";
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
