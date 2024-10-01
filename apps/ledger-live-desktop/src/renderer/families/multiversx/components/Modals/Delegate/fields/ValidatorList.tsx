@@ -7,13 +7,13 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import ValidatorItem from "./ValidatorItem";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
-import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
+import { useSearchValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import {
   MultiversxAccount,
   MultiversxProvider,
   Transaction,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const ValidatorsFieldContainer = styled(Box)`

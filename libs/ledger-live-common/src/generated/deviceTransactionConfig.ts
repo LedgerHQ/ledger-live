@@ -4,12 +4,12 @@ import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
-import elrond from "@ledgerhq/coin-multiversx/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
 import filecoin from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 import internet_computer from "@ledgerhq/coin-internet_computer/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
+import multiversx from "@ledgerhq/coin-multiversx/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
@@ -27,12 +27,12 @@ export default {
   bitcoin,
   cardano,
   cosmos,
-  elrond,
   evm,
   hedera,
   filecoin,
   internet_computer,
   icon,
+  multiversx,
   near,
   polkadot,
   solana,

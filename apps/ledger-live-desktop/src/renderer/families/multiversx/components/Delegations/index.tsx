@@ -7,7 +7,7 @@ import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxProvider,
   MultiversxAccount as AccountType,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface Props {
   delegations: Array<DelegationType>;

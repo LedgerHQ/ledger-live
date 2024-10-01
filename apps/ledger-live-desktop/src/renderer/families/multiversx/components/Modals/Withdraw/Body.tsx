@@ -21,7 +21,10 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { StepProps, St, StepId } from "./types";
-import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  MultiversxAccount,
+  MultiversxProvider,
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 import { UnbondingType } from "../../../types";
 

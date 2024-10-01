@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { Trans, useTranslation } from "react-i18next";
 import { SubAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";

@@ -1,4 +1,4 @@
-import type { MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface UnbondingType {
   amount: string;

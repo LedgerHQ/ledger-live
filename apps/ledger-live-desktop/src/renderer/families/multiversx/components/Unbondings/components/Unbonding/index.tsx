@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useDispatch } from "react-redux";
 import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
@@ -20,8 +20,8 @@ import { UnbondingType } from "~/renderer/families/multiversx/types";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
-} from "@ledgerhq/live-common/families/elrond/constants";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/constants";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 

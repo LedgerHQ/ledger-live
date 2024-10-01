@@ -2,7 +2,7 @@ import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import invariant from "invariant";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -15,7 +15,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import {
   MultiversxTransactionMode,
   Transaction,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 

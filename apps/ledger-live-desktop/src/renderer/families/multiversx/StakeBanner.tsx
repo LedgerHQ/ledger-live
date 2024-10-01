@@ -1,16 +1,19 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getAccountBannerState as getMultiversxBannerState } from "@ledgerhq/live-common/families/elrond/banner";
+import { getAccountBannerState as getMultiversxBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
+import {
+  MultiversxAccount,
+  MultiversxProvider,
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { AccountBannerState } from "@ledgerhq/live-common/families/elrond/banner";
+import { AccountBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 
 const StakeBanner: React.FC<{ account: MultiversxAccount }> = ({ account }) => {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
-import { Transaction, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { Transaction, MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
 import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {

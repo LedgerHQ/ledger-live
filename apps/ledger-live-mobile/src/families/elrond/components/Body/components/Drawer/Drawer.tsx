@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import DelegationDrawer from "~/components/DelegationDrawer";
 import Circle from "~/components/Circle";

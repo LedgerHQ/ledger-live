@@ -3,8 +3,8 @@ import { Image, View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import { Text } from "@ledgerhq/native-ui";
@@ -13,7 +13,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import BigNumber from "bignumber.js";
 
 import Icon from "react-native-vector-icons/Feather";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Button from "~/components/Button";

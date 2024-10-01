@@ -6,7 +6,7 @@ import type {
   MultiversxAccount,
   MultiversxProvider,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import type { ScreenName } from "~/const";
 
 export type MultiversxUndelegationFlowParamList = {

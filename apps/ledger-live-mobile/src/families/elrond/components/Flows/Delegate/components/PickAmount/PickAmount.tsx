@@ -3,12 +3,12 @@ import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } 
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/multiversx/constants";
 
-import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import type { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import type { PickAmountPropsType, RatioType } from "./types";
 
 import { ScreenName } from "~/const";

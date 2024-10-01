@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import FirstLetterIcon from "~/components/FirstLetterIcon";

@@ -4,7 +4,7 @@ import type {
   MultiversxAccount,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import type { ScreenName } from "~/const";
 import type { DelegationType } from "../../../types";
 

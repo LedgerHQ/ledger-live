@@ -4,13 +4,13 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
-} from "@ledgerhq/live-common/families/elrond/constants";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
+} from "@ledgerhq/live-common/families/multiversx/constants";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import {
   MultiversxProvider,
   MultiversxOperation,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";

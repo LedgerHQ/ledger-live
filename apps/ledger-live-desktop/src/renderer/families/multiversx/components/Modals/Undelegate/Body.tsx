@@ -21,7 +21,7 @@ import {
   Transaction,
   MultiversxAccount,
   MultiversxProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/types-devices";
 import { DelegationType } from "../../../types";

@@ -4,7 +4,7 @@ import {
   MultiversxOperation,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { LLDCoinFamily } from "../types";
 
 export type MultiversxFamily = LLDCoinFamily<
