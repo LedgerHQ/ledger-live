@@ -1,15 +1,16 @@
 import * as React from "react";
-import Svg, { Defs, G, Path, Rect, ClipPath, SvgProps } from "react-native-svg";
+import type { ColorValue } from "react-native";
+import Svg, { Defs, G, Path, Rect, ClipPath, type SvgProps } from "react-native-svg";
 
-type Props = SvgProps & { size?: number };
+type Props = SvgProps & { size?: number; outline?: ColorValue };
 
 const BASE_SIZE = 32;
 
-export function P2P({ size = BASE_SIZE, ...props }: Props): JSX.Element {
+export function P2P({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#1540DC" />
-      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="white" strokeOpacity="0.05" />
+      <Rect x={0.5} y={0.5} width={31} height={31} rx={7.5} stroke={outline} stroke-opacity={0.1} />
       <G>
         <Rect width="19.2" height="19.2" rx="9.6" x="6.4" y="6.4" fill="white" opacity="0" />
         <Path

@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { ColorValue } from "react-native";
 import Svg, {
   ClipPath,
   Defs,
@@ -8,16 +9,16 @@ import Svg, {
   RadialGradient,
   Rect,
   Stop,
-  SvgProps,
+  type SvgProps,
 } from "react-native-svg";
 
-type Props = SvgProps & { size?: number };
+type Props = SvgProps & { size?: number; outline?: ColorValue };
 
-export function RocketPool({ size = 32, ...props }: Props): JSX.Element {
+export function RocketPool({ size = 32, outline, ...props }: Props): JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="url(#paint0_linear_2938_2011)" />
-      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="white" strokeOpacity="0.05" />
+      <Rect x={0.5} y={0.5} width={31} height={31} rx={7.5} stroke={outline} stroke-opacity={0.1} />
       <G clipPath="url(#clip0_2938_2011)">
         <Rect
           x="6.39999"

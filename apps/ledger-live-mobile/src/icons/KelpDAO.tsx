@@ -1,15 +1,16 @@
 import * as React from "react";
-import Svg, { Path, Rect, SvgProps } from "react-native-svg";
+import type { ColorValue } from "react-native";
+import Svg, { Path, Rect, type SvgProps } from "react-native-svg";
 
-type Props = SvgProps & { size?: number };
+type Props = SvgProps & { size?: number; outline?: ColorValue };
 
 const BASE_SIZE = 32;
 
-export function KelpDAO({ size = BASE_SIZE, ...props }: Props): JSX.Element {
+export function KelpDAO({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#075A5A" />
-      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="white" stroke-opacity="0.05" />
+      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={outline} stroke-opacity={0.1} />
       <Path
         d="M18.8613 6.44624L15.9052 8.12293C14.8366 8.72899 14.7415 10.2359 15.7254 10.9721L18.7437 13.2306C19.3585 13.6906 19.2993 14.6322 18.6317 15.0111L15.9081 16.5574C14.8389 17.1644 14.7454 18.6731 15.7315 19.4081L18.6051 21.5502C18.9033 21.7725 19.079 22.1231 19.079 22.4955V22.5837C19.079 22.8549 19.371 23.025 19.606 22.8908L22.5777 21.1927C23.6468 20.5819 23.7344 19.07 22.7431 18.3391L19.7269 16.1153C19.1077 15.6587 19.162 14.7145 19.8294 14.3323L22.5832 12.7552C23.6506 12.1439 23.7379 10.6339 22.7481 9.90307L19.8656 7.77464C19.565 7.55261 19.3874 7.20053 19.3874 6.82615V6.75382C19.3874 6.48314 19.0963 6.31295 18.8613 6.44624Z"
         fill="#D9EDED"
