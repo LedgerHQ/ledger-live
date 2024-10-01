@@ -1,16 +1,26 @@
 import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
-import evms from "@ledgerhq/cryptoassets/data/evm/index";
+import evms from "@ledgerhq/cryptoassets-evm-signatures/lib/data/evm/index";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { EthAppPleaseEnableContractData } from "../../src/errors";
 import SignatureCALEth from "../fixtures/SignatureCALEth";
 import ledgerService from "../../src/services/ledger";
 import Eth from "../../src/Eth";
+import { ethers } from "ethers";
 
-const txHex =
-  "f86a0e8506a2bb7d008301512c94005d1123878fc55fbd56b54c73963b234a64af3c80b844a9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000018080";
-jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
+const transaction: ethers.Transaction = {
+  to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  nonce: 14,
+  gasPrice: ethers.BigNumber.from("0x06a2bb7d00"),
+  gasLimit: ethers.BigNumber.from("0x01512c"),
+  value: ethers.BigNumber.from("0x00"),
+  data: "0xa9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000",
+  chainId: 1,
+};
+const txHex = ethers.utils.serializeTransaction(transaction).slice(2);
+
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
   get signatures() {
     return {
       1: SignatureCALEth,

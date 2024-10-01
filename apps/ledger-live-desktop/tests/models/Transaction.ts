@@ -7,5 +7,6 @@ export class Transaction {
     public accountToCredit: Account,
     public amount: string,
     public speed: Fee,
+    public memoTag?: string,
   ) {}
 }

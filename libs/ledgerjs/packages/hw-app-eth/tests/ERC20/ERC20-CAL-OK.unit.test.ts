@@ -1,16 +1,27 @@
 import axios from "axios";
 import path from "path";
 import fs from "fs/promises";
+import { ethers } from "ethers";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
+import SignatureCALEth from "../fixtures/SignatureCALEth";
 import ledgerService from "../../src/services/ledger";
 import Eth from "../../src/Eth";
 
-const txHex =
-  "f86a0e8506a2bb7d008301512c94005d1123878fc55fbd56b54c73963b234a64af3c80b844a9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000018080";
+const transaction: ethers.Transaction = {
+  to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  nonce: 14,
+  gasPrice: ethers.BigNumber.from("0x06a2bb7d00"),
+  gasLimit: ethers.BigNumber.from("0x01512c"),
+  value: ethers.BigNumber.from("0x00"),
+  data: "0xa9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000",
+  chainId: 1,
+};
+const txHex = ethers.utils.serializeTransaction(transaction).slice(2);
 
 describe("ERC20 dynamic cal", () => {
   describe("ERC20 is in local CAL", () => {
     it("should be successfully signin transaction from dynamic CAL", async () => {
+      jest.spyOn(axios, "get").mockImplementation(async () => ({ data: SignatureCALEth }));
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
         "utf-8",

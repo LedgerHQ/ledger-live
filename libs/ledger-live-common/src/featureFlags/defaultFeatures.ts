@@ -79,6 +79,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyScrollSepolia: DEFAULT_FEATURE,
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
+  currencyEtherlink: DEFAULT_FEATURE,
 };
 
 /**
