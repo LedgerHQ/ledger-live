@@ -28,7 +28,8 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
-import { CARDANO_MAX_SUPPLY, MAX_FEES_THROW, MAX_FEES_WARN } from "./constants";
+import { CARDANO_MAX_SUPPLY } from "./constants";
+import coinConfig from "./config";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -63,6 +64,9 @@ export const getTransactionStatus: AccountBridge<
   } else {
     throw new Error("Invalid transaction mode");
   }
+
+  const MAX_FEES_WARN = coinConfig.getCoinConfig().maxFeesWarning;
+  const MAX_FEES_THROW = coinConfig.getCoinConfig().maxFeesError;
 
   if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
     throw new CardanoFeeTooHigh();

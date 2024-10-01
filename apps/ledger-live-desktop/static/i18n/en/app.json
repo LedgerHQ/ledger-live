@@ -6085,12 +6085,12 @@
       "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
     },
     "CardanoFeeTooHigh": {
-      "title": "Network fees seems higher than usual",
-      "description": "Please try again or contact Ledger Support"
+      "title": "Abnormally high network fees.",
+      "description": "Network fees unusually high please double check your transaction."
     },
     "CardanoInvalidProtoParams": {
-      "title": "Cardano Invalid Protocol Prams",
-      "description": "Something went wrong, Please contact Ledger Support"
+      "title": "Cardano Invalid Protocol Parameters",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
