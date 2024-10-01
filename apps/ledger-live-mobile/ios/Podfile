@@ -54,7 +54,8 @@ target 'ledgerlivemobile' do
       config[:reactNativePath],
       # Set `mac_catalyst_enabled` to `true` in order to apply patches
       # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
 
     # Workaround build error for classic quoted imports
