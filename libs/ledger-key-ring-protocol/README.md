@@ -1,3 +1,3 @@
-## trustchain
+## ledger key ring protocol
 
-Ledger Live trustchain layer.
+Ledger Key Ring Protocol layer.

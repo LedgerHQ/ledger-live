@@ -1,7 +1,7 @@
 {
-  "name": "@ledgerhq/hw-trustchain",
+  "name": "@ledgerhq/hw-ledger-key-ring-protocol",
   "version": "0.1.6",
-  "description": "Ledger Live trustchain hardware layer",
+  "description": "Ledger Key Ring Protocol hardware layer",
   "private": true,
   "keywords": [
     "Ledger"
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/hw-trustchain",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/hw-ledger-key-ring-protocol",
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",

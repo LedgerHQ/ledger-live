@@ -140,7 +140,7 @@ export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
  *
  * @example
  *
- * import { sdk } from "@ledgerhq/trustchain";
+ * import { sdk } from "@ledgerhq/ledger-key-ring-protocol";
  *
  * sdk.getOrCreateTrustchain(deviceId, memberCredentials).then(trustchain => console.log(trustchain));
  */

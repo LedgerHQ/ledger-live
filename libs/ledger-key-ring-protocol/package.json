@@ -1,7 +1,7 @@
 {
-  "name": "@ledgerhq/trustchain",
+  "name": "@ledgerhq/ledger-key-ring-protocol",
   "version": "0.4.0",
-  "description": "Ledger Live trustchain layer",
+  "description": "Ledger Key Ring Protocol layer",
   "private": true,
   "keywords": [
     "Ledger"
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/trustchain",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-key-ring-protocol",
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
@@ -57,7 +57,7 @@
     "@ledgerhq/errors": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
-    "@ledgerhq/hw-trustchain": "workspace:*",
+    "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "workspace:*",

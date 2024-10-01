@@ -1,7 +1,7 @@
 import { createWalletSyncWatchLoop } from "./createWalletSyncWatchLoop";
 import { advanceTimersByTimeAsync, getWalletSyncWatchLoopConfig } from "./__mocks__/watchLoop";
 import { Subject } from "rxjs";
-import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 jest.useFakeTimers();
 

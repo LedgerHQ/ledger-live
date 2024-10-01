@@ -1,4 +1,4 @@
-import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
+import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { emptyState, convertLocalToDistantState } from "../__mocks__";

@@ -14,7 +14,7 @@ import {
 } from "~/renderer/actions/walletSync";
 import { useHistory } from "react-router";
 import styled, { useTheme } from "styled-components";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
 import { useTranslation } from "react-i18next";
 

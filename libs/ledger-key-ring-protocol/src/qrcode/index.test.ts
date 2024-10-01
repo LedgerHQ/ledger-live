@@ -1,7 +1,7 @@
 import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
 import { convertKeyPairToLiveCredentials } from "../sdk";
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { ScannedInvalidQrCode, ScannedOldImportQrCode } from "../errors";
 
 describe("Trustchain QR Code", () => {

@@ -2,8 +2,8 @@ import {
   memberCredentialsSelector,
   trustchainSelector,
   setTrustchain,
-} from "@ledgerhq/trustchain/store";
-import { Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { QueryKey } from "./type.hooks";

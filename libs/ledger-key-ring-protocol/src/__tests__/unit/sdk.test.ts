@@ -7,7 +7,7 @@ import {
   Permissions,
   SoftwareDevice,
   StreamTree,
-} from "@ledgerhq/hw-trustchain";
+} from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { getEnv } from "@ledgerhq/live-env";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
