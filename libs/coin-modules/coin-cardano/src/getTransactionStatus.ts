@@ -65,7 +65,7 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
-    txStatus.errors.feeTooHigh = new CardanoFeeTooHigh();
+    throw new CardanoFeeTooHigh();
   } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
     txStatus.warnings.feeTooHigh = new CardanoFeeTooHigh();
   }

@@ -25,7 +25,7 @@ import {
   Transaction,
 } from "./types";
 import { CARDANO_MAX_SUPPLY } from "./constants";
-import { CardanoOutOfSync } from "./errors";
+import { CardanoInvalidProtoParams } from "./errors";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   const address = TyphonUtils.getAddressFromHex(
@@ -373,10 +373,10 @@ export const buildTransaction = async (
   transaction: Transaction,
 ): Promise<TyphonTransaction> => {
   const cardanoResources = account.cardanoResources as CardanoResources;
-  const protocolParams = cardanoResources.protocolParams;
+  const { protocolParams } = transaction;
 
-  if (!isProtocolParamsValid(account.cardanoResources.protocolParams)) {
-    throw new CardanoOutOfSync();
+  if (!protocolParams || !isProtocolParamsValid(protocolParams)) {
+    throw new CardanoInvalidProtoParams();
   }
 
   const typhonTx = new TyphonTransaction({

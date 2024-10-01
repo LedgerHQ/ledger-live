@@ -6088,9 +6088,9 @@
       "title": "Network fees seems higher than usual",
       "description": "Please try again or contact Ledger Support"
     },
-    "CardanoOutOfSync": {
-      "title": "Account sync required",
-      "description": "Your account is out of sync. Please resync and try again, or contact Ledger Support"
+    "CardanoInvalidProtoParams": {
+      "title": "Cardano Invalid Protocol Prams",
+      "description": "Something went wrong, Please contact Ledger Support"
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
