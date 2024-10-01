@@ -4,7 +4,7 @@ export * from "./cardano";
 export * from "./celo";
 export * from "./cosmos";
 export * from "./crypto_org";
-export * from "./elrond";
+export * from "./multiversx";
 export * from "./evm";
 export * from "./hedera";
 export * from "./internet_computer";
