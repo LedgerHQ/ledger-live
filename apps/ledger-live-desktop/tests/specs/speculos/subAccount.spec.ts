@@ -97,7 +97,6 @@ for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosApp: token.account.currency.speculosApp,
     });
 
     test(
