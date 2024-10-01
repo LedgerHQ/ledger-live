@@ -190,6 +190,7 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
+  llmMemoTag: Feature_MemoTag;
 };
 
 /**
@@ -514,6 +515,7 @@ export type Feature_web3hub = DefaultFeature;
 export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
+export type Feature_MemoTag = DefaultFeature;
 
 /**
  * Utils types.

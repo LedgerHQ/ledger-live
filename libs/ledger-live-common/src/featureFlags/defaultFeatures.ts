@@ -495,6 +495,7 @@ export const DEFAULT_FEATURES: Features = {
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
+  llmMemoTag: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
