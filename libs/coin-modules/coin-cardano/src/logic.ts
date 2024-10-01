@@ -20,6 +20,7 @@ import {
   StakeChain,
   StakeCredential,
   Token,
+  ProtocolParams,
 } from "./types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import BigNumber from "bignumber.js";
@@ -327,4 +328,27 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   const words = bech32.toWords(Buffer.from(poolId, "hex"));
   const encoded = bech32.encode(networkParams.poolIdPrefix, words, 1000);
   return encoded;
+}
+
+export function isValidNumString(value: unknown): boolean {
+  if (typeof value !== "string" && typeof value !== "number") return false;
+  if (isNaN(Number(value))) return false;
+  if (new BigNumber(value).isNaN()) return false;
+  return true;
+}
+
+export function isProtocolParamsValid(pp: ProtocolParams): boolean {
+  const paramsRequiredCheck = [
+    pp.minFeeA,
+    pp.minFeeB,
+    pp.stakeKeyDeposit,
+    pp.lovelacePerUtxoWord,
+    pp.collateralPercent,
+    pp.priceSteps,
+    pp.priceMem,
+    pp.maxTxSize,
+    pp.maxValueSize,
+    pp.utxoCostPerByte,
+  ];
+  return paramsRequiredCheck.every(isValidNumString);
 }

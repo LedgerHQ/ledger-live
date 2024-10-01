@@ -9,3 +9,6 @@ export const CARDANO_MAX_SUPPLY = 45e9;
 
 export const CARDANO_API_ENDPOINT = getEnv("CARDANO_API_ENDPOINT");
 export const CARDANO_TESTNET_API_ENDPOINT = getEnv("CARDANO_TESTNET_API_ENDPOINT");
+
+export const MAX_FEES_WARN = 5e6;
+export const MAX_FEES_THROW = 10e6;
