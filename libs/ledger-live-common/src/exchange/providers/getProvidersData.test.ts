@@ -20,12 +20,14 @@ describe("transformData", () => {
         signature: "a1b2c3",
         public_key: "1234567890abcdef",
         public_key_curve: "secp256k1",
+        service_app_version: 2,
       },
       {
         name: "ProviderB",
         signature: "d4e5f6",
         public_key: "abcdef1234567890",
         public_key_curve: "secp256r1",
+        service_app_version: 2,
       },
     ];
 
@@ -70,6 +72,7 @@ describe("getProvidersData", () => {
         signature: "a1b2c3",
         public_key: "1234567890abcdef",
         public_key_curve: "secp256k1",
+        service_app_version: 2,
       },
     ];
 

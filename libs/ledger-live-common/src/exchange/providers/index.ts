@@ -7,22 +7,22 @@ import { getEnv } from "@ledgerhq/live-env";
 export { getSwapProvider, getAvailableProviders };
 
 export type ExchangeProviderNameAndSignature = {
-  name?: string;
-  publicKey?: {
+  name: string;
+  publicKey: {
     curve: "secp256k1" | "secp256r1";
     data: Buffer;
   };
   version?: number;
-  signature?: Buffer;
+  signature: Buffer;
 };
 
 export function convertToAppExchangePartnerKey(
   provider: ExchangeProviderNameAndSignature,
 ): PartnerKeyInfo {
   return {
-    name: provider.name!,
-    curve: provider.publicKey!.curve,
-    publicKey: provider.publicKey!.data,
+    name: provider.name,
+    curve: provider.publicKey.curve,
+    publicKey: provider.publicKey.data,
   };
 }
 

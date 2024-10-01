@@ -1,4 +1,3 @@
-import { version } from "node:os";
 import { ExchangeProviderNameAndSignature } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 import { getProvidersData } from "./getProvidersData";
@@ -18,9 +17,6 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
-  signature?: Buffer;
-  name?: string;
-  publicKey?: any;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
@@ -77,7 +73,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.paraswap.io/",
   },
   thorswap: {
-    type: "DEX",
+    type: "CEX",
     needsBearerToken: false,
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
     supportUrl: "mailto:support@thorswap.finance",
@@ -185,7 +181,8 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     mainUrl: "https://www.paraswap.io/",
   },
   thorswap: {
-    type: "DEX",
+    type: "CEX",
+    name: "thorswap",
     needsBearerToken: false,
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
     supportUrl: "mailto:support@thorswap.finance",
@@ -199,6 +196,10 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
         "hex",
       ),
     },
+    signature: Buffer.from(
+      "304402207a9676f6971575cad70e4ef4d937ebdba82c51e6a0ab5343c11fefa18dff326d0220643f0718da68ead3fd9900eb90bca782d533d1698c8ea1435ae232ddf2e94229",
+      "hex",
+    ),
   },
 };
 

@@ -48,7 +48,7 @@ const completeExchange = (
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = await getSwapProvider(provider);
-        if (providerConfig.type !== "CEX" && provider !== "thorswap") {
+        if (providerConfig.type !== "CEX") {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
 
@@ -83,7 +83,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerConfig.signature!);
+        await exchange.checkPartner(providerConfig.signature);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
