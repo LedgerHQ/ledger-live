@@ -147,14 +147,6 @@ export default function UndelegationSummary({ navigation, route }: Props) {
         />
       </View>
       <GenericErrorBottomModal
-        error={status.errors["feeTooHigh"]}
-        footerButtons={
-          <>
-            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
-          </>
-        }
-      />
-      <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
