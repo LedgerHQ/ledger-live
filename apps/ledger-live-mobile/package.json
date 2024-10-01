@@ -210,6 +210,7 @@
     "react-native-vector-icons": "10.2.0",
     "react-native-version-number": "0.3.6",
     "react-native-video": "5.2.1",
+    "react-native-view-shot": "^3.8.0",
     "react-native-webview": "13.10.3",
     "react-redux": "7.2.9",
     "redux": "4.2.1",

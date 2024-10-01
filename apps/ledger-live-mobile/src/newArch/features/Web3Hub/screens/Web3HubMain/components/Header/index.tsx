@@ -61,7 +61,8 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
             />
           </View>
         </TouchableOpacity>
-        <TabButton count={2} navigation={navigation} />
+        {/** @toremove touched by Canestin */}
+        <TabButton count={2} navigation={navigation} fromX />
       </Flex>
     </AnimatedBar>
   );

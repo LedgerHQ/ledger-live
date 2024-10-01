@@ -87,7 +87,7 @@ export default function ManifestsList({
         ListEmptyComponent={
           isLoading ? null : ( // TODO handle empty case
             <Box height={40}>
-              <Text>{t("common.retry")}</Text>
+              <Text>{t("common.retry")}</Text>()
             </Box>
           )
         }

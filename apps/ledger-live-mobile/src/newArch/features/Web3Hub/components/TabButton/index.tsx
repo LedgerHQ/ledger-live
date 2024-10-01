@@ -5,18 +5,66 @@ import { Text } from "@ledgerhq/native-ui";
 import { BorderlessButton } from "react-native-gesture-handler";
 import type { AppProps, MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
+import { captureScreen } from "react-native-view-shot";
+import deviceStorage from "~/logic/storeWrapper";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 type Props = {
   count: number;
+  fromX?: boolean;
+  manifest?: AppManifest;
   navigation: MainProps["navigation"] | SearchProps["navigation"] | AppProps["navigation"];
 };
 
-export default function TabButton({ count, navigation }: Props) {
+type;
+
+export default function TabButton({ count, navigation, fromX = false, manifest }: Props) {
   const { colors } = useTheme();
 
+  const captureTabPreview = useCallback(async () => {
+    try {
+      if (!manifest) throw Error("Manifest Absent");
+
+      const uri = await captureScreen({
+        format: "jpg",
+        quality: 0.8,
+      });
+
+      let tabHistory = await deviceStorage.get("web3hubTabHistory");
+
+      if (!tabHistory || Object.keys(tabHistory).length === 0) {
+        tabHistory = [];
+      }
+
+      tabHistory = [
+        ...tabHistory,
+        {
+          id: manifest.id + Math.ceil(Math.random() * 1000),
+          manifestId: manifest.id,
+          title: manifest.name,
+          icon: manifest.icon?.trim(),
+          previewUri: uri,
+          url: manifest.url,
+        },
+      ];
+
+      deviceStorage.save("web3hubTabHistory", tabHistory);
+    } catch (error) {
+      console.error("Failed to capture screen or save tab preview", error);
+    }
+  }, [manifest]);
+
   const goToTabs = useCallback(() => {
+    if (!fromX) {
+      captureTabPreview();
+    }
+
+    navigation.setParams({ presentation: "modal" });
     navigation.push(NavigatorName.Web3Hub, {
       screen: ScreenName.Web3HubTabs,
+      params: {
+        merge: true,
+      },
     });
   }, [navigation]);
 

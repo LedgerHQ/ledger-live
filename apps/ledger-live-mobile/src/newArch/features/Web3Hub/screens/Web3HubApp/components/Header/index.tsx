@@ -17,6 +17,7 @@ type Props = {
   initialLoad: boolean;
   secure: boolean;
   baseUrl: string;
+  manifest: any;
 };
 
 export default function Web3HubAppHeader({
@@ -25,6 +26,7 @@ export default function Web3HubAppHeader({
   initialLoad,
   secure,
   baseUrl,
+  manifest,
 }: Props) {
   const { colors } = useTheme();
 
@@ -60,7 +62,8 @@ export default function Web3HubAppHeader({
               </>
             )}
           </Flex>
-          <TabButton count={2} navigation={navigation} />
+
+          <TabButton count={2} navigation={navigation} manifest={manifest} />
         </Flex>
       }
     />

@@ -25,7 +25,7 @@ export default function Web3HubTabsHeader({ title, navigation }: Props) {
       <Text
         flex={1}
         numberOfLines={1}
-        variant="h4"
+        variant="h5"
         mr={50}
         accessibilityRole="header"
         textAlign={"center"}

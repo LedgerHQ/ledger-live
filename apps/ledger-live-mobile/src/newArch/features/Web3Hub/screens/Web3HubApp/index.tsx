@@ -31,13 +31,16 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
       <TrackScreen category="Web3Hub" page="App" appId={manifest?.id} />
-      <Header
-        navigation={navigation}
-        layoutY={layoutY}
-        initialLoad={initialLoad}
-        secure={secure}
-        baseUrl={baseUrl}
-      />
+      {manifest && (
+        <Header
+          navigation={navigation}
+          layoutY={layoutY}
+          initialLoad={initialLoad}
+          secure={secure}
+          baseUrl={baseUrl}
+          manifest={manifest}
+        />
+      )}
 
       {manifest ? (
         <WebPlatformPlayer

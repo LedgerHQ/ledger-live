@@ -56,7 +56,7 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
               onChangeText={setSearch}
             />
           </Flex>
-          <TabButton count={2} navigation={navigation} />
+          <TabButton count={2} navigation={navigation} fromX />
         </Flex>
       }
     />
