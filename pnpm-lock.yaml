@@ -590,9 +590,6 @@ importers:
       '@ledgerhq/native-modules-tools':
         specifier: workspace:*
         version: link:../../tools/native-modules-tools
-      '@ledgerhq/react-devtools':
-        specifier: workspace:^
-        version: link:../../tools/react-dev-tools
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
@@ -7322,8 +7319,6 @@ importers:
   tools/native-modules-tools: {}
 
   tools/pnpm-utils: {}
-
-  tools/react-dev-tools: {}
 
 packages:
 
