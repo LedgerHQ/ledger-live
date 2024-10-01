@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -25,7 +25,7 @@ import {
   MultiversxFamily,
   UnbondingType,
 } from "~/renderer/families/multiversx/types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface DelegationPropsType {
   account: MultiversxAccount;

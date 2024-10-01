@@ -1,4 +1,4 @@
-import type { MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DrawerPropsType } from "../../../Drawer/types";
 

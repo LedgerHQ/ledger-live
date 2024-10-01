@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/react";
+import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
-import type { MultiversxPreloadData } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/types";
 import type { DetailsPropsType } from "./types";
 
 import Section from "~/screens/OperationDetails/Section";

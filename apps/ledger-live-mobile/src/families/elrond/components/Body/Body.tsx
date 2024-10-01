@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 
 import type {
   MultiversxProvider,
   MultiversxAccount,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import type { BodyPropsType, WithBodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";

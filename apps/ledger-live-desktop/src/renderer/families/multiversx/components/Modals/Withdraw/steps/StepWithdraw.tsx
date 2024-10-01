@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback } from "react";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
@@ -11,7 +11,7 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 

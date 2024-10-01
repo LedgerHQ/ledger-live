@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { ValidatorList } from "../fields";
-import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { StepProps } from "../types";
 
 const StepDelegation = (props: StepProps) => {

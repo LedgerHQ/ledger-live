@@ -1,8 +1,8 @@
 import {
   hasMinimumDelegableBalance,
   randomizeProviders,
-} from "@ledgerhq/live-common/families/elrond/helpers";
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/helpers";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -10,7 +10,7 @@ import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
-import { getCurrentMultiversxPreloadData } from "@ledgerhq/coin-elrond/preload";
+import { getCurrentMultiversxPreloadData } from "@ledgerhq/coin-multiversx/preload";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 

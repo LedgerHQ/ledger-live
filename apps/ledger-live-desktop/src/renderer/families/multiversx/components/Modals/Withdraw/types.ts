@@ -8,7 +8,7 @@ import {
   MultiversxProvider,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "connectDevice" | "confirmation" | "withdraw";
 export type StepProps = {

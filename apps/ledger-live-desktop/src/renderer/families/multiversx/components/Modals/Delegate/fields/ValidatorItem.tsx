@@ -15,9 +15,12 @@ import { urls } from "~/config/urls";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
-} from "@ledgerhq/live-common/families/elrond/constants";
+} from "@ledgerhq/live-common/families/multiversx/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  MultiversxAccount,
+  MultiversxProvider,
+} from "@ledgerhq/live-common/families/multiversx/types";
 
 export type Recipient = {
   address: string;

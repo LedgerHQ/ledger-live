@@ -1,4 +1,4 @@
-import type { MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { MultiversxClaimRewardsFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";

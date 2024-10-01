@@ -15,7 +15,7 @@ import {
   TitleWrapper,
 } from "~/renderer/families/multiversx/blocks/Summary";
 import { DelegationType } from "./types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 

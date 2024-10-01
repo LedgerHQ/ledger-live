@@ -7,7 +7,7 @@ import { casperConfig } from "../families/casper/config";
 import { celoConfig } from "../families/celo/config";
 import { cosmosConfig } from "../families/cosmos/config";
 import { cryptoOrgConfig } from "../families/crypto_org/config";
-import { multiversxConfig } from "../families/elrond/config";
+import { multiversxConfig } from "../families/multiversx/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";

@@ -2,7 +2,7 @@ import type { ListRenderItemInfo } from "react-native";
 import type {
   MultiversxAccount,
   MultiversxProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import type { onSelectType } from "../../types";
 
 export interface ItemPropsType extends ListRenderItemInfo<MultiversxProvider> {

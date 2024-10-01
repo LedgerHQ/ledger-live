@@ -2,7 +2,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ToolTip from "~/renderer/components/Tooltip";
@@ -23,12 +23,12 @@ import { openModal } from "~/renderer/actions/modals";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
-} from "@ledgerhq/live-common/families/elrond/constants";
+} from "@ledgerhq/live-common/families/multiversx/constants";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversxProvider,
   MultiversxAccount as AccountType,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { ModalsData } from "~/renderer/families/multiversx/modals";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";

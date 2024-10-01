@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SubAccount } from "@ledgerhq/types-live";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 const AccountHeaderManageActions = (props: {
   account: MultiversxAccount | SubAccount;

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
@@ -8,7 +8,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { MultiversxProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversxProvider, Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { UnbondingType } from "~/renderer/families/multiversx/types";
 import { Option as FilterOption } from "react-select/src/filters";
 

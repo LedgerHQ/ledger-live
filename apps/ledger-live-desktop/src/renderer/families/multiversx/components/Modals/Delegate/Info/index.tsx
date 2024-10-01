@@ -8,7 +8,10 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType } from "~/renderer/families/multiversx/types";
-import { MultiversxAccount, MultiversxProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  MultiversxAccount,
+  MultiversxProvider,
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export interface Props {

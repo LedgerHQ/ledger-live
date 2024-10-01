@@ -26,7 +26,7 @@ import {
   MultiversxAccount,
   Transaction,
   MultiversxProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {

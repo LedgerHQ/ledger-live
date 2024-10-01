@@ -7,7 +7,7 @@ import {
   Transaction,
   TransactionStatus,
   MultiversxProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { Step } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";

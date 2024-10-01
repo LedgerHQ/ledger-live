@@ -4,8 +4,8 @@ import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
+import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";

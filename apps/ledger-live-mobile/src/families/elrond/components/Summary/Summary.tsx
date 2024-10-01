@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { DelegationType } from "../../types";
 import type { SummaryPropsType, ItemType } from "./types";
 

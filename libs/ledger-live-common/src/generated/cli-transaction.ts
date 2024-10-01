@@ -8,9 +8,9 @@ import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
 import { cliTools as cosmos } from "../families/cosmos/setup";
-import { cliTools as elrond } from "../families/elrond/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as icon } from "../families/icon/setup";
+import { cliTools as multiversx } from "../families/multiversx/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
 import { cliTools as solana } from "../families/solana/setup";
@@ -31,9 +31,9 @@ export default {
   bitcoin,
   cardano,
   cosmos,
-  elrond,
   evm,
   icon,
+  multiversx,
   near,
   polkadot,
   solana,

@@ -11,7 +11,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { ValidatorField, AmountField } from "../fields";
-import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps } from "../types";
 

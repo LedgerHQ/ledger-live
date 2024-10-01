@@ -3,7 +3,7 @@ import {
   MultiversxProvider,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";

@@ -4,10 +4,10 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -48,7 +48,8 @@ const PickMethod = (props: PickMethodPropsType) => {
   const methods = [TransactionMethodEnum.claimRewards, TransactionMethodEnum.reDelegateRewards];
 
   const currentDelegation = useMemo(
-    () => account.multiversxResources.delegations.find(delegation => recipient === delegation.contract),
+    () =>
+      account.multiversxResources.delegations.find(delegation => recipient === delegation.contract),
     [account.multiversxResources.delegations, recipient],
   );
 

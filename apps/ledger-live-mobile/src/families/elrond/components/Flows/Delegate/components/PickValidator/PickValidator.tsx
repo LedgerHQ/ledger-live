@@ -5,7 +5,7 @@ import { Box, SearchInput, Text } from "@ledgerhq/native-ui";
 import { FlatList, View } from "react-native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
-import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { useSearchValidators } from "@ledgerhq/live-common/families/multiversx/react";
 
 import type { onSelectType, PickValidatorPropsType } from "./types";
 

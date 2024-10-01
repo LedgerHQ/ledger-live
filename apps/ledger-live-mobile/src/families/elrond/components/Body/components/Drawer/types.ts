@@ -1,7 +1,7 @@
 import type {
   MultiversxAccount,
   MultiversxProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+} from "@ledgerhq/live-common/families/multiversx/types";
 import type BigNumber from "bignumber.js";
 
 export interface DrawerPropsType {
