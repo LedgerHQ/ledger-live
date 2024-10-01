@@ -1,7 +1,7 @@
 {
-  "name": "@ledgerhq/hw-app-elrond",
+  "name": "@ledgerhq/hw-app-multiversx",
   "version": "6.21.0",
-  "description": "Ledger Hardware Wallet Elrond Application API",
+  "description": "Ledger Hardware Wallet MultiversX Application API",
   "keywords": [
     "Ledger",
     "LedgerWallet",
@@ -18,13 +18,13 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-elrond",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-multiversx",
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/Elrond.js",
-  "module": "lib-es/Elrond.js",
-  "types": "lib/Elrond.d.ts",
+  "main": "lib/Multiversx.js",
+  "module": "lib-es/Multiversx.js",
+  "types": "lib/Multiversx.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",

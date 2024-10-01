@@ -4,7 +4,7 @@
 [Ledger Devs Discord](https://developers.ledger.com/discord-pro),
 [Developer Portal](https://developers.ledger.com/)
 
-## @ledgerhq/hw-app-elrond
+## @ledgerhq/hw-app-multiversx
 
 Ledger Hardware Wallet Multiversx JavaScript bindings.
 
@@ -51,7 +51,7 @@ Multiversx API
 #### Examples
 
 ```javascript
-import Multiversx from "@ledgerhq/hw-app-elrond";
+import Multiversx from "@ledgerhq/hw-app-multiversx";
 const multiversx = new Multiversx(transport);
 ```
 

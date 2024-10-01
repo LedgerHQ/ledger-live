@@ -1,4 +1,4 @@
 {
-    "entry": ["src/Elrond.ts"],
+    "entry": ["src/Multiversx.ts"],
     "ignoreUnimported": []
   }
