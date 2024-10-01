@@ -9,6 +9,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
 import { ListProvider } from "./types";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   provider: ListProvider;
@@ -37,6 +38,8 @@ export function EvmStakingDrawerProvider({
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
   const manifest = remoteManifest || localManifest;
 
+  const theme = useTheme();
+
   const { t } = useTranslation();
 
   const providerPress = useCallback(() => {
@@ -61,7 +64,10 @@ export function EvmStakingDrawerProvider({
         p={5}
         backgroundColor="opacityDefault.c05"
       >
-        <EvmStakingDrawerProviderIcon icon={provider.icon} />
+        <EvmStakingDrawerProviderIcon
+          icon={provider.icon}
+          outline={theme.theme === "light" ? theme.colors.neutral.c50 : undefined}
+        />
         <Flex rowGap={2} alignItems="flex-start" flex={3}>
           <Flex flexDirection="column" flex={1} alignItems="flex-start">
             <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>

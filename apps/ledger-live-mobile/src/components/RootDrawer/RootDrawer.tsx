@@ -34,8 +34,9 @@ function StakeModalVersionWrapper() {
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
     (async () => {
-      const x = await Braze.getFeatureFlag("earn-use-latest-stake-modal");
-      setEnabled(Boolean(x?.enabled));
+      const flag = await Braze.getFeatureFlag("earn-use-latest-stake-modal");
+      Braze.logFeatureFlagImpression("earn-use-latest-stake-modal");
+      setEnabled(Boolean(flag?.enabled));
     })();
   }, []);
   return enabled ? <EvmStakingDrawer /> : <EvmStakingDrawer_deprecated />;

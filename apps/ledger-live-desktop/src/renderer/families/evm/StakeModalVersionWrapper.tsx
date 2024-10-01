@@ -4,9 +4,7 @@ import { Props, StakeModal } from "./StakeFlowModal";
 import StakeFlowModal_deprecated from "./StakeFlowModal_deprecated";
 
 export default function StakeModalVersionWrapper(props: Props) {
-  return braze.getFeatureFlag("earn-use-latest-stake-modal").enabled ? (
-    <StakeModal {...props} />
-  ) : (
-    <StakeFlowModal_deprecated {...props} />
-  );
+  const flag = braze.getFeatureFlag("earn-use-latest-stake-modal");
+  braze.logFeatureFlagImpression("earn-use-latest-stake-modal");
+  return flag.enabled ? <StakeModal {...props} /> : <StakeFlowModal_deprecated {...props} />;
 }

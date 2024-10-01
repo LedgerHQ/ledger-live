@@ -14,6 +14,9 @@ import { EthStakingModalBody } from "./EthStakingModalBody";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
+const SCROLL_WIDTH = "18px";
+const SHADOW_HEIGHT = "40px";
+
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 const IconButton = styled("button")`
@@ -28,6 +31,59 @@ const IconButton = styled("button")`
   outline: inherit;
   padding: 8px;
 `;
+
+const ScrollableContainer = styled(Box)<{ noScroll?: boolean }>(
+  ({ noScroll, theme }) => `
+  padding: 20px ${noScroll ? 20 : 20 - theme.overflow.trackSize}px 20px 20px;
+  flex: 1;
+  ${noScroll ? "overflow: hidden" : theme.overflow.y};
+
+
+  ::-webkit-scrollbar {
+    width: ${SCROLL_WIDTH};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 12px ${theme.colors.neutral.c40};
+    border: 6px solid rgba(0,0,0,0);
+    border-radius: 12px;
+  }
+`,
+);
+
+const Header = styled(Box)(
+  ({ theme }) => `
+   position: relative;
+  ::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: ${SCROLL_WIDTH};
+    height: ${SHADOW_HEIGHT};
+    background: linear-gradient(to bottom, ${theme.colors.background.main}, transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+`,
+);
+
+const Footer = styled(Box)(
+  ({ theme }) => `
+    position: relative;
+    ::before {
+      content: "";
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: ${SCROLL_WIDTH};
+      height: ${SHADOW_HEIGHT};
+      background: linear-gradient(to top, ${theme.colors.background.main}, transparent);
+      z-index: 1;
+      pointer-events: none;
+    }
+  `,
+);
 
 // Comparison fns for sorting providers by minimum ETH required
 const ascending = (a: EthStakingProvider, b: EthStakingProvider) => (a?.min ?? 0) - (b?.min ?? 0);
@@ -45,7 +101,7 @@ export interface Props {
 
 const MODAL_WIDTH = 500;
 
-export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
+export const StakeModal = ({ account, source }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -83,36 +139,30 @@ export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
           backgroundColor={colors.background.main}
           flex={1}
           flexDirection="column"
+          height="100%"
           px={3}
-          width="100%"
         >
-          <Box
-            px={3}
-            py={4}
-            position="sticky"
-            style={{
-              // TODO proper gradient color
-              background: `linear-gradient(to bottom, ${colors.background.main} 75%, transparent 100%)`,
-            }}
-            top={0}
-            width="100%"
-          >
-            <Flex flexDirection="column" alignItems="center" rowGap={24}>
-              <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
+          <Header p={3} pb={0} width="100%" position="relative">
+            <Flex flexDirection="column" alignItems="center">
+              <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px" mb={4}>
                 {t("ethereum.stake.title")}
               </Text>
-              <Flex flexDirection="row" alignItems="center" height="24px" columnGap={2}>
+              <Flex flexDirection="row" alignItems="center" height="24px" columnGap={2} mb={3}>
                 {OPTION_VALUES.map((x, i) => {
                   const checked = i === OPTION_VALUES.indexOf(selected);
                   return (
                     <Button
                       borderRadius={2}
+                      border={0}
                       height="auto"
                       key={x}
                       onClick={() => setSelected(x)}
                       outline={!checked}
                       size="xs"
-                      style={{ textTransform: "capitalize" }}
+                      style={{
+                        textTransform: "capitalize",
+                        ...(checked ? {} : { backgroundColor: colors.opacityDefault.c10 }),
+                      }}
                       variant={checked ? "color" : "main"}
                     >
                       {t(`ethereum.stake.category.${x}.name`)}
@@ -125,7 +175,13 @@ export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
                   <EthStakeIllustration size={140} />
                 </Flex>
               )}
-              <Text textAlign="center" color="neutral.c70" fontSize={14} maxWidth={360}>
+              <Text
+                textAlign="center"
+                color="neutral.c70"
+                minHeight="4.5rem"
+                fontSize={14}
+                maxWidth={360}
+              >
                 {t(`ethereum.stake.category.${selected}.description`)}
               </Text>
             </Flex>
@@ -145,12 +201,12 @@ export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
                 <Icons.Close size="M" />
               </IconButton>
             </Box>
-          </Box>
-          <Flex
+          </Header>
+          <ScrollableContainer
             backgroundColor={colors.background.main}
             flex={1}
-            justifyContent="center"
             overflow="auto"
+            justifyContent="center"
             paddingX={3}
             width="100%"
           >
@@ -158,28 +214,16 @@ export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
             <EthStakingModalBody
               onClose={onClose}
               account={account}
-              hasCheckbox={hasCheckbox}
               source={source}
               providers={formattedProviders}
             />
-          </Flex>
-          <Flex
-            bottom={0}
-            px={3}
-            pb={4}
-            pt={5}
-            position="sticky"
-            style={{
-              // TODO proper gradient color
-              background: `linear-gradient(to top, ${colors.background.main} 70%, transparent 100%)`,
-            }}
-            width="100%"
-          >
+          </ScrollableContainer>
+          <Footer bottom={0} px={4} pb={3} pt={0} width="100%" position="relative">
             <Flex
               alignItems="center"
               backgroundColor={colors.primary.c20}
               borderRadius={2}
-              columnGap={2}
+              columnGap={3}
               p={2}
               style={{
                 cursor: "pointer",
@@ -220,7 +264,7 @@ export const StakeModal = ({ account, hasCheckbox, source }: Props) => {
                 <Icons.ExternalLink size="M" color={colors.palette.text.shade60} />
               </Flex>
             </Flex>
-          </Flex>
+          </Footer>
         </Flex>
       )}
     />

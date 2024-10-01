@@ -86,7 +86,7 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
             activeBg={colors.primary.c80}
             activeColor={colors.neutral.c00}
             inactiveColor={colors.neutral.c100}
-            gap={8}
+            gap={4}
             inactiveBg={colors.neutral.c40}
             activeIndex={selectedIndex}
             onChange={setSelectedIndex}
