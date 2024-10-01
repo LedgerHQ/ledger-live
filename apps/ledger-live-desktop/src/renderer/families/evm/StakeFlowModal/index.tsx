@@ -3,7 +3,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { Account, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,7 +15,7 @@ import { EthStakingModalBody } from "./EthStakingModalBody";
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
 const SCROLL_WIDTH = "18px";
-const SHADOW_HEIGHT = "40px";
+const SHADOW_HEIGHT = 30;
 
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
@@ -32,11 +32,15 @@ const IconButton = styled("button")`
   padding: 8px;
 `;
 
-const ScrollableContainer = styled(Box)<{ noScroll?: boolean }>(
-  ({ noScroll, theme }) => `
-  padding: 20px ${noScroll ? 20 : 20 - theme.overflow.trackSize}px 20px 20px;
+interface IsScrollable {
+  isScrollable: boolean;
+}
+
+const ScrollableContainer = styled(Box)<IsScrollable>(
+  ({ theme, isScrollable }) => `
+  padding: 0px ${isScrollable ? 20 - theme.overflow.trackSize : 20}px 0px 20px;
   flex: 1;
-  ${noScroll ? "overflow: hidden" : theme.overflow.y};
+  ${isScrollable ? theme.overflow.y : "overflow: hidden"};
 
 
   ::-webkit-scrollbar {
@@ -51,37 +55,51 @@ const ScrollableContainer = styled(Box)<{ noScroll?: boolean }>(
 `,
 );
 
-const Header = styled(Box)(
-  ({ theme }) => `
+const Header = styled(Box)<IsScrollable>(
+  ({ isScrollable, theme }) => `
    position: relative;
-  ::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: ${SCROLL_WIDTH};
-    height: ${SHADOW_HEIGHT};
-    background: linear-gradient(to bottom, ${theme.colors.background.main}, transparent);
-    z-index: 1;
-    pointer-events: none;
-  }
+   ${
+     isScrollable
+       ? `
+        ::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: ${SCROLL_WIDTH};
+            height: ${SHADOW_HEIGHT};
+            background: linear-gradient(to bottom, ${theme.colors.background.main}, transparent);
+            z-index: 1;
+            pointer-events: none;
+          }
+        `
+       : ""
+   }
 `,
 );
 
-const Footer = styled(Box)(
-  ({ theme }) => `
+const Footer = styled(Box)<IsScrollable>(
+  ({ isScrollable, theme }) => `
     position: relative;
-    ::before {
-      content: "";
-      position: absolute;
-      bottom: 100%;
-      left: 0;
-      right: ${SCROLL_WIDTH};
-      height: ${SHADOW_HEIGHT};
-      background: linear-gradient(to top, ${theme.colors.background.main}, transparent);
-      z-index: 1;
-      pointer-events: none;
+
+    ${
+      isScrollable
+        ? `
+          ::before {
+              content: "";
+              position: absolute;
+              bottom: 100%;
+              left: 0;
+              right: ${SCROLL_WIDTH};
+              height: ${SHADOW_HEIGHT};
+              background: linear-gradient(to top, ${theme.colors.background.main}, transparent);
+              z-index: 1;
+              pointer-events: none;
+            }
+        `
+        : ""
     }
+
   `,
 );
 
@@ -120,6 +138,18 @@ export const StakeModal = ({ account, source }: Props) => {
     [providers, hasMinValidatorEth, selected],
   );
 
+  const scrollableContainerRef = useRef<HTMLDivElement>(null);
+
+  const [isScrollable, setIsScrollable] = useState(false);
+
+  /** When the selected tab changes, we need to check if the content is scrollable */
+  useEffect(() => {
+    setIsScrollable(
+      (scrollableContainerRef.current?.scrollHeight ?? 0) >
+        (scrollableContainerRef.current?.clientHeight ?? 0),
+    );
+  }, [selected, setIsScrollable]);
+
   if (!ethStakingProviders?.enabled) {
     return null;
   }
@@ -142,7 +172,7 @@ export const StakeModal = ({ account, source }: Props) => {
           height="100%"
           px={3}
         >
-          <Header p={3} pb={0} width="100%" position="relative">
+          <Header p={3} pb={0} width="100%" position="relative" isScrollable={isScrollable}>
             <Flex flexDirection="column" alignItems="center">
               <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px" mb={4}>
                 {t("ethereum.stake.title")}
@@ -175,15 +205,24 @@ export const StakeModal = ({ account, source }: Props) => {
                   <EthStakeIllustration size={140} />
                 </Flex>
               )}
-              <Text
-                textAlign="center"
-                color="neutral.c70"
-                minHeight="4.5rem"
-                fontSize={14}
-                maxWidth={360}
-              >
-                {t(`ethereum.stake.category.${selected}.description`)}
-              </Text>
+              <Box width="100%" height="100%" display="grid">
+                {OPTION_VALUES.map(x => (
+                  <Text
+                    style={{
+                      justifySelf: "center",
+                      visibility: x === selected ? "visible" : "hidden",
+                      gridArea: "1 / 1 / 2 / 2",
+                    }}
+                    key={x}
+                    textAlign="center"
+                    color="neutral.c70"
+                    fontSize={14}
+                    maxWidth={360}
+                  >
+                    {t(`ethereum.stake.category.${x}.description`)}
+                  </Text>
+                ))}
+              </Box>
             </Flex>
             <Box
               alignItems="center"
@@ -203,13 +242,17 @@ export const StakeModal = ({ account, source }: Props) => {
             </Box>
           </Header>
           <ScrollableContainer
+            ref={scrollableContainerRef}
             backgroundColor={colors.background.main}
             flex={1}
             overflow="auto"
             justifyContent="center"
             paddingX={3}
+            paddingY={0}
+            isScrollable={isScrollable}
             width="100%"
           >
+            <Box height={SHADOW_HEIGHT * 0.8} />
             <TrackPage category="ETH Stake Modal" name="Main Modal" />
             <EthStakingModalBody
               onClose={onClose}
@@ -217,8 +260,17 @@ export const StakeModal = ({ account, source }: Props) => {
               source={source}
               providers={formattedProviders}
             />
+            <Box height={SHADOW_HEIGHT * 0.8} />
           </ScrollableContainer>
-          <Footer bottom={0} px={4} pb={3} pt={0} width="100%" position="relative">
+          <Footer
+            bottom={0}
+            px={4}
+            pb={3}
+            pt={0}
+            width="100%"
+            position="relative"
+            isScrollable={isScrollable}
+          >
             <Flex
               alignItems="center"
               backgroundColor={colors.primary.c20}
