@@ -10,11 +10,13 @@ import { expect } from "detox";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
+  acceptAnalyticsButtonId = "accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   readyToScanButtonID = "onboarding-scan-button";
   scanAndImportAccountsPageID = "onboarding-import-accounts-title";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
+  acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
@@ -64,6 +66,12 @@ export default class OnboardingStepsPage {
   async startOnboarding() {
     await waitForElementById(this.getStartedButtonId);
     await tapByElement(this.onboardingGetStartedButton());
+    await waitForElementById(new RegExp(`${this.setupLedger}|${this.acceptAnalyticsButtonId}`));
+    try {
+      await tapByElement(this.acceptAnalyticsButton());
+    } catch {
+      // Analytics prompt not enabled
+    }
   }
 
   // Exploring App
