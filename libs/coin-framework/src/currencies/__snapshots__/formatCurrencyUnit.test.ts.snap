@@ -104,6 +104,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
@@ -427,6 +429,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Etherlink unit (XTZ) 1`] = `"0.012345678900000000- -XTZ"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
@@ -752,6 +756,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
@@ -1075,6 +1081,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
@@ -1400,6 +1408,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Etherlink unit (XTZ) 1`] = `"0.012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
@@ -1723,6 +1733,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Etherlink unit (XTZ) 1`] = `"0.012345678900000000- -XTZ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
@@ -2048,6 +2060,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
@@ -2371,6 +2385,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
@@ -2696,6 +2712,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Etherlink unit (XTZ) 1`] = `"0,012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
@@ -3020,6 +3038,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Etherlink unit (XTZ) 1`] = `"0.012345678900000000- -XTZ"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
@@ -3343,6 +3363,8 @@ exports[`formatCurrencyUnit with default options should correctly format Ethereu
 exports[`formatCurrencyUnit with default options should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ethereum unit (ether) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Etherlink unit (XTZ) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ethersocial unit (ESN) 1`] = `"0.0123456"`;
 
