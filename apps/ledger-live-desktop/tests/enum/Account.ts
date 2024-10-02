@@ -160,6 +160,8 @@ export class Account {
     Currency.SOL,
     "Solana 2",
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    undefined,
+    1,
   );
 
   static readonly TRX_1 = new Account(
@@ -261,6 +263,8 @@ export class Account {
     Currency.ATOM,
     "Cosmos 2",
     "cosmos12d854g9mut943gu5ncyhalapukttkddnvlxaq6",
+    undefined,
+    1,
   );
 
   static readonly XTZ_1 = new Account(
@@ -294,6 +298,16 @@ export class Account {
     Currency.NEAR,
     "NEAR 1",
     "70b2982a31cfcffc773145d2143392612bb83a22926c912e2ce3ec0634f637e2",
+    undefined,
+    0,
+  );
+
+  static readonly NEAR_2 = new Account(
+    Currency.NEAR,
+    "NEAR 2",
+    "5effd8bfea3885b6f5f91256663e5af720b18761a96bd6592e210a23f950872c",
+    undefined,
+    1,
   );
 
   static readonly ETH_USDT_1 = new Account(
@@ -390,5 +404,21 @@ export class Account {
     Currency.ETH,
     "Ethereum 2",
     "0x43047a5023d55a8658fcb1c1cea468311adaa3ad",
+  );
+
+  static readonly MULTIVERS_X_1 = new Account(
+    Currency.MULTIVERS_X,
+    "MultiversX 1",
+    "erd1kp2psapk98pjtxr0n583qlq9zurwdwaqcvgh7l5hyj6hh839p5dq82cuw9",
+    undefined,
+    0,
+  );
+
+  static readonly OSMO_1 = new Account(
+    Currency.OSMO,
+    "Osmosis 1",
+    "osmo1w7v2v6v8z3r3d8x8h7yjv6w2k3c5w3z7w6v8v8",
+    undefined,
+    0,
   );
 }

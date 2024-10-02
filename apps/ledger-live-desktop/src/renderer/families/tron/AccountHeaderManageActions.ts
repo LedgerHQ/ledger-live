@@ -54,6 +54,7 @@ const AccountHeaderManageActions = ({
         button: "stake",
       },
       onClick: () => stakeOnClick(),
+      accountActionsTestId: "stake-button",
     },
   ];
 };
