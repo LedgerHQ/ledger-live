@@ -15,6 +15,7 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { supportedChains } from "@ledgerhq/live-nft-react";
 
 const NB_COLUMNS = 2;
 
@@ -48,7 +49,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
-    chains: ["ethereum", "polygon"],
+    chains: supportedChains,
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
