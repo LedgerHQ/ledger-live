@@ -4,7 +4,7 @@ import { createBridges } from "@ledgerhq/coin-multiversx/bridge/js";
 import makeCliTools from "@ledgerhq/coin-multiversx/cli-transaction";
 import multiversxResolver from "@ledgerhq/coin-multiversx/hw-getAddress";
 import { MultiversxAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-multiversx/types";
-import Multiversx from "../../../../ledgerjs/packages/hw-app-multiversx/lib/Multiversx";
+import Multiversx from "@ledgerhq/hw-app-multiversx";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";

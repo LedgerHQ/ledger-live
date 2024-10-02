@@ -122,6 +122,7 @@
     "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
     "ljs:hw-app-hedera": "pnpm --filter hw-app-hedera",
     "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
+    "ljs:hw-app-multiversx": "pnpm --filter hw-app-multiversx",
     "ljs:hw-app-near": "pnpm --filter hw-app-near",
     "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",
     "ljs:hw-app-solana": "pnpm --filter hw-app-solana",
