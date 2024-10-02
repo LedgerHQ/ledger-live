@@ -13,6 +13,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
+import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
@@ -46,6 +47,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
+import { NeedMemoTagModal } from "./NeedMemoTagModal";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -390,6 +392,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               )}
             </StyledTouchableOpacity>
           </Flex>
+          <FeatureToggle featureId="llmMemoTag">
+            <NeedMemoTagModal />
+          </FeatureToggle>
           <Flex px={6} flexDirection="column" rowGap={8} mt={6}>
             {isUTXOCompliantCurrency && (
               <Text variant="small" fontWeight="medium" color="neutral.c70" textAlign="center">

@@ -3132,6 +3132,13 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "memoTag": {
+        "link": "Need a Tag/Memo?",
+        "title": "Need a Tag/Memo?",
+        "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta": "I understand",
+        "learnMore": "Learn more about Tags"
+      },
       "selectCrypto": {
         "title": "Choose a crypto you want to receive"
       },
