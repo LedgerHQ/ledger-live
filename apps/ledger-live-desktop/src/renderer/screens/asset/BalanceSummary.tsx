@@ -10,7 +10,7 @@ import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { Data } from "~/renderer/components/Chart/types";
-import { PortfolioRange } from "@ledgerhq/types-live";
+import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ type Props = {
   unit: Unit;
   range: PortfolioRange;
   countervalueFirst: boolean;
+  account: AccountLike;
 };
 export default function BalanceSummary({
   unit,
@@ -32,6 +33,7 @@ export default function BalanceSummary({
   range,
   chartColor,
   currency,
+  account,
 }: Props) {
   const { t } = useTranslation();
   const portfolio = usePortfolio();
@@ -85,6 +87,7 @@ export default function BalanceSummary({
     <Card p={0} py={5}>
       <Box px={6}>
         <AssetBalanceSummaryHeader
+          account={account}
           currency={currency}
           unit={unit}
           counterValue={counterValue}

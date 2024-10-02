@@ -22,9 +22,9 @@ describe("displayNftCollection", () => {
     });
 
     await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
-    await expect(screen.getByText(/receive nft/i)).toBeVisible();
-    await expect(screen.getByText(/see gallery/i)).toBeVisible();
-    await expect(screen.getByText(/see more collections/i)).toBeVisible();
+    expect(screen.getByText(/receive nft/i)).toBeVisible();
+    expect(screen.getByText(/see gallery/i)).toBeVisible();
+    expect(screen.getByText(/see more collections/i)).toBeVisible();
   });
 
   it("should open the NFTs gallery", async () => {
@@ -36,10 +36,10 @@ describe("displayNftCollection", () => {
     });
 
     await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
-    await expect(screen.getByText(/receive nft/i)).toBeVisible();
-    await expect(screen.getByText(/see gallery/i)).toBeVisible();
+    expect(screen.getByText(/receive nft/i)).toBeVisible();
+    expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/see gallery/i));
-    await expect(screen.getByText(/all nft/i)).toBeVisible();
+    expect(screen.getByText(/all nft/i)).toBeVisible();
   });
 
   it("should open the corresponding NFTs collection and the correct detail drawer", async () => {
@@ -65,10 +65,10 @@ describe("displayNftCollection", () => {
 
     // Open external viewer
     await user.click(screen.getByTestId("external-viewer-button"));
-    await expect(screen.getByText(/open in opensea.io/i)).toBeVisible();
+    expect(screen.getByText(/open in opensea.io/i)).toBeVisible();
 
     // Close drawer
-    await waitFor(() => user.click(screen.getByTestId("drawer-close-button")));
+    await user.click(screen.getByTestId("drawer-close-button"));
     await waitFor(() => expect(screen.queryByTestId("side-drawer-container")).toBeNull());
   });
 
@@ -80,7 +80,7 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/receive nft/i)).toBeVisible();
-    await expect(screen.getByText(/learn more/i)).toBeVisible();
+    expect(screen.getByText(/receive nft/i)).toBeVisible();
+    expect(screen.getByText(/learn more/i)).toBeVisible();
   });
 });

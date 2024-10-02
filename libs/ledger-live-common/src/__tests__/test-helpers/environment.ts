@@ -100,6 +100,7 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "etherlink",
 ]);
 LiveConfig.setConfig(liveConfig);
 

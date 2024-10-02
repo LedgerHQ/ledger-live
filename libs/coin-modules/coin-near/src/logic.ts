@@ -119,7 +119,6 @@ export const mapStakingPositions = (
     return {
       ...sp,
       formattedAmount: formatCurrencyUnit(unit, sp.staked, formatConfig),
-      formattedRewards: formatCurrencyUnit(unit, sp.rewards, formatConfig),
       formattedPending: formatCurrencyUnit(unit, sp.pending, formatConfig),
       formattedAvailable: formatCurrencyUnit(unit, sp.available, formatConfig),
       rank,

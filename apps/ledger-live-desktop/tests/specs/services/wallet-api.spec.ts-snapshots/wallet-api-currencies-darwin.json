@@ -763,5 +763,14 @@
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "etherlink",
+    "ticker": "XTZ",
+    "name": "Etherlink",
+    "family": "ethereum",
+    "color": "#38FF9C",
+    "decimals": 18
   }
 ]

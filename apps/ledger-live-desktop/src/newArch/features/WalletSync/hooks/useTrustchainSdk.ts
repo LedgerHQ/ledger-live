@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { getEnv } from "@ledgerhq/live-env";
-import { getSdk } from "@ledgerhq/trustchain/index";
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { useStore } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { walletSyncStateSelector } from "@ledgerhq/live-wallet/store";
-import { TrustchainSDK } from "@ledgerhq/trustchain/types";
+import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useInstanceName } from "./useInstanceName";

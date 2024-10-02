@@ -22,6 +22,7 @@ jest.mock("../network", () => {
         extrinsics: mockExtrinsics(),
       }),
     getTransactionParams: () => mockGetTransactionParams(),
+    metadataHash: () => "0x12345678",
   };
 });
 
@@ -60,48 +61,35 @@ describe("craftTransaction", () => {
     });
 
     // WHEN
-    const result = await craftTransaction(address, 0, defaultExtrinsicArg(amount, recipient));
+    const result = (await craftTransaction(address, 0, defaultExtrinsicArg(amount, recipient)))
+      .unsigned;
 
     // THEN
-    expect(spyRegistry).toHaveBeenCalledTimes(6);
-    expect(spyRegistry).toHaveBeenCalledWith("BlockNumber", 12);
+    expect(spyRegistry).toHaveBeenCalledTimes(3);
     expect(spyRegistry).toHaveBeenCalledWith("ExtrinsicEra", {
       current: 12,
       period: 64,
     });
     expect(spyRegistry).toHaveBeenCalledWith("u32", 42);
-    expect(spyRegistry).toHaveBeenCalledWith("Compact<Balance>", 0);
     expect(spyRegistry).toHaveBeenCalledWith("u32", 22);
-    expect(mockCodec).toHaveBeenCalledTimes(6);
+    expect(mockCodec).toHaveBeenCalledTimes(3);
     expect(mockExtrinsics).toHaveBeenCalledTimes(1);
     expect(mockTransferKeepAlive).toHaveBeenCalledTimes(1);
     expect(mockTransferKeepAlive.mock.lastCall[0]).toEqual(recipient);
     expect(mockTransferKeepAlive.mock.lastCall[1]).toEqual(amount.toString());
 
     const expectedResult = {
-      registry: registry,
-      unsigned: {
-        address,
-        blockHash: "0xb10c4a54",
-        genesisHash: "0x83835154a54",
-        method: expectExtrinsicMethodHex,
-        signedExtensions: [
-          "CheckVersion",
-          "CheckGenesis",
-          "CheckEra",
-          "CheckNonce",
-          "CheckWeight",
-          "ChargeTransactionPayment",
-          "CheckBlockGasLimit",
-        ],
-        blockNumber: "HexCodec 4 BlockNumber",
-        era: "HexCodec 4 ExtrinsicEra",
-        nonce: "HexCodec 4 Compact<Index>",
-        specVersion: "HexCodec 4 u32",
-        tip: "HexCodec 4 Compact<Balance>",
-        transactionVersion: "HexCodec 4 u32",
-        version: 4,
-      },
+      address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+      blockHash: "0xb10c4a54",
+      era: "HexCodec 4 ExtrinsicEra",
+      genesisHash: "0x83835154a54",
+      method: expectExtrinsicMethodHex,
+      nonce: 0,
+      transactionVersion: "HexCodec 4 u32",
+      specVersion: "HexCodec 4 u32",
+      version: 4,
+      metadataHash: new Uint8Array([1, 0, 18, 52, 86, 120]),
+      mode: 1,
     };
     expect(result).toEqual(expectedResult);
   });

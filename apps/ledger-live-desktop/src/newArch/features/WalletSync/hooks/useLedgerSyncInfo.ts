@@ -1,12 +1,14 @@
 import { useQueries, UseQueryResult } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import getTrustchainApi, { StatusAPIResponse as TrustchainStatus } from "@ledgerhq/trustchain/api";
+import getTrustchainApi, {
+  StatusAPIResponse as TrustchainStatus,
+} from "@ledgerhq/ledger-key-ring-protocol/api";
 import getCloudSyncApi, {
   StatusAPIResponse as CloudSyncStatus,
 } from "@ledgerhq/live-wallet/cloudsync/api";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { trustchainSelector } from "@ledgerhq/trustchain/store";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 

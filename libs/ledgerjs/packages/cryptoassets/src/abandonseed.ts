@@ -109,6 +109,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   blast_sepolia: EVM_DEAD_ADDRESS,
   scroll: EVM_DEAD_ADDRESS,
   scroll_sepolia: EVM_DEAD_ADDRESS,
+  etherlink: EVM_DEAD_ADDRESS,
 };
 
 /**

@@ -15,7 +15,7 @@ module.exports = {
   // Picking the the main field first is safer.
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
-  external: [...electronMainExternals, "@ledgerhq/react-devtools/package.json"],
+  external: [...electronMainExternals],
   plugins: [
     ...common.plugins,
     CopyPlugin({

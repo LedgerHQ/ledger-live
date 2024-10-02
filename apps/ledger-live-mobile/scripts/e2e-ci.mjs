@@ -2,13 +2,14 @@
 import { basename } from "path";
 
 let platform, test, build, bundle;
+let speculos = "";
 let cache = true;
 
 const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--speculos]`,
   );
   process.exit(exitCode);
 };
@@ -34,7 +35,7 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile e2e:test \
+  await $`pnpm mobile e2e:test${speculos} \
     -c ios.sim.release \
     --loglevel error \
     --record-logs all \
@@ -50,7 +51,7 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile e2e:test \\
+  await $`pnpm mobile e2e:test${speculos} \\
     -c android.emu.release \\
     --loglevel error \\
     --record-logs all \\
@@ -103,6 +104,9 @@ for (const argName in argv) {
       cache = argv[argName];
       break;
     case "_":
+      break;
+    case "speculos":
+      speculos = ":speculos";
       break;
     default:
       usage(42);

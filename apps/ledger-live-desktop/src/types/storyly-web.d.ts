@@ -1,20 +1,26 @@
 declare module "storyly-web" {
-  type StorylyData = Array<{
-    title: string;
-    image: URL;
-    pinned: boolean;
-    id: number;
-  }>;
-
   type Story = {
     group_id: number;
     id: number;
     index: number;
-    media: {
-      actionUrl?: string;
-    };
+    actionUrl: string | undefined;
     seen: boolean;
     title: string;
+  };
+
+  type StoryGroup = {
+    iconUrl: string;
+    id: number;
+    nudge?: string;
+    pinned?: boolean;
+    stories: Story[];
+    title: string;
+    type: unknown;
+  };
+
+  type StorylyData = {
+    dataSource: string;
+    groupList: StoryGroup[];
   };
 
   /**
@@ -23,15 +29,24 @@ declare module "storyly-web" {
   interface StorylyOptions {
     layout: "classic" | "modern";
     token: string;
-    events?: {
-      closeStoryGroup?(): void;
-      isReady?(data: StorylyData): void;
-      actionClicked?(story: Story): void;
-    };
-    lang?: Language;
+    locale?: LanguagePrefixed;
     segments?: string[];
     props?: StorylyStyleProps;
   }
+
+  /**
+   * Storyly user events
+   */
+  type StorylyUserEvents =
+    | "actionClicked"
+    | "loaded"
+    | "loadFailed"
+    | "openStoryGroup"
+    | "storyOpenFailed"
+    | "storyImpression"
+    | "storyCompleted"
+    | "groupCompleted"
+    | "closeStoryGroup";
 
   /**
    * Storyly Ref
@@ -42,6 +57,7 @@ declare module "storyly-web" {
     setLang: (options: { language: StorylyOptions["lang"] }) => void;
     openStory: (props: openStoryParams) => void;
     close: () => void;
+    on: (event: StorylyUserEvents, callback: (...args) => void) => void;
   }
 
   interface openStoryParams {
@@ -64,5 +80,13 @@ declare module "storyly-web" {
   >;
 
   export default StorylyWeb;
-  export { StorylyRef, StorylyOptions, StorylyData, openStoryParams };
+  export {
+    StorylyRef,
+    StorylyOptions,
+    StorylyData,
+    openStoryParams,
+    StorylyUserEvents,
+    Story,
+    StoryGroup,
+  };
 }

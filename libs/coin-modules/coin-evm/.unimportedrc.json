@@ -25,6 +25,7 @@
     "@ethersproject/constants",
     "@ethersproject/strings",
     "@ethersproject/hash",
-    "@ethersproject/keccak256"
+    "@ethersproject/keccak256",
+    "@ledgerhq/cryptoassets-evm-signatures/data/evm/index"
   ]
 }

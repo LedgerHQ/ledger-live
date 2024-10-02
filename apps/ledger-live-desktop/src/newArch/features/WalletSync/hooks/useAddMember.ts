@@ -2,17 +2,17 @@ import {
   memberCredentialsSelector,
   setTrustchain,
   trustchainSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
-} from "@ledgerhq/trustchain/errors";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();

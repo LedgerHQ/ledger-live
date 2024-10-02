@@ -92,4 +92,5 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "etherlink",
 ]);

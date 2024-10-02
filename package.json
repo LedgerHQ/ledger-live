@@ -191,7 +191,8 @@
       "@ledgerhq/devices": "workspace:*",
       "tslib": "2.6.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2"
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
+      "@ethersproject/providers>ws": "7.5.10"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
@@ -220,5 +221,5 @@
       }
     }
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.11.0"
 }
