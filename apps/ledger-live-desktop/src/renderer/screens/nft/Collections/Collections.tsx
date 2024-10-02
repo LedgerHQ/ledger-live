@@ -79,7 +79,7 @@ const Collections = ({ account }: Props) => {
     addresses: account.freshAddress,
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
-    action: enabled ? hideSpamCollection : undefined,
+    ...(enabled && { action: hideSpamCollection }),
   });
 
   const collections = useMemo(
