@@ -1204,7 +1204,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F77638C1F4BC132FB97FEEAF /* Pods-ledgerlivemobile.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = PrereleaseAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ledgerlivemobile/ledgerlivemobile.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
