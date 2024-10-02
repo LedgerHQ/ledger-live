@@ -6,6 +6,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { TokenAccount } from "@ledgerhq/types-live";
+import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
   account: BitcoinAccount | TokenAccount;
@@ -41,12 +42,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   return [
     {
-      key: "Yield",
-      icon: () => null,
-      label: t("account.yield"),
+      key: "Stake",
+      icon: IconCoins,
+      label: t("accounts.contextMenu.yield"),
       event: "button_clicked2",
       eventProperties: {
-        button: "yield",
+        button: "stake",
       },
       onClick: () => stakeOnClick(),
     },
