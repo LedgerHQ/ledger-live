@@ -2409,8 +2409,12 @@
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
-      "french": "French",
-      "spanish": "Spanish"
+      "french": "Français",
+      "spanish": "Español",
+      "german": "Deutsch",
+      "brazilian": "Português (Br)",
+      "russian": "Русский",
+      "turkish": "Türkçe"
     }
   },
   "distribution": {
