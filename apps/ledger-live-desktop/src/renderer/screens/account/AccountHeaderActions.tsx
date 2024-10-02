@@ -251,6 +251,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultCurrency: currency,
         defaultAccount: account,
         defaultParentAccount: parentAccount,
+        from: history.location.pathname,
       },
     });
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);

@@ -28,7 +28,7 @@
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
     "@ethersproject/rlp": "^5.5.0",
-    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",

@@ -47,6 +47,10 @@ export type FilteringInfoShowField = {
       deviceTokenIndex?: number;
     }
   >;
+  isDiscarded: boolean;
+};
+export type FilteringInfoDiscardField = {
+  path: string;
 };
 
 export type FilteringInfoContractName = {

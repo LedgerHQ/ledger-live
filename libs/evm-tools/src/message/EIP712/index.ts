@@ -3,8 +3,8 @@ import axios from "axios";
 import SHA224 from "crypto-js/sha224";
 import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
-import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
-import EIP712CALV2 from "@ledgerhq/cryptoassets/data/eip712_v2";
+import EIP712CAL from "@ledgerhq/cryptoassets-evm-signatures/data/eip712";
+import EIP712CALV2 from "@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2";
 import { CALServiceEIP712Response, MessageFilters } from "./types";
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.

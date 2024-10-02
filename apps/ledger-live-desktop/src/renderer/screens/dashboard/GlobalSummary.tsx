@@ -46,6 +46,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     <Card p={0} py={5} grow>
       <Box px={6}>
         <BalanceInfos
+          counterValueId={counterValue.type !== "FiatCurrency" ? counterValue.id : undefined}
           unit={counterValue.units[0]}
           isAvailable={portfolio.balanceAvailable}
           valueChange={portfolio.countervalueChange}

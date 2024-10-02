@@ -5,6 +5,7 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import { BitcoinPage } from "./shared";
 import { openURL } from "~/renderer/linking";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 jest.mock(
   "electron",
@@ -22,6 +23,7 @@ describe("displayBitcoinPage", () => {
       initialState: {
         settings: {
           hasSeenOrdinalsDiscoveryDrawer: true,
+          devicesModelList: [DeviceModelId.stax, DeviceModelId.europa],
         },
       },
     });
@@ -49,6 +51,7 @@ describe("displayBitcoinPage", () => {
       initialState: {
         settings: {
           hasSeenOrdinalsDiscoveryDrawer: true,
+          devicesModelList: [DeviceModelId.stax, DeviceModelId.europa],
         },
       },
     });

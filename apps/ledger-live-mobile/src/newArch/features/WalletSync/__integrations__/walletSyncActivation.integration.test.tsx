@@ -1,6 +1,6 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { render, waitFor } from "@tests/test-renderer";
+import { render } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSharedNavigator } from "./shared";
 import { DeviceLike, State } from "~/reducers/types";
 import { setEnv } from "@ledgerhq/live-env";
@@ -55,9 +55,9 @@ describe("WalletSyncActivation", () => {
       }),
     );
 
-    await user.press(screen.getByText(/use your ledger/i));
+    await user.press(screen.getByText(/use my ledger/i));
 
-    expect(await screen.findByText(/Choose your Ledger device/i)).toBeVisible();
+    expect(await screen.findByText(/Choose a Ledger device/i)).toBeVisible();
 
     await user.press(
       await screen.findByRole("button", {
@@ -65,9 +65,7 @@ describe("WalletSyncActivation", () => {
       }),
     );
 
-    await waitFor(async () => {
-      expect(await screen.getByTestId("device-action-loading")).toBeVisible();
-    });
+    expect(await screen.findByTestId("device-action-loading")).toBeVisible();
 
     // await waitFor(async () => {
     //   expect(await screen.findByText(`Continue on your Ledger Stax`)).toBeVisible();
