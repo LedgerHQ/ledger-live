@@ -4,9 +4,8 @@ import { useNftGalleryFilter } from "../useNftGalleryFilter";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { notifyManager } from "@tanstack/react-query";
 
-import { wrapper } from "../../tools/helperTests";
+import { generateNftsOwned, wrapper } from "../../tools/helperTests";
 import { isThresholdValid } from "../helpers";
-import { generateNftsOwned } from "./testHelper";
 
 jest.setTimeout(30000);
 

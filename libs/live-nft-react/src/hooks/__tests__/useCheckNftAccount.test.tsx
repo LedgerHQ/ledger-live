@@ -2,8 +2,7 @@ import { waitFor, renderHook } from "@testing-library/react";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { notifyManager } from "@tanstack/react-query";
 
-import { wrapper } from "../../tools/helperTests";
-import { generateNftsOwned } from "./testHelper";
+import { wrapper, generateNftsOwned } from "../../tools/helperTests";
 import { useCheckNftAccount } from "../useCheckNftAccount";
 
 jest.setTimeout(30000);
