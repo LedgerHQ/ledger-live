@@ -13,7 +13,10 @@ import walletsync, {
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { State } from "~/renderer/reducers";
 import { cache as bridgeCache } from "~/renderer/bridge/cache";
 import {
@@ -24,7 +27,10 @@ import {
   WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
-import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
+import {
+  latestDistantStateSelector,
+  latestDistantVersionSelector,
+} from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
@@ -80,6 +86,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),

@@ -1,5 +1,9 @@
-import { MemberCredentials, Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
-import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import {
+  MemberCredentials,
+  Trustchain,
+  TrustchainSDK,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import getApi, { JWT } from "./api";
 import { Observable } from "rxjs";
 import { z, ZodType } from "zod";

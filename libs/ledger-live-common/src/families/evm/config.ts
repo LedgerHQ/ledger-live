@@ -717,6 +717,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.scrollscan.com/api" },
     },
   },
+  config_currency_etherlink: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://node.mainnet.etherlink.com" },
+      explorer: { type: "etherscan", uri: "https://explorer.etherlink.com/api" },
+    },
+  },
 };
 
 export { evmConfig };

@@ -1,5 +1,5 @@
 import React from "react";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useRemoveMember } from "LLD/features/WalletSync/hooks/useRemoveMember";

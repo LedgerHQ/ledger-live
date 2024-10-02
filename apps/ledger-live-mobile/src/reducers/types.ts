@@ -28,7 +28,7 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { TrustchainStore } from "@ledgerhq/trustchain/store";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 // === ACCOUNT STATE ===

@@ -56,7 +56,13 @@ export default function Loading({ title, subtitle }: Loading) {
         <Text variant="h5Inter" fontSize={20} fontWeight="600">
           {title}
         </Text>
-        <Text variant="body" fontSize={14} color={"hsla(0, 0%, 75%, 1)"}>
+        <Text
+          variant="body"
+          fontSize={14}
+          color={"hsla(0, 0%, 75%, 1)"}
+          whiteSpace="pre-line"
+          textAlign="center"
+        >
           {subtitle}
         </Text>
       </Flex>

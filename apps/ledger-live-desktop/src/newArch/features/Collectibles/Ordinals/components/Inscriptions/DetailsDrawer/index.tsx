@@ -5,8 +5,10 @@ import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collec
 import useInscriptionDetailDrawer from "./useInscriptionDetailDrawer";
 import Actions from "./Actions";
 import SubTitle from "./SubTitle";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 
 type ViewProps = ReturnType<typeof useInscriptionDetailDrawer> & {
+  account: BitcoinAccount;
   onClose: () => void;
 };
 
@@ -14,10 +16,11 @@ type Props = {
   inscription: SimpleHashNft;
   correspondingRareSat: SimpleHashNft | null | undefined;
   isLoading: boolean;
+  account: BitcoinAccount;
   onClose: () => void;
 };
 
-const View: React.FC<ViewProps> = ({ data, rareSat, onClose }) => (
+const View: React.FC<ViewProps> = ({ data, rareSat, account, inscription, onClose }) => (
   <DetailDrawer
     collectibleType={CollectibleTypeEnum.NFT}
     areFieldsLoading={data.areFieldsLoading}
@@ -44,7 +47,7 @@ const View: React.FC<ViewProps> = ({ data, rareSat, onClose }) => (
       </DetailDrawer.Subtitle>
     )}
     <DetailDrawer.Actions>
-      <Actions />
+      <Actions account={account} inscription={inscription} />
     </DetailDrawer.Actions>
   </DetailDrawer>
 );
@@ -53,12 +56,14 @@ const InscriptionDetailDrawer = ({
   inscription,
   isLoading,
   correspondingRareSat,
+  account,
   onClose,
 }: Props) => {
   return (
     <View
-      onClose={onClose}
       {...useInscriptionDetailDrawer({ isLoading, inscription, correspondingRareSat })}
+      onClose={onClose}
+      account={account}
     />
   );
 };

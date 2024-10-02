@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 
 describe("WalletSyncActivated", () => {
   it("Should open WalletSyncActivated screen", async () => {
@@ -45,7 +45,7 @@ describe("WalletSyncActivated", () => {
     });
 
     // Check if the ledger sync row is visible
-    await expect(await screen.findByText(/ledger sync/i)).toBeVisible();
+    expect(await screen.findByText(/ledger sync/i)).toBeVisible();
 
     // On Press the ledger sync row
     await user.press(await screen.findByText(/ledger sync/i));

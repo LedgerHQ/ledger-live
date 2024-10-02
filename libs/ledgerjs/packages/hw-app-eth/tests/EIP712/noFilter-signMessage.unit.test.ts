@@ -14,7 +14,7 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
 };
 
 // act like no message has filters
-jest.mock("@ledgerhq/cryptoassets/data/eip712", () => ({}));
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712", () => ({}));
 nock.disableNetConnect();
 
 describe("EIP712", () => {
@@ -24,7 +24,7 @@ describe("EIP712", () => {
   });
 
   describe("SignEIP712Message without filters", () => {
-    test("should sign correctly the 0.json sample message", async () => {
+    it("should sign correctly the 0.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "0"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "0"), "utf-8").then(JSON.parse);
       const transport = await openTransportReplayer(
@@ -41,7 +41,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 1.json sample message", async () => {
+    it("should sign correctly the 1.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "1"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "1"), "utf-8").then(JSON.parse);
 
@@ -59,7 +59,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 2.json sample message", async () => {
+    it("should sign correctly the 2.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "2"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "2"), "utf-8").then(JSON.parse);
 
@@ -77,7 +77,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 3.json sample message", async () => {
+    it("should sign correctly the 3.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "3"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "3"), "utf-8").then(JSON.parse);
 
@@ -95,7 +95,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 4.json sample message", async () => {
+    it("should sign correctly the 4.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "4"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "4"), "utf-8").then(JSON.parse);
 
@@ -113,7 +113,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 5.json sample message", async () => {
+    it("should sign correctly the 5.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "5"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "5"), "utf-8").then(JSON.parse);
 
@@ -131,7 +131,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 6.json sample message", async () => {
+    it("should sign correctly the 6.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "6"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "6"), "utf-8").then(JSON.parse);
 
@@ -149,7 +149,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 7.json sample message", async () => {
+    it("should sign correctly the 7.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "7"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "7"), "utf-8").then(JSON.parse);
 
@@ -167,7 +167,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 8.json sample message", async () => {
+    it("should sign correctly the 8.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "8"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "8"), "utf-8").then(JSON.parse);
 
@@ -185,7 +185,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 9.json sample message", async () => {
+    it("should sign correctly the 9.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "9"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "9"), "utf-8").then(JSON.parse);
 
@@ -203,7 +203,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 10.json sample message", async () => {
+    it("should sign correctly the 10.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "10"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "10"), "utf-8").then(JSON.parse);
 
@@ -221,7 +221,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 11.json sample message", async () => {
+    it("should sign correctly the 11.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "11"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "11"), "utf-8").then(JSON.parse);
 
@@ -239,7 +239,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 12.json sample message", async () => {
+    it("should sign correctly the 12.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "12"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "12"), "utf-8").then(JSON.parse);
 
@@ -257,7 +257,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 13.json sample message", async () => {
+    it("should sign correctly the 13.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "13"), "utf-8");
       const message = await fs.readFile(getFilePath("message", "13"), "utf-8").then(JSON.parse);
 
@@ -275,7 +275,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 14.json sample message (shorthand byte string => 0x3 vs 0x03)", async () => {
+    it("should sign correctly the 14.json sample message (shorthand byte string => 0x3 vs 0x03)", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "14"), "utf-8");
       const messageShorthand = await fs
         .readFile(getFilePath("message", "14"), "utf-8")
@@ -303,7 +303,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 15-permit.json sample message", async () => {
+    it("should sign correctly the 15-permit.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "15"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "15-permit"), "utf-8")
@@ -323,7 +323,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 16-permit2.json sample message", async () => {
+    it("should sign correctly the 16-permit2.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "16"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "16-permit2"), "utf-8")
@@ -343,7 +343,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 17-uniswapx.json sample message", async () => {
+    it("should sign correctly the 17-uniswapx.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "17"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
@@ -363,7 +363,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 18-1inch-fusion.json sample message", async () => {
+    it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "18"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")

@@ -1,6 +1,8 @@
 import { useQueries, UseQueryResult } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import getTrustchainApi, { StatusAPIResponse as TrustchainStatus } from "@ledgerhq/trustchain/api";
+import getTrustchainApi, {
+  StatusAPIResponse as TrustchainStatus,
+} from "@ledgerhq/ledger-key-ring-protocol/api";
 import getCloudSyncApi, {
   StatusAPIResponse as CloudSyncStatus,
 } from "@ledgerhq/live-wallet/cloudsync/api";

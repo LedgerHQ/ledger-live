@@ -53,7 +53,7 @@ describe("WalletSyncStatus", () => {
     );
 
     // Check if the ledger sync row is visible
-    await expect(await screen.findByText(/ledger sync/i)).toBeVisible();
+    expect(await screen.findByText(/ledger sync/i)).toBeVisible();
 
     // On Press the ledger sync row
     await user.press(await screen.findByText(/ledger sync/i));
