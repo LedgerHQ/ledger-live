@@ -152,29 +152,41 @@
     "@ledgerhq/coin-ton": "0.3.11",
     "@ledgerhq/coin-cosmos": "0.1.0",
     "@ledgerhq/coin-elrond": "0.1.0",
-    "@ledgerhq/hw-app-elrond": "6.21.0"
+    "@ledgerhq/hw-app-elrond": "6.21.0",
+    "@ledgerhq/cryptoassets-evm-signatures": "13.4.0"
   },
   "changesets": [
     "big-snakes-marry",
+    "breezy-bottles-jam",
+    "brown-buckets-matter",
+    "brown-ducks-rule",
     "calm-pets-shout",
     "clever-rocks-watch",
     "cuddly-zebras-give",
     "dry-otters-shop",
     "empty-clouds-glow",
+    "five-ties-sniff",
     "four-worms-end",
     "fresh-cobras-argue",
     "great-months-lick",
     "green-starfishes-suffer",
+    "lazy-tips-report",
     "olive-drinks-complain",
+    "plenty-hornets-turn",
     "rare-yaks-deny",
+    "seven-geese-play",
+    "shy-apples-tickle",
     "six-hairs-raise",
     "slow-dingos-destroy",
     "sour-poets-play",
     "strange-sheep-share",
     "strong-goats-rush",
+    "stupid-students-clap",
     "tasty-brooms-chew",
+    "thick-poets-lie",
     "tough-terms-film",
     "witty-bugs-add",
-    "witty-cows-breathe"
+    "witty-cows-breathe",
+    "yellow-flowers-march"
   ]
 }

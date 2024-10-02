@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.7.0-nightly.1
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26)]:
+  - @ledgerhq/cryptoassets@13.6.0-nightly.0
+  - @ledgerhq/live-common@34.10.0-nightly.1
+  - @ledgerhq/live-wallet@0.6.2-nightly.1
+  - @ledgerhq/coin-framework@0.18.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.7-nightly.0
+  - @ledgerhq/device-core@0.4.1-nightly.0
+
 ## 24.6.1-nightly.0
 
 ### Patch Changes

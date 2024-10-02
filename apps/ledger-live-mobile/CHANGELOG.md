@@ -1,5 +1,39 @@
 # live-mobile
 
+## 4.0.0-nightly.1
+
+### Major Changes
+
+- [#7909](https://github.com/LedgerHQ/ledger-live/pull/7909) [`59994d9`](https://github.com/LedgerHQ/ledger-live/commit/59994d9385fd8baab2eb54c4da63e475178a6ebb) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - use production firebase for ios nightly builds and rename local builds from staging to dev
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+- [#7955](https://github.com/LedgerHQ/ledger-live/pull/7955) [`5d825f2`](https://github.com/LedgerHQ/ledger-live/commit/5d825f2d38ec9c0407d3f3d0b5d13e2779ce4c3d) Thanks [@KVNLS](https://github.com/KVNLS)! - LLM - Fix wording for Ledger Sync on activation
+
+### Patch Changes
+
+- [#7929](https://github.com/LedgerHQ/ledger-live/pull/7929) [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Fixed side effect that caused the synchronization to stop working
+
+- [#7959](https://github.com/LedgerHQ/ledger-live/pull/7959) [`94b2e3d`](https://github.com/LedgerHQ/ledger-live/commit/94b2e3df4e7f8004d195e6ab6e5447f5e0218567) Thanks [@thesan](https://github.com/thesan)! - Accept analytics during onboarding tests
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415)]:
+  - @ledgerhq/types-cryptoassets@7.16.0-nightly.0
+  - @ledgerhq/types-live@6.52.0-nightly.0
+  - @ledgerhq/live-common@34.10.0-nightly.1
+  - @ledgerhq/live-wallet@0.6.2-nightly.1
+  - @ledgerhq/live-nft@0.4.7-nightly.0
+  - @ledgerhq/coin-evm@2.3.1-nightly.0
+  - @ledgerhq/coin-framework@0.18.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.1.3-nightly.0
+  - @ledgerhq/coin-elrond@0.1.2-nightly.0
+  - @ledgerhq/domain-service@1.2.6-nightly.0
+  - @ledgerhq/live-countervalues@0.2.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.7-nightly.0
+  - @ledgerhq/live-nft-react@0.4.7-nightly.0
+  - @ledgerhq/native-ui@0.24.1-nightly.1
+
 ## 3.50.1-nightly.0
 
 ### Patch Changes

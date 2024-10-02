@@ -1,5 +1,40 @@
 ## 34.5.0-next.4
 
+## 34.10.0-nightly.1
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+### Patch Changes
+
+- Updated dependencies [[`07c584a`](https://github.com/LedgerHQ/ledger-live/commit/07c584a61573c53ff0d205d316d9195cd8f5399e), [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415), [`8f8bf46`](https://github.com/LedgerHQ/ledger-live/commit/8f8bf46123750acc8dea29f367249806ff7bf737), [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3)]:
+  - @ledgerhq/hw-app-eth@7.0.0-nightly.0
+  - @ledgerhq/cryptoassets@13.6.0-nightly.0
+  - @ledgerhq/coin-polkadot@1.3.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@1.5.0-nightly.0
+  - @ledgerhq/live-wallet@0.6.2-nightly.1
+  - @ledgerhq/live-nft@0.4.7-nightly.0
+  - @ledgerhq/coin-solana@0.7.7-nightly.0
+  - @ledgerhq/coin-evm@2.3.1-nightly.0
+  - @ledgerhq/coin-framework@0.18.2-nightly.0
+  - @ledgerhq/coin-algorand@0.5.7-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.2-nightly.0
+  - @ledgerhq/coin-cardano@0.2.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.1.3-nightly.0
+  - @ledgerhq/coin-elrond@0.1.2-nightly.0
+  - @ledgerhq/coin-icon@0.4.4-nightly.0
+  - @ledgerhq/coin-near@0.5.7-nightly.0
+  - @ledgerhq/coin-stellar@0.3.2-nightly.0
+  - @ledgerhq/coin-tezos@0.6.3-nightly.0
+  - @ledgerhq/coin-ton@0.3.15-nightly.0
+  - @ledgerhq/coin-xrp@0.5.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.7-nightly.0
+  - @ledgerhq/coin-tron@0.0.7-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.7-nightly.0
+  - @ledgerhq/device-core@0.4.1-nightly.0
+
 ## 34.10.0-nightly.0
 
 ### Minor Changes
