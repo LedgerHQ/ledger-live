@@ -54,6 +54,7 @@ import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
 import exportAccounts from "./commands/live/exportAccounts";
+import ledgerKeyRingProtocol from "./commands/live/ledgerKeyRingProtocol";
 import liveData from "./commands/live/liveData";
 import portfolio from "./commands/live/portfolio";
 import synchronousOnboarding from "./commands/live/synchronousOnboarding";
@@ -118,6 +119,7 @@ export default {
   countervalues,
   envs,
   exportAccounts,
+  ledgerKeyRingProtocol,
   liveData,
   portfolio,
   synchronousOnboarding,
