@@ -1,18 +1,19 @@
 /* eslint-disable no-console */
-import { RPCHandler, WalletHandlers, customWrapper } from "@ledgerhq/wallet-api-server";
+import { RPCHandler, customWrapper } from "@ledgerhq/wallet-api-server";
 import { deserializeTransaction } from "@ledgerhq/wallet-api-core";
 import {
   getParentAccount,
   getMainAccount,
   makeEmptyTokenAccount,
   isTokenAccount,
-  isAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import {
   MessageSignParams,
   MessageSignResult,
+  SignOptions,
+  TransactionOptions,
   TransactionSignAndBroadcastParams,
   TransactionSignAndBroadcastResult,
   TransactionSignParams,
@@ -28,7 +29,6 @@ import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
-import { prepareMessageToSign } from "../../hw/signMessage";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;
@@ -43,6 +43,7 @@ type ACREUiHooks = {
   "custom.acre.messageSign": (params: {
     account: AccountLike;
     message: AnyMessage;
+    options?: SignOptions;
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -55,7 +56,7 @@ type ACREUiHooks = {
       hasFeesProvided: boolean;
       liveTx: Partial<Transaction>;
     };
-    options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
+    options?: TransactionOptions;
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
   }) => void;
@@ -167,7 +168,7 @@ export const handlers = ({
 
       tracking.signMessageRequested(manifest);
 
-      const { accountId: walletAccountId, hexMessage } = params;
+      const { accountId: walletAccountId, derivationPath, message, options } = params;
 
       const accountId = getAccountIdFromWalletAccountId(walletAccountId);
       if (!accountId) {
@@ -181,22 +182,13 @@ export const handlers = ({
         return Promise.reject(new Error("account not found"));
       }
 
-      let formattedMessage: AnyMessage;
-      try {
-        if (isAccount(account)) {
-          formattedMessage = prepareMessageToSign(account, hexMessage);
-        } else {
-          throw new Error("account provided should be the main one");
-        }
-      } catch (error) {
-        tracking.signMessageFail(manifest);
-        return Promise.reject(error);
-      }
+      const formattedMessage = { ...message, path: derivationPath } as unknown as AnyMessage;
 
       return new Promise((resolve, reject) => {
         return uiMessageSign({
           account,
           message: formattedMessage,
+          options,
           onSuccess: signature => {
             tracking.signMessageSuccess(manifest);
             resolve({

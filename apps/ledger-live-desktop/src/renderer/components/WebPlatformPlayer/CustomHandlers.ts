@@ -51,12 +51,21 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
         tracking,
         manifest,
         uiHooks: {
-          "custom.acre.messageSign": ({ account, message, onSuccess, onError, onCancel }) => {
+          "custom.acre.messageSign": ({
+            account,
+            message,
+            options,
+            onSuccess,
+            onError,
+            onCancel,
+          }) => {
             ipcRenderer.send("show-app", {});
             dispatch(
               openModal("MODAL_SIGN_MESSAGE", {
                 account,
                 message,
+                useApp: options?.hwAppId,
+                dependencies: options?.dependencies,
                 onConfirmationHandler: onSuccess,
                 onFailHandler: onError,
                 onClose: onCancel,
@@ -74,6 +83,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             ipcRenderer.send("show-app", {});
             dispatch(
               openModal("MODAL_SIGN_TRANSACTION", {
+                isACRE: true,
                 canEditFees,
                 stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
                 transactionData: liveTx,

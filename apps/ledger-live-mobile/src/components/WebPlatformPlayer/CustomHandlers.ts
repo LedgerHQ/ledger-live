@@ -37,12 +37,21 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
         tracking,
         manifest,
         uiHooks: {
-          "custom.acre.messageSign": ({ account, message, onSuccess, onError, onCancel }) => {
+          "custom.acre.messageSign": ({
+            account,
+            message,
+            options,
+            onSuccess,
+            onError,
+            onCancel,
+          }) => {
             navigation.navigate(NavigatorName.SignMessage, {
               screen: ScreenName.SignSummary,
               params: {
                 message,
                 accountId: account.id,
+                appName: options?.hwAppId,
+                dependencies: options?.dependencies,
                 onConfirmationHandler: onSuccess,
                 onFailHandler: onError,
               },
@@ -57,7 +66,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx);
+            const tx = prepareSignTransaction(account, parentAccount, liveTx, true);
 
             navigation.navigate(NavigatorName.SignTransaction, {
               screen: ScreenName.SignTransactionSummary,
@@ -69,6 +78,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
                 parentId: parentAccount ? parentAccount.id : undefined,
                 appName: options?.hwAppId,
                 dependencies: options?.dependencies,
+                isACRE: true,
                 onSuccess: ({
                   signedOperation,
                   transactionSignError,

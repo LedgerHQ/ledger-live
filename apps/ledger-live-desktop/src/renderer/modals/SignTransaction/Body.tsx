@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
+import { Account, AccountBridge, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -25,6 +25,7 @@ import {
   DeviceTransactionField,
   getDeviceTransactionConfig,
 } from "@ledgerhq/live-common/transaction/index";
+import { bridge as ACREBridge } from "@ledgerhq/live-common/families/bitcoin/ACRESetup";
 
 export type Params = {
   canEditFees: boolean;
@@ -41,6 +42,7 @@ export type Params = {
   amount?: BigNumber;
   manifestId?: string;
   manifestName?: string;
+  isACRE?: boolean;
 };
 
 type Props = {
@@ -134,7 +136,10 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   } = useBridgeTransaction(() => {
     const parentAccount = params && params.parentAccount;
     const account = params && params.account;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = params.isACRE
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (ACREBridge.accountBridge as unknown as AccountBridge<any>)
+      : getAccountBridge(account, parentAccount);
     const tx = bridge.createTransaction(account);
     const { recipient, ...txData } = transactionData;
     const tx2 = bridge.updateTransaction(tx, {
@@ -147,7 +152,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
       parentAccount,
       transaction,
     };
-  });
+  }, params.isACRE);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const handleOpenModal = useCallback(
     <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) =>
@@ -221,6 +226,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const stepperProps = {
     title,
     stepId,
+    isACRE: params.isACRE,
     manifestId: params.manifestId,
     manifestName: params.manifestName,
     useApp: params.useApp,
