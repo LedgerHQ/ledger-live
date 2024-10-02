@@ -88,7 +88,19 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     [dispatch, onResult],
   );
 
-  const { error, imageCommitRequested, imageLoadRequested, loadingImage, progress } = status;
+  const {
+    error: CLSError,
+    imageCommitRequested,
+    imageLoadRequested,
+    loadingImage,
+    progress,
+  } = status;
+  const [error, setError] = useState<null | Error>(null);
+  useEffect(() => {
+    if (CLSError) {
+      setError(CLSError);
+    }
+  }, [CLSError]);
   const isError = !!error;
   const isRefusedOnStaxError =
     (error as unknown) instanceof ImageLoadRefusedOnDevice ||
