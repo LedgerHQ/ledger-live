@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
+import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getKey } from "~/renderer/storage";
 
 export const fetchTrustchain = () => async (dispatch: Dispatch) => {

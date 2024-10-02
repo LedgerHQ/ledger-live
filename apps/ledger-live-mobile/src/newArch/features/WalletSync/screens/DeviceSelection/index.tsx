@@ -16,7 +16,7 @@ import {
 import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
+import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type NavigationProps = BaseComposite<

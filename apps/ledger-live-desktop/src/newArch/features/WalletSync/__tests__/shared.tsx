@@ -1,7 +1,7 @@
 import React from "react";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { getSdk } from "@ledgerhq/trustchain/index";
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";

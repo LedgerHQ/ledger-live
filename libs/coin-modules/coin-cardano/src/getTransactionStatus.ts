@@ -19,6 +19,8 @@ import {
   CardanoStakeKeyDepositError,
   CardanoMinAmountError,
   CardanoNotEnoughFunds,
+  CardanoFeeTooHigh,
+  CardanoFeeHigh,
 } from "./errors";
 import type {
   CardanoAccount,
@@ -28,6 +30,7 @@ import type {
   TransactionStatus,
 } from "./types";
 import { CARDANO_MAX_SUPPLY } from "./constants";
+import coinConfig from "./config";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -51,15 +54,28 @@ export const getTransactionStatus: AccountBridge<
     });
   }
 
+  let txStatus: TransactionStatus;
+
   if (transaction.mode === "send") {
-    return getSendTransactionStatus(account, transaction);
+    txStatus = await getSendTransactionStatus(account, transaction);
   } else if (transaction.mode === "delegate") {
-    return getDelegateTransactionStatus(account, transaction);
+    txStatus = await getDelegateTransactionStatus(account, transaction);
   } else if (transaction.mode === "undelegate") {
-    return getUndelegateTransactionStatus(account, transaction);
+    txStatus = await getUndelegateTransactionStatus(account, transaction);
   } else {
     throw new Error("Invalid transaction mode");
   }
+
+  const MAX_FEES_WARN = coinConfig.getCoinConfig().maxFeesWarning;
+  const MAX_FEES_THROW = coinConfig.getCoinConfig().maxFeesError;
+
+  if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
+    throw new CardanoFeeTooHigh();
+  } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
+    txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
+  }
+
+  return txStatus;
 };
 
 async function getSendTransactionStatus(

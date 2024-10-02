@@ -16,3 +16,11 @@ export const CardanoStakeKeyDepositError = createCustomErrorClass("CardanoStakeK
 export const CardanoNotEnoughFunds = createCustomErrorClass("CardanoNotEnoughFunds");
 
 export const CardanoInvalidPoolId = createCustomErrorClass("CardanoInvalidPoolId");
+
+/**
+ * Cardano warning/error for high fees
+ */
+export const CardanoFeeHigh = createCustomErrorClass("CardanoFeeHigh");
+export const CardanoFeeTooHigh = createCustomErrorClass("CardanoFeeTooHigh");
+
+export const CardanoInvalidProtoParams = createCustomErrorClass("CardanoInvalidProtoParams");

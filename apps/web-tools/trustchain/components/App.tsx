@@ -3,11 +3,15 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
-import { getInitialStore } from "@ledgerhq/trustchain/store";
+import {
+  MemberCredentials,
+  Trustchain,
+  TrustchainMember,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
+import { getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
-import { getSdk } from "@ledgerhq/trustchain";
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppSetDeviceId } from "./AppSetDeviceId";
 import { AppSetSupportedCurrencies } from "./AppSetSupportedCurrencies";

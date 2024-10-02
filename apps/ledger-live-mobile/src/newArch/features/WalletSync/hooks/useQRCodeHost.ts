@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
+import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
   QRCodeWSClosed,
-} from "@ledgerhq/trustchain/errors";
-import { MemberCredentials } from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   trustchainSelector,
   memberCredentialsSelector,
   setTrustchain,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";

@@ -177,6 +177,7 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber;
   memo?: string;
   poolId: string | undefined;
+  protocolParams?: ProtocolParams;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -189,6 +190,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string;
   memo?: string;
   poolId: string | undefined;
+  protocolParams?: ProtocolParams;
   // also the transaction fields as raw JSON data
 };
 
