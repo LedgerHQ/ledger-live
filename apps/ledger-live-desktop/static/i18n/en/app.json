@@ -6084,12 +6084,16 @@
     "CardanoStakeKeyDepositError": {
       "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
     },
-    "CardanoFeeTooHigh": {
+    "CardanoFeeHigh": {
       "title": "Abnormally high network fees.",
       "description": "Network fees unusually high please double check your transaction."
     },
+    "CardanoFeeTooHigh": {
+      "title": "Abnormally high network fees.",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
     "CardanoInvalidProtoParams": {
-      "title": "Cardano Invalid Protocol Parameters",
+      "title": "Cardano invalid protocol parameters",
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
     "StacksMemoTooLong": {
