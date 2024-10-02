@@ -2397,11 +2397,14 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@multiversx/sdk-core':
-        specifier: 13.6.3
-        version: 13.6.3(bignumber.js@9.1.2)
+        specifier: ^13.6.3
+        version: 13.6.3(bignumber.js@9.1.2)(protobufjs@7.3.2)
       '@multiversx/sdk-network-providers':
         specifier: ^2.7.1
-        version: 2.7.1
+        version: 2.7.1(axios@1.7.7)
+      axios:
+        specifier: ^1.7.4
+        version: 1.7.7
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -2417,6 +2420,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      protobufjs:
+        specifier: ^7.2.6
+        version: 7.3.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -4488,7 +4494,7 @@ importers:
         specifier: workspace:^
         version: link:../hw-transport
       '@multiversx/sdk-core':
-        specifier: ^13.3.0
+        specifier: ^13.6.3
         version: 13.6.3(bignumber.js@9.1.2)(protobufjs@7.3.2)
       bignumber.js:
         specifier: ^9.0.1
@@ -16429,6 +16435,9 @@ packages:
 
   axios@1.7.3:
     resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
+
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
@@ -37242,16 +37251,6 @@ snapshots:
       outvariant: 1.4.2
       strict-event-emitter: 0.5.1
 
-  '@multiversx/sdk-core@13.6.3(bignumber.js@9.1.2)':
-    dependencies:
-      '@multiversx/sdk-transaction-decoder': 1.0.2
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      blake2b: 2.1.3
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      json-bigint: 1.0.0
-      keccak: 3.0.2
-
   '@multiversx/sdk-core@13.6.3(bignumber.js@9.1.2)(protobufjs@7.3.2)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
@@ -37263,8 +37262,9 @@ snapshots:
       keccak: 3.0.2
       protobufjs: 7.3.2
 
-  '@multiversx/sdk-network-providers@2.7.1':
+  '@multiversx/sdk-network-providers@2.7.1(axios@1.7.7)':
     dependencies:
+      axios: 1.7.7
       bech32: 1.1.4
       bignumber.js: 9.0.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -41806,7 +41806,7 @@ snapshots:
   '@stellar/stellar-sdk@11.3.0':
     dependencies:
       '@stellar/stellar-base': 11.0.1
-      axios: 1.7.3
+      axios: 1.7.7
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0
@@ -44104,7 +44104,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.56.3(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.7.3
+      axios: 1.7.7
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -44146,7 +44146,7 @@ snapshots:
 
   '@types/axios@0.14.0':
     dependencies:
-      axios: 1.7.3
+      axios: 1.7.7
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -45808,7 +45808,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       '@zondax/ledger-js': 0.8.2
-      axios: 1.7.3
+      axios: 1.7.7
 
   JSONStream@1.3.5:
     dependencies:
@@ -46408,6 +46408,12 @@ snapshots:
       follow-redirects: 1.15.6
 
   axios@1.7.3:
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+
+  axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -64037,7 +64043,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.7.3
+      axios: 1.7.7
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.12.1
