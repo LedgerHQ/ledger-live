@@ -1,6 +1,8 @@
 import { Component } from "tests/page/abstractClasses";
 import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";
+import { Delegate } from "tests/models/Delegate";
+import { Account } from "tests/enum/Account";
 import { step } from "tests/misc/reporters/step";
 
 export class Drawer extends Component {
@@ -20,6 +22,9 @@ export class Drawer extends Component {
   readonly swapAccountFrom = this.page.getByTestId("swap-account-from").first();
   readonly swapAccountTo = this.page.getByTestId("swap-account-to").first();
   readonly backButton = this.page.getByRole("button", { name: "Back" });
+  private provider = (provider: string) =>
+    this.page.locator('[data-testid="drawer-content"]').locator(`text=${provider}`);
+  private transactionType = this.page.getByTestId("transaction-type");
 
   async continue() {
     await this.continueButton.click();
@@ -28,6 +33,30 @@ export class Drawer extends Component {
   @step("Verify address is visible")
   async addressValueIsVisible(address: string) {
     await this.addressValue(address).waitFor({ state: "visible" });
+  }
+
+  @step("Verify provider is visible")
+  async providerIsVisible(account: Delegate) {
+    if (account.account === Account.NEAR_1 || account.account === Account.ATOM_1) {
+      await this.provider(account.provider).waitFor({ state: "visible" });
+    }
+  }
+
+  @step("Verify amount is visible")
+  async amountValueIsVisible() {
+    await this.amountValue.waitFor({ state: "visible" });
+  }
+
+  @step("Verify transaction type is correct")
+  async transactionTypeIsVisible() {
+    await this.transactionType.waitFor({ state: "visible" });
+  }
+
+  @step("Verify that the information of the delegation is visible")
+  async expectDelegationInfos(delegationInfo: Delegate) {
+    await this.providerIsVisible(delegationInfo);
+    await this.amountValueIsVisible();
+    await this.transactionTypeIsVisible();
   }
 
   @step("Verify that the information of the transaction is visible")
