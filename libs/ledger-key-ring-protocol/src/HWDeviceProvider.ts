@@ -1,8 +1,8 @@
 import { from, lastValueFrom } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
+import { ApduDevice } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
-import { crypto, device } from "@ledgerhq/hw-trustchain";
+import { crypto, device } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import getApi from "./api";
 import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
@@ -12,9 +12,9 @@ export class HWDeviceProvider {
   /**
    * TODO withDevice should be imported statically from @ledgerhq/live-common/hw/deviceAccess
    *
-   * but ATM making @ledgerhq/live-common a dependency of @ledgerhq/trustchain causes:
+   * but ATM making @ledgerhq/live-common a dependency of @ledgerhq/ledger-key-ring-protocol causes:
    * > Turbo error: Invalid package dependency graph: cyclic dependency detected:
-   * >   @ledgerhq/trustchain,@ledgerhq/live-wallet,@ledgerhq/live-common
+   * >   @ledgerhq/ledger-key-ring-protocol,@ledgerhq/live-wallet,@ledgerhq/live-common
    *
    * Maybe hw/deviceAccess.ts and hw/index.ts could be moved to @ledgerhq/devices
    * This would break the cyclic dependency as @ledgerhq/live-common would depend on @ledgerhq/devices

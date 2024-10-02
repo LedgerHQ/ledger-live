@@ -17,7 +17,7 @@ import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import ScannedInvalidQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
 import { useSelector } from "react-redux";
-import { trustchainSelector } from "@ledgerhq/trustchain/store";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;

@@ -1,4 +1,4 @@
-import { TrustchainLifecycle } from "@ledgerhq/trustchain/types";
+import { TrustchainLifecycle } from "@ledgerhq/ledger-key-ring-protocol/types";
 import getCloudSyncApi from "../cloudsync/api";
 import { liveSlug } from ".";
 import { WSState } from "../store";

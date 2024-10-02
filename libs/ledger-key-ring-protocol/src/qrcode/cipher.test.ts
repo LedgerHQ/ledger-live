@@ -1,4 +1,4 @@
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { makeCipher } from "./cipher";
 import { InvalidEncryptionKeyError } from "../errors";
 

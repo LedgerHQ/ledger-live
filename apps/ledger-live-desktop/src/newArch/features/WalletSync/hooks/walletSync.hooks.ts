@@ -1,4 +1,4 @@
-import { resetTrustchainStore } from "@ledgerhq/trustchain/store";
+import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "react-redux";
 import { ErrorType } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -7,7 +7,7 @@ import {
   TrustchainEjected,
   TrustchainNotAllowed,
   TrustchainOutdated,
-} from "@ledgerhq/trustchain/errors";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 

@@ -23,7 +23,7 @@ import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 import { importMarket } from "~/actions/market";
-import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
+import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 
 export default class LedgerStoreProvider extends Component<

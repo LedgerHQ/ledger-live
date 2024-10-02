@@ -1,4 +1,4 @@
-import { Permissions, crypto } from "@ledgerhq/hw-trustchain";
+import { Permissions, crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import WebSocket from "isomorphic-ws";
 import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
