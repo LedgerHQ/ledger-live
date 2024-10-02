@@ -1,6 +1,10 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
 
+import { deserializeError } from "@ledgerhq/errors";
+import { from } from "rxjs";
+import commandsMain from "@ledgerhq/live-cli/src/commands-index";
+import { initSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
 export async function launchApp({
   env,
   lang,
@@ -41,4 +45,43 @@ export async function launchApp({
     executablePath: require("electron/index.js"),
     timeout: 120000,
   });
+}
+
+export const executeLedgerCLI = async (commandName: string, args = {}) => {
+  try {
+    initSpeculosTransport();
+
+    const commands = { ...(commandsMain as Record<string, any>) };
+    const cmd = commands[commandName];
+    if (!cmd) {
+      throw new Error(`Command not found: ledger-live ${commandName}`);
+    }
+    const options = { ...args };
+
+    return new Promise<void>((resolve, reject) => {
+      from(cmd.job(options)).subscribe({
+        next: log => {
+          if (log !== undefined) console.log(log);
+        },
+        error: error => {
+          const e = error instanceof Error ? error : deserializeError(error);
+          console.error(e);
+          reject(e);
+        },
+        complete: () => {
+          resolve();
+        },
+      });
+    });
+  } catch (e) {
+    console.error("Error executing the command:", e);
+  }
+};
+
+export async function executeCommandCLI(commandName: string, args = {}): Promise<void> {
+  try {
+    await executeLedgerCLI(commandName, args);
+  } catch (e) {
+    console.error(e);
+  }
 }

@@ -5,6 +5,7 @@ import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
+import { executeCommandCLI } from "tests/utils/electronUtils";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
@@ -103,6 +104,7 @@ export const test = base.extend<TestFixtures>({
         specs[speculosApp.name.replace(/ /g, "_")],
       );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+      await executeCommandCLI("deviceAppVersion");
     }
 
     try {

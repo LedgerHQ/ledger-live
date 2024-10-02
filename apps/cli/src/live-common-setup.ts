@@ -9,12 +9,20 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
-import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/index";
+import {
+  registerTransportModule,
+  unregisterTransportModule,
+  disconnect,
+} from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "../../../libs/ledgerjs/packages/hw-transport-node-speculos-http/lib/SpeculosHttpTransport";
+import { getEnv } from "@ledgerhq/live-env";
 
 checkLibs({
   NotEnoughBalance,
@@ -94,6 +102,24 @@ if (SPECULOS_APDU_PORT) {
       }),
     disconnect: () => Promise.resolve(),
   });
+}
+
+export async function initSpeculosTransport() {
+  const { SPECULOS_API_PORT } = process.env;
+  const apiPort = SPECULOS_API_PORT ? parseInt(SPECULOS_API_PORT, 10) : getEnv("SPECULOS_API_PORT");
+
+  if (apiPort) {
+    unregisterTransportModule("hid");
+    const req: Record<string, number> = {
+      apiPort: apiPort,
+    };
+
+    registerTransportModule({
+      id: "speculos-http",
+      open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+      disconnect: () => Promise.resolve(),
+    });
+  }
 }
 
 const cacheBle = {};

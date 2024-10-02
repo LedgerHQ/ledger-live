@@ -160,6 +160,7 @@
   "devDependencies": {
     "@electron/notarize": "^2.3.0",
     "@jest/globals": "^29.7.0",
+    "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/native-modules-tools": "workspace:*",
