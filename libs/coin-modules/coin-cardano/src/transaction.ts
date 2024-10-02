@@ -41,6 +41,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : undefined,
     memo: tr.memo,
     poolId: tr.poolId,
+    protocolParams: tr.protocolParams,
   };
 };
 
@@ -53,6 +54,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     fees: t.fees?.toString() || undefined,
     memo: t.memo,
     poolId: t.poolId,
+    protocolParams: t.protocolParams,
   };
 };
 
