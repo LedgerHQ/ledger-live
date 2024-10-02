@@ -11,6 +11,8 @@ import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
+import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
+import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 
 export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
   const utf8Message = Buffer.from(message, "hex").toString();
@@ -32,19 +34,23 @@ export const prepareMessageToSign = (account: Account, message: string): AnyMess
 
 const signMessage: SignMessage = (transport, account, opts) => {
   const { currency } = account;
-  const signMessage = perFamily[currency.family].signMessage;
+  let signMessage = perFamily[currency.family].signMessage;
+  if ("type" in opts) {
+    signMessage =
+      opts.type === AcreMessageType.Withdraw
+        ? ACREMessageSigner.signWithdraw
+        : ACREMessageSigner.signMessage;
+  }
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, account, opts)
     .then(result => {
-      log(
-        "hw",
-        `signMessage ${currency.id} on ${account.freshAddressPath} with message [${opts.message}]`,
-        result,
-      );
+      const path = "path" in opts && opts.path ? opts.path : account.freshAddressPath;
+      log("hw", `signMessage ${currency.id} on ${path} with message [${opts.message}]`, result);
       return result;
     })
     .catch(e => {
-      log("hw", `signMessage ${currency.id} on ${account.freshAddressPath} FAILED ${String(e)}`);
+      const path = "path" in opts && opts.path ? opts.path : account.freshAddressPath;
+      log("hw", `signMessage ${currency.id} on ${path} FAILED ${String(e)}`);
 
       if (e && e.name === "TransportStatusError") {
         if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {

@@ -1,13 +1,10 @@
+import { CustomModule, serializeTransaction, Transaction } from "@ledgerhq/wallet-api-client";
 import {
-  CustomModule,
-  serializeTransaction,
-  Transaction,
-  TransactionSign,
-  TransactionSignAndBroadcast,
-} from "@ledgerhq/wallet-api-client";
-import {
+  AcreMessage,
   MessageSignParams,
   MessageSignResult,
+  SignOptions,
+  TransactionOptions,
   TransactionSignAndBroadcastParams,
   TransactionSignAndBroadcastResult,
   TransactionSignParams,
@@ -22,23 +19,26 @@ export class AcreModule extends CustomModule {
    * Let the user sign the provided message.
    * @param accountId - Ledger Live id of the account
    * @param message - Message the user should sign
-   * @param address - Address to sign the message with
+   * @param derivationPath - Derivation path to sign the message with
+   * @param options - Extra parameters
    *
    * @returns Message signed
    * @throws {@link RpcError} if an error occured on server side
    */
   async messageSign(
     accountId: string,
-    message: Buffer,
-    address: string,
+    message: AcreMessage,
+    derivationPath?: string,
+    options?: SignOptions,
     meta?: Record<string, unknown>,
   ) {
     const result = await this.request<MessageSignParams, MessageSignResult>(
       "custom.acre.messageSign",
       {
         accountId,
-        hexMessage: message.toString("hex"),
-        address,
+        message,
+        derivationPath,
+        options,
         meta,
       },
     );
@@ -58,7 +58,7 @@ export class AcreModule extends CustomModule {
   async transactionSign(
     accountId: string,
     transaction: Transaction,
-    options?: TransactionSign["params"]["options"],
+    options?: TransactionOptions,
     meta?: Record<string, unknown>,
   ): Promise<Buffer> {
     const result = await this.request<TransactionSignParams, TransactionSignResult>(
@@ -86,7 +86,7 @@ export class AcreModule extends CustomModule {
   async transactionSignAndBroadcast(
     accountId: string,
     transaction: Transaction,
-    options?: TransactionSignAndBroadcast["params"]["options"],
+    options?: TransactionOptions,
     meta?: Record<string, unknown>,
   ): Promise<string> {
     const result = await this.request<

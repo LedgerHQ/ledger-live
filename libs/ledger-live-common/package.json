@@ -119,6 +119,7 @@
     "https": false
   },
   "dependencies": {
+    "@blooo/hw-app-acre": "^1.0.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
