@@ -21,7 +21,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   if (!bitcoinResources || parentAccount) return null;
 
   const stakeOnClick = () => {
-    const value = "/platform/acre-testnet";
+    const value = "/platform/acre";
 
     track("button_clicked2", {
       ...stakeDefaultTrack,
