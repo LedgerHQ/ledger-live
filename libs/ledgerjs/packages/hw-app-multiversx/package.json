@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "bip32-path": "^0.4.2",
-    "@multiversx/sdk-core": "^13.6.3",
+    "@multiversx/sdk-core": "^13.7.0",
     "bignumber.js": "^9.0.1",
     "protobufjs": "^7.2.6"
   },
