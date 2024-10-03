@@ -446,11 +446,22 @@ type BannerProps = {
 
 const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+
   return (
     <BannerCard
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-      LeftElement={<BankMedium />}
+      LeftElement={
+        <Flex
+          backgroundColor={colors.opacityDefault.c05}
+          borderColor="transparent"
+          borderWidth={16}
+          borderRadius={999}
+        >
+          <BankMedium size={24} />
+        </Flex>
+      }
       onPressDismiss={hideBanner}
       onPress={onPress}
     />
