@@ -1,3 +1,4 @@
+import nock from "nock";
 import axios from "axios";
 import { fail } from "assert";
 import { ethers } from "ethers";
@@ -11,10 +12,11 @@ import ERC1155_ABI from "./fixtures/ABI/ERC1155.json";
 import PARASWAP_ABI from "./fixtures/ABI/PARASWAP.json";
 import { ResolutionConfig } from "../src/services/types";
 import ParaswapJSON from "./fixtures/REST/Paraswap-Plugin.json";
+import { transactionContracts, transactionData } from "./fixtures/utils";
 import { byContractAddressAndChainId } from "../src/services/ledger/erc20";
 import { ERC1155_CLEAR_SIGNED_SELECTORS, ERC721_CLEAR_SIGNED_SELECTORS } from "../src/utils";
 
-jest.mock("axios");
+nock.disableNetConnect();
 
 describe("Eth app biding", () => {
   describe("clearSignTransaction", () => {
@@ -293,7 +295,7 @@ describe("Eth app biding", () => {
         "44'/60'/0'/0/0",
         ethers.utils
           .serializeTransaction({
-            to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            to: transactionContracts.paraswap,
             value: ethers.BigNumber.from("0"),
             gasLimit: ethers.BigNumber.from("298891"),
             maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
@@ -322,7 +324,7 @@ describe("Eth app biding", () => {
             type: 2,
           })
           .substring(2),
-        { erc20: true, externalPlugins: true, nft: true },
+        { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
         true,
       );
       expect(result).toEqual({
@@ -331,6 +333,66 @@ describe("Eth app biding", () => {
         v: "00",
       });
       expect(spy).toHaveBeenCalledTimes(3); // 1 time plugin json file + 2 times CAL signatures <-- FIXME 1 time should be enough
+    });
+
+    it("should clear sign the Uniswap Universal Router transaction", async () => {
+      const spy = jest.spyOn(axios, "get");
+      spy.mockImplementation(async url => {
+        if (url?.includes("erc20-signatures")) {
+          return { data: CAL_ETH } as any;
+        }
+        return Promise.reject({ response: { status: 404 } }) as any;
+      });
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e01200006607556e69737761703fc91a3afd70395cd496c647d5a6cc9d4b2b7fad3593564c3044022014391e8f355867a57fe88f6a5a4dbcb8bf8f888a9db3ff3449caf72d120396bd02200c13d9c3f79400fe0aa0434ac54d59b79503c9964a4abc3e8cd22763e0242935
+        <= 9000
+        => e00a0000680457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe
+        <= 009000
+        => e00a0000680457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe
+        <= 019000
+        => e004000096058000002c8000003c80000000000000000000000002f9044f018084448b9b8085143fc44a5883048f8b943fc91a3afd70395cd496c647d5a6cc9d4b2b7fad80b904243593564c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000
+        <= 9000
+        => e00480009600000000000000000000000000669ba25a00000000000000000000000000000000000000000000000000000000000000030a010c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000600000000000
+        <= 9000
+        => e0048000960000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000016000000000000000000000000055747be9f9f5beb232ad59fe7af013b81d95fd5e000000000000000000000000ffffffffffffffffffffffffffffff
+        <= 9000
+        => e004800096ffffffffff0000000000000000000000000000000000000000000000000000000066c32ea60000000000000000000000000000000000000000000000000000000000000006000000000000000000000000ef1c6e67703c7bd7107eed8303fbe6ec2554bf6b00000000000000000000000000000000000000000000000000000000669ba25a0000000000000000000000000000000000
+        <= 9000
+        => e0048000960000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000413cbf00ab90b6d1b17401cbf49e00c40f98bcb3f39461ca65e26009f9e9f77029279a4587efa2d792ea61ede56e0fbd7c1305007bc59d09bc60eaba46efa23edd1c0000000000000000000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e0048000960000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000233a3559d9da00000000000000000000000000000000000000000000000062e76d8ff4b926e80000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e0048000960000a00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002bc02aaa39b223fe8d0a0e5c4f27ead9083c756cc200271055747be9f9f5beb232ad59fe7af013b81d95fd5e00000000000000000000000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e00480004e0000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000233a3559d9da000c0
+        <= 00a42d6ead5539eb1ac552b65b46df4e8fd87c37da54a280d33dc7a78992b56bb02244776870b31cfb50ea71c0ea31a30e6e513bd9766f74d61dc52b523ac256879000
+        `),
+      );
+      const eth = new Eth(transport);
+      const result = await eth.clearSignTransaction(
+        "44'/60'/0'/0/0",
+        ethers.utils
+          .serializeTransaction({
+            to: transactionContracts.uniswapUniversaRouter,
+            value: ethers.BigNumber.from("0"),
+            gasLimit: ethers.BigNumber.from("298891"),
+            maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
+            maxFeePerGas: ethers.BigNumber.from("86969174616"),
+            data: transactionData.uniswap["permit2>swap-out-v3>unwrap"],
+            chainId: 1,
+            nonce: 0,
+            type: 2,
+          })
+          .substring(2),
+        { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
+        true,
+      );
+      expect(result).toEqual({
+        v: "00",
+        r: "a42d6ead5539eb1ac552b65b46df4e8fd87c37da54a280d33dc7a78992b56bb0",
+        s: "2244776870b31cfb50ea71c0ea31a30e6e513bd9766f74d61dc52b523ac25687",
+      });
     });
 
     it("should throw in case of error with strict mode", async () => {
