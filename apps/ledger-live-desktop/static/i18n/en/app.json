@@ -4036,6 +4036,10 @@
         "desc": "Add exchange provider's info",
         "placeholder": "Exchange provider's info in CAL format"
       },
+      "analyticsConsole": {
+        "title": "Allow Analytics Console",
+        "desc": "Display and allow opening analytics console."
+      },
       "debugSimpleHash": {
         "testSimpleHash": {
           "title": "SimpleHash Tools",
@@ -6084,6 +6088,18 @@
     },
     "CardanoStakeKeyDepositError": {
       "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
+    },
+    "CardanoFeeHigh": {
+      "title": "Abnormally high network fees.",
+      "description": "Network fees unusually high please double check your transaction."
+    },
+    "CardanoFeeTooHigh": {
+      "title": "Abnormally high network fees.",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
+    "CardanoInvalidProtoParams": {
+      "title": "Cardano invalid protocol parameters",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"

@@ -24,6 +24,7 @@ import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
+import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -66,6 +67,12 @@ const Default = () => {
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
       >
         <EnablePlatformDevToolsToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.analyticsConsole.title")}
+        desc={t("settings.developer.analyticsConsole.desc")}
+      >
+        <EnableAnalyticsConsole />
       </Row>
       <RunLocalAppButton />
       <CustomLockScreenToggle />
