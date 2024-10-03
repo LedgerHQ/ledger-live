@@ -9,6 +9,10 @@ type Props = {
 
 function ConfirmationHeaderTitle({ accountCurrency }: Props) {
   const { t } = useTranslation();
+  const networkName =
+    accountCurrency?.type === "TokenCurrency"
+      ? accountCurrency.parentCurrency?.name
+      : accountCurrency?.name;
 
   return (
     <Box alignItems={"center"} justifyContent={"center"}>
@@ -21,13 +25,11 @@ function ConfirmationHeaderTitle({ accountCurrency }: Props) {
           currencyTicker: accountCurrency?.ticker,
         })}
       </Text>
-      {accountCurrency?.type === "TokenCurrency" && accountCurrency.parentCurrency && (
-        <Text color={"neutral.c80"} variant={"small"}>
-          {t("transfer.receive.receiveConfirmation.onCurrencyName", {
-            currencyName: accountCurrency.parentCurrency.name,
-          })}
-        </Text>
-      )}
+      <Text color={"neutral.c80"} variant={"small"}>
+        {t("transfer.receive.receiveConfirmation.onCurrencyName", {
+          currencyName: networkName,
+        })}
+      </Text>
     </Box>
   );
 }
