@@ -21,9 +21,9 @@ import {
   DerivationPath,
   SoftwareDevice,
   Device,
-} from "@ledgerhq/hw-trustchain";
+} from "@ledgerhq/hw-ledger-key-ring-protocol";
 import getApi from "./api";
-import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
+import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import {

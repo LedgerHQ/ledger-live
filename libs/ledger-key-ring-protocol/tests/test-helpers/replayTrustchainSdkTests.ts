@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ScenarioOptions } from "./types";

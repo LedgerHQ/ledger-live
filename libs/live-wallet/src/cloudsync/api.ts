@@ -4,7 +4,7 @@ import WS from "isomorphic-ws";
 import querystring from "querystring";
 import type { WebSocket } from "ws";
 import { Observable } from "rxjs";
-import { Trustchain } from "@ledgerhq/trustchain/types";
+import { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 export type JWT = {
   accessToken: string;

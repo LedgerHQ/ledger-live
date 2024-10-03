@@ -10,7 +10,7 @@ import {
   TrustchainSDK,
   TrustchainSDKContext,
 } from "./types";
-import { Permissions } from "@ledgerhq/hw-trustchain";
+import { Permissions } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { TrustchainEjected } from "./errors";
 import getApi from "./api";
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { TrustchainSDKContext } from "@ledgerhq/trustchain/types";
-import { TrustchainStore, getInitialStore } from "@ledgerhq/trustchain/store";
+import { TrustchainSDKContext } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainStore, getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 const IdentityLabel = styled.label`
   display: block;
