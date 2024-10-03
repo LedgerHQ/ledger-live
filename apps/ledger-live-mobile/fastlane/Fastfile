@@ -144,7 +144,7 @@ platform :ios do
     )
     match(
       type: "appstore",
-      app_identifier: ["com.ledger.live.prerelease"],
+      app_identifier: "com.ledger.live.prerelease",
       force: true,
       generate_apple_certs: true,
       git_url: ENV["GIT_REPO_URL"],
