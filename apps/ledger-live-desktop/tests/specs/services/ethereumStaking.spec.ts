@@ -19,6 +19,8 @@ test.use({
   },
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
+    referralProgramDesktopSidebar: { enabled: false },
+    protectServicesDesktop: { enabled: false },
     stakePrograms: {
       enabled: true,
       params: {
