@@ -6,6 +6,7 @@ import * as contractServices from "../src/services/ledger/contracts";
 import { getLoadConfig } from "../src/services/ledger/loadConfig";
 import * as erc20Services from "../src/services/ledger/erc20";
 import * as nftServices from "../src/services/ledger/nfts";
+import signatureCALEth from "./fixtures/SignatureCALEth";
 import * as uniswapModule from "../src/modules/Uniswap";
 import { ResolutionConfig } from "../src/services/types";
 import { ledgerService } from "../src/Eth";
@@ -654,7 +655,12 @@ describe("Ledger Service", () => {
     describe("UNISWAP", () => {
       it("should resolve a Uniswap universal router transaction (permit2>swap-out-v3>unwrap)", async () => {
         // @ts-expect-error not casted as jest mock
-        axios.get.mockImplementation(async () => null);
+        axios.get.mockImplementation(async (uri: string) => {
+          if (uri.endsWith("evm/1/erc20-signatures.json")) {
+            return { data: signatureCALEth };
+          }
+          return null;
+        });
 
         const txHash = getSerializedTransaction(
           transactionContracts.uniswapUniversaRouter,
@@ -670,7 +676,6 @@ describe("Ledger Service", () => {
           domains: [],
           erc20Tokens: [
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
-            "0354424f55747be9f9f5beb232ad59fe7af013b81d95fd5e0000001200000001304402200c4b2625ab03d6fd63b720f71317d7a9cac3f34a847e377f5b75b47e36459be002201fdc4ae8f67ef84a0c0e2a0758658b6e42d78668747ef4f87adf80012d96a698",
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
           ],
           nfts: [],
@@ -693,7 +698,12 @@ describe("Ledger Service", () => {
       });
       it("should resolve a Uniswap universal router transaction (wrap>swap-in-v3)", async () => {
         // @ts-expect-error not casted as jest mock
-        axios.get.mockImplementation(async () => null);
+        axios.get.mockImplementation(async (uri: string) => {
+          if (uri.endsWith("evm/1/erc20-signatures.json")) {
+            return { data: signatureCALEth };
+          }
+          return null;
+        });
 
         const txHash = getSerializedTransaction(
           transactionContracts.uniswapUniversaRouter,
@@ -710,7 +720,6 @@ describe("Ledger Service", () => {
           erc20Tokens: [
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
-            "0354424f55747be9f9f5beb232ad59fe7af013b81d95fd5e0000001200000001304402200c4b2625ab03d6fd63b720f71317d7a9cac3f34a847e377f5b75b47e36459be002201fdc4ae8f67ef84a0c0e2a0758658b6e42d78668747ef4f87adf80012d96a698",
           ],
           nfts: [],
           externalPlugin: [

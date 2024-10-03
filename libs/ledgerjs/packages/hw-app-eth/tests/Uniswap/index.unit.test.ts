@@ -12,7 +12,7 @@ import {
 import SignatureCALEth from "../fixtures/SignatureCALEth";
 
 nock.disableNetConnect();
-jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
+jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
   get signatures() {
     return {
       1: SignatureCALEth,
