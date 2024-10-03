@@ -147,6 +147,9 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -162,6 +165,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common

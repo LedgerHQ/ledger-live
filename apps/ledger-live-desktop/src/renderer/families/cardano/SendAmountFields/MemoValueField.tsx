@@ -9,6 +9,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { track } from "~/renderer/analytics/segment";
+
 const MemoValueField = ({
   onChange,
   account,

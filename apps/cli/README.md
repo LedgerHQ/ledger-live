@@ -376,6 +376,25 @@ Usage: ledger-live i18n       # Test e2e functionality for device localization s
 Usage: ledger-live listApps   # list all installed apps on the device
  -d, --device <String>        : provide a specific HID path of a device
 
+Usage: ledger-live ledgerKeyRingProtocol # Ledger Key Ring Protocol command
+ -d, --device <String>        : provide a specific HID path of a device
+     --initMemberCredentials  : Init member credentials for Ledger Key Ring Protocol
+     --getKeyRingTree         : Get or create a Ledger Key Ring Protocol Tree
+     --encryptUserData        : Encrypt user data with the current private key secured by the Ledger Key Ring Protocol
+     --decryptUserData        : Encrypt user data with the current private key secured by the Ledger Key Ring Protocol
+     --getMembers             : Get members of the Ledger Key Ring Protocol Tree
+     --restoreKeyRingTree     : Restore a Ledger Key Ring Protocol Tree
+     --destroyKeyRingTree     : Destroy a Ledger Key Ring Protocol Tree
+     --pubKey <String>        : pubkey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --privateKey <String>    : privatekey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --rootId <String>        : The immutable id of the Tree root retrieved from getKeyRingTree result
+     --walletSyncEncryptionKey <String>: The secret used to encrypt/decrypt the wallet sync data retrieved from getKeyRingTree result
+     --applicationPath <String>: privatekey for Ledger Key Ring Protocol Tree from initMemberCredentials result
+     --message <String>       : message to be encrypted/decrypted
+     --applicationId <Number> : application identifier
+     --name <String>          : name of the instance
+     --apiBaseUrl <String>    : api base url for Ledger Key Ring Protocol
+
 Usage: ledger-live liveData   # utility for Ledger Live app.json file
  -d, --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
