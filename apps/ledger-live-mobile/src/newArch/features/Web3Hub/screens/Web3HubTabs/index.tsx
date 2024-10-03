@@ -51,7 +51,7 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, []);
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>

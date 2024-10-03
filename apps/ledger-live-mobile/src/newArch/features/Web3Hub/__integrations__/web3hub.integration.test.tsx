@@ -1,5 +1,5 @@
 import * as React from "react";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
+import { screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { Web3HubTest } from "./shared";
@@ -16,6 +16,10 @@ jest.mock(
       </>
     ),
 );
+
+jest.mock("react-native-view-shot", () => ({
+  captureScreen: jest.fn().mockResolvedValue("mock-uri.jpg"),
+}));
 
 async function waitForLoader() {
   expect(await screen.findByRole("progressbar")).toBeOnTheScreen();
@@ -330,9 +334,11 @@ describe("Web3Hub integration test", () => {
 
     expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /2/i }));
-    expect(await screen.findByText("1 tab")).toBeOnTheScreen();
-    expect((await screen.findAllByTestId("web3hub-tab-item-dummy"))[0]).toBeOnTheScreen();
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
+
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
+    await waitFor(() => expect(screen.getByText("1 tab")).toBeOnTheScreen());
+    await waitFor(() => expect(screen.getByTestId("web3hub-tab-item-dummy-0")).toBeOnTheScreen());
 
     expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /back/i }));
@@ -342,17 +348,14 @@ describe("Web3Hub integration test", () => {
 
     expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
     await user.press(screen.getAllByText("Wallet API Tools")[0]);
-    expect(await screen.findByText("Open Wallet API Tools")).toBeOnTheScreen();
-    await user.press(screen.getByText("Open Dummy Wallet App"));
     expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
     expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
 
     expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /2/i }));
-    expect(await screen.findByText("2 tabs")).toBeOnTheScreen();
-    expect(
-      (await screen.findAllByTestId("web3hub-tab-item-wallet-api-tools"))[0],
-    ).toBeOnTheScreen();
+
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
+    await waitFor(() => expect(screen.getByText("2 tabs")).toBeOnTheScreen());
+    await waitFor(() => expect(screen.getByTestId(/wallet-api-tools-0/)).toBeOnTheScreen());
   });
 });

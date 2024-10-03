@@ -1,19 +1,33 @@
-import React from "react";
-import { useTheme } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
+import { useTheme, useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { BorderlessButton } from "react-native-gesture-handler";
 import type { AppProps, MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
+import { Web3HubTabType } from "../../screens/Web3HubTabs/components/TabItem";
+import deviceStorage from "~/logic/storeWrapper";
 
 type Props = {
-  count: number;
+  count?: number;
   onclick?: () => void;
   navigation: MainProps["navigation"] | SearchProps["navigation"] | AppProps["navigation"];
 };
 
-export default function TabButton({ count, navigation, onclick }: Props) {
+export default function TabButton({ navigation, onclick }: Props) {
   const { colors } = useTheme();
+  const [count, setCount] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      const getTabCount = async () => {
+        const tabCount = (await deviceStorage.get("web3hubTabHistory")) as Web3HubTabType[];
+        setCount(tabCount.length.toString());
+      };
+
+      getTabCount();
+    }, []),
+  );
 
   const handleClick = () => {
     if (onclick) {
