@@ -38,7 +38,8 @@ const api = new MultiversxApi(
   getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
 );
 
-const proxy = new ApiNetworkProvider(getEnv("MULTIVERSX_API_ENDPOINT"));
+const networkConfig = { clientName: "ledger-live" };
+const proxy = new ApiNetworkProvider(getEnv("MULTIVERSX_API_ENDPOINT"), networkConfig);
 
 /**
  * Get account balances and nonce
