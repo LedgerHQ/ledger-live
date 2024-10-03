@@ -1,4 +1,4 @@
 {
-    "entry": ["src/Multiversx.ts"],
+    "entry": ["src/MultiversX.ts"],
     "ignoreUnimported": []
   }

@@ -1,22 +1,22 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
+import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 const AccountHeaderManageActions = (props: {
-  account: MultiversxAccount | SubAccount;
-  parentAccount?: MultiversxAccount | null;
+  account: MultiversXAccount | SubAccount;
+  parentAccount?: MultiversXAccount | null;
   source?: string;
 }) => {
   const { account, source } = props;
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
-  const validators = useMultiversxRandomizedValidators();
+  const validators = useMultiversXRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
     () => account.type === "Account" && hasMinimumDelegableBalance(account),

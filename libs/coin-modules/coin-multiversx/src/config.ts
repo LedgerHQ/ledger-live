@@ -1,6 +1,6 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type MultiversxCoinConfig = () => CurrencyConfig & {
+export type MultiversXCoinConfig = () => CurrencyConfig & {
   config_currency_multiversx: {
     type: "object";
     default: {
@@ -11,13 +11,13 @@ export type MultiversxCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: MultiversxCoinConfig | undefined;
+let coinConfig: MultiversXCoinConfig | undefined;
 
-export const setCoinConfig = (config: MultiversxCoinConfig): void => {
+export const setCoinConfig = (config: MultiversXCoinConfig): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (): ReturnType<MultiversxCoinConfig> => {
+export const getCoinConfig = (): ReturnType<MultiversXCoinConfig> => {
   if (!coinConfig?.()) {
     throw new Error("MultiversX module config not set");
   }

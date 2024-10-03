@@ -26,8 +26,8 @@ import {
 } from "@ledgerhq/live-common/families/multiversx/constants";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
-  MultiversxProvider,
-  MultiversxAccount as AccountType,
+  MultiversXProvider,
+  MultiversXAccount as AccountType,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { ModalsData } from "~/renderer/families/multiversx/modals";
 import Discreet from "~/renderer/components/Discreet";
@@ -50,7 +50,7 @@ interface DropDownItemType {
   parameters: {
     account: AccountType;
     contract: string;
-    validators: Array<MultiversxProvider>;
+    validators: Array<MultiversXProvider>;
     delegations: Array<DelegationType>;
     amount?: string;
   };
@@ -59,7 +59,7 @@ interface DropDownItemType {
 type Props = DelegationType & {
   account: AccountType;
   delegations: Array<DelegationType>;
-  validators: Array<MultiversxProvider>;
+  validators: Array<MultiversXProvider>;
 };
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (

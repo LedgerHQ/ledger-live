@@ -20,13 +20,13 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
-import { MultiversxSigner } from "../signer";
+import { MultiversXSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
-import type { MultiversxAccount, Transaction, TransactionStatus } from "../types";
+import type { MultiversXAccount, Transaction, TransactionStatus } from "../types";
 
 export function buildCurrencyBridge(
-  signerContext: SignerContext<MultiversxSigner>,
+  signerContext: SignerContext<MultiversXSigner>,
 ): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
@@ -44,8 +44,8 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<MultiversxSigner>,
-): AccountBridge<Transaction, MultiversxAccount, TransactionStatus> {
+  signerContext: SignerContext<MultiversXSigner>,
+): AccountBridge<Transaction, MultiversXAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -69,7 +69,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<MultiversxSigner>) {
+export function createBridges(signerContext: SignerContext<MultiversXSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

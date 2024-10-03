@@ -1,10 +1,10 @@
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { MultiversxDelegationFlowParamList } from "../../types";
+import type { MultiversXDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";
 
 export type ValidationSuccessPropsType = BaseComposite<
   StackNavigatorProps<
-    MultiversxDelegationFlowParamList,
-    ScreenName.MultiversxDelegationValidationSuccess
+    MultiversXDelegationFlowParamList,
+    ScreenName.MultiversXDelegationValidationSuccess
   >
 >;

@@ -16,13 +16,13 @@ const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
 
 /**
- * Multiversx API
+ * MultiversX API
  *
  * @example
- * import Multiversx from "@ledgerhq/hw-app-multiversx";
- * const multiversx = new Multiversx(transport)
+ * import MultiversX from "@ledgerhq/hw-app-multiversx";
+ * const multiversx = new MultiversX(transport)
  */
-export default class Multiversx {
+export default class MultiversX {
   transport: Transport;
 
   constructor(transport: Transport, scrambleKey = "eGLD") {
@@ -42,7 +42,7 @@ export default class Multiversx {
   }
 
   /**
-   * Get Multiversx app configuration.
+   * Get MultiversX app configuration.
    *
    * @return an object with a contractData, accountIndex, addressIndex, version
    * @example
@@ -67,7 +67,7 @@ export default class Multiversx {
   }
 
   /**
-   * Get Multiversx address for a given BIP 32 path.
+   * Get MultiversX address for a given BIP 32 path.
    *
    * @param path a path in BIP 32 format
    * @param boolDisplay optionally enable or not the display
@@ -104,7 +104,7 @@ export default class Multiversx {
   }
 
   /**
-   * Set Multiversx address for a given BIP 32 path.
+   * Set MultiversX address for a given BIP 32 path.
    *
    * @param path a path in BIP 32 format
    * @param display optionally enable or not the display

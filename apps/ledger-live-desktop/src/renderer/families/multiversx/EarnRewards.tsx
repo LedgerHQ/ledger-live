@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
+import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Text from "~/renderer/components/Text";
@@ -22,13 +22,13 @@ import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import {
   DelegationType,
-  MultiversxFamily,
+  MultiversXFamily,
   UnbondingType,
 } from "~/renderer/families/multiversx/types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface DelegationPropsType {
-  account: MultiversxAccount;
+  account: MultiversXAccount;
 }
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -41,7 +41,7 @@ const Wrapper = styled(Box).attrs(() => ({
 /* eslint-disable react/display-name */
 const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
-  const validators = useMultiversxRandomizedValidators();
+  const validators = useMultiversXRandomizedValidators();
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
     account.multiversxResources ? account.multiversxResources.delegations : [],
   );
@@ -259,7 +259,7 @@ const Delegation = (props: DelegationPropsType) => {
   );
 };
 
-const EarnRewards: MultiversxFamily["AccountBodyHeader"] = ({ account }) => {
+const EarnRewards: MultiversXFamily["AccountBodyHeader"] = ({ account }) => {
   return account.type === "Account" ? <Delegation account={account} /> : null;
 };
 

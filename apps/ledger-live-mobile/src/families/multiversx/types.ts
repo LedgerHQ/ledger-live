@@ -1,9 +1,9 @@
-import type { MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXProvider } from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface UnbondingType {
   amount: string;
   seconds: number;
-  validator?: MultiversxProvider;
+  validator?: MultiversXProvider;
 }
 
 export interface DelegationType {
@@ -13,7 +13,7 @@ export interface DelegationType {
   userActiveStake: string;
   userUnBondable: string;
   userUndelegatedList: UnbondingType[];
-  validator?: MultiversxProvider;
+  validator?: MultiversXProvider;
 }
 
 export interface NavigationType {

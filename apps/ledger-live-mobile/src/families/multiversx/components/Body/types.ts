@@ -1,8 +1,8 @@
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 export interface BodyPropsType {
-  account: MultiversxAccount;
+  account: MultiversXAccount;
 }
 
 export interface WithBodyPropsType {

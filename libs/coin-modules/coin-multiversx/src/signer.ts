@@ -1,16 +1,16 @@
-export type MultiversxAddress = {
+export type MultiversXAddress = {
   publicKey: string;
   address: string;
 };
 
-export type MultiversxSignature = {
+export type MultiversXSignature = {
   signature: null | Buffer;
 };
 
-export interface MultiversxSigner {
-  getAddress(path: string, boolDisplay?: boolean): Promise<MultiversxAddress>;
+export interface MultiversXSigner {
+  getAddress(path: string, boolDisplay?: boolean): Promise<MultiversXAddress>;
   setAddress(path: string, boolDisplay?: boolean): Promise<void>;
-  sign(path: string, message: string): Promise<MultiversxSignature>;
+  sign(path: string, message: string): Promise<MultiversXSignature>;
   provideESDTInfo(
     ticker?: string,
     id?: string,

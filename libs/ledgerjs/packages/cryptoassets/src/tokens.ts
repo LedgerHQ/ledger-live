@@ -5,7 +5,7 @@ import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
 import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import vechainTokens, { Vip180Token } from "./data/vip180";
-import esdttokens, { MultiversxESDTToken } from "./data/esdt";
+import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import casperTokens, { CasperToken } from "./data/casper";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
@@ -40,8 +40,8 @@ addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
 // Algoland tokens
 addTokens(asatokens.map(convertAlgorandASATokens));
-// Multiversx tokens
-addTokens(esdttokens.map(convertMultiversxESDTTokens));
+// MultiversX tokens
+addTokens(esdttokens.map(convertMultiversXESDTTokens));
 // Cardano tokens
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 // Stellar tokens
@@ -373,13 +373,13 @@ function convertTRONTokens(type: "trc10" | "trc20") {
   };
 }
 
-function convertMultiversxESDTTokens([
+function convertMultiversXESDTTokens([
   ticker,
   identifier,
   decimals,
   signature,
   name,
-]: MultiversxESDTToken): TokenCurrency {
+]: MultiversXESDTToken): TokenCurrency {
   const MULTIVERSX_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
   const parentCurrency = getCryptoCurrencyById("multiversx");
 

@@ -2,48 +2,48 @@ import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import type { ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
-export type MultiversxDelegationFlowParamList = {
-  [ScreenName.MultiversxDelegationStarted]: {
-    validators: MultiversxProvider[];
-    account: MultiversxAccount;
+export type MultiversXDelegationFlowParamList = {
+  [ScreenName.MultiversXDelegationStarted]: {
+    validators: MultiversXProvider[];
+    account: MultiversXAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationValidator]: {
-    validators: MultiversxProvider[];
-    account: MultiversxAccount;
+  [ScreenName.MultiversXDelegationValidator]: {
+    validators: MultiversXProvider[];
+    account: MultiversXAccount;
     transaction?: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
     skipStartedStep?: boolean;
   };
-  [ScreenName.MultiversxDelegationValidatorList]: {
+  [ScreenName.MultiversXDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
-    validators: MultiversxProvider[];
-    account: MultiversxAccount;
+    validators: MultiversXProvider[];
+    account: MultiversXAccount;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationAmount]: {
+  [ScreenName.MultiversXDelegationAmount]: {
     transaction: Transaction;
-    validators: MultiversxProvider[];
-    account: MultiversxAccount;
+    validators: MultiversXProvider[];
+    account: MultiversXAccount;
     validatorName: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationSelectDevice]: {
+  [ScreenName.MultiversXDelegationSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction | null | undefined;
     status?: TransactionStatus;
-    validators: MultiversxProvider[];
+    validators: MultiversXProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationConnectDevice]: {
+  [ScreenName.MultiversXDelegationConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -55,22 +55,22 @@ export type MultiversxDelegationFlowParamList = {
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
-    validators: MultiversxProvider[];
+    validators: MultiversXProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationValidationError]: {
+  [ScreenName.MultiversXDelegationValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.MultiversxDelegationValidationSuccess]: {
+  [ScreenName.MultiversXDelegationValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     result: Operation;
-    validators: MultiversxProvider[];
+    validators: MultiversXProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

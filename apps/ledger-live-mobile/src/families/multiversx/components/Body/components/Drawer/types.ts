@@ -1,16 +1,16 @@
 import type {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import type BigNumber from "bignumber.js";
 
 export interface DrawerPropsType {
   onClose: () => void;
-  account: MultiversxAccount;
+  account: MultiversXAccount;
   data: {
     type: string;
     amount: BigNumber;
-    validator: MultiversxProvider;
+    validator: MultiversXProvider;
     claimableRewards?: string | BigNumber;
     seconds?: number;
   };

@@ -18,15 +18,15 @@ import {
 } from "@ledgerhq/live-common/families/multiversx/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 
 export type Recipient = {
   address: string;
 };
-export type ValidatorItemType = MultiversxProvider & {
-  account: MultiversxAccount;
+export type ValidatorItemType = MultiversXProvider & {
+  account: MultiversXAccount;
   onSelectValidator: (recipient: string) => void;
   disabled: boolean;
   active: boolean;

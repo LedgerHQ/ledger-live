@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { MultiversxAccount, MultiversxProtocolTransaction, Transaction } from "./types";
+import { MultiversXAccount, MultiversXProtocolTransaction, Transaction } from "./types";
 
 describe("buildOptimisticOperation", () => {
   it("should work with mode = send", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as MultiversxAccount;
+    } as MultiversXAccount;
 
     const transaction = {
       family: "multiversx",
@@ -16,9 +16,9 @@ describe("buildOptimisticOperation", () => {
       recipient: "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx",
     } as Transaction;
 
-    const notSignedTransaction: MultiversxProtocolTransaction = {
+    const notSignedTransaction: MultiversXProtocolTransaction = {
       nonce: 7,
-    } as MultiversxProtocolTransaction;
+    } as MultiversXProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 
@@ -33,7 +33,7 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = delegate", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as MultiversxAccount;
+    } as MultiversXAccount;
 
     const transaction = {
       family: "multiversx",
@@ -44,9 +44,9 @@ describe("buildOptimisticOperation", () => {
       data: "delegate",
     } as Transaction;
 
-    const notSignedTransaction: MultiversxProtocolTransaction = {
+    const notSignedTransaction: MultiversXProtocolTransaction = {
       nonce: 7,
-    } as MultiversxProtocolTransaction;
+    } as MultiversXProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 
@@ -61,7 +61,7 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = claimRewards", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as MultiversxAccount;
+    } as MultiversXAccount;
 
     const transaction = {
       family: "multiversx",
@@ -72,9 +72,9 @@ describe("buildOptimisticOperation", () => {
       data: "claimRewards",
     } as Transaction;
 
-    const notSignedTransaction: MultiversxProtocolTransaction = {
+    const notSignedTransaction: MultiversXProtocolTransaction = {
       nonce: 7,
-    } as MultiversxProtocolTransaction;
+    } as MultiversXProtocolTransaction;
 
     const operation = buildOptimisticOperation(account, transaction, notSignedTransaction);
 

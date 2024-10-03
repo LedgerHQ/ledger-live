@@ -5,13 +5,13 @@ import { TableLine } from "~/renderer/families/multiversx/blocks/Delegation";
 import Delegation from "~/renderer/families/multiversx/components/Delegations/components/Delegation";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
-  MultiversxProvider,
-  MultiversxAccount as AccountType,
+  MultiversXProvider,
+  MultiversXAccount as AccountType,
 } from "@ledgerhq/live-common/families/multiversx/types";
 
 export interface Props {
   delegations: Array<DelegationType>;
-  validators: Array<MultiversxProvider>;
+  validators: Array<MultiversXProvider>;
   account: AccountType;
 }
 const Delegations = (props: Props) => {

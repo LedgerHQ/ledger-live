@@ -11,20 +11,20 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
-import type { MultiversxAccount, Transaction, TransactionStatus } from "./types";
+import type { MultiversXAccount, Transaction, TransactionStatus } from "./types";
 import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";
 import {
-  MultiversxDecimalsLimitReached,
-  MultiversxMinDelegatedAmountError,
-  MultiversxMinUndelegatedAmountError,
-  MultiversxDelegationBelowMinimumError,
+  MultiversXDecimalsLimitReached,
+  MultiversXMinDelegatedAmountError,
+  MultiversXMinUndelegatedAmountError,
+  MultiversXDelegationBelowMinimumError,
   NotEnoughEGLDForFees,
 } from "./errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
-  MultiversxAccount,
+  MultiversXAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
@@ -71,7 +71,7 @@ export const getTransactionStatus: AccountBridge<
     }
 
     if (!errors.amount && !totalSpentEgld.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpentEgld)) {
-      errors.amount = new MultiversxDecimalsLimitReached();
+      errors.amount = new MultiversXDecimalsLimitReached();
     }
   } else {
     totalSpent = totalSpentEgld = isAmountSpentFromBalance(transaction.mode)
@@ -96,11 +96,11 @@ export const getTransactionStatus: AccountBridge<
         },
       );
       if (transaction.mode === "delegate") {
-        errors.amount = new MultiversxMinDelegatedAmountError("", {
+        errors.amount = new MultiversXMinDelegatedAmountError("", {
           formattedAmount,
         });
       } else if (transaction.mode === "unDelegate") {
-        errors.amount = new MultiversxMinUndelegatedAmountError("", {
+        errors.amount = new MultiversXMinUndelegatedAmountError("", {
           formattedAmount,
         });
       }
@@ -126,7 +126,7 @@ export const getTransactionStatus: AccountBridge<
           showCode: true,
         },
       );
-      errors.amount = new MultiversxDelegationBelowMinimumError("", {
+      errors.amount = new MultiversXDelegationBelowMinimumError("", {
         formattedAmount,
       });
     }

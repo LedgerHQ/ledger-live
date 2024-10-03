@@ -6,7 +6,7 @@
     "Ledger",
     "LedgerWallet",
     "egld",
-    "Multiversx",
+    "MultiversX",
     "NanoS",
     "Blue",
     "Hardware Wallet"
@@ -22,9 +22,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/Multiversx.js",
-  "module": "lib-es/Multiversx.js",
-  "types": "lib/Multiversx.d.ts",
+  "main": "lib/MultiversX.js",
+  "module": "lib-es/MultiversX.js",
+  "types": "lib/MultiversX.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",

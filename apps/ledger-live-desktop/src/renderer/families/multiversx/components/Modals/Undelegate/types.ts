@@ -1,6 +1,6 @@
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
@@ -16,8 +16,8 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account: MultiversxAccount;
-  validators: MultiversxProvider[];
+  account: MultiversXAccount;
+  validators: MultiversXProvider[];
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;

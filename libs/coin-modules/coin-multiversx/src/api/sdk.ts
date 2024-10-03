@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import MultiversxApi from "./apiCalls";
+import MultiversXApi from "./apiCalls";
 import {
-  MultiversxApiTransaction,
-  MultiversxDelegation,
-  MultiversxProvider,
-  MultiversxTransferOptions,
-  MultiversxTransactionOperation,
+  MultiversXApiTransaction,
+  MultiversXDelegation,
+  MultiversXProvider,
+  MultiversXTransferOptions,
+  MultiversXTransactionOperation,
   ESDTToken,
   Transaction,
-  MultiversxOperation,
+  MultiversXOperation,
 } from "../types";
 import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
@@ -20,7 +20,7 @@ import {
   ApiNetworkProvider,
   INetworkConfig,
   INonce,
-  Transaction as MultiversxSdkTransaction,
+  Transaction as MultiversXSdkTransaction,
   TransactionPayload,
 } from "@multiversx/sdk-core";
 import { BinaryUtils } from "../utils/binary.utils";
@@ -33,7 +33,7 @@ import {
   MIN_GAS_LIMIT,
 } from "../constants";
 import { MultiversXAccount } from "./dtos/multiversx-account";
-const api = new MultiversxApi(
+const api = new MultiversXApi(
   getEnv("MULTIVERSX_API_ENDPOINT"),
   getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
 );
@@ -52,7 +52,7 @@ export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
   return account;
 };
 
-export const getProviders = async (): Promise<MultiversxProvider[]> => {
+export const getProviders = async (): Promise<MultiversXProvider[]> => {
   const providers = await api.getProviders();
   return providers;
 };
@@ -72,11 +72,11 @@ export const getAccountNonce = async (addr: string): Promise<INonce> => {
 /**
  * Returns true if account is the signer
  */
-function isSender(transaction: MultiversxApiTransaction, addr: string): boolean {
+function isSender(transaction: MultiversXApiTransaction, addr: string): boolean {
   return transaction.sender === addr;
 }
 
-function isSelfSend(transaction: MultiversxApiTransaction): boolean {
+function isSelfSend(transaction: MultiversXApiTransaction): boolean {
   return (
     !!transaction.sender && !!transaction.receiver && transaction.sender === transaction.receiver
   );
@@ -85,7 +85,7 @@ function isSelfSend(transaction: MultiversxApiTransaction): boolean {
 /**
  * Map transaction to an Operation Type
  */
-function getEGLDOperationType(transaction: MultiversxApiTransaction, addr: string): OperationType {
+function getEGLDOperationType(transaction: MultiversXApiTransaction, addr: string): OperationType {
   if (transaction.action && transaction.action.category == "stake") {
     const stakeAction = transaction.action.name;
     switch (stakeAction) {
@@ -102,14 +102,14 @@ function getEGLDOperationType(transaction: MultiversxApiTransaction, addr: strin
     }
   }
   return isSender(transaction, addr)
-    ? transaction.transfer === MultiversxTransferOptions.esdt
+    ? transaction.transfer === MultiversXTransferOptions.esdt
       ? "FEES"
       : "OUT"
     : "IN";
 }
 
 function getESDTOperationValue(
-  transaction: MultiversxApiTransaction,
+  transaction: MultiversXApiTransaction,
   tokenIdentifier?: string,
 ): BigNumber {
   const hasFailed =
@@ -135,8 +135,8 @@ function getESDTOperationValue(
   }
 }
 
-function getStakingAmount(transaction: MultiversxApiTransaction, address: string): BigNumber {
-  const operation: MultiversxTransactionOperation | undefined = transaction.operations?.find(
+function getStakingAmount(transaction: MultiversXApiTransaction, address: string): BigNumber {
+  const operation: MultiversXTransactionOperation | undefined = transaction.operations?.find(
     ({ sender, receiver, action, type }) =>
       action == "transfer" &&
       type == "egld" &&
@@ -164,9 +164,9 @@ function getStakingAmount(transaction: MultiversxApiTransaction, address: string
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getEGLDOperationValue(transaction: MultiversxApiTransaction, address: string): BigNumber {
+function getEGLDOperationValue(transaction: MultiversXApiTransaction, address: string): BigNumber {
   if (transaction.mode === "send") {
-    if (transaction.transfer === MultiversxTransferOptions.esdt) {
+    if (transaction.transfer === MultiversXTransferOptions.esdt) {
       // Only fees paid in EGLD for token transactions
       return isSender(transaction, address) && transaction.fee
         ? new BigNumber(transaction.fee)
@@ -186,14 +186,14 @@ function getEGLDOperationValue(transaction: MultiversxApiTransaction, address: s
 }
 
 /**
- * Map the Multiversx history transaction to a Ledger Live Operation
+ * Map the MultiversX history transaction to a Ledger Live Operation
  */
 function transactionToEGLDOperation(
   accountId: string,
   addr: string,
-  transaction: MultiversxApiTransaction,
+  transaction: MultiversXApiTransaction,
   subAccounts: TokenAccount[],
-): MultiversxOperation {
+): MultiversXOperation {
   const type = getEGLDOperationType(transaction, addr);
   const fee = new BigNumber(transaction.fee ?? 0);
   const hasFailed =
@@ -209,7 +209,7 @@ function transactionToEGLDOperation(
       ? delegationAmount.minus(fee)
       : getEGLDOperationValue(transaction, addr);
 
-  const operation: MultiversxOperation = {
+  const operation: MultiversXOperation = {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
     fee,
@@ -252,7 +252,7 @@ function transactionToEGLDOperation(
 }
 
 const getESDTOperationType = (
-  transaction: MultiversxApiTransaction,
+  transaction: MultiversXApiTransaction,
   address: string,
 ): OperationType => {
   return isSender(transaction, address) ? "OUT" : "IN";
@@ -261,9 +261,9 @@ const getESDTOperationType = (
 const transactionToESDTOperation = (
   tokenAccountId: string,
   addr: string,
-  transaction: MultiversxApiTransaction,
+  transaction: MultiversXApiTransaction,
   tokenIdentifier?: string,
-): MultiversxOperation => {
+): MultiversXOperation => {
   const type = getESDTOperationType(transaction, addr);
   const value = getESDTOperationValue(transaction, tokenIdentifier);
   const fee = new BigNumber(transaction.fee ?? 0);
@@ -297,7 +297,7 @@ export const getEGLDOperations = async (
   addr: string,
   startAt: number,
   subAccounts: TokenAccount[],
-): Promise<MultiversxOperation[]> => {
+): Promise<MultiversXOperation[]> => {
   const rawTransactions = await api.getHistory(addr, startAt);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map(transaction =>
@@ -309,7 +309,7 @@ export const getAccountESDTTokens = async (address: string): Promise<ESDTToken[]
   return await api.getESDTTokensForAddress(address);
 };
 
-export const getAccountDelegations = async (address: string): Promise<MultiversxDelegation[]> => {
+export const getAccountDelegations = async (address: string): Promise<MultiversXDelegation[]> => {
   return await api.getAccountDelegations(address);
 };
 
@@ -323,7 +323,7 @@ export const getESDTOperations = async (
   address: string,
   tokenIdentifier: string,
   startAt: number,
-): Promise<MultiversxOperation[]> => {
+): Promise<MultiversXOperation[]> => {
   const accountESDTTransactions = await api.getESDTTransactionsForAddress(
     address,
     tokenIdentifier,
@@ -346,7 +346,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
     ChainID: CHAIN_ID,
   };
 
-  const transaction = new MultiversxSdkTransaction({
+  const transaction = new MultiversXSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
     receiver: new Address(getAbandonSeedAddress("multiversx")),
     chainID: CHAIN_ID,

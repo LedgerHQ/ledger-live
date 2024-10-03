@@ -10,8 +10,8 @@ import ValidatorItem from "./ValidatorItem";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 import { useSearchValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
   Transaction,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -41,8 +41,8 @@ const SeeAllButton = styled.div<{
   }
 `;
 type Props = {
-  account: MultiversxAccount;
-  validators: Array<MultiversxProvider>;
+  account: MultiversXAccount;
+  validators: Array<MultiversXProvider>;
   onSelectValidator: (recipient: string) => void;
   transaction: Transaction;
 };
@@ -69,7 +69,7 @@ const ValidatorList = (props: Props) => {
     [transaction.recipient],
   );
   const renderItem = useCallback(
-    (props: MultiversxProvider & { disabled: boolean }) =>
+    (props: MultiversXProvider & { disabled: boolean }) =>
       props ? (
         <ValidatorItem
           unit={unit}

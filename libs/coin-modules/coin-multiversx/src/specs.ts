@@ -1,7 +1,7 @@
 import type {
-  MultiversxAccount,
-  MultiversxOperation,
-  MultiversxOperationRaw,
+  MultiversXAccount,
+  MultiversXOperation,
+  MultiversXOperationRaw,
   Transaction,
 } from "./types";
 import invariant from "invariant";
@@ -65,9 +65,9 @@ function expectCorrectEsdtBalanceChange(input: TransactionTestInput<Transaction>
 function expectCorrectOptimisticOperation(input: TransactionTestInput<Transaction>) {
   const { operation, optimisticOperation, transaction } = input;
 
-  const opExpected: Partial<MultiversxOperationRaw> = toOperationRaw({
+  const opExpected: Partial<MultiversXOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  }) as MultiversxOperationRaw;
+  }) as MultiversXOperationRaw;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
@@ -129,7 +129,7 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
 
 function expectCorrectSpendableBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, accountBeforeTransaction } = input;
-  const operation = input.operation as MultiversxOperation;
+  const operation = input.operation as MultiversXOperation;
   let value = operation.value;
   if (operation.extra.amount) {
     if (operation.type === "DELEGATE") {
@@ -156,7 +156,7 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
 }
 
 const multiversx: AppSpec<Transaction> = {
-  name: "Multiversx",
+  name: "MultiversX",
   currency: getCryptoCurrencyById("multiversx"),
   appQuery: {
     model: DeviceModelId.nanoS,
@@ -309,7 +309,7 @@ const multiversx: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
-        const delegations = (account as MultiversxAccount)?.multiversxResources?.delegations;
+        const delegations = (account as MultiversXAccount)?.multiversxResources?.delegations;
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           delegations.some(d => new BigNumber(d.userActiveStake).gt(0)),
@@ -339,7 +339,7 @@ const multiversx: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptWithdrawTransaction,
       transaction: ({ account, bridge }) => {
-        const delegations = (account as MultiversxAccount)?.multiversxResources?.delegations;
+        const delegations = (account as MultiversXAccount)?.multiversxResources?.delegations;
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           // among all delegations

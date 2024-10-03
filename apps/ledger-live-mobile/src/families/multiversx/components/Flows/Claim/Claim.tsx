@@ -15,9 +15,9 @@ import PickMethod from "./components/PickMethod";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import type { MultiversxClaimRewardsFlowParamList } from "./types";
+import type { MultiversXClaimRewardsFlowParamList } from "./types";
 
-const Stack = createStackNavigator<MultiversxClaimRewardsFlowParamList>();
+const Stack = createStackNavigator<MultiversXClaimRewardsFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -45,7 +45,7 @@ const Claim = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsValidator}
+        name={ScreenName.MultiversXClaimRewardsValidator}
         component={PickValidator}
         options={{
           headerTitle: () => (
@@ -69,7 +69,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsMethod}
+        name={ScreenName.MultiversXClaimRewardsMethod}
         component={PickMethod}
         options={{
           headerTitle: () => <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />,
@@ -77,7 +77,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsSelectDevice}
+        name={ScreenName.MultiversXClaimRewardsSelectDevice}
         component={ClaimRewardsSelectDevice}
         options={{
           headerTitle: () => (
@@ -93,7 +93,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsConnectDevice}
+        name={ScreenName.MultiversXClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
           headerLeft: undefined,
@@ -111,7 +111,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsValidationError}
+        name={ScreenName.MultiversXClaimRewardsValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -120,7 +120,7 @@ const Claim = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxClaimRewardsValidationSuccess}
+        name={ScreenName.MultiversXClaimRewardsValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

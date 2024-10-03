@@ -1,17 +1,17 @@
 import BigNumber from "bignumber.js";
 import {
-  type MultiversxResourcesRaw,
-  type MultiversxResources,
-  type MultiversxAccountRaw,
-  type MultiversxAccount,
-  type MultiversxOperationExtraRaw,
-  type MultiversxOperationExtra,
-  isMultiversxOperationExtraRaw,
-  isMultiversxOperationExtra,
+  type MultiversXResourcesRaw,
+  type MultiversXResources,
+  type MultiversXAccountRaw,
+  type MultiversXAccount,
+  type MultiversXOperationExtraRaw,
+  type MultiversXOperationExtra,
+  isMultiversXOperationExtraRaw,
+  isMultiversXOperationExtra,
 } from "./types";
 import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
-export function toMultiversxResourcesRaw(r: MultiversxResources): MultiversxResourcesRaw {
+export function toMultiversXResourcesRaw(r: MultiversXResources): MultiversXResourcesRaw {
   const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
@@ -20,7 +20,7 @@ export function toMultiversxResourcesRaw(r: MultiversxResources): MultiversxReso
   };
 }
 
-export function fromMultiversxResourcesRaw(r: MultiversxResourcesRaw): MultiversxResources {
+export function fromMultiversXResourcesRaw(r: MultiversXResourcesRaw): MultiversXResources {
   const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
@@ -30,24 +30,24 @@ export function fromMultiversxResourcesRaw(r: MultiversxResourcesRaw): Multivers
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
-  const multiversxAccount = account as MultiversxAccount;
+  const multiversxAccount = account as MultiversXAccount;
   if (multiversxAccount.multiversxResources) {
-    (accountRaw as MultiversxAccountRaw).multiversxResources = toMultiversxResourcesRaw(
+    (accountRaw as MultiversXAccountRaw).multiversxResources = toMultiversXResourcesRaw(
       multiversxAccount.multiversxResources,
     );
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const multiversxResourcesRaw = (accountRaw as MultiversxAccountRaw).multiversxResources;
+  const multiversxResourcesRaw = (accountRaw as MultiversXAccountRaw).multiversxResources;
   if (multiversxResourcesRaw)
-    (account as MultiversxAccount).multiversxResources =
-      fromMultiversxResourcesRaw(multiversxResourcesRaw);
+    (account as MultiversXAccount).multiversxResources =
+      fromMultiversXResourcesRaw(multiversxResourcesRaw);
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
-  const extra: MultiversxOperationExtra = {};
-  if (!isMultiversxOperationExtraRaw(extraRaw)) {
+  const extra: MultiversXOperationExtra = {};
+  if (!isMultiversXOperationExtraRaw(extraRaw)) {
     // All fields might be undefined
     return extra;
   }
@@ -59,8 +59,8 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
 }
 
 export function toOperationExtraRaw(extra: OperationExtra) {
-  const extraRaw: MultiversxOperationExtraRaw = {};
-  if (!isMultiversxOperationExtra(extra)) {
+  const extraRaw: MultiversXOperationExtraRaw = {};
+  if (!isMultiversXOperationExtra(extra)) {
     // All fields might be undefined
     return extraRaw;
   }

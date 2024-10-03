@@ -21,14 +21,14 @@ import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/multiversx/constants";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 // FIXME spreading UnbondingType is a bad pattern
 const Unbonding = (
   props: UnbondingType & {
-    account: MultiversxAccount;
+    account: MultiversXAccount;
     unbondings: UnbondingType[];
   },
 ) => {

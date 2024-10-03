@@ -4,12 +4,12 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
-import MultiversxBuildESDTTokenAccounts from "./buildSubAccounts";
+import MultiversXBuildESDTTokenAccounts from "./buildSubAccounts";
 import { reconciliateSubAccounts } from "./reconciliation";
 import { computeDelegationBalance } from "./logic";
-import { MultiversxAccount } from "./types";
+import { MultiversXAccount } from "./types";
 
-export const getAccountShape: GetAccountShape<MultiversxAccount> = async (info, syncConfig) => {
+export const getAccountShape: GetAccountShape<MultiversXAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -29,7 +29,7 @@ export const getAccountShape: GetAccountShape<MultiversxAccount> = async (info, 
   let subAccounts: TokenAccount[] = [];
   const hasTokens = await hasESDTTokens(address);
   if (hasTokens) {
-    const tokenAccounts = await MultiversxBuildESDTTokenAccounts({
+    const tokenAccounts = await MultiversXBuildESDTTokenAccounts({
       currency,
       accountId: accountId,
       accountAddress: address,

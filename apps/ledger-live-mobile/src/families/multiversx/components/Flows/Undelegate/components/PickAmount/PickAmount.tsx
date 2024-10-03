@@ -117,7 +117,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const onContinue = useCallback(() => {
     if (transaction) {
-      navigation.navigate(ScreenName.MultiversxUndelegationSelectDevice, {
+      navigation.navigate(ScreenName.MultiversXUndelegationSelectDevice, {
         accountId: account.id,
         transaction,
       });

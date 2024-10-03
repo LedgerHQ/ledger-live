@@ -3,12 +3,12 @@ import { SignedOperation } from "@ledgerhq/types-live/src";
 import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {
   ESDTToken,
-  MultiversxApiTransaction,
-  MultiversxDelegation,
-  MultiversxProvider,
-  MultiversxTransactionAction,
-  MultiversxTransactionMode,
-  MultiversxTransferOptions,
+  MultiversXApiTransaction,
+  MultiversXDelegation,
+  MultiversXProvider,
+  MultiversXTransactionAction,
+  MultiversXTransactionMode,
+  MultiversXTransferOptions,
   NetworkInfo,
 } from "../types";
 import { MultiversXAccount } from "./dtos/multiversx-account";
@@ -36,7 +36,7 @@ interface BlockRoundResponse {
   round: number;
 }
 
-const decodeTransactionMode = (action?: MultiversxTransactionAction): string => {
+const decodeTransactionMode = (action?: MultiversXTransactionAction): string => {
   if (!action) {
     return "send";
   }
@@ -54,7 +54,7 @@ const decodeTransactionMode = (action?: MultiversxTransactionAction): string => 
   return mode;
 };
 
-export default class MultiversxApi {
+export default class MultiversXApi {
   private API_URL: string;
   private DELEGATION_API_URL: string;
 
@@ -78,8 +78,8 @@ export default class MultiversxApi {
     };
   }
 
-  async getProviders(): Promise<MultiversxProvider[]> {
-    const { data: providers } = await network<MultiversxProvider[]>({
+  async getProviders(): Promise<MultiversXProvider[]> {
+    const { data: providers } = await network<MultiversXProvider[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/providers`,
     });
@@ -135,22 +135,22 @@ export default class MultiversxApi {
     return hash;
   }
 
-  async getHistory(addr: string, startAt: number): Promise<MultiversxApiTransaction[]> {
+  async getHistory(addr: string, startAt: number): Promise<MultiversXApiTransaction[]> {
     const { data: transactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
     });
 
-    let allTransactions: MultiversxApiTransaction[] = [];
+    let allTransactions: MultiversXApiTransaction[] = [];
     let from = 0;
     while (from < transactionsCount) {
-      const { data: transactions } = await network<MultiversxApiTransaction[]>({
+      const { data: transactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       for (const transaction of transactions) {
-        transaction.mode = decodeTransactionMode(transaction.action) as MultiversxTransactionMode;
+        transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
       }
 
       allTransactions = [...allTransactions, ...transactions];
@@ -161,8 +161,8 @@ export default class MultiversxApi {
     return allTransactions;
   }
 
-  async getAccountDelegations(addr: string): Promise<MultiversxDelegation[]> {
-    const { data: delegations } = await network<MultiversxDelegation[]>({
+  async getAccountDelegations(addr: string): Promise<MultiversXDelegation[]> {
+    const { data: delegations } = await network<MultiversXDelegation[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/accounts/${addr}/delegations`,
     });
@@ -174,16 +174,16 @@ export default class MultiversxApi {
     addr: string,
     token: string,
     startAt: number,
-  ): Promise<MultiversxApiTransaction[]> {
+  ): Promise<MultiversXApiTransaction[]> {
     const { data: tokenTransactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
     });
 
-    let allTokenTransactions: MultiversxApiTransaction[] = [];
+    let allTokenTransactions: MultiversXApiTransaction[] = [];
     let from = 0;
     while (from < tokenTransactionsCount) {
-      const { data: tokenTransactions } = await network<MultiversxApiTransaction[]>({
+      const { data: tokenTransactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
       });
@@ -194,7 +194,7 @@ export default class MultiversxApi {
     }
 
     for (const esdtTransaction of allTokenTransactions) {
-      esdtTransaction.transfer = MultiversxTransferOptions.esdt;
+      esdtTransaction.transfer = MultiversXTransferOptions.esdt;
     }
 
     return allTokenTransactions;

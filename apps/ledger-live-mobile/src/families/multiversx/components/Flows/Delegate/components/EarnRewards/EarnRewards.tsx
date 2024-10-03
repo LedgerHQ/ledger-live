@@ -33,7 +33,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
    */
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.MultiversxDelegationValidator, route.params);
+    navigation.navigate(ScreenName.MultiversXDelegationValidator, route.params);
   }, [navigation, route.params]);
 
   /*

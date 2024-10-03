@@ -6,10 +6,10 @@ import {
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/multiversx/constants";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
+import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import {
-  MultiversxProvider,
-  MultiversxOperation,
+  MultiversXProvider,
+  MultiversXOperation,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
@@ -56,12 +56,12 @@ const redirectAddress = (address: string) => () => {
 type OperationDetailsDelegationProps = {
   account: Account;
   isTransactionField?: boolean;
-  operation: MultiversxOperation;
+  operation: MultiversXOperation;
 };
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
-  const { validators } = useMultiversxPreloadData();
-  const formattedValidator: MultiversxProvider | undefined = validators.find(
+  const { validators } = useMultiversXPreloadData();
+  const formattedValidator: MultiversXProvider | undefined = validators.find(
     v => v.contract === operation.contract,
   );
 
@@ -104,12 +104,12 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   );
 };
 
-const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, MultiversxOperation>) => {
+const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, MultiversXOperation>) => {
   const { type, account, operation } = props;
   const unit = useAccountUnit(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { validators } = useMultiversxPreloadData();
+  const { validators } = useMultiversXPreloadData();
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -227,7 +227,7 @@ const UndelegateAmountCell = ({
   operation,
   currency,
   unit,
-}: AmountCellExtraProps<MultiversxOperation>) => {
+}: AmountCellExtraProps<MultiversXOperation>) => {
   return !operation.extra.amount || operation.extra.amount?.isZero() ? null : (
     <Fragment>
       <FormattedVal

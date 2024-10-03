@@ -18,14 +18,14 @@ import ValidationSuccess from "./components/ValidationSuccess";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 
-import type { MultiversxDelegationFlowParamList } from "./types";
+import type { MultiversXDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 const options = {
   headerShown: false,
 };
 
-const Stack = createStackNavigator<MultiversxDelegationFlowParamList>();
+const Stack = createStackNavigator<MultiversXDelegationFlowParamList>();
 
 /*
  * Handle the component declaration.
@@ -49,7 +49,7 @@ const Delegate = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationStarted}
+        name={ScreenName.MultiversXDelegationStarted}
         component={EarnRewards}
         options={{
           headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
@@ -57,7 +57,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationValidator}
+        name={ScreenName.MultiversXDelegationValidator}
         component={SetDelegation}
         options={{
           gestureEnabled: false,
@@ -74,7 +74,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationValidatorList}
+        name={ScreenName.MultiversXDelegationValidatorList}
         component={PickValidator}
         options={{
           gestureEnabled: false,
@@ -83,7 +83,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationAmount}
+        name={ScreenName.MultiversXDelegationAmount}
         component={PickAmount}
         options={props => ({
           headerTitle: () => (
@@ -96,7 +96,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationSelectDevice}
+        name={ScreenName.MultiversXDelegationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
@@ -112,7 +112,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationConnectDevice}
+        name={ScreenName.MultiversXDelegationConnectDevice}
         component={ConnectDevice}
         options={{
           headerLeft: undefined,
@@ -130,7 +130,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationValidationError}
+        name={ScreenName.MultiversXDelegationValidationError}
         component={ValidationError}
         options={{
           headerShown: false,
@@ -139,7 +139,7 @@ const Delegate = () => {
       />
 
       <Stack.Screen
-        name={ScreenName.MultiversxDelegationValidationSuccess}
+        name={ScreenName.MultiversXDelegationValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerLeft: undefined,

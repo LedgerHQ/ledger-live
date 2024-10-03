@@ -9,21 +9,21 @@ import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
-import { Transaction, MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
+import { Transaction, MultiversXProvider } from "@ledgerhq/live-common/families/multiversx/types";
 import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };
-type OptionType = MultiversxProvider & {
+type OptionType = MultiversXProvider & {
   delegation: DelegationType | undefined;
 };
 interface DelegationSelectorFieldType {
-  validators: Array<MultiversxProvider>;
+  validators: Array<MultiversXProvider>;
   delegations: Array<DelegationType>;
   contract: string;
   transaction: Transaction;
-  onChange: (validator?: MultiversxProvider | null) => void;
+  onChange: (validator?: MultiversXProvider | null) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   t: TFunction;
   bridge: AccountBridge<Transaction>;

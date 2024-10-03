@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { DelegationType } from "../../types";
 import type { SummaryPropsType, ItemType } from "./types";
 
@@ -28,7 +28,7 @@ const withSummary = (Component: FC<SummaryPropsType>) => (props: SummaryPropsTyp
 const Summary = (props: SummaryPropsType) => {
   const { t } = useTranslation();
 
-  const account = props.account as MultiversxAccount;
+  const account = props.account as MultiversXAccount;
   const unit = useAccountUnit(account);
 
   /*

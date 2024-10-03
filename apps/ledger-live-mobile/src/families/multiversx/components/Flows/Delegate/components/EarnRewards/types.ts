@@ -1,8 +1,8 @@
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { MultiversxDelegationFlowParamList } from "../../types";
+import type { MultiversXDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";
 
 export type EarnRewardsPropsType = StackNavigatorProps<
-  MultiversxDelegationFlowParamList,
-  ScreenName.MultiversxDelegationStarted
+  MultiversXDelegationFlowParamList,
+  ScreenName.MultiversXDelegationStarted
 >;

@@ -3,10 +3,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
-  MultiversxAccount,
+  MultiversXAccount,
   Transaction,
   TransactionStatus,
-  MultiversxProvider,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Step } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
@@ -16,7 +16,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: MultiversxAccount;
+  account?: MultiversXAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
@@ -32,7 +32,7 @@ export type StepProps = {
   onOperationBroadcasted: (operation: Operation) => void;
   setSigned: (assigned: boolean) => void;
   bridgePending: boolean;
-  validators: Array<MultiversxProvider>;
+  validators: Array<MultiversXProvider>;
   delegations: Array<DelegationType>;
 };
 export type St = Step<StepId, StepProps>;

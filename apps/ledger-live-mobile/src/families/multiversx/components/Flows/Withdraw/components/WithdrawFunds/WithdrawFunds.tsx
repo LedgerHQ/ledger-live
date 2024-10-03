@@ -55,7 +55,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
   const onNext = useCallback(() => {
     if (transaction) {
       navigation.navigate(
-        ScreenName.MultiversxWithdrawSelectDevice,
+        ScreenName.MultiversXWithdrawSelectDevice,
         Object.assign(route.params, {
           transaction,
           accountId: account.id,
