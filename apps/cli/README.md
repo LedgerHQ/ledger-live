@@ -395,6 +395,21 @@ Usage: ledger-live ledgerKeyRingProtocol # Ledger Key Ring Protocol command
      --name <String>          : name of the instance
      --apiBaseUrl <String>    : api base url for Ledger Key Ring Protocol
 
+Usage: ledger-live ledgerSync # Ledger Sync command
+     --push                   : Init member credentials for Ledger Key Ring Protocol
+     --pull                   : Get or create a Ledger Key Ring Protocol Tree
+     --pubKey <String>        : pubkey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --privateKey <String>    : privatekey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --rootId <String>        : The immutable id of the Tree root retrieved from getKeyRingTree result
+     --walletSyncEncryptionKey <String>: The secret used to encrypt/decrypt the wallet sync data retrieved from getKeyRingTree result
+     --applicationPath <String>: privatekey for Ledger Key Ring Protocol Tree from initMemberCredentials result
+     --data <String>          : data to be pushed to Ledger Sync
+     --version <Number>       : version of the data
+     --applicationId <Number> : application identifier
+     --name <String>          : name of the instance
+     --apiBaseUrl <String>    : api base url for Ledger Key Ring Protocol
+     --cloudSyncApiBaseUrl <String>: api base url for Cloud Sync
+
 Usage: ledger-live liveData   # utility for Ledger Live app.json file
  -d, --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
