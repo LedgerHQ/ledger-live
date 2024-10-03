@@ -30,6 +30,7 @@ import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_ERROR from "./ErrorModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
+import MODAL_HIDE_INSCRIPTION from "LLD/features/Collectibles/Ordinals/components/Inscriptions/HideModal";
 
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
 import MODAL_SIMPLEHASH_TOOLS from "./SimpleHashTools";
@@ -63,6 +64,7 @@ const globalModals: GlobalModals = {
   MODAL_CREATE_LOCAL_APP,
   MODAL_WALLET_SYNC_DEBUGGER,
   MODAL_SIMPLEHASH_TOOLS,
+  MODAL_HIDE_INSCRIPTION,
 
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,

@@ -88,6 +88,11 @@ export type GlobalModalData = {
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
   MODAL_VAULT_SIGNER: undefined;
+  MODAL_HIDE_INSCRIPTION: {
+    inscriptionName: string;
+    inscriptionId: string;
+    onClose?: () => void;
+  };
 };
 
 /**

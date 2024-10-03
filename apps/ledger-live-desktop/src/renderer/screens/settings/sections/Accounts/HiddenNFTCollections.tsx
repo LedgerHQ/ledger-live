@@ -6,16 +6,15 @@ import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-rea
 import { SettingsSection as Section, SettingsSectionRow as Row } from "../../SettingsSection";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
-import IconCross from "~/renderer/icons/Cross";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { unhideNftCollection } from "~/renderer/actions/settings";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import Track from "~/renderer/analytics/Track";
-import IconAngleDown from "~/renderer/icons/AngleDown";
 import { State } from "~/renderer/reducers";
 import { NFTMetadata } from "@ledgerhq/types-live";
+import { Icons } from "@ledgerhq/react-ui";
 
 const HiddenNftCollectionRow = ({
   contractAddress,
@@ -69,7 +68,7 @@ const HiddenNftCollectionRow = ({
         {collectionMetadata?.tokenName || contractAddress}
       </Text>
       <IconContainer onClick={onUnhide}>
-        <IconCross size={16} />
+        <Icons.Close size="S" />
       </IconContainer>
     </HiddenNftCollectionRowContainer>
   );
@@ -115,7 +114,7 @@ export default function HiddenNftCollections() {
               })}
             </Box>
             <Show visible={sectionVisible}>
-              <IconAngleDown size={24} />
+              <Icons.ChevronDown size="S" />
             </Show>
           </Box>
         ) : null}

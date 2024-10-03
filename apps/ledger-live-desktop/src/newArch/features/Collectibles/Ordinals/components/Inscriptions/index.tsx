@@ -14,12 +14,14 @@ import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collec
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { GroupedNftOrdinals } from "@ledgerhq/live-nft-react/index";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 
 type ViewProps = ReturnType<typeof useInscriptionsModel> & {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
   inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
+  account: BitcoinAccount;
   onReceive: () => void;
 };
 
@@ -29,6 +31,7 @@ type Props = {
   isError: boolean;
   error: Error | null;
   inscriptionsGroupedWithRareSats: GroupedNftOrdinals[];
+  account: BitcoinAccount;
   onReceive: () => void;
   onInscriptionClick: (inscription: SimpleHashNft) => void;
 };
@@ -40,6 +43,7 @@ const View: React.FC<ViewProps> = ({
   inscriptions,
   error,
   inscriptionsGroupedWithRareSats,
+  account,
   onShowMore,
   onReceive,
 }) => {
@@ -57,6 +61,7 @@ const View: React.FC<ViewProps> = ({
         {hasInscriptions &&
           inscriptions.map((item, index) => (
             <Item
+              account={account}
               key={index}
               isLoading={isLoading}
               inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
@@ -85,6 +90,7 @@ const Inscriptions: React.FC<Props> = ({
   isError,
   error,
   inscriptionsGroupedWithRareSats,
+  account,
   onReceive,
   onInscriptionClick,
 }) => (
@@ -92,6 +98,7 @@ const Inscriptions: React.FC<Props> = ({
     isLoading={isLoading}
     isError={isError}
     error={error}
+    account={account}
     onReceive={onReceive}
     inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
     {...useInscriptionsModel({ inscriptions, onInscriptionClick })}

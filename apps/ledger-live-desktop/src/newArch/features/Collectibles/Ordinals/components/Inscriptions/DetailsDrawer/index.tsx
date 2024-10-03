@@ -47,7 +47,7 @@ const View: React.FC<ViewProps> = ({ data, rareSat, account, inscription, onClos
       </DetailDrawer.Subtitle>
     )}
     <DetailDrawer.Actions>
-      <Actions account={account} inscription={inscription} />
+      <Actions account={account} onModalClose={onClose} inscription={inscription} />
     </DetailDrawer.Actions>
   </DetailDrawer>
 );
