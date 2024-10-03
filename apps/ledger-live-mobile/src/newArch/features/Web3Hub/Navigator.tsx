@@ -16,7 +16,6 @@ const Stack = createNativeStackNavigator<Web3HubStackParamList>();
 
 const screenOptions: NativeStackNavigationOptions = {
   headerShown: false,
-  // presentation: "transparentModal",
 };
 
 export default function Navigator() {

@@ -200,8 +200,7 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /2/i }));
 
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
@@ -215,8 +214,7 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /2/i }));
 
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
 
@@ -228,8 +226,7 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /2/i }));
 
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
     expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
@@ -315,5 +312,47 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /back/i }));
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+  });
+
+  it("Should navigate to app page, capture it and list the tabs", async () => {
+    const { user } = render(<Web3HubTest />);
+
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    await waitForLoader();
+
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+    expect(await screen.findByText("Open Dummy Wallet App")).toBeOnTheScreen();
+    await user.press(screen.getByText("Open Dummy Wallet App"));
+    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByText("1 tab")).toBeOnTheScreen();
+    expect((await screen.findAllByTestId("web3hub-tab-item-dummy"))[0]).toBeOnTheScreen();
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Wallet API Tools")[0]);
+    expect(await screen.findByText("Open Wallet API Tools")).toBeOnTheScreen();
+    await user.press(screen.getByText("Open Dummy Wallet App"));
+    expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByText("2 tabs")).toBeOnTheScreen();
+    expect(
+      (await screen.findAllByTestId("web3hub-tab-item-wallet-api-tools"))[0],
+    ).toBeOnTheScreen();
+    expect(await screen.findByText("New tab")).toBeOnTheScreen();
   });
 });

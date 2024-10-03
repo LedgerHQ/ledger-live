@@ -19,6 +19,7 @@ const transformIncludePatterns = [
   "react-native-android-location-services-dialog-box",
   "react-native-vector-icons",
   "react-native-qrcode-svg",
+  "react-native-view-shot",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

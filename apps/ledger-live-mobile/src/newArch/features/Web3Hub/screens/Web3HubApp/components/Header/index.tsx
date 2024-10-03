@@ -6,6 +6,8 @@ import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
 import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import { AppProps } from "LLM/features/Web3Hub/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import { captureTab } from "~/newArch/features/Web3Hub/utils/captureTab";
 
 const BAR_HEIGHT = 60;
 export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
@@ -17,7 +19,7 @@ type Props = {
   initialLoad: boolean;
   secure: boolean;
   baseUrl: string;
-  manifest: any;
+  manifest?: AppManifest;
 };
 
 export default function Web3HubAppHeader({
@@ -63,7 +65,7 @@ export default function Web3HubAppHeader({
             )}
           </Flex>
 
-          <TabButton count={2} navigation={navigation} manifest={manifest} />
+          <TabButton count={2} navigation={navigation} onclick={() => captureTab(manifest)} />
         </Flex>
       }
     />
