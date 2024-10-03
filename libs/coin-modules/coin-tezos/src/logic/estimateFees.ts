@@ -1,6 +1,6 @@
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { COST_PER_BYTE, DEFAULT_STORAGE_LIMIT, Estimate, getRevealFee, getRevealGasLimit, REVEAL_STORAGE_LIMIT,  DEFAULT_FEE } from "@taquito/taquito";
+import { COST_PER_BYTE, DEFAULT_STORAGE_LIMIT, Estimate, getRevealFee } from "@taquito/taquito";
 import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import { getTezosToolkit } from "./tezosToolkit";
@@ -99,35 +99,28 @@ export async function estimateFees({
         throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.mode });
     }
 
-    const revealFees = DEFAULT_FEE.REVEAL;
+    // NOTE: if useAllAmount is true, is it for sure in the send mode (ie. transfer)?
+    const revealFees = getRevealFee(account.address);
     if (transaction.useAllAmount) {
       let totalFees: number;
-      if (!account.revealed) {
-        totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez;
+      if (estimate.burnFeeMutez) {
+        totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE; // 20 is storage buffer
       } else {
-        totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - (20 * COST_PER_BYTE);
+        totalFees = estimate.suggestedFeeMutez;
       }
-
-      console.log("Account balance: ", parseInt(account.balance.toString()));
-      console.log("estimate.suggestedFeeMutez: ", estimate.suggestedFeeMutez);
-      console.log("estimate.burnFeeMutez: ", estimate.burnFeeMutez);
-      console.log("totalFees: ", totalFees);
-      console.log("revealFees: ", revealFees);
-      console.log("OLD REVEAL FEE: ", DEFAULT_FEE.REVEAL);
-      console.log("ESTIAMATE GASE LIMIT: ", estimate.gasLimit);
-
       const maxAmount =
         parseInt(account.balance.toString()) - (totalFees + (account.revealed ? 0 : revealFees));
       // from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
-      console.log("MAX AMOUNT: ", maxAmount);
+      const gasBuffer = 500;
+      estimation.fees = BigInt(totalFees + gasBuffer);
+
+      estimation.gasLimit = BigInt(estimate.gasLimit + gasBuffer);
+      estimation.amount = maxAmount - gasBuffer > 0 ? BigInt(maxAmount - gasBuffer) : BigInt(0);
+
       estimation.fees = BigInt(estimate.suggestedFeeMutez);
-      console.log("estimation.fees: ", estimation.fees);
       estimation.gasLimit = BigInt(estimate.gasLimit);
-      console.log("estimation.gasLimit: ", estimation.gasLimit);
-      estimation.amount = maxAmount > 0 ? BigInt(maxAmount) : BigInt(0);
-      console.log("estimation.amount: ", estimation.amount);
     } else {
       estimation.fees = BigInt(estimate.suggestedFeeMutez);
       estimation.gasLimit = BigInt(estimate.gasLimit);
@@ -135,17 +128,9 @@ export async function estimateFees({
     }
 
     estimation.storageLimit = BigInt(estimate.storageLimit);
-    console.log("estimation.storageLimit: ", estimation.storageLimit);
     estimation.estimatedFees = estimation.fees;
-    console.log(" estimation.estimatedFees: ", estimation.estimatedFees);
     if (!account.revealed) {
       estimation.estimatedFees = estimation.estimatedFees + BigInt(revealFees);
-      estimation.amount -= BigInt(revealFees);
-      console.log("New estimation amount: ", estimation.amount);
-      console.log(" estimation.estimatedFees unrevealed: ", estimation.estimatedFees);
-      estimation.gasLimit += BigInt(getRevealGasLimit(account.address));
-      console.log(" New estimation.gasLimit  unrevealed: ",  estimation.gasLimit);
-
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
@@ -162,6 +147,5 @@ export async function estimateFees({
       throw e;
     }
   }
-
   return estimation;
 }
