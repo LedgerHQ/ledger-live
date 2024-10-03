@@ -132,7 +132,7 @@ platform :ios do
     )
     match(
       type: "appstore",
-      app_identifier: ["com.ledger.live.nightly"],
+      app_identifier: "com.ledger.live.nightly",
       force: true,
       generate_apple_certs: true,
       git_url: ENV["GIT_REPO_URL"],
