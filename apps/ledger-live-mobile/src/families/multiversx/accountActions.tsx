@@ -2,7 +2,7 @@ import {
   hasMinimumDelegableBalance,
   randomizeProviders,
 } from "@ledgerhq/live-common/families/multiversx/helpers";
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -10,7 +10,7 @@ import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
-import { getCurrentMultiversxPreloadData } from "@ledgerhq/coin-multiversx/preload";
+import { getCurrentMultiversXPreloadData } from "@ledgerhq/coin-multiversx/preload";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -19,7 +19,7 @@ import { NavigatorName, ScreenName } from "~/const";
  */
 
 export interface getActionsType {
-  account: MultiversxAccount;
+  account: MultiversXAccount;
   parentAccount?: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }
@@ -39,14 +39,14 @@ const getMainActions = ({
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
    */
-  const preloaded = getCurrentMultiversxPreloadData();
+  const preloaded = getCurrentMultiversXPreloadData();
   const validators = randomizeProviders(preloaded.validators);
 
   const isFirstTimeFlow =
     account.multiversxResources && account.multiversxResources.delegations.length === 0;
   const screen = isFirstTimeFlow
-    ? ScreenName.MultiversxDelegationStarted
-    : ScreenName.MultiversxDelegationValidator;
+    ? ScreenName.MultiversXDelegationStarted
+    : ScreenName.MultiversXDelegationValidator;
 
   /*
    * Return an empty array if "multiversxResources" doesn't exist.
@@ -61,7 +61,7 @@ const getMainActions = ({
    */
   const navigationParams: NavigationParamsType = delegationEnabled
     ? [
-        NavigatorName.MultiversxDelegationFlow,
+        NavigatorName.MultiversXDelegationFlow,
         {
           screen,
           params: {

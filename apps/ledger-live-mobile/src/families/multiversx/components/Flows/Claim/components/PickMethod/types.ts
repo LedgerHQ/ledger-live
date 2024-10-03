@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { MultiversxClaimRewardsFlowParamList } from "../../types";
+import type { MultiversXClaimRewardsFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";
 
 export type PickMethodPropsType = StackNavigatorProps<
-  MultiversxClaimRewardsFlowParamList,
-  ScreenName.MultiversxClaimRewardsMethod
+  MultiversXClaimRewardsFlowParamList,
+  ScreenName.MultiversXClaimRewardsMethod
 >;
 
 export interface OptionType {

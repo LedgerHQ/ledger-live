@@ -125,7 +125,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.MultiversxDelegationValidator, {
+    navigation.navigate(ScreenName.MultiversXDelegationValidator, {
       account,
       validators,
       transaction: bridge.updateTransaction(transaction, { amount }),

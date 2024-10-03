@@ -2,7 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
-import type { MultiversxAccount, Transaction } from "@ledgerhq/coin-multiversx/types";
+import type { MultiversXAccount, Transaction } from "@ledgerhq/coin-multiversx/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
@@ -38,7 +38,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account: MultiversxAccount, transaction: Transaction) => {
+const getTransactionStatus = (account: MultiversXAccount, transaction: Transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;

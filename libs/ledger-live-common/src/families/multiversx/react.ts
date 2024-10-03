@@ -1,17 +1,17 @@
 import { BigNumber } from "bignumber.js";
 import { useState, useMemo, useEffect } from "react";
 import {
-  getCurrentMultiversxPreloadData,
-  getMultiversxPreloadDataUpdates,
+  getCurrentMultiversXPreloadData,
+  getMultiversXPreloadDataUpdates,
 } from "@ledgerhq/coin-multiversx/preload";
 import { randomizeProviders } from "@ledgerhq/coin-multiversx/helpers/randomizeProviders";
-import type { MultiversxProvider } from "./types";
+import type { MultiversXProvider } from "./types";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS, MIN_DELEGATION_AMOUNT } from "./constants";
 
-export function useMultiversxPreloadData() {
-  const [state, setState] = useState(getCurrentMultiversxPreloadData);
+export function useMultiversXPreloadData() {
+  const [state, setState] = useState(getCurrentMultiversXPreloadData);
   useEffect(() => {
-    const sub = getMultiversxPreloadDataUpdates().subscribe(data => {
+    const sub = getMultiversXPreloadDataUpdates().subscribe(data => {
       setState(data);
     });
     return () => sub.unsubscribe();
@@ -19,19 +19,19 @@ export function useMultiversxPreloadData() {
   return state;
 }
 
-export function useMultiversxRandomizedValidators(): MultiversxProvider[] {
-  const { validators } = useMultiversxPreloadData();
+export function useMultiversXRandomizedValidators(): MultiversXProvider[] {
+  const { validators } = useMultiversXPreloadData();
   return useMemo(() => randomizeProviders(validators), [validators]);
 }
 
-type EnhancedValidator = MultiversxProvider & { disabled: boolean };
+type EnhancedValidator = MultiversXProvider & { disabled: boolean };
 
-export function useSearchValidators(validators: MultiversxProvider[], search: string) {
+export function useSearchValidators(validators: MultiversXProvider[], search: string) {
   return useMemo(() => {
     const needle = search.toLowerCase();
 
     // Filter the providers such that they'll match the possible search criteria.
-    const filter = (validator: MultiversxProvider) => {
+    const filter = (validator: MultiversXProvider) => {
       const [foundByContract, foundByName]: Array<boolean> = [
         validator.contract.toLowerCase().includes(needle),
         validator.identity.name ? validator.identity.name.toLowerCase().includes(needle) : false,
@@ -41,7 +41,7 @@ export function useSearchValidators(validators: MultiversxProvider[], search: st
     };
 
     // Map the providers such that they'll be assigned the "disabled" key if conditions are met.
-    const disable = (validator: MultiversxProvider): EnhancedValidator => {
+    const disable = (validator: MultiversXProvider): EnhancedValidator => {
       const [alpha, beta] = [validator.maxDelegationCap, validator.totalActiveStake];
       const delegative = alpha !== "0" && validator.withDelegationCap;
       const difference = new BigNumber(alpha).minus(beta);
@@ -52,7 +52,7 @@ export function useSearchValidators(validators: MultiversxProvider[], search: st
     };
 
     // Sort the providers such that Figment by Ledger will always be first.
-    const sort = (validator: MultiversxProvider) =>
+    const sort = (validator: MultiversXProvider) =>
       validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS ? -1 : 1;
     const items = validators.sort(sort).map(disable);
 

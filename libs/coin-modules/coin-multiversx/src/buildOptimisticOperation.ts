@@ -5,13 +5,13 @@ import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
-  MultiversxAccount,
-  MultiversxProtocolTransaction,
-  MultiversxTransactionMode,
+  MultiversXAccount,
+  MultiversXProtocolTransaction,
+  MultiversXTransactionMode,
   Transaction,
 } from "./types";
 
-function getOptimisticOperationType(transactionMode: MultiversxTransactionMode): OperationType {
+function getOptimisticOperationType(transactionMode: MultiversXTransactionMode): OperationType {
   switch (transactionMode) {
     case "delegate":
       return "DELEGATE";
@@ -44,9 +44,9 @@ function getOptimisticOperationDelegationAmount(transaction: Transaction): BigNu
 }
 
 export const buildOptimisticOperation = (
-  account: MultiversxAccount,
+  account: MultiversXAccount,
   transaction: Transaction,
-  unsignedTx: MultiversxProtocolTransaction,
+  unsignedTx: MultiversXProtocolTransaction,
 ): Operation => {
   const senders = [account.freshAddress];
   const recipients = [transaction.recipient];

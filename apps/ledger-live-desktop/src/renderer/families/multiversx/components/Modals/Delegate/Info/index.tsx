@@ -9,17 +9,17 @@ import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export interface Props {
-  account: MultiversxAccount;
-  validators: Array<MultiversxProvider>;
+  account: MultiversXAccount;
+  validators: Array<MultiversXProvider>;
   delegations?: Array<DelegationType>;
 }
-const MultiversxEarnRewardsInfoModal = (props: Props) => {
+const MultiversXEarnRewardsInfoModal = (props: Props) => {
   const { account, validators, delegations } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -58,4 +58,4 @@ const MultiversxEarnRewardsInfoModal = (props: Props) => {
     />
   );
 };
-export default MultiversxEarnRewardsInfoModal;
+export default MultiversXEarnRewardsInfoModal;

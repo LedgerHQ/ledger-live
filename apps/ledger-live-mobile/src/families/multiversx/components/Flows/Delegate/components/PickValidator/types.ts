@@ -1,14 +1,14 @@
-import type { MultiversxProvider } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXProvider } from "@ledgerhq/live-common/families/multiversx/types";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { MultiversxDelegationFlowParamList } from "../../types";
+import type { MultiversXDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "~/const";
 
 export interface onSelectType {
-  validator: MultiversxProvider;
+  validator: MultiversXProvider;
   return: void;
 }
 
 export type PickValidatorPropsType = StackNavigatorProps<
-  MultiversxDelegationFlowParamList,
-  ScreenName.MultiversxDelegationValidatorList
+  MultiversXDelegationFlowParamList,
+  ScreenName.MultiversXDelegationValidatorList
 >;

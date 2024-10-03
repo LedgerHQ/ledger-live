@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { useMultiversxRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
+import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 
 import type {
-  MultiversxProvider,
-  MultiversxAccount,
+  MultiversXProvider,
+  MultiversXAccount,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import type { BodyPropsType, WithBodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
@@ -20,11 +20,11 @@ import Drawer from "./components/Drawer";
 import styles from "./styles";
 
 /*
- * Create a higher order component that will return null if there are no resources for Multiversx staking.
+ * Create a higher order component that will return null if there are no resources for MultiversX staking.
  */
 
 const withBody = (Component: FC<BodyPropsType>) => (props: WithBodyPropsType) => {
-  const account = props.account as MultiversxAccount;
+  const account = props.account as MultiversXAccount;
 
   /*
    * Return nothing if there isn't any data for the "multiversxResources" key.
@@ -61,7 +61,7 @@ const Body = (props: BodyPropsType) => {
    * Randomize the list of the memoized validators..
    */
 
-  const validators = useMultiversxRandomizedValidators();
+  const validators = useMultiversXRandomizedValidators();
 
   /*
    * Call the drawer callback and populate the state with the given data, thus activating it.
@@ -77,7 +77,7 @@ const Body = (props: BodyPropsType) => {
    */
 
   const findValidator = useCallback(
-    (contract: string): MultiversxProvider | undefined =>
+    (contract: string): MultiversXProvider | undefined =>
       validators.find(validator => validator.contract === contract),
     [validators],
   );

@@ -4,7 +4,7 @@ import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { FieldType } from "~/components/DelegationDrawer";
 import type { DrawerPropsType, DrawerStatusType } from "../types";
 
@@ -20,7 +20,7 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
  * Handle the hook declaration.
  */
 
-const useDrawerItems = (data: DrawerPropsType["data"], account: MultiversxAccount) => {
+const useDrawerItems = (data: DrawerPropsType["data"], account: MultiversXAccount) => {
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 

@@ -15,7 +15,7 @@ import {
   TitleWrapper,
 } from "~/renderer/families/multiversx/blocks/Summary";
 import { DelegationType } from "./types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -26,7 +26,7 @@ interface BalanceType {
   amount: BigNumber;
 }
 
-const Summary = (props: { account: MultiversxAccount }) => {
+const Summary = (props: { account: MultiversXAccount }) => {
   const { account } = props;
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState(
@@ -114,7 +114,7 @@ const Summary = (props: { account: MultiversxAccount }) => {
   );
 };
 
-function AccountBalanceSummaryFooter({ account }: { account: MultiversxAccount | SubAccount }) {
+function AccountBalanceSummaryFooter({ account }: { account: MultiversXAccount | SubAccount }) {
   if (account.type !== "Account") return null;
   return <Summary account={account} />;
 }

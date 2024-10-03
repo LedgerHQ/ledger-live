@@ -56,7 +56,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const onSelect = useCallback(
     (validator: onSelectType["validator"], value: onSelectType["value"]) => {
       if (validator) {
-        navigation.navigate(ScreenName.MultiversxClaimRewardsMethod, {
+        navigation.navigate(ScreenName.MultiversXClaimRewardsMethod, {
           value,
           account,
           recipient: validator.contract,

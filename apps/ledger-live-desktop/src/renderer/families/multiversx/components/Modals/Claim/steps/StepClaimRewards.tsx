@@ -13,7 +13,7 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import {
-  MultiversxTransactionMode,
+  MultiversXTransactionMode,
   Transaction,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { StepProps } from "../types";
@@ -40,7 +40,7 @@ const StepClaimRewards = (props: StepProps) => {
     [bridge, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
-    (mode: MultiversxTransactionMode) => {
+    (mode: MultiversXTransactionMode) => {
       updateClaimRewards({
         ...transaction,
         mode,
@@ -49,7 +49,7 @@ const StepClaimRewards = (props: StepProps) => {
     [updateClaimRewards, transaction],
   );
   const onDelegationChange = useCallback(
-    // @ts-expect-error the expected type should be MultiversxProvider | null
+    // @ts-expect-error the expected type should be MultiversXProvider | null
     // however if we do that, there is no `delegation` key on validator halp
     validator => {
       updateClaimRewards({

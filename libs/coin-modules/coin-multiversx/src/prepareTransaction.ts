@@ -2,14 +2,14 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "./types";
 import { getFees } from "./api";
 import { GAS } from "./constants";
-import { MultiversxEncodeTransaction } from "./encode";
+import { MultiversXEncodeTransaction } from "./encode";
 import { isAmountSpentFromBalance } from "./logic";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Prepare t before checking status
  *
- * @param {MultiversxAccount} account
+ * @param {MultiversXAccount} account
  * @param {Transaction} transaction
  */
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
@@ -26,29 +26,29 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     null;
 
   if (tokenAccount) {
-    preparedTx.data = MultiversxEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
+    preparedTx.data = MultiversXEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
     preparedTx.gasLimit = GAS.ESDT_TRANSFER;
   } else {
     switch (transaction.mode) {
       case "delegate":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = MultiversxEncodeTransaction.delegate();
+        preparedTx.data = MultiversXEncodeTransaction.delegate();
         break;
       case "claimRewards":
         preparedTx.gasLimit = GAS.CLAIM;
-        preparedTx.data = MultiversxEncodeTransaction.claimRewards();
+        preparedTx.data = MultiversXEncodeTransaction.claimRewards();
         break;
       case "withdraw":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = MultiversxEncodeTransaction.withdraw();
+        preparedTx.data = MultiversXEncodeTransaction.withdraw();
         break;
       case "reDelegateRewards":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = MultiversxEncodeTransaction.reDelegateRewards();
+        preparedTx.data = MultiversXEncodeTransaction.reDelegateRewards();
         break;
       case "unDelegate":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = MultiversxEncodeTransaction.unDelegate(transaction);
+        preparedTx.data = MultiversXEncodeTransaction.unDelegate(transaction);
         break;
       case "send":
         break;

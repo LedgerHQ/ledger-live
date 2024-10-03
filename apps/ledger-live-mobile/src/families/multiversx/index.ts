@@ -1,11 +1,11 @@
-import * as MultiversxClaimRewardsFlow from "./components/Flows/Claim";
-import * as MultiversxDelegationFlow from "./components/Flows/Delegate";
-import * as MultiversxUndelegationFlow from "./components/Flows/Undelegate";
-import * as MultiversxWithdrawFlow from "./components/Flows/Withdraw";
+import * as MultiversXClaimRewardsFlow from "./components/Flows/Claim";
+import * as MultiversXDelegationFlow from "./components/Flows/Delegate";
+import * as MultiversXUndelegationFlow from "./components/Flows/Undelegate";
+import * as MultiversXWithdrawFlow from "./components/Flows/Withdraw";
 
 export {
-  MultiversxClaimRewardsFlow,
-  MultiversxDelegationFlow,
-  MultiversxUndelegationFlow,
-  MultiversxWithdrawFlow,
+  MultiversXClaimRewardsFlow,
+  MultiversXDelegationFlow,
+  MultiversXUndelegationFlow,
+  MultiversXWithdrawFlow,
 };

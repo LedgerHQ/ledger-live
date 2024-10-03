@@ -7,7 +7,7 @@ import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import {
-  MultiversxAccount,
+  MultiversXAccount,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -81,7 +81,7 @@ const WarningDisplay = styled(Box)`
 export interface Props {
   amount: BigNumber;
   initialAmount: BigNumber;
-  account: MultiversxAccount;
+  account: MultiversXAccount;
   label: JSX.Element;
   onChange: (amount: BigNumber, unit?: Unit) => void;
   status: TransactionStatus;

@@ -1,14 +1,14 @@
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { MultiversxPreloadData, MultiversxProvider } from "./types";
+import type { MultiversXPreloadData, MultiversXProvider } from "./types";
 import { getProviders } from "./api";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
-let currentPreloadedData: MultiversxPreloadData = {
+let currentPreloadedData: MultiversXPreloadData = {
   validators: [],
 };
 
-function fromHydrateValidator(validatorRaw: Record<string, any>): MultiversxProvider {
+function fromHydrateValidator(validatorRaw: Record<string, any>): MultiversXProvider {
   return {
     contract: validatorRaw.contract,
     owner: validatorRaw.owner,
@@ -45,7 +45,7 @@ function fromHydrateValidator(validatorRaw: Record<string, any>): MultiversxProv
   };
 }
 
-function fromHydratePreloadData(data: any): MultiversxPreloadData {
+function fromHydratePreloadData(data: any): MultiversXPreloadData {
   let validators = [];
 
   if (typeof data === "object" && data) {
@@ -59,18 +59,18 @@ function fromHydratePreloadData(data: any): MultiversxPreloadData {
   };
 }
 
-const updates = new Subject<MultiversxPreloadData>();
-export function getCurrentMultiversxPreloadData(): MultiversxPreloadData {
+const updates = new Subject<MultiversXPreloadData>();
+export function getCurrentMultiversXPreloadData(): MultiversXPreloadData {
   return currentPreloadedData;
 }
 
-export function setMultiversxPreloadData(data: MultiversxPreloadData) {
+export function setMultiversXPreloadData(data: MultiversXPreloadData) {
   if (data === currentPreloadedData) return;
   currentPreloadedData = data;
   updates.next(data);
 }
 
-export function getMultiversxPreloadDataUpdates(): Observable<MultiversxPreloadData> {
+export function getMultiversXPreloadDataUpdates(): Observable<MultiversXPreloadData> {
   return updates.asObservable();
 }
 
@@ -80,7 +80,7 @@ export const getPreloadStrategy = () => {
   };
 };
 
-export const preload = async (): Promise<MultiversxPreloadData> => {
+export const preload = async (): Promise<MultiversXPreloadData> => {
   log("multiversx/preload", "preloading multiversx data...");
   const validators = (await getProviders()) || [];
   return {
@@ -91,5 +91,5 @@ export const preload = async (): Promise<MultiversxPreloadData> => {
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);
   log("multiversx/preload", `hydrated ${hydrated.validators.length} multiversx validators`);
-  setMultiversxPreloadData(hydrated);
+  setMultiversXPreloadData(hydrated);
 };

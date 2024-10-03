@@ -1,5 +1,5 @@
-import type { MultiversxAccount, MultiversxProvider } from "./types";
-import { MultiversxDelegation, MultiversxPreloadData } from "./types";
+import type { MultiversXAccount, MultiversXProvider } from "./types";
+import { MultiversXDelegation, MultiversXPreloadData } from "./types";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 import { hasMinimumDelegableBalance } from "@ledgerhq/coin-multiversx/helpers/hasMinimumDelegableBalance";
 
@@ -13,7 +13,7 @@ interface AccountBannerDelegateState {
 
 interface AccountBannerRedelegateState {
   bannerType: "redelegate";
-  worstDelegation: MultiversxDelegation;
+  worstDelegation: MultiversXDelegation;
 }
 
 export type AccountBannerState =
@@ -22,9 +22,9 @@ export type AccountBannerState =
   | AccountBannerHiddenState;
 
 function getWorstValidator(
-  delegations: MultiversxDelegation[],
-  validators: MultiversxProvider[],
-  ledgerValidator: MultiversxProvider,
+  delegations: MultiversXDelegation[],
+  validators: MultiversXProvider[],
+  ledgerValidator: MultiversXProvider,
 ) {
   return delegations.reduce((worstValidator, delegation) => {
     const validator = validators.find(validator => validator.contract === delegation.contract);
@@ -36,13 +36,13 @@ function getWorstValidator(
 }
 
 export function getAccountBannerState(
-  account: MultiversxAccount,
-  multiversxPreloadData: MultiversxPreloadData,
+  account: MultiversXAccount,
+  multiversxPreloadData: MultiversXPreloadData,
 ): AccountBannerState {
   const { validators } = multiversxPreloadData;
   const multiversxResources = account.multiversxResources
     ? account.multiversxResources
-    : { delegations: [] as MultiversxDelegation[] };
+    : { delegations: [] as MultiversXDelegation[] };
 
   const hasDelegations = multiversxResources.delegations.length > 0;
   const ledgerValidator = validators.find(
@@ -57,7 +57,7 @@ export function getAccountBannerState(
   }
 
   if (hasDelegations) {
-    const worstValidator: MultiversxProvider = getWorstValidator(
+    const worstValidator: MultiversXProvider = getWorstValidator(
       multiversxResources.delegations,
       validators,
       ledgerValidator,

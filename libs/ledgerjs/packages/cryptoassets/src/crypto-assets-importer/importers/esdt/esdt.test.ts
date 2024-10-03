@@ -30,7 +30,7 @@ describe("import ESDT tokens", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const expectedFile = `export type MultiversxESDTToken = [
+    const expectedFile = `export type MultiversXESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -42,7 +42,7 @@ import tokens from "./esdt.json";
 
 export { default as hash } from "./esdt-hash.json";
 
-export default tokens as MultiversxESDTToken[];
+export default tokens as MultiversXESDTToken[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());

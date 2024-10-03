@@ -8,7 +8,7 @@ import Alert from "~/components/Alert";
  * Handle the component declaration.
  */
 
-const MultiversxAccountSubHeader = () => (
+const MultiversXAccountSubHeader = () => (
   <Fragment>
     <AccountSubHeader family="MultiversX" team="MultiversX" />
 
@@ -18,4 +18,4 @@ const MultiversxAccountSubHeader = () => (
   </Fragment>
 );
 
-export default MultiversxAccountSubHeader;
+export default MultiversXAccountSubHeader;

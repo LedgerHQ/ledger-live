@@ -4,11 +4,11 @@ import Unbonding from "~/renderer/families/multiversx/components/Unbondings/comp
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/multiversx/blocks/Delegation";
 import { UnbondingType } from "~/renderer/families/multiversx/types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 interface UnbondingsType {
   unbondings: Array<UnbondingType>;
-  account: MultiversxAccount;
+  account: MultiversXAccount;
 }
 const Unbondings = (props: UnbondingsType) => {
   const { unbondings, account } = props;

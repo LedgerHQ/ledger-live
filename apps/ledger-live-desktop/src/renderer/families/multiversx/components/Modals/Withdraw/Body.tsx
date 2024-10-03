@@ -22,16 +22,16 @@ import logger from "~/renderer/logger";
 import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { StepProps, St, StepId } from "./types";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 import { UnbondingType } from "../../../types";
 
 export type Data = {
-  account: MultiversxAccount;
+  account: MultiversXAccount;
   unbondings?: UnbondingType[];
-  validator?: MultiversxProvider;
+  validator?: MultiversXProvider;
   contract?: string;
   amount?: string;
 };

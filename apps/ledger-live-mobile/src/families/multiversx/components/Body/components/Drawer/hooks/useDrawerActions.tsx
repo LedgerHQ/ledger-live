@@ -4,7 +4,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
-import type { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { NavigationType } from "../../../../../types";
 import type { DrawerPropsType } from "../types";
 import type { Action, IconProps } from "~/components/DelegationDrawer";
@@ -22,7 +22,7 @@ import { rgba } from "../../../../../../../colors";
 
 const useDrawerActions = (
   data: DrawerPropsType["data"],
-  account: MultiversxAccount,
+  account: MultiversXAccount,
   onClose: DrawerPropsType["onClose"],
 ) => {
   const navigation: StackNavigationProp<NavigationType> = useNavigation();
@@ -37,8 +37,8 @@ const useDrawerActions = (
 
   const onCollectRwards = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.MultiversxClaimRewardsFlow, {
-      screen: ScreenName.MultiversxClaimRewardsMethod,
+    navigation.navigate(NavigatorName.MultiversXClaimRewardsFlow, {
+      screen: ScreenName.MultiversXClaimRewardsMethod,
       params: {
         account,
         value: claimableRewards,
@@ -54,8 +54,8 @@ const useDrawerActions = (
 
   const onWithdrawFunds = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.MultiversxWithdrawFlow, {
-      screen: ScreenName.MultiversxWithdrawFunds,
+    navigation.navigate(NavigatorName.MultiversXWithdrawFlow, {
+      screen: ScreenName.MultiversXWithdrawFunds,
       params: { account, amount, validator },
     });
   }, [validator, account, navigation, onClose, amount]);
@@ -66,8 +66,8 @@ const useDrawerActions = (
 
   const onUndelegation = useCallback(() => {
     onClose();
-    navigation.navigate(NavigatorName.MultiversxUndelegationFlow, {
-      screen: ScreenName.MultiversxUndelegationAmount,
+    navigation.navigate(NavigatorName.MultiversXUndelegationFlow, {
+      screen: ScreenName.MultiversXUndelegationAmount,
       params: { account, validator, amount: new BigNumber(amount) },
     });
   }, [validator, account, navigation, onClose, amount]);

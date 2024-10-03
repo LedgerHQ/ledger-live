@@ -3,25 +3,25 @@ import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import type { ScreenName } from "~/const";
 
-export type MultiversxWithdrawFlowParamList = {
-  [ScreenName.MultiversxWithdrawFunds]: {
-    account: MultiversxAccount;
-    validator: MultiversxProvider;
+export type MultiversXWithdrawFlowParamList = {
+  [ScreenName.MultiversXWithdrawFunds]: {
+    account: MultiversXAccount;
+    validator: MultiversXProvider;
     amount: BigNumber;
   };
-  [ScreenName.MultiversxWithdrawSelectDevice]: {
+  [ScreenName.MultiversXWithdrawSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.MultiversxWithdrawConnectDevice]: {
+  [ScreenName.MultiversXWithdrawConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -34,13 +34,13 @@ export type MultiversxWithdrawFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.MultiversxWithdrawValidationError]: {
+  [ScreenName.MultiversXWithdrawValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.MultiversxWithdrawValidationSuccess]: {
+  [ScreenName.MultiversXWithdrawValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

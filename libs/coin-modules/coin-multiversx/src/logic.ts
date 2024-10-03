@@ -1,7 +1,7 @@
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, MultiversxTransactionMode, MultiversxDelegation } from "./types";
+import type { Transaction, MultiversXTransactionMode, MultiversXDelegation } from "./types";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -54,11 +54,11 @@ export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
 };
 
 // For some transaction modes the amount doesn't belong to the account's balance
-export const isAmountSpentFromBalance = (mode: MultiversxTransactionMode) => {
+export const isAmountSpentFromBalance = (mode: MultiversXTransactionMode) => {
   return ["send", "delegate"].includes(mode);
 };
 
-export const computeDelegationBalance = (delegations: MultiversxDelegation[]): BigNumber => {
+export const computeDelegationBalance = (delegations: MultiversXDelegation[]): BigNumber => {
   let totalDelegationBalance = new BigNumber(0);
 
   for (const delegation of delegations) {

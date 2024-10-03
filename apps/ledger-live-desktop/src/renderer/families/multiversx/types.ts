@@ -1,24 +1,24 @@
 import {
-  MultiversxProvider,
-  MultiversxAccount,
-  MultiversxOperation,
+  MultiversXProvider,
+  MultiversXAccount,
+  MultiversXOperation,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { LLDCoinFamily } from "../types";
 
-export type MultiversxFamily = LLDCoinFamily<
-  MultiversxAccount,
+export type MultiversXFamily = LLDCoinFamily<
+  MultiversXAccount,
   Transaction,
   TransactionStatus,
-  MultiversxOperation
+  MultiversXOperation
 >;
 
 export interface UnbondingType {
   amount: string;
   seconds: number;
   contract?: string;
-  validator?: MultiversxProvider;
+  validator?: MultiversXProvider;
 }
 
 export interface DelegationType {
@@ -28,5 +28,5 @@ export interface DelegationType {
   userActiveStake: string;
   userUnBondable: string;
   userUndelegatedList: Array<UnbondingType>;
-  validator?: MultiversxProvider;
+  validator?: MultiversXProvider;
 }

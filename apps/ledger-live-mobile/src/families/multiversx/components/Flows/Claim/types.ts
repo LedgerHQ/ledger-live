@@ -1,32 +1,32 @@
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
-  MultiversxAccount,
+  MultiversXAccount,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import type { ScreenName } from "~/const";
 import type { DelegationType } from "../../../types";
 
-export type MultiversxClaimRewardsFlowParamList = {
-  [ScreenName.MultiversxClaimRewardsValidator]: {
+export type MultiversXClaimRewardsFlowParamList = {
+  [ScreenName.MultiversXClaimRewardsValidator]: {
     delegations: DelegationType[];
-    account: MultiversxAccount;
+    account: MultiversXAccount;
   };
-  [ScreenName.MultiversxClaimRewardsMethod]: {
+  [ScreenName.MultiversXClaimRewardsMethod]: {
     transaction?: Transaction;
-    account: MultiversxAccount;
+    account: MultiversXAccount;
     recipient: string;
     value: string;
     name: string;
   };
-  [ScreenName.MultiversxClaimRewardsSelectDevice]: {
+  [ScreenName.MultiversXClaimRewardsSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.MultiversxClaimRewardsConnectDevice]: {
+  [ScreenName.MultiversXClaimRewardsConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -39,13 +39,13 @@ export type MultiversxClaimRewardsFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.MultiversxClaimRewardsValidationError]: {
+  [ScreenName.MultiversXClaimRewardsValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.MultiversxClaimRewardsValidationSuccess]: {
+  [ScreenName.MultiversXClaimRewardsValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

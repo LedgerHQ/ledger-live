@@ -1,5 +1,5 @@
 import { getAccountBannerState } from "./banner";
-import { MultiversxAccount, MultiversxDelegation, MultiversxProvider } from "./types";
+import { MultiversXAccount, MultiversXDelegation, MultiversXProvider } from "./types";
 import { BigNumber } from "bignumber.js";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 
@@ -16,11 +16,11 @@ describe("getAccountBannerState", () => {
         {
           contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({
@@ -44,11 +44,11 @@ describe("getAccountBannerState", () => {
         {
           contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({
@@ -63,7 +63,7 @@ describe("getAccountBannerState", () => {
         delegations: [
           {
             contract: "contract:a",
-          } as MultiversxDelegation,
+          } as MultiversXDelegation,
         ],
       },
     };
@@ -71,11 +71,11 @@ describe("getAccountBannerState", () => {
       validators: [
         {
           contract: "123",
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({
@@ -90,7 +90,7 @@ describe("getAccountBannerState", () => {
         delegations: [
           {
             contract: "contract:a",
-          } as MultiversxDelegation,
+          } as MultiversXDelegation,
         ],
       },
     };
@@ -99,19 +99,19 @@ describe("getAccountBannerState", () => {
         {
           contract: "contract:a",
           aprValue: 0.1,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.2,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({
@@ -129,7 +129,7 @@ describe("getAccountBannerState", () => {
         delegations: [
           {
             contract: "contract:a",
-          } as MultiversxDelegation,
+          } as MultiversXDelegation,
         ],
       },
     };
@@ -138,19 +138,19 @@ describe("getAccountBannerState", () => {
         {
           contract: "contract:a",
           aprValue: 0.2,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.1,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({
@@ -165,7 +165,7 @@ describe("getAccountBannerState", () => {
         delegations: [
           {
             contract: "contract:a",
-          } as MultiversxDelegation,
+          } as MultiversXDelegation,
         ],
       },
     };
@@ -174,19 +174,19 @@ describe("getAccountBannerState", () => {
         {
           contract: "contract:a",
           aprValue: 0.2,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
           aprValue: 0.1,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
         {
           contract: "contract:b",
           aprValue: 0.3,
-        } as MultiversxProvider,
+        } as MultiversXProvider,
       ],
     };
     const result = getAccountBannerState(
-      account as unknown as MultiversxAccount,
+      account as unknown as MultiversXAccount,
       multiversxPreloadData,
     );
     expect(result).toEqual({

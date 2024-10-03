@@ -25,15 +25,15 @@ import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
   Transaction,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
-  account: MultiversxAccount;
-  validators?: Array<MultiversxProvider>;
+  account: MultiversXAccount;
+  validators?: Array<MultiversXProvider>;
   delegations?: Array<DelegationType>;
   source?: string;
 };
@@ -92,7 +92,7 @@ const Body = (props: Props) => {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const defaultValidator: MultiversxProvider | undefined = params.validators?.find(
+  const defaultValidator: MultiversXProvider | undefined = params.validators?.find(
     validator => validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
   );
   const { account, source = "Account Page" } = params;

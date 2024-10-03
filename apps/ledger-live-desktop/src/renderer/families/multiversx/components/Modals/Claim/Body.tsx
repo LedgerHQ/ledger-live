@@ -23,16 +23,16 @@ import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
-  MultiversxAccount,
+  MultiversXAccount,
   Transaction,
-  MultiversxProvider,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
-  account: MultiversxAccount;
+  account: MultiversXAccount;
   delegations?: Array<DelegationType>;
-  validators?: Array<MultiversxProvider>;
+  validators?: Array<MultiversXProvider>;
   contract?: string;
 };
 interface OwnProps {

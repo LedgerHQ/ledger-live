@@ -3,7 +3,7 @@ import { AccountRaw } from "@ledgerhq/types-live";
 export const multiversx1: AccountRaw = {
   id: "js:2:multiversx:erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk:",
   seedIdentifier: "erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk",
-  name: "Multiversx 1",
+  name: "MultiversX 1",
   derivationMode: "",
   index: 0,
   freshAddress: "erd1rnq7m8kdrpyfany4fweqtydsk4pgx0l6dtl6tvcad5wesagruxts62e9rk",

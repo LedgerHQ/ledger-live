@@ -3,10 +3,10 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { MultiversxAccount, MultiversxOperation } from "./types";
+import type { MultiversXAccount, MultiversXOperation } from "./types";
 import BigNumber from "bignumber.js";
 
-function formatAccountSpecifics(account: MultiversxAccount): string {
+function formatAccountSpecifics(account: MultiversXAccount): string {
   const { multiversxResources } = account;
   invariant(multiversxResources, "multiversx account expected");
   const unit = getAccountCurrency(account).units[0];
@@ -56,7 +56,7 @@ function formatAccountSpecifics(account: MultiversxAccount): string {
 }
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { amount } = (op as MultiversxOperation).extra;
+  const { amount } = (op as MultiversXOperation).extra;
   return amount?.gt && amount.gt(0)
     ? " amount: " +
         `${

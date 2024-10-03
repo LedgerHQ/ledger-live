@@ -7,11 +7,11 @@ import {
   TRANSACTION_VERSION_DEFAULT,
 } from "./constants";
 import { isAmountSpentFromBalance } from "./logic";
-import type { MultiversxProtocolTransaction, Transaction } from "./types";
+import type { MultiversXProtocolTransaction, Transaction } from "./types";
 
 /**
  *
- * @param {MultiversxAccount} account
+ * @param {MultiversXAccount} account
  * @param {SubAccount | null | undefined} tokenAccount
  * @param {Transaction} transaction
  */
@@ -50,7 +50,7 @@ export const doBuildTransactionToSign = async (options: {
 }): Promise<string> => {
   const gasLimit = options.transaction.gasLimit || options.minGasLimit.valueOf();
 
-  const transaction: MultiversxProtocolTransaction = {
+  const transaction: MultiversXProtocolTransaction = {
     nonce: options.nonce.valueOf(),
     value: options.value,
     receiver: options.transaction.recipient,

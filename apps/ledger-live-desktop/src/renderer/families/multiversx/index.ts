@@ -4,9 +4,9 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
-import { MultiversxFamily } from "./types";
+import { MultiversXFamily } from "./types";
 
-const family: MultiversxFamily = {
+const family: MultiversXFamily = {
   operationDetails,
   accountHeaderManageActions,
   AccountBodyHeader,

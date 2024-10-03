@@ -39,10 +39,10 @@ import type { CosmosDelegationFlowParamList } from "~/families/cosmos/Delegation
 import type { CosmosRedelegationFlowParamList } from "~/families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "~/families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "~/families/cosmos/ClaimRewardsFlow/types";
-import type { MultiversxDelegationFlowParamList } from "~/families/multiversx/components/Flows/Delegate/types";
-import type { MultiversxUndelegationFlowParamList } from "~/families/multiversx/components/Flows/Undelegate/types";
-import type { MultiversxClaimRewardsFlowParamList } from "~/families/multiversx/components/Flows/Claim/types";
-import type { MultiversxWithdrawFlowParamList } from "~/families/multiversx/components/Flows/Withdraw/types";
+import type { MultiversXDelegationFlowParamList } from "~/families/multiversx/components/Flows/Delegate/types";
+import type { MultiversXUndelegationFlowParamList } from "~/families/multiversx/components/Flows/Undelegate/types";
+import type { MultiversXClaimRewardsFlowParamList } from "~/families/multiversx/components/Flows/Claim/types";
+import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/components/Flows/Withdraw/types";
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
@@ -90,18 +90,18 @@ type Props =
   | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationConnectDevice>
   | StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsConnectDevice>
   | StackNavigatorProps<
-      MultiversxDelegationFlowParamList,
-      ScreenName.MultiversxDelegationConnectDevice
+      MultiversXDelegationFlowParamList,
+      ScreenName.MultiversXDelegationConnectDevice
     >
   | StackNavigatorProps<
-      MultiversxUndelegationFlowParamList,
-      ScreenName.MultiversxUndelegationConnectDevice
+      MultiversXUndelegationFlowParamList,
+      ScreenName.MultiversXUndelegationConnectDevice
     >
   | StackNavigatorProps<
-      MultiversxClaimRewardsFlowParamList,
-      ScreenName.MultiversxClaimRewardsConnectDevice
+      MultiversXClaimRewardsFlowParamList,
+      ScreenName.MultiversXClaimRewardsConnectDevice
     >
-  | StackNavigatorProps<MultiversxWithdrawFlowParamList, ScreenName.MultiversxWithdrawConnectDevice>
+  | StackNavigatorProps<MultiversXWithdrawFlowParamList, ScreenName.MultiversXWithdrawConnectDevice>
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>

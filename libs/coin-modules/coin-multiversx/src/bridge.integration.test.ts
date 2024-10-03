@@ -29,7 +29,7 @@ const multiversx: CurrenciesData<Transaction> = {
       raw: {
         id: `js:2:multiversx:${TEST_ADDRESS}:`,
         seedIdentifier: `${TEST_ADDRESS}`,
-        name: "Multiversx 1",
+        name: "MultiversX 1",
         derivationMode: "",
         index: 0,
         freshAddress: `${TEST_ADDRESS}`,

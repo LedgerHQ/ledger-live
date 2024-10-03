@@ -12,25 +12,25 @@ import type {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-export type MultiversxAccount = Account & { multiversxResources: MultiversxResources };
+export type MultiversXAccount = Account & { multiversxResources: MultiversXResources };
 
-export type MultiversxAccountRaw = AccountRaw & {
-  multiversxResources: MultiversxResourcesRaw;
+export type MultiversXAccountRaw = AccountRaw & {
+  multiversxResources: MultiversXResourcesRaw;
 };
 
-export type MultiversxResources = {
+export type MultiversXResources = {
   nonce: number;
-  delegations: MultiversxDelegation[];
+  delegations: MultiversXDelegation[];
   isGuarded: boolean;
 };
 
-export type MultiversxResourcesRaw = {
+export type MultiversXResourcesRaw = {
   nonce: number;
-  delegations: MultiversxDelegation[];
+  delegations: MultiversXDelegation[];
   isGuarded: boolean;
 };
 
-export type MultiversxDelegation = {
+export type MultiversXDelegation = {
   address: string;
   contract: string;
   userUnBondable: string;
@@ -45,11 +45,11 @@ export type UserUndelegated = {
 };
 
 /**
- * Multiversx transaction
+ * MultiversX transaction
  */
 export type Transaction = TransactionCommon & {
   family: "multiversx";
-  mode: MultiversxTransactionMode;
+  mode: MultiversXTransactionMode;
   fees: BigNumber | null | undefined;
   data?: string;
   gasLimit: number;
@@ -57,7 +57,7 @@ export type Transaction = TransactionCommon & {
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "multiversx";
-  mode: MultiversxTransactionMode;
+  mode: MultiversXTransactionMode;
   fees: string | null | undefined;
   data?: string;
   gasLimit: number;
@@ -67,7 +67,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type MultiversxTransactionMode =
+export type MultiversXTransactionMode =
   | "send"
   | "delegate"
   | "reDelegateRewards"
@@ -76,9 +76,9 @@ export type MultiversxTransactionMode =
   | "withdraw";
 
 /**
- * Multiversx transaction payload to sign
+ * MultiversX transaction payload to sign
  */
-export type MultiversxProtocolTransaction = {
+export type MultiversXProtocolTransaction = {
   nonce: number;
   value: string;
   receiver: string;
@@ -93,12 +93,12 @@ export type MultiversxProtocolTransaction = {
 };
 
 /**
- * Multiversx transaction as received from explorer
+ * MultiversX transaction as received from explorer
  */
-export type MultiversxApiTransaction = {
-  mode: MultiversxTransactionMode;
+export type MultiversXApiTransaction = {
+  mode: MultiversXTransactionMode;
   fees: BigNumber | null | undefined;
-  transfer?: MultiversxTransferOptions;
+  transfer?: MultiversXTransferOptions;
   txHash?: string;
   sender?: string;
   receiver?: string;
@@ -115,16 +115,16 @@ export type MultiversxApiTransaction = {
   data?: string;
   tokenIdentifier?: string;
   tokenValue?: string;
-  action?: MultiversxTransactionAction;
-  operations?: MultiversxTransactionOperation[];
+  action?: MultiversXTransactionAction;
+  operations?: MultiversXTransactionOperation[];
 };
 
-export enum MultiversxTransferOptions {
+export enum MultiversXTransferOptions {
   egld = "egld",
   esdt = "esdt",
 }
 
-export type MultiversxTransactionOperation = {
+export type MultiversXTransactionOperation = {
   action: string;
   type: string;
   sender: string;
@@ -132,17 +132,17 @@ export type MultiversxTransactionOperation = {
   value: string;
 };
 
-export type MultiversxTransactionAction = {
+export type MultiversXTransactionAction = {
   category: string;
   name: string;
-  arguments: MultiversxTransactionActionArguments;
+  arguments: MultiversXTransactionActionArguments;
 };
 
-export type MultiversxTransactionActionArguments = {
-  transfers: MultiversxTransactionActionArgumentsTransfers[];
+export type MultiversXTransactionActionArguments = {
+  transfers: MultiversXTransactionActionArgumentsTransfers[];
 };
 
-export type MultiversxTransactionActionArgumentsTransfers = {
+export type MultiversXTransactionActionArgumentsTransfers = {
   token: string;
   value: string;
 };
@@ -172,14 +172,14 @@ export type NetworkInfoRaw = {
   gasPerByte: number;
 };
 
-export type MultiversxPreloadData = {
-  validators: MultiversxProvider[];
+export type MultiversXPreloadData = {
+  validators: MultiversXProvider[];
 };
 
 /**
- * Multiversx validator
+ * MultiversX validator
  */
-export type MultiversxProvider = {
+export type MultiversXProvider = {
   contract: string;
   owner: string;
   serviceFee: string;
@@ -214,22 +214,22 @@ export type MultiversxProvider = {
   };
 };
 
-export type MultiversxOperation = Operation<MultiversxOperationExtra>;
-export type MultiversxOperationRaw = OperationRaw<MultiversxOperationExtraRaw>;
+export type MultiversXOperation = Operation<MultiversXOperationExtra>;
+export type MultiversXOperationRaw = OperationRaw<MultiversXOperationExtraRaw>;
 
-export type MultiversxOperationExtra = {
+export type MultiversXOperationExtra = {
   amount?: BigNumber;
 };
 
-export function isMultiversxOperationExtra(op: OperationExtra): op is MultiversxOperationExtra {
+export function isMultiversXOperationExtra(op: OperationExtra): op is MultiversXOperationExtra {
   return op !== null && typeof op === "object" && "amount" in op;
 }
 
-export type MultiversxOperationExtraRaw = {
+export type MultiversXOperationExtraRaw = {
   amount?: string;
 };
-export function isMultiversxOperationExtraRaw(
+export function isMultiversXOperationExtraRaw(
   op: OperationExtraRaw,
-): op is MultiversxOperationExtraRaw {
+): op is MultiversXOperationExtraRaw {
   return op !== null && typeof op === "object" && "amount" in op;
 }

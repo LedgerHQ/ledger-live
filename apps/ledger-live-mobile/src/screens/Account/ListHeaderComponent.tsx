@@ -14,7 +14,7 @@ import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import Header from "./Header";
@@ -116,7 +116,7 @@ export function getListHeaderComponents({
       account: account as Account &
         CosmosAccount &
         PolkadotAccount &
-        MultiversxAccount &
+        MultiversXAccount &
         NearAccount,
     });
 

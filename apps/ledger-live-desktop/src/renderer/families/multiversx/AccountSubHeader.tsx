@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { MultiversxAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { Trans, useTranslation } from "react-i18next";
 import { SubAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import AccountSubHeaderDrawer from "~/renderer/components/AccountSubHeader/Accou
 import Alert from "~/renderer/components/Alert";
 
 export interface AccountSubHeaderPropsType {
-  account: MultiversxAccount | SubAccount;
+  account: MultiversXAccount | SubAccount;
 }
 
 const CardContent = styled(Box)`

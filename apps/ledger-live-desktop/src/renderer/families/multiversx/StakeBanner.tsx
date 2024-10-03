@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getAccountBannerState as getMultiversxBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
+import { getAccountBannerState as getMultiversXBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-import { useMultiversxPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
+import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import {
-  MultiversxAccount,
-  MultiversxProvider,
+  MultiversXAccount,
+  MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
@@ -15,16 +15,16 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 
-const StakeBanner: React.FC<{ account: MultiversxAccount }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: MultiversXAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
 
-  const multiversxPreloadData = useMultiversxPreloadData();
+  const multiversxPreloadData = useMultiversXPreloadData();
 
   const dispatch = useDispatch();
-  const bannerState: AccountBannerState = getMultiversxBannerState(account, multiversxPreloadData);
+  const bannerState: AccountBannerState = getMultiversXBannerState(account, multiversxPreloadData);
   const showDelegationBanner = bannerState.bannerType === "delegate";
   if (!stakeAccountBannerParams?.multiversx?.delegate && showDelegationBanner) {
     return null;
@@ -65,7 +65,7 @@ const StakeBanner: React.FC<{ account: MultiversxAccount }> = ({ account }) => {
     if (bannerState.bannerType === "redelegate") {
       const findValidator = (validator: string) =>
         multiversxPreloadData.validators.find(
-          (item: MultiversxProvider) => item.contract === validator,
+          (item: MultiversXProvider) => item.contract === validator,
         );
 
       const mappedDelegations = account.multiversxResources.delegations.map(delegation => ({
