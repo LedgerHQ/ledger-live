@@ -141,7 +141,7 @@ export default {
         .push(
           { rootId, walletSyncEncryptionKey, applicationPath },
           { pubkey: pubKey, privatekey: privateKey },
-          JSON.parse(data) as LiveData,
+          JSON.parse(data!) as LiveData,
         )
         .then(result => JSON.stringify(result, null, 2));
     }
