@@ -8,6 +8,20 @@
   - @ledgerhq/hw-app-eth@6.39.0-next.0
   - @ledgerhq/live-common@34.10.0-next.0
 
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1
+
+## 0.3.9-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1-hotfix.0
+
 ## 0.3.8
 
 ### Patch Changes

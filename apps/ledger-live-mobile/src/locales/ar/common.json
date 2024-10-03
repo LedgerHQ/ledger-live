@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "مُعرّف {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "عرض أسعار"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -788,6 +789,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "تأكد أن لديك {{depositAmount}} ADA متاح للإيداع"
     },
+    "CardanoFeeHigh" : {
+      "title" : "Abnormally high network fees.",
+      "description" : "Network fees unusually high please double check your transaction."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "Abnormally high network fees.",
+      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano invalid protocol parameters",
+      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
     },
@@ -892,6 +905,9 @@
     "NearStakingThresholdNotMet" : {
       "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
     },
+    "PinNotSet" : {
+      "title" : "لم يتم إعداد كود PIN"
+    },
     "PriorityFeeTooLow" : {
       "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
     },
@@ -919,6 +935,13 @@
     "InvalidMemoICP" : {
       "title" : "الملاحظة يجب أن تكون رقماً"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "المستلم لتحويل رمز التوكن غير صالح، أنواع الحساب المدعومة لتحويل رموز التوكن: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "عذراً، فشل تقدير الرسوم",
+      "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
+    },
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
@@ -936,7 +959,41 @@
     "CustomError" : {
       "title" : "عذراً، حاول مرة أخرى.",
       "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
-      "errorCode" : "الكود: {{errorCode}}"
+      "errorCode" : "الكود: {{errorCode}}",
+      "errorMessage" : "{{errorMessage}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "لم تعد متزامناً بعد الآن"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "أنت لم تعد متزامناً بعد الآن",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
+    },
+    "TrustchainNotFound" : {
+      "title" : "حدث خطأ ما أثناء جلب بياناتك",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
+    },
+    "TonExcessFee" : {
+      "title" : "إنها تشمل تحويل رمز توكن. ستدفع 0.1 TON كرسوم، وأي فائض سيُعاد إليك."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "لا توجد أموال كافية في الحساب الرئيسي (TON) لحساب الرسوم. الحد الأدنى المطلوب للرصيد هو 0.1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "الأموال المتوفرة غير كافية. الحد الأدنى المطلوب للرصيد هو 0.2 TON."
+    },
+    "BackupAppDataError" : {
+      "title" : "خطأ أثناء النسخ الاحتياطي لبيانات التطبيق"
+    },
+    "RestoreAppDataError" : {
+      "title" : "خطأ في استعادة بيانات التطبيق"
+    },
+    "DeleteAppDataError" : {
+      "title" : "خطأ في حذف بيانات التطبيق"
+    },
+    "ScannedNewImportQrCode" : {
+      "title" : "مطلوب التحديث",
+      "description" : "لمزامنة تطبيقاتك، يُرجى التأكد من أن كليهما مُحدّث إلى أحدث إصدار."
     }
   },
   "crash" : {
@@ -1351,10 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "مرحباً بك مجدداً",
-      "subtitle" : "اختر كيف تريد الوصول إلى محفظتك:",
+      "subtitle" : "Tell us how you prefer to access your wallet:",
       "connect" : "توصيل جهازك Ledger",
       "sync" : "المزامنة مع Ledger Live لسطح المكتب",
-      "walletSync" : "المزامنة مع تطبيق Ledger Live آخر"
+      "walletSync" : "Use Ledger Sync"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "استكشف بدون جهاز",
@@ -2274,6 +2331,7 @@
     },
     "quickActions" : {
       "buy" : "شراء",
+      "sell" : "بيع",
       "swap" : "مبادلة",
       "send" : "إرسال",
       "deposit" : "تلقي",
@@ -2315,12 +2373,11 @@
         "description" : "استيراد الأصل من Ledger Live لسطح المكتب"
       },
       "add" : {
-        "title" : "الإضافة عن طريق جهازك Ledger",
-        "description" : "إنشاء أو استيراد أصولك باستخدام جهازك Ledger"
+        "title" : "Use your Ledger device",
+        "description" : "Create or import your crypto account using your Ledger device"
       },
       "walletSync" : {
-        "title" : "الاستيراد عبر تطبيق Ledger Live آخر",
-        "description" : "تنشيط مزامنة Ledger"
+        "title" : "Use Ledger Sync"
       }
     }
   },
@@ -2760,7 +2817,7 @@
       "dateFormat" : "تنسيق التاريخ",
       "dateFormatDesc" : "تعيين تنسيق التاريخ في Ledger Live",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "ببساطة قم بتأمين بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live.",
+      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password" : "App lock (قفل التطبيق)",
@@ -2993,6 +3050,10 @@
         },
         "platformManifest" : {
           "title" : "تحميل بيان المنصة"
+        },
+        "mockAppUpdate" : {
+          "title" : "تحديث صوري للتطبيق",
+          "description" : "يعرض التحديث المتاح للتطبيق في My Ledger (جهازي Ledger)، ويقوم بإعادة تثبيت نفس إصدار التطبيق"
         }
       }
     },
@@ -6206,6 +6267,9 @@
     "webPlatformPlayer" : {
       "infoPanel" : {
         "website" : "الموقع الإلكتروني"
+      },
+      "back" : {
+        "card" : "كل البطاقات"
       }
     }
   },
@@ -6642,7 +6706,7 @@
         "title" : "إدارة تفضيلاتك",
         "analytics" : {
           "title" : "التحليلات",
-          "description" : "لقياس أداء Ledger Live وتحسين كل من التطبيق وتجربتك، نشارك بيانات الاستخدام، بما في ذلك زيارات الصفحات والنقرات."
+          "description" : "لقياس أداء Ledger Live وتحسين كل من التطبيق وتجربة المستخدم، أوافق على جمع بياناتي، بما في ذلك زيارات الصفحات والنقرات"
         },
         "personalizedExp" : {
           "title" : "التخصيص",
@@ -6652,7 +6716,7 @@
           "notNow" : "ليس الآن",
           "accept" : "قبول",
           "acceptAll" : "قبول الكل",
-          "confirm" : "مشاركة"
+          "confirm" : "تأكيد"
         },
         "infoText" : {
           "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
@@ -6700,81 +6764,77 @@
     "title" : "مزامنة Ledger",
     "activation" : {
       "screen" : {
-        "title" : "قم بمزامنة حساباتك عبر جميع المنصات",
-        "description" : "جهازك Ledger سيقوم بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
-        "mainCta" : "مزامنة حساباتك",
-        "secondCta" : "أنشأت مفتاحاً بالفعل؟"
+        "title" : "Turn on Ledger Sync for this phone?",
+        "description" : "This automatically syncs your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+        "mainCta" : "تشغيل مزامنة Ledger",
+        "secondCta" : "I already turned it on",
+        "learnMore" : "How does Ledger Sync work?"
       }
     },
     "deviceSelection" : {
-      "title" : "اختر جهاز Ledger الذي ستستخدمه في تأمين نسخك الاحتياطي",
+      "title" : "Choose your Ledger device",
       "description" : "يمكنك استرداد نسخك الاحتياطي ببساطة بتوصيل جهازك Ledger بتطبيقات Ledger Live للجوّال وسطح المكتب."
     },
     "deviceAction" : {
       "title" : "تابع على جهازك Ledger {{wording}}",
       "description" : "اتبع التعليمات التي تظهر على الشاشة الموثوقة (Trusted Display) لجهازك Ledger."
     },
+    "loading" : {
+      "title" : "انتظرنا...",
+      "activation" : "يتم تشفير بياناتك بشكل تام... ",
+      "synch" : "جارٍ تحديث الحالات التي تمت مزامنتها..."
+    },
     "success" : {
-      "sync" : "تمت المزامنة بنجاح!",
-      "syncDesc" : "التغييرات في حساباتك ستظهر الآن تلقائياً عبر كل التطبيقات والمنصات.",
-      "activation" : "تم بنجاح!",
-      "activationDesc" : "لقد مكّنت مزامنة Ledger بنجاح.",
+      "sync" : "Sync successful",
+      "syncDesc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
+      "activation" : "Ledger Sync turned on for Ledger Live on this phone",
       "syncAnother" : "المزامنة مع تطبيق Ledger Live آخر",
       "close" : "إغلاق"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "مزامنة",
-        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة. "
+        "title" : "المزامنة مع تطبيق Ledger Live آخر",
+        "description" : "Sync your Ledger Live crypto accounts across different phones and computers."
       },
       "manageKey" : {
-        "title" : "إدارة المفتاح",
-        "description" : "قم بتأمين أو حذف مفتاح التشفير الخاص بك عبر جهاز Ledger آخر.",
-        "success" : "لقد تم إلغاء مزامنة أجهزتك ومفتاحك تم حذفه",
-        "drawer" : {
-          "step1" : {
-            "title" : "إدارة مفتاحك",
-            "titleCta" : "حذف مفتاحك",
-            "descCta" : "كل بياناتك التي تمت مزامنتها سيتم حذفها."
-          },
-          "step2" : {
-            "delete" : "حذف",
-            "cancel" : "إلغاء",
-            "title" : "هل تريد بالفعل حذف مفتاح الشفير الخاص بك؟",
-            "desc" : "بالنقر على حذف، فإن أجهزتك سيتم إلغاء مزامنتها وكل البيانات التي تمت مزامنتها ستُحذف. كن مطمئناً إلى أن القيام بهذا الإجراء لا يؤثر على أموالك. يمكنك إعادة مزامنة حساباتك في أي وقت."
-          }
+        "title" : "حذف المزامنة",
+        "description" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة ستتوقف عن المزامنة.",
+        "success" : "تطبيقات Ledger Live الخاصة بك لم تعد متزامنةً",
+        "successHint" : "يمكنك تشغيل المزامنة مجدداً في أي وقت.",
+        "confirm" : {
+          "delete" : "نعم، احذفها",
+          "cancel" : "إبقاء المزامنة",
+          "title" : "متأكد أنك تريد حذف المزامنة؟",
+          "desc" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة لن تكون متزامنة بعد الآن. هذا لا يؤثر على أموالك بأي طريقة."
         }
       },
       "manageInstances" : {
-        "title" : "إدارة الحالات التي تمت مزامنتها",
+        "title" : "Ledger Live is synched across:",
         "remove" : "حذف"
       },
       "synchronizedInstances" : {
-        "cta" : "قم بالإدارة الآن",
-        "title" : "{{count}} حالة تمت مزامنتها",
-        "title_plural" : "{{count}} حالة تمت مزامنتها",
+        "cta" : "إدارة",
+        "title" : "{{count}} Ledger Live app synched",
+        "title_plural" : "{{count}} Ledger Live apps synched",
         "error" : "الحالات",
         "unsecuredError" : {
-          "title" : "التزامن ليس مؤمّناً بواسطة جهاز Ledger هذا",
-          "description" : "يرجى توصيل جهاز Ledger الذي استخدمته لإنشاء مفتاح التشفير الخاص بك.",
-          "info" : "إذا فقدت جهازك Ledger، لا تقلق! ما زال بإمكانك حذف مفتاحك. هذا الإجراء سيحذف بياناتك ويلغي مزامنة كل الحالات المتزامنة حالياً في نفس الوقت.",
+          "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
+          "description" : "If you don’t have the same Ledger device, select “Delete sync”.",
           "cta" : "توصيل جهاز Ledger آخر",
-          "ctaDelete" : "حذف مفتاح التشفير الخاص بي"
+          "ctaDelete" : "Delete sync"
         },
         "autoRemoveError" : {
-          "title" : "لا يمكنك إزالة الحالة الحالية",
-          "description" : "لأسباب تتعلق بالأمان، لا يمكنك إزالة الحالة التي تستخدمها حالياً بدون حذف مفتاح التشفير الخاص بك.",
+          "title" : "You can’t remove this phone while you’re using it",
+          "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync'.",
           "info" : "حذف مفتاح التشفير الخاص بك سيؤدي إلى إلغاء مزامنة أجهزتك، وكل البيانات التي تمت مزامنتها ستُحذف. لكن، هذا لن يؤثر على أموالك. يمكنك إعادة مزامنة حساباتك في أي وقت.",
           "cta" : "أفهم ذلك",
-          "ctaDelete" : "حذف مفتاح التشفير الخاص بي"
+          "ctaDelete" : "Delete sync"
         },
-        "success" : "{{member}} الخاص بك لم يعد متزامن"
+        "success" : "Your Ledger Live app on {{member}} is no longer connected to Ledger Sync"
       },
       "errors" : {
         "fetching" : "حدث خطأ ما أثناء جلب حالاتك التي تمت مزامنتها.",
-        "trustchain" : "سلسلة ثقة زائفة غير متوقعة",
-        "memberCredentials" : "بيانات اعتماد عضو زائفة غير متوقعة",
-        "ledgerSyncUnavailable" : "مزامنة Ledger غير متاحة حالياً. هذا ليس له أي تأثير على أصولك."
+        "ledgerSyncUnavailable" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
       }
     },
     "synchronize" : {
@@ -6786,23 +6846,134 @@
         "connectDevice" : {
           "title" : "استخدم جهازك Ledger"
         }
+      },
+      "qrCode" : {
+        "title" : "Sync Ledger Live apps",
+        "show" : {
+          "title" : "عرض كود QR",
+          "explanation" : {
+            "title" : "مسح ومزامنة حساباتك باستخدام تطبيق Ledger Live آخر",
+            "steps" : {
+              "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
+              "step3" : "مسح ضوئي لكود QR"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "مسح ضوئي",
+          "description" : "مسح ضوئي لكود QR",
+          "explanation" : {
+            "title" : "To sync with Ledger Live on another phone or computer...",
+            "steps" : {
+              "step1" : "Open the Ledger Live you want to sync with.",
+              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
+              "step3" : "مسح ضوئي لكود QR"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Enter Ledger Sync code",
+          "desc" : "Enter the code shown on your computer to sync your crypto accounts across both apps.",
+          "error" : {
+            "title" : "The codes don’t match",
+            "desc" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى.",
+            "tryAgain" : "إعادة المحاولة"
+          }
+        },
+        "scannedInvalidQrCode" : {
+          "title" : "كود QR غير صالح",
+          "desc" : "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
+          "info" : "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
+          "cta" : "أفهم ذلك"
+        },
+        "scannedOldQrCode" : {
+          "title" : "Ledger Live update required",
+          "desc" : "To continue with sync, update the Ledger Live app that’s not up to date.",
+          "info" : "For more on how to update, <0>check out this article<0>.",
+          "cta" : "أفهم ذلك"
+        },
+        "unbacked" : {
+          "title" : "لم يتم اكتشاف المزامنة",
+          "description" : "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta" : "تشغيل مزامنة Ledger"
+        },
+        "unbackedOnboarding" : {
+          "title" : "لم يتم اكتشاف المزامنة",
+          "description" : "Come back here after you turn on sync for the other Ledger Live app, and then select “Try again”.",
+          "info" : "If Ledger Sync is not enabled anywhere, then continue without it.",
+          "cta" : "إعادة المحاولة",
+          "cancel" : "المتابعة بدون مزامنة"
+        },
+        "backedWithDifferentSeeds" : {
+          "title" : "Different Ledger devices were used to enable Ledger Sync on each app",
+          "description" : "To sync the two Ledger Live apps, you need to use the same Ledger device.",
+          "info" : "To fix this, delete sync for one of the apps and turn it on again by scanning the QR code.",
+          "cta" : "أفهم ذلك"
+        },
+        "alreadyBacked" : {
+          "title" : "Both Ledger Live apps are already synched",
+          "cta" : "فهمت ذلك"
+        }
+      },
+      "unbackedOnboarding" : {
+        "title" : "لم يتم اكتشاف المزامنة",
+        "description" : "If Ledger Sync is enabled, select “Try again” and make sure to connect the same Ledger device you used for enabling it.",
+        "info" : "Or, continue without Ledger Sync.",
+        "cta" : "إعادة المحاولة",
+        "cancel" : "المتابعة بدون مزامنة"
+      },
+      "alreadySecureError" : {
+        "title" : "هذا التطبيق مُؤمّن بالفعل بواسطة جهاز Ledger هذا",
+        "description" : "إذا كنت تحاول إنشاء نسخ احتياطي جديد، يُرجى توصيل جهاز Ledger الذي استخدمته لإنشاء مفتاح التشفير الآخر الخاص بك.",
+        "cta" : "أفهم ذلك"
+      },
+      "alreadySecureOtherSeedError" : {
+        "title" : "يمكنك استخدام جهاز Ledger هذا للمزامنة",
+        "description" : "إذا كانت لا تزال ترغب في مزامنة التطبيقين، يُرجى حذف مفتاحك وحاول مرةً أخرى.",
+        "cta" : "حذف مفتاح التشفير الخاص بي"
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "تم تمكين التوقيع بوضوح",
-      "checkbox" : "لاتذكرني مرة أخرى.",
-      "CTA" : "افتح {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "استكشف",
-      "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "تم تمكين التوقيع بوضوح",
+        "clearSigningDisabled" : "تم تعطيل التوقيع بوضوح",
+        "checkbox" : "لاتذكرني مرة أخرى.",
+        "CTA" : "افتح {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "استكشف",
+        "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+      },
+      "label" : {
+        "clearSigning" : "التوقيع بوضوح"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "اكتشف"
+      },
       "header" : {
         "title" : "استكشف ويب 3.0",
         "placeholder" : "ابحث أو اكتب عنوان URL"
+      },
+      "clearSigning" : {
+        "title" : "التوقيع بوضوح"
+      }
+    },
+    "app" : {
+      "selectAccountModal" : {
+        "networkHeader" : {
+          "title" : "اختر شبكة"
+        },
+        "accountHeader" : {
+          "title" : "اختر حساب"
+        },
+        "addAccountItem" : {
+          "name" : "إضافة حساب"
+        }
       }
     }
   }

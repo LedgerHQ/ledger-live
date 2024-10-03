@@ -15,6 +15,20 @@
   - @ledgerhq/coin-framework@0.18.2-next.0
   - @ledgerhq/domain-service@1.2.6-next.0
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1
+
+## 0.9.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1-hotfix.0
+
 ## 0.9.1
 
 ### Patch Changes
