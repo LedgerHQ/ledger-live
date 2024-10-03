@@ -12,7 +12,6 @@ import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "tests/enum/AppInfos";
-import { runCliCommand } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -107,10 +106,6 @@ export const test = base.extend<TestFixtures>({
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
         process.env.SPECULOS_API_PORT = device?.ports.apiPort;
         process.env.MOCK = "";
-
-        const command = "balanceHistory --format asciichart";
-        const output = await runCliCommand(command);
-        console.log(output);
       }
 
       // default environment variables
