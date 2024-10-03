@@ -17,7 +17,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
-} from "../../../libs/ledgerjs/packages/hw-transport-node-speculos-http/lib/SpeculosHttpTransport";
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 checkLibs({
   NotEnoughBalance,
