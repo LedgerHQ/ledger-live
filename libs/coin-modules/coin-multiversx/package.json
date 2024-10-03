@@ -43,8 +43,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@multiversx/sdk-core": "^13.6.3",
-    "@multiversx/sdk-network-providers": "^2.7.1",
+    "@multiversx/sdk-core": "^13.7.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",

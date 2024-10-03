@@ -17,12 +17,12 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import {
   Address,
+  ApiNetworkProvider,
   INetworkConfig,
   INonce,
   Transaction as MultiversxSdkTransaction,
   TransactionPayload,
 } from "@multiversx/sdk-core";
-import { ApiNetworkProvider } from "@multiversx/sdk-network-providers";
 import { BinaryUtils } from "../utils/binary.utils";
 import {
   CHAIN_ID,
