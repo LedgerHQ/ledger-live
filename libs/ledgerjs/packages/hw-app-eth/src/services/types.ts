@@ -44,6 +44,8 @@ export type ResolutionConfig = {
   erc20?: boolean;
   // List of trusted names (ENS for now) to clear sign
   domains?: DomainDescriptor[];
+  // activate uniswap v3 plugin resolution
+  uniswapV3?: boolean;
 };
 
 export type LedgerEthTransactionService = {

@@ -4035,6 +4035,10 @@
         "desc": "Add exchange provider's info",
         "placeholder": "Exchange provider's info in CAL format"
       },
+      "analyticsConsole": {
+        "title": "Allow Analytics Console",
+        "desc": "Display and allow opening analytics console."
+      },
       "debugSimpleHash": {
         "testSimpleHash": {
           "title": "SimpleHash Tools",

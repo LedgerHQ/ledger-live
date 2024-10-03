@@ -11,6 +11,7 @@ import { MarketCoinPage } from "../../page/market.coin.page";
 import { AssetPage } from "../../page/asset.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { AccountPage } from "../../page/account.page";
+import { delegateModal } from "../../page/modal/delegate.modal";
 
 test.use({
   env: {
@@ -78,6 +79,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
+  const delegate = new delegateModal(page);
 
   const maskItemsInMarket = {
     mask: [
@@ -126,7 +128,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln");
+    await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
@@ -198,7 +200,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln_pooling");
+    await delegate.chooseStakeProvider("kiln_pooling");
     await analyticsPromise;
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
