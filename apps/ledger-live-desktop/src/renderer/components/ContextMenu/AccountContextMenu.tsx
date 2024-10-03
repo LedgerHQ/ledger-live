@@ -121,6 +121,7 @@ export default function AccountContextMenu({
               defaultCurrency: currency,
               defaultAccount: account,
               defaultParentAccount: parentAccount,
+              from: history.location.pathname,
             },
           });
         },

@@ -97,16 +97,12 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   if (!isFocused) return null;
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} style={{ flex: 1 }}>
+    <SafeAreaView edges={["left", "right"]} style={{ flex: 1 }}>
       <TrackScreen category="Manager" name="ChooseDevice" />
       {!isHeaderOverridden ? (
         <Flex px={16} pb={8}>
           <Text fontWeight="semiBold" variant="h4">
             <Trans i18nKey="walletSync.deviceSelection.title" />
-          </Text>
-
-          <Text pt={3} fontWeight="medium" variant="bodyLineHeight" color="neutral.c70">
-            <Trans i18nKey="walletSync.deviceSelection.description" />
           </Text>
         </Flex>
       ) : null}

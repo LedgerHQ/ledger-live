@@ -3,45 +3,44 @@ import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-const accounts: Account[] = [
-  Account.BTC_1,
-  Account.ETH_1,
-  Account.SOL_1,
-  Account.TRX_1,
-  Account.DOT_1,
-  Account.XRP_1,
-  Account.ADA_1,
-  Account.ALGO_1,
-  Account.XLM_1,
-  Account.BCH_1,
-  Account.ATOM_1,
-  Account.XTZ_1,
+const accounts = [
+  { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
+  { account: Account.ETH_1, xrayTicket: "B2CQA-2551" },
+  { account: Account.SOL_1, xrayTicket: "B2CQA-2553" },
+  { account: Account.XRP_1, xrayTicket: "B2CQA-2557" },
+  { account: Account.ADA_1, xrayTicket: "B2CQA-2549" },
+  { account: Account.DOT_1, xrayTicket: "B2CQA-2552" },
+  { account: Account.TRX_1, xrayTicket: "B2CQA-2556" },
+  { account: Account.XLM_1, xrayTicket: "B2CQA-2554" },
+  { account: Account.BCH_1, xrayTicket: "B2CQA-2547" },
+  { account: Account.ALGO_1, xrayTicket: "B2CQA-2546" },
+  { account: Account.ATOM_1, xrayTicket: "B2CQA-2550" },
+  { account: Account.XTZ_1, xrayTicket: "B2CQA-2555" },
 ];
 
 for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosApp: account.currency.speculosApp,
     });
 
     test(
-      `[${account.currency.name}] Delete Account`,
+      `[${account.account.currency.name}] Delete Account`,
       {
         annotation: {
           type: "TMS",
-          description: "B2CQA-320",
+          description: account.xrayTicket,
         },
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(account.accountName);
-        await app.account.expectAccountVisibility(account.accountName);
+        await app.accounts.navigateToAccountByName(account.account.accountName);
+        await app.account.expectAccountVisibility(account.account.accountName);
 
         await app.account.deleteAccount();
-        await app.accounts.expectAccountAbsence(account.accountName);
+        await app.accounts.expectAccountAbsence(account.account.accountName);
       },
     );
   });

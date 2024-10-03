@@ -24,6 +24,7 @@ export class Layout extends Component {
   readonly drawerExperimentalButton = this.page.getByTestId("drawer-experimental-button");
   private bookmarkedAccountsList = this.page.getByTestId("drawer-bookmarked-accounts");
   readonly bookmarkedAccounts = this.bookmarkedAccountsList.locator(".bookmarked-account-item");
+  readonly inputWarning = this.page.locator("id=input-warning");
 
   // topbar
   private topbarDiscreetButton = this.page.getByTestId("topbar-discreet-button");
@@ -36,7 +37,6 @@ export class Layout extends Component {
   // general
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
-  private loadingSpinner = this.page.getByTestId("loading-spinner");
   readonly logo = this.page.getByTestId("logo");
 
   // updater
@@ -104,10 +104,21 @@ export class Layout extends Component {
   }
 
   @step("Check warning message")
-  async checkWarningMessage(expectedWarningMessage: RegExp) {
-    await expect(this.insufficientFundsWarning).toBeVisible();
-    const warningText = await this.insufficientFundsWarning.innerText();
-    expect(warningText).toMatch(expectedWarningMessage);
+  async checkAmoutWarningMessage(expectedWarningMessage: RegExp) {
+    if (expectedWarningMessage !== null) {
+      await expect(this.insufficientFundsWarning).toBeVisible();
+      const warningText = await this.insufficientFundsWarning.innerText();
+      expect(warningText).toMatch(expectedWarningMessage);
+    }
+  }
+
+  @step("Check warning message")
+  async checkInputWarningMessage(expectedWarningMessage: string | null) {
+    if (expectedWarningMessage !== null) {
+      await expect(this.inputWarning).toBeVisible();
+      const warningText = await this.inputWarning.innerText();
+      expect(warningText).toMatch(expectedWarningMessage);
+    }
   }
 
   @step("Check if the error message is the same as expected")

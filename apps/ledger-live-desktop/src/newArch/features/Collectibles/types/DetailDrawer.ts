@@ -1,11 +1,12 @@
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { CollectibleType } from "./Collectibles";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
 
 export type ExternalViewerButtonProps = {
-  nft: ProtoNFT;
+  nft: ProtoNFT | SimpleHashNft;
   account: Account;
-  metadata: NFTMetadata;
+  metadata: NFTMetadata | SimpleHashNft["extra_metadata"];
 };
 
 export type CopyableFieldProps = {

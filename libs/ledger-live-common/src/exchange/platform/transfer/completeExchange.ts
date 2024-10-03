@@ -46,7 +46,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = getProviderConfig(exchangeType, provider);
+        const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 

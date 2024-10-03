@@ -125,6 +125,7 @@ function Main({ route, navigation }: Props) {
             />
             <Button
               title={t("analyticsOptIn.variantA.main.content.ctas.accept")}
+              testID="accept-analytics-button"
               onPress={clickOnAcceptAll}
               type="main"
               size="large"

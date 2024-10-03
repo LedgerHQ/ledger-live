@@ -68,7 +68,8 @@
     },
     "start": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "unimported": {
       "cache": false
