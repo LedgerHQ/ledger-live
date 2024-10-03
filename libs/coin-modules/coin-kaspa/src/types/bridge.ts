@@ -38,9 +38,39 @@ export type KaspaOperationExtraRaw = OperationExtraRaw & {
 
 export type KaspaOperationType = "IN" | "OUT";
 
-export type KaspaTransaction = TransactionCommon & {
-  family: "kaspa";
-  fees: BigNumber | null | undefined;
+export type KaspaPreviousOutpoint = {
+  transactionId: string;
+  index: number;
+};
+
+export type KaspaTransactionInput = {
+  previousOutpoint: KaspaPreviousOutpoint;
+  signatureScript: string;
+  sequence: number;
+  sigOpCount: number;
+};
+
+export type KaspaScriptPublicKey = {
+  version: number;
+  scriptPublicKey: string;
+};
+
+export type KaspaTransactionOutput = {
+  amount: number;
+  scriptPublicKey: KaspaScriptPublicKey;
+};
+
+// TODO: implement rbf functions
+export type KaspaTransaction = {
+  version: number;
+  inputs: KaspaTransactionInput[];
+  outputs: KaspaTransactionOutput[] | null;
+  locktime: number;
+  subnetworkId: string;
+};
+
+export type KaspaTransactionCommon = TransactionCommon & {
+  fees: number | null;
   rbf: boolean;
 };
 

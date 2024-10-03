@@ -1,8 +1,15 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-/**
- * MyCoin error thrown on a specifc check done on a transaction amount
- */
-export const MyCoinSpecificError = createCustomErrorClass(
-  "MyCoinSpecificError"
+export const NotEnoughFeeError = createCustomErrorClass(
+  "NotEnoughFeeError"
 );
+
+export const TransactionMassExceededError = createCustomErrorClass(
+  "TransactionMassExceededError"
+);
+
+export const EmptyRecipientError = createCustomErrorClass(
+  "EmptyRecipientError"
+);
+
+

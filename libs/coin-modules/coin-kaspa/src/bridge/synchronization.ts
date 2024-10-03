@@ -6,9 +6,25 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { KaspaAccount } from "../types/bridge";
 import { BigNumber } from "bignumber.js";
+import KaspaBIP32 from "../lib/bip32";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async (info, syncConfig) => {
-  const { address, initialAccount, currency, derivationMode } = info;
+  const { xpub } = info;
+
+  // what is the format xpub exactly?
+  const kaspaBip32: KaspaBIP32 = new KaspaBIP32(
+    Buffer.from(xpub.slice(0, 32)),
+    Buffer.from(xpub.slice(33, 64)),
+  );
+
+  const accountAddresses: String[] = [];
+
+  for (let type = 0; type <= 1; type++) {
+    for (let index = 0; index <= 100; index++) {
+      accountAddresses.push(kaspaBip32.getAddress(type, index));
+    }
+  }
+
   const oldOperations = initialAccount?.operations || [];
 
   // Needed for incremental synchronisation

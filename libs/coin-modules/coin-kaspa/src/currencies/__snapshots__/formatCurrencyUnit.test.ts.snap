@@ -150,6 +150,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Klaytn unit (KLAY) 1`] = `"0,012345678900000000- -KLAY"`;
@@ -471,6 +473,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -794,6 +798,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Klaytn unit (KLAY) 1`] = `"0,012345678900000000- -KLAY"`;
@@ -1115,6 +1121,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format KASPA unit (KAS) 1`] = `"123 456 789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -1438,6 +1446,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Klaytn unit (KLAY) 1`] = `"0.012345678900000000- -KLAY"`;
@@ -1759,6 +1769,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -2082,6 +2094,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Klaytn unit (KLAY) 1`] = `"0,012345678900000000- -KLAY"`;
@@ -2403,6 +2417,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format KASPA unit (KAS) 1`] = `"123 456 789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -2726,6 +2742,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Klaytn unit (KLAY) 1`] = `"0,012345678900000000- -KLAY"`;
@@ -3048,6 +3066,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Klaytn unit (KLAY) 1`] = `"0.012345678900000000- -KLAY"`;
@@ -3369,6 +3389,8 @@ exports[`formatCurrencyUnit with default options should correctly format IOV uni
 exports[`formatCurrencyUnit with default options should correctly format Injective unit (Injective) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Kin unit (KIN) 1`] = `"123,456,789,000"`;
 
