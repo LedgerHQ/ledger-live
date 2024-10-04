@@ -5,4 +5,5 @@ export * from "./hooks/useNftFloorPrice";
 export * from "./hooks/useRefreshMetadata";
 export * from "./hooks/useCheckSpamScore";
 export * from "./hooks/useFetchOrdinals";
+export * from "./hooks/useFetchOrdinalByTokenId";
 export * from "./hooks/helpers/ordinals";

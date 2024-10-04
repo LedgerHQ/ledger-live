@@ -4,4 +4,5 @@ export const NFTS_QUERY_KEY = {
   FloorPrice: "FloorPrice",
   CheckSpamScore: "CheckSpamScore",
   FetchOrdinals: "FetchOrdinals",
+  FectchOrdinalsByTokenId: "FectchOrdinalsByTokenId",
 };
