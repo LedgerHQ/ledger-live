@@ -3,7 +3,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { Account, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "react-redux";
 import styled, { useTheme } from "styled-components";
@@ -317,12 +317,12 @@ export const StakeModal = ({ account, source }: Props) => {
               <Box flex={1}>
                 <Box>
                   <Text ff="Inter|SemiBold" fontSize={14}>
-                    {t("ethereum.stake.how_it_works")}
+                    {t("ethereum.stake.howItWorks")}
                   </Text>
                 </Box>
                 <Box>
                   <Text ff="Inter|SemiBold" fontSize={13} color={colors.palette.text.shade60}>
-                    {t("ethereum.stake.read_about")}
+                    {t("ethereum.stake.readAbout")}
                   </Text>
                 </Box>
               </Box>

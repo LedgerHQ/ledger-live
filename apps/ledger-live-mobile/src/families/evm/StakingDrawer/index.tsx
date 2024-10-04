@@ -154,10 +154,10 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
               </Flex>
             </Flex>
             <Box flex={1} justifyContent="space-between">
-              <Text fontSize={14}>{t("stake.ethereum.how_it_works")}</Text>
+              <Text fontSize={14}>{t("stake.ethereum.howItWorks")}</Text>
               <Box>
                 <Text fontSize={13} color={colors.neutral.c80}>
-                  {t("stake.ethereum.read_about")}
+                  {t("stake.ethereum.readAbout")}
                 </Text>
               </Box>
             </Box>

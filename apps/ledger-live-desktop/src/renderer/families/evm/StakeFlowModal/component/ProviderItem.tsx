@@ -97,15 +97,15 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
           {provider.lst
             ? t("ethereum.stake.lst")
             : provider.min
-              ? t("ethereum.stake.required_minimum", {
+              ? t("ethereum.stake.requiredMinimum", {
                   min: provider.min,
                 })
-              : t("ethereum.stake.no_minimum")}
+              : t("ethereum.stake.noMinimum")}
         </Text>
       </Flex>
       <Flex flex={1} flexWrap="wrap" justifyContent="right">
         <Text variant="paragraph" fontSize={13} color="neutral.c70" textAlign="right">
-          {t(`ethereum.stake.rewards_strategy.${provider.rewardsStrategy}`)}
+          {t(`ethereum.stake.rewardsStrategy.${provider.rewardsStrategy}`)}
         </Text>
       </Flex>
     </Container>

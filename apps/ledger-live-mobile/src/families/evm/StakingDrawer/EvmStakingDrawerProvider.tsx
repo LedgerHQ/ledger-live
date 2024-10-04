@@ -77,10 +77,10 @@ export function EvmStakingDrawerProvider({
               {provider.lst
                 ? t("stake.ethereum.lst")
                 : provider.min
-                  ? t("stake.ethereum.required_minimum", {
+                  ? t("stake.ethereum.requiredMinimum", {
                       min: provider.min,
                     })
-                  : t("stake.ethereum.no_minimum")}
+                  : t("stake.ethereum.noMinimum")}
             </Text>
           </Flex>
         </Flex>
@@ -93,7 +93,7 @@ export function EvmStakingDrawerProvider({
               flexWrap="wrap"
               textAlign="right"
             >
-              {t(`stake.ethereum.rewards_strategy.${provider.rewardsStrategy}`)}
+              {t(`stake.ethereum.rewardsStrategy.${provider.rewardsStrategy}`)}
             </Text>
           ) : (
             <></>

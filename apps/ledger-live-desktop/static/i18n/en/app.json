@@ -3754,9 +3754,9 @@
           "description": "You can restake your liquid token to get additional rewards."
         }
       },
-      "how_it_works": "How ETH staking works",
+      "howItWorks": "How ETH staking works",
       "lst": "Liquid token needed",
-      "no_minimum": "No minimum",
+      "noMinimum": "No minimum",
       "provider": {
         "figment": {
           "title": "Figment"
@@ -3786,9 +3786,9 @@
           "title": "Stader Labs"
         }
       },
-      "read_about": "Read about ETH staking and different strategies",
-      "required_minimum": "Requires {{min}} ETH",
-      "rewards_strategy": {
+      "readAbout": "Read about ETH staking and different strategies",
+      "requiredMinimum": "Requires {{min}} ETH",
+      "rewardsStrategy": {
         "auto-compounded": "Auto-compounded rewards",
         "basic": "Rewards",
         "daily": "Daily rewards",
