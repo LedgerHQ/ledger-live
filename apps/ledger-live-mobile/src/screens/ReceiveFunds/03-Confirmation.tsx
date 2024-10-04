@@ -466,7 +466,7 @@ const WithdrawBanner = ({ onPress, hideBanner, ...props }: BannerProps) => {
         <Flex
           backgroundColor={colors.opacityDefault.c05}
           borderColor="transparent"
-          borderWidth={16}
+          borderWidth={12}
           borderRadius={999}
         >
           <BankMedium size={24} />
