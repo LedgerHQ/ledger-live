@@ -39,7 +39,7 @@ import {
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
@@ -50,7 +50,7 @@ import {
   useRedirectToSwapHistory,
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-
+import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -270,6 +270,61 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             },
           );
         });
+      },
+      "custom.getTransactionByHash": async ({
+        params,
+      }: {
+        params: {
+          transactionHash: string;
+          fromAccountId: string;
+          SWAP_VERSION: string;
+        };
+      }): Promise<any> => {
+        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+        if (!realFromAccountId) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:326 fromAccount",
+          "color: #007acc;",
+          fromAccount,
+        );
+        if (!fromAccount) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
+        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3.tsx:304 mainAccount",
+          "color: #007acc;",
+          mainAccount,
+        );
+
+        const lol = getNodeApi(mainAccount.currency);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3.tsx:313 lol",
+          "color: #007acc;",
+          lol,
+        );
+        try {
+          const tx = await lol.getTransaction(mainAccount.currency, params.transactionHash);
+          console.log(
+            "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3.tsx:314 tx",
+            "color: #007acc;",
+            tx,
+          );
+          return Promise.resolve(tx);
+        } catch (error) {
+          console.log(
+            "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3.tsx:321 error",
+            "color: #007acc;",
+            error,
+          );
+          return Promise.resolve({});
+        }
       },
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();
