@@ -1,4 +1,4 @@
-import Braze from "@braze/react-native-sdk";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -30,15 +30,12 @@ export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[])
 }
 
 function StakeModalVersionWrapper() {
-  const [enabled, setEnabled] = useState(false);
-  useEffect(() => {
-    (async () => {
-      const flag = await Braze.getFeatureFlag("earn-use-latest-stake-modal");
-      Braze.logFeatureFlagImpression("earn-use-latest-stake-modal");
-      setEnabled(Boolean(flag?.enabled));
-    })();
-  }, []);
-  return enabled ? <EvmStakingDrawer /> : <EvmStakingDrawer_deprecated />;
+  const ethStakingModalWithFilters = useFeature("ethStakingModalWithFilters");
+  return ethStakingModalWithFilters?.enabled ? (
+    <EvmStakingDrawer />
+  ) : (
+    <EvmStakingDrawer_deprecated />
+  );
 }
 
 export function RootDrawerSelector() {

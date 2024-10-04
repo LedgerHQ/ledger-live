@@ -144,6 +144,7 @@ export type Features = CurrencyFeatures & {
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
+  ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
