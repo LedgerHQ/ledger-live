@@ -38,6 +38,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { MEMO_TAG_COINS } from "~/utils/constants";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, {
@@ -393,7 +394,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             </StyledTouchableOpacity>
           </Flex>
           <FeatureToggle featureId="llmMemoTag">
-            <NeedMemoTagModal />
+            {"id" in currency && MEMO_TAG_COINS.includes(currency.id) && <NeedMemoTagModal />}
           </FeatureToggle>
           <Flex px={6} flexDirection="column" rowGap={8} mt={6}>
             {isUTXOCompliantCurrency && (
