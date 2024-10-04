@@ -80,7 +80,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   thorswap: {
     type: "CEX",
     needsBearerToken: false,
-    displayName: "THORSwap",
+    displayName: "THORChain",
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
     supportUrl: "mailto:support@thorswap.finance",
     mainUrl: "https://www.thorswap.finance/",
