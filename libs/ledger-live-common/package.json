@@ -253,7 +253,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/web3.js": "1.77.3",
+    "@solana/web3.js": "1.91.6",
     "@svgr/core": "^5.5.0",
     "@tanstack/react-query": "^5.28.9",
     "@testing-library/react": "^14.1.2",
