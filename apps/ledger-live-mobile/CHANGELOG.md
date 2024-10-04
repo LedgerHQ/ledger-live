@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.51.0-next.1
+
+### Patch Changes
+
+- [#8010](https://github.com/LedgerHQ/ledger-live/pull/8010) [`828e905`](https://github.com/LedgerHQ/ledger-live/commit/828e905db2cddeb0c754ac0b507d02dc6cc154f6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - When user has a lock password the app get locked when he wants to sync with another instance
+
 ## 3.51.0-next.0
 
 ### Minor Changes
