@@ -5,7 +5,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function StakeModalVersionWrapper(props: Props) {
   const ethStakingModalWithFilters = useFeature("ethStakingModalWithFilters");
-
   return ethStakingModalWithFilters?.enabled ? (
     <StakeModal {...props} />
   ) : (

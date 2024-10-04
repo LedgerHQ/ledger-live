@@ -3,18 +3,18 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { Account, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useStore } from "react-redux";
 import styled, { useTheme } from "styled-components";
+import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Modal from "~/renderer/components/Modal";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
-import { EthStakingModalBody } from "./EthStakingModalBody";
-import * as braze from "@braze/web-sdk";
-import { useStore } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { EthStakingModalBody } from "./EthStakingModalBody";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
@@ -156,17 +156,6 @@ export const StakeModal = ({ account, source }: Props) => {
     );
   }, [selected, setIsScrollable]);
 
-  useEffect(() => {
-    if (!trackingEnabledSelector(store.getState())) {
-      return;
-    }
-    const data = {
-      button: `filter_${selected}`,
-    };
-    track(BUTTON_CLICKED_TRACK_EVENT, data);
-    braze.logCustomEvent(BUTTON_CLICKED_TRACK_EVENT, data);
-  }, [store, selected]);
-
   if (!ethStakingProviders?.enabled) {
     return null;
   }
@@ -203,7 +192,15 @@ export const StakeModal = ({ account, source }: Props) => {
                       border={0}
                       height="auto"
                       key={x}
-                      onClick={() => setSelected(x)}
+                      onClick={() => {
+                        setSelected(x);
+                        if (!trackingEnabledSelector(store.getState())) {
+                          return;
+                        }
+                        track(BUTTON_CLICKED_TRACK_EVENT, {
+                          button: `filter_${x}`,
+                        });
+                      }}
                       outline={!checked}
                       size="xs"
                       style={{
@@ -301,8 +298,8 @@ export const StakeModal = ({ account, source }: Props) => {
               onClick={() =>
                 openURL(
                   selected === "restaking"
-                    ? "https://www.ledger.com/academy/what-is-ethereum-restaking"
-                    : "https://www.ledger.com/academy/ethereum-staking-how-to-stake-eth",
+                    ? urls.ledgerAcademy.whatIsEthereumRestaking
+                    : urls.ledgerAcademy.ethereumStakingHowToStakeEth,
                 )
               }
             >

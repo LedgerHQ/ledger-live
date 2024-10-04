@@ -31,6 +31,8 @@ export type TabsProps = BaseTabsProps & {
 };
 
 export const TabsContainer = styled(FlexBox)<{ stretchItems: boolean }>`
+  // Avoid conflict with styled-system's size property by nulling size and renaming it
+  size: undefined;
   flex-direction: row;
   width: 100%;
   align-items: ${(p) => (p.stretchItems ? "stretch" : "center")};

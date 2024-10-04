@@ -1,4 +1,3 @@
-import Braze from "@braze/react-native-sdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
@@ -11,6 +10,7 @@ import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
 import { trackingEnabledSelector } from "~/reducers/settings";
+import { urls } from "~/utils/urls";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
 
@@ -76,17 +76,6 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
     [has32Eth, providers, selected],
   );
 
-  useEffect(() => {
-    if (!trackingEnabledSelector(store.getState())) {
-      return;
-    }
-    const data = {
-      button: `filter_${selected}`,
-    };
-    track(BUTTON_CLICKED_TRACK_EVENT, data);
-    Braze.logCustomEvent(BUTTON_CLICKED_TRACK_EVENT, data);
-  }, [selected, store]);
-
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
@@ -104,7 +93,15 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
             gap={4}
             inactiveBg={colors.neutral.c40}
             activeIndex={selectedIndex}
-            onChange={setSelectedIndex}
+            onChange={index => {
+              setSelectedIndex(index);
+              if (!trackingEnabledSelector(store.getState())) {
+                return;
+              }
+              track(BUTTON_CLICKED_TRACK_EVENT, {
+                button: `filter_${OPTION_VALUES[index]}`,
+              });
+            }}
             stretchItems={false}
           />
           <Text variant="body" color="neutral.c80" minHeight={52} textAlign="center">
@@ -138,8 +135,8 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
             onPress={() =>
               Linking.openURL(
                 selected === "restaking"
-                  ? "https://www.ledger.com/academy/what-is-ethereum-restaking"
-                  : "https://www.ledger.com/academy/ethereum-staking-how-to-stake-eth",
+                  ? urls.ledgerAcademy.whatIsEthereumRestaking
+                  : urls.ledgerAcademy.ethereumStakingHowToStakeEth,
               )
             }
           >

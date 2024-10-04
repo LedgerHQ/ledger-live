@@ -55,10 +55,6 @@ const commonConfig = {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
       "<rootDir>/tests/fileTransformer.js",
   },
-  transformIgnorePatterns: [
-    "<rootDir>/node_modules/.pnpm/(?!(@braze)@)",
-    "node_modules/(?!.pnpm|@braze)",
-  ],
   globalSetup: "<rootDir>/tests/setup.ts",
   moduleDirectories: ["node_modules", "./tests"],
   modulePaths: [compilerOptions.baseUrl],
