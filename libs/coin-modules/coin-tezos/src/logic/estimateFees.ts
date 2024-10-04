@@ -1,6 +1,6 @@
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { COST_PER_BYTE, DEFAULT_STORAGE_LIMIT, Estimate, getRevealFee } from "@taquito/taquito";
+import { COST_PER_BYTE, DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
 import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import { getTezosToolkit } from "./tezosToolkit";
@@ -100,24 +100,30 @@ export async function estimateFees({
     }
 
     // NOTE: if useAllAmount is true, is it for sure in the send mode (ie. transfer)?
-    const revealFees = getRevealFee(account.address);
     if (transaction.useAllAmount) {
       let totalFees: number;
-      if (estimate.burnFeeMutez) {
+      if (estimate.burnFeeMutez > 0) {
         totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE; // 20 is storage buffer
       } else {
         totalFees = estimate.suggestedFeeMutez;
       }
       const maxAmount =
-        parseInt(account.balance.toString()) - (totalFees + (account.revealed ? 0 : revealFees));
+        parseInt(account.balance.toString()) -
+        (totalFees + (account.revealed ? 0 : DEFAULT_FEE.REVEAL));
       // from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
       const gasBuffer = 500;
+      const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
+      const increasedFee = (gasBuffer: number, opSize: number) => {
+        return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
+      };
+      const incr = increasedFee(gasBuffer, Number(estimate.opSize));
       estimation.fees = BigInt(totalFees + gasBuffer);
 
       estimation.gasLimit = BigInt(estimate.gasLimit + gasBuffer);
-      estimation.amount = maxAmount - gasBuffer > 0 ? BigInt(maxAmount - gasBuffer) : BigInt(0);
+      estimation.amount =
+        maxAmount - (gasBuffer - incr) > 0 ? BigInt(maxAmount - (gasBuffer - incr)) : BigInt(0);
 
       estimation.fees = BigInt(estimate.suggestedFeeMutez);
       estimation.gasLimit = BigInt(estimate.gasLimit);
@@ -130,7 +136,7 @@ export async function estimateFees({
     estimation.storageLimit = BigInt(estimate.storageLimit);
     estimation.estimatedFees = estimation.fees;
     if (!account.revealed) {
-      estimation.estimatedFees = estimation.estimatedFees + BigInt(revealFees);
+      estimation.estimatedFees = estimation.estimatedFees + BigInt(DEFAULT_FEE.REVEAL);
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
