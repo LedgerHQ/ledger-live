@@ -103,6 +103,7 @@ export async function estimateFees({
     if (transaction.useAllAmount) {
       let totalFees: number;
       if (estimate.burnFeeMutez > 0) {
+        // from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
         totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE; // 20 is storage buffer
       } else {
         totalFees = estimate.suggestedFeeMutez;
@@ -119,11 +120,9 @@ export async function estimateFees({
         return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
       };
       const incr = increasedFee(gasBuffer, Number(estimate.opSize));
-      estimation.fees = BigInt(totalFees + gasBuffer);
 
-      estimation.gasLimit = BigInt(estimate.gasLimit + gasBuffer);
-      estimation.amount =
-        maxAmount - (gasBuffer - incr) > 0 ? BigInt(maxAmount - (gasBuffer - incr)) : BigInt(0);
+      const maxMinusBuff = maxAmount - (gasBuffer - incr);
+      estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : BigInt(0);
 
       estimation.fees = BigInt(estimate.suggestedFeeMutez);
       estimation.gasLimit = BigInt(estimate.gasLimit);
@@ -132,7 +131,6 @@ export async function estimateFees({
       estimation.gasLimit = BigInt(estimate.gasLimit);
       estimation.amount = transaction.amount;
     }
-
     estimation.storageLimit = BigInt(estimate.storageLimit);
     estimation.estimatedFees = estimation.fees;
     if (!account.revealed) {
