@@ -37,6 +37,7 @@ import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
+import Circle from "~/components/Circle";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import { MEMO_TAG_COINS } from "~/utils/constants";
 import { urls } from "~/utils/urls";
@@ -453,14 +454,9 @@ const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
       LeftElement={
-        <Flex
-          backgroundColor={colors.opacityDefault.c05}
-          borderColor="transparent"
-          borderWidth={12}
-          borderRadius={999}
-        >
-          <BankMedium size={24} />
-        </Flex>
+        <Circle size={40} bg={colors.opacityDefault.c05}>
+          <BankMedium size={20} />
+        </Circle>
       }
       onPressDismiss={hideBanner}
       onPress={onPress}
