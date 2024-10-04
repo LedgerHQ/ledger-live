@@ -72,6 +72,14 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
   },
+  thorswap: {
+    type: "CEX",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "mailto:support@thorswap.finance",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+  },
 };
 
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProviderConfig> = {
@@ -172,6 +180,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
   },
+  thorswap: {
+    type: "CEX",
+    name: "thorswap",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "mailto:support@thorswap.finance",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "304402207a9676f6971575cad70e4ef4d937ebdba82c51e6a0ab5343c11fefa18dff326d0220643f0718da68ead3fd9900eb90bca782d533d1698c8ea1435ae232ddf2e94229",
+      "hex",
+    ),
+  },
 };
 
 type CurrencyDataResponse = {
@@ -244,7 +273,6 @@ export const fetchAndMergeProviderData = async () => {
       getProvidersData("swap"),
       getProvidersCDNData(),
     ]);
-
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;
 

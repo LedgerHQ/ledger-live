@@ -5,7 +5,9 @@ import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-const transactionsInputsInvalid = [
+//Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
+
+const transactionsAmountInvalid = [
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
     expectedErrorMessage: null,
@@ -35,6 +37,107 @@ const transactionsInputsInvalid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-2572",
+  },
+];
+
+const transactionsAddressInvalid = [
+  {
+    transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
+    expectedErrorMessage: "This is not a valid Ethereum address",
+    xrayTicket: "B2CQA-2709",
+  },
+  {
+    transaction: new Transaction(Account.ETH_1, Account.EMPTY, "0.00001", Fee.MEDIUM),
+    expectedErrorMessage: null,
+    xrayTicket: "B2CQA-2710",
+  },
+  {
+    transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5", Fee.MEDIUM),
+    expectedErrorMessage: "Recipient address is the same as the sender address",
+    xrayTicket: "B2CQA-2711",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", Fee.MEDIUM, "123456"),
+    expectedErrorMessage: "Recipient address is the same as the sender address",
+    xrayTicket: "B2CQA-2712",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001", Fee.MEDIUM),
+    expectedErrorMessage: "Recipient address is the same as the sender address",
+    xrayTicket: "B2CQA-2713",
+  },
+];
+
+const transactionAddressValid = [
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2714",
+  },
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2715, B2CQA-2716",
+  },
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: "Auto-verification not available: carefully verify the address",
+    xrayTicket: "B2CQA-2717",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM, "123456"),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2718",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2719",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM, "123456"),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2720",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2721",
+  },
+  {
+    transaction: new Transaction(Account.BTC_LEGACY_1, Account.BTC_LEGACY_2, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2722",
+  },
+  {
+    transaction: new Transaction(Account.BTC_SEGWIT_1, Account.BTC_SEGWIT_2, "0.00001", Fee.MEDIUM),
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2723",
+  },
+  {
+    transaction: new Transaction(
+      Account.BTC_NATIVE_SEGWIT_1,
+      Account.BTC_NATIVE_SEGWIT_2,
+      "0.00001",
+      Fee.MEDIUM,
+    ), //BTC Native Segwit
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2724",
+  },
+  {
+    transaction: new Transaction(
+      Account.BTC_TAPROOT_1,
+      Account.BTC_TAPROOT_2,
+      "0.00001",
+      Fee.MEDIUM,
+    ), //BTC Taproot
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2725",
+  },
+  {
+    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.00001", Fee.MEDIUM), //BCH
+    expectedWarningMessage: null,
+    xrayTicket: "B2CQA-2726",
   },
 ];
 
@@ -75,7 +178,7 @@ for (const transaction of transactionE2E) {
         );
 
         await app.account.clickSend();
-        await app.send.fillTxInfo(transaction.transaction);
+        await app.send.craftTx(transaction.transaction);
         await app.send.expectTxInfoValidity(transaction.transaction);
         await app.send.clickContinueToDevice();
 
@@ -105,7 +208,6 @@ test.describe("Send token (subAccount) - invalid address input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    speculosApp: tokenTransactionInvalid.transaction.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -152,7 +254,6 @@ test.describe("Send token (subAccount) - invalid amount input", () => {
   for (const transaction of tokenTransactionInvalid) {
     test.use({
       userdata: "speculos-2ETH-2BNB",
-      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
     });
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
@@ -173,7 +274,7 @@ test.describe("Send token (subAccount) - invalid amount input", () => {
         await app.send.clickContinue();
         await app.send.fillAmount(transaction.transaction.amount);
         await app.send.checkContinueButtonDisabled();
-        await app.layout.checkWarningMessage(transaction.expectedWarningMessage);
+        await app.layout.checkAmoutWarningMessage(transaction.expectedWarningMessage);
       },
     );
   }
@@ -188,7 +289,6 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   );
   test.use({
     userdata: "speculos-subAccount",
-    speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -214,45 +314,10 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   );
 });
 
-test.describe("Check invalid address input error", () => {
-  const transactionInvalidAddress = new Transaction(
-    Account.ETH_1,
-    Account.BTC_NATIVE_SEGWIT_1,
-    "0.00001",
-    Fee.MEDIUM,
-  );
-
-  test.use({
-    userdata: "speculos-tests-app",
-    speculosApp: transactionInvalidAddress.accountToDebit.currency.speculosApp,
-  });
-
-  test(
-    `Check invalid address input error for ${transactionInvalidAddress.accountToDebit.currency.name}`,
-    {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-1904",
-      },
-    },
-    async ({ app }) => {
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(
-        transactionInvalidAddress.accountToDebit.accountName,
-      );
-
-      await app.account.clickSend();
-      await app.send.fillRecipient(transactionInvalidAddress.accountToCredit.address);
-      await app.send.checkInvalidAddressError(transactionInvalidAddress);
-    },
-  );
-});
-
-for (const transaction of transactionsInputsInvalid) {
+for (const transaction of transactionsAmountInvalid) {
   test.describe("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
     });
 
     test(
@@ -290,7 +355,6 @@ test.describe("Verify send max user flow", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -314,3 +378,61 @@ test.describe("Verify send max user flow", () => {
     },
   );
 });
+
+for (const transaction of transactionAddressValid) {
+  test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
+    test.use({
+      userdata: "speculos-checkSendAddress",
+    });
+
+    test(
+      `Check button enabled ${transaction.xrayTicket} - valid address input`,
+      {
+        annotation: {
+          type: "TMS",
+          description: transaction.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transaction.transaction.accountToDebit.accountName,
+        );
+
+        await app.account.clickSend();
+        await app.send.fillRecipientInfo(transaction.transaction);
+        await app.layout.checkInputWarningMessage(transaction.expectedWarningMessage);
+        await app.send.checkContinueButtonEnable();
+      },
+    );
+  });
+}
+
+for (const transaction of transactionsAddressInvalid) {
+  test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
+    test.use({
+      userdata: "speculos-checkSendAddress",
+    });
+
+    test(
+      `Check "${transaction.expectedErrorMessage}" (${transaction.xrayTicket}) - invalid address input error`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-1904, B2CQA-472.2",
+        },
+      },
+      async ({ app }) => {
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transaction.transaction.accountToDebit.accountName,
+        );
+
+        await app.account.clickSend();
+        await app.send.fillRecipientInfo(transaction.transaction);
+        await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
+        await app.send.checkContinueButtonDisabled();
+      },
+    );
+  });
+}

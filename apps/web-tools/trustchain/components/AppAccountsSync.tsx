@@ -1,6 +1,6 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import {
@@ -31,7 +31,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCu
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Loading } from "./Loading";
-import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
+import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/lib-es/errors";
 import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
@@ -53,6 +53,7 @@ const localStateSelector = (state: State) => ({
 });
 
 const latestDistantStateSelector = (state: State) => state.walletState.walletSyncState.data;
+const latestDistantVersionSelector = (state: State) => state.walletState.walletSyncState.version;
 
 export default function AppAccountsSync({
   deviceId,
@@ -141,6 +142,7 @@ export default function AppAccountsSync({
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),

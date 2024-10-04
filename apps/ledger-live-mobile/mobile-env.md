@@ -38,5 +38,5 @@ In other cases, these env files will be used:
 |--|--|--|
 |release|GoogleService-Info-Production|N/A|
 |prerelease|GoogleService-Info-Production|N/A|
-|nightly|N/A|N/A|
+|nightly|GoogleService-Info-Production|N/A|
 |staging|GoogleService-Info-Staging|N/A|

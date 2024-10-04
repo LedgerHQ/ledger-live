@@ -175,8 +175,10 @@ export const getFeeData: NodeApi["getFeeData"] = currency =>
         ]);
         // Taking the average priority fee used on the last 5 blocks
         const maxPriorityFeeAverage = feeHistory.reward
-          .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
-          .dividedToIntegerBy(feeHistory.reward.length);
+          ? feeHistory.reward
+              .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
+              .dividedToIntegerBy(feeHistory.reward.length)
+          : new BigNumber(0);
 
         // A maxPriorityFeePerGas too low might make a transaction stuck forever
         // As a safety measure, if maxPriorityFeePerGas is zero

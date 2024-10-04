@@ -37,8 +37,7 @@ describe("ManageYourBackup", () => {
     const button = screen.getByRole("button", { name: "Manage" });
     await user.click(button);
 
-    const row = screen.getByTestId("walletSync-manage-backup");
-    await waitFor(() => expect(row).toBeDefined());
+    const row = await screen.findByTestId("walletSync-manage-backup");
 
     await user.click(row);
 
@@ -57,8 +56,6 @@ describe("ManageYourBackup", () => {
     await user.click(deleteButton);
 
     //Success message
-    await waitFor(() =>
-      expect(screen.getByText("Your Ledger Live apps are no longer synched")).toBeDefined(),
-    );
+    expect(await screen.findByText("Your Ledger Live apps are no longer synched")).toBeDefined();
   });
 });

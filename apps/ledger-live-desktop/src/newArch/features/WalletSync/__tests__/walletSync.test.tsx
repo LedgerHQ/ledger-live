@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen } from "tests/testUtils";
 import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { WalletSyncTestApp, lldWalletSyncFeatureFlag, mockedSdk } from "./shared";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
@@ -34,10 +34,7 @@ describe("Rendering", () => {
     const button = screen.getByRole("button", { name: "Manage" });
 
     await user.click(button);
-    await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined(),
-    );
-
+    expect(await screen.findByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined();
     expect(screen.getByText("I already turned it on")).toBeDefined();
     expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync.enabled).toBe(true);
     expect(screen.getByText(/How does Ledger Sync work?/i)).toBeDefined();
@@ -52,10 +49,7 @@ describe("Rendering", () => {
     const button = screen.getByRole("button", { name: "Manage" });
 
     await user.click(button);
-    await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined(),
-    );
-
+    expect(await screen.findByRole("button", { name: "Turn on Ledger Sync" })).toBeDefined();
     expect(screen.getByText("I already turned it on")).toBeDefined();
     expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync).toBe(undefined);
     expect(screen.queryByText(/How does Ledger Sync work?/i)).toBeNull();

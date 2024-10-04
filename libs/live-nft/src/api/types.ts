@@ -86,10 +86,19 @@ export interface owner {
   readonly quantity_string: string;
 }
 
+export interface marketplace_page {
+  readonly collection_url: string;
+  readonly marketplace_collection_id: string;
+  readonly marketplace_id: string;
+  readonly marketplace_name: string;
+  readonly nft_url: string;
+  readonly verified: boolean;
+}
 export interface collection {
   readonly name: string;
   readonly spam_score: number;
   readonly description?: string;
+  readonly marketplace_pages?: marketplace_page[];
 }
 
 export interface firstCreated {

@@ -5,9 +5,9 @@ import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSync
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
-import { memberCredentialsSelector } from "@ledgerhq/trustchain/store";
+import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import styled from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";

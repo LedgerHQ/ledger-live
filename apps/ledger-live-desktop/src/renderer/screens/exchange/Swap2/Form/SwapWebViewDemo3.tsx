@@ -91,6 +91,11 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
+// remove the account id from the from path
+function simplifyFromPath(path: string): string {
+  return path.replace(/^\/account.*/, "/account/{id}");
+}
+
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
@@ -112,7 +117,11 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { state } = useLocation<{ defaultAccount?: AccountLike; defaultParentAccount?: Account }>();
+  const { state } = useLocation<{
+    defaultAccount?: AccountLike;
+    defaultParentAccount?: Account;
+    from?: string;
+  }>();
   const redirectToHistory = useRedirectToSwapHistory();
 
   const { networkStatus } = useNetworkStatus();
@@ -283,8 +292,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               ).id,
             }
           : {}),
+        ...(state?.from ? { fromPath: simplifyFromPath(state.from) } : {}),
       }).toString(),
-    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState],
+    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState, state?.from],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {

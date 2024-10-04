@@ -20,6 +20,7 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
+import { getStakeActivation } from "./stake-activation";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
@@ -48,7 +49,7 @@ export type ChainAPI = Readonly<{
     authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
-  getStakeActivation: (stakeAccAddr: string) => ReturnType<Connection["getStakeActivation"]>;
+  getStakeActivation: (stakeAccAddr: string) => ReturnType<typeof getStakeActivation>;
 
   getInflationReward: (addresses: string[]) => ReturnType<Connection["getInflationReward"]>;
 
@@ -175,7 +176,7 @@ export function getChainAPI(
     ),
 
     getStakeActivation: (stakeAccAddr: string) =>
-      connection().getStakeActivation(new PublicKey(stakeAccAddr)).catch(remapErrors),
+      getStakeActivation(connection(), new PublicKey(stakeAccAddr)).catch(remapErrors),
 
     getInflationReward: (addresses: string[]) =>
       connection()
