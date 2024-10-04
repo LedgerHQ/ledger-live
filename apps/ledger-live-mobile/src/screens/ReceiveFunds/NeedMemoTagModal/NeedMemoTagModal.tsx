@@ -1,8 +1,10 @@
 import { useTheme } from "styled-components/native";
 import React, { useState } from "react";
 import { Linking } from "react-native";
-import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import Circle from "~/components/Circle";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { urls } from "~/utils/urls";
 
 export function NeedMemoTagModal() {
@@ -18,16 +20,11 @@ export function NeedMemoTagModal() {
         {t("transfer.receive.memoTag.link")}
       </Button>
 
-      <BottomDrawer isOpen={isOpen} onClose={closeModal}>
+      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={closeModal}>
         <Flex alignItems="center" mb={7}>
-          <Flex
-            backgroundColor={colors.opacityDefault.c05}
-            borderColor="transparent"
-            borderRadius={999}
-            borderWidth={16}
-          >
+          <Circle size={72} bg={colors.opacityDefault.c05}>
             <Icons.InformationFill size="L" color="primary.c80" />
-          </Flex>
+          </Circle>
         </Flex>
 
         <Text variant="h4" textAlign="center" mb={6}>
@@ -50,7 +47,7 @@ export function NeedMemoTagModal() {
         >
           {t("transfer.receive.memoTag.learnMore")}
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }
