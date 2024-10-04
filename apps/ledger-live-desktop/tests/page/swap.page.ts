@@ -153,18 +153,8 @@ export class SwapPage extends AppPage {
     return account.accountType ? account.currency.name : account.accountName;
   }
 
-  async waitForAccountsBalance(accountAddress: string, timeout = 10000) {
-    const regex = new RegExp(`/blockchain/v\\d+/.+/${accountAddress}$`);
-    const fetchTxByAddressResponse = this.page.waitForResponse(response => {
-      return regex.test(response.url()) && response.status() === 200;
-    });
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, timeout, null));
-    return Promise.race([fetchTxByAddressResponse, timeoutPromise]);
-  }
-
   @step("Select account to swap from")
   async selectAccountToSwapFrom(accountToSwapFrom: Account) {
-    await this.waitForAccountsBalance(accountToSwapFrom.address);
     await this.originCurrencyDropdown.click();
     const accName = this.getAccountName(accountToSwapFrom);
     if (accountToSwapFrom.accountType) {

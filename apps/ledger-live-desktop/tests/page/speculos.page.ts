@@ -161,9 +161,9 @@ export class SpeculosPage extends AppPage {
     if (swap.feesAmount) {
       //max number of chars on the screen
       speculosFeesAmount =
-        extractNumberFromString(swap.feesAmount).length < 19
+        extractNumberFromString(swap.feesAmount).length < 18
           ? extractNumberFromString(swap.feesAmount)
-          : extractNumberFromString(swap.feesAmount).substring(0, 18);
+          : extractNumberFromString(swap.feesAmount).substring(0, 17);
     }
     expect(
       verifySwapFeesAmount(swap.accountToDebit.currency.name, speculosFeesAmount, feesAmountScreen),
