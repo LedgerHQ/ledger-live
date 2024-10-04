@@ -10,6 +10,8 @@ import {
   AnalyticsButton,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { TrackScreen } from "~/analytics";
+import { blockPasswordLock } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
 
 interface Props {
   setSelectedOption: (option: OptionsType) => void;
@@ -26,6 +28,9 @@ const QrCodeMethod = ({
 }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  dispatch(blockPasswordLock(true));
 
   const handleSelectOption = (option: OptionsType) => {
     setSelectedOption(option);
