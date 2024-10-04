@@ -49,7 +49,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       eventProperties: {
         button: "stake",
       },
-      onClick: () => stakeOnClick(),
+      onClick: stakeOnClick,
     },
   ];
 };
