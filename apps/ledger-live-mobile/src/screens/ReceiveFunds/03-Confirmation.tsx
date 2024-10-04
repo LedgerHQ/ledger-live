@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Linking, Share, TouchableOpacityProps, View } from "react-native";
+import { Dimensions, Linking, Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
@@ -233,28 +233,23 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const mainAccountName = useMaybeAccountName(mainAccount);
 
-  const bannerHeight = useSharedValue<number | undefined>(undefined);
+  const screenHeight = Dimensions.get("window").height;
+  const bannerHeight = useSharedValue(screenHeight * 0.23);
   const bannerOpacity = useSharedValue(1);
 
   const animatedBannerStyle = useAnimatedStyle(() => ({
-    height: bannerHeight.value,
-    opacity: bannerOpacity.value,
-  }));
-
-  const initBannerHeight = useCallback<Required<TouchableOpacityProps>["onLayout"]>(
-    ({ nativeEvent }) => {
-      bannerHeight.value = nativeEvent.layout.height;
-    },
-    [bannerHeight],
-  );
-  const handleBannerClose = useCallback(() => {
-    bannerHeight.value = withTiming(0, { duration: 200 }, onFinish => {
+    height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
       if (onFinish && bannerHeight.value === 0) {
         runOnJS(hideBanner)();
       }
-    });
-    bannerOpacity.value = withTiming(0, { duration: 200 });
-  }, [bannerHeight, bannerOpacity, hideBanner]);
+    }),
+    opacity: withTiming(bannerOpacity.value, { duration: 200 }),
+  }));
+
+  const handleBannerClose = useCallback(() => {
+    bannerHeight.value = 0;
+    bannerOpacity.value = 0;
+  }, [bannerHeight, bannerOpacity]);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -416,6 +411,11 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           {CustomConfirmationAlert && <CustomConfirmationAlert mainAccount={mainAccount} />}
         </Flex>
       </NavigationScrollView>
+      {displayBanner && (
+        <Animated.View style={[animatedBannerStyle, { marginHorizontal: 16, marginTop: 16 }]}>
+          <WithdrawBanner hideBanner={handleBannerClose} onPress={clickLearn} />
+        </Animated.View>
+      )}
       <Flex
         px={6}
         mt={6}
@@ -431,15 +431,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
         </Flex>
-        {displayBanner && (
-          <Animated.View style={animatedBannerStyle}>
-            <WithdrawBanner
-              hideBanner={handleBannerClose}
-              onLayout={initBannerHeight}
-              onPress={clickLearn}
-            />
-          </Animated.View>
-        )}
       </Flex>
       {verified ? null : isModalOpened ? (
         <ReceiveSecurityModal onVerifyAddress={onRetry} triggerSuccessEvent={triggerSuccessEvent} />
@@ -448,18 +439,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   );
 }
 
-type BannerProps = TouchableOpacityProps & {
+type BannerProps = {
   hideBanner: () => void;
   onPress: () => void;
 };
 
-const WithdrawBanner = ({ onPress, hideBanner, ...props }: BannerProps) => {
+const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   return (
     <BannerCard
-      {...props}
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
       LeftElement={
