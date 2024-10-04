@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "react-redux";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,98 +15,13 @@ import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { EthStakingModalBody } from "./EthStakingModalBody";
+import { Footer, Header, IconButton, ScrollableContainer, SHADOW_HEIGHT } from "./styles";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
-const SCROLL_WIDTH = 18;
-const SHADOW_HEIGHT = 30;
 const BUTTON_CLICKED_TRACK_EVENT = "button_clicked";
 
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
-
-const IconButton = styled("button")`
-  align-items: center;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  display: flex;
-  font: inherit;
-  justify-content: center;
-  outline: inherit;
-  padding: 8px;
-`;
-
-interface IsScrollable {
-  isScrollable: boolean;
-}
-
-const ScrollableContainer = styled(Box)<IsScrollable>(
-  ({ theme, isScrollable }) => `
-  padding: 0px ${isScrollable ? 20 - SCROLL_WIDTH : 20}px 0px 20px;
-  flex: 1;
-  ${isScrollable ? theme.overflow.y : "overflow: hidden"};
-
-
-  ::-webkit-scrollbar {
-    width: ${SCROLL_WIDTH}px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 0 12px ${theme.colors.neutral.c40};
-    border: 6px solid rgba(0,0,0,0);
-    border-radius: 12px;
-  }
-`,
-);
-
-const Header = styled(Box)<IsScrollable>(
-  ({ isScrollable, theme }) => `
-   position: relative;
-   ${
-     isScrollable
-       ? `
-        ::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: ${SCROLL_WIDTH}px;
-            height: ${SHADOW_HEIGHT}px;
-            background: linear-gradient(to bottom, ${theme.colors.background.main}, transparent);
-            z-index: 1;
-            pointer-events: none;
-          }
-        `
-       : ""
-   }
-`,
-);
-
-const Footer = styled(Box)<IsScrollable>(
-  ({ isScrollable, theme }) => `
-    position: relative;
-
-    ${
-      isScrollable
-        ? `
-          ::before {
-              content: "";
-              position: absolute;
-              bottom: 100%;
-              left: 0;
-              right: ${SCROLL_WIDTH}px;
-              height: ${SHADOW_HEIGHT}px;
-              background: linear-gradient(to top, ${theme.colors.background.main}, transparent);
-              z-index: 1;
-              pointer-events: none;
-            }
-        `
-        : ""
-    }
-
-  `,
-);
 
 // Comparison fns for sorting providers by minimum ETH required
 const ascending = (a: EthStakingProvider, b: EthStakingProvider) => (a?.min ?? 0) - (b?.min ?? 0);
