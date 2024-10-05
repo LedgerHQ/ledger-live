@@ -1,5 +1,15 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.2.7-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/coin-framework@0.18.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.7-nightly.1
+  - @ledgerhq/cryptoassets@13.6.0-nightly.1
+
 ## 0.2.7-nightly.0
 
 ### Patch Changes

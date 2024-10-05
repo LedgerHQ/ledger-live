@@ -1,5 +1,50 @@
 ## 34.5.0-next.4
 
+## 34.10.0-nightly.2
+
+### Minor Changes
+
+- [#7917](https://github.com/LedgerHQ/ledger-live/pull/7917) [`87b706c`](https://github.com/LedgerHQ/ledger-live/commit/87b706c8a807f14c72c7d47206e9ee767f50a04c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: add priority fees for solana transaction
+
+### Patch Changes
+
+- [#7963](https://github.com/LedgerHQ/ledger-live/pull/7963) [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303) Thanks [@thesan](https://github.com/thesan)! - Create `llmMemoTag`
+
+- [#7998](https://github.com/LedgerHQ/ledger-live/pull/7998) [`6f0d39f`](https://github.com/LedgerHQ/ledger-live/commit/6f0d39f46ef5d3e24439421aa68dfe7aadcd1dbc) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update xrp node url
+
+- [#7965](https://github.com/LedgerHQ/ledger-live/pull/7965) [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- [#7971](https://github.com/LedgerHQ/ledger-live/pull/7971) [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add thorswap swap
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`87b706c`](https://github.com/LedgerHQ/ledger-live/commit/87b706c8a807f14c72c7d47206e9ee767f50a04c), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7), [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33), [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7), [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102)]:
+  - @ledgerhq/live-env@2.4.0-nightly.0
+  - @ledgerhq/coin-evm@2.4.0-nightly.1
+  - @ledgerhq/coin-solana@0.8.0-nightly.1
+  - @ledgerhq/hw-app-eth@7.0.0-nightly.1
+  - @ledgerhq/live-nft@0.4.7-nightly.1
+  - @ledgerhq/live-wallet@0.7.0-nightly.2
+  - @ledgerhq/coin-cardano@0.2.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.8.2-nightly.1
+  - @ledgerhq/coin-framework@0.18.2-nightly.1
+  - @ledgerhq/coin-algorand@0.5.7-nightly.1
+  - @ledgerhq/coin-cosmos@0.1.3-nightly.1
+  - @ledgerhq/coin-elrond@0.1.2-nightly.1
+  - @ledgerhq/coin-icon@0.4.4-nightly.1
+  - @ledgerhq/coin-near@0.5.7-nightly.1
+  - @ledgerhq/coin-polkadot@1.3.0-nightly.2
+  - @ledgerhq/coin-stellar@0.3.2-nightly.1
+  - @ledgerhq/coin-tezos@0.6.3-nightly.1
+  - @ledgerhq/coin-ton@0.3.15-nightly.1
+  - @ledgerhq/coin-tron@0.0.7-nightly.1
+  - @ledgerhq/coin-xrp@0.5.3-nightly.1
+  - @ledgerhq/device-core@0.4.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.7-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.7-nightly.1
+  - @ledgerhq/cryptoassets@13.6.0-nightly.1
+  - @ledgerhq/live-network@2.0.2-nightly.0
+  - @ledgerhq/speculos-transport@0.1.7-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.7-nightly.1
+
 ## 34.10.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-eth
 
+## 7.0.0-nightly.1
+
+### Minor Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin
+
+### Patch Changes
+
+- [#7992](https://github.com/LedgerHQ/ledger-live/pull/7992) [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force ws version even when bundled without pnpm from the monorepo
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/domain-service@1.2.6-nightly.1
+  - @ledgerhq/evm-tools@1.2.3-nightly.1
+  - @ledgerhq/cryptoassets-evm-signatures@14.0.0-nightly.1
+
 ## 7.0.0-nightly.0
 
 ### Major Changes

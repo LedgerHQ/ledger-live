@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-ledger-key-ring-protocol",
-  "version": "0.1.6",
+  "version": "0.2.0-nightly.0",
   "description": "Ledger Key Ring Protocol hardware layer",
   "private": true,
   "keywords": [

@@ -1,5 +1,16 @@
 # @ledgerhq/live-nft-react
 
+## 0.4.7-nightly.1
+
+### Patch Changes
+
+- [#7966](https://github.com/LedgerHQ/ledger-live/pull/7966) [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the hide inscription feature for ordinals
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/live-nft@0.4.7-nightly.1
+  - @ledgerhq/cryptoassets@13.6.0-nightly.1
+
 ## 0.4.7-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,25 @@
 # web-tools
 
+## 0.10.0-nightly.2
+
+### Minor Changes
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`6f0d39f`](https://github.com/LedgerHQ/ledger-live/commit/6f0d39f46ef5d3e24439421aa68dfe7aadcd1dbc), [`87b706c`](https://github.com/LedgerHQ/ledger-live/commit/87b706c8a807f14c72c7d47206e9ee767f50a04c), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7), [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33), [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7), [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/live-common@34.10.0-nightly.2
+  - @ledgerhq/live-env@2.4.0-nightly.0
+  - @ledgerhq/hw-app-eth@7.0.0-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.0-nightly.0
+  - @ledgerhq/live-wallet@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@0.18.2-nightly.1
+  - @ledgerhq/domain-service@1.2.6-nightly.1
+  - @ledgerhq/cryptoassets@13.6.0-nightly.1
+
 ## 0.9.2-nightly.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-elrond",
-  "version": "0.1.2-nightly.0",
+  "version": "0.1.2-nightly.1",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",

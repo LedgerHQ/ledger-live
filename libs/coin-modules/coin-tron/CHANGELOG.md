@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tron
 
+## 0.0.7-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/live-env@2.4.0-nightly.0
+  - @ledgerhq/coin-framework@0.18.2-nightly.1
+  - @ledgerhq/cryptoassets@13.6.0-nightly.1
+  - @ledgerhq/live-network@2.0.2-nightly.0
+
 ## 0.0.7-nightly.0
 
 ### Patch Changes

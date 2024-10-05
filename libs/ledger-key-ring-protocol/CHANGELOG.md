@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7)]:
+  - @ledgerhq/live-env@2.4.0-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0-nightly.0
+  - @ledgerhq/live-network@2.0.2-nightly.0
+  - @ledgerhq/speculos-transport@0.1.7-nightly.0
+
 ## 0.4.1-nightly.0
 
 ### Patch Changes

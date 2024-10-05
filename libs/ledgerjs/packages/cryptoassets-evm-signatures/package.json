@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets-evm-signatures",
-  "version": "14.0.0-nightly.0",
+  "version": "14.0.0-nightly.1",
   "description": "Ledger crypto-assets list, evm only",
   "keywords": [
     "Ledger"

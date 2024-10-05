@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.52.0-nightly.1
+
+### Patch Changes
+
+- [#7963](https://github.com/LedgerHQ/ledger-live/pull/7963) [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303) Thanks [@thesan](https://github.com/thesan)! - Create `llmMemoTag`
+
 ## 6.52.0-nightly.0
 
 ### Minor Changes

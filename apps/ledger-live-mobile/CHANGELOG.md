@@ -1,5 +1,41 @@
 # live-mobile
 
+## 4.0.0-nightly.2
+
+### Minor Changes
+
+- [#7973](https://github.com/LedgerHQ/ledger-live/pull/7973) [`64d8546`](https://github.com/LedgerHQ/ledger-live/commit/64d854687369a63a77f3b31793b87af570e2f3c5) Thanks [@KVNLS](https://github.com/KVNLS)! - Fetch FF every 5 minutes for LLM & LLD
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- [#7963](https://github.com/LedgerHQ/ledger-live/pull/7963) [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303) Thanks [@thesan](https://github.com/thesan)! - Create `llmMemoTag`
+
+- [#8009](https://github.com/LedgerHQ/ledger-live/pull/8009) [`961f567`](https://github.com/LedgerHQ/ledger-live/commit/961f56747a156bb8c167f9aac76f204fd59a326f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - When user has a lock password the app get locked when he wants to sync with another instance
+
+- [#7965](https://github.com/LedgerHQ/ledger-live/pull/7965) [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- [#7957](https://github.com/LedgerHQ/ledger-live/pull/7957) [`a4cd30a`](https://github.com/LedgerHQ/ledger-live/commit/a4cd30a6cf405a3fb647282a958210ded9ed0b21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed a spacing issue when there was a category with all its content cards dismissed by the user
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`6f0d39f`](https://github.com/LedgerHQ/ledger-live/commit/6f0d39f46ef5d3e24439421aa68dfe7aadcd1dbc), [`87b706c`](https://github.com/LedgerHQ/ledger-live/commit/87b706c8a807f14c72c7d47206e9ee767f50a04c), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7), [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7), [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102)]:
+  - @ledgerhq/types-live@6.52.0-nightly.1
+  - @ledgerhq/live-common@34.10.0-nightly.2
+  - @ledgerhq/live-env@2.4.0-nightly.0
+  - @ledgerhq/coin-evm@2.4.0-nightly.1
+  - @ledgerhq/live-nft-react@0.4.7-nightly.1
+  - @ledgerhq/live-nft@0.4.7-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.0-nightly.0
+  - @ledgerhq/live-wallet@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@0.18.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.1.3-nightly.1
+  - @ledgerhq/coin-elrond@0.1.2-nightly.1
+  - @ledgerhq/domain-service@1.2.6-nightly.1
+  - @ledgerhq/live-countervalues@0.2.7-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.7-nightly.1
+  - @ledgerhq/live-network@2.0.2-nightly.0
+
 ## 4.0.0-nightly.1
 
 ### Major Changes
