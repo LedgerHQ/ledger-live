@@ -55,7 +55,7 @@ jobs:
           name: lint-desktop-external
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint-desktop-external.json
       - name: check for dead code
-        run: pnpm knip-check --filter=./apps/ledger-live-desktop
+        run: pnpm desktop knip-check
         shell: bash
 
   unit-tests:

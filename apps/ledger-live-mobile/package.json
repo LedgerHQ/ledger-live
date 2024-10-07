@@ -69,6 +69,7 @@
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
     "assets:replace": "zx ./scripts/replace-assets.mjs",
+    "unimported": "unimported",
     "knip-check": "pnpm knip --directory ../.. --workspace apps/ledger-live-mobile"
   },
   "dependencies": {
