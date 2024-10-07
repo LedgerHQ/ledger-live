@@ -4,12 +4,10 @@ import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
-import { useStore } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
-import { trackingEnabledSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
@@ -58,7 +56,6 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
 
   const { t } = useTranslation();
   const { theme: themeName, colors } = useTheme();
-  const store = useStore();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selected = OPTION_VALUES[selectedIndex];
@@ -95,9 +92,6 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
             activeIndex={selectedIndex}
             onChange={index => {
               setSelectedIndex(index);
-              if (!trackingEnabledSelector(store.getState())) {
-                return;
-              }
               track(BUTTON_CLICKED_TRACK_EVENT, {
                 button: `filter_${OPTION_VALUES[index]}`,
               });

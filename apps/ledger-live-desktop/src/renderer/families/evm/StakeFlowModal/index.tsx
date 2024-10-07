@@ -5,7 +5,6 @@ import { Account, EthStakingProvider, EthStakingProviderCategory } from "@ledger
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useStore } from "react-redux";
 import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
@@ -13,7 +12,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Modal from "~/renderer/components/Modal";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { EthStakingModalBody } from "./EthStakingModalBody";
 import { Footer, Header, IconButton, ScrollableContainer, SHADOW_HEIGHT } from "./styles";
 
@@ -42,7 +40,6 @@ const MODAL_WIDTH = 500;
 export const StakeModal = ({ account, source }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const store = useStore();
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
@@ -109,9 +106,6 @@ export const StakeModal = ({ account, source }: Props) => {
                       key={x}
                       onClick={() => {
                         setSelected(x);
-                        if (!trackingEnabledSelector(store.getState())) {
-                          return;
-                        }
                         track(BUTTON_CLICKED_TRACK_EVENT, {
                           button: `filter_${x}`,
                         });
