@@ -17,8 +17,11 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const history = useHistory();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { bitcoinResources } = mainAccount;
-  if (!bitcoinResources || parentAccount) return null;
+  const {
+    bitcoinResources,
+    currency: { id: currencyId },
+  } = mainAccount;
+  if (!bitcoinResources || parentAccount || currencyId !== "bitcoin") return null;
 
   const stakeOnClick = () => {
     const value = "/platform/acre";
