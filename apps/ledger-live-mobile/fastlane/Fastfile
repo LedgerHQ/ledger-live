@@ -33,7 +33,7 @@ def infer_android_version_code
       track: track,
       json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
     ).map(&:to_i).max
-  }.max + 1
+  }.max + 2 # TO BE RUN ONCE
 end
 
 def trim_version_number(version)
