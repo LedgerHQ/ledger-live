@@ -103,7 +103,7 @@ export async function estimateFees({
     if (transaction.useAllAmount) {
       let totalFees: number;
       if (estimate.burnFeeMutez > 0) {
-        // from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
+        // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
         totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE; // 20 is storage buffer
       } else {
         totalFees = estimate.suggestedFeeMutez;
@@ -111,7 +111,7 @@ export async function estimateFees({
       const maxAmount =
         parseInt(account.balance.toString()) -
         (totalFees + (account.revealed ? 0 : DEFAULT_FEE.REVEAL));
-      // from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
+      // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
       const gasBuffer = 500;
