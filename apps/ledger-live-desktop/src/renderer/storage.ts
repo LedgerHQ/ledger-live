@@ -188,8 +188,6 @@ export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
 
-export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
-
 export const saveLSS = async (lssConfig: SatStackConfig) => {
   const configStub = {
     node: {

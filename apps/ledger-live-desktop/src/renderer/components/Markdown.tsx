@@ -130,7 +130,6 @@ export const Notes = styled(Box).attrs(() => ({
     font-weight: 700;
   }
 `;
-export const Terms = Notes;
 type Props = {
   children: string;
 };

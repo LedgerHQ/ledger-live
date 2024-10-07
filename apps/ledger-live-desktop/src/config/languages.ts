@@ -28,11 +28,6 @@ export const LanguageLocaleIds = {
 export type Language = (typeof LanguageIds)[number];
 
 /**
- * This is the Language Locale type.
- */
-export type LanguageLocale = (typeof LanguageLocaleIds)[keyof typeof LanguageLocaleIds][number];
-
-/**
  * This is the Locale type.
  */
 export type Locale = string;

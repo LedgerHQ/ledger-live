@@ -158,8 +158,6 @@ const handlers: WalletSyncHandlers = {
 };
 
 // Selectors
-export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => state.walletSync;
-
 export const walletSyncDrawerVisibilitySelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.isDrawerOpen;
 
@@ -169,17 +167,11 @@ export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =
   state.walletSync.step;
 export const walletSyncNextStepSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.nextStep;
-export const walletSyncHasTrustchainBeenCreatedSelector = (state: {
-  walletSync: WalletSyncState;
-}) => state.walletSync.hasTrustchainBeenCreated;
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
 
 export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
-
-export const walletSyncQrCodeUrlSelector = (state: { walletSync: WalletSyncState }) =>
-  state.walletSync.qrCodeUrl;
 
 export const walletSyncQrCodePinCodeSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.qrCodePinCode;

@@ -542,13 +542,6 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & Un
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
-export const timeRangeDaysByKey = {
-  day: 1,
-  week: 7,
-  month: 30,
-  year: 365,
-  all: -1,
-};
 export type LangAndRegion = {
   language: string;
   region: string | undefined | null;
@@ -584,7 +577,6 @@ export const getsupportedCountervalues = async (): Promise<SupportedCountervalue
 export const storeSelector = (state: State): SettingsState => state.settings;
 export const settingsExportSelector = storeSelector;
 export const discreetModeSelector = (state: State): boolean => state.settings.discreetMode === true;
-export const getCounterValueCode = (state: State) => state.settings.counterValue;
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
@@ -678,25 +670,6 @@ export const currencySettingsLocaleSelector = (
   };
 };
 
-export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
-  currency;
-
-// TODO: drop (bad perf implication)
-export const currencySettingsSelector = createSelector(
-  storeSelector,
-  currencyPropExtractor,
-  currencySettingsLocaleSelector,
-);
-export const exchangeSettingsForPairSelector = (
-  state: State,
-  {
-    from,
-    to,
-  }: {
-    from: Currency;
-    to: Currency;
-  },
-): string | undefined | null => state.settings.pairExchanges[pairHash(from, to)];
 export const confirmationsNbForCurrencySelector = (
   state: State,
   {
@@ -765,16 +738,6 @@ export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hidd
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
-export const dismissedBannerSelector = (
-  state: State,
-  {
-    bannerKey,
-  }: {
-    bannerKey: string;
-  },
-) => (state.settings.dismissedBanners || []).includes(bannerKey);
-export const dismissedBannerSelectorLoaded = (bannerKey: string) => (state: State) =>
-  (state.settings.dismissedBanners || []).includes(bannerKey);
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
@@ -788,12 +751,8 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
-export const swapHasAcceptedIPSharingSelector = (state: State) =>
-  state.settings.swap.hasAcceptedIPSharing;
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
-export const swapAcceptedProvidersSelector = (state: State) =>
-  state.settings.swap.acceptedProviders;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
@@ -826,8 +785,6 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
-
-export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const hasSeenOrdinalsDiscoveryDrawerSelector = (state: State) =>

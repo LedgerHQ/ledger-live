@@ -1,5 +1,3 @@
-import { ImageDimensions } from "./types";
-
 export function createCanvas(image?: HTMLImageElement): {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
@@ -26,12 +24,5 @@ export function rotateSize(width: number, height: number, rotationDeg: number) {
   return {
     width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
     height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
-  };
-}
-
-export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
-  return {
-    width: dimensions.width * scale,
-    height: dimensions.height * scale,
   };
 }

@@ -21,11 +21,3 @@ export type ImageBase64Data = {
 //    */
 //   imageFileUri: string;
 // };
-
-export type ImageUrl = {
-  /**
-   * Image URL locating an image on the internet.
-   * e.g: "https://example.com/an_image.png"
-   */
-  imageUrl: string;
-};

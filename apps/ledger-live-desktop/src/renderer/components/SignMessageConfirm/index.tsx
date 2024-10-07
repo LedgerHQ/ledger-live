@@ -29,8 +29,6 @@ export type FieldComponentProps = {
   field: DeviceTransactionField;
 };
 
-export type FieldComponent = React.ComponentType<FieldComponentProps>;
-
 const TextField = ({ field }: FieldComponentProps) => {
   return field.type === "text" ? (
     <SignMessageConfirmField label={field.label}>

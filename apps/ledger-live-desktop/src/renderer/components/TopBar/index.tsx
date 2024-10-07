@@ -36,13 +36,6 @@ const Inner = styled(Box).attrs(() => ({
 }))`
   height: 100%;
 `;
-export const SeparatorBar = styled.div`
-  height: 1px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  width: calc(100% - ${p => p.theme.space[6] * 2}px);
-  left: ${p => p.theme.space[6]};
-  position: relative;
-`;
 const TopBar = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

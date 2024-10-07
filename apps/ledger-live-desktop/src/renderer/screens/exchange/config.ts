@@ -24,23 +24,3 @@ export const isCurrencySupported = (
   }
   return supportedSellCurrenciesIds.includes(currency.id);
 };
-type Config = {
-  host: string;
-  url: string;
-  partnerId: string;
-};
-const config = {
-  sandbox: {
-    host: "https://trade-ui.sandbox.coinify.com",
-    url: "https://trade-ui.sandbox.coinify.com/widget",
-    partnerId: "191f0c7f-076d-459f-bf2d-833465bfadc2",
-  },
-  production: {
-    host: "https://trade-ui.coinify.com",
-    url: "https://trade-ui.coinify.com/widget",
-    partnerId: "191f0c7f-076d-459f-bf2d-833465bfadc2",
-  },
-};
-export const getConfig = (): Config =>
-  process.env.COINIFY_SANDBOX ? config.sandbox : config.production;
-export const SWAP_RATES_TIMEOUT = 10000; // 10s
