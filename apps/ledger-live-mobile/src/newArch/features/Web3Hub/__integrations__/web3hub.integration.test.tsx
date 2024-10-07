@@ -4,6 +4,7 @@ import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { Web3HubTest } from "./shared";
 import { Text } from "@ledgerhq/native-ui";
+import deviceStorage from "~/logic/storeWrapper";
 
 // Need to fix some stuff if we want to test the player too
 jest.mock(
@@ -29,6 +30,10 @@ async function waitForLoader() {
 }
 
 describe("Web3Hub integration test", () => {
+  beforeEach(() => {
+    deviceStorage.delete("web3hub__TabHistory");
+  });
+
   it("Should list manifests and navigate to app page", async () => {
     const { user } = render(<Web3HubTest />);
 
@@ -201,8 +206,8 @@ describe("Web3Hub integration test", () => {
 
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByRole("button", { name: /0/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /0/i }));
 
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
@@ -215,8 +220,8 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
     expect(screen.getByRole("searchbox")).toBeEnabled();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByRole("button", { name: /0/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /0/i }));
 
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
@@ -227,8 +232,8 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
     expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByRole("button", { name: /0/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /0/i }));
 
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
@@ -318,7 +323,7 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
   });
 
-  it("Should navigate to app page, capture it and list the tabs", async () => {
+  it("Should navigate to app page, capture it, list the tabs and increments the tab counter", async () => {
     const { user } = render(<Web3HubTest />);
 
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
@@ -332,8 +337,8 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
     expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByRole("button", { name: /0/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /0/i }));
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
 
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
@@ -351,8 +356,8 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
     expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
+    expect(await screen.findByRole("button", { name: /1/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /1/i }));
 
     expect(await screen.findByText("New tab")).toBeOnTheScreen();
     await waitFor(() => expect(screen.getByText("2 tabs")).toBeOnTheScreen());
