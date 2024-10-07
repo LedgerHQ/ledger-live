@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { canStake, isAlreadyStaking } from "./logic";
+import { canStake, isAlreadyStaking, isValidNumString } from "./logic";
 import { CardanoAccount } from "./types";
 
 describe("canStake", () => {
@@ -35,5 +35,22 @@ describe("isAlreadyStaking", () => {
       cardanoResources: { delegation: { poolId: "itspoolid" } },
     } as CardanoAccount;
     expect(isAlreadyStaking(noResourcesAcc)).toEqual(true);
+  });
+});
+
+describe("isValidNumString", () => {
+  it("should return false for invalid number", () => {
+    expect(isValidNumString("")).toEqual(false);
+    expect(isValidNumString(undefined)).toEqual(false);
+    expect(isValidNumString(null)).toEqual(false);
+    expect(isValidNumString({})).toEqual(false);
+    expect(isValidNumString([])).toEqual(false);
+  });
+
+  it("should return true for valid number", () => {
+    expect(isValidNumString(123)).toEqual(true);
+    expect(isValidNumString(123.321)).toEqual(true);
+    expect(isValidNumString("123")).toEqual(true);
+    expect(isValidNumString("123.321")).toEqual(true);
   });
 });

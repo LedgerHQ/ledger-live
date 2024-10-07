@@ -36,6 +36,7 @@ const View: React.FC<ViewProps> = ({
       onReceive={onReceive}
       onInscriptionClick={onInscriptionClick}
       inscriptionsGroupedWithRareSats={inscriptionsGroupedWithRareSats}
+      account={account}
     />
     <RareSats rareSats={rareSats} onReceive={onReceive} {...rest} />
     <DiscoveryDrawer isOpen={isDrawerOpen} onClose={handleDrawerClose} />

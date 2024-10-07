@@ -87,7 +87,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerNameAndSignature.signature);
+        await exchange.checkPartner(providerNameAndSignature.signature!);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";

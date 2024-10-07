@@ -11,6 +11,7 @@ import { buildTransaction } from "./buildTransaction";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner, Witness } from "./signer";
 import typhonSerializer from "./typhonSerializer";
+import { CardanoInvalidProtoParams } from "./errors";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -26,6 +27,10 @@ export const buildSignOperation =
 
         if (!transaction.fees) {
           throw new FeeNotLoaded();
+        }
+
+        if (!transaction.protocolParams) {
+          throw new CardanoInvalidProtoParams();
         }
 
         const unsignedTransaction = await buildTransaction(account, transaction);
