@@ -4359,14 +4359,20 @@
       "tokenBlacklist": {
         "title": "Hidden tokens",
         "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
-        "count": "{{count}} token",
-        "count_plural": "{{count}} tokens"
+        "count": "1 token",
+        "count_other": "{{count}} tokens"
       },
       "hiddenNftCollections": {
         "title": "Hidden NFT Collections",
         "desc": "You can hide NFT Collections by right-clicking on the collection name and selecting 'Hide NFT Collection'.",
-        "count": "{{count}} collection",
-        "count_plural": "{{count}} collections"
+        "count": "1 collection",
+        "count_other": "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset": {
+        "title": "Hidden Inscriptions",
+        "desc": "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count": "1 inscription",
+        "count_other": "{{count}} inscriptions"
       },
       "fullNode": {
         "title": "Connect Bitcoin full node",
@@ -6613,6 +6619,11 @@
       "seeMore": "See more inscriptions",
       "empty": "To add Inscriptions, simply send them to your Bitcoin address.",
       "receive": "Receive Inscription",
+      "hide": "Hide Inscription",
+      "modal": {
+        "title": "Hide Inscription",
+        "desc": "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer": {
         "title": "Discover Ordinals",
         "description": "Do you know that you may own valuable rare sats and inscriptions?",

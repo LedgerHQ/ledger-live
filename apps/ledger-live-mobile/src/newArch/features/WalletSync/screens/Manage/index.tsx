@@ -21,6 +21,8 @@ import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
 import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
+import { useDispatch } from "react-redux";
+import { blockPasswordLock } from "~/actions/appstate";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -40,16 +42,21 @@ const WalletSyncManage = () => {
   } = manageInstancesHook.memberHook;
 
   const { onClickTrack } = useLedgerSyncAnalytics();
+  const dispatch = useDispatch();
 
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
   const goToSync = () => {
     manageInstancesHook.checkInstances();
+    dispatch(blockPasswordLock(true));
     setIsSyncDrawerOpen(true);
     onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncSettings });
   };
 
-  const closeSyncDrawer = () => setIsSyncDrawerOpen(false);
+  const closeSyncDrawer = () => {
+    setIsSyncDrawerOpen(false);
+    dispatch(blockPasswordLock(false));
+  };
 
   const goToManageBackup = () => {
     manageKeyHook.openDrawer();

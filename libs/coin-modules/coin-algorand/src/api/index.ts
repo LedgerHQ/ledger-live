@@ -1,4 +1,3 @@
-import network from "@ledgerhq/live-network/network";
 import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
 
 import { broadcastTransaction, getAccount, getTransactionParams } from "./algodv2";
@@ -10,13 +9,12 @@ export * from "./algodv2.types";
 export * from "./indexer.types";
 
 export default {
-  getAccount: async (address: string): Promise<AlgoAccount> => getAccount(network)(address),
+  getAccount: async (address: string): Promise<AlgoAccount> => getAccount(address),
 
-  getTransactionParams: async (): Promise<AlgoTransactionParams> => getTransactionParams(network)(),
+  getTransactionParams: async (): Promise<AlgoTransactionParams> => getTransactionParams(),
 
-  broadcastTransaction: async (payload: Buffer): Promise<string> =>
-    broadcastTransaction(network)(payload),
+  broadcastTransaction: async (payload: Buffer): Promise<string> => broadcastTransaction(payload),
 
   getAccountTransactions: async (address: string, startAt?: number): Promise<AlgoTransaction[]> =>
-    getAccountTransactions(network)(address, startAt),
+    getAccountTransactions(address, startAt),
 };

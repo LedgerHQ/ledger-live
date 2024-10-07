@@ -5,33 +5,34 @@ import network from "@ledgerhq/live-network";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
-  needsBearerToken: boolean;
+  needsBearerToken?: boolean;
 };
 
 type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
 export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
-  needsBearerToken: boolean;
-  needsKYC: boolean;
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
+  displayName: string;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
-const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
+export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   changelly: {
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    displayName: "Changelly",
     termsOfUseUrl: "https://changelly.com/terms-of-use",
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
   },
   exodus: {
     type: "CEX",
+    displayName: "Exodus",
     needsBearerToken: false,
     termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
     supportUrl: "https://www.exodus.com/contact-support/",
@@ -42,6 +43,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   cic: {
     needsKYC: false,
     needsBearerToken: false,
+    displayName: "CIC",
     type: "CEX",
     termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
     supportUrl: "https://criptointercambio.com/en/about",
@@ -50,6 +52,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   moonpay: {
     needsKYC: true,
     needsBearerToken: false,
+    displayName: "MoonPay",
     type: "CEX",
     version: 2,
     termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
@@ -59,6 +62,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   oneinch: {
     type: "DEX",
     needsKYC: false,
+    displayName: "1inch",
     needsBearerToken: false,
     termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
     supportUrl: "https://help.1inch.io/en/",
@@ -67,6 +71,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   paraswap: {
     type: "DEX",
     needsKYC: false,
+    displayName: "Paraswap",
     needsBearerToken: false,
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
     supportUrl: "https://help.paraswap.io/en/",
@@ -75,6 +80,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   thorswap: {
     type: "CEX",
     needsBearerToken: false,
+    displayName: "THORChain",
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
     supportUrl: "mailto:support@thorswap.finance",
     mainUrl: "https://www.thorswap.finance/",
@@ -82,7 +88,7 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   },
 };
 
-const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProviderConfig> = {
+const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
   changelly: {
     name: "Changelly",
     publicKey: {

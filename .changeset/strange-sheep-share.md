@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/trustchain": patch
+"@ledgerhq/ledger-key-ring-protocol": patch
 ---
 
-Fix type errors in `@ledgerhq/trustchain` tests
+Fix type errors in `@ledgerhq/ledger-key-ring-protocol` tests
