@@ -32,5 +32,5 @@ permissions:
 jobs:
   build-mobile:
     name: "Build Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@chores/knip
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
     secrets: inherit

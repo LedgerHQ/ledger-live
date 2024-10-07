@@ -14,7 +14,7 @@ permissions:
 jobs:
   determine-affected:
     name: "Turbo Affected"
-    if: ${{!github.event.pull_request.head.repo.fork }}
+    if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@chores/knip
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
@@ -31,7 +31,7 @@ jobs:
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name == github.repository}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@chores/knip
     secrets: inherit
 

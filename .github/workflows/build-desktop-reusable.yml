@@ -52,12 +52,12 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chores/knip
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the toolchain
         id: toolchain
         if: ${{ matrix.config.name != 'linux' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@chores/knip
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -69,7 +69,7 @@ jobs:
       - name: Setup the caches
         id: caches
         if: ${{ matrix.config.name == 'linux' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chores/knip
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -79,7 +79,7 @@ jobs:
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@chores/knip
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         with:
           os: ${{ matrix.config.name }}
 
@@ -151,14 +151,14 @@ jobs:
             return JSON.stringify(obj);
 
       - uses: LedgerHQ/ledger-live/tools/actions/build-checks@chores/knip
-        if: ${{ !cancelled() && github.event.number != '' }}
+        if: ${{ !cancelled() && inputs.prNumber != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@chores/knip
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}
