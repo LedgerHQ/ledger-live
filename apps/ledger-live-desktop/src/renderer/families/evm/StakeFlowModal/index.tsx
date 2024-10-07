@@ -93,7 +93,7 @@ export const StakeModal = ({ account, source }: Props) => {
           height="100%"
           px={3}
         >
-          <Header p={3} pb={0} width="100%" position="relative" isScrollable={isScrollable}>
+          <Header p={3} pt={5} pb={0} width="100%" position="relative" isScrollable={isScrollable}>
             <Flex flexDirection="column" alignItems="center">
               <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px" mb={4}>
                 {t("ethereum.stake.title")}
@@ -159,7 +159,7 @@ export const StakeModal = ({ account, source }: Props) => {
               justifyContent="center"
               position="absolute"
               right={1}
-              top={3}
+              top={4}
             >
               <IconButton
                 title={t("common.close")}
@@ -194,7 +194,7 @@ export const StakeModal = ({ account, source }: Props) => {
           <Footer
             bottom={0}
             px={4}
-            pb={3}
+            pb={4}
             pt={0}
             width="100%"
             position="relative"
