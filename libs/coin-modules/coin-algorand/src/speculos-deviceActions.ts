@@ -1,8 +1,4 @@
-import {
-  deviceActionFlow,
-  formatDeviceAmount,
-  SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "@ledgerhq/coin-framework/bot";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { findTokenById } from "@ledgerhq/cryptoassets/index";
 import { displayTokenValue } from "./deviceTransactionConfig";

@@ -1,6 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import { SpeculosButton } from "../../bot/types";
 import { BotScenario, expectedToFieldForTokenTransfer, Methods, methodToString } from "./utils";
 import { isFilEthAddress } from "./bridge/utils/addresses";
 import { fromEthAddress, fromString, toEthAddress } from "iso-filecoin/address";

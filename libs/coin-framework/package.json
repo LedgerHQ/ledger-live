@@ -29,6 +29,9 @@
       "account": [
         "lib/account/index"
       ],
+      "bot": [
+        "lib/bot/index"
+      ],
       "currencies": [
         "lib/currencies/index"
       ],
@@ -100,8 +103,6 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

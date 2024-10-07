@@ -48,12 +48,6 @@ export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
   return maybeAccount;
 }
 
-export enum SpeculosButton {
-  LEFT = "Ll",
-  RIGHT = "Rr",
-  BOTH = "LRlr",
-}
-
 // generalized logic of device actions
 export function deviceActionFlow<T extends TransactionCommon>(
   description: FlowDesc<T>,

@@ -11,11 +11,16 @@ import {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { SpeculosButton } from "./specs";
 
-import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
-export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+export enum SpeculosButton {
+  LEFT = "Ll",
+  RIGHT = "Rr",
+  BOTH = "LRlr",
+}
+
+export type SpeculosTransport = {
+  button: (button: SpeculosButton) => Promise<void>;
+};
 
 // Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {

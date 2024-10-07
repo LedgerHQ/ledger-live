@@ -1,6 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
+import { deviceActionFlow } from "../../bot/specs";
+import { SpeculosButton } from "../../bot/types";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [

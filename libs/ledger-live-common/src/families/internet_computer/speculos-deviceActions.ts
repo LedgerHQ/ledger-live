@@ -1,6 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import { SpeculosButton } from "../../bot/types";
 import { methodToString } from "./utils";
 
 const ignoreSpaces = (s: string) => s.replace(/ /g, "");
