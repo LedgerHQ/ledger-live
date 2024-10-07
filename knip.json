@@ -29,7 +29,11 @@
         "src/webviewPreloader/index.ts"
       ],
       "project": ["src/**"],
-      "ignore": ["src/**/__integration__/**"],
+      "ignore": [
+        "src/**/__integration__/**",
+        "src/renderer/families/cardano/modals.ts",
+        "src/renderer/styles/theme.ts"
+      ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw"]
     },
