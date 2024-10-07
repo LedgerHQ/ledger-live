@@ -94,6 +94,12 @@ export default function AssetBalanceSummaryHeader({
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
 
   const availableOnSwap = currenciesAll.includes(currency.id);
+  const yieldStakeLabelCoin =
+    currency &&
+    (("family" in currency && currency.family === "bitcoin") ||
+      ("parentCurrency" in currency && currency.parentCurrency.family === "bitcoin"))
+      ? t("accounts.contextMenu.yield")
+      : t("accounts.contextMenu.stake");
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
@@ -208,7 +214,7 @@ export default function AssetBalanceSummaryHeader({
 
         {availableOnStake && (
           <Button variant="color" onClick={onStake} buttonTestId="asset-page-stake-button">
-            {t("accounts.contextMenu.stake")}
+            {yieldStakeLabelCoin}
           </Button>
         )}
       </Box>
