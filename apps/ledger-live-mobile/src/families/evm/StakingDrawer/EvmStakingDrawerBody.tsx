@@ -11,17 +11,11 @@ import { ListProvider } from "./types";
 
 interface Props {
   providers: ListProvider[];
-  singleProviderRedirectMode: boolean;
   accountId: string;
   onClose(callback: () => void): void;
 }
 
-export function EvmStakingDrawerBody({
-  providers,
-  singleProviderRedirectMode,
-  accountId,
-  onClose,
-}: Props) {
+export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const { track, page } = useAnalytics();
@@ -49,24 +43,10 @@ export function EvmStakingDrawerBody({
     [track, page, navigation, accountId, onClose],
   );
 
-  const redirectIfOneProvider = useCallback(
-    ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
-      if (singleProviderRedirectMode && providers.length === 1) {
-        onProviderPress({ manifest, provider });
-      }
-    },
-    [onProviderPress, singleProviderRedirectMode, providers.length],
-  );
-
   return (
     <Flex rowGap={16} pb={32}>
       {providers.map(x => (
-        <EvmStakingDrawerProvider
-          key={x.id}
-          provider={x}
-          onProviderPress={onProviderPress}
-          redirectIfOneProvider={redirectIfOneProvider}
-        />
+        <EvmStakingDrawerProvider key={x.id} provider={x} onProviderPress={onProviderPress} />
       ))}
     </Flex>
   );

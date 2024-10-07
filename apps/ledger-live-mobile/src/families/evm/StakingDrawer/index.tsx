@@ -48,10 +48,11 @@ interface Props {
   accountId: string;
   has32Eth: boolean;
   providers: EthStakingProvider[];
+  /** @deprecated redirect functionality no longer being considered in latest version of the modal */
   singleProviderRedirectMode: boolean;
 }
 
-function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }: Props) {
+function Content({ accountId, has32Eth, providers }: Props) {
   const { isOpen, onModalHide, onClose } = useRootDrawerContext();
 
   const { t } = useTranslation();
@@ -110,7 +111,6 @@ function Content({ accountId, has32Eth, providers, singleProviderRedirectMode }:
         >
           <EvmStakingDrawerBody
             onClose={onClose}
-            singleProviderRedirectMode={singleProviderRedirectMode}
             accountId={accountId}
             providers={listProvidersSorted}
           />

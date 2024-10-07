@@ -1,25 +1,16 @@
-import React, { useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
-
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-
+import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native";
+import { useTheme } from "styled-components/native";
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
 import { ListProvider } from "./types";
-import { useTheme } from "styled-components/native";
 
-type Props = {
+interface Props {
   provider: ListProvider;
-  redirectIfOneProvider({
-    manifest,
-    provider,
-  }: {
-    manifest: LiveAppManifest;
-    provider: ListProvider;
-  }): void;
   onProviderPress({
     manifest,
     provider,
@@ -27,13 +18,9 @@ type Props = {
     manifest: LiveAppManifest;
     provider: ListProvider;
   }): void;
-};
+}
 
-export function EvmStakingDrawerProvider({
-  provider,
-  onProviderPress,
-  redirectIfOneProvider,
-}: Props) {
+export function EvmStakingDrawerProvider({ provider, onProviderPress }: Props) {
   const localManifest = useLocalLiveAppManifest(provider.liveAppId);
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
   const manifest = remoteManifest || localManifest;
@@ -47,12 +34,6 @@ export function EvmStakingDrawerProvider({
       onProviderPress({ manifest, provider });
     }
   }, [manifest, provider, onProviderPress]);
-
-  useEffect(() => {
-    if (manifest) {
-      redirectIfOneProvider({ manifest, provider });
-    }
-  }, [manifest, provider, redirectIfOneProvider]);
 
   return (
     <TouchableOpacity onPress={providerPress}>
