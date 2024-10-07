@@ -1,31 +1,26 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
-import type { TabsProps } from "LLM/features/Web3Hub/types";
+import type { TabData, TabsProps } from "LLM/features/Web3Hub/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigatorName, ScreenName } from "~/const";
-import deviceStorage from "~/logic/storeWrapper";
-import TabItem, { Web3HubTabType } from "./components/TabItem";
+import TabItem, { useTabHistory } from "../../components/TabItem";
 import Header from "./components/Header";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
-const identityFn = (item: Web3HubTabType) => item.id;
+const identityFn = (item: TabData) => item.id;
 
 const newTab = "New tab";
 
 export default function Web3HubTabs({ navigation }: TabsProps) {
   const { colors } = useTheme();
-  const [tabs, setTabs] = useState<Web3HubTabType[]>([]);
-  const listRef = useRef(null);
+  const [tabs, setTabs] = useState<TabData[]>([]);
+  const { tabHistory } = useTabHistory();
 
-  const handleItemClosePress = (itemId: string) => {
-    const filteredTabs = tabs.filter(item => item.id !== itemId);
-    deviceStorage.save("web3hub__TabHistory", filteredTabs);
-    setTabs(filteredTabs);
-  };
+  const listRef = useRef(null);
 
   const goToSearch = useCallback(() => {
     navigation.push(NavigatorName.Web3Hub, {
@@ -34,24 +29,14 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
   }, [navigation]);
 
   useEffect(() => {
-    const getTabs = async () => {
-      try {
-        const tabHistory =
-          ((await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[]) || [];
-        setTabs(tabHistory);
-      } catch (error) {
-        console.error("Error fetching tabs from storage:", error);
-      }
-    };
-
-    getTabs();
+    setTabs(tabHistory);
 
     const timer = setTimeout(() => {
-      getTabs();
-    }, 400);
+      setTabs(tabHistory);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [tabHistory]);
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
@@ -66,12 +51,7 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
           testID="web3hub-tabs-scroll"
           keyExtractor={identityFn}
           renderItem={({ item }) => (
-            <TabItem
-              item={item}
-              extraData={{ colors: colors }}
-              onItemClosePress={handleItemClosePress}
-              navigation={navigation}
-            />
+            <TabItem item={item} extraData={{ colors: colors }} navigation={navigation} />
           )}
           estimatedItemSize={50}
           data={tabs}
