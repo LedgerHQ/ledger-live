@@ -25,7 +25,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(teamLink);
-  }, []);
+  }, [teamLink]);
 
   return (
     <>
