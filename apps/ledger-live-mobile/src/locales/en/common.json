@@ -2335,7 +2335,8 @@
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake"
+      "stake": "Stake",
+      "yield": "Yield"
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2591,6 +2592,7 @@
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
+    "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
