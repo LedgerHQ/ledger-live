@@ -53,8 +53,8 @@ export class delegateModal extends Modal {
     await this.stakeProviderContainer(stakeProvider).click();
   }
 
-  @step("Verify success message and Click on view details button")
-  async viewDetailsButton() {
+  @step("Click on view details button")
+  async clickViewDetailsButton() {
     await this.detailsButton.click();
   }
 }
