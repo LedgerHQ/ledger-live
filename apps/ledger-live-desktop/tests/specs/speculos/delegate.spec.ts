@@ -47,7 +47,7 @@ for (const account of accounts) {
         await app.modal.countinueSendAmount();
 
         await app.speculos.signDelegationTransaction(account.delegate);
-        await app.delegate.viewDetailsButton();
+        await app.delegate.clickViewDetailsButton();
 
         await app.drawer.waitForDrawerToBeVisible();
         await app.drawer.transactionTypeIsVisible();

@@ -2,8 +2,8 @@ import { Component } from "tests/page/abstractClasses";
 import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";
 import { Delegate } from "tests/models/Delegate";
-import { Account } from "tests/enum/Account";
 import { step } from "tests/misc/reporters/step";
+import { Currency } from "tests/enum/Currency";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -23,7 +23,7 @@ export class Drawer extends Component {
   readonly swapAccountTo = this.page.getByTestId("swap-account-to").first();
   readonly backButton = this.page.getByRole("button", { name: "Back" });
   private provider = (provider: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${provider}`);
+    this.page.getByTestId("drawer-content").locator(`text=${provider}`);
   private transactionType = this.page.getByTestId("transaction-type");
 
   async continue() {
@@ -37,7 +37,7 @@ export class Drawer extends Component {
 
   @step("Verify provider is visible")
   async providerIsVisible(account: Delegate) {
-    if (account.account === Account.NEAR_1 || account.account === Account.ATOM_1) {
+    if (account.account.currency === Currency.SOL || account.account.currency === Currency.ATOM) {
       await this.provider(account.provider).waitFor({ state: "visible" });
     }
   }
