@@ -4,9 +4,9 @@ import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
+  isExchangeTypeNg,
   ExchangeTypes,
   createExchange,
-  getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
@@ -92,7 +92,7 @@ const completeExchange = (
 
         currentStep = "PROCESS_TRANSACTION";
         const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
-          exchange.transactionType === ExchangeTypes.SellNg
+          isExchangeTypeNg(exchange.transactionType)
             ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
             : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
         await exchange.processTransaction(payload, estimatedFees, format);
@@ -182,7 +182,7 @@ const completeExchange = (
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
-  return exchangeType === ExchangeTypes.SellNg
+  return isExchangeTypeNg(exchangeType)
     ? Buffer.from(signature, "base64url")
     : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
