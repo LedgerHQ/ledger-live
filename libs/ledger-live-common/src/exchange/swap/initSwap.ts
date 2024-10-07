@@ -203,7 +203,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
-          await swap.checkPayoutAddress(
+          await swap.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,
