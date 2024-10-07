@@ -101,6 +101,7 @@ export const DEFAULT_FEATURES: Features = {
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
+  ethStakingModalWithFilters: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),

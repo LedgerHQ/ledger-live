@@ -55,6 +55,7 @@ export const urls = {
     tr: "https://support.ledger.com/tr/article/4423020306705-zd",
     zh: "https://support.ledger.com/zh-CN/article/4423020306705-zd",
   },
+  memoTag: "https://support.ledger.com/article/4409603715217-zd",
   pairingIssues: "https://support.ledger.com/article/360025864773-zd",
   ratingsContact: "https://support.ledger.com/article/4423020306705-zd",
   buyNanoX:
@@ -146,6 +147,11 @@ export const urls = {
     "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   fixConnectionIssues: "https://support.ledger.com/article/360025864773-zd",
   otgCable: "https://support.ledger.com/article/115005463729-zd",
+  ledgerAcademy: {
+    whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
+    ethereumStakingHowToStakeEth:
+      "https://www.ledger.com/academy/ethereum-staking-how-to-stake-eth",
+  },
   ledgerStatus: "https://status.ledger.com/",
   bitcoinAddressType: "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
   supportPage: "https://support.ledger.com/",

@@ -4,39 +4,54 @@ import Text from "../../Text";
 import { TouchableOpacity } from "react-native";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
-const TabBox = styled(TouchableOpacity)<{ isActive: boolean }>`
+const TabBox = styled(TouchableOpacity)<
+  Pick<TabItemProps, "isActive" | "size" | "activeBg" | "inactiveBg" | "stretchItems">
+>`
   text-align: center;
+  flex-grow: ${(p) => (p.stretchItems ? "1" : "0")};
   margin: auto;
-  flex: 1;
-  padding: ${(p) => p.theme.space[5]}px 0;
+  padding: ${(p) => p.theme.space[p.size === "small" ? 3 : 5]}px;
   border-radius: 8px;
-  background-color: ${(p) => (p.isActive ? p.theme.colors.palette.primary.c20 : "transparent")};
+  background-color: ${(p) =>
+    p.isActive ? p.activeBg ?? p.theme.colors.primary.c20 : p.inactiveBg ?? "transparent"};
 `;
-
-const StyledTabs = styled(TemplateTabs)``;
 
 export const ChipTab = ({
   onPress,
   isActive,
   label,
   disabled,
-}: TabItemProps): React.ReactElement => {
-  return (
-    <TabBox isActive={isActive} onPress={onPress} disabled={disabled}>
-      <Text
-        variant={"small"}
-        fontWeight={"semiBold"}
-        color={isActive ? "palette.neutral.c100" : "palette.neutral.c80"}
-        textAlign={"center"}
-      >
-        {label}
-      </Text>
-    </TabBox>
-  );
-};
+  activeBg,
+  activeColor,
+  inactiveBg,
+  inactiveColor,
+  stretchItems,
+  size = "medium",
+}: TabItemProps): React.ReactElement => (
+  <TabBox
+    activeBg={activeBg}
+    disabled={disabled}
+    inactiveBg={inactiveBg}
+    isActive={isActive}
+    stretchItems={stretchItems}
+    onPress={onPress}
+    size={size}
+  >
+    <Text
+      variant="small"
+      fontWeight="semiBold"
+      color={
+        isActive ? activeColor ?? "palette.neutral.c100" : inactiveColor ?? "palette.neutral.c80"
+      }
+      textAlign="center"
+    >
+      {label}
+    </Text>
+  </TabBox>
+);
 
 const ChipTabs = (props: BaseTabsProps): React.ReactElement => (
-  <StyledTabs {...props} Item={ChipTab} />
+  <TemplateTabs {...props} Item={ChipTab} />
 );
 
 export default ChipTabs;

@@ -1,7 +1,7 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
-import { getSwapProvider } from "../../providers/swap";
+import { getSwapProvider, SWAP_DATA_CDN } from "../../providers/swap";
 
 export const FILTER = {
   centralised: "centralised",
@@ -13,12 +13,6 @@ export const FILTER = {
 export type AccountTuple = {
   account: Account | null | undefined;
   subAccount: SubAccount | null | undefined;
-};
-
-const providerMap: Record<string, string> = {
-  cic: "CIC",
-  oneinch: "1inch",
-  moonpay: "MoonPay",
 };
 
 export function getAccountTuplesForCurrency(
@@ -66,8 +60,10 @@ export const isRegistrationRequired = async (provider: string): Promise<boolean>
   return needsBearerToken || needsKYC;
 };
 
-export const getProviderName = (provider: string): string =>
-  providerMap[provider] ?? provider.charAt(0).toUpperCase() + provider.slice(1);
+export const getProviderName = (provider: string): string => {
+  const { displayName } = SWAP_DATA_CDN[provider];
+  return displayName;
+};
 
 export const getNoticeType = (provider: string): { message: string; learnMore: boolean } => {
   switch (provider) {

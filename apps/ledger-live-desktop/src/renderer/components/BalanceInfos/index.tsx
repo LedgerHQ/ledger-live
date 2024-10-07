@@ -142,6 +142,13 @@ export default function BalanceInfos({
     [counterValueId, flattenedAccounts],
   );
 
+  const parentAccount = useMemo(() => {
+    if (defaultAccount?.type === "TokenAccount") {
+      const parentId = defaultAccount.parentId;
+      return flattenedAccounts.find(a => a.id === parentId);
+    }
+  }, [defaultAccount, flattenedAccounts]);
+
   // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const onBuy = useCallback(() => {
@@ -160,9 +167,10 @@ export default function BalanceInfos({
       state: {
         from: history.location.pathname,
         defaultAccount,
+        defaultParentAccount: parentAccount,
       },
     });
-  }, [history, defaultAccount]);
+  }, [history, defaultAccount, parentAccount]);
 
   const ref = useRef<HTMLDivElement>(null);
   const { width } = useResize(ref);
