@@ -7,7 +7,6 @@ import {
   AlgoTransaction,
   AlgoTransactionDetails,
 } from "./indexer.types";
-import { LargeNumberLike } from "crypto";
 
 const LIMIT = 100; // Max nb of transactions per request
 
