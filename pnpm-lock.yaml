@@ -1293,6 +1293,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
+      '@ledgerhq/speculos-transport':
+        specifier: workspace:^
+        version: link:../../libs/speculos-transport
       '@ledgerhq/test-utils':
         specifier: workspace:^
         version: link:../../libs/test-utils
