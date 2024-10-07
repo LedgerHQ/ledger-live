@@ -23,11 +23,6 @@ import App from "./src";
 import logReport from "./src/log-report";
 import { withSentry } from "./src/sentry";
 
-if (__DEV__) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("react-native-performance-flipper-reporter").setupDefaultFlipperReporter();
-}
-
 logReport.logReportInit();
 
 const Root = withSentry(App);
