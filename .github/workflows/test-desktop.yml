@@ -25,5 +25,5 @@ permissions:
 jobs:
   test-desktop:
     name: "Test Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@chores/knip
     secrets: inherit
