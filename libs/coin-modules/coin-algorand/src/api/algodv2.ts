@@ -73,7 +73,7 @@ export const getTransactionParams = async (): Promise<AlgoTransactionParams> => 
   };
 };
 
-type ExplorerBroadcastReturn = { txId: string; };
+type ExplorerBroadcastReturn = { txId: string };
 
 export const broadcastTransaction = async (payload: Buffer): Promise<string> => {
   const { data }: { data: AlgoTransactionBroadcastResponse } = await network<
