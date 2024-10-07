@@ -21,9 +21,9 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
   const [tabs, setTabs] = useState<Web3HubTabType[]>([]);
   const listRef = useRef(null);
 
-  const handleItemPress = (itemId: string) => {
+  const handleItemClosePress = (itemId: string) => {
     const filteredTabs = tabs.filter(item => item.id !== itemId);
-    deviceStorage.save("web3hubTabHistory", filteredTabs);
+    deviceStorage.save("web3hub__TabHistory", filteredTabs);
     setTabs(filteredTabs);
   };
 
@@ -37,7 +37,7 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
     const getTabs = async () => {
       try {
         const tabHistory =
-          ((await deviceStorage.get("web3hubTabHistory")) as Web3HubTabType[]) || [];
+          ((await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[]) || [];
         setTabs(tabHistory);
       } catch (error) {
         console.error("Error fetching tabs from storage:", error);
@@ -69,7 +69,7 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
             <TabItem
               item={item}
               extraData={{ colors: colors }}
-              onItemPress={handleItemPress}
+              onItemClosePress={handleItemClosePress}
               navigation={navigation}
             />
           )}

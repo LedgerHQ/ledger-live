@@ -10,9 +10,10 @@ export const captureTab = async (manifest: AppManifest | undefined) => {
     const uri = await captureScreen({
       format: "jpg",
       quality: 0.6,
+      result: "data-uri",
     });
 
-    let tabHistory = (await deviceStorage.get("web3hubTabHistory")) as Web3HubTabType[];
+    let tabHistory = (await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[];
 
     if (!tabHistory || Object.keys(tabHistory).length === 0) {
       tabHistory = [];
@@ -30,7 +31,7 @@ export const captureTab = async (manifest: AppManifest | undefined) => {
       },
     ];
 
-    deviceStorage.save("web3hubTabHistory", tabHistory);
+    deviceStorage.save("web3hub__TabHistory", tabHistory);
   } catch (error) {
     console.error("Failed to capture screen or save tab preview", error);
   }

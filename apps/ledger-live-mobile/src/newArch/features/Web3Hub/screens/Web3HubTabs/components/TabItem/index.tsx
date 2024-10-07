@@ -16,12 +16,12 @@ export type Web3HubTabType = {
 
 export default function TabItem({
   item,
-  onItemPress,
+  onItemClosePress,
   extraData,
   navigation,
 }: {
   item: Web3HubTabType;
-  onItemPress: (itemId: string) => void;
+  onItemClosePress: (itemId: string) => void;
   navigation: TabsProps["navigation"];
   extraData: { colors: Theme["colors"] };
 }) {
@@ -39,8 +39,8 @@ export default function TabItem({
     });
   }, [navigation, item?.manifestId]);
 
-  const handlePressClose = () => {
-    onItemPress(item.id);
+  const handleClosePress = () => {
+    onItemClosePress(item.id);
   };
 
   return (
@@ -73,7 +73,7 @@ export default function TabItem({
 
           <Text style={{ ...styles.title, flex: 1, color: "#C3C3C3" }}>{item.title}</Text>
 
-          <TouchableOpacity onPress={handlePressClose}>
+          <TouchableOpacity onPress={handleClosePress}>
             <IconsLegacy.CloseMedium size={16} color={"#C3C3C3"} />
           </TouchableOpacity>
         </Flex>

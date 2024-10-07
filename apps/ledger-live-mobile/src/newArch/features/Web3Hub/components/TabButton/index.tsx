@@ -21,7 +21,7 @@ export default function TabButton({ navigation, onclick }: Props) {
   useFocusEffect(
     useCallback(() => {
       const getTabCount = async () => {
-        const tabCount = (await deviceStorage.get("web3hubTabHistory")) as Web3HubTabType[];
+        const tabCount = (await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[];
         setCount(tabCount.length.toString());
       };
 
