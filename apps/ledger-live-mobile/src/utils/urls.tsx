@@ -55,6 +55,7 @@ export const urls = {
     tr: "https://support.ledger.com/tr/article/4423020306705-zd",
     zh: "https://support.ledger.com/zh-CN/article/4423020306705-zd",
   },
+  memoTag: "https://support.ledger.com/article/4409603715217-zd",
   pairingIssues: "https://support.ledger.com/article/360025864773-zd",
   ratingsContact: "https://support.ledger.com/article/4423020306705-zd",
   buyNanoX:
