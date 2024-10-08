@@ -2335,7 +2335,8 @@
       "swap" : "互换",
       "send" : "发送",
       "deposit" : "接收",
-      "stake" : "质押"
+      "stake" : "质押",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "买入",
     "walletconnect" : "WalletConnect",
     "stake" : "质押",
+    "yield" : "Yield",
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "分享地址",
       "addressCopied" : "地址已复制到剪贴板",
       "taprootWarning" : "确保发送方支持 taproot",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "我了解",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "选择您要接收的加密货币"
       },
@@ -6615,7 +6624,7 @@
     "title" : "连接设备"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
       "tagMinimum" : "需要 {{min}} ETH",
@@ -6644,10 +6653,76 @@
         },
         "kiln" : {
           "title" : "Kiln 单独质押",
-          "tag" : "需要 32 枚以太币",
+          "tag" : "需要 32 ETH",
           "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
           "supportLink" : "详细了解 Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "选择权益质押服务提供商",
+      "category" : {
+        "all" : {
+          "name" : "全部",
+          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+        },
+        "liquid" : {
+          "name" : "流动性质押",
+          "description" : "您可以质押以太币，获得流动代币奖励。您仍然可以进行交易，并参与 DeFi 活动。"
+        },
+        "protocol" : {
+          "name" : "协议",
+          "description" : "您可以一次质押 32 ETH，获得完整节点奖励的以太币。"
+        },
+        "pooling" : {
+          "name" : "大池质押",
+          "description" : "您可以加入一个质押池，质押任意数量的以太币并获得奖励。"
+        },
+        "restaking" : {
+          "name" : "再质押",
+          "description" : "您可以再质押您的流动代币，获得额外奖励。"
+        }
+      },
+      "howItWorks" : "以太币质押的运作方式",
+      "lst" : "需要流动代币",
+      "noMinimum" : "无最低限制",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 流动性再质押"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "需要了解的策略和战术",
+      "requiredMinimum" : "需要 {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自动以复利计算奖励",
+        "basic" : "奖励",
+        "daily" : "每日奖励",
+        "eigenlayer_points" : "Eigenlayer 积分",
+        "validator" : "验证者奖励"
       }
     },
     "noFundsModal" : {
