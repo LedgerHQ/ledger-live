@@ -16,6 +16,7 @@ type Props = {
 const EventList: React.FC<Props> = ({ showExtraProps, hideSyncEvents, hidden }) => {
   const { items } = useAnalyticsEventsLog();
   if (hidden) return null;
+  console.log("hello");
   return (
     <ScrollView>
       <AnimatedFlex paddingBottom={100} flexDirection="column-reverse">
