@@ -1598,7 +1598,7 @@ PODS:
   - sovran-react-native (0.4.5):
     - React-Core
   - Storyly (3.6.0)
-  - storyly-react-native (3.6.0):
+  - storyly-react-native (3.6.2):
     - React
     - Storyly (= 3.6.0)
   - TOCropViewController (2.5.3)
@@ -2132,7 +2132,7 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
   Storyly: 310297bcf4493d3d5b41e71834fba49502c8067a
-  storyly-react-native: f14aab1a353a8c685b1ab3371fb5fd0c028bc311
+  storyly-react-native: ddc3bbad4176759d21b7b21143f174120b9679e1
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   Yoga: 4f4f07a17818e76d1b04edc01b68b6d49a682100
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5

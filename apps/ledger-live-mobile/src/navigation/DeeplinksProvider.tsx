@@ -10,7 +10,6 @@ import {
   PartialState,
 } from "@react-navigation/native";
 import Config from "react-native-config";
-import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
@@ -587,8 +586,6 @@ export const DeeplinksProvider = ({
     },
     [],
   );
-
-  useFlipper(navigationRef);
 
   if (!isReady) {
     return null;
