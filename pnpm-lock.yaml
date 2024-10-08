@@ -3347,11 +3347,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.11
-        version: 1.5.11
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: ^1.13.0
+        version: 1.13.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -3653,17 +3653,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.11
-        version: 1.5.11
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: ^1.13.0
+        version: 1.13.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.12
-        version: 1.5.12(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.6.0
+        version: 1.6.0(react@18.2.0)(rxjs@7.8.1)
       '@stacks/network':
         specifier: 6.10.0
         version: 6.10.0
@@ -6958,11 +6958,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.11
-        version: 1.5.11
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: ^1.13.0
+        version: 1.13.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -7020,14 +7020,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.11
-        version: 1.5.11
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.11
-        version: 1.3.11(react@18.2.0)
+        specifier: ^1.3.12
+        version: 1.3.12(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.17
-        version: 1.1.17(react@18.2.0)
+        specifier: ^1.2.0
+        version: 1.2.0(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -10654,19 +10654,19 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/wallet-api-client-react@1.3.11':
-    resolution: {integrity: sha512-77xaaGEAGeEvgos9DAc56vYomjqtddwmA9YWsxGkrGBQiGuEphANjtI2wzc5337mpaJZIBFB2d6GhR9umQ+1+g==}
+  '@ledgerhq/wallet-api-client-react@1.3.12':
+    resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
 
-  '@ledgerhq/wallet-api-client@1.5.11':
-    resolution: {integrity: sha512-M0TuBxdYdD0LfYtXAHIJNSe8Cg+HGJA/MD9uIMUsMyTQbRlyhqvBXHNy1Q19lPLjVejrcGYMqujcGTS9eH+LQQ==}
+  '@ledgerhq/wallet-api-client@1.6.0':
+    resolution: {integrity: sha512-xf5g9baUB1Fn94GKYGNXtlRCKTWnqMBv1w9bE/H3+IXubwY7Cdy5zhn4rI8+iA4Llmwujp+sZciesWAa9f63gg==}
 
-  '@ledgerhq/wallet-api-core@1.12.0':
-    resolution: {integrity: sha512-UatH08CLG2iH0kC7Lpq4sDtmjX1m64CJMLga+/04iP77aMBzYlpz9N10XkYyD+4CmvZ9SFncm//mAap9gr5jkQ==}
+  '@ledgerhq/wallet-api-core@1.13.0':
+    resolution: {integrity: sha512-HGnkPcbkeoNr+XAH+5NSrgyRYD/sVD3tgCyoYPAKEs7j3W/eJyT/EvBWwV4yPKhghfSjuqMo1L+0wLCXnbt4Dw==}
 
-  '@ledgerhq/wallet-api-server@1.5.12':
-    resolution: {integrity: sha512-RAoBbqQ52GAa4I/KoIlqfIa3W50oYbJdoQGzj+GKJth2XJJXR4t80FktSMFjj1oxBP++ruWyYa0p+k+05xj0BA==}
+  '@ledgerhq/wallet-api-server@1.6.0':
+    resolution: {integrity: sha512-x2aI2wqWlt03zUMYucfqNeYkohZzROs2DYgRdwkkZbQG2Q0iUZsixUYjNkFZxPVUhxXaUA+YIgF43OeG/fyOjA==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -10674,8 +10674,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-simulator@1.1.17':
-    resolution: {integrity: sha512-cuYVnR+dJzItF0x4gW5V5rTb5pLDZgo5C6/edJ85KSl/kx0jeqREIdJ0T1euCG70+lShGrTwyGc/KsEvBdu5Tg==}
+  '@ledgerhq/wallet-api-simulator@1.2.0':
+    resolution: {integrity: sha512-EB4rqArFWut8A+Pzoi0uK1sqlGsF5fPYDql4IGH5ghdyKgh3Mq9svi5Um8h3+33aETB3hqCR2T2itN+kGxk3Tw==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -36818,39 +36818,39 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/wallet-api-client-react@1.3.11(react@18.2.0)':
+  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.2.0)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.11
+      '@ledgerhq/wallet-api-client': 1.6.0
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-client@1.5.11':
+  '@ledgerhq/wallet-api-client@1.6.0':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/wallet-api-core': 1.12.0
+      '@ledgerhq/wallet-api-core': 1.13.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/wallet-api-core@1.12.0':
+  '@ledgerhq/wallet-api-core@1.13.0':
     dependencies:
       '@ledgerhq/errors': 6.19.1
       bignumber.js: 9.1.2
       uuid: 9.0.1
       zod: 3.23.8
 
-  '@ledgerhq/wallet-api-server@1.5.12(react@18.2.0)(rxjs@7.8.1)':
+  '@ledgerhq/wallet-api-server@1.6.0(react@18.2.0)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.12.0
+      '@ledgerhq/wallet-api-core': 1.13.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
     optionalDependencies:
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-simulator@1.1.17(react@18.2.0)':
+  '@ledgerhq/wallet-api-simulator@1.2.0(react@18.2.0)':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/wallet-api-client': 1.5.11
-      '@ledgerhq/wallet-api-core': 1.12.0
-      '@ledgerhq/wallet-api-server': 1.5.12(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.6.0
+      '@ledgerhq/wallet-api-core': 1.13.0
+      '@ledgerhq/wallet-api-server': 1.6.0(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
