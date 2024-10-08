@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Aguente firme...",
-      "activation" : "Seus dados estão sendo criptografados de ponta a ponta... ",
-      "synch" : "Estamos atualizando as instâncias sincronizadas..."
+      "activation" : "Isso pode demorar até 30 segundos.\nPermaneça nesta tela."
     },
     "error" : {
       "title" : "Algo deu errado",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Ver mais inscrições",
+      "empty" : "Para adicionar Inscriptions, basta enviá-las para seu endereço Bitcoin.",
+      "receive" : "Receber Inscription",
       "discoveryDrawer" : {
         "title" : "Explorar Ordinals",
         "description" : "Você sabe que é possível ter valiosos Sats Raros e Inscriptions?",
         "learnMore" : "Saiba mais",
-        "viewCoinControl" : "Ver controle de moedas"
+        "protectTitle" : "Proteja seus ativos ordinals",
+        "protectDescription" : "Exclua seus ativos Ordinals de suas transações."
+      },
+      "detailsDrawer" : {
+        "description" : "Descrição",
+        "collectionName" : "Nome da Coleção",
+        "inscriptionId" : "ID da inscrição",
+        "inscriptionNumber" : "Número de inscrições",
+        "mintedTo" : "Emitido para",
+        "genesisTx" : "Transação gênesis",
+        "blockNumber" : "Número do bloco",
+        "contentType" : "Tipo de conteúdo",
+        "createdDate" : "Data de criação",
+        "satribute" : "Raridade do Sat",
+        "satNumber" : "Número Sat",
+        "satName" : "Nome Sat",
+        "location" : "Local",
+        "outputValue" : "Valor de saída",
+        "storedOnChain" : "Armazenado On-Chain",
+        "hide" : "Ocultar"
       }
     },
     "rareSats" : {
+      "empty" : "Para adicionar Sats Raros, basta enviá-los para seu endereço Bitcoin.",
+      "receive" : "Receber Sat Raro",
       "title" : "Sats Raros",
       "table" : {
         "type" : "Quantia / Tipo de Sat",
-        "year" : "Ano",
-        "utxo" : "Tamanho do UTXO"
+        "year" : "Ano"
       },
       "rareSat" : {
         "description" : {
