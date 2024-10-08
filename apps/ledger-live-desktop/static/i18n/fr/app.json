@@ -1126,6 +1126,7 @@
       "send" : "Envoyer",
       "swap" : "Swap",
       "stake" : "Staker",
+      "yield" : "Rendement",
       "buy" : "Acheter",
       "sell" : "Vendre",
       "edit" : "Modifier le compte",
@@ -3682,12 +3683,12 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Faites fructifier vos ETH",
       "subTitle" : "Stakez vos ETH et recevez des récompenses quotidiennes directement via Ledger Live.",
       "tagMinimum" : "{{min}} ETH minimum",
       "kiln_pooling" : {
-        "title" : "Staker avec un pool sur Kiln",
+        "title" : "Staking en pool sur Kiln",
         "description" : "Stakez sans durée, ni montant minimum. Gagnez des récompenses capitalisées automatiquement.",
         "supportLink" : "En savoir plus sur les pools sur Kiln"
       },
@@ -3702,7 +3703,7 @@
         "supportLink" : "En savoir plus sur les pools sur Stader"
       },
       "kiln" : {
-        "title" : "Staker avec un validateur Kiln",
+        "title" : "Staking avec validateur Kiln",
         "tag" : "32 ETH minimum",
         "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et demandez facilement vos récompenses.",
         "supportLink" : "En savoir plus sur les validateurs Kiln"
@@ -3712,6 +3713,72 @@
         "tag" : "32 ETH minimum",
         "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et recevez automatiquement vos récompenses sur votre compte.",
         "supportLink" : "En savoir plus sur les validateurs Figment"
+      }
+    },
+    "stake" : {
+      "title" : "Choisir un prestataire de staking",
+      "category" : {
+        "all" : {
+          "name" : "Tout",
+          "description" : "Tous les prestataires de staking d’ETH disponibles sur Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquide",
+          "description" : "Vous pouvez staker des ETH et gagner des récompenses sous forme de tokens liquides. Vous pourrez continuer à trader et profiter de la DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocole",
+          "description" : "Vous pouvez staker un minimum de 32 ETH et obtenir les récompenses de votre nœud complet en ETH."
+        },
+        "pooling" : {
+          "name" : "Pool",
+          "description" : "Vous pouvez rejoindre un pool pour staker le montant d’ETH de votre choix et obtenir des récompenses."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Vous pouvez restaker vos tokens liquides pour obtenir des récompenses supplémentaires."
+        }
+      },
+      "howItWorks" : "Fonctionnement du staking d’ETH",
+      "lst" : "Token liquide nécessaire",
+      "noMinimum" : "Pas de minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking en pool sur Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking liquide avec Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking avec validateur Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "En savoir plus sur le staking d’ETH et les différentes stratégies",
+      "requiredMinimum" : "{{min}} ETH minimum",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Récompenses capitalisées auto.",
+        "basic" : "Récompenses",
+        "daily" : "Récompenses quotidiennes",
+        "eigenlayer_points" : "Points EigenLayer",
+        "validator" : "Récompenses validateur"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
         "placeholder" : "Infos prestataire Exchange (CAL)"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "Ouvrir",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "Ajouter",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "Description",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "Tokens masqués",
         "desc" : "Vous pouvez masquer les tokens en vous rendant sur le compte parent, en faisant un clic droit sur le token et en sélectionnant Masquer le token.",
-        "count" : "{{count}} token",
-        "count_plural" : "{{count}} tokens"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "Collections de NFT masquées",
         "desc" : "Vous pouvez cacher des collections NFT en faisant un clic droit sur le nom de la collection et sélectionnant Masquer la collection de NFT.",
-        "count" : "{{count}} collection",
-        "count_plural" : "{{count}} collections"
+        "count" : "1 collection",
+        "count_other" : "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Connecter un nœud Bitcoin complet",
@@ -6584,6 +6686,11 @@
       "seeMore" : "Voir plus d’inscriptions",
       "empty" : "Pour ajouter des inscriptions, il vous suffit de les recevoir sur votre adresse Bitcoin.",
       "receive" : "Recevoir une inscription",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "Découvrez les ordinals",
         "description" : "Savez-vous que vous possédez peut-être des rare sats et des inscriptions de grande valeur ?",
