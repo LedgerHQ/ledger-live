@@ -2970,7 +2970,7 @@
       "header" : "Aide",
       "desc" : "En savoir plus sur Ledger Live ou obtenir de l’aide.",
       "support" : "Assistance Ledger",
-      "supportDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre wallet physique.",
+      "supportDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre appareil Ledger.",
       "configureDevice" : "Configurer un appareil",
       "configureDeviceDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés.",
       "clearCache" : "Vider le cache",
@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Pour préserver votre vie privée, une nouvelle adresse est générée pour chaque transaction. Les précédentes restent toujours valides.",
         "title" : "Recevoir des {{currencyTicker}}",
         "onCurrencyName" : "sur {{currencyName}}",
         "copyAdress" : "Copier",
@@ -5926,7 +5927,6 @@
         "status" : "Statut",
         "active" : "Actif",
         "inactive" : "Inactif",
-        "rewards" : "Récompenses",
         "pending" : "En attente",
         "available" : "Disponible au retrait"
       },
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Choisir votre wallet Ledger",
-      "description" : "Pour récupérer votre synchronisation, connectez votre appareil Ledger à Ledger Live sur votre mobile ou ordinateur."
+      "title" : "Choisir un wallet Ledger"
     },
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "Quelques secondes...",
-      "activation" : "Chiffrement de vos données de bout en bout... ",
+      "activation" : "Cela peut prendre jusqu’à 30 secondes.\nVeuillez ne pas quitter cet écran.",
       "synch" : "Mise à jour de vos synchronisations..."
     },
     "success" : {
       "sync" : "Synchronisation réussie",
       "syncDesc" : "Les mouvements sur vos comptes crypto apparaîtront automatiquement sur toutes les applications Ledger Live de vos téléphones et ordinateurs synchronisés.",
-      "activation" : "Ledger Sync est activé pour Ledger Live sur ce téléphone",
+      "activation" : "Ledger Sync est activé sur ce téléphone",
       "syncAnother" : "Synchroniser avec une autre application Ledger Live",
       "close" : "Fermer"
     },
@@ -6841,10 +6840,10 @@
       "chooseMethod" : {
         "title" : "Choisissez votre méthode de synchronisation",
         "scan" : {
-          "title" : "Scanner un code QR"
+          "title" : "Scanner le code QR"
         },
         "connectDevice" : {
-          "title" : "Utiliser mon wallet Ledger"
+          "title" : "Utiliser mon appareil Ledger"
         }
       },
       "qrCode" : {

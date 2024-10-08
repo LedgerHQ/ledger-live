@@ -790,16 +790,16 @@
       "title" : "تأكد أن لديك {{depositAmount}} ADA متاح للإيداع"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "رسوم الشبكة مرتفعة على غير العادة يُرجى التحقق مرةً أخرى من معاملتك."
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "مُعلّمات بروتوكول كاردانو (Cardano) غير صالحة",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
     },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
@@ -1408,10 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "مرحباً بك مجدداً",
-      "subtitle" : "Tell us how you prefer to access your wallet:",
+      "subtitle" : "أخبرنا كيف تفضّل الوصول إلى محفظتك:",
       "connect" : "توصيل جهازك Ledger",
       "sync" : "المزامنة مع Ledger Live لسطح المكتب",
-      "walletSync" : "Use Ledger Sync"
+      "walletSync" : "استخدام مزامنة Ledger"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "استكشف بدون جهاز",
@@ -2373,11 +2373,11 @@
         "description" : "استيراد الأصل من Ledger Live لسطح المكتب"
       },
       "add" : {
-        "title" : "Use your Ledger device",
-        "description" : "Create or import your crypto account using your Ledger device"
+        "title" : "استخدم جهازك Ledger",
+        "description" : "إنشاء أو استيراد حسابات الأصول المشفرة خاصتك باستخدام جهازك Ledger"
       },
       "walletSync" : {
-        "title" : "Use Ledger Sync"
+        "title" : "استخدام مزامنة Ledger"
       }
     }
   },
@@ -2817,7 +2817,7 @@
       "dateFormat" : "تنسيق التاريخ",
       "dateFormatDesc" : "تعيين تنسيق التاريخ في Ledger Live",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password" : "App lock (قفل التطبيق)",
@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "لأسباب تتعلق بالخصوصية، يتم إنشاء عنوان جديد لكل معاملة. العناوين السابقة تظل صالحةً.",
         "title" : "تلقي {{currencyTicker}}",
         "onCurrencyName" : "على {{currencyName}}",
         "copyAdress" : "نسخ العنوان",
@@ -5926,7 +5927,6 @@
         "status" : "الحالة",
         "active" : "نشِط",
         "inactive" : "غير نشِط",
-        "rewards" : "المكافآت",
         "pending" : "مُعلقّة",
         "available" : "قابل للسحب"
       },
@@ -6764,16 +6764,15 @@
     "title" : "مزامنة Ledger",
     "activation" : {
       "screen" : {
-        "title" : "Turn on Ledger Sync for this phone?",
-        "description" : "This automatically syncs your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+        "title" : "تشغيل مزامنة Ledger لهذا الهاتف؟",
+        "description" : "يقوم هذا بمزامنة حسابات الأصول المشفرة خاصتك تلقائياً عبر كل هواتفك وأجهزة الكمبيوتر الخاصة بك، حتى عند الانتقال إلى جهاز جديد.",
         "mainCta" : "تشغيل مزامنة Ledger",
-        "secondCta" : "I already turned it on",
-        "learnMore" : "How does Ledger Sync work?"
+        "secondCta" : "لقد قمت بتشغيلها بالفعل",
+        "learnMore" : "كيف تعمل مزامنة Ledger؟"
       }
     },
     "deviceSelection" : {
-      "title" : "Choose your Ledger device",
-      "description" : "يمكنك استرداد نسخك الاحتياطي ببساطة بتوصيل جهازك Ledger بتطبيقات Ledger Live للجوّال وسطح المكتب."
+      "title" : "اختر جهاز Ledger"
     },
     "deviceAction" : {
       "title" : "تابع على جهازك Ledger {{wording}}",
@@ -6781,20 +6780,20 @@
     },
     "loading" : {
       "title" : "انتظرنا...",
-      "activation" : "يتم تشفير بياناتك بشكل تام... ",
+      "activation" : "قد يستغرق هذا حتى 30 ثانية.\nيُرجى عدم مغادرة هذه الشاشة.",
       "synch" : "جارٍ تحديث الحالات التي تمت مزامنتها..."
     },
     "success" : {
-      "sync" : "Sync successful",
-      "syncDesc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
-      "activation" : "Ledger Sync turned on for Ledger Live on this phone",
+      "sync" : "تمت المزامنة بنجاح",
+      "syncDesc" : "التغييرات في حسابات الأصول المشفرة خاصتك ستظهر الآن تلقائياً عبر تطبيقات Ledger Live على الهواتف وأجهزة الكمبيوتر التي تمت مزامنتها.",
+      "activation" : "تم تشغيل مزامنة Ledger لهذا الهاتف",
       "syncAnother" : "المزامنة مع تطبيق Ledger Live آخر",
       "close" : "إغلاق"
     },
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "المزامنة مع تطبيق Ledger Live آخر",
-        "description" : "Sync your Ledger Live crypto accounts across different phones and computers."
+        "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة."
       },
       "manageKey" : {
         "title" : "حذف المزامنة",
@@ -6809,32 +6808,32 @@
         }
       },
       "manageInstances" : {
-        "title" : "Ledger Live is synched across:",
+        "title" : "تمت مزامنة Ledger Live عبر:",
         "remove" : "حذف"
       },
       "synchronizedInstances" : {
         "cta" : "إدارة",
-        "title" : "{{count}} Ledger Live app synched",
-        "title_plural" : "{{count}} Ledger Live apps synched",
+        "title" : "تمت مزامنة عدد {{count}} تطبيق Ledger Live",
+        "title_plural" : "تمت مزامنة عدد {{count}} تطبيق Ledger Live",
         "error" : "الحالات",
         "unsecuredError" : {
-          "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
-          "description" : "If you don’t have the same Ledger device, select “Delete sync”.",
+          "title" : "قم بتوصيل نفس جهاز Ledger الذي استخدمته لتمكين مزامنة Ledger",
+          "description" : "إذا لم يكن لديك نفس جهاز Ledger، اختر ”Delete sync (حذف المزامنة)“.",
           "cta" : "توصيل جهاز Ledger آخر",
-          "ctaDelete" : "Delete sync"
+          "ctaDelete" : "حذف المزامنة"
         },
         "autoRemoveError" : {
-          "title" : "You can’t remove this phone while you’re using it",
-          "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync'.",
+          "title" : "لا يمكنك إزالة هذا الهاتف بينما تستخدمه",
+          "description" : "للإزالة، استخدم هاتف أو كمبيوتر آخر تم تمكين مزامنة Ledger عليه. إذا لم يكن لديك جهاز آخر، اختر ”Delete sync (حذف المزامنة)“.",
           "info" : "حذف مفتاح التشفير الخاص بك سيؤدي إلى إلغاء مزامنة أجهزتك، وكل البيانات التي تمت مزامنتها ستُحذف. لكن، هذا لن يؤثر على أموالك. يمكنك إعادة مزامنة حساباتك في أي وقت.",
           "cta" : "أفهم ذلك",
-          "ctaDelete" : "Delete sync"
+          "ctaDelete" : "حذف المزامنة"
         },
-        "success" : "Your Ledger Live app on {{member}} is no longer connected to Ledger Sync"
+        "success" : "تطبيق Ledger Live الخاص بك على {{member}} لم يعد متصلاً بمزامنة Ledger"
       },
       "errors" : {
         "fetching" : "حدث خطأ ما أثناء جلب حالاتك التي تمت مزامنتها.",
-        "ledgerSyncUnavailable" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
+        "ledgerSyncUnavailable" : "مزامنة Ledger غير متاحة بشكل مؤقت بسبب بعض المشكلات التقنية من جانبنا. نحن نعمل على حلها."
       }
     },
     "synchronize" : {
@@ -6844,18 +6843,18 @@
           "title" : "مسح ضوئي لكود QR"
         },
         "connectDevice" : {
-          "title" : "استخدم جهازك Ledger"
+          "title" : "استخدام جهازي Ledger"
         }
       },
       "qrCode" : {
-        "title" : "Sync Ledger Live apps",
+        "title" : "مزامنة تطبيقات Ledger Live",
         "show" : {
           "title" : "عرض كود QR",
           "explanation" : {
             "title" : "مسح ومزامنة حساباتك باستخدام تطبيق Ledger Live آخر",
             "steps" : {
               "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
+              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Turn on Ledger Sync (تشغيل مزامنة Ledger)</0> <1>></1> <0>Scan QR code (امسح ضوئياً كود QR)</0>",
               "step3" : "مسح ضوئي لكود QR"
             }
           }
@@ -6864,62 +6863,62 @@
           "title" : "مسح ضوئي",
           "description" : "مسح ضوئي لكود QR",
           "explanation" : {
-            "title" : "To sync with Ledger Live on another phone or computer...",
+            "title" : "للمزامنة مع Ledger Live على هاتف أو كمبيوتر آخر...",
             "steps" : {
-              "step1" : "Open the Ledger Live you want to sync with.",
-              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
+              "step1" : "افتح Ledger Live الذي تريد المزامنة معه.",
+              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Turn on Ledger Sync (تشغيل مزامنة Ledger)</0> <1>></1> <0>Show QR (عرض كود QR)</0>",
               "step3" : "مسح ضوئي لكود QR"
             }
           }
         },
         "pinCode" : {
-          "title" : "Enter Ledger Sync code",
-          "desc" : "Enter the code shown on your computer to sync your crypto accounts across both apps.",
+          "title" : "أدخِل كود مزامنة Ledger",
+          "desc" : "أدخِل الكود الظاهر على جهاز الكمبيوتر الخاص بك لمزامنة حسابات الأصول المشفرة خاصتك عبر كلا التطبيقين.",
           "error" : {
-            "title" : "The codes don’t match",
+            "title" : "الأكواد غير متطابقة",
             "desc" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى.",
             "tryAgain" : "إعادة المحاولة"
           }
         },
         "scannedInvalidQrCode" : {
           "title" : "كود QR غير صالح",
-          "desc" : "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
-          "info" : "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
+          "desc" : "فقط امسح ضوئياً كود QR المعروض على Ledger Live من أجل مزامنة تطبيقات Ledger Live الخاصة بك.",
+          "info" : "للحصول على كود QR، افتح ”Settings (الإعدادات)“، واختر ”General (عام)“، ثم اختر ”Ledger Sync (مزامنة Ledger)“، و”Turn on Sync (تشغيل المزامنة)“ و”Show QR (عرض كود QR)“.",
           "cta" : "أفهم ذلك"
         },
         "scannedOldQrCode" : {
-          "title" : "Ledger Live update required",
-          "desc" : "To continue with sync, update the Ledger Live app that’s not up to date.",
-          "info" : "For more on how to update, <0>check out this article<0>.",
+          "title" : "تحديث Ledger Live مطلوب",
+          "desc" : "لمتابعة المزامنة، قم بتحديث تطبيق Ledger Live غير المُحدّث إلى أحدث إصدار.",
+          "info" : "للمزيد حول كيفية التحديث، <0>اطّلع على هذه المقالة<0>.",
           "cta" : "أفهم ذلك"
         },
         "unbacked" : {
           "title" : "لم يتم اكتشاف المزامنة",
-          "description" : "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على التطبيق الذي تقوم بالمزامنة معه.",
           "cta" : "تشغيل مزامنة Ledger"
         },
         "unbackedOnboarding" : {
           "title" : "لم يتم اكتشاف المزامنة",
-          "description" : "Come back here after you turn on sync for the other Ledger Live app, and then select “Try again”.",
-          "info" : "If Ledger Sync is not enabled anywhere, then continue without it.",
+          "description" : "عُد إلى هنا بعد تشغيل المزامنة في تطبيق Ledger Live الآخر، ثم اختر ”Try again (إعادة المحاولة)“.",
+          "info" : "إذا لم تكن مزامنة Ledger مُمكّنة في أي مكان، تابع بدونها.",
           "cta" : "إعادة المحاولة",
           "cancel" : "المتابعة بدون مزامنة"
         },
         "backedWithDifferentSeeds" : {
-          "title" : "Different Ledger devices were used to enable Ledger Sync on each app",
-          "description" : "To sync the two Ledger Live apps, you need to use the same Ledger device.",
-          "info" : "To fix this, delete sync for one of the apps and turn it on again by scanning the QR code.",
+          "title" : "تم استخدام أجهزة Ledger مختلفة لتمكين مزامنة Ledger على كل تطبيق",
+          "description" : "لمزامنة تطبيقي Ledger Live، تحتاج إلى استخدام نفس جهاز Ledger.",
+          "info" : "لإصلاح هذا، قم بحذف المزامنة لتطبيق من التطبيقين وأعِد تشغيله بمسح كود QR ضوئياً.",
           "cta" : "أفهم ذلك"
         },
         "alreadyBacked" : {
-          "title" : "Both Ledger Live apps are already synched",
+          "title" : "تمت مزامنة كلا تطبيقي Ledger Live بالفعل",
           "cta" : "فهمت ذلك"
         }
       },
       "unbackedOnboarding" : {
         "title" : "لم يتم اكتشاف المزامنة",
-        "description" : "If Ledger Sync is enabled, select “Try again” and make sure to connect the same Ledger device you used for enabling it.",
-        "info" : "Or, continue without Ledger Sync.",
+        "description" : "إذا كانت مزامنة Ledger مُمكّنة، اختر ”Try again (إعادة المحاولة)“ وتأكد من توصيل نفس جهاز Ledger الذي استخدمته في تمكينها.",
+        "info" : "أو تابع بدون مزامنة Ledger.",
         "cta" : "إعادة المحاولة",
         "cancel" : "المتابعة بدون مزامنة"
       },

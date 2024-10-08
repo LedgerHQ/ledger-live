@@ -53,6 +53,7 @@ const localStateSelector = (state: State) => ({
 });
 
 const latestDistantStateSelector = (state: State) => state.walletState.walletSyncState.data;
+const latestDistantVersionSelector = (state: State) => state.walletState.walletSyncState.version;
 
 export default function AppAccountsSync({
   deviceId,
@@ -141,6 +142,7 @@ export default function AppAccountsSync({
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),

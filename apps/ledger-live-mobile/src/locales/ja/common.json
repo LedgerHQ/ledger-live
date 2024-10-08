@@ -1408,10 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "おかえりなさい",
-      "subtitle" : "Tell us how you prefer to access your wallet:",
+      "subtitle" : "ウォレットにアクセスするご希望の方法を教えてください：",
       "connect" : "Ledgerを接続する",
       "sync" : "Ledger Live Desktopと同期する",
-      "walletSync" : "Use Ledger Sync"
+      "walletSync" : "Ledger Syncを使用する"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "デバイスなしで探索する",
@@ -2373,11 +2373,11 @@
         "description" : "Ledger Live Desktopから資産をインポート"
       },
       "add" : {
-        "title" : "Use your Ledger device",
-        "description" : "Create or import your crypto account using your Ledger device"
+        "title" : "Ledgerデバイスを使用する",
+        "description" : "Ledgerデバイスを使用して暗号資産アカウントを作成またはインポートする"
       },
       "walletSync" : {
-        "title" : "Use Ledger Sync"
+        "title" : "Ledger Syncを使用する"
       }
     }
   },
@@ -2817,7 +2817,7 @@
       "dateFormat" : "日付形式",
       "dateFormatDesc" : "Ledger Liveの日付形式を設定。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "アプリロック",
@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "プライバシー上の理由から、トランザクションごとに新しいアドレスが生成されます。以前のものは引き続き有効です。",
         "title" : "{{currencyTicker}}を受け取る",
         "onCurrencyName" : "（{{currencyName}}で）",
         "copyAdress" : "アドレスをコピー",
@@ -5926,7 +5927,6 @@
         "status" : "ステータス",
         "active" : "アクティブ",
         "inactive" : "停止中",
-        "rewards" : "報酬",
         "pending" : "保留中",
         "available" : "引き出し可能"
       },
@@ -6764,16 +6764,15 @@
     "title" : "Ledger同期",
     "activation" : {
       "screen" : {
-        "title" : "Turn on Ledger Sync for this phone?",
-        "description" : "This automatically syncs your crypto accounts across all your phones and computers, even when transitioning to a new device.",
-        "mainCta" : "Turn on Ledger Sync",
-        "secondCta" : "I already turned it on",
-        "learnMore" : "How does Ledger Sync work?"
+        "title" : "このスマートフォンに対してLedger同期をオンにしますか？",
+        "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
+        "mainCta" : "Ledger Syncをオンにする",
+        "secondCta" : "すでにオンにしました",
+        "learnMore" : "Ledger Syncの仕組みは？"
       }
     },
     "deviceSelection" : {
-      "title" : "Choose your Ledger device",
-      "description" : "LedgerをLedger Liveモバイル＆デスクトップアプリに接続するだけで、バックアップを取得できます。"
+      "title" : "Ledgerデバイスを選択"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}}で続ける",
@@ -6781,20 +6780,20 @@
     },
     "loading" : {
       "title" : "お待ちください...",
-      "activation" : "データがエンドツーエンドで暗号化されています... ",
+      "activation" : "これには最大30秒かかる場合があります。\nこちらの画面のままでお待ちください。",
       "synch" : "同期されたインスタンスを更新しています..."
     },
     "success" : {
-      "sync" : "Sync successful",
-      "syncDesc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
-      "activation" : "Ledger Sync turned on for Ledger Live on this phone",
+      "sync" : "同期に成功しました",
+      "syncDesc" : "暗号資産アカウントの変更は、同期されたスマホおよびコンピューター上のLedger Liveアプリ全体に自動的に表示されるようになります。",
+      "activation" : "このスマホではLedger Syncがオンになっています",
       "syncAnother" : "別のLedger Liveアプリと同期する",
       "close" : "閉じる"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "Sync with another Ledger Live app",
-        "description" : "Sync your Ledger Live crypto accounts across different phones and computers."
+        "title" : "別のLedger Liveアプリと同期する",
+        "description" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。"
       },
       "manageKey" : {
         "title" : "同期の削除",
@@ -6809,32 +6808,32 @@
         }
       },
       "manageInstances" : {
-        "title" : "Ledger Live is synched across:",
+        "title" : "Ledger Liveを複数のデバイス間で同期済み：",
         "remove" : "削除"
       },
       "synchronizedInstances" : {
-        "cta" : "Manage",
-        "title" : "{{count}} Ledger Live app synched",
-        "title_plural" : "{{count}} Ledger Live apps synched",
+        "cta" : "管理",
+        "title" : "{{count}}個のLedger Liveアプリを同期済み",
+        "title_plural" : "{{count}}個のLedger Liveアプリを同期済み",
         "error" : "インスタンス",
         "unsecuredError" : {
-          "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
-          "description" : "If you don’t have the same Ledger device, select “Delete sync”.",
+          "title" : "Ledger Syncを有効にするのに使用したのと同じLedgerデバイスを接続します",
+          "description" : "同じLedgerデバイスをお持ちでない場合は、「同期の削除」を選択してください。",
           "cta" : "別のLedgerを接続する",
-          "ctaDelete" : "Delete sync"
+          "ctaDelete" : "同期の削除"
         },
         "autoRemoveError" : {
-          "title" : "You can’t remove this phone while you’re using it",
-          "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync'.",
+          "title" : "このスマートフォンを使用中には削除できません",
+          "description" : "削除するには、Ledger Syncが有効になっている別のスマホかコンピューターを使用します。別のデバイスをお持ちでない場合は、「同期を削除」を選択してください。",
           "info" : "暗号化キーを削除するとデバイスの同期が解除され、同期されたデータはすべて削除されます。ただし、これはお客様の資金には影響しません。アカウントはいつでも再同期できます。",
           "cta" : "わかりました",
-          "ctaDelete" : "Delete sync"
+          "ctaDelete" : "同期の削除"
         },
-        "success" : "Your Ledger Live app on {{member}} is no longer connected to Ledger Sync"
+        "success" : "{{member}}のLedger LiveアプリはLedger Syncに接続されなくなりました"
       },
       "errors" : {
         "fetching" : "同期されたインスタンスを取得中に問題が発生しました。",
-        "ledgerSyncUnavailable" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
+        "ledgerSyncUnavailable" : "当社側の技術的な問題のため、Ledger Syncは一時的に利用できません。現在修正に取り組んでいます。"
       }
     },
     "synchronize" : {
@@ -6844,18 +6843,18 @@
           "title" : "QRコードをスキャン"
         },
         "connectDevice" : {
-          "title" : "Ledgerを使用"
+          "title" : "Ledgerデバイスを使用する"
         }
       },
       "qrCode" : {
-        "title" : "Sync Ledger Live apps",
+        "title" : "Ledger Liveアプリを同期",
         "show" : {
           "title" : "QRを表示",
           "explanation" : {
             "title" : "別のLedger Liveアプリを使用してアカウントをスキャンして同期します",
             "steps" : {
               "step1" : "同期したいLedger Liveアプリを開く",
-              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
+              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRコードをスキャン</0>に移動",
               "step3" : "QRコードをスキャン"
             }
           }
@@ -6864,63 +6863,63 @@
           "title" : "スキャン",
           "description" : "QRコードをスキャン",
           "explanation" : {
-            "title" : "To sync with Ledger Live on another phone or computer...",
+            "title" : "別のスマホまたはコンピューターでLedger Liveと同期するには...",
             "steps" : {
-              "step1" : "Open the Ledger Live you want to sync with.",
-              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
+              "step1" : "同期したいLedger Liveを開く。",
+              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRを表示</0>に移動",
               "step3" : "QRコードをスキャン"
             }
           }
         },
         "pinCode" : {
-          "title" : "Enter Ledger Sync code",
-          "desc" : "Enter the code shown on your computer to sync your crypto accounts across both apps.",
+          "title" : "Ledger Syncコードを入力",
+          "desc" : "コンピューターに表示されているコードを入力して、両方のアプリ間で暗号資産アカウントを同期します。",
           "error" : {
-            "title" : "The codes don’t match",
+            "title" : "コードが一致しません",
             "desc" : "入力したコードが他のLedger Liveインスタンスに表示されるコードであることを確認してください。",
             "tryAgain" : "再試行"
           }
         },
         "scannedInvalidQrCode" : {
           "title" : "QRコードが無効です",
-          "desc" : "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
-          "info" : "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
-          "cta" : "I understand"
+          "desc" : "Ledger Liveアプリを同期するには、Ledger Liveに表示されているQRコードのみをスキャンしてください。",
+          "info" : "QRコードの場合は、「設定」を開き、「一般」を選択し、「Ledger Sync」、「同期をオンにする」、「QRを表示」を選択します。",
+          "cta" : "わかりました"
         },
         "scannedOldQrCode" : {
-          "title" : "Ledger Live update required",
-          "desc" : "To continue with sync, update the Ledger Live app that’s not up to date.",
-          "info" : "For more on how to update, <0>check out this article<0>.",
-          "cta" : "I understand"
+          "title" : "Ledger Liveのアップデートが必要です",
+          "desc" : "同期を続行するには、最新ではないLedger Liveアプリをアップデートしてください。",
+          "info" : "アップデート方法の詳細については、<0>こちらの記事<0>をご覧ください。",
+          "cta" : "わかりました"
         },
         "unbacked" : {
-          "title" : "Sync not detected",
-          "description" : "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
-          "cta" : "Turn on Ledger Sync"
+          "title" : "同期が検出されませんでした",
+          "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします。",
+          "cta" : "Ledger Syncをオンにする"
         },
         "unbackedOnboarding" : {
-          "title" : "Sync not detected",
-          "description" : "Come back here after you turn on sync for the other Ledger Live app, and then select “Try again”.",
-          "info" : "If Ledger Sync is not enabled anywhere, then continue without it.",
+          "title" : "同期が検出されませんでした",
+          "description" : "他のLedger Liveアプリの同期をオンにした後に、ここに戻ってきて「再試行」を選択します。",
+          "info" : "Ledger Syncがどこでも有効になっていない場合は、Ledger Syncを使用せずに続行します。",
           "cta" : "再試行",
           "cancel" : "同期せずに続行する"
         },
         "backedWithDifferentSeeds" : {
-          "title" : "Different Ledger devices were used to enable Ledger Sync on each app",
-          "description" : "To sync the two Ledger Live apps, you need to use the same Ledger device.",
-          "info" : "To fix this, delete sync for one of the apps and turn it on again by scanning the QR code.",
+          "title" : "各アプリでLedger Syncを有効にするために、異なるLedgerデバイスが使用されました",
+          "description" : "2つのLedger Liveアプリを同期するには、同じLedgerデバイスを使用する必要があります。",
+          "info" : "これを修正するには、いずれかのアプリの同期を削除し、QRコードをスキャンして再度オンにします。",
           "cta" : "わかりました"
         },
         "alreadyBacked" : {
-          "title" : "Both Ledger Live apps are already synched",
-          "cta" : "Got it"
+          "title" : "両方のLedger Liveアプリがすでに同期されています",
+          "cta" : "了解"
         }
       },
       "unbackedOnboarding" : {
-        "title" : "Sync not detected",
-        "description" : "If Ledger Sync is enabled, select “Try again” and make sure to connect the same Ledger device you used for enabling it.",
-        "info" : "Or, continue without Ledger Sync.",
-        "cta" : "Try again",
+        "title" : "同期が検出されませんでした",
+        "description" : "Ledger Syncが有効になっている場合は、「再試行」を選択し、有効にするのに使用したのと同じLedgerデバイスを接続していることを確認してください。",
+        "info" : "または、Ledger Syncを使用せずに続行します。",
+        "cta" : "再試行",
         "cancel" : "同期せずに続行する"
       },
       "alreadySecureError" : {

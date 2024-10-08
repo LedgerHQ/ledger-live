@@ -68,6 +68,55 @@ export interface preview {
   readonly predominate_color: string;
 }
 
+export interface video_properties {
+  readonly audio_coding: string;
+  readonly duration: number;
+  readonly height: number;
+  readonly mime_type: string;
+  readonly size: number;
+  readonly video_coding: string;
+  readonly width: number;
+}
+
+export interface owner {
+  readonly first_acquired_date: string;
+  readonly last_acquired_date: string;
+  readonly owner_address: string;
+  readonly quantity: number;
+  readonly quantity_string: string;
+}
+
+export interface marketplace_page {
+  readonly collection_url: string;
+  readonly marketplace_collection_id: string;
+  readonly marketplace_id: string;
+  readonly marketplace_name: string;
+  readonly nft_url: string;
+  readonly verified: boolean;
+}
+export interface collection {
+  readonly name: string;
+  readonly spam_score: number;
+  readonly description?: string;
+  readonly marketplace_pages?: marketplace_page[];
+}
+
+export interface firstCreated {
+  readonly block_number: number;
+  readonly minted_to: string;
+  readonly quantity: number;
+  readonly quantity_string: string;
+  readonly timestamp: string;
+  readonly transaction: string;
+  readonly transaction_initiator: string;
+}
+
+export interface attribute {
+  readonly trait_type: string;
+  readonly value: string;
+  readonly display_type: string;
+}
+
 export interface SimpleHashNft {
   readonly nft_id: string;
   readonly chain: string;
@@ -79,10 +128,11 @@ export interface SimpleHashNft {
   readonly token_count: number;
   readonly previews?: preview;
   readonly other_url?: string;
-  readonly collection: {
-    readonly name: string;
-    readonly spam_score: number;
-  };
+  readonly video_url?: string;
+  readonly video_properties?: video_properties;
+  readonly owners?: owner[];
+  readonly collection: collection;
+  readonly first_created?: firstCreated;
   readonly contract: {
     readonly type: string;
     readonly name?: string;
@@ -91,6 +141,7 @@ export interface SimpleHashNft {
     readonly ledger_metadata?: {
       readonly ledger_stax_image: string;
     };
+    readonly attributes?: attribute[];
     readonly utxo_details?: UtxoDetails;
     readonly ordinal_details?: ordinal_details;
     readonly image_original_url: string;

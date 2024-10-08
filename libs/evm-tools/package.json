@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/evm-tools",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "EVM tooling used for coin integrations & app bindings",
   "main": "./index.ts",
   "keywords": [
@@ -45,7 +45,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "axios": "1.7.7",
     "crypto-js": "4.2.0",

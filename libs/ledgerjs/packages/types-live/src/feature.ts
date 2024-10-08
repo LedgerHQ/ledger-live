@@ -120,6 +120,7 @@ export type CurrencyFeatures = {
   currencyScrollSepolia: DefaultFeature;
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
+  currencyEtherlink: DefaultFeature;
 };
 
 /**

@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다.",
         "title" : "{{currencyTicker}} 수령",
         "onCurrencyName" : "{{currencyName}}에서",
         "copyAdress" : "주소 복사",
@@ -5926,7 +5927,6 @@
         "status" : "상태",
         "active" : "활성",
         "inactive" : "비활성",
-        "rewards" : "보상",
         "pending" : "대기 중",
         "available" : "출금 가능"
       },
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "내 Ledger 장치 선택하기",
-      "description" : "Ledger 장치를 Ledger Live 모바일 및 데스크탑 앱에 연결하기만 하면 간편하게 백업을 복구할 수 있습니다."
+      "title" : "Ledger 장치 선택하기"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "조금만 기다려 주세요...",
-      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
+      "activation" : "최대 30초가 소요될 수 있습니다.\n이 화면을 떠나지 마세요.",
       "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
     },
     "success" : {
       "sync" : "동기화 정상 완료",
       "syncDesc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대전화와 컴퓨터의 Ledger Live 앱에 자동으로 표시됩니다.",
-      "activation" : "이 휴대전화에서 Ledger Live에 대한 Ledger 동기화가 켜짐",
+      "activation" : "이 휴대전화에서 Ledger Sync가 켜짐",
       "syncAnother" : "다른 Ledger Live 앱과 동기화",
       "close" : "닫기"
     },
@@ -6844,7 +6843,7 @@
           "title" : "QR 코드 스캔"
         },
         "connectDevice" : {
-          "title" : "Ledger 장치를 사용하세요"
+          "title" : "내 Ledger 장치 사용"
         }
       },
       "qrCode" : {

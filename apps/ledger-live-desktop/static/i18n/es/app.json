@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Ten paciencia…",
-      "activation" : "Tus datos se están cifrando de extremo a extremo… ",
-      "synch" : "Estamos actualizando las instancias sincronizadas…"
+      "activation" : "Esto puede tardar hasta 30 segundos.\nEspera en esta pantalla."
     },
     "error" : {
       "title" : "Algo ha salido mal",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Ver más inscripciones",
+      "empty" : "Para agregar inscripciones, simplemente envíalas a tu dirección de Bitcoin.",
+      "receive" : "Recibir inscripción",
       "discoveryDrawer" : {
         "title" : "Descubre los ordinales",
         "description" : "¿Sabías que puedes hacerte con sats e inscripciones raros y valiosos?",
         "learnMore" : "Más información",
-        "viewCoinControl" : "Ver control de monedas"
+        "protectTitle" : "Protege tus activos de Ordinales",
+        "protectDescription" : "Excluye tus activos de Ordinales de tus transacciones."
+      },
+      "detailsDrawer" : {
+        "description" : "Descripción",
+        "collectionName" : "Nombre de la colección",
+        "inscriptionId" : "ID de inscripción",
+        "inscriptionNumber" : "Número de inscripción",
+        "mintedTo" : "Acuñado en",
+        "genesisTx" : "Transacción Genesis",
+        "blockNumber" : "Número de bloque",
+        "contentType" : "Tipo de contenido",
+        "createdDate" : "Fecha de creación",
+        "satribute" : "Rareza del sat",
+        "satNumber" : "Número de sat",
+        "satName" : "Nombre del sat",
+        "location" : "Ubicación",
+        "outputValue" : "Valor de salida",
+        "storedOnChain" : "Guardado on-chain",
+        "hide" : "Ocultar"
       }
     },
     "rareSats" : {
+      "empty" : "Para agregar sats raros, simplemente envíalos a tu dirección de Bitcoin.",
+      "receive" : "Recibir sat raro",
       "title" : "Sats raros",
       "table" : {
         "type" : "Tipo de sat / Cantidad",
-        "year" : "Año",
-        "utxo" : "Tamaño de UTXO"
+        "year" : "Año"
       },
       "rareSat" : {
         "description" : {

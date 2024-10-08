@@ -49,4 +49,6 @@ export const BUY_SELL_UI_APP_ID = "buy-sell-ui";
 
 export const CARD_APP_ID = "card-program";
 
+export const WC_ID = "ledger-wallet-connect";
+
 export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID, CARD_APP_ID];

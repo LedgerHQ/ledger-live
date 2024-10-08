@@ -6313,7 +6313,7 @@
     },
     "postOnboarding" : {
       "title" : "Kilit ekranını kişiselleştirin",
-      "description" : "{{productName}} cihazınızın kilitli ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
+      "description" : "{{productName}} cihazınızda kilit ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
       "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
     "customImageSet" : "Kilit ekranı kişiselleştirildi",
@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Bekleyin...",
-      "activation" : "Verileriniz uçtan uca şifreleniyor... ",
-      "synch" : "Senkronize oturumları güncelliyoruz..."
+      "activation" : "Bu, 30 saniyeye kadar sürebilir.\nLütfen bu ekranda kalın."
     },
     "error" : {
       "title" : "Bir hata oluştu",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Daha fazla inscription görün",
+      "empty" : "Inscription eklemek için onu Bitcoin adresinize göndermeniz yeterlidir.",
+      "receive" : "Inscription Alın",
       "discoveryDrawer" : {
         "title" : "Ordinal'leri Keşfedin",
         "description" : "Değerli nadir sat'lara ve inscription'lara sahip olabileceğinizi biliyor muydunuz?",
         "learnMore" : "Daha fazla bilgi",
-        "viewCoinControl" : "Coin yönetimini görüntüleyin"
+        "protectTitle" : "Ordinal varlıklarınızı koruyun",
+        "protectDescription" : "Ordinal varlıklarınızı işlemlerinizden hariç tutun."
+      },
+      "detailsDrawer" : {
+        "description" : "Açıklama",
+        "collectionName" : "Koleksiyon Adı",
+        "inscriptionId" : "Inscription Kimliği",
+        "inscriptionNumber" : "Inscription Numarası",
+        "mintedTo" : "Mint'lenme Hedefi",
+        "genesisTx" : "Genesis İşlemi",
+        "blockNumber" : "Blok Numarası",
+        "contentType" : "İçerik Türü",
+        "createdDate" : "Oluşturulma tarihi",
+        "satribute" : "Sat Nadirliği",
+        "satNumber" : "Sat Numarası",
+        "satName" : "Sat Adı",
+        "location" : "Konum",
+        "outputValue" : "Çıktı değeri",
+        "storedOnChain" : "On-Chain Saklanıyor",
+        "hide" : "Gizle"
       }
     },
     "rareSats" : {
+      "empty" : "Nadir Sat eklemek için onu Bitcoin adresinize göndermeniz yeterlidir.",
+      "receive" : "Nadir Sat Alın",
       "title" : "Nadir Sat'lar",
       "table" : {
         "type" : "Sat Türü / Miktarı",
-        "year" : "Yıl",
-        "utxo" : "UTXO boyutu"
+        "year" : "Yıl"
       },
       "rareSat" : {
         "description" : {

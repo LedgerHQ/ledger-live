@@ -550,8 +550,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://zkevm-rpc.com",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://api-zkevm.polygonscan.com/api",
+        type: "blockscout",
+        uri: "https://zkevm.blockscout.com/api",
       },
     },
   },
@@ -566,8 +566,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://developer-access-mainnet.base.org",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://api.basescan.org/api",
+        type: "blockscout",
+        uri: "https://base.blockscout.com/api",
       },
     },
   },
@@ -715,6 +715,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: { type: "active" },
       node: { type: "external", uri: "https://sepolia-rpc.scroll.io" },
       explorer: { type: "etherscan", uri: "https://api-sepolia.scrollscan.com/api" },
+    },
+  },
+  config_currency_etherlink: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://node.mainnet.etherlink.com" },
+      explorer: { type: "etherscan", uri: "https://explorer.etherlink.com/api" },
     },
   },
 };

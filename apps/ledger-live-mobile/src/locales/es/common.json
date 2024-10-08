@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Por motivos de privacidad, se genera una dirección nueva para cada transacción. Las anteriores siguen siendo válidas.",
         "title" : "Recibir {{currencyTicker}}",
         "onCurrencyName" : "En {{currencyName}}",
         "copyAdress" : "Copiar dirección",
@@ -5926,7 +5927,6 @@
         "status" : "Estado",
         "active" : "Activo",
         "inactive" : "Inactivo",
-        "rewards" : "Recompensas",
         "pending" : "Pendiente",
         "available" : "Puede retirarse"
       },
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Elige tu dispositivo Ledger",
-      "description" : "Para recuperar tu copia de respaldo, sólo tienes que conectar tu Ledger a las aplicaciones Ledger Live Mobile y Desktop."
+      "title" : "Elige un dispositivo Ledger"
     },
     "deviceAction" : {
       "title" : "Continúa en tu Ledger {{wording}}",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "Ten paciencia…",
-      "activation" : "Tus datos se están cifrando de extremo a extremo… ",
+      "activation" : "Esto puede tardar hasta 30 segundos.\nEspera en esta pantalla.",
       "synch" : "Estamos actualizando las instancias sincronizadas…"
     },
     "success" : {
       "sync" : "Sincronización correcta",
       "syncDesc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Live en los teléfonos y PCs sincronizados.",
-      "activation" : "Ledger Sync activado para Ledger Live en este teléfono",
+      "activation" : "Ledger Sync activado para este teléfono",
       "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
       "close" : "Cerrar"
     },
@@ -6841,10 +6840,10 @@
       "chooseMethod" : {
         "title" : "Elige tu método de sincronización",
         "scan" : {
-          "title" : "Escanear un código QR"
+          "title" : "Escanear código QR"
         },
         "connectDevice" : {
-          "title" : "Usa tu Ledger"
+          "title" : "Usar mi dispositivo Ledger"
         }
       },
       "qrCode" : {

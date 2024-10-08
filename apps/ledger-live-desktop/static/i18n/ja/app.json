@@ -3990,7 +3990,7 @@
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -6437,11 +6437,11 @@
     "title" : "Ledger同期",
     "close" : "閉じる",
     "activate" : {
-      "title" : "Turn on Ledger Sync for this computer?",
-      "description" : "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
-      "cta" : "Turn on Ledger Sync",
-      "alreadySync" : "I already turned it on",
-      "learnMore" : "How does Ledger Sync work?"
+      "title" : "このコンピューターに対してLedger同期をオンにしますか？",
+      "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
+      "cta" : "Ledger Syncをオンにする",
+      "alreadySync" : "すでにオンにしました",
+      "learnMore" : "Ledger Syncの仕組みは？"
     },
     "manage" : {
       "cta" : "管理",
@@ -6461,21 +6461,20 @@
     },
     "loading" : {
       "title" : "お待ちください...",
-      "activation" : "データがエンドツーエンドで暗号化されています... ",
-      "synch" : "同期されたインスタンスを更新しています..."
+      "activation" : "これには最大30秒かかる場合があります。\nこちらの画面のままでお待ちください。"
     },
     "error" : {
       "title" : "問題が発生しました。",
       "description" : "後でもう一度お試しください。",
       "cta" : "再試行",
       "fetching" : "データの取得中に問題が発生しました。",
-      "ledgerSyncDown" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
+      "ledgerSyncDown" : "当社側の技術的な問題のため、Ledger Syncは一時的に利用できません。現在修正に取り組んでいます。"
     },
     "unsecuredError" : {
-      "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
-      "description" : "If you don’t have the same Ledger device, select “Delete sync” instead.",
+      "title" : "Ledger Syncを有効にするのに使用したのと同じLedgerデバイスを接続します",
+      "description" : "同じLedgerデバイスをお持ちでない場合は、代わりに「同期の削除」を選択してください。",
       "cta" : "別のLedgerを接続する",
-      "ctaDelete" : "Delete sync"
+      "ctaDelete" : "同期の削除"
     },
     "alreadySecureError" : {
       "title" : "このアプリはすでにこのLedgerによって保護されています",
@@ -6485,21 +6484,21 @@
     "alreadySecureOtherSeedError" : {
       "title" : "このLedgerを同期に使用することはできません",
       "description" : "それでもその2つのアプリを同期したい場合は、キーを削除して再試行してください。",
-      "cta" : "Delete sync"
+      "cta" : "同期の削除"
     },
     "autoRemoveError" : {
-      "title" : "You can’t remove this computer while you’re using it",
-      "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync' instead.",
+      "title" : "このコンピューターを使用中には削除できません",
+      "description" : "削除するには、Ledger Syncが有効になっている別のスマホかコンピューターを使用します。別のデバイスをお持ちでない場合は、代わりに「同期を削除」を選択してください。",
       "cta" : "わかりました",
-      "ctaDelete" : "Delete sync"
+      "ctaDelete" : "同期の削除"
     },
     "success" : {
       "backup" : {
-        "title" : "Ledger Sync turned on for Ledger Live on this computer"
+        "title" : "このコンピューターでは、Ledger SyncはLedger Liveに対してオンになっています"
       },
       "synch" : {
-        "title" : "Sync successful!",
-        "desc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers. "
+        "title" : "同期に成功しました！",
+        "desc" : "暗号資産アカウントの変更は、同期されたスマホおよびコンピューター上のLedger Liveアプリ全体に自動的に表示されるようになります。 "
       },
       "synchAnother" : "別のLedger Liveアプリと同期する",
       "close" : "閉じる"
@@ -6512,8 +6511,8 @@
         "cancel" : "同期を維持"
       },
       "deleteBackupSuccess" : {
-        "title" : "Your Ledger Live apps are no longer synched",
-        "description" : "You can turn on sync anytime"
+        "title" : "Ledger Liveアプリは同期されなくなりました",
+        "description" : "いつでも同期を再度オンにすることができます"
       },
       "deleteBackupError" : {
         "title" : "問題が発生しました。"
@@ -6539,10 +6538,10 @@
           "desktop" : "コンピューターと同期"
         },
         "mobile" : {
-          "description" : "Sync with the Ledger Live app on another phone",
+          "description" : "別のスマホのLedger Liveアプリと同期",
           "steps" : {
             "step1" : "同期したいLedger Liveアプリを開く",
-            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
+            "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>QRを表示</0>に移動",
             "step3" : "QRコードをスキャン"
           }
         },
@@ -6550,7 +6549,7 @@
           "description" : "アカウントを別のLedger Liveアプリと同期します",
           "steps" : {
             "step1" : "同期したいLedger Liveアプリを開く",
-            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
+            "step2" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>Ledgerを使用</0>に移動",
             "step3" : "Ledgerを接続する"
           }
         }
@@ -6561,18 +6560,18 @@
         "cta" : "Ledger Syncをオンにする"
       },
       "pinCode" : {
-        "title" : "Your Ledger Sync code",
-        "description" : "To sync your crypto accounts across both Ledger Live apps, enter this code in Ledger Live on your phone.",
+        "title" : "お客様のLedger Syncコード",
+        "description" : "両方のLedger Liveアプリ間で暗号資産アカウントを同期するには、スマホのLedger Liveにこのコードを入力します。",
         "error" : {
-          "title" : "The codes don’t match",
+          "title" : "コードが一致しません",
           "description" : "入力したコードが他のLedger Liveインスタンスに表示されるコードであることを確認してください。"
         }
       }
     },
     "manageInstances" : {
-      "title" : "Ledger Live is synched across",
+      "title" : "Ledger Liveを複数のデバイス間で同期済み",
       "remove" : "削除",
-      "deleteInstanceSuccess" : "Your Ledger Live app on {{instanceName}} is no longer connected to Ledger Sync",
+      "deleteInstanceSuccess" : "{{instanceName}}のLedger LiveアプリはLedger Syncに接続されなくなりました",
       "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
     },
     "deviceAction" : {
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "もっとインスクリプションを見る",
+      "empty" : "インスクリプションを追加するには、インスクリプションをビットコインアドレスに送信するだけです。",
+      "receive" : "インスクリプションを受け取る",
       "discoveryDrawer" : {
         "title" : "Ordinalsを知る",
         "description" : "お客様は貴重なレアサトシやインスクリプションを所有している可能性があることをご存知ですか？",
         "learnMore" : "詳細はこちら",
-        "viewCoinControl" : "コインコントロールを見る"
+        "protectTitle" : "Ordinals資産を保護",
+        "protectDescription" : "Ordinals資産をトランザクションから除外します。"
+      },
+      "detailsDrawer" : {
+        "description" : "説明",
+        "collectionName" : "コレクション名",
+        "inscriptionId" : "インスクリプションID",
+        "inscriptionNumber" : "インスクリプション番号",
+        "mintedTo" : "ミント先：",
+        "genesisTx" : "ジェネシストランザクション",
+        "blockNumber" : "ブロック番号",
+        "contentType" : "コンテンツタイプ",
+        "createdDate" : "作成日",
+        "satribute" : "Satのレア度",
+        "satNumber" : "Satの番号",
+        "satName" : "Satの名前",
+        "location" : "位置",
+        "outputValue" : "出力値",
+        "storedOnChain" : "オンチェーンに保管",
+        "hide" : "隠す"
       }
     },
     "rareSats" : {
+      "empty" : "Rare Satsを追加するには、Rare Satsをビットコインアドレスに送信するだけです。",
+      "receive" : "Rare Satsを受け取る",
       "title" : "レアサッツ",
       "table" : {
         "type" : "Satのタイプ / 数量",
-        "year" : "年",
-        "utxo" : "UTXOサイズ"
+        "year" : "年"
       },
       "rareSat" : {
         "description" : {

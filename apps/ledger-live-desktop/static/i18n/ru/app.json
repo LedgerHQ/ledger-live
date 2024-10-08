@@ -311,7 +311,7 @@
       "changeCTA" : "Изменить",
       "rates" : {
         "title" : "Курсы",
-        "registration" : "Необходима регистрация ",
+        "registration" : "Регистрация нужна ",
         "noRegistration" : "Регистрация не нужна",
         "fixed" : "Фиксированный",
         "float" : "Плавающий",
@@ -6062,16 +6062,16 @@
       "title" : "Убедитесь, что у вас есть {{depositAmount}} ADA для пополнения"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "Очень высокая комиссия сети",
+      "description" : "Комиссия сети слишком высокая. Перепроверьте транзакцию."
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Очень высокая комиссия сети",
+      "description" : "Транзакции с ADA временно недоступны. Повторно синхронизируйтесь с блокчейном и попробуйте снова. Для помощи свяжитесь с Поддержкой."
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Неверные параметры протокола Cardano",
+      "description" : "Транзакции с ADA временно недоступны. Повторно синхронизируйтесь с блокчейном и попробуйте снова. Для помощи свяжитесь с Поддержкой."
     },
     "StacksMemoTooLong" : {
       "title" : "Слишком длинное значение Memo"
@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Наберитесь терпения...",
-      "activation" : "Ваши данные проходят через сквозное шифрование... ",
-      "synch" : "Обновляем синхронизированные элементы..."
+      "activation" : "Всё займёт не более 30 секунд.\nОставайтесь на этом экране."
     },
     "error" : {
       "title" : "Что-то пошло не так",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Больше надписей",
+      "empty" : "Чтобы добавить надписи, просто отправьте их на ваш Биткойн-адрес.",
+      "receive" : "Получить надписи",
       "discoveryDrawer" : {
         "title" : "Познакомьтесь с Ординалами",
         "description" : "Знаете, что у вас могут быть редкие ценные сатоши и надписи?",
         "learnMore" : "Подробнее",
-        "viewCoinControl" : "Запустить Контроль монет"
+        "protectTitle" : "Защитите ваши Ординалы",
+        "protectDescription" : "Исключить Ординалы из дальнейших транзакций."
+      },
+      "detailsDrawer" : {
+        "description" : "Описание",
+        "collectionName" : "Название коллекции",
+        "inscriptionId" : "ID надписи",
+        "inscriptionNumber" : "Номер надписи",
+        "mintedTo" : "Сминчено на",
+        "genesisTx" : "Генезис-транзакция",
+        "blockNumber" : "Номер блока",
+        "contentType" : "Разновидность содержания",
+        "createdDate" : "Дата создания",
+        "satribute" : "Редкость сатоши",
+        "satNumber" : "Номер сатоши",
+        "satName" : "Название сатоши",
+        "location" : "Расположение",
+        "outputValue" : "Ценность выхода",
+        "storedOnChain" : "Хранение в блокчейне",
+        "hide" : "Скрыть"
       }
     },
     "rareSats" : {
+      "empty" : "Чтобы добавить редкие сатоши, просто отправьте их на ваш Биткойн-адрес.",
+      "receive" : "Получить сатсы",
       "title" : "Редкие сатсы",
       "table" : {
         "type" : "Разновидность сатоши / сумма",
-        "year" : "Год",
-        "utxo" : "Размер UTXO"
+        "year" : "Год"
       },
       "rareSat" : {
         "description" : {

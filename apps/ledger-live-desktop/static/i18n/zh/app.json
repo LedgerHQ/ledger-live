@@ -6062,16 +6062,16 @@
       "title" : "请确保您有 {{depositAmount}} ADA 可用于该存款"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "网络费用异常高。",
+      "description" : "网络费用异常高，请仔细核对您的交易。"
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "网络费用异常高。",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Cardano 无效协议参数",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "请耐心等候...",
-      "activation" : "您的数据正在端到端加密... ",
-      "synch" : "我们正在更新已同步实例..."
+      "activation" : "最多可能需要 30 秒。\n请停留在此界面。"
     },
     "error" : {
       "title" : "出错了",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "查看更多铭文",
+      "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
+      "receive" : "接收铭文",
       "discoveryDrawer" : {
         "title" : "了解序数铭文",
         "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
         "learnMore" : "了解更多",
-        "viewCoinControl" : "查看硬币控制"
+        "protectTitle" : "保护您的序数铭文资产",
+        "protectDescription" : "从您的交易中排除序数铭文资产。"
+      },
+      "detailsDrawer" : {
+        "description" : "描述",
+        "collectionName" : "藏品名称",
+        "inscriptionId" : "铭文 ID",
+        "inscriptionNumber" : "铭文编号",
+        "mintedTo" : "已铸造至",
+        "genesisTx" : "创世交易",
+        "blockNumber" : "区块编号",
+        "contentType" : "内容类型",
+        "createdDate" : "创建日期",
+        "satribute" : "聪的稀有度",
+        "satNumber" : "聪的编号",
+        "satName" : "聪的名称",
+        "location" : "位置",
+        "outputValue" : "输出值",
+        "storedOnChain" : "已存储在链上",
+        "hide" : "隐藏"
       }
     },
     "rareSats" : {
+      "empty" : "要添加稀有聪，只需将其发送到您的比特币地址。",
+      "receive" : "接收稀有聪",
       "title" : "稀有聪",
       "table" : {
         "type" : "聪的类型/数量",
-        "year" : "年",
-        "utxo" : "UTXO 大小"
+        "year" : "年"
       },
       "rareSat" : {
         "description" : {

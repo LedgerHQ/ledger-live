@@ -1,37 +1,14 @@
 import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
-import { IconProps } from "LLD/features/Collectibles/types/Collection";
-import { mappingKeysWithIconAndName } from "../Icons";
-import { MappingKeys } from "LLD/features/Collectibles/types/Ordinals";
+import { createRareSatObject, matchCorrespondingIcon } from "../helpers";
 
-function matchCorrespondingIcon(
-  rareSats: SimpleHashNft[],
-): Array<SimpleHashNft & { icons: Array<({ size, color, style }: IconProps) => JSX.Element> }> {
-  return rareSats.map(rareSat => {
-    const iconKeys: string[] = [];
-    const rarity = rareSat.extra_metadata?.ordinal_details?.sat_rarity?.toLowerCase();
-
-    if (rarity && rarity !== "common") {
-      iconKeys.push(rarity.replace(" ", "_"));
-    }
-
-    const icons = iconKeys
-      .map(
-        iconKey =>
-          mappingKeysWithIconAndName[iconKey as keyof typeof mappingKeysWithIconAndName]?.icon,
-      )
-      .filter(Boolean) as Array<({ size, color, style }: IconProps) => JSX.Element>;
-
-    return { ...rareSat, icons };
-  });
-}
-
-export function getInscriptionsData(inscriptions: SimpleHashNft[]) {
-  const inscriptionsWithIcons = matchCorrespondingIcon(inscriptions);
-  return inscriptionsWithIcons.map(item => ({
+export function getInscriptionsData(
+  inscriptions: SimpleHashNft[],
+  onInscriptionClick: (inscription: SimpleHashNft) => void,
+) {
+  return inscriptions.map(item => ({
     tokenName: item.name || item.contract.name || "",
+    nftId: item.nft_id,
     collectionName: item.collection.name,
-    tokenIcons: item.icons,
-    rareSatName: [item.extra_metadata?.ordinal_details?.sat_rarity] as MappingKeys[],
     media: {
       uri: item.image_url || item.previews?.image_small_url,
       isLoading: false,
@@ -39,9 +16,12 @@ export function getInscriptionsData(inscriptions: SimpleHashNft[]) {
       contentType: item.extra_metadata?.ordinal_details?.content_type,
       mediaType: "image",
     },
-    onClick: () => {
-      console.log(`you clicked on : \x1b[32m${item.name}\x1b[0m inscription`);
-    },
-    // it does nothing for now but it will be used for the next PR with the drawer
+    onClick: () => onInscriptionClick(item),
   }));
+}
+
+export function processRareSat(inscription: SimpleHashNft) {
+  const matchedRareSatsIcons = matchCorrespondingIcon(inscription);
+  const rareSatObject = createRareSatObject({ rareSat: matchedRareSatsIcons });
+  return rareSatObject.rareSat[0];
 }

@@ -7,12 +7,10 @@ type Props = {
 
 const useFetchOrdinals = ({ account }: Props) => {
   const utxosAddresses = account.bitcoinResources?.utxos?.map(utxo => utxo.address).join(",") || "";
-  const { rareSats, inscriptions, isLoading, isError, isFetched } = fetchOrdinalsFromSimpleHash({
+  return fetchOrdinalsFromSimpleHash({
     addresses: utxosAddresses,
     threshold: 0,
   });
-
-  return { rareSats, inscriptions, isLoading, isError, isFetched };
 };
 
 export default useFetchOrdinals;

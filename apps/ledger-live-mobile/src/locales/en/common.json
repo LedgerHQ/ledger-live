@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation": {
+        "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid.",
         "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
@@ -5928,7 +5929,6 @@
         "status": "Status",
         "active": "Active",
         "inactive": "Inactive",
-        "rewards": "Rewards",
         "pending": "Pending",
         "available": "Withdrawable"
       },
@@ -6778,8 +6778,7 @@
       }
     },
     "deviceSelection": {
-      "title": "Choose your Ledger device",
-      "description": "You can retrieve your backup by simply connecting your Ledger to the Ledger Live mobile and desktop apps."
+      "title": "Choose a Ledger device"
     },
     "deviceAction": {
       "title": "Continue on your Ledger {{wording}}",
@@ -6787,13 +6786,13 @@
     },
     "loading": {
       "title": "Hang tight...",
-      "activation": "Your data is being end-to-end encrypted... ",
+      "activation": "This can take up to 30 seconds.\nPlease stay on this screen.",
       "synch": "We are updating the synched instances..."
     },
     "success": {
       "sync": "Sync successful",
       "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
-      "activation": "Ledger Sync turned on for Ledger Live on this phone",
+      "activation": "Ledger Sync turned on for this phone",
       "syncAnother": "Sync with another Ledger Live app",
       "close": "Close"
     },
@@ -6847,10 +6846,10 @@
       "chooseMethod": {
         "title": "Choose your sync method",
         "scan": {
-          "title": "Scan a QR code"
+          "title": "Scan QR code"
         },
         "connectDevice": {
-          "title": "Use your Ledger"
+          "title": "Use my Ledger device"
         }
       },
       "qrCode": {
