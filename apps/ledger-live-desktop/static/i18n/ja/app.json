@@ -1126,6 +1126,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "yield" : "Yield",
       "buy" : "購入",
       "sell" : "売却",
       "edit" : "アカウントを編集",
@@ -3682,36 +3683,102 @@
     }
   },
   "ethereum" : {
-    "stake" : {
-      "title" : "所有するETHを運用",
-      "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
-      "tagMinimum" : "{{min}}ETHが必要",
+    "stake_deprecated" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
+      "tagMinimum" : "Requires {{min}} ETH",
       "kiln_pooling" : {
-        "title" : "Kilnステーキングプール",
-        "description" : "ステーキングの最低数量設定なし。ロック（凍結）期間なしで自動複利報酬を獲得。",
-        "supportLink" : "Kilnプールについての詳細を確認"
+        "title" : "Kiln staking pool",
+        "description" : "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+        "supportLink" : "Learn more about Kiln pooling"
       },
       "lido" : {
         "title" : "Lido",
-        "description" : "流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
-        "supportLink" : "Lidoの詳細について"
+        "description" : "Stake any amount of ETH for instant liquidity and daily rewards.",
+        "supportLink" : "Learn more about Lido"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
-        "description" : "ステーキングの最低数量設定なし。即時の流動性を利用して、自動複利報酬を獲得。",
-        "supportLink" : "Staderプールの詳細を見る"
+        "description" : "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+        "supportLink" : "Learn more about Stader pooling"
       },
       "kiln" : {
-        "title" : "Kiln専用ステーキング",
-        "tag" : "32ETHが必要",
-        "description" : "専用バリデーターに32ETH超をステーキングして、簡単に報酬を獲得。",
-        "supportLink" : "Kilnバリデーターの詳細を確認"
+        "title" : "Kiln dedicated staking",
+        "tag" : "Requires 32 ETH",
+        "description" : "Stake over 32 ETH on dedicated validators and easily claim rewards.",
+        "supportLink" : "Learn more about Kiln validator"
       },
       "figment" : {
         "title" : "Figment",
-        "tag" : "32ETHが必要",
-        "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
-        "supportLink" : "Figmentバリデーターの詳細を見る"
+        "tag" : "Requires 32 ETH",
+        "description" : "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+        "supportLink" : "Learn more about Figment validator"
+      }
+    },
+    "stake" : {
+      "title" : "Select staking provider",
+      "category" : {
+        "all" : {
+          "name" : "All",
+          "description" : "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "You can stake a batch of 32 ETH and get full node rewards in ETH."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "You can join a pool to stake any amount of ETH and get rewards."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "You can restake your liquid token to get additional rewards."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Liquid token needed",
+      "noMinimum" : "No minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid restaking"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Read about ETH staking and different strategies",
+      "requiredMinimum" : "Requires {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Rewards",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "Open",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "Add",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "Description",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
         "desc" : "トークンを非表示にするには、親アカウントに移動し、トークンを右クリックして「トークンを非表示」を選択してください。",
-        "count" : "{{count}} トークン",
-        "count_plural" : "{{count}}トークン"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "NFTコレクションを非表示",
         "desc" : "コレクション名を右クリックして「NFTコレクションを非表示」を選択すると、NFTコレクションが非表示になります。",
-        "count" : "{{count}}コレクション",
-        "count_plural" : "{{count}}コレクション"
+        "count" : "1 collection",
+        "count_other" : "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Bitcoinフルノードを接続",
@@ -6584,6 +6686,11 @@
       "seeMore" : "もっとインスクリプションを見る",
       "empty" : "インスクリプションを追加するには、インスクリプションをビットコインアドレスに送信するだけです。",
       "receive" : "インスクリプションを受け取る",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinalsを知る",
         "description" : "お客様は貴重なレアサトシやインスクリプションを所有している可能性があることをご存知ですか？",
