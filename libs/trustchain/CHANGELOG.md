@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.4.1
+
+### Patch Changes
+
+- [#7945](https://github.com/LedgerHQ/ledger-live/pull/7945) [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215) Thanks [@thesan](https://github.com/thesan)! - Fix type errors in `@ledgerhq/trustchain` tests
+
 ## 0.4.1-next.0
 
 ### Patch Changes

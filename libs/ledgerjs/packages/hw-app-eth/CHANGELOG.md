@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-eth
 
+## 6.39.0
+
+### Minor Changes
+
+- [#7943](https://github.com/LedgerHQ/ledger-live/pull/7943) [`07c584a`](https://github.com/LedgerHQ/ledger-live/commit/07c584a61573c53ff0d205d316d9195cd8f5399e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters for empty arrays / discarded paths
+
+- [#7903](https://github.com/LedgerHQ/ledger-live/pull/7903) [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: uses lightweight token asset list
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3)]:
+  - @ledgerhq/types-live@6.52.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.0
+  - @ledgerhq/domain-service@1.2.6
+  - @ledgerhq/evm-tools@1.2.3
+
 ## 6.39.0-next.0
 
 ### Minor Changes

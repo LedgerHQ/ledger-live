@@ -1,5 +1,17 @@
 # @ledgerhq/coin-solana
 
+## 0.7.7
+
+### Patch Changes
+
+- [#7956](https://github.com/LedgerHQ/ledger-live/pull/7956) [`8f8bf46`](https://github.com/LedgerHQ/ledger-live/commit/8f8bf46123750acc8dea29f367249806ff7bf737) Thanks [@mikhd](https://github.com/mikhd)! - Replace outdated solana getStakeActivation endpoint
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c)]:
+  - @ledgerhq/types-cryptoassets@7.16.0
+  - @ledgerhq/cryptoassets@13.6.0
+  - @ledgerhq/types-live@6.52.0
+  - @ledgerhq/coin-framework@0.18.2
+
 ## 0.7.7-next.0
 
 ### Patch Changes
