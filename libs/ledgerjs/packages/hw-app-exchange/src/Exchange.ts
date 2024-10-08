@@ -280,7 +280,7 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      this.transactionType === ExchangeTypes.Swap
+      this.transactionType === ExchangeTypes.Swap || this.transactionType === ExchangeTypes.SwapNg
         ? CHECK_PAYOUT_ADDRESS
         : CHECK_ASSET_IN_AND_DISPLAY,
       this.transactionRate,
