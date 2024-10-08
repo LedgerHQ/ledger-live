@@ -2335,7 +2335,8 @@
       "swap" : "Permutar",
       "send" : "Enviar",
       "deposit" : "Recibir",
-      "stake" : "Participar"
+      "stake" : "Participar",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Comprar",
     "walletconnect" : "WalletConnect",
     "stake" : "Participar",
+    "yield" : "Yield",
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Compartir dirección",
       "addressCopied" : "Dirección copiada en el portapapeles",
       "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Entiendo",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Elige la cripto que quieres recibir"
       },
@@ -6615,7 +6624,7 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
       "tagMinimum" : "Requiere {{min}} ETH",
@@ -6633,7 +6642,7 @@
         },
         "lido" : {
           "title" : "Lido",
-          "description" : "Pon en participación cualquier cantidad de ETH para obtener liquidez inmediata y recompensas diarias.",
+          "description" : "Pon en participación cualquier monto de ETH para obtener liquidez inmediata y recompensas diarias.",
           "supportLink" : "Obtén más información acerca de Lido"
         },
         "figment" : {
@@ -6648,6 +6657,72 @@
           "description" : "Pon en participación más de 32 ETH en validadores exclusivos y reclama tus recompensas fácilmente.",
           "supportLink" : "Más información sobre Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Seleccionar proveedor de puesta en participación",
+      "category" : {
+        "all" : {
+          "name" : "Todo",
+          "description" : "Todos los proveedores de puesta en participación de Ethereum disponibles en Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Líquido",
+          "description" : "Puedes poner ETH en participación y recibir tokens líquidos como recompensa. Seguirás pudiendo operar y realizar actividades de DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Puedes poner en participación un lote de 32 ETH y recibir recompensas por nodo completo en ETH."
+        },
+        "pooling" : {
+          "name" : "Agrupación en pools",
+          "description" : "Puedes unirte a un pool para poner en participación la cantidad de ETH que quieras y recibir recompensas."
+        },
+        "restaking" : {
+          "name" : "Volver a poner en participación",
+          "description" : "Puedes volver a poner en participación tus tokens líquidos para recibir recompensas adicionales."
+        }
+      },
+      "howItWorks" : "Cómo funciona la puesta en participación de ETH",
+      "lst" : "Tokens líquidos requeridos",
+      "noMinimum" : "Sin mínimos",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Pool de puesta en participación de Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Volver a poner en participación Kiln Liquid"
+        },
+        "kiln" : {
+          "title" : "Puesta en participación dedicada de Kiln"
+        },
+        "kelpdao" : {
+          "title" : "DAO Kelp"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Estrategias y tácticas que debes saber",
+      "requiredMinimum" : "Requiere {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas con interés compuesto automático",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diarias",
+        "eigenlayer_points" : "Puntos de Eigenlayer",
+        "validator" : "Recompensas para validadores"
       }
     },
     "noFundsModal" : {
