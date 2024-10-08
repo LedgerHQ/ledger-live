@@ -2335,7 +2335,8 @@
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
-      "stake" : "Stake et"
+      "stake" : "Stake et",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Satın Al",
     "walletconnect" : "WalletConnect",
     "stake" : "Stake et",
+    "yield" : "Yield",
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Anladım",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Almak istediğiniz kriptoyu seçin"
       },
@@ -6615,7 +6624,7 @@
     "title" : "Cihazı bağlayın"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller kazanarak bakiyenizi artırın.",
       "tagMinimum" : "{{min}} ETH gerektirir",
@@ -6634,7 +6643,7 @@
         "lido" : {
           "title" : "Lido",
           "description" : "Anında likidite ve günlük ödüller için herhangi bir miktarda ETH stake edin.",
-          "supportLink" : "Lido hakkında daha fazla bilgi alın"
+          "supportLink" : "Lideo hakkında daha fazla bilgi alın"
         },
         "figment" : {
           "title" : "Figment",
@@ -6648,6 +6657,72 @@
           "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödülleri kolayca alın.",
           "supportLink" : "Kiln hakkında daha fazla bilgi edinin"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Staking sağlayıcısı seçin",
+      "category" : {
+        "all" : {
+          "name" : "Tümü",
+          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Live'da mevcuttur."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "ETH stake edip ödül olarak liquid token'lar alabilirsiniz. Yatırım yapmaya ve DeFi faaliyetlerine katılmaya devam edebilirsiniz."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "32 ETH stake ederek ETH cinsinden tam node ödülleri alabilirsiniz."
+        },
+        "pooling" : {
+          "name" : "Havuza Katılma",
+          "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
+        },
+        "restaking" : {
+          "name" : "Yeniden Stake Etme",
+          "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Liquid token gerektirir",
+      "noMinimum" : "Alt limit yok",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking havuzu"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid yeniden stake etme"
+        },
+        "kiln" : {
+          "title" : "Kiln ile özel staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO'su"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Strategies and tactics to know",
+      "requiredMinimum" : "{{min}} ETH gerektirir",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Ödüller",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     },
     "noFundsModal" : {
