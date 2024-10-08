@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Gizlilik nedeniyle her işlem için yeni bir adres oluşturulur. Önceki adresler geçerli olmaya devam eder.",
         "title" : "{{currencyTicker}} al",
         "onCurrencyName" : "{{currencyName}} üzerinden",
         "copyAdress" : "Adresi kopyala",
@@ -5926,7 +5927,6 @@
         "status" : "Durum",
         "active" : "Aktif",
         "inactive" : "Devre Dışı",
-        "rewards" : "Ödüller",
         "pending" : "Beklemede",
         "available" : "Çekilebilir bakiye"
       },
@@ -6524,7 +6524,7 @@
       "customImage" : {
         "title" : "Kilit ekranını kişiselleştirin",
         "titleCompleted" : "Kilit ekranı kişiselleştirildi",
-        "description" : "{{productName}} cihazınızın kilitli ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
+        "description" : "{{productName}} cihazınızda kilit ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
       "recover" : {
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Ledger cihazınızı seçin",
-      "description" : "Ledger cihazınızı Ledger Live mobil ve masaüstü sürümlerine bağlayarak yedeklemenize erişebilirsiniz."
+      "title" : "Bir Ledger cihazı seçin"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "Bekleyin...",
-      "activation" : "Verileriniz uçtan uca şifreleniyor... ",
+      "activation" : "Bu, 30 saniyeye kadar sürebilir.\nLütfen bu ekranda kalın.",
       "synch" : "Senkronize oturumları güncelliyoruz..."
     },
     "success" : {
       "sync" : "Senkronizasyon başarılı",
       "syncDesc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Live uygulamalarında otomatik olarak görüntülenecektir.",
-      "activation" : "Ledger Sync, bu telefonda Ledger Live için açıldı",
+      "activation" : "Ledger Sync bu telefon için kapatıldı",
       "syncAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
       "close" : "Kapat"
     },
@@ -6841,10 +6840,10 @@
       "chooseMethod" : {
         "title" : "Senkronizasyon yönteminizi seçin",
         "scan" : {
-          "title" : "Bir karekodu okutun"
+          "title" : "Karekodu okutun"
         },
         "connectDevice" : {
-          "title" : "Ledger cihazınızı kullanın"
+          "title" : "Ledger cihazımı kullan"
         }
       },
       "qrCode" : {
