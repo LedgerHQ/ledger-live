@@ -4,6 +4,7 @@ import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { NFTS_QUERY_KEY } from "../queryKeys";
 import { NftGalleryFilterResult, HookProps } from "./types";
+import { hashProtoNFT } from "./helpers";
 
 /**
  * useNftGalleryFilter() will apply a spam filtering on top of existing NFT data.
@@ -51,12 +52,4 @@ export function useNftGalleryFilter({
   }, [queryResult, nftsWithProperties]);
 
   return out;
-}
-
-function hashProtoNFT(contract: string, tokenId: string, currencyId: string): string {
-  return `${contract}|${tokenId}|${currencyId}`;
-}
-
-export function isThresholdValid(threshold?: string | number): boolean {
-  return Number(threshold) >= 0 && Number(threshold) <= 100;
 }
