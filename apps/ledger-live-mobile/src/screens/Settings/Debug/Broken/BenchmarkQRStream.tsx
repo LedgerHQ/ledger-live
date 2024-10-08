@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Scanner from "~/components/Scanner";
 import LText from "~/components/LText";
 import { rgba, Theme, withTheme } from "../../../../colors";
@@ -7,6 +7,7 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { Box } from "@ledgerhq/native-ui";
 
 type Props = {
   colors: Theme["colors"];
@@ -66,11 +67,11 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
 
     if (end) {
       return (
-        <View style={styles.resultRoot}>
+        <Box style={styles.resultRoot}>
           <LText selectable>
             {benchmarks.map((b: Benchmark) => `${b.dataSize} ${b.count}`).join("\n")}
           </LText>
-        </View>
+        </Box>
       );
     }
 
@@ -79,7 +80,7 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
       backgroundColor: rgba(colors.darkBlue, 0.4),
     };
     return (
-      <View
+      <Box
         style={[
           styles.root,
           {
@@ -88,15 +89,15 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
         ]}
       >
         <Scanner onResult={this.onBarCodeRead} liveQrCode />
-        <View style={[darkenStyle]} />
-        <View style={[darkenStyle, styles.centered]}>
-          <View style={styles.centered}>
+        <Box style={[darkenStyle]} />
+        <Box style={[darkenStyle, styles.centered]}>
+          <Box style={styles.centered}>
             <LText semiBold style={styles.text} color="white">
               {summary}
             </LText>
-          </View>
-        </View>
-      </View>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 }
