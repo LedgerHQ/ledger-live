@@ -25,11 +25,13 @@ function ConfirmationHeaderTitle({ accountCurrency }: Props) {
           currencyTicker: accountCurrency?.ticker,
         })}
       </Text>
-      <Text color={"neutral.c80"} variant={"small"}>
-        {t("transfer.receive.receiveConfirmation.onCurrencyName", {
-          currencyName: networkName,
-        })}
-      </Text>
+      {networkName && (
+        <Text color={"neutral.c80"} variant={"small"}>
+          {t("transfer.receive.receiveConfirmation.onCurrencyName", {
+            currencyName: networkName,
+          })}
+        </Text>
+      )}
     </Box>
   );
 }
