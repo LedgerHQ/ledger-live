@@ -1,6 +1,6 @@
 export type { CardanoNativeToken } from "./data/cardanoNative";
 export type { AlgorandASAToken } from "./data/asa";
-export type { ElrondESDTToken } from "./data/esdt";
+export type { MultiversXESDTToken } from "./data/esdt";
 export type { StellarToken } from "./data/stellar";
 export type { CasperToken } from "./data/casper";
 export type { TRC10Token } from "./data/trc10";

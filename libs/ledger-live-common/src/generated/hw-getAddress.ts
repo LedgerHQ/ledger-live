@@ -10,9 +10,9 @@ import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as cosmos } from "../families/cosmos/setup";
-import { resolver as elrond } from "../families/elrond/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as icon } from "../families/icon/setup";
+import { resolver as multiversx } from "../families/multiversx/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
@@ -35,9 +35,9 @@ export default {
   bitcoin,
   cardano,
   cosmos,
-  elrond,
   evm,
   icon,
+  multiversx,
   near,
   polkadot,
   solana,
