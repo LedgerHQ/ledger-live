@@ -131,8 +131,8 @@ export class SwapPage extends AppPage {
   @step("Select exchange quote with provider $1")
   async selectQuote(electronApp: ElectronApplication, providerName: string) {
     const [, webview] = electronApp.windows();
-    await expect(await webview.getByTestId(this.quoteSelector(providerName))).toBeEnabled();
-    await webview.getByTestId(this.quoteSelector(providerName)).click({ force: true });
+    await expect(webview.getByTestId(this.quoteSelector(providerName))).toBeVisible();
+    await webview.getByTestId(this.quoteSelector(providerName)).click();
   }
 
   async waitForExchangeToBeAvailable() {
@@ -145,7 +145,8 @@ export class SwapPage extends AppPage {
     await expect(
       webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`),
     ).not.toHaveAttribute("value", "disabled");
-    await webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`).click({ force: true });
+
+    await webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`).click();
   }
 
   async confirmExchange() {
@@ -171,46 +172,25 @@ export class SwapPage extends AppPage {
     return account.accountType ? account.currency.name : account.accountName;
   }
 
-  async waitForAccountsBalance(account: Account, timeout = 15000) {
-    const regex = new RegExp(
-      `/blockchain/v\\d+/.+/${account.currency.ticker.toLowerCase()}/address/${account.address}/balance$`,
-    );
-    const fetchTxByAddressResponse = this.page.waitForResponse(response => {
-      return regex.test(response.url()) && response.status() === 200;
+  async waitForAccountsBalance(account: Account, timeout = 30000) {
+    const regex = account.parentAccount
+      ? new RegExp(
+          `/blockchain/v\\d+/.+/${account.parentAccount.currency.ticker.toLowerCase()}/address/${account.address}/balance$`,
+        )
+      : new RegExp(
+          `/blockchain/v\\d+/.+/${account.currency.ticker.toLowerCase()}/address/${account.address}/balance$`,
+        );
+    const fetchTxByAddressResponse = this.page
+      .waitForResponse(response => regex.test(response.url()) && response.status() === 200, {
+        timeout,
+      })
+      .catch(() => null);
+    return fetchTxByAddressResponse.then(result => {
+      if (result === null) {
+        console.log("No successful response within the timeout period.");
+      }
+      return result;
     });
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, timeout, null));
-    return Promise.race([fetchTxByAddressResponse, timeoutPromise]);
-  }
-
-  async waitForAccountsTxsLoaded(account: Account, timeout = 15000) {
-    const regex = new RegExp(
-      `/blockchain/v\\d+/.+/${account.currency.ticker.toLowerCase()}/address/${account.address}/txs$`,
-    );
-    const fetchTxByAddressResponse = this.page.waitForResponse(response => {
-      return regex.test(response.url()) && response.status() === 200;
-    });
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, timeout, null));
-    return Promise.race([fetchTxByAddressResponse, timeoutPromise]);
-  }
-
-  async waitForAccountsCountervalues(account: Account, timeout = 20000) {
-    let regex = new RegExp(
-      `/countervalues.live.ledger.com/v\\d+/.+/${account.currency.name.toLowerCase()}`,
-    );
-    if (account.parentAccount) {
-      regex = new RegExp(
-        `/countervalues.live.ledger.com/v\\d+/.+/from=${account.parentAccount.currency.name.toLowerCase()}`,
-      );
-    } else {
-      regex = new RegExp(
-        `/countervalues.live.ledger.com/v\\d+/.+/from=${account.currency.name.toLowerCase()}`,
-      );
-    }
-    const fetchTxByAddressResponse = this.page.waitForResponse(response => {
-      return regex.test(response.url()) && response.status() === 200;
-    });
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, timeout, null));
-    return Promise.race([fetchTxByAddressResponse, timeoutPromise]);
   }
 
   @step("Fill in amount: $0")
@@ -262,9 +242,7 @@ export class SwapPage extends AppPage {
 
   @step("Wait for accounts balance fetch")
   async waitForAccountsBalanceFetch(accountToSwapFrom: Account) {
-    await this.waitForAccountsTxsLoaded(accountToSwapFrom);
     await this.waitForAccountsBalance(accountToSwapFrom);
-    //await this.waitForAccountsCountervalues(accountToSwapFrom);
   }
 
   @step("Fill in amount: $1")
