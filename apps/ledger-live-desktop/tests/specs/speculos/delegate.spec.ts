@@ -4,23 +4,50 @@ import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-const accounts = [
+const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2731, B2CQA-2740",
+    xrayTicket: "B2CQA-2740",
   },
   {
     delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2730, B2CQA-2742",
+    xrayTicket: "B2CQA-2742",
   },
   {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
-    xrayTicket: "B2CQA-2732, B2CQA-2741",
+    xrayTicket: "B2CQA-2741",
   },
 ];
 
-for (const account of accounts) {
-  test.describe("Delegate", () => {
+const validators = [
+  {
+    delegate: new Delegate(Account.ATOM_1, "0.001", "????"),
+    xrayTicket: "B2CQA-2731, B2CQA-385.1",
+  },
+  {
+    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2730, B2CQA-385.2",
+  },
+  {
+    delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
+    xrayTicket: "B2CQA-2732, B2CQA-385.3",
+  },
+  {
+    delegate: new Delegate(Account.ADA_1, "0.01", "????"),
+    xrayTicket: "B2CQA-385.4",
+  },
+  {
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "????"),
+    xrayTicket: "B2CQA-385.5",
+  },
+  {
+    delegate: new Delegate(Account.OSMO_1, "1", "????"),
+    xrayTicket: "B2CQA-385.6",
+  },
+];
+
+for (const account of e2eDelegationAccounts) {
+  test.describe.skip("Delegate", () => {
     test.use({
       userdata: "speculos-delegate",
       speculosApp: account.delegate.account.currency.speculosApp,
@@ -58,6 +85,37 @@ for (const account of accounts) {
         await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
         await app.drawer.expectDelegationInfos(account.delegate);
+      },
+    );
+  });
+}
+
+for (const validator of validators) {
+  test.describe("Select a validator", () => {
+    test.use({
+      userdata: "speculos-delegate",
+      speculosApp: validator.delegate.account.currency.speculosApp,
+    });
+
+    test(
+      `[${validator.delegate.account.currency.name}] - Select validator`,
+      {
+        annotation: {
+          type: "TMS",
+          description: validator.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
+
+        //CLicker sur le bouton stake (en haut de l'account)
+        // ledger-live-desktop/src/renderer/families/cosmos/AccountHeaderManageActions.ts - accountActionsTestId: "stake-button-cosmos",
+
+        await app.delegate.verifyProvider(validator.delegate.provider);
+
+        // todo partie qui check si on peut selectionner un autre validator
       },
     );
   });

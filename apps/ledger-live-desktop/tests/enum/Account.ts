@@ -344,4 +344,16 @@ export class Account {
     "Ethereum 2",
     "0x43047a5023d55a8658fcb1c1cea468311adaa3ad",
   );
+
+  static readonly MULTIVERS_X_1 = new Account(
+    Currency.MULTIVERS_X,
+    "MultiversX 1",
+    "erd1kp2psapk98pjtxr0n583qlq9zurwdwaqcvgh7l5hyj6hh839p5dq82cuw9",
+  );
+
+  static readonly OSMO_1 = new Account(
+    Currency.OSMO,
+    "Osmosis 1",
+    "osmo1w7v2v6v8z3r3d8x8h7yjv6w2k3c5w3z7w6v8v8",
+  );
 }
