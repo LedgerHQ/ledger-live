@@ -4021,7 +4021,7 @@
           "description" : "Utilisez quelques outils pratiques avec SimpleHash.",
           "cta" : "Ouvrir",
           "tabs" : {
-            "spam" : "Signalement de spam",
+            "spam" : "Signaler spam",
             "refresh" : "Actualiser métadonnées",
             "check" : "Score de spam"
           }
@@ -4029,9 +4029,9 @@
         "debugSpamNft" : {
           "report" : "Signaler",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT signalé ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT signalé/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé/de son contrat",
           "collectionId" : "Identifiant de la collection",
           "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
           "tokenId" : "Identifiant du token",
@@ -4042,7 +4042,7 @@
           "error" : "Une erreur est survenue lors de l’envoi du signalement. Veuillez réessayer plus tard.",
           "reportType" : {
             "title" : "Que souhaiteriez-vous signaler ?",
-            "desc" : "Sélectionnez le type de signalement à faire",
+            "desc" : "Sélectionnez le type de signalement",
             "individual" : "Signaler un NFT comme spam",
             "contract" : "Signaler un contrat comme spam",
             "collection" : "Signaler une collection comme spam"
@@ -4051,9 +4051,9 @@
         "debugRefreshMetadata" : {
           "refresh" : "Actualiser",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à actualiser, ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT à actualiser/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser, ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser/de son contrat",
           "tokenId" : "Identifiant du token",
           "tokenIdDesc" : "token_id du NFT à actualiser",
           "success" : "Votre actualisation a bien été envoyée. Elle prendra effet dans un délai de 5 à 10 minutes.",
@@ -4067,9 +4067,9 @@
         "debugCheckSpamScore" : {
           "check" : "Consulter",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à consulter, ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT à consulter/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter, ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter/de son contrat",
           "tokenId" : "Identifiant du token",
           "tokenIdDesc" : "token_id du NFT à consulter",
           "result" : {
@@ -4096,7 +4096,7 @@
               "name" : "ID trustchain : ",
               "emptyId" : "Identifiant manquant",
               "applicationPath" : "Chemin de l’application : ",
-              "emptyApplicationPath" : "Chemin de l’application manquant",
+              "emptyApplicationPath" : "Chemin de l’application vide",
               "cloudSyncVersion" : "Version synchro cloud : ",
               "lastSyncInfo" : "Dernière synchro : ",
               "uniported" : "Comptes non importés : "
@@ -4106,8 +4106,8 @@
           },
           "generator" : {
             "title" : "Générateur",
-            "flow" : "Sélectionner un processus",
-            "step" : "Sélectionner une étape",
+            "flow" : "Choisissez un processus",
+            "step" : "Choisissez une étape",
             "instance" : "Créer des membres",
             "cta" : "Appliquer"
           }
@@ -4197,7 +4197,7 @@
       "termsBtn" : "Lire",
       "faq" : "Assistance Ledger",
       "chatbot" : "Chatbot Ledger",
-      "faqDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre wallet physique.",
+      "faqDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre appareil Ledger.",
       "terms" : "Conditions d’utilisation",
       "termsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions d’utilisation.",
       "privacy" : "Politique de confidentialité",
@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Quelques secondes...",
-      "activation" : "Chiffrement de vos données de bout en bout... ",
-      "synch" : "Mise à jour de vos synchronisations..."
+      "activation" : "Cela peut prendre jusqu’à 30 secondes.\nVeuillez ne pas quitter cet écran."
     },
     "error" : {
       "title" : "Une erreur est survenue",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Voir plus d’inscriptions",
+      "empty" : "Pour ajouter des inscriptions, il vous suffit de les recevoir sur votre adresse Bitcoin.",
+      "receive" : "Recevoir une inscription",
       "discoveryDrawer" : {
         "title" : "Découvrez les ordinals",
         "description" : "Savez-vous que vous possédez peut-être des rare sats et des inscriptions de grande valeur ?",
         "learnMore" : "En savoir plus",
-        "viewCoinControl" : "Voir Contrôle des coins"
+        "protectTitle" : "Protégez vos ordinals",
+        "protectDescription" : "Excluez vos ordinals de vos transactions."
+      },
+      "detailsDrawer" : {
+        "description" : "Description",
+        "collectionName" : "Nom de la collection",
+        "inscriptionId" : "ID de l’inscription",
+        "inscriptionNumber" : "Numéro de l’inscription",
+        "mintedTo" : "Minté sur",
+        "genesisTx" : "Transaction de création",
+        "blockNumber" : "Numéro du bloc",
+        "contentType" : "Type de contenu",
+        "createdDate" : "Date de création",
+        "satribute" : "Rareté du sat",
+        "satNumber" : "Numéro du sat",
+        "satName" : "Nom du sat",
+        "location" : "Emplacement",
+        "outputValue" : "Valeur de l’output",
+        "storedOnChain" : "Stockée en chaîne",
+        "hide" : "Masquer"
       }
     },
     "rareSats" : {
+      "empty" : "Pour ajouter des Rare Sats, il vous suffit de les recevoir sur votre adresse Bitcoin.",
+      "receive" : "Recevoir un Rare Sat",
       "title" : "Rare Sats",
       "table" : {
         "type" : "Type/Nombre de sat",
-        "year" : "Année",
-        "utxo" : "Taille des UTXO"
+        "year" : "Année"
       },
       "rareSat" : {
         "description" : {
