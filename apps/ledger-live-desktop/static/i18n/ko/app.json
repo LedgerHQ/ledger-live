@@ -1126,6 +1126,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "yield" : "Yield",
       "buy" : "구매",
       "sell" : "판매",
       "edit" : "계정 편집",
@@ -3682,7 +3683,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
@@ -3712,6 +3713,72 @@
         "tag" : "32 ETH 필요",
         "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
         "supportLink" : "Figment 검증인에 대해 자세히 알아보기"
+      }
+    },
+    "stake" : {
+      "title" : "스테이킹 업체 선정",
+      "category" : {
+        "all" : {
+          "name" : "전체",
+          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+        },
+        "liquid" : {
+          "name" : "리퀴드(Liquid)",
+          "description" : "ETH를 스테이킹하고 리퀴드 토큰으로 보상을 받을 수 있으며, 여전히 자산 거래 및 디파이 활동 역시 참여 가능합니다."
+        },
+        "protocol" : {
+          "name" : "프로토콜(Protocol)",
+          "description" : "32 ETH 배치를 스테이킹하고 ETH로 전체 노드 보상을 받을 수 있습니다."
+        },
+        "pooling" : {
+          "name" : "풀링(Pooling)",
+          "description" : "풀에 참여하여 원하는 금액의 ETH를 스테이킹해 보상을 받을 수 있습니다."
+        },
+        "restaking" : {
+          "name" : "리스테이킹(Restaking)",
+          "description" : "리퀴드 토큰을 리스테이킹해 추가 보상을 받을 수 있습니다."
+        }
+      },
+      "howItWorks" : "ETH 스테이킹의 원리",
+      "lst" : "리퀴드 토큰 필요",
+      "noMinimum" : "최소 한도 없음",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 리퀴드 스테이킹"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs"
+        }
+      },
+      "readAbout" : "ETH 스테이킹과 다양한 전략 알아보기",
+      "requiredMinimum" : "{{min}} ETH 필요",
+      "rewardsStrategy" : {
+        "auto-compounded" : "자동 복리 보상",
+        "basic" : "보상",
+        "daily" : "일일 보상",
+        "eigenlayer_points" : "Eigenlayer 포인트",
+        "validator" : "검증인 보상"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "Open",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "Add",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "Description",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "숨겨진 토큰",
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
-        "count" : "({{count}}) 토큰",
-        "count_plural" : "{{count}}개의 토큰"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "숨겨진 NFT 컬렉션",
         "desc" : "컬렉션 이름을 마우스 오른쪽 버튼으로 클릭하고 'NFT 컬렉션 숨기기'를 선택하여 NFT 컬렉션을 숨길 수 있습니다.",
-        "count" : "{{count}}개의 컬렉션",
-        "count_plural" : "{{count}}개의 컬렉션"
+        "count" : "1 collection",
+        "count_other" : "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
@@ -6584,6 +6686,11 @@
       "seeMore" : "더 많은 인스크립션 보기",
       "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
       "receive" : "인스크립션 받기",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinals 살펴보기",
         "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
