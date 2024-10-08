@@ -1,5 +1,5 @@
 import {
-  bitcoinFamillyAccountGetXPubLogic,
+  bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
   completeExchangeLogic,
   receiveOnAccountLogic,
@@ -704,19 +704,19 @@ describe("signMessageLogic", () => {
   });
 });
 
-describe("bitcoinFamillyAccountGetXPubLogic", () => {
+describe("bitcoinFamilyAccountGetXPubLogic", () => {
   // Given
-  const mockBitcoinFamillyAccountXpubRequested = jest.fn();
-  const mockBitcoinFamillyAccountXpubFail = jest.fn();
-  const mockBitcoinFamillyAccountXpubSuccess = jest.fn();
+  const mockBitcoinFamilyAccountXpubRequested = jest.fn();
+  const mockBitcoinFamilyAccountXpubFail = jest.fn();
+  const mockBitcoinFamilyAccountXpubSuccess = jest.fn();
 
   const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
 
   const context = createContextContainingAccountId({
     tracking: {
-      bitcoinFamillyAccountXpubRequested: mockBitcoinFamillyAccountXpubRequested,
-      bitcoinFamillyAccountXpubFail: mockBitcoinFamillyAccountXpubFail,
-      bitcoinFamillyAccountXpubSuccess: mockBitcoinFamillyAccountXpubSuccess,
+      bitcoinFamilyAccountXpubRequested: mockBitcoinFamilyAccountXpubRequested,
+      bitcoinFamilyAccountXpubFail: mockBitcoinFamilyAccountXpubFail,
+      bitcoinFamilyAccountXpubSuccess: mockBitcoinFamilyAccountXpubSuccess,
     },
     accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
   });
@@ -727,9 +727,9 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
   );
 
   beforeEach(() => {
-    mockBitcoinFamillyAccountXpubRequested.mockClear();
-    mockBitcoinFamillyAccountXpubFail.mockClear();
-    mockBitcoinFamillyAccountXpubSuccess.mockClear();
+    mockBitcoinFamilyAccountXpubRequested.mockClear();
+    mockBitcoinFamilyAccountXpubFail.mockClear();
+    mockBitcoinFamilyAccountXpubSuccess.mockClear();
     getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
@@ -758,13 +758,13 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
 
     // When
     await expect(async () => {
-      await bitcoinFamillyAccountGetXPubLogic(context, walletAccountId);
+      await bitcoinFamilyAccountGetXPubLogic(context, walletAccountId);
     }).rejects.toThrowError(errorMessage);
 
     // Then
-    expect(mockBitcoinFamillyAccountXpubRequested).toBeCalledTimes(1);
-    expect(mockBitcoinFamillyAccountXpubFail).toBeCalledTimes(1);
-    expect(mockBitcoinFamillyAccountXpubSuccess).toBeCalledTimes(0);
+    expect(mockBitcoinFamilyAccountXpubRequested).toBeCalledTimes(1);
+    expect(mockBitcoinFamilyAccountXpubFail).toBeCalledTimes(1);
+    expect(mockBitcoinFamilyAccountXpubSuccess).toBeCalledTimes(0);
   });
 
   it("should return the xpub", async () => {
@@ -773,13 +773,13 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
-    const result = await bitcoinFamillyAccountGetXPubLogic(context, walletAccountId);
+    const result = await bitcoinFamilyAccountGetXPubLogic(context, walletAccountId);
 
     // Then
     expect(result).toEqual("testxpub");
-    expect(mockBitcoinFamillyAccountXpubRequested).toBeCalledTimes(1);
-    expect(mockBitcoinFamillyAccountXpubFail).toBeCalledTimes(0);
-    expect(mockBitcoinFamillyAccountXpubSuccess).toBeCalledTimes(1);
+    expect(mockBitcoinFamilyAccountXpubRequested).toBeCalledTimes(1);
+    expect(mockBitcoinFamilyAccountXpubFail).toBeCalledTimes(0);
+    expect(mockBitcoinFamilyAccountXpubSuccess).toBeCalledTimes(1);
   });
 });
 

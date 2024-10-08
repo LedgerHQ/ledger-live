@@ -26,7 +26,7 @@ import {
 } from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
-  bitcoinFamillyAccountGetXPubLogic,
+  bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
   startExchangeLogic,
   completeExchangeLogic,
@@ -702,7 +702,7 @@ export function useWalletAPIServer({
 
   useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {
-      return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
+      return bitcoinFamilyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
 
