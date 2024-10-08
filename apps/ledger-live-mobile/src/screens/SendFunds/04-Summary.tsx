@@ -56,15 +56,11 @@ function SendSummary({ navigation, route }: Props) {
 
   invariant(account, "account is missing");
 
-  const isACRE = "isACRE" in route.params ? route.params.isACRE : false;
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(
-    () => ({
-      transaction: route.params.transaction,
-      account,
-      parentAccount,
-    }),
-    isACRE,
-  );
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+    transaction: route.params.transaction,
+    account,
+    parentAccount,
+  }));
   invariant(transaction, "transaction is missing");
 
   const isNFTSend = isNftTransaction(transaction);
