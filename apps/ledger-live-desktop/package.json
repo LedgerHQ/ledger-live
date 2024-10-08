@@ -200,6 +200,7 @@
     "@types/uuid": "^8.3.4",
     "@types/write-file-atomic": "^4.0.0",
     "@vitejs/plugin-react": "^3.1.0",
+    "allure-js-commons": "^3.0.4",
     "allure-playwright": "3.0.4",
     "axios": "1.7.7",
     "chalk": "^4.1.2",
