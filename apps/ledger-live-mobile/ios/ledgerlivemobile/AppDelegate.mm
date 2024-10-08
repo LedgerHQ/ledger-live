@@ -10,18 +10,6 @@
 #import "BrazeReactBridge.h"
 
 #import <Firebase.h>
-#if DEBUG
-#ifdef FB_SONARKIT_ENABLED
-#import <FlipperKit/FlipperClient.h>
-#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
-#import <FlipperKitLayoutPlugin/SKDescriptorMapper.h>
-#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
-#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
-#import <FlipperPerformancePlugin.h> // react-native-performance-plugin
-#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
-#endif
-#endif
 
 
 @implementation AppDelegate
