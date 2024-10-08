@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "조금만 기다려 주세요...",
-      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
-      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
+      "activation" : "최대 30초가 소요될 수 있습니다.\n이 화면을 떠나지 마세요."
     },
     "error" : {
       "title" : "문제가 발생했습니다",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "더 많은 인스크립션 보기",
+      "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
+      "receive" : "인스크립션 받기",
       "discoveryDrawer" : {
         "title" : "Ordinals 살펴보기",
         "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
         "learnMore" : "자세히 알아보기",
-        "viewCoinControl" : "코인 제어 보기"
+        "protectTitle" : "Ordinals 자산 보호",
+        "protectDescription" : "트랜잭션에서 Ordinals 자산을 제외하세요."
+      },
+      "detailsDrawer" : {
+        "description" : "설명",
+        "collectionName" : "컬렉션명",
+        "inscriptionId" : "인스크립션 ID",
+        "inscriptionNumber" : "인스크립션 번호",
+        "mintedTo" : "민팅 대상",
+        "genesisTx" : "제네시스 트랜잭션",
+        "blockNumber" : "블록 번호",
+        "contentType" : "콘텐츠 유형",
+        "createdDate" : "생성 일자",
+        "satribute" : "Sat 희귀성",
+        "satNumber" : "Sat 번호",
+        "satName" : "Sat 이름",
+        "location" : "위치",
+        "outputValue" : "산출값",
+        "storedOnChain" : "온체인에 저장됨",
+        "hide" : "숨기기"
       }
     },
     "rareSats" : {
+      "empty" : "내 Bitcoin 계정으로 전송하여 간편하게 Rare Sats를 추가할 수 있습니다.",
+      "receive" : "Rare Sat 받기",
       "title" : "Rare Sats",
       "table" : {
         "type" : "Sat 유형 / 수량",
-        "year" : "년",
-        "utxo" : "UTXO 크기"
+        "year" : "년"
       },
       "rareSat" : {
         "description" : {

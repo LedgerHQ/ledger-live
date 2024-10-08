@@ -3990,7 +3990,7 @@
       "stock" : "مؤشر السوق الإقليمي",
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -6062,16 +6062,16 @@
       "title" : "تأكد أن لديك {{depositAmount}} ADA متاح للإيداع"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "رسوم الشبكة مرتفعة على غير العادة يُرجى التحقق مرةً أخرى من معاملتك."
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "مُعلّمات بروتوكول كاردانو (Cardano) غير صالحة",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
     },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
@@ -6437,11 +6437,11 @@
     "title" : "مزامنة Ledger",
     "close" : "إغلاق",
     "activate" : {
-      "title" : "Turn on Ledger Sync for this computer?",
-      "description" : "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+      "title" : "تشغيل مزامنة Ledger لهذا الكمبيوتر؟",
+      "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك تلقائياً عبر كل هواتفك وأجهزة الكمبيوتر الخاصة بك، حتى عند الانتقال إلى جهاز جديد.",
       "cta" : "تشغيل مزامنة Ledger",
-      "alreadySync" : "I already turned it on",
-      "learnMore" : "How does Ledger Sync work?"
+      "alreadySync" : "لقد قمت بتشغيلها بالفعل",
+      "learnMore" : "كيف تعمل مزامنة Ledger؟"
     },
     "manage" : {
       "cta" : "إدارة",
@@ -6461,21 +6461,20 @@
     },
     "loading" : {
       "title" : "انتظرنا...",
-      "activation" : "يتم تشفير بياناتك بشكل تام... ",
-      "synch" : "جارٍ تحديث الحالات التي تمت مزامنتها..."
+      "activation" : "قد يستغرق هذا حتى 30 ثانية.\nيُرجى عدم مغادرة هذه الشاشة."
     },
     "error" : {
       "title" : "حدث خطأ ما",
       "description" : "يُرجى إعادة المحاولة لاحقاً.",
       "cta" : "إعادة المحاولة",
       "fetching" : "حدث خطأ ما أثناء جلب بياناتك.",
-      "ledgerSyncDown" : "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
+      "ledgerSyncDown" : "مزامنة Ledger غير متاحة بشكل مؤقت بسبب بعض المشكلات التقنية من جانبنا. نحن نعمل على حلها."
     },
     "unsecuredError" : {
-      "title" : "Connect the same Ledger device you used for enabling Ledger Sync",
-      "description" : "If you don’t have the same Ledger device, select “Delete sync” instead.",
+      "title" : "قم بتوصيل نفس جهاز Ledger الذي استخدمته لتمكين مزامنة Ledger",
+      "description" : "إذا لم يكن لديك نفس جهاز Ledger، اختر ”Delete sync (حذف المزامنة)“ بدلاً من ذلك.",
       "cta" : "توصيل جهاز Ledger آخر",
-      "ctaDelete" : "Delete sync"
+      "ctaDelete" : "حذف المزامنة"
     },
     "alreadySecureError" : {
       "title" : "هذا التطبيق مُؤمّن بالفعل بواسطة جهاز Ledger هذا",
@@ -6485,21 +6484,21 @@
     "alreadySecureOtherSeedError" : {
       "title" : "يمكنك استخدام جهاز Ledger هذا للمزامنة",
       "description" : "إذا كانت لا تزال ترغب في مزامنة التطبيقين، يُرجى حذف مفتاحك والمحاولة مرةً أخرى.",
-      "cta" : "Delete sync"
+      "cta" : "حذف المزامنة"
     },
     "autoRemoveError" : {
-      "title" : "You can’t remove this computer while you’re using it",
-      "description" : "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync' instead.",
+      "title" : "لا يمكنك إزالة هذا الكمبيوتر بينما تستخدمه",
+      "description" : "للإزالة، استخدم هاتف أو كمبيوتر آخر تم تمكين مزامنة Ledger عليه. إذا لم يكن لديك جهاز آخر، اختر ”Delete sync (حذف المزامنة)“ بدلاً من ذلك.",
       "cta" : "أفهم ذلك",
-      "ctaDelete" : "Delete sync"
+      "ctaDelete" : "حذف المزامنة"
     },
     "success" : {
       "backup" : {
-        "title" : "Ledger Sync turned on for Ledger Live on this computer"
+        "title" : "تم تشغيل مزامنة Ledger من أجل Ledger Live على هذا الكمبيوتر"
       },
       "synch" : {
-        "title" : "Sync successful!",
-        "desc" : "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers. "
+        "title" : "تمت المزامنة بنجاح!",
+        "desc" : "التغييرات في حسابات الأصول المشفرة خاصتك ستظهر الآن تلقائياً عبر تطبيقات Ledger Live على الهواتف وأجهزة الكمبيوتر التي تمت مزامنتها. "
       },
       "synchAnother" : "المزامنة مع تطبيق Ledger Live آخر",
       "close" : "إغلاق"
@@ -6512,8 +6511,8 @@
         "cancel" : "إبقاء المزامنة"
       },
       "deleteBackupSuccess" : {
-        "title" : "Your Ledger Live apps are no longer synched",
-        "description" : "You can turn on sync anytime"
+        "title" : "تطبيقات Ledger Live الخاصة بك لم تعد متزامنةً",
+        "description" : "يمكنك تشغيل المزامنة في أي وقت"
       },
       "deleteBackupError" : {
         "title" : "حدث خطأ ما"
@@ -6539,10 +6538,10 @@
           "desktop" : "المزامنة مع الكمبيوتر"
         },
         "mobile" : {
-          "description" : "Sync with the Ledger Live app on another phone",
+          "description" : "المزامنة مع تطبيق Ledger Live على هاتف آخر",
           "steps" : {
             "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
             "step3" : "مسح ضوئي لكود QR"
           }
         },
@@ -6550,7 +6549,7 @@
           "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
           "steps" : {
             "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
             "step3" : "توصيل جهازك Ledger"
           }
         }
@@ -6561,18 +6560,18 @@
         "cta" : "تشغيل مزامنة Ledger"
       },
       "pinCode" : {
-        "title" : "Your Ledger Sync code",
-        "description" : "To sync your crypto accounts across both Ledger Live apps, enter this code in Ledger Live on your phone.",
+        "title" : "كود مزامنة Ledger الخاص بك",
+        "description" : "لمزامنة حسابات أصولك المشفرة عبر تطبيقي Ledger Live، أدخِل هذا الكود في Ledger Live على هاتفك.",
         "error" : {
-          "title" : "The codes don’t match",
+          "title" : "الأكواد غير متطابقة",
           "description" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى."
         }
       }
     },
     "manageInstances" : {
-      "title" : "Ledger Live is synched across",
+      "title" : "تمت مزامنة Ledger Live عبر",
       "remove" : "حذف",
-      "deleteInstanceSuccess" : "Your Ledger Live app on {{instanceName}} is no longer connected to Ledger Sync",
+      "deleteInstanceSuccess" : "تطبيق Ledger Live الخاص بك على {{instanceName}} لم يعد متصلاً بمزامنة Ledger",
       "deleteInstanceError" : "حدث خطأ ما في إلغاء تزامن {{instanceName}}"
     },
     "deviceAction" : {
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "See more inscriptions",
+      "empty" : "لإضافة نقوش، ببساطة أرسلها إلى عنوان بيتكوين الخاص بك.",
+      "receive" : "تلقي نقش",
       "discoveryDrawer" : {
         "title" : "اكتشف الترتيبات (Ordinals)",
         "description" : "هل تعرف أنك ربما تمتلك وحدات ساتوشي ونقوش نادرة قيّمة؟",
         "learnMore" : "تعرّف على المزيد",
-        "viewCoinControl" : "عرض التحكم في العملات"
+        "protectTitle" : "حماية أصول الترتيبات الخاصة بك",
+        "protectDescription" : "استبعد أصول الترتيبات الخاصة بك من معاملاتك."
+      },
+      "detailsDrawer" : {
+        "description" : "الوصف",
+        "collectionName" : "اسم المجموعة",
+        "inscriptionId" : "مُعرّف النقش",
+        "inscriptionNumber" : "رقم النقش",
+        "mintedTo" : "تم السكّ إلى",
+        "genesisTx" : "معاملة التكوين",
+        "blockNumber" : "رقم الكتلة",
+        "contentType" : "نوع المحتوى",
+        "createdDate" : "تاريخ الإنشاء",
+        "satribute" : "ندرة وحدة الساتوشي",
+        "satNumber" : "رقم وحدة الساتوشي",
+        "satName" : "اسم وحدة الساتوشي",
+        "location" : "الموقع",
+        "outputValue" : "قيمة المخرجات",
+        "storedOnChain" : "محفوظة على سلسلة الكتل (on-chain)",
+        "hide" : "إخفاء"
       }
     },
     "rareSats" : {
+      "empty" : "لإضافة وحدات ساتوشي نادرة، ببساطة أرسِلها إلى عنوان بيتكوين الخاص بك.",
+      "receive" : "تلقي وحدة ساتوشي نادرة",
       "title" : "وحدات ساتوشي نادرة",
       "table" : {
         "type" : "نوع وحدة ساتوتشي / المبلغ",
-        "year" : "سنة",
-        "utxo" : "حجم UTXO ( إخراج المعاملات غير المنفقة)"
+        "year" : "سنة"
       },
       "rareSat" : {
         "description" : {

@@ -2056,7 +2056,7 @@
       "mcuBlueSecond" : "Halte die Taste mindestens 5 Sekunden lang gedrückt, bis die Boot-Optionen angezeigt werden. Tippe auf „Bootloader-Modus“",
       "successTitle" : "Das Betriebssystem deines {{deviceName}}-Geräts ist auf dem neuesten Stand.",
       "successTitleApps" : "Das Betriebssystem deines {{deviceName}}-Geräts ist auf dem neuesten Stand. Noch eine letzte Sache ...",
-      "successSubtitleApps" : "Zum Starten der App-Wiederherstellung auf deinem {{deviceName}}-Gerät\nwählst du unten den Button „Restore apps“ (Apps wiederherstellen) aus.",
+      "successSubtitleApps" : "Zum Starten der App-Wiederherstellung auf deinem {{deviceName}}-Gerät wählst du unten den Button „Restore apps“ (Apps wiederherstellen) aus.",
       "sucessCTAApps" : "Apps wiederherstellen",
       "SuccessCTANoApps" : "Beenden",
       "resetSteps" : {
@@ -4308,7 +4308,7 @@
     "openUserDataDirectory" : {
       "title" : "Benutzerdaten anzeigen",
       "desc" : "Zeigen Sie die auf Ihrem Computer gespeicherten Benutzerdaten an, einschließlich Ihrer Konten, Caches und Einstellungen.",
-      "btn" : "Ansicht"
+      "btn" : "Anzeigen"
     },
     "repairDevice" : {
       "title" : "Reparieren Sie Ihr Ledger-Gerät",
@@ -6461,8 +6461,7 @@
     },
     "loading" : {
       "title" : "Nur noch ein wenig Geduld …",
-      "activation" : "Deine Daten werden Ende-zu-Ende-verschlüsselt … ",
-      "synch" : "Wir aktualisieren die synchronisierten Instanzen …"
+      "activation" : "Das kann bis zu 30 Sekunden dauern.\nBitte schließe diese Seite nicht."
     },
     "error" : {
       "title" : "Etwas ist schief gelaufen",
@@ -6583,19 +6582,41 @@
   "ordinals" : {
     "inscriptions" : {
       "seeMore" : "Weitere Inscriptions anzeigen",
+      "empty" : "Zum Hinzufügen von Inscriptions sende sie einfach an deine Bitcoin-Adresse.",
+      "receive" : "Inscription empfangen",
       "discoveryDrawer" : {
         "title" : "Ordinale entdecken",
         "description" : "Wusstest du, dass du möglicherweise wertvolle seltene Sats und Inscriptions besitzt?",
         "learnMore" : "Weitere Informationen",
-        "viewCoinControl" : "Coin Control anzeigen"
+        "protectTitle" : "Schütze deine Ordinal-Vermögenswerte",
+        "protectDescription" : "Schließe deine Ordinal-Vermögenswerte aus deinen Transaktionen aus."
+      },
+      "detailsDrawer" : {
+        "description" : "Beschreibung",
+        "collectionName" : "Sammlungsname",
+        "inscriptionId" : "Inscription-ID",
+        "inscriptionNumber" : "Inscription-Nummer",
+        "mintedTo" : "Geprägt für",
+        "genesisTx" : "Genesis-Transaktion",
+        "blockNumber" : "Blocknummer",
+        "contentType" : "Inhaltstyp",
+        "createdDate" : "Datum der Erstellung",
+        "satribute" : "Seltenheitsgrad des Sat",
+        "satNumber" : "Sat-Nummer",
+        "satName" : "Sat-Name",
+        "location" : "Position",
+        "outputValue" : "Ausgabewert",
+        "storedOnChain" : "Auf der Blockchain gespeichert",
+        "hide" : "Ausblenden"
       }
     },
     "rareSats" : {
+      "empty" : "Zum Hinzufügen seltener Sats sende sie einfach an deine Bitcoin-Adresse.",
+      "receive" : "Seltenen Sat empfangen",
       "title" : "Seltene Sats",
       "table" : {
         "type" : "Sat-Typ/-Betrag",
-        "year" : "Jahr",
-        "utxo" : "UTXO-Größe"
+        "year" : "Jahr"
       },
       "rareSat" : {
         "description" : {

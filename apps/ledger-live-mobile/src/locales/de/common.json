@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Aus Datenschutzgründen wird für jede Transaktion eine neue Adresse generiert. Die vorherigen bleiben weiterhin gültig.",
         "title" : "Erhalte {{currencyTicker}}",
         "onCurrencyName" : "Für {{currencyName}}",
         "copyAdress" : "Adresse kopieren",
@@ -5926,7 +5927,6 @@
         "status" : "Status",
         "active" : "Aktiv",
         "inactive" : "Inaktiv",
-        "rewards" : "Prämien",
         "pending" : "Ausstehend",
         "available" : "Auszahlbar"
       },
@@ -6318,7 +6318,7 @@
       "sort" : "Sortieren",
       "filter" : "Filtern",
       "view" : {
-        "label" : "Ansicht",
+        "label" : "Anzeigen",
         "all" : "Alle Coins",
         "liveCompatible" : "Live kompatibel",
         "all_label" : "Alle Kryptowährungen",
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Wähle dein Ledger-Gerät",
-      "description" : "Du kannst deine Sicherheitskopie bequem abrufen, indem du dein Ledger-Gerät einfach mit der Ledger Live-Mobil- oder -Desktop-App verbindest."
+      "title" : "Wähle ein Ledger-Gerät"
     },
     "deviceAction" : {
       "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "Nur noch ein wenig Geduld …",
-      "activation" : "Deine Daten werden Ende-zu-Ende-verschlüsselt … ",
+      "activation" : "Dies kann bis zu 30 Sekunden dauern.\nBitte schließe diese Seite nicht.",
       "synch" : "Wir aktualisieren die synchronisierten Instanzen …"
     },
     "success" : {
       "sync" : "Synchronisierung erfolgreich",
       "syncDesc" : "Änderungen auf deinen Kryptokonten werden nun automatisch in den Ledger Live-Apps auf allen synchronisierten Smartphones und Computern angezeigt.",
-      "activation" : "Ledger Sync ist auf diesem Smartphone für Ledger Live aktiviert",
+      "activation" : "Ledger Sync für dieses Smartphone aktiviert",
       "syncAnother" : "Mit einer anderen Ledger Live-App synchronisieren",
       "close" : "Schließen"
     },
@@ -6844,7 +6843,7 @@
           "title" : "QR-Code scannen"
         },
         "connectDevice" : {
-          "title" : "Dein Ledger-Gerät verwenden"
+          "title" : "Mein Ledger-Gerät verwenden"
         }
       },
       "qrCode" : {

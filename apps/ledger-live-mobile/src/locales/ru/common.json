@@ -790,16 +790,16 @@
       "title" : "Убедитесь, что у вас есть {{depositAmount}} ADA для пополнения"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "Очень высокая комиссия сети",
+      "description" : "Комиссия сети слишком высокая. Перепроверьте транзакцию."
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Очень высокая комиссия сети",
+      "description" : "Транзакции с ADA временно недоступны. Повторно синхронизируйтесь с блокчейном и попробуйте снова. Для помощи свяжитесь с Поддержкой."
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Неверные параметры протокола Cardano",
+      "description" : "Транзакции с ADA временно недоступны. Повторно синхронизируйтесь с блокчейном и попробуйте снова. Для помощи свяжитесь с Поддержкой."
     },
     "StacksMemoTooLong" : {
       "title" : "Слишком длинное значение Memo"
@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Из соображений конфиденциальности для каждой проводимой транзакции генерируется новый адрес. При этом уже созданные адреса тоже можно использовать.",
         "title" : "Получить {{currencyTicker}}",
         "onCurrencyName" : "На {{currencyName}}",
         "copyAdress" : "Копировать",
@@ -5926,7 +5927,6 @@
         "status" : "Статус",
         "active" : "Активно",
         "inactive" : "Неактивно",
-        "rewards" : "Вознаграждение",
         "pending" : "В ожидании",
         "available" : "Доступно для вывода"
       },
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Выберите кошелёк Ledger",
-      "description" : "Чтобы использовать резервную копию, достаточно подключить кошелёк Ledger к Ledger Live для смартфона или ПК."
+      "title" : "Выберите устройство Ledger"
     },
     "deviceAction" : {
       "title" : "Продолжите операцию на вашем Ledger {{wording}}",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "Наберитесь терпения...",
-      "activation" : "Ваши данные проходят через сквозное шифрование... ",
+      "activation" : "Всё займёт не более 30 секунд.\nОставайтесь на этом экране.",
       "synch" : "Обновляем синхронизированные элементы..."
     },
     "success" : {
       "sync" : "Синхронизация прошла успешно",
       "syncDesc" : "Изменения с вашими счетами автоматически отобразятся во всех приложениях Ledger Live на синхронизированных смартфонах и ПК.",
-      "activation" : "Ledger Sync включён для Ledger Live на этом смартфоне",
+      "activation" : "Ledger Sync включён на этом смартфоне",
       "syncAnother" : "Синхронизировать с другим приложением Ledger Live",
       "close" : "Закрыть"
     },
@@ -6841,10 +6840,10 @@
       "chooseMethod" : {
         "title" : "Выберите метод синхронизации",
         "scan" : {
-          "title" : "Сканировать QR-код"
+          "title" : "Сканируйте QR-код"
         },
         "connectDevice" : {
-          "title" : "С помощью Ledger"
+          "title" : "Использовать устройство Ledger"
         }
       },
       "qrCode" : {
