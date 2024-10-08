@@ -16,7 +16,7 @@ overrides:
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
-pnpmfileChecksum: 5u75dtojn5ihmrmct6hd2yqpdq
+pnpmfileChecksum: 3it4ens57vqjvjphhe4k7ak3za
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
@@ -8697,8 +8697,6 @@ packages:
   '@celo/connect@6.0.1':
     resolution: {integrity: sha512-nMWivxDeXSILRqsnFZNDz4Rv3eX3xj7++16LT03m5fa6GvlfLvxx1jQ1yv6Hf2Z8yvHEeL36zzBIfqyHOyF99Q==}
     engines: {node: '>=8.14.2'}
-    peerDependencies:
-      web3: 1.10.4
 
   '@celo/contractkit@8.1.1':
     resolution: {integrity: sha512-EUZaoo8BQIkXKWF4h0UI9yNmVAsDSsDOjTB5C4RrdDkylzn7PGICPmUMq/9WU2QH1zFV9kf1JpGzxlA8Uci6MQ==}
@@ -33109,39 +33107,24 @@ snapshots:
       bignumber.js: 9.1.2
       debug: 4.3.4
       utf8: 3.0.0
-      web3-core: 1.10.4
-      web3-eth: 1.10.4
-      web3-eth-contract: 1.10.4
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-
-  '@celo/connect@6.0.1(web3@1.10.4)':
-    dependencies:
-      '@celo/base': 6.1.0
-      '@celo/utils': 7.0.0
-      '@ethereumjs/util': 8.0.5
-      '@types/debug': 4.1.12
-      '@types/utf8': 2.1.6
-      bignumber.js: 9.1.2
-      debug: 4.3.4
-      utf8: 3.0.0
       web3: 1.10.4
       web3-core: 1.10.4
       web3-eth: 1.10.4
       web3-eth-contract: 1.10.4
     transitivePeerDependencies:
+      - bufferutil
       - encoding
       - supports-color
+      - utf-8-validate
 
   '@celo/contractkit@8.1.1':
     dependencies:
       '@celo/abis': 11.0.0
       '@celo/abis-12': '@celo/abis@12.0.0-canary.16'
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/connect': 6.0.1
       '@celo/utils': 7.0.0
-      '@celo/wallet-local': 6.0.1(web3@1.10.4)
+      '@celo/wallet-local': 6.0.1
       '@types/bn.js': 5.1.5
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
@@ -33185,7 +33168,7 @@ snapshots:
   '@celo/wallet-base@6.0.1':
     dependencies:
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/connect': 6.0.1
       '@celo/utils': 7.0.0
       '@ethereumjs/rlp': 5.0.2
       '@ethereumjs/util': 8.0.5
@@ -33221,12 +33204,11 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-      - web3
 
-  '@celo/wallet-local@6.0.1(web3@1.10.4)':
+  '@celo/wallet-local@6.0.1':
     dependencies:
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/connect': 6.0.1
       '@celo/utils': 7.0.0
       '@celo/wallet-base': 6.0.1
       '@ethereumjs/util': 8.0.5
@@ -33235,7 +33217,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-      - web3
 
   '@celo/wallet-remote@6.0.1':
     dependencies:
@@ -33249,7 +33230,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-      - web3
 
   '@chainsafe/as-sha256@0.3.1': {}
 

@@ -62,6 +62,10 @@ function readPackage(pkg, context) {
       addPeerDependencies("@storybook/addon-react-native-web", {
         webpack: "*",
       }),
+      /* @celo/* packages */
+      addDependencies("@celo/connect", {
+        "web3": pkg.peerDependencies?.web3 ?? "1.10",
+      }),
       addDependencies("@cosmjs/proto-signing", {
         "@cosmjs/crypto": pkg.version,
         "@cosmjs/encoding": pkg.version,
