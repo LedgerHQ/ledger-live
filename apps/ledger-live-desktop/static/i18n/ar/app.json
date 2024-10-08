@@ -1126,6 +1126,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
+      "yield" : "Yield",
       "buy" : "شراء",
       "sell" : "بيع",
       "edit" : "تعديل الحساب",
@@ -3682,36 +3683,102 @@
     }
   },
   "ethereum" : {
-    "stake" : {
-      "title" : "قم بتنمية ما تملك من ETH",
-      "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
-      "tagMinimum" : "يتطلب {{min}} ETH",
+    "stake_deprecated" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
+      "tagMinimum" : "Requires {{min}} ETH",
       "kiln_pooling" : {
-        "title" : "مُجمِع تكديس Kiln",
-        "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+        "title" : "Kiln staking pool",
+        "description" : "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+        "supportLink" : "Learn more about Kiln pooling"
       },
       "lido" : {
         "title" : "Lido",
-        "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
-        "supportLink" : "تعرف على المزيد عن Lido"
+        "description" : "Stake any amount of ETH for instant liquidity and daily rewards.",
+        "supportLink" : "Learn more about Lido"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
-        "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً مع وصول إلى سيولة فورية.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Stader"
+        "description" : "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+        "supportLink" : "Learn more about Stader pooling"
       },
       "kiln" : {
-        "title" : "تكديس Kiln المُخصص",
-        "tag" : "يتطلب 32 ETH",
-        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
-        "supportLink" : "تعرف على المزيد عن مدقق Kiln"
+        "title" : "Kiln dedicated staking",
+        "tag" : "Requires 32 ETH",
+        "description" : "Stake over 32 ETH on dedicated validators and easily claim rewards.",
+        "supportLink" : "Learn more about Kiln validator"
       },
       "figment" : {
         "title" : "Figment",
-        "tag" : "يتطلب 32 ETH",
-        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
-        "supportLink" : "تعرف على المزيد عن مدقق Figment"
+        "tag" : "Requires 32 ETH",
+        "description" : "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+        "supportLink" : "Learn more about Figment validator"
+      }
+    },
+    "stake" : {
+      "title" : "Select staking provider",
+      "category" : {
+        "all" : {
+          "name" : "All",
+          "description" : "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "You can stake a batch of 32 ETH and get full node rewards in ETH."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "You can join a pool to stake any amount of ETH and get rewards."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "You can restake your liquid token to get additional rewards."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Liquid token needed",
+      "noMinimum" : "No minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid restaking"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Read about ETH staking and different strategies",
+      "requiredMinimum" : "Requires {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Rewards",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "Open",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "Add",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "Description",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "إخفاء رموز التوكن",
         "desc" : "يمكنك إخفاء رموز التوكن بالانتقال إلى الحساب الرئيسي ثم النقر بالزر الأيمن على رمز التوكن واختيار \"Hide token\" (إخفاء رمز التوكن).",
-        "count" : "{{count}} رمز توكن",
-        "count_plural" : "{{count}} رمز توكن"
+        "count" : "1 رمز توكن",
+        "count_other" : "{{count}} رمز توكن"
       },
       "hiddenNftCollections" : {
         "title" : "Hidden NFT Collections",
         "desc" : "يمكنك إخفاء مجموعات NFT عن طريق النقر بالزر الأيمن على اسم المجموعة واختيار \"إخفاء مجموعات NFT\".",
-        "count" : "{{count}} مجموعة",
-        "count_plural" : "{{count}} مجموعة"
+        "count" : "1 collection",
+        "count_other" : "{{count}} مجموعة"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "توصيل عقدة بيتكوين الكاملة",
@@ -6584,6 +6686,11 @@
       "seeMore" : "See more inscriptions",
       "empty" : "لإضافة نقوش، ببساطة أرسلها إلى عنوان بيتكوين الخاص بك.",
       "receive" : "تلقي نقش",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "اكتشف الترتيبات (Ordinals)",
         "description" : "هل تعرف أنك ربما تمتلك وحدات ساتوشي ونقوش نادرة قيّمة؟",
