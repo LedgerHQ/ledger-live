@@ -2335,7 +2335,8 @@
       "swap" : "Trocar",
       "send" : "Enviar",
       "deposit" : "Receber",
-      "stake" : "Aplicar"
+      "stake" : "Aplicar",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Comprar",
     "walletconnect" : "WalletConnect",
     "stake" : "Aplicar",
+    "yield" : "Yield",
     "sell" : "Vender",
     "swap" : "Trocar",
     "manage" : "Gerenciar",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Compartilhar Endereço",
       "addressCopied" : "Endereço copiado para a área de transferência",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Eu entendo",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Selecione a criptomoeda que deseja receber"
       },
@@ -6615,20 +6624,20 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
       "tagMinimum" : "Requer {{min}} ETH",
       "close" : "Fechar",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Reserva de staking Kiln",
-          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
-          "supportLink" : "Saiba mais sobre a reserva da Kiln"
+          "title" : "Staking em reserva Kiln",
+          "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+          "supportLink" : "Saiba mais sobre as reservas na Kiln"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
+          "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, com acesso instantâneo a liquidez.",
           "supportLink" : "Saiba mais sobre a Stader"
         },
         "lido" : {
@@ -6643,11 +6652,77 @@
           "supportLink" : "Saiba mais sobre a Figment"
         },
         "kiln" : {
-          "title" : "Kiln Staking Solo",
+          "title" : "Staking solo Kiln",
           "tag" : "Requer 32 ETH",
           "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
           "supportLink" : "Saiba mais sobre a Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Selecione o provedor de staking",
+      "category" : {
+        "all" : {
+          "name" : "Todos",
+          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Você pode fazer staking de ETH e receber recompensas em tokens líquidos. Você ainda poderá negociar e participar de atividades DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Você pode fazer um staking de um lote de 32 ETH e receber recompensas de node completo em ETH."
+        },
+        "pooling" : {
+          "name" : "Reservas",
+          "description" : "Você pode participar de uma reserva para fazer staking de qualquer quantia de ETH e receber recompensas."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Você pode reaplicar seu token líquido para obter recompensas adicionais."
+        }
+      },
+      "howItWorks" : "Como funciona o staking de ETH",
+      "lst" : "Requer token líquido",
+      "noMinimum" : "Sem mínimo",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking em reservas Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking líquido de Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking dedicado Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Estratégias e táticas que você deve conhecer",
+      "requiredMinimum" : "Requer {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas compostas automaticamente",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diárias",
+        "eigenlayer_points" : "Pontos Eigenlayer",
+        "validator" : "Recompensas de validador"
       }
     },
     "noFundsModal" : {
