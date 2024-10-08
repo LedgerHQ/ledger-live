@@ -6,7 +6,6 @@ import { getMainAccount } from "../account";
 import { delay } from "../promise";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
-import { bridge as ACREBridge } from "../families/bitcoin/ACRESetup";
 
 export type State<T extends Transaction = Transaction> = {
   account: AccountLike | null | undefined;
@@ -189,7 +188,6 @@ const DEBOUNCE_STATUS_DELAY = 300;
 
 const useBridgeTransaction = <T extends Transaction = Transaction>(
   optionalInit?: (() => Partial<State<T>>) | null | undefined,
-  isACRE?: boolean,
 ): Result<T> => {
   const [
     { account, parentAccount, transaction, status, statusOnTransaction, errorAccount, errorStatus },
@@ -242,12 +240,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       statusIsPending.current = true; // consider pending until status is resolved (error or success)
 
       Promise.resolve(debounce)
-        .then(() =>
-          isACRE
-            ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (ACREBridge.accountBridge as unknown as AccountBridge<any>)
-            : getAccountBridge(mainAccount, null),
-        )
+        .then(() => getAccountBridge(mainAccount, null))
         .then(async bridge => {
           if (ignore) return;
           const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
@@ -308,7 +301,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
         errorTimeout = null;
       }
     };
-  }, [transaction, mainAccount, bridgePending, dispatch, isACRE]);
+  }, [transaction, mainAccount, bridgePending, dispatch]);
 
   const bridgeError = errorAccount || errorStatus;
 

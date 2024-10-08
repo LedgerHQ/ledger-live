@@ -66,7 +66,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx, true);
+            const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
             navigation.navigate(NavigatorName.SignTransaction, {
               screen: ScreenName.SignTransactionSummary,

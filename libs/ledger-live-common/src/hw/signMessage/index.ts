@@ -3,8 +3,9 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { firstValueFrom, from, Observable } from "rxjs";
-import perFamily from "../../generated/hw-signMessage";
+import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
+import perFamily from "../../generated/hw-signMessage";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
@@ -12,7 +13,6 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
 import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
-import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 
 export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
   const utf8Message = Buffer.from(message, "hex").toString();

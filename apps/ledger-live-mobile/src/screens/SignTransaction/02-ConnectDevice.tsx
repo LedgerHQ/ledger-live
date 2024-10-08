@@ -30,13 +30,10 @@ function ConnectDevice({
   invariant(account, "account is required");
   const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
-  const { transaction, status } = useBridgeTransaction(
-    () => ({
-      account: mainAccount,
-      transaction: route.params.transaction,
-    }),
-    route.params.isACRE,
-  );
+  const { transaction, status } = useBridgeTransaction(() => ({
+    account: mainAccount,
+    transaction: route.params.transaction,
+  }));
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
