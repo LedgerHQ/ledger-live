@@ -1126,6 +1126,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "yield" : "Yield",
       "buy" : "买入",
       "sell" : "卖出",
       "edit" : "编辑账户",
@@ -3682,7 +3683,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "质押您的以太币，通过直接在 Ledger Live 中接收每日奖励来增长您的持有量",
       "tagMinimum" : "需要 {{min}} ETH",
@@ -3703,7 +3704,7 @@
       },
       "kiln" : {
         "title" : "Kiln 专属质押",
-        "tag" : "需要 32 枚以太币",
+        "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
         "supportLink" : "了解关于 Kiln 验证者的更多信息"
       },
@@ -3712,6 +3713,72 @@
         "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
         "supportLink" : "详细了解 Figment 验证者"
+      }
+    },
+    "stake" : {
+      "title" : "选择权益质押服务提供商",
+      "category" : {
+        "all" : {
+          "name" : "全部",
+          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+        },
+        "liquid" : {
+          "name" : "流动性质押",
+          "description" : "您可以质押以太币，获得流动代币奖励。您仍然可以进行交易，并参与 DeFi 活动。"
+        },
+        "protocol" : {
+          "name" : "协议",
+          "description" : "您可以一次质押 32 ETH，获得完整节点奖励的以太币。"
+        },
+        "pooling" : {
+          "name" : "大池质押",
+          "description" : "您可以加入一个质押池，质押任意数量的以太币并获得奖励。"
+        },
+        "restaking" : {
+          "name" : "再质押",
+          "description" : "您可以再质押您的流动代币，获得额外奖励。"
+        }
+      },
+      "howItWorks" : "以太币质押的运作方式",
+      "lst" : "需要流动代币",
+      "noMinimum" : "无最低限制",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 流动性再质押"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "了解以太币质押及各种不同策略",
+      "requiredMinimum" : "需要 {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自动以复利计算奖励",
+        "basic" : "奖励",
+        "daily" : "每日奖励",
+        "eigenlayer_points" : "Eigenlayer 积分",
+        "validator" : "验证者奖励"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "打开",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "添加",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "描述",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "隐藏代币列表",
         "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
-        "count" : "{{count}} 枚代币",
-        "count_plural" : "{{count}} 枚代币"
+        "count" : "1 枚代币",
+        "count_other" : "{{count}} 枚代币"
       },
       "hiddenNftCollections" : {
         "title" : "隐藏的 NFT 藏品",
         "desc" : "您可以通过右键单击藏品集名称并选择 \"隐藏 NFT 藏品集\" 来隐藏 NFT 收藏品。",
-        "count" : "{{count}} 个藏品集",
-        "count_plural" : "{{count}} 个藏品集"
+        "count" : "1 collection",
+        "count_other" : "{{count}} 个藏品集"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "连接比特币完整节点",
@@ -6584,6 +6686,11 @@
       "seeMore" : "查看更多铭文",
       "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
       "receive" : "接收铭文",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "了解序数铭文",
         "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
