@@ -56,6 +56,7 @@ export type GlobalModalData = {
   MODAL_LOTTIE_DEBUGGER: undefined;
   MODAL_WALLET_SYNC_DEBUGGER: undefined;
   MODAL_SIMPLEHASH_TOOLS: undefined;
+  MODAL_BRAZE_TOOLS: undefined;
   MODAL_CREATE_LOCAL_APP: {
     manifest?: LiveAppManifest;
   };
