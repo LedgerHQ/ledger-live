@@ -5,7 +5,7 @@ import Switch from "~/components/Switch";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import Slider from "react-native-slider";
+// import Slider from "react-native-slider";
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
 import Status from "./Status";
@@ -103,7 +103,7 @@ const AnalyticsConsole = () => {
                     label="Hide Sync* events"
                   />
                   <Text>Height of the transparent overlay:</Text>
-                  <Slider
+                  {/* <Slider
                     step={1}
                     value={transparentHeightPercentage}
                     minimumValue={1}
@@ -111,7 +111,7 @@ const AnalyticsConsole = () => {
                     onSlidingStart={handleSlidingStart}
                     onSlidingComplete={handleSlidingComplete}
                     onValueChange={handleSliderValueChange}
-                  />
+                  /> */}
                 </Flex>
                 <Status />
                 <Divider />
