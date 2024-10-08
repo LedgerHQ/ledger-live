@@ -60,6 +60,10 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
     useMarketActions({ currency, page: Page.Market, currenciesAll });
+  const yieldStakeLabelCoin =
+    currency && currency.id === "bitcoin"
+      ? t("accounts.contextMenu.yield")
+      : t("accounts.contextMenu.stake");
 
   const onCurrencyClick = useCallback(() => {
     if (currency) {
@@ -160,7 +164,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
                     variant="color"
                     onClick={e => onStake(e)}
                   >
-                    {t("accounts.contextMenu.stake")}
+                    {yieldStakeLabelCoin}
                   </Button>
                 )}
               </Flex>

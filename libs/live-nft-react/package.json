@@ -28,7 +28,8 @@
     "@ledgerhq/cryptoassets": "workspace:*",
     "@ledgerhq/live-nft": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
-    "@ledgerhq/types-live": "workspace:*"
+    "@ledgerhq/types-live": "workspace:*",
+    "@ledgerhq/coin-framework": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "14",
@@ -38,7 +39,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-jest": "^29.1.1",
-    "@ledgerhq/coin-framework": "workspace:*",
     "@tanstack/react-query": "^5.28.9",
     "bignumber.js": "9"
   },

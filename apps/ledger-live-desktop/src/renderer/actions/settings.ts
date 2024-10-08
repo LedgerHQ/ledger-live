@@ -218,6 +218,11 @@ export const hideNftCollection = (collectionId: string) => ({
   type: "HIDE_NFT_COLLECTION",
   payload: collectionId,
 });
+export const hideOrdinalsAsset = (inscriptionId: string) => ({
+  type: "HIDE_ORDINALS_ASSET",
+  payload: inscriptionId,
+});
+
 export const setLastSeenCustomImage = (lastSeenCustomImage: {
   imageSize: number;
   imageHash: string;
@@ -246,6 +251,10 @@ export const showToken = (tokenId: string) => ({
 export const unhideNftCollection = (collectionId: string) => ({
   type: "UNHIDE_NFT_COLLECTION",
   payload: collectionId,
+});
+export const unhideOrdinalsAsset = (inscriptionId: string) => ({
+  type: "UNHIDE_ORDINALS_ASSET",
+  payload: inscriptionId,
 });
 type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
 export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {

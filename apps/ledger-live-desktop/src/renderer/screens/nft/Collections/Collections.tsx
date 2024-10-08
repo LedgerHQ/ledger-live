@@ -19,8 +19,9 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useHideSpamCollection } from "~/renderer/hooks/useHideSpamCollection";
 
 const INCREMENT = 5;
 const EmptyState = styled.div`
@@ -71,11 +72,14 @@ const Collections = ({ account }: Props) => {
     [account.id, history],
   );
 
-  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+  const { enabled, hideSpamCollection } = useHideSpamCollection();
+
+  const { nfts, fetchNextPage, hasNextPage } = useCheckNftAccount({
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    ...(enabled && { action: hideSpamCollection }),
   });
 
   const collections = useMemo(

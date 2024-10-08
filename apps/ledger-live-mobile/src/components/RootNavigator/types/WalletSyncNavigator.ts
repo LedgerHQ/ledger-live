@@ -1,4 +1,4 @@
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { ScreenName } from "~/const";
 
 export type WalletSyncNavigatorStackParamList = {

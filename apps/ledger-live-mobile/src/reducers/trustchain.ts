@@ -4,7 +4,7 @@ import {
   trustchainHandlers,
   TrustchainHandlersPayloads,
   TrustchainHandlers,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { handleActions } from "redux-actions";
 
 export default handleActions<

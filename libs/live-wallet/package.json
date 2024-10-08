@@ -29,7 +29,7 @@
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
-    "@ledgerhq/trustchain": "workspace:*",
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
     "base64-js": "1",
