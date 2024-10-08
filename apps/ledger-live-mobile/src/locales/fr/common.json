@@ -2335,7 +2335,8 @@
       "swap" : "Échanger",
       "send" : "Envoyer",
       "deposit" : "Recevoir",
-      "stake" : "Staker"
+      "stake" : "Staker",
+      "yield" : "Rendement"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Acheter",
     "walletconnect" : "WalletConnect",
     "stake" : "Staker",
+    "yield" : "Rendement",
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée dans le presse-papiers",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Compris",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Choisissez la crypto à recevoir"
       },
@@ -6615,14 +6624,14 @@
     "title" : "Connectez votre appareil"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Faites fructifier vos ETH",
       "subTitle" : "Stakez vos ETH et gagnez des récompenses quotidiennes directement via Ledger Live.",
       "tagMinimum" : "{{min}} ETH minimum",
       "close" : "Fermer",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Staker avec un pool sur Kiln",
+          "title" : "Staking en pool sur Kiln",
           "description" : "Stakez sans durée, ni montant minimum. Gagnez des récompenses capitalisées automatiquement.",
           "supportLink" : "En savoir plus sur les pools sur Kiln"
         },
@@ -6648,6 +6657,72 @@
           "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et demandez facilement vos récompenses.",
           "supportLink" : "En savoir plus sur Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Choisir un prestataire de staking",
+      "category" : {
+        "all" : {
+          "name" : "Tout",
+          "description" : "Tous les prestataires de staking d’ETH disponibles sur Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquide",
+          "description" : "Vous pouvez staker des ETH et gagner des récompenses sous forme de tokens liquides. Vous pourrez continuer à trader et profiter de la DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocole",
+          "description" : "Vous pouvez staker un minimum de 32 ETH et obtenir les récompenses de votre nœud complet en ETH."
+        },
+        "pooling" : {
+          "name" : "Pool",
+          "description" : "Vous pouvez rejoindre un pool pour staker le montant d’ETH de votre choix et obtenir des récompenses."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Vous pouvez restaker vos tokens liquides pour obtenir des récompenses supplémentaires."
+        }
+      },
+      "howItWorks" : "Fonctionnement du staking d’ETH",
+      "lst" : "Token liquide nécessaire",
+      "noMinimum" : "Pas de minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking en pool sur Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking liquide avec Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking avec validateur Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Stratégies et tactiques à connaître",
+      "requiredMinimum" : "{{min}} ETH minimum",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Récompenses capitalisées auto.",
+        "basic" : "Récompenses",
+        "daily" : "Récompenses quotidiennes",
+        "eigenlayer_points" : "Points EigenLayer",
+        "validator" : "Récompenses validateur"
       }
     },
     "noFundsModal" : {
