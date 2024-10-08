@@ -269,9 +269,7 @@ platform :ios do
         gym(
           scheme: PROJECT_NAME,
           workspace: XCODE_WORKSPACE,
-          # This should come from env files - as we move each release type to its own app we will
-          # move them away from "Release" and to their own .env-file defined configuration
-          configuration: !options[:adhoc] ? ENV["APP_CONFIGURATION"] : "Release",
+          configuration: ENV["APP_CONFIGURATION"],
           silent: true,
           xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
           output_directory: OUTPUT_DIRECTORY,
