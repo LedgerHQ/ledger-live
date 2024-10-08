@@ -2335,7 +2335,8 @@
       "swap" : "Umtauschen",
       "send" : "Senden",
       "deposit" : "Empfangen",
-      "stake" : "Staken"
+      "stake" : "Staken",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Kaufen",
     "walletconnect" : "Wallet Connect",
     "stake" : "Staken",
+    "yield" : "Yield",
     "sell" : "Verkaufen",
     "swap" : "Umtauschen",
     "manage" : "Verwalten",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Adresse teilen",
       "addressCopied" : "Adresse in Zwischenablage kopiert",
       "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Verstanden",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Wähle eine Kryptowährung aus, die du empfangen möchtest"
       },
@@ -6615,16 +6624,16 @@
     "title" : "Gerät verbinden"
   },
   "stake" : {
-    "ethereum" : {
-      "title" : "Vermehren Sie Ihr ETH-Guthaben",
-      "subTitle" : "Staken Sie Ihre ETH und vermehren Sie Ihr Vermögen – durch tägliche Prämien direkt in Ledger Live.",
+    "ethereum_deprecated" : {
+      "title" : "Vermehre dein ETH-Guthaben",
+      "subTitle" : "Stake deine ETH und vermehre dein Vermögen – durch tägliche Prämien direkt in Ledger Live.",
       "tagMinimum" : "Benötigt {{min}} ETH",
       "close" : "Schließen",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Kiln Staking Pool",
+          "title" : "Kiln-Staking-Pool",
           "description" : "Stake ohne Mindestbetrag. Verdiene automatisch aufgelaufene Belohnungen ohne Sperrfrist.",
-          "supportLink" : "Mehr über Kiln Pooling erfahren."
+          "supportLink" : "Mehr über Kiln-Pooling erfahren."
         },
         "stader-eth" : {
           "title" : "Stader Labs",
@@ -6634,20 +6643,86 @@
         "lido" : {
           "title" : "Lido",
           "description" : "Stake einen beliebigen ETH-Betrag für Sofortliquidität und tägliche Belohnungen.",
-          "supportLink" : "Mehr über Lido lernen"
+          "supportLink" : "Mehr über Lido erfahren"
         },
         "figment" : {
           "title" : "Figment",
-          "tag" : "Benötigt 32 ETH",
+          "tag" : "Benötigt 32 ETH",
           "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und lasse Belohnungen automatisch deinem Konto gutschreiben.",
           "supportLink" : "Erfahre mehr über Figment"
         },
         "kiln" : {
           "title" : "Solo-Staking mit Kiln",
-          "tag" : "Benötigt 32 ETH",
+          "tag" : "Benötigt 32 ETH",
           "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und fordere deine Belohnungen ganz leicht ein.",
           "supportLink" : "Erfahre mehr über Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Staking-Anbieter auswählen",
+      "category" : {
+        "all" : {
+          "name" : "Alle",
+          "description" : "Alle Staking-Anbieter für Ethereum sind in Ledger Live verfügbar."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Du kannst ETH staken und Belohnungen in Form von Liquid-Token erhalten. So kannst du weiterhin handeln und dich an DeFi-Aktivitäten beteiligen."
+        },
+        "protocol" : {
+          "name" : "Protokoll",
+          "description" : "Du kannst einen Batch von 32 ETH staken und dafür Full-Node-Belohnungen in ETH erhalten."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "Du kannst einem Pool beitreten, um einen beliebigen ETH-Betrag zu staken und Belohnungen zu erhalten."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Du kannst dein Liquid-Token erneut staken, um zusätzliche Belohnungen zu erhalten."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Benötigtes Liquid-Token",
+      "noMinimum" : "No minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln-Staking-Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Liquid-Restaking mit Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp-DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Ronin Wallet"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Strategies and tactics to know",
+      "requiredMinimum" : "Requires {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Rewards",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     },
     "noFundsModal" : {
