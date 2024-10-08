@@ -46,7 +46,7 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -65,12 +65,12 @@
     "superstruct": "0.14.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/bs58": "^4.0.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/object-hash": "^2.1.0",
-    "@faker-js/faker": "^8.4.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },
