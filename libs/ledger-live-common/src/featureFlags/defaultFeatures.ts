@@ -6,8 +6,8 @@ import {
   Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
-import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
+import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
  * Default disabled feature.
@@ -395,6 +395,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
   ptxCard: DEFAULT_FEATURE,
+
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
@@ -416,9 +417,16 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapCoreExperiment: {
+    enabled: false,
+    params: {
+      variant: "Demo0",
+      manifest_id: "swap-live-app-demo-0",
+    },
+  },
+
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
   ptxSwapExodusProvider: DEFAULT_FEATURE,
-  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,

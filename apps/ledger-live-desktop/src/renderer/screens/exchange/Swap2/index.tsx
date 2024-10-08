@@ -49,6 +49,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Swap2 = () => {
   const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
+
   const SwapPage = isDemo3Enabled ? SwapApp : SwapForm;
 
   return (

@@ -35,6 +35,7 @@ import { NetworkDown } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
+import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import {
@@ -136,6 +137,7 @@ const SwapWebView = ({
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const swapLiveEnabledFlag = useSwapLiveConfig();
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -471,6 +473,11 @@ const SwapWebView = ({
       toNewTokenId: swapState?.toNewTokenId,
       feeStrategy: swapState?.feeStrategy,
       customFeeConfig: swapState?.customFeeConfig,
+      ...(swapLiveEnabledFlag?.params &&
+      "variant" in swapLiveEnabledFlag.params &&
+      swapLiveEnabledFlag.params.variant === "Demo0"
+        ? { ptxSwapCoreExperiment: "Demo0" }
+        : {}),
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
@@ -484,11 +491,22 @@ const SwapWebView = ({
   }, [
     addressFrom,
     addressTo,
-    swapState,
+    swapState?.fromAmount,
+    swapState?.error,
+    swapState?.loading,
+    swapState?.fromParentAccountId,
+    swapState?.estimatedFees,
+    swapState?.provider,
+    swapState?.toAccountId,
+    swapState?.fromAccountId,
+    swapState?.toNewTokenId,
+    swapState?.feeStrategy,
+    swapState?.customFeeConfig,
     sourceCurrency?.id,
     isMaxEnabled,
     fromCurrency,
     targetCurrency?.id,
+    swapLiveEnabledFlag?.params,
   ]);
 
   useEffect(() => {
