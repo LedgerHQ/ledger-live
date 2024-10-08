@@ -26,7 +26,7 @@ const swaps = [
     ),
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "35", Fee.MEDIUM, Provider.CHANGELLY),
+    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "35", Fee.MEDIUM, Provider.EXODUS),
   },
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.018", Fee.MEDIUM, Provider.CHANGELLY),
@@ -62,7 +62,7 @@ const swaps = [
     ),
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "40", Fee.MEDIUM, Provider.CHANGELLY),
+    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "35", Fee.MEDIUM, Provider.CHANGELLY),
   },
 ];
 
@@ -103,14 +103,15 @@ for (const { swap } of swaps) {
     }) => {
       const rate = Rates.FLOAT;
       await app.layout.goToSwap();
-      await app.swap.selectAssetFrom(electronApp, swap.accountToDebit.accountName);
-      await app.swapDrawer.selectAccount(swap.accountToDebit.accountName);
+      await app.swap.waitForAccountsBalanceFetch(swap.accountToDebit);
+      await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
+      await app.swapDrawer.selectAccountByName(swap.accountToDebit);
       await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
-      await app.swapDrawer.selectAccount(swap.accountToDebit.accountName);
+      await app.swapDrawer.selectAccountByName(swap.accountToCredit);
 
       await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
-      await app.swap.selectQuote(electronApp, swap.provider.uiName, rate);
-      await app.swap.clickExchangeButton(electronApp, swap.provider.name);
+      await app.swap.selectQuote(electronApp, swap.provider.name);
+      await app.swap.clickExchangeButton(electronApp, swap.provider.uiName);
       const amountTo = await app.swapDrawer.getAmountToReceive();
       const fees = await app.swapDrawer.getFees();
       swap.setAmountToReceive(amountTo);

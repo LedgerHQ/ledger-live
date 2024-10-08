@@ -7,6 +7,7 @@ export class Account {
     public readonly accountName: string,
     public readonly address: string,
     public readonly accountType?: AccountType,
+    public readonly parentAccount?: Account,
   ) {}
 
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
@@ -260,6 +261,7 @@ export class Account {
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
     AccountType.ERC20,
+    Account.ETH_1,
   );
 
   static readonly ETH_USDT_2 = new Account(
