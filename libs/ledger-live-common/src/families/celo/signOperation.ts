@@ -8,7 +8,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./buildTransaction";
-import { CeloApp } from "./hw-app-celo";
+import Eth from "@ledgerhq/hw-app-eth";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -28,14 +28,14 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
             throw new FeeNotLoaded();
           }
 
-          const celo = new CeloApp(transport);
+          const celo = new Eth(transport);
           const unsignedTransaction = await buildTransaction(account, transaction);
           const { chainId, to } = unsignedTransaction;
           const rlpEncodedTransaction = rlpEncodedTx(unsignedTransaction);
 
           const tokenInfo = tokenInfoByAddressAndChainId(to!, chainId!);
           if (tokenInfo) {
-            await celo.provideERC20TokenInformation(tokenInfo);
+            await celo.provideERC20TokenInformation(`0x${tokenInfo.data.toString("hex")}`);
           }
 
           o.next({ type: "device-signature-requested" });
@@ -47,6 +47,7 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
 
           if (cancelled) return;
 
+          // TODO: this doesn't seem necessary anymore
           const signature = parseSigningResponse(response, chainId!);
 
           o.next({ type: "device-signature-granted" });
