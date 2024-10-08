@@ -201,35 +201,35 @@ export function signMessageLogic(
   return uiNavigation(account, formattedMessage);
 }
 
-export const bitcoinFamillyAccountGetXPubLogic = (
+export const bitcoinFamilyAccountGetXPubLogic = (
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
 ): Promise<string> => {
-  tracking.bitcoinFamillyAccountXpubRequested(manifest);
+  tracking.bitcoinFamilyAccountXpubRequested(manifest);
 
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
   }
 
   const account = accounts.find(account => account.id === accountId);
   if (account === undefined) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account not found"));
   }
 
   if (!isAccount(account) || account.currency.family !== "bitcoin") {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
 
   if (!account.xpub) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account xpub not available"));
   }
 
-  tracking.bitcoinFamillyAccountXpubSuccess(manifest);
+  tracking.bitcoinFamilyAccountXpubSuccess(manifest);
   return Promise.resolve(account.xpub);
 };
 
