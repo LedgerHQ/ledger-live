@@ -2335,7 +2335,8 @@
       "swap" : "スワップ",
       "send" : "送付",
       "deposit" : "受け取る",
-      "stake" : "ステーキング"
+      "stake" : "ステーキング",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "購入",
     "walletconnect" : "WalletConnect",
     "stake" : "ステーキング",
+    "yield" : "Yield",
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "アドレスを共有",
       "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "I understand",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "受け取りたい暗号資産を選択"
       },
@@ -6615,39 +6624,105 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
-    "ethereum" : {
-      "title" : "所有するETHを運用",
-      "subTitle" : "ETHをステーキングし、日々の報酬をLedger Liveで直接獲得して資産を増やしましょう。",
-      "tagMinimum" : "{{min}}ETHが必要",
-      "close" : "閉じる",
+    "ethereum_deprecated" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "tagMinimum" : "Requires {{min}} ETH",
+      "close" : "Close",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Kilnステーキングプール",
-          "description" : "最低数量なしでステーキング。ロック（凍結）期間なしで自動複利報酬を獲得。",
-          "supportLink" : "Kilnプールの詳細を確認"
+          "title" : "Kiln staking pool",
+          "description" : "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+          "supportLink" : "Learn more about Kiln pooling"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "最低数量なしでステーキング。流動性を利用して、自動複利報酬を獲得。",
-          "supportLink" : "Staderについての詳細"
+          "description" : "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+          "supportLink" : "Learn more about Stader"
         },
         "lido" : {
           "title" : "Lido",
-          "description" : "即時の流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
-          "supportLink" : "Lidoの詳細を確認"
+          "description" : "Stake any amount of ETH for instant liquidity and daily rewards.",
+          "supportLink" : "Learn more about Lido"
         },
         "figment" : {
           "title" : "Figment",
-          "tag" : "必要最低額32ETH",
-          "description" : "専用バリデーターに32ETH超をステーキングして、アカウントに自動的に送信される報酬を獲得。",
-          "supportLink" : "Figmentの詳細"
+          "tag" : "Requires 32 ETH",
+          "description" : "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+          "supportLink" : "Learn more about Figment"
         },
         "kiln" : {
-          "title" : "Kilnソロステーキング",
-          "tag" : "32ETHが必要",
-          "description" : "専用バリデーターに32ETH以上をステーキングして、簡単に報酬を獲得。",
-          "supportLink" : "Kilnの詳細"
+          "title" : "Kiln solo staking",
+          "tag" : "Requires 32 ETH",
+          "description" : "Stake over 32 ETH on dedicated validators and easily claim rewards.",
+          "supportLink" : "Learn more about Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Select staking provider",
+      "category" : {
+        "all" : {
+          "name" : "All",
+          "description" : "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "You can stake a batch of 32 ETH and get full node rewards in ETH."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "You can join a pool to stake any amount of ETH and get rewards."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "You can restake your liquid token to get additional rewards."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Liquid token needed",
+      "noMinimum" : "No minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid restaking"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Strategies and tactics to know",
+      "requiredMinimum" : "Requires {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Rewards",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     },
     "noFundsModal" : {
