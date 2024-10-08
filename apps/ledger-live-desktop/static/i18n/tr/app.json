@@ -1126,6 +1126,7 @@
       "send" : "Gönder",
       "swap" : "Takas et",
       "stake" : "Stake et",
+      "yield" : "Yield",
       "buy" : "Satın Al",
       "sell" : "Sat",
       "edit" : "Hesabı düzenle",
@@ -3682,7 +3683,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller alarak bakiyenizi artırın.",
       "tagMinimum" : "{{min}} ETH gerektirir",
@@ -3712,6 +3713,72 @@
         "tag" : "32 ETH gerektirir",
         "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödüller otomatik olarak hesabınıza gönderilsin.",
         "supportLink" : "Figment doğrulayıcısı hakkında daha fazla bilgi edinin"
+      }
+    },
+    "stake" : {
+      "title" : "Staking sağlayıcısı seçin",
+      "category" : {
+        "all" : {
+          "name" : "Tümü",
+          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Live'da mevcuttur."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "ETH stake edip ödül olarak liquid token'lar alabilirsiniz. Yatırım yapmaya ve DeFi faaliyetlerine katılmaya devam edebilirsiniz."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "32 ETH stake ederek ETH cinsinden tam node ödülleri alabilirsiniz."
+        },
+        "pooling" : {
+          "name" : "Havuza Katılma",
+          "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
+        },
+        "restaking" : {
+          "name" : "Yeniden Stake Etme",
+          "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
+        }
+      },
+      "howItWorks" : "How ETH staking works",
+      "lst" : "Liquid token gerektirir",
+      "noMinimum" : "Alt limit yok",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking havuzu"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid yeniden stake etme"
+        },
+        "kiln" : {
+          "title" : "Kiln ile özel staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO'su"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Read about ETH staking and different strategies",
+      "requiredMinimum" : "{{min}} ETH gerektirir",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Auto-compounded rewards",
+        "basic" : "Ödüller",
+        "daily" : "Daily rewards",
+        "eigenlayer_points" : "Eigenlayer points",
+        "validator" : "Validator rewards"
       }
     }
   },
@@ -4014,6 +4081,35 @@
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
+      "analyticsConsole" : {
+        "title" : "Allow Analytics Console",
+        "desc" : "Display and allow opening analytics console."
+      },
+      "brazeTools" : {
+        "title" : "Braze Tools",
+        "description" : "Generate local braze cards",
+        "open" : "Open",
+        "modal" : {
+          "title" : "Generate Local Braze Card",
+          "add" : "Add",
+          "dismiss" : "Dismiss all cards",
+          "fields" : {
+            "notification" : "Notification Content Card",
+            "action" : "Action Content Card",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "Title",
+            "description" : "Description",
+            "order" : "Order",
+            "image" : "Image URL",
+            "mainCta" : "Main CTA",
+            "link" : "Link",
+            "secondaryCta" : "Secondary CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4430,20 @@
       "tokenBlacklist" : {
         "title" : "Gizlenmiş token'lar",
         "desc" : "Token'ları gizlemek için ana hesaba gidin, token ismine sağ tıklayın ve 'Token'ı gizle' seçeneğini seçin.",
-        "count" : "{{count}} token",
-        "count_plural" : "{{count}} token"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "Gizli NFT Koleksiyonları",
         "desc" : "Koleksiyon adına sağ tıklayıp 'NFT Koleksiyonunu Gizle'yi seçerek NFT Koleksiyonlarını gizleyebilirsiniz.",
-        "count" : "{{count}} koleksiyonu",
-        "count_plural" : "{{count}} koleksiyonları"
+        "count" : "1 collection",
+        "count_other" : "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Hidden Inscriptions",
+        "desc" : "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Bitcoin tam düğümü bağla",
@@ -6584,6 +6686,11 @@
       "seeMore" : "Daha fazla inscription görün",
       "empty" : "Inscription eklemek için onu Bitcoin adresinize göndermeniz yeterlidir.",
       "receive" : "Inscription Alın",
+      "hide" : "Hide Inscription",
+      "modal" : {
+        "title" : "Hide Inscription",
+        "desc" : "This action will hide the following inscription <0>{{inscriptionName}}</0> from your account. You can unhide it at any time from the settings."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinal'leri Keşfedin",
         "description" : "Değerli nadir sat'lara ve inscription'lara sahip olabileceğinizi biliyor muydunuz?",
