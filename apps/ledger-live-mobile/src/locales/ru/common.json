@@ -2335,7 +2335,8 @@
       "swap" : "Обмен",
       "send" : "Отправить",
       "deposit" : "Получить",
-      "stake" : "Стейкать"
+      "stake" : "Стейкать",
+      "yield" : "Yield"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2591,6 +2592,7 @@
     "buy" : "Купить",
     "walletconnect" : "WalletConnect",
     "stake" : "Стейкать",
+    "yield" : "Yield",
     "sell" : "Продать",
     "swap" : "Обменять",
     "manage" : "Управление",
@@ -3132,6 +3134,13 @@
       "shareAddress" : "Поделиться",
       "addressCopied" : "Адрес скопирован",
       "taprootWarning" : "Убедитесь, что у отправителя есть поддержка Taproot",
+      "memoTag" : {
+        "link" : "Need a Tag/Memo?",
+        "title" : "Need a Tag/Memo?",
+        "description" : "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta" : "Понятно",
+        "learnMore" : "Learn more about Tags"
+      },
       "selectCrypto" : {
         "title" : "Выбор криптовалюты для получения"
       },
@@ -6615,7 +6624,7 @@
     "title" : "Добавление устройства"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Приумножайте ETH",
       "subTitle" : "Стейкайте ETH и приумножайте их за счёт ежедневных вознаграждений прямо в Ledger Live.",
       "tagMinimum" : "От {{min}} ETH",
@@ -6624,7 +6633,7 @@
         "kiln_pooling" : {
           "title" : "Стейкинг-пул Kiln",
           "description" : "Стейкайте любую сумму. Получайте вознаграждения с автоматической капитализацией без блокировки.",
-          "supportLink" : "Подробнее о пуле Kiln"
+          "supportLink" : "Подробнее про пул Kiln"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
@@ -6648,6 +6657,72 @@
           "description" : "Стейкайте более 32 ETH с определёнными валидаторами и получайте вознаграждения без каких-либо проблем.",
           "supportLink" : "Подробнее о Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Выберите оператора стейкинга",
+      "category" : {
+        "all" : {
+          "name" : "Все",
+          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Ликвидный",
+          "description" : "Застейкайте ETH и получите вознаграждения в ликвидных токенах. Ими получится торговать и также использовать на DeFi-платформах."
+        },
+        "protocol" : {
+          "name" : "Протокол",
+          "description" : "Застейкайте партию в 32 ETH и получайте вознаграждения для полной ноды в эфирах."
+        },
+        "pooling" : {
+          "name" : "Пул",
+          "description" : "Присоединитесь к пулу для стейкинга любой суммы ETH и получайте вознаграждения."
+        },
+        "restaking" : {
+          "name" : "Рестейкинг",
+          "description" : "Застейкайте ликвидные токены повторно для дополнительных вознаграждений."
+        }
+      },
+      "howItWorks" : "Как работает стейкинг ETH",
+      "lst" : "Требуются ликвидные токены",
+      "noMinimum" : "Без мин. суммы",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Стейкинг-пул Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Ликвидный рестейкинг c Kiln"
+        },
+        "kiln" : {
+          "title" : "Выделенный стейкинг в Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Стратегии и тактики для ознакомления",
+      "requiredMinimum" : "От {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Автоматическая капитализация вознаграждения",
+        "basic" : "Вознаграждение",
+        "daily" : "Ежедневное вознаграждение",
+        "eigenlayer_points" : "Поинты EigenLayer",
+        "validator" : "Вознаграждение валидатора"
       }
     },
     "noFundsModal" : {
