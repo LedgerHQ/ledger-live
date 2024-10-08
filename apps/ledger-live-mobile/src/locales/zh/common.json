@@ -790,16 +790,16 @@
       "title" : "请确保您有 {{depositAmount}} ADA 可用于该存款"
     },
     "CardanoFeeHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "Network fees unusually high please double check your transaction."
+      "title" : "网络费用异常高。",
+      "description" : "网络费用异常高，请仔细核对您的交易。"
     },
     "CardanoFeeTooHigh" : {
-      "title" : "Abnormally high network fees.",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "网络费用异常高。",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "Cardano invalid protocol parameters",
-      "description" : "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+      "title" : "Cardano 无效协议参数",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -3170,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "出于隐私原因，每笔交易都会生成一个新地址。以前的地址仍然有效。",
         "title" : "接收 {{currencyTicker}}",
         "onCurrencyName" : "在 {{currencyName}} 上",
         "copyAdress" : "复制地址",
@@ -5926,7 +5927,6 @@
         "status" : "状态",
         "active" : "活跃",
         "inactive" : "不活跃",
-        "rewards" : "奖励",
         "pending" : "待处理",
         "available" : "可提取"
       },
@@ -6772,8 +6772,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "选择您的 Ledger 设备",
-      "description" : "只需将 Ledger 设备连接到 Ledger Live 手机应用程序和桌面版应用程序即可检索备份。"
+      "title" : "选择 Ledger 设备"
     },
     "deviceAction" : {
       "title" : "继续在您的 Ledger {{wording}} 上操作",
@@ -6781,13 +6780,13 @@
     },
     "loading" : {
       "title" : "请耐心等候...",
-      "activation" : "您的数据正在端到端加密... ",
+      "activation" : "最多可能需要 30 秒。\n请停留在此界面。",
       "synch" : "我们正在更新已同步实例..."
     },
     "success" : {
       "sync" : "同步成功",
       "syncDesc" : "您的加密货币账户更改将自动显示在已同步手机和电脑上的 Ledger Live 应用程序中。",
-      "activation" : "该手机上的 Ledger Live 已开启 Ledger Sync",
+      "activation" : "该手机已开启 Ledger Sync",
       "syncAnother" : "与另一个 Ledger Live 应用程序同步",
       "close" : "关闭"
     },
@@ -6844,7 +6843,7 @@
           "title" : "扫描二维码"
         },
         "connectDevice" : {
-          "title" : "使用 Ledger 设备"
+          "title" : "使用我的 Ledger 设备"
         }
       },
       "qrCode" : {
