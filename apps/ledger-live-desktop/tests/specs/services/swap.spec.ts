@@ -203,12 +203,12 @@ test.describe.parallel("Swap", () => {
       await swapPage.navigateToExchangeDetails();
       await swapPage.waitForExchangeDetails();
       await expect.soft(swapPage.detailsSwapId).toHaveText("12345");
-      await expect.soft(drawer.swapAmountFrom).toContainText("-1.280"); // regex /-1.280\d+ BTC/ not working with toHaveText() and value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
-      await expect.soft(drawer.swapAmountTo).toContainText("+17.8943438531 ETH");
+      await expect.soft(drawer.swapAmountFrom).toContainText(/^-1.280/); // regex value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
+      await expect.soft(drawer.swapAmountTo).toContainText(/^\+17[.,]+8943438531 ETH$/); // match +17,8943438531 ETH or +17.8943438531 ETH
       await expect.soft(drawer.swapAccountFrom).toHaveText("Bitcoin 2 (legacy)");
       await expect.soft(drawer.swapAccountTo).toHaveText("Ethereum 2");
 
-      // Flaky due to LIVE-8642 - the formatting is sometimes different values - therefore we are doing the above text checks
+      // Screenshot verification is flaky due to LIVE-8642 - the formatting is sometimes rounding to different values - therefore we are doing the above text checks (this seems to relate to locale formatting)
       // await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
