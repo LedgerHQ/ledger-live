@@ -13,7 +13,8 @@ type MultiversXESDTToken = [
 export const importESDTTokens = async (outputDir: string) => {
   try {
     console.log("importing esdt tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "multiversx" }, [
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "elrond" }, [
+    // const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "multiversx" }, [
       "ticker",
       "id",
       "decimals",

@@ -381,7 +381,7 @@ function convertMultiversXESDTTokens([
   name,
 ]: MultiversXESDTToken): TokenCurrency {
   const MULTIVERSX_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
-  const parentCurrency = getCryptoCurrencyById("multiversx");
+  const parentCurrency = getCryptoCurrencyById("elrond");
 
   return {
     type: "TokenCurrency",

@@ -1717,9 +1717,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["xmr", "monero"],
   },
-  multiversx: {
+  elrond: {
     type: "CryptoCurrency",
-    id: "multiversx",
+    id: "elrond",
+    // id: "multiversx",
     coinType: CoinType.MULTIVERSX,
     name: "MultiversX",
     managerAppName: "MultiversX",
