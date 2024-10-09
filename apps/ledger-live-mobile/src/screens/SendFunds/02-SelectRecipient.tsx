@@ -7,7 +7,6 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-nft";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
@@ -30,7 +29,6 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import KeyboardView from "~/components/KeyboardView";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { MemoTagInpput } from "~/components/MemoTagInpput";
 import RetryButton from "~/components/RetryButton";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -39,6 +37,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { MEMO_TAG_COINS } from "~/utils/constants";
+import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import { MemoTagInput } from "./MemoTagInput";
 import RecipientRow from "./RecipientRow";
@@ -158,7 +157,21 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const onPressContinue = useCallback(async () => {
+  const featureMemoTag =
+    useFeature("llmMemoTag") && "id" in currency && MEMO_TAG_COINS.includes(currency.id);
+
+  const [memoTagDrawerState, setMemoTagDrawerState] = useState<"INITIAL" | "SHOWING" | "SHOWN">(
+    "INITIAL",
+  );
+
+  const onPressContinue = useCallback(() => {
+    const tag = "tag" in transaction && transaction.tag;
+    if (memoTagDrawerState === "INITIAL" && featureMemoTag && typeof tag === "undefined") {
+      return setMemoTagDrawerState("SHOWING");
+    }
+
+    track("SendRecipientContinue");
+
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
@@ -192,6 +205,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     navigation,
     parentAccount?.id,
     route.params,
+    featureMemoTag,
+    memoTagDrawerState,
   ]);
 
   if (!account || !transaction) return null;
@@ -296,11 +311,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               />
             )}
 
-            <FeatureToggle featureId="llmMemoTag">
-              {"id" in currency && MEMO_TAG_COINS.includes(currency.id) && (
-                <MemoTagInput onChange={onChangeMemoTag} />
-              )}
-            </FeatureToggle>
+            {featureMemoTag && <MemoTagInput onChange={onChangeMemoTag} />}
 
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
@@ -318,7 +329,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
-              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               disabled={debouncedBridgePending || !!status.errors.recipient}
@@ -328,6 +338,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           </View>
         </KeyboardView>
       </SafeAreaView>
+
+      <MemoTagDrawer
+        open={memoTagDrawerState === "SHOWING"}
+        onClose={() => setMemoTagDrawerState("SHOWN")}
+        onNext={onPressContinue}
+      />
 
       <GenericErrorBottomModal
         error={bridgeErr}
