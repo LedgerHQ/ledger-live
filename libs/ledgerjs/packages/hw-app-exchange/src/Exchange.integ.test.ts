@@ -1,3 +1,4 @@
+import bippath from "bip32-path";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import Exchange, { ExchangeTypes, PartnerKeyInfo } from "./Exchange";
 import Transport from "@ledgerhq/hw-transport";
@@ -183,7 +184,14 @@ describe("Check SWAP until payload signature", () => {
 
     await exchange.checkPartner(partnerSigned);
 
-    const amount = new BigNumber(100_000);
+    // const amount = BigInt(10_000_000_000_000_000); // In Wei (or the smallest unit of the coin), i.e. 0.01 ETH
+    const amount = BigInt(4_120_000_000_000_000_000); // 4.12 ETH
+
+    const outAmount = BigInt(1234); // 12.34 EUR
+    const b = new ArrayBuffer(8);
+    new DataView(b).setBigUint64(0, outAmount);
+    const bufOutAmount = Buffer.from(new Uint8Array(b));
+
     let encodedPayload = await generateSellPayloadProtobuf({
       traderEmail: "test@ledger.fr",
       inCurrency: "ETH",
@@ -191,18 +199,87 @@ describe("Check SWAP until payload signature", () => {
       inAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       outCurrency: "EUR",
       outAmount: {
-        coefficient: Buffer.from("1", "hex"),
-        exponent: 1,
+        coefficient: bufOutAmount,
+        exponent: 2,
       },
       deviceTransactionId: Buffer.from(transactionId.padStart(32, "0"), "hex"),
     });
     encodedPayload = convertToJWSPayload(encodedPayload);
+    console.log("SELL Payload in base64:", encodedPayload.toString());
 
     const estimatedFees = new BigNumber(0);
     await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
 
     const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
     await exchange.checkTransactionSignature(payloadSignature);
+
+    const configEth = {
+      config: Buffer.from("0345544808457468657265756d050345544812", "hex"),
+      signature: Buffer.from(
+        "3044022065d7931ab3144362d57e3fdcc5de921fb65024737d917f0ab1f8b173d1ed3c2e022027493568d112dc53c7177f8e5fc915d91a903780a067badf109085a73d360323",
+        "hex",
+      ),
+    };
+    const addressParameters = bip32asBuffer("44'/60'/0'/0/0");
+    exchange.checkPayoutAddress(configEth.config, configEth.signature, addressParameters);
+  });
+
+  it("NG Sell with prepared data", async () => {
+    // Given
+    const exchange = new Exchange(transport, ExchangeTypes.SellNg);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(64);
+
+    const { partnerInfo, partnerSigned } = await appExchangeSellDataset(ngSignFormat);
+    await exchange.setPartnerKey(partnerInfo);
+
+    await exchange.checkPartner(partnerSigned);
+
+    const encodedPayload = Buffer.from(
+      ".ChxzYXJhLm5laWxhLWppbWVuZXpAbGVkZ2VyLmZyEgNCVEMaBAAIK1YiIzJOQTVSZ3U4elhUQnZVTkZwbm1qc0RDaTd2eFVtdmRQODhQKgNFVVIyDAoIAAAAAAAAdTAQAjogNQrqDJf3R_HQ92CBRhSkdSOAGxrrfQvLuqKk9Gv4GEs=",
+    );
+
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+
+    // const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+    const payloadSignature = Buffer.from(
+      "XzscgDTYa33fxi0yjSN-NtIn9YaIUzRB4VbkIFOUM7fol_7pM5dREuH623DKq5BUMRZNdUrnazS2NlArRyvHUA==",
+      "base64url",
+    );
+    await exchange.checkTransactionSignature(payloadSignature);
+
+    // const configBtc = {
+    //   config: Buffer.from("0342544307426974636f696e00", "hex"),
+    //   signature: Buffer.from(
+    //     "3045022100cb174382302219dca359c0a4d457b2569e31a06b2c25c0088a2bd3fd6c04386a02202c6d0a5b924a414621067e316f021aa13aa5b2eee2bf36ea3cfddebc053b201b",
+    //     "hex",
+    //   ),
+    // };
+    const configBtcTesnet = {
+      config: Buffer.from([
+        0x3, 0x42, 0x54, 0x43, 0xc, 0x42, 0x69, 0x74, 0x63, 0x6f, 0x69, 0x6e, 0x20, 0x54, 0x65,
+        0x73, 0x74, 0x0,
+      ]),
+      signature: Buffer.from([
+        0x30, 0x45, 0x2, 0x21, 0x0, 0xa5, 0x37, 0xd3, 0x11, 0x8a, 0x9c, 0xd8, 0x94, 0x74, 0x4a,
+        0x4f, 0xd5, 0x5c, 0xb7, 0x3d, 0x4f, 0xb2, 0x60, 0xfc, 0xf4, 0x6d, 0x8f, 0xc8, 0xed, 0x2a,
+        0xe6, 0x5e, 0x6c, 0x68, 0x44, 0x55, 0xab, 0x2, 0x20, 0x39, 0x2a, 0xf5, 0x7f, 0xbc, 0x57,
+        0x7d, 0xf5, 0xd1, 0xfe, 0x4d, 0x7d, 0x57, 0xee, 0xea, 0x76, 0x82, 0x44, 0xf2, 0xa5, 0x76,
+        0x7d, 0xd9, 0x82, 0x90, 0x4, 0xfe, 0x6f, 0x1d, 0x0, 0x3a, 0x58,
+      ]),
+    };
+    const addressParameters = bip32asBuffer("84'/0'/0'/0/1");
+    exchange.checkPayoutAddress(
+      configBtcTesnet.config,
+      configBtcTesnet.signature,
+      addressParameters,
+    );
   });
 });
 
@@ -383,4 +460,15 @@ function convertSignatureToDER(sig: Uint8Array): Buffer {
 // Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
 function convertToJWSPayload(raw: Buffer): Buffer {
   return Buffer.from("." + raw.toString("base64url"));
+}
+
+function bip32asBuffer(path: string): Buffer {
+  const pathElements = !path ? [] : bippath.fromString(path).toPathArray();
+
+  const buffer = Buffer.alloc(1 + pathElements.length * 4);
+  buffer[0] = pathElements.length;
+  pathElements.forEach((element, index) => {
+    buffer.writeUInt32BE(element, 1 + 4 * index);
+  });
+  return buffer;
 }
