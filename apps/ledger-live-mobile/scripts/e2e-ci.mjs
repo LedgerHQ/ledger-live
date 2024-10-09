@@ -44,7 +44,7 @@ const test_ios = async () => {
     --headless \
     --retries 1 \
     --cleanup \
-    --maxWorkers 8`;
+    --maxWorkers 4`;
 };
 
 const build_android = async () => {

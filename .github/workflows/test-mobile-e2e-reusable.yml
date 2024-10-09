@@ -119,10 +119,6 @@ jobs:
           xcrun simctl create "iPhone 14" "iPhone 14"
           xcrun simctl create "iPhone 14" "iPhone 14"
           xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: pnpm mobile e2e:ci -p ios -b
