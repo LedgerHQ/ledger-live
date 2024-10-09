@@ -35,7 +35,7 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile e2e:test${speculos} \
+  await $`echo 'Starting detox tests with 8 workers...' && pnpm mobile e2e:test${speculos} \
     -c ios.sim.release \
     --loglevel error \
     --record-logs all \
@@ -43,7 +43,8 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 1 \
-    --cleanup`;
+    --cleanup \
+    --maxWorkers 8`;
 };
 
 const build_android = async () => {
