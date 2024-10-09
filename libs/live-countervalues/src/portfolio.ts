@@ -19,6 +19,7 @@ import type {
   AssetsDistribution,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { log } from "@ledgerhq/logs";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
@@ -141,9 +142,13 @@ export function getBalanceHistory(
   const t = new Date(conf.startOf(now).getTime() - 1).getTime(); // end of yesterday
 
   for (let i = 0; i < count - 1; i++) {
+    const value = balances[balances.length - 1 - i];
+    if (Number.isNaN(value)) {
+      log("countervalues-error", `Value is NaN for ${account.id}`);
+    }
     history.unshift({
       date: new Date(t - conf.increment * i),
-      value: balances[balances.length - 1 - i] || 0,
+      value: value || 0,
     });
   }
 
