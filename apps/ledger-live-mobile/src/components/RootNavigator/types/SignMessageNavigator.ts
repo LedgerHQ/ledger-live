@@ -17,7 +17,7 @@ export type SignMessageNavigatorStackParamList = {
     currentNavigation?: keyof SignMessageNavigatorStackParamList;
     nextNavigation?: keyof SignMessageNavigatorStackParamList;
   } & CommonParams;
-  [ScreenName.SignSelectDevice]: CommonParams;
+  [ScreenName.SignSelectDevice]: { forceSelectDevice?: boolean } & CommonParams;
   [ScreenName.SignConnectDevice]: {
     device?: Device;
     analyticsPropertyFlow?: string;

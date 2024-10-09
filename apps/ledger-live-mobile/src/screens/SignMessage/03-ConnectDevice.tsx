@@ -8,7 +8,6 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
-import { navigateToSelectDevice } from "../ConnectDevice";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
@@ -60,7 +59,12 @@ export default function ConnectDevice({
           action={action}
           request={request}
           device={route.params.device}
-          onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
+          onSelectDeviceLink={() => {
+            navigation.navigate(ScreenName.SignSelectDevice, {
+              ...route.params,
+              forceSelectDevice: true,
+            });
+          }}
           onResult={onResult}
         />
       </SafeAreaView>
