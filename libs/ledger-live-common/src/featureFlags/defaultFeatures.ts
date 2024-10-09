@@ -494,6 +494,10 @@ export const DEFAULT_FEATURES: Features = {
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
+  ldmkTransport: {
+    ...DEFAULT_FEATURE,
+    params: { stale: true },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
