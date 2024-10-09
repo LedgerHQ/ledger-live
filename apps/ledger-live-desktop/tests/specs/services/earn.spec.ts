@@ -43,11 +43,11 @@ test("Earn @smoke", async ({ page }) => {
     await layout.goToEarn();
     await liveAppWebview.waitForLoaded();
 
-    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBeVisible();
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBeVisible();
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBeVisible();
+    expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBeVisible();
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBeVisible();
     await expect
       .soft(page)
       .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });
