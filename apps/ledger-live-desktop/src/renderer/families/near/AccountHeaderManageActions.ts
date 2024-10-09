@@ -57,6 +57,7 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

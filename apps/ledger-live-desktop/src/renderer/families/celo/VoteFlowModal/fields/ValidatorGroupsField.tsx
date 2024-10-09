@@ -70,7 +70,7 @@ const ValidatorGroupsField = ({
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
       <S.ValidatorsFieldContainer>
-        <Box p={1}>
+        <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
             data={showAll ? validatorGroups : [chosenValidatorGroup ?? validatorGroups[0]]}
             style={{

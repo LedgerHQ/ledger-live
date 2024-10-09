@@ -49,6 +49,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       disabled: disableStakeButton,
       label: t("account.stake"),
       tooltip: disabledLabel,
+      accountActionsTestId: "stake-button",
     },
   ];
 };

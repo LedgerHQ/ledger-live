@@ -10,8 +10,7 @@ export class AccountPage extends AppPage {
   private swapButton = this.page.getByTestId("swap-account-action-button");
   private buyButton = this.page.getByTestId("buy-button");
   private sellButton = this.page.getByTestId("sell-button");
-  private stakeButton = this.page.getByTestId("stake-from-account-action-button");
-  private stakeButtonCosmos = this.page.getByTestId("stake-button-cosmos");
+  private stakeButton = this.page.getByTestId("stake-button");
   readonly stakeBanner = this.page.getByTestId("account-stake-banner");
   private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
@@ -91,10 +90,6 @@ export class AccountPage extends AppPage {
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
     await operationList.scrollIntoViewIfNeeded();
-  }
-
-  async startCosmosStakingFlow() {
-    await this.stakeButtonCosmos.click();
   }
 
   /**

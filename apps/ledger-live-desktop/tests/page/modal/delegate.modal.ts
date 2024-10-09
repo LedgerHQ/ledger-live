@@ -8,6 +8,7 @@ export class delegateModal extends Modal {
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
   private searchCloseButton = this.page.getByText("Show less");
+  private validatorList = this.page.getByTestId("validator-list");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
@@ -56,5 +57,10 @@ export class delegateModal extends Modal {
   @step("Click on view details button")
   async clickViewDetailsButton() {
     await this.detailsButton.click();
+  }
+
+  @step("check validator list is visible")
+  async checkValidatorListIsVisible() {
+    await expect(this.validatorList).toBeVisible();
   }
 }
