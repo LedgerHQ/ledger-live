@@ -304,10 +304,10 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.GetAddress}
           component={GetAddress}
-          // options={{
-          //   headerLeft: () => null,
-          //   title: t("transfer.receive.headerTitle"),
-          // }}
+          options={{
+            headerRight: () => null,
+            title: "",
+          }}
           listeners={({ route }) => ({
             beforeRemove: () => {
               route.params.onError(new Error("Interrupted by user"));

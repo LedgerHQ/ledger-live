@@ -1,8 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { firstValueFrom } from "rxjs";
+import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import type { Result } from "@ledgerhq/coin-framework/lib/derivation";
+import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TrackScreen } from "~/analytics";
@@ -12,14 +16,33 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { Result } from "@ledgerhq/coin-framework/lib/derivation";
-import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { renderLoading } from "~/components/DeviceAction/rendering";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.GetAddress>
 >;
 
 const edges = ["left", "right"] as const;
+
+function GetAddressOnResult({
+  device,
+  handleResult,
+}: {
+  device: Device;
+  handleResult: (device: Device) => void;
+}) {
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    handleResult(device);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return renderLoading({
+    t,
+    lockModal: true,
+  });
+}
 
 export default function GetAddress({ navigation, route }: NavigationProps) {
   const action = useAppDeviceAction();
@@ -49,16 +72,29 @@ export default function GetAddress({ navigation, route }: NavigationProps) {
     [account, path],
   );
 
-  const handleResult = useCallback(
+  const renderOnResult = useCallback(
     ({ device }: AppResult) => {
-      getAddress(device)
-        .then(onSuccess, onError)
-        .finally(() => {
-          navigation.pop();
-        });
+      return (
+        <GetAddressOnResult
+          device={device}
+          handleResult={device => {
+            getAddress(device)
+              .then(onSuccess, onError)
+              .finally(() => {
+                navigation.pop();
+              });
+          }}
+        />
+      );
     },
     [getAddress, navigation, onError, onSuccess],
   );
+
+  const request = useMemo(() => {
+    return {
+      account,
+    };
+  }, [account]);
 
   return (
     <SafeAreaView
@@ -70,21 +106,21 @@ export default function GetAddress({ navigation, route }: NavigationProps) {
         },
       ]}
     >
-      <TrackScreen category="VerifyAccount" name="ConnectDevice" />
-      <SelectDevice2
-        onSelect={setDevice}
-        stopBleScanning={!!device}
-        requestToSetHeaderOptions={requestToSetHeaderOptions}
-      />
+      <TrackScreen category="GetAddress" name="ConnectDevice" />
+      <Flex flex={1} mb={8}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+      </Flex>
       {device ? (
         <DeviceActionModal
           action={action}
           device={device}
           onClose={handleClose}
-          request={{
-            account,
-          }}
-          onResult={handleResult}
+          request={request}
+          renderOnResult={renderOnResult}
         />
       ) : null}
     </SafeAreaView>
@@ -93,13 +129,5 @@ export default function GetAddress({ navigation, route }: NavigationProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  bodyError: {
-    flex: 1,
-    flexDirection: "column",
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 16,
   },
 });

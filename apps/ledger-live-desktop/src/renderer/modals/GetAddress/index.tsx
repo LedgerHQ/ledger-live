@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { firstValueFrom } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -10,6 +10,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 
 const appAction = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
@@ -19,6 +20,21 @@ export type Data = {
   onResult: (result: Result) => void;
   onCancel: (error: Error) => void;
 };
+
+function GetAddressOnResult({
+  device,
+  handleResult,
+}: {
+  device: Device;
+  handleResult: (device: Device) => void;
+}) {
+  useEffect(() => {
+    handleResult(device);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return renderLoading();
+}
 
 export default function GetAddress({ account, path, onResult, onCancel }: Data) {
   const getAddress = useCallback(
@@ -43,9 +59,16 @@ export default function GetAddress({ account, path, onResult, onCancel }: Data) 
     [account, path],
   );
 
-  const handleResult = useCallback(
-    ({ device }: AppResult) => {
-      getAddress(device).then(onResult, onCancel);
+  const renderOnResult = useCallback(
+    ({ device }: AppResult, onClose: () => void) => {
+      return (
+        <GetAddressOnResult
+          device={device}
+          handleResult={device => {
+            getAddress(device).then(onResult, onCancel).finally(onClose);
+          }}
+        />
+      );
     },
     [getAddress, onCancel, onResult],
   );
@@ -72,10 +95,7 @@ export default function GetAddress({ account, path, onResult, onCancel }: Data) 
               <DeviceAction
                 action={appAction}
                 request={request}
-                onResult={res => {
-                  handleResult(res);
-                  onClose();
-                }}
+                Result={res => renderOnResult(res, onClose)}
               />
             </Box>
           )}
