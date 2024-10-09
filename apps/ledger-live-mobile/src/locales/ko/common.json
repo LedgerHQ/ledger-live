@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "호가"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -788,6 +789,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "예치에 사용할 {{depositAmount}} ADA가 있는지 확인하세요"
     },
+    "CardanoFeeHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "네트워크 수수료가 비정상적으로 높습니다. 트랜잭션을 다시 확인해 주세요."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano 유효하지 않은 프로토콜 파라미터",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -892,6 +905,9 @@
     "NearStakingThresholdNotMet" : {
       "title" : "금액은 {{threshold}} 이상이어야 합니다."
     },
+    "PinNotSet" : {
+      "title" : "PIN이 설정되지 않았습니다"
+    },
     "PriorityFeeTooLow" : {
       "title" : "우선 수수료가 권장 값 보다 낮습니다."
     },
@@ -919,6 +935,13 @@
     "InvalidMemoICP" : {
       "title" : "메모는 숫자여야 합니다"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "토큰 전송에 대한 수신자가 잘못되었습니다. 토큰 전송에 지원되는 계정 유형: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "죄송합니다, 수수료 추정에 실패했습니다",
+      "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
+    },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
@@ -936,7 +959,41 @@
     "CustomError" : {
       "title" : "죄송하지만 다시 시도하세요.",
       "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
-      "errorCode" : "코드: {{errorCode}}"
+      "errorCode" : "코드: {{errorCode}}",
+      "errorMessage" : "{{errorMessage}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "동기화 해제됨"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "더 이상 동기화 상태가 아닙니다",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
+    },
+    "TrustchainNotFound" : {
+      "title" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
+    },
+    "TonExcessFee" : {
+      "title" : "진행할 경우, 토큰이 전송됩니다. 수수료로 0.1 TON을 지불하게 되며, 초과 금액은 반환됩니다."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "메인 계정(TON)에 수수료 계산에 사용할 잔액이 부족합니다. 필요한 최소 잔액은 0.1 TON입니다."
+    },
+    "TonMinimumRequired" : {
+      "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
+    },
+    "BackupAppDataError" : {
+      "title" : "앱 데이터 백업 중 오류가 발생했습니다"
+    },
+    "RestoreAppDataError" : {
+      "title" : "앱 데이터 복원 중 오류가 발생했습니다"
+    },
+    "DeleteAppDataError" : {
+      "title" : "앱 데이터 삭제 중 오류가 발생했습니다"
+    },
+    "ScannedNewImportQrCode" : {
+      "title" : "업테이트가 필요합니다",
+      "description" : "앱을 동기화하려면 두 앱 모두 최신 버전으로 업데이트되어 있는지 확인하세요."
     }
   },
   "crash" : {
@@ -1351,10 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "다시 돌아오신 것을 환영합니다.",
-      "subtitle" : "아래와 같이 지갑에 액세스할 방법을 선택합니다.",
+      "subtitle" : "선호하는 지갑 액세스 방법을 알려주세요:",
       "connect" : "Ledger 장치에 연결합니다",
       "sync" : "Ledger Live 데스크탑과 동기화합니다",
-      "walletSync" : "다른 Ledger Live 앱과 동기화"
+      "walletSync" : "Ledger 동기화 사용"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "장치가 없어도 가능합니다",
@@ -2274,6 +2331,7 @@
     },
     "quickActions" : {
       "buy" : "구매",
+      "sell" : "판매",
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
@@ -2315,12 +2373,11 @@
         "description" : "Ledger Live 데스크탑에서 자산 가져오기"
       },
       "add" : {
-        "title" : "기존 Ledger 장치로 추가",
-        "description" : "Ledger 장치를 사용하여 자산을 생성하거나 가져옵니다."
+        "title" : "Ledger 장치 사용",
+        "description" : "Ledger 장치를 사용하여 암호화폐 계정 만들기 또는 가져오기"
       },
       "walletSync" : {
-        "title" : "다른 Ledger Live 앱을 통해 가져오기",
-        "description" : "Ledger 동기화 활성화"
+        "title" : "Ledger 동기화 사용"
       }
     }
   },
@@ -2760,7 +2817,7 @@
       "dateFormat" : "날짜 형식",
       "dateFormatDesc" : "Ledger Live 날짜 형식 설정",
       "walletSync" : "Ledger 동기화",
-      "walletSyncDesc" : "간단하게 앱 데이터를 보호하고 여러 Ledger Live 인스턴스를 동기화하세요.",
+      "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정을 동기화하세요.",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "앱 잠금",
@@ -2993,6 +3050,10 @@
         },
         "platformManifest" : {
           "title" : "플랫폼 Manifest 불러오기"
+        },
+        "mockAppUpdate" : {
+          "title" : "모의 앱 업데이트",
+          "description" : "내 Ledger에 이용할 수 있는 앱 업데이트를 표시하세요. 같은 앱 버전이 재설치 됩니다"
         }
       }
     },
@@ -3109,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다.",
         "title" : "{{currencyTicker}} 수령",
         "onCurrencyName" : "{{currencyName}}에서",
         "copyAdress" : "주소 복사",
@@ -5865,7 +5927,6 @@
         "status" : "상태",
         "active" : "활성",
         "inactive" : "비활성",
-        "rewards" : "보상",
         "pending" : "대기 중",
         "available" : "출금 가능"
       },
@@ -6206,6 +6267,9 @@
     "webPlatformPlayer" : {
       "infoPanel" : {
         "website" : "웹사이트"
+      },
+      "back" : {
+        "card" : "모든 카드"
       }
     }
   },
@@ -6642,7 +6706,7 @@
         "title" : "환경 설정 관리",
         "analytics" : {
           "title" : "애널리틱스",
-          "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
+          "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해, 본인은 페이지 방문 및 클릭 수를 포함한 사용자 데이터 수집에 동의합니다."
         },
         "personalizedExp" : {
           "title" : "개인 맞춤화",
@@ -6652,7 +6716,7 @@
           "notNow" : "나중에 하기",
           "accept" : "수락",
           "acceptAll" : "모두 수락",
-          "confirm" : "공유"
+          "confirm" : "유효성 검사"
         },
         "infoText" : {
           "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
@@ -6700,81 +6764,76 @@
     "title" : "Ledger 동기화",
     "activation" : {
       "screen" : {
-        "title" : "모든 플랫폼에서 계정을 동기화하세요",
-        "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 합니다.",
-        "mainCta" : "계정 동기화",
-        "secondCta" : "이미 생성된 키가 있나요?"
+        "title" : "이 휴대전화에서 Ledger 동기화를 켜시겠습니까?",
+        "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
+        "mainCta" : "Ledger 동기화 켜기",
+        "secondCta" : "이미 켜진 상태입니다",
+        "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
       }
     },
     "deviceSelection" : {
-      "title" : "안전한 백업용으로 사용할 Ledger 장치를 선택하세요",
-      "description" : "Ledger 장치를 Ledger Live 모바일 및 데스크탑 앱에 연결하기만 하면 간편하게 백업을 복구할 수 있습니다."
+      "title" : "Ledger 장치 선택하기"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
       "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
     },
+    "loading" : {
+      "title" : "조금만 기다려 주세요...",
+      "activation" : "최대 30초가 소요될 수 있습니다.\n이 화면을 떠나지 마세요.",
+      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
+    },
     "success" : {
-      "sync" : "동기화 성공!",
-      "syncDesc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다.",
-      "activation" : "완료되었습니다!",
-      "activationDesc" : "Ledger 동기화를 성공적으로 활성화했습니다.",
+      "sync" : "동기화 정상 완료",
+      "syncDesc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대전화와 컴퓨터의 Ledger Live 앱에 자동으로 표시됩니다.",
+      "activation" : "이 휴대전화에서 Ledger Sync가 켜짐",
       "syncAnother" : "다른 Ledger Live 앱과 동기화",
       "close" : "닫기"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "동기화",
-        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐겨보세요. "
+        "title" : "다른 Ledger Live 앱과 동기화",
+        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정을 동기화하세요."
       },
       "manageKey" : {
-        "title" : "키 관리",
-        "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요.",
-        "success" : "장치가 비동기화되었으며 키가 삭제되었습니다.",
-        "drawer" : {
-          "step1" : {
-            "title" : "키 관리",
-            "titleCta" : "키 삭제하기",
-            "descCta" : "동기화된 모든 데이터가 삭제됩니다."
-          },
-          "step2" : {
-            "delete" : "삭제",
-            "cancel" : "취소",
-            "title" : "암호화 키를 삭제하시겠습니까?",
-            "desc" : "삭제를 클릭하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 비동기화하더라도 자금에는 영향이 없으므로 안심하시기 바랍니다. 언제든지 계정을 다시 동기화할 수 있습니다."
-          }
+        "title" : "동기화 삭제",
+        "description" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정 동기화가 중단됩니다.",
+        "success" : "Ledger Live 앱이 더 이상 동기화되지 않습니다",
+        "successHint" : "언제든지 동기화를 다시 켤 수 있습니다.",
+        "confirm" : {
+          "delete" : "네, 삭제하겠습니다",
+          "cancel" : "동기화 유지",
+          "title" : "정말 동기화를 삭제하시겠습니까?",
+          "desc" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다."
         }
       },
       "manageInstances" : {
-        "title" : "동기화된 인스턴스 관리",
+        "title" : "Ledger Live가 다음에서 동기화됨:",
         "remove" : "제거"
       },
       "synchronizedInstances" : {
-        "cta" : "지금 관리하기",
-        "title" : "{{count}}개의 동기화된 인스턴스",
-        "title_plural" : "{{count}} 동기화된 인스턴스",
+        "cta" : "관리",
+        "title" : "{{count}} Ledger Live 앱 동기화 완료",
+        "title_plural" : "{{count}} Ledger Live 앱 동기화 완료",
         "error" : "인스턴스",
         "unsecuredError" : {
-          "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
-          "description" : "암호화 키 생성에 사용된 Ledger 장치를 연결하세요.",
-          "info" : "Ledger 장치를 분실한 경우에도 키를 삭제할 수 있으니 걱정마세요! 이 작업을 수행하면 데이터가 동시에 삭제되고 현재 동기화된 모든 인스턴스의 동기화가 중단됩니다.",
+          "title" : "Ledger 동기화 활성화에 사용한 것과 동일한 Ledger 장치를 연결합니다.",
+          "description" : "동일한 Ledger 장치가 없으면 \"동기화 삭제\"를 선택합니다.",
           "cta" : "다른 Ledger 장치 연결하기",
-          "ctaDelete" : "내 암호화 키 삭제"
+          "ctaDelete" : "동기화 삭제"
         },
         "autoRemoveError" : {
-          "title" : "현재 인스턴스를 제거할 수 없습니다.",
-          "description" : "보안상의 이유로 암호화 키를 삭제하지 않으면 현재 사용 중인 인스턴스를 제거할 수 없습니다.",
+          "title" : "현재 사용 중인 휴대전화는 삭제할 수 없습니다.",
+          "description" : "삭제하려면 Ledger 동기화가 활성화된 다른 휴대전화나 컴퓨터를 사용하세요. 다른 장치가 없으면 '동기화 삭제'를 선택하세요.",
           "info" : "암호화 키를 삭제하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 그러나 이는 귀하의 자금에 영향을 미치지 않습니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
           "cta" : "이해합니다",
-          "ctaDelete" : "내 암호화 키 삭제"
+          "ctaDelete" : "동기화 삭제"
         },
-        "success" : "귀하의 {{member}} 동기화가 중단되었습니다"
+        "success" : "{{member}}의 Ledger Live 앱이 더 이상 Ledger 동기화에 연결되어 있지 않습니다."
       },
       "errors" : {
         "fetching" : "동기화된 인스턴스를 가져오는 중에 문제가 발생했습니다.",
-        "trustchain" : "예상치 못한 허위 트러스트체인",
-        "memberCredentials" : "예상치 못한 허위 회원 인증서",
-        "ledgerSyncUnavailable" : "현재 Ledger 동기화를 사용할 수 없습니다. 이는 귀하의 자산에 아무런 영향을 미치지 않습니다."
+        "ledgerSyncUnavailable" : "당사 측의 기술적 문제로 인해 Ledger 동기화를 일시적으로 사용할 수 없으며, 현재 수정 중에 있습니다."
       }
     },
     "synchronize" : {
@@ -6784,25 +6843,136 @@
           "title" : "QR 코드 스캔"
         },
         "connectDevice" : {
-          "title" : "Ledger 장치를 사용하세요"
+          "title" : "내 Ledger 장치 사용"
         }
+      },
+      "qrCode" : {
+        "title" : "Ledger Live 앱 동기화",
+        "show" : {
+          "title" : "QR 보기",
+          "explanation" : {
+            "title" : "Ledger Live 앱으로 스캔하고 계정을 동기화하세요",
+            "steps" : {
+              "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+              "step2" : "Go to <0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>Ledger 동기화 켜기</0> <1>></1> <0>QR 코드 스캔</0>",
+              "step3" : "QR 코드 스캔"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "스캔",
+          "description" : "QR 코드 스캔",
+          "explanation" : {
+            "title" : "다른 휴대전화나 컴퓨터에서 Ledger Live와 동기화하려면...",
+            "steps" : {
+              "step1" : "동기화하려는 Ledger Live를 엽니다.",
+              "step2" : "Go to <0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>Ledger 동기화 켜기</0> <1>></1> <0>QR 표시</0>",
+              "step3" : "QR 코드 스캔"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Ledger 동기화 코드 입력",
+          "desc" : "컴퓨터에 표시된 코드를 입력하여 두 앱 간에 암호화폐 계정을 동기화합니다.",
+          "error" : {
+            "title" : "코드가 일치하지 않습니다.",
+            "desc" : "입력한 코드가 다른 Ledger Live 인스턴스에 표시된 코드와 일치하는지 확인해 주세요.",
+            "tryAgain" : "다시 시도하세요"
+          }
+        },
+        "scannedInvalidQrCode" : {
+          "title" : "유효하지 않은 QR 코드",
+          "desc" : "Ledger Live 앱을 동기화하려면 Ledger Live에 표시된 QR 코드만 스캔합니다.",
+          "info" : "QR 코드의 경우 \"설정\"을 열고 \"일반\"을 선택한 다음 \"Ledger 동기화\", \"동기화 켜기\" 및 \"QR 표시\"를 선택합니다.",
+          "cta" : "이해합니다"
+        },
+        "scannedOldQrCode" : {
+          "title" : "Ledger Live 업데이트 필요",
+          "desc" : "동기화를 계속하려면 최신 상태가 아닌 Ledger Live 앱을 업데이트하세요.",
+          "info" : "업데이트 방법에 대한 자세한 내용은 <0>이 문서<0>를 확인하세요.",
+          "cta" : "이해합니다"
+        },
+        "unbacked" : {
+          "title" : "동기화가 감지되지 않음",
+          "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+          "cta" : "Ledger 동기화 켜기"
+        },
+        "unbackedOnboarding" : {
+          "title" : "동기화가 감지되지 않음",
+          "description" : "다른 Ledger Live 앱의 동기화를 켠 후 여기로 돌아와서 \"다시 시도\"를 선택하세요.",
+          "info" : "Ledger 동기화가 어디에도 활성화되어 있지 않으면 Ledger 동기화 없이 계속하세요.",
+          "cta" : "다시 시도하세요",
+          "cancel" : "동기화 없이 계속하기"
+        },
+        "backedWithDifferentSeeds" : {
+          "title" : "각 앱에서 Ledger 동기화를 활성화하는 데 다른 Ledger 장치를 사용했습니다.",
+          "description" : "두 Ledger Live 앱을 동기화하려면 동일한 Ledger 장치를 사용해야 합니다.",
+          "info" : "이 문제를 해결하려면 앱 중 하나에 대한 동기화를 삭제하고 QR 코드를 스캔하여 다시 켜 주세요.",
+          "cta" : "이해합니다"
+        },
+        "alreadyBacked" : {
+          "title" : "두 Ledger Live 앱이 이미 동기화되었습니다.",
+          "cta" : "알겠습니다"
+        }
+      },
+      "unbackedOnboarding" : {
+        "title" : "동기화가 감지되지 않음",
+        "description" : "Ledger 동기화가 활성화되어 있으면 \"다시 시도\"를 선택하고 활성화하는 데 사용한 것과 동일한 Ledger 장치를 연결해야 합니다.",
+        "info" : "또는 Ledger 동기화 없이 계속하세요.",
+        "cta" : "다시 시도하세요",
+        "cancel" : "동기화 없이 계속하기"
+      },
+      "alreadySecureError" : {
+        "title" : "이 앱은 이미 이 Ledger에 의해 보호되고 있습니다.",
+        "description" : "새로운 백업을 생성하려는 경우, 다른 암호화 키를 생성하는 데 사용한 Ledger 장치를 연결하세요.",
+        "cta" : "이해합니다"
+      },
+      "alreadySecureOtherSeedError" : {
+        "title" : "이 Ledger를 사용하여 동기화할 수 없습니다",
+        "description" : "그래도 두 앱을 동기화하려면 키를 삭제하고 다시 시도하세요.",
+        "cta" : "내 암호화 키 삭제"
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "클리어 서명 활성화",
-      "checkbox" : "추가 알림을 보내지 마세요.",
-      "CTA" : "{{app}} 열기"
-    },
-    "manifestsList" : {
-      "title" : "탐색",
-      "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "클리어 서명 활성화",
+        "clearSigningDisabled" : "클리어 서명 비활성화",
+        "checkbox" : "추가 알림을 보내지 마세요.",
+        "CTA" : "{{app}} 열기"
+      },
+      "manifestsList" : {
+        "title" : "탐색",
+        "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+      },
+      "label" : {
+        "clearSigning" : "클리어 서명"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "탐색"
+      },
       "header" : {
         "title" : "Web3 탐색",
         "placeholder" : "URL을 검색하거나 입력하세요"
+      },
+      "clearSigning" : {
+        "title" : "클리어 서명"
+      }
+    },
+    "app" : {
+      "selectAccountModal" : {
+        "networkHeader" : {
+          "title" : "네트워크 선택"
+        },
+        "accountHeader" : {
+          "title" : "계정 선택"
+        },
+        "addAccountItem" : {
+          "name" : "계정 추가"
+        }
       }
     }
   }

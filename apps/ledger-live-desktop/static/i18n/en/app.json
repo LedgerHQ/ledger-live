@@ -4106,6 +4106,31 @@
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
       },
+      "brazeTools": {
+        "title": "Braze Tools",
+        "description": "Generate local braze cards",
+        "open": "Open",
+        "modal": {
+          "title": "Generate Local Braze Card",
+          "add": "Add",
+          "dismiss": "Dismiss all cards",
+          "fields": {
+            "notification": "Notification Content Card",
+            "action": "Action Content Card",
+            "portfolio": "Portfolio Content Card",
+            "title": "Title",
+            "description": "Description",
+            "order": "Order",
+            "image": "Image URL",
+            "mainCta": "Main CTA",
+            "link": "Link",
+            "secondaryCta": "Secondary CTA",
+            "cta": "CTA",
+            "url": "URL",
+            "path": "Path"
+          }
+        }
+      },
       "debugSimpleHash": {
         "testSimpleHash": {
           "title": "SimpleHash Tools",

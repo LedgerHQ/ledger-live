@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-storyly stories localization
+add TOS thorchain

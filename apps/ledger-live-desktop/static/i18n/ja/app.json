@@ -145,7 +145,8 @@
     "add" : "追加",
     "or" : "または",
     "clearAll" : "全消去",
-    "buyLedger" : "Ledgerを購入する"
+    "buyLedger" : "Ledgerを購入する",
+    "quote" : "見積もり"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -859,6 +860,9 @@
       "continue" : "続行"
     }
   },
+  "card" : {
+    "backToCard" : "すべてのカード"
+  },
   "lend" : {
     "title" : "暗号資産をレンディング",
     "tabs" : {
@@ -1526,7 +1530,8 @@
     "messageIfSkipped" : "{{name}} のアドレスが、Ledgerデバイスで確認できません。セキュリティを最適化するために、アドレスを確認してください。",
     "showQrCode" : "QRコードを表示",
     "taprootWarning" : "送信者がタップルートをサポートしていることを確認する",
-    "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
+    "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。",
+    "utxoWarning" : "プライバシー上の理由から、トランザクションごとに新しいアドレスが生成されます。以前のものは引き続き有効です。"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1868,8 +1873,8 @@
       "targetAccount" : "送付先アカウント"
     },
     "sell" : {
-      "notice" : "送金する前に、売却の詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-      "confirm" : "売却取引を確認"
+      "notice" : "送付前に詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+      "confirm" : "トランザクションを確定"
     },
     "fund" : {
       "notice" : "送付する前に、資金の詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "売却",
-    "titleCrypto" : "{{currency}}を売却する"
+    "titleCrypto" : "{{currency}}を売却する",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "トランザクションのブロードキャスト成功",
+        "description" : "操作は、承認のためにネットワークに送信されました。トランザクションが承認され、プロバイダーが処理するまでお待ちください。"
+      }
+    }
   },
   "receive" : {
     "title" : "受け取る",
@@ -3979,7 +3990,7 @@
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "シンプルにアプリのデータを保護し、複数のLedger Liveインスタンスを同期する。",
+      "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4005,6 +4016,16 @@
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHashツール",
+          "description" : "SimpleHashを使用した便利なツールをご利用いただけます",
+          "cta" : "開く",
+          "tabs" : {
+            "spam" : "スパム報告",
+            "refresh" : "メタデータを更新",
+            "check" : "スパムスコア"
+          }
+        },
         "debugSpamNft" : {
           "report" : "報告",
           "contractAddress" : "コントラクトアドレス",
@@ -4064,8 +4085,38 @@
         },
         "back" : "戻る"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger同期デバッガー",
+        "description" : "特定のLedgerSyncフローを起動したり、LedgerSyncの現在の状態を確認したりできます。",
+        "cta" : "開く",
+        "modal" : {
+          "check" : {
+            "title" : "チェッカー",
+            "trustchain" : {
+              "name" : "Trustchain ID： ",
+              "emptyId" : "空のID",
+              "applicationPath" : "アプリケーションパス： ",
+              "emptyApplicationPath" : "空のアプリケーションパス",
+              "cloudSyncVersion" : "クラウド同期バージョン： ",
+              "lastSyncInfo" : "最後の同期情報： ",
+              "uniported" : "インポートされていないアカウント： "
+            },
+            "copied" : "テキストがクリップボードにコピーされました！",
+            "export" : "エクスポート"
+          },
+          "generator" : {
+            "title" : "ジェネレーター",
+            "flow" : "フローを選択",
+            "step" : "ステップを選択",
+            "instance" : "メンバーの生成",
+            "cta" : "適用"
+          }
+        }
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
+      "mockAppUpdate" : "Mockアプリのアップデート",
+      "mockAppUpdateDesc" : "My Ledgerで利用可能なアプリのアップデートを表示すると、同じバージョンのアプリが再インストールされます。",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "ネットワークログを有効にする",
           "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger Syncをテスト",
-          "description" : "特定のLedgerSyncフローを起動できるようになります",
-          "cta" : "テスト",
-          "modal" : {
-            "flow" : "フローを選択",
-            "step" : "ステップを選択",
-            "instance" : "メンバーの生成",
-            "cta" : "適用"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHashツール",
-          "description" : "SimpleHashを使用した便利なツールをいくつか利用できます",
-          "cta" : "開く",
-          "tabs" : {
-            "spam" : "スパム報告",
-            "refresh" : "メタデータを更新",
-            "check" : "スパムスコア"
-          }
         }
       }
     },
@@ -5544,6 +5574,13 @@
       "title" : "金額と手数料を算出できません",
       "description" : "金額と手数料を算出できません"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "トークン転送の受取人が無効です。トークン転送でサポートされているアカウントタイプ：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "手数料の概算に失敗しました。",
+      "description" : "ネットワーク上で手数料の見積もりに失敗しました。入力を確認してください。トランザクションは失敗する可能性が高いです"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "レートの有効期限切れ",
-      "description" : "レートの有効期限が切れたため、取引のトランザクションを完了できませんでした。レートを更新してスワップを再試行してください。"
+      "description" : "取引レートの有効期限が切れました。更新してもう一度お試しください。"
     },
     "PayinExtraIdError" : {
       "message" : "スワップに必要なextraIdがありません"
     },
     "SwapGenericAPIError" : {
       "title" : "問題が発生しました。",
-      "description" : "トランザクションが成立しませんでした。もう一度お試しいただくか、サポートまでご連絡ください。"
+      "description" : "トランザクションが失敗しました。もう一度お試しください。"
     },
     "TimeoutError" : {
       "title" : "サーバーからの応答時間が長すぎます。",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "同期されていません"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "同期していません",
+      "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "TrustchainNotFound" : {
+      "title" : "データの取得中に問題が発生しました。",
+      "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "DeviceShouldStayInApp" : {
       "title" : "{{appName}} アプリを開いてください。",
@@ -5777,7 +5825,7 @@
       "title" : "優先手数料が必要以上に高額です。お支払い額が多すぎるかもしれません"
     },
     "MaxFeeTooLow" : {
-      "title" : "最大手数料が推奨手数料より低額です"
+      "title" : "推奨値より低い手数料です"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "最大優先手数料は、最大手数料より高くすることはできません"
@@ -6013,6 +6061,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "デポジット用に{{depositAmount}}ADAを所有していることを確認してください"
     },
+    "CardanoFeeHigh" : {
+      "title" : "ネットワーク手数料が異常に高いです。",
+      "description" : "ネットワーク料金が異常に高いので、トランザクションを再確認してください。"
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "ネットワーク手数料が異常に高いです。",
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardanoのプロトコルパラメータが無効です",
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -6159,6 +6219,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
+    },
+    "TonExcessFee" : {
+      "title" : "これはトークン転送を構成します。手数料は0.1TONで、それ以上はお客様に返金されます。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "メインアカウント（TON）の資金が不足しており、手数料を計算できません。最低必要残高は0.1TONです。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "資金が不足しています。最低必要残高は0.02TONです。"
+    },
+    "BackupAppDataError" : {
+      "title" : "アプリデータのバックアップ中にエラーが発生しました"
+    },
+    "RestoreAppDataError" : {
+      "title" : "アプリデータの復元中にエラーが発生しました"
+    },
+    "DeleteAppDataError" : {
+      "title" : "アプリデータの削除中にエラーが発生しました"
+    },
+    "PinNotSet" : {
+      "title" : "PINコードが設定されていません"
     }
   },
   "cryptoOrg" : {
@@ -6354,82 +6435,84 @@
   },
   "walletSync" : {
     "title" : "Ledger同期",
+    "close" : "閉じる",
     "activate" : {
-      "title" : "すべてのプラットフォーム間でアカウントを同期",
-      "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
-      "cta" : "アカウントを同期する"
+      "title" : "このコンピューターに対してLedger同期をオンにしますか？",
+      "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
+      "cta" : "Ledger Syncをオンにする",
+      "alreadySync" : "すでにオンにしました",
+      "learnMore" : "Ledger Syncの仕組みは？"
     },
-    "alreadySync" : "キーを作成済みですか？",
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
-        "label" : "同期する",
-        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。"
+        "label" : "別のLedger Liveアプリと同期する",
+        "description" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。"
       },
       "backup" : {
-        "label" : "キーの管理",
-        "description" : "別のLedgerを使用して暗号化キーを保護または削除する。"
+        "label" : "同期の削除",
+        "description" : "異なるLedger Liveアプリ間で同期された暗号資産アカウントは同期を停止します。"
       },
       "instance" : {
-        "label" : "1個の同期されたインスタンス",
-        "label_other" : "{{count}}個の同期されたインスタンス",
+        "label" : "1個のLedger Liveアプリを同期済み",
+        "label_other" : "{{count}}個のLedger Liveアプリを同期済み",
         "cta" : "管理"
       }
     },
     "loading" : {
       "title" : "お待ちください...",
-      "activation" : "データがエンドツーエンドで暗号化されています... ",
-      "synch" : "同期されたインスタンスを更新しています..."
+      "activation" : "これには最大30秒かかる場合があります。\nこちらの画面のままでお待ちください。"
     },
     "error" : {
       "title" : "問題が発生しました。",
       "description" : "後でもう一度お試しください。",
       "cta" : "再試行",
       "fetching" : "データの取得中に問題が発生しました。",
-      "ledgerSyncDown" : "Ledger Syncは現在利用できません。<br/>これはお客様の資産には影響しません。"
+      "ledgerSyncDown" : "当社側の技術的な問題のため、Ledger Syncは一時的に利用できません。現在修正に取り組んでいます。"
     },
     "unsecuredError" : {
-      "title" : "同期はこのLedgerによって保護されていません",
-      "description" : "暗号化キーの作成に使用されたLedgerデバイスを接続してください。",
-      "info" : "Ledgerを紛失しても、心配いりません。その場合でも、キーは削除できます。この操作により同時にデータを削除し、現在同期されているすべてのインスタンスの同期を解除します。",
+      "title" : "Ledger Syncを有効にするのに使用したのと同じLedgerデバイスを接続します",
+      "description" : "同じLedgerデバイスをお持ちでない場合は、代わりに「同期の削除」を選択してください。",
       "cta" : "別のLedgerを接続する",
-      "ctaDelete" : "暗号化キーを削除する"
+      "ctaDelete" : "同期の削除"
+    },
+    "alreadySecureError" : {
+      "title" : "このアプリはすでにこのLedgerによって保護されています",
+      "description" : "新しいバックアップを作成しようとしている場合は、他の暗号化キーの作成に使用したLedgerデバイスを接続してください。",
+      "cta" : "わかりました"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "このLedgerを同期に使用することはできません",
+      "description" : "それでもその2つのアプリを同期したい場合は、キーを削除して再試行してください。",
+      "cta" : "同期の削除"
     },
     "autoRemoveError" : {
-      "title" : "現在のインスタンスは削除できません",
-      "description" : "セキュリティ上の理由から、暗号化キーを削除せずに現在使用しているインスタンスを削除することはできません。",
-      "info" : "暗号化キーを削除するとデバイスの同期が解除され、同期されたデータはすべて削除されます。ただし、これはお客様の資金には影響しません。アカウントはいつでも再同期できます。",
+      "title" : "このコンピューターを使用中には削除できません",
+      "description" : "削除するには、Ledger Syncが有効になっている別のスマホかコンピューターを使用します。別のデバイスをお持ちでない場合は、代わりに「同期を削除」を選択してください。",
       "cta" : "わかりました",
-      "ctaDelete" : "暗号化キーを削除する"
+      "ctaDelete" : "同期の削除"
     },
     "success" : {
       "backup" : {
-        "title" : "成功",
-        "desc" : "Ledger Syncが正常に有効になりました。"
+        "title" : "このコンピューターでは、Ledger SyncはLedger Liveに対してオンになっています"
       },
       "synch" : {
-        "title" : "同期が成功しました",
-        "desc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。"
+        "title" : "同期に成功しました！",
+        "desc" : "暗号資産アカウントの変更は、同期されたスマホおよびコンピューター上のLedger Liveアプリ全体に自動的に表示されるようになります。 "
       },
       "synchAnother" : "別のLedger Liveアプリと同期する",
       "close" : "閉じる"
     },
     "manageBackup" : {
-      "title" : "キーの管理",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "データの削除",
-          "description" : "同期されたデータはすべて削除されます。"
-        }
-      },
       "deleteBackup" : {
-        "title" : "本当に暗号化キーを削除してもよろしいですか？",
-        "description" : "「削除」をクリックすると、デバイスの同期が解除され、同期されたデータがすべて削除されます。この操作を実行しても資金には影響しませんので、ご安心ください。アカウントはいつでも再同期できます。",
-        "delete" : "削除",
-        "cancel" : "キャンセル"
+        "title" : "同期を削除してもよろしいですか？",
+        "description" : "さまざまな携帯電話やコンピューター上のLedger Liveアプリ間の暗号資産アカウントが同期されなくなります。これはお客様の資金には一切影響しません。 ",
+        "delete" : "はい、削除します",
+        "cancel" : "同期を維持"
       },
       "deleteBackupSuccess" : {
-        "title" : "デバイスの同期が解除され、キーが削除されました"
+        "title" : "Ledger Liveアプリは同期されなくなりました",
+        "description" : "いつでも同期を再度オンにすることができます"
       },
       "deleteBackupError" : {
         "title" : "問題が発生しました。"
@@ -6440,7 +6523,7 @@
         "title" : "同期方法を選択",
         "description" : "Ledgerデバイスと直接同期するか、Ledger LiveでQRコードをスキャンして同期するかを選択できます。",
         "scan" : {
-          "title" : "QRコードをスキャン",
+          "title" : "QRコードを表示",
           "description" : "QRコードをスキャンして同期する"
         },
         "connectDevice" : {
@@ -6449,29 +6532,124 @@
         }
       },
       "qrCode" : {
-        "title" : "同期する",
-        "hint" : "2つのLedger Liveデスクトップアプリを同期しますか？こちらをクリック。",
-        "description" : "アカウントをスキャンして別のLedger Liveアプリと同期します",
-        "steps" : {
-          "step1" : "同期したいLedger Liveアプリを開く",
-          "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期</0> > <0>QRを表示</0>に移動",
-          "step3" : "読み込みが100%に達するまでQRコードをスキャンする。"
+        "title" : "Ledger Liveアプリを同期",
+        "options" : {
+          "mobile" : "スマホと同期",
+          "desktop" : "コンピューターと同期"
+        },
+        "mobile" : {
+          "description" : "別のスマホのLedger Liveアプリと同期",
+          "steps" : {
+            "step1" : "同期したいLedger Liveアプリを開く",
+            "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>QRを表示</0>に移動",
+            "step3" : "QRコードをスキャン"
+          }
+        },
+        "desktop" : {
+          "description" : "アカウントを別のLedger Liveアプリと同期します",
+          "steps" : {
+            "step1" : "同期したいLedger Liveアプリを開く",
+            "step2" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>Ledgerを使用</0>に移動",
+            "step3" : "Ledgerを接続する"
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "同期が検出されませんでした",
+        "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします",
+        "cta" : "Ledger Syncをオンにする"
+      },
       "pinCode" : {
-        "title" : "コードを入力",
-        "description" : "同期したい他のLedger Liveに表示されているコードを入力します。"
+        "title" : "お客様のLedger Syncコード",
+        "description" : "両方のLedger Liveアプリ間で暗号資産アカウントを同期するには、スマホのLedger Liveにこのコードを入力します。",
+        "error" : {
+          "title" : "コードが一致しません",
+          "description" : "入力したコードが他のLedger Liveインスタンスに表示されるコードであることを確認してください。"
+        }
       }
     },
     "manageInstances" : {
-      "title" : "同期されたインスタンスの管理",
+      "title" : "Ledger Liveを複数のデバイス間で同期済み",
       "remove" : "削除",
-      "deleteInstanceSuccess" : "{{instanceName}}の同期は解除されています",
+      "deleteInstanceSuccess" : "{{instanceName}}のLedger LiveアプリはLedger Syncに接続されなくなりました",
       "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
     },
     "deviceAction" : {
       "title" : "Ledger{{wording}}で続ける",
       "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "もっとインスクリプションを見る",
+      "empty" : "インスクリプションを追加するには、インスクリプションをビットコインアドレスに送信するだけです。",
+      "receive" : "インスクリプションを受け取る",
+      "discoveryDrawer" : {
+        "title" : "Ordinalsを知る",
+        "description" : "お客様は貴重なレアサトシやインスクリプションを所有している可能性があることをご存知ですか？",
+        "learnMore" : "詳細はこちら",
+        "protectTitle" : "Ordinals資産を保護",
+        "protectDescription" : "Ordinals資産をトランザクションから除外します。"
+      },
+      "detailsDrawer" : {
+        "description" : "説明",
+        "collectionName" : "コレクション名",
+        "inscriptionId" : "インスクリプションID",
+        "inscriptionNumber" : "インスクリプション番号",
+        "mintedTo" : "ミント先：",
+        "genesisTx" : "ジェネシストランザクション",
+        "blockNumber" : "ブロック番号",
+        "contentType" : "コンテンツタイプ",
+        "createdDate" : "作成日",
+        "satribute" : "Satのレア度",
+        "satNumber" : "Satの番号",
+        "satName" : "Satの名前",
+        "location" : "位置",
+        "outputValue" : "出力値",
+        "storedOnChain" : "オンチェーンに保管",
+        "hide" : "隠す"
+      }
+    },
+    "rareSats" : {
+      "empty" : "Rare Satsを追加するには、Rare Satsをビットコインアドレスに送信するだけです。",
+      "receive" : "Rare Satsを受け取る",
+      "title" : "レアサッツ",
+      "table" : {
+        "type" : "Satのタイプ / 数量",
+        "year" : "年"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "最初のサトシを示すAlphaで、各ビットコインの誕生に踏み込みましょう。このラベルは、ビットコインの単位の起源を意味します。",
+          "black_epic" : "約4年ごとにビットコインのマイニング報酬が半分になるときに発生する、各半減期イベントの最終的なサトシです。",
+          "black_legendary" : "Black Legendaryの説明はありません",
+          "black_mythic" : "Black Mythicの説明はありません",
+          "black_rare" : "マイニング難易度調整の各期間終了時の最終的なサトシを示します。",
+          "black_uncommon" : "約4年ごとにビットコインのマイニング報酬が半分になるときに発生する、各半減期イベントの最終的なサトシです。",
+          "block_9" : "Block 9は、ビットコインの歴史の中で独特の特徴を持っています。採掘された最も初期のブロックの1つとして、その中に含まれるサトシは流通している最も古いサトシの一部です。これらのサトシは、ビットコインの誕生直後、まさにその始まりとの具体的なつながりを提供しています。",
+          "block_9_450x" : "Block 9 450xでタイムスリップ。ここでは、9番目のブロックの最初のビットコインのサトシが強調されています。このラベルは、ビットコインの歴史における魅惑的な章を展開するのです。",
+          "block_78" : "Block 78は、ビットコインの歴史の注目すべき瞬間で、重要な位置を占めています。このブロックはHal Finney氏によってマイニングされ、とらえどころのないサトシ・ナカモト以外の人物が、ブロックチェーンの成長に貢献した最初の例となりました。",
+          "block_286" : "サトシ・ナカモトによってマイニングされた史上2回目のビットコイントランザクションのサトシを表す、Block 286の重要性を解明します。これらのサトシは、ビットコインのとらえどころのない創造主の重みを伝えており、その謎めいた物語に貢献しています。",
+          "block_666" : "Block 666の説明はありません",
+          "common" : "Commonの説明はありません",
+          "epic" : "ビットコインネットワークは4年ごとに、マイニング報酬が半分になる「半減」イベントを経験します。これらの各半減期の最初のサトシには「エピック（Epic）」というラベルが付けられており、ビットコインの経済モデルにおける重要な瞬間を示しています。",
+          "first_tx" : "2009年1月12日、サトシ・ナカモトがHal Finney氏というコンピューターサイエンティストに10ビットコインを送ったことで歴史が作られました。これが史上初のビットコイントランザクションとなりました。この象徴的なトランザクションから生成されたサトシ（Sat）には、「ファーストトランザクション（First Transaction）」というラベルが付けられています。これは、ビットコインのピアツーピア取引（P2P：サーバーを介さずに端末同士で直接データのやり取りを行う通信方式）の起源を象徴しています。",
+          "hitman" : "Hitmanの説明はありません",
+          "jpeg" : "JPEGで過去への旅を。これらのサトシは、2010年2月24日の画像に対する最初のビットコイン取引に関連付けられている可能性があります。このラベルは革新的な物語を語り、ビットコインが型破りなトランザクションや取引を行った初期の進出を紹介しています。",
+          "legacy" : "Legacyの説明はありません",
+          "legendary" : "Legendaryの説明はありません",
+          "mythic" : "Mythicの説明はありません",
+          "nakamoto" : "ビットコインの正体不明の発明者、サトシ・ナカモトを取り巻く神秘性は今も衰えていません。ナカモト自身が採掘したサトシにはこのラベルが付けられており、コレクター間で非常に人気があります。",
+          "omega" : "最後のサトシであるOmegaで、あらゆるビットコインの詩的な結末をご体験ください。ビットコイン単位の最後のサトシとして。",
+          "paliblock" : "PaliBlock Palindromeの説明はありません",
+          "palindrome" : "遊び心のあるひねりを加えたもので、番号が前後から同じように読めるサトシは「Palindrome（回文）」と呼ばれます。例えば、あるサトシの番号は12321または45654です。これらのユニークな数値属性により、このラベル付きのサトシに希少性がさらに加わり、好奇心が一層かき立てられます。",
+          "palinception" : "各サトシが回文の回文を形成する、均一回文（uniform palinception）の魅惑的な世界を掘り下げてみましょう。これらの複雑な構造のサトシは、ミラーナンバーの魅力的な織物を創造しています。",
+          "pizza" : "ビットコインコミュニティで最も象徴的な話の1つは、2010年5月22日にパパ・ジョンズ（Papa John's）のピザ2枚に10000ビットコインを支払ったプログラマーの話です。この出来事はよく、ビットコインの価値の流星的な上昇を示すものとして引用されます。この伝説的なトランザクションのサトシには「ピザ（Pizza）」のラベルが付けられています。",
+          "rare" : "ビットコインネットワークは、ブロックがおよそ10分ごとに追加されるようにマイニングの難易度を定期的に調整しています。そのような各調整期間の最初のサトシは「レア（Rare）」としてマークされています。これは、当ネットワークのセキュリティとコンセンサスメカニズムの進化し続ける性質を反映しています。 ",
+          "uncommon" : "このラベルは各ブロックの最初のサトシに指定されています。新しいブロックが約10分ごとにビットコインブロックチェーンに追加されることを考えると、これらのサトシはその時間枠のまさに始まりを捉えています。",
+          "vintage" : "ビットコインの夜明けは、最初の1000ブロックによって特徴づけられました。この期間内に採掘されたサトシには「ヴィンテージ（Vintage）」というブランドが付けられています。"
+        }
+      }
     }
   }
 }
