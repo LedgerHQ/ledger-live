@@ -5411,6 +5411,9 @@
     "AccountHeader": {
       "title": "You can earn rewards by delegating your account",
       "btn": "Earn rewards"
+    },
+    "delegation": {
+      "addCustomValidator": "+ Add custom validator"
     }
   },
   "tron": {
