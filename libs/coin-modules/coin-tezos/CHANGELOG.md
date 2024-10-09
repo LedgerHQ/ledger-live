@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tezos
 
+## 0.6.4-next.0
+
+### Patch Changes
+
+- [#8004](https://github.com/LedgerHQ/ledger-live/pull/8004) [`e3e46e5`](https://github.com/LedgerHQ/ledger-live/commit/e3e46e5efa4e7955ffc7a3bf1f7dd333aa6a5806) Thanks [@qperrot](https://github.com/qperrot)! - Tezos send full balance
+
+- [#8004](https://github.com/LedgerHQ/ledger-live/pull/8004) [`28ab0bc`](https://github.com/LedgerHQ/ledger-live/commit/28ab0bc6b441d8dac1d7c8dc4d5bd6b88031eeb5) Thanks [@qperrot](https://github.com/qperrot)! - Tezos send full balance and fix algorand format issue
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3)]:
+  - @ledgerhq/types-live@6.52.1-next.0
+  - @ledgerhq/coin-framework@0.18.3-next.0
+  - @ledgerhq/cryptoassets@13.6.1-next.0
+  - @ledgerhq/live-network@2.0.2-next.0
+
 ## 0.6.3
 
 ### Patch Changes

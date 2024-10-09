@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
 ## 2.3.0
 
 ### Minor Changes
