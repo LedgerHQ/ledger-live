@@ -201,7 +201,7 @@ export function signMessageLogic(
   return uiNavigation(account, formattedMessage);
 }
 
-function fromRelativePath(basePath: string, derivationPath?: string) {
+export function fromRelativePath(basePath: string, derivationPath?: string) {
   if (!derivationPath) {
     return basePath;
   }
@@ -237,9 +237,6 @@ export const bitcoinFamilyAccountGetAddressLogic = (
 
   const path = fromRelativePath(account.freshAddressPath, derivationPath);
 
-  // eslint-disable-next-line no-console
-  console.log(path);
-
   tracking.bitcoinFamilyAccountAddressSuccess(manifest);
   return uiNavigation(account, path);
 };
@@ -270,9 +267,6 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = (
   }
 
   const path = fromRelativePath(account.freshAddressPath, derivationPath);
-
-  // eslint-disable-next-line no-console
-  console.log(path);
 
   tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
   return uiNavigation(account, path);

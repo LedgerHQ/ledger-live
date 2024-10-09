@@ -29,6 +29,7 @@ import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
+import { fromRelativePath } from "../logic";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;
@@ -182,7 +183,9 @@ export const handlers = ({
         return Promise.reject(new Error("account not found"));
       }
 
-      const formattedMessage = { ...message, path: derivationPath } as unknown as AnyMessage;
+      const path = fromRelativePath(getMainAccount(account).freshAddressPath, derivationPath);
+
+      const formattedMessage = { ...message, path } as AnyMessage;
 
       return new Promise((resolve, reject) => {
         return uiMessageSign({
