@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
+import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
   QRCodeWSClosed,
   TrustchainAlreadyInitialized,
-} from "@ledgerhq/trustchain/errors";
-import { MemberCredentials } from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -14,7 +14,7 @@ import {
   trustchainSelector,
   memberCredentialsSelector,
   setTrustchain,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";

@@ -1,6 +1,6 @@
 import Base64 from "base64-js";
 import pako from "pako";
-import { TrustchainSDK, Trustchain } from "@ledgerhq/trustchain/types";
+import { TrustchainSDK, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 export type Cipher<Data> = {
   decrypt: (trustchain: Trustchain, base64payload: string) => Promise<Data>;

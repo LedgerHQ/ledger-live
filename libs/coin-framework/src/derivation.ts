@@ -8,7 +8,7 @@ import invariant from "invariant";
 import { Observable, defer, empty, of, range } from "rxjs";
 import { catchError, concatMap, map, switchMap, takeWhile } from "rxjs/operators";
 
-export type ModeSpec = {
+type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
   startsAt?: number;
@@ -45,7 +45,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze({
+const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation

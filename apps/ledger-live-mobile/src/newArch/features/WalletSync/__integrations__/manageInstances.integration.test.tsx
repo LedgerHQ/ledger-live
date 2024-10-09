@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 const INSTANCES: Array<TrustchainMember> = [
   {

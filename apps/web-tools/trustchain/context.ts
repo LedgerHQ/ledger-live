@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { TrustchainSDK } from "@ledgerhq/trustchain/types";
-import { getSdk } from "@ledgerhq/trustchain/index";
+import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { getEnv } from "@ledgerhq/live-env";
 
 export const defaultContext = {

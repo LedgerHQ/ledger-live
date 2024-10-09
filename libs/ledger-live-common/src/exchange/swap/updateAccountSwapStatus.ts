@@ -10,13 +10,13 @@ const maybeGetUpdatedSwapHistory = async (
   const pendingSwapIds: SwapStatusRequest[] = [];
   let accountNeedsUpdating = false;
   let consolidatedSwapHistory: SwapOperation[] = [];
-
   if (swapHistory) {
-    for (const { provider, swapId, status } of swapHistory) {
+    for (const { provider, swapId, status, operationId } of swapHistory) {
       if (isSwapOperationPending(status)) {
         pendingSwapIds.push({
           provider,
           swapId,
+          ...(provider === "thorswap" && { operationId }),
         });
       }
     }

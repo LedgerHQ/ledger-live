@@ -42,4 +42,5 @@ export class Currency {
   static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", AppInfos.BINANCE_SMART_CHAIN);
   static readonly POL_DAI = new Currency("(PoS) Dai Stablecoin", "DAI", AppInfos.POLYGON);
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", AppInfos.POLYGON);
+  static readonly NEAR = new Currency("NEAR", "NEAR", AppInfos.NEAR);
 }

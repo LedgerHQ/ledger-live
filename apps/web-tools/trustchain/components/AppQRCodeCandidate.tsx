@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError, NoTrustchainInitialized } from "@ledgerhq/trustchain/errors";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { memberNameForPubKey } from "./IdentityManager";
 import { Input } from "./Input";

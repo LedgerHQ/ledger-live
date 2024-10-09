@@ -1,9 +1,12 @@
 import * as React from "react";
-import Svg, { SvgProps, Path, Rect } from "react-native-svg";
+import type { ColorValue } from "react-native";
+import Svg, { type SvgProps, Path, Rect } from "react-native-svg";
 
-type Props = SvgProps & { size?: number; color?: string };
+const BASE_SIZE = 16;
 
-function Kiln({ size = 16 }: Props): JSX.Element {
+type Props = SvgProps & { size?: number; outline?: ColorValue };
+
+export function Kiln({ size = BASE_SIZE, outline }: Props): JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
       <Rect y="0.00390625" width="32" height="32" rx="8" fill="#FBFBFB" />
@@ -21,8 +24,8 @@ function Kiln({ size = 16 }: Props): JSX.Element {
         width="31"
         height="31"
         rx="7.5"
-        stroke="white"
-        stroke-opacity="0.1"
+        stroke={outline}
+        stroke-opacity={0.1}
       />
     </Svg>
   );

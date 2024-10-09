@@ -2,14 +2,14 @@ import {
   memberCredentialsSelector,
   setTrustchain,
   trustchainSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
+import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
+import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 type Props = {
   device: Device | null;

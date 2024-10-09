@@ -4,7 +4,7 @@ import {
   trustchainSelector,
   resetTrustchainStore,
   memberCredentialsSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useMutation } from "@tanstack/react-query";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";

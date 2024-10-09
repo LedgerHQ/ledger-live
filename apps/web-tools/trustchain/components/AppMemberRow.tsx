@@ -5,7 +5,7 @@ import {
   Trustchain,
   TrustchainDeviceCallbacks,
   TrustchainMember,
-} from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
 import { useTrustchainSDK } from "../context";

@@ -21,13 +21,16 @@
     "src/transaction/common.ts"
   ],
   "ignoreUnimported": [
-    "src/test-helpers/staticTime.ts",
+    "src/config.ts",
     "src/test-helpers/bridge-integration-suite.ts",
-    "src/config.ts"
+    "src/test-helpers/staticTime.ts"
   ],
   "ignoreUnresolved": [
     "follow-redirects",
     "form-data",
     "proxy-from-env"
+  ],
+  "ignoreUnused": [
+    "lru-cache"
   ]
 }

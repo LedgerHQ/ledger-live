@@ -67,6 +67,11 @@ export default function MarketCoinScreen() {
     changeCounterCurrency,
   } = useMarketCoin();
 
+  const yieldStakeLabelCoin =
+    currency && currency.id === "bitcoin"
+      ? t("accounts.contextMenu.yield")
+      : t("accounts.contextMenu.stake");
+
   const { name, ticker, image, internalCurrency, price } = currency || {};
 
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -130,7 +135,7 @@ export default function MarketCoinScreen() {
               )}
               {availableOnStake && (
                 <Button variant="color" onClick={onStake} data-testid="market-coin-stake-button">
-                  {t("accounts.contextMenu.stake")}
+                  {yieldStakeLabelCoin}
                 </Button>
               )}
             </>

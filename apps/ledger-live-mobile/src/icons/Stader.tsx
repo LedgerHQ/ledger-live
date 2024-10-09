@@ -1,13 +1,24 @@
 import * as React from "react";
-import Svg, { SvgProps, Path, Rect, G, Defs, ClipPath } from "react-native-svg";
+import type { ColorValue } from "react-native";
+import Svg, { type SvgProps, Path, Rect, G, Defs, ClipPath } from "react-native-svg";
 
-type Props = SvgProps & { size?: number };
+type Props = SvgProps & { size?: number; outline?: ColorValue };
 
-function Stader({ size = 32, ...props }: Props): JSX.Element {
+const BASE_SIZE = 32;
+
+export function Stader({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element {
   return (
-    <Svg width={size} height={size} fill="none" {...props}>
-      <Rect width={size} height={size} fill="#F3F0EB" rx={10} />
-      <Rect width={size} height={size} x={0.5} y={0.5} stroke="#fff" strokeOpacity={0.1} rx={9.5} />
+    <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
+      <Rect
+        fill="#F3F0EB"
+        width="31"
+        height="31"
+        x={0.5}
+        y={0.5}
+        rx={7.5}
+        stroke={outline}
+        stroke-opacity={0.1}
+      />
       <G clipPath="url(#stader_svg__a)">
         <Path
           fill="#07C166"

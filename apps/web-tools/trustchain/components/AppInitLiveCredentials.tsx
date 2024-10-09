@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { MemberCredentials } from "@ledgerhq/trustchain/types";
+import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 

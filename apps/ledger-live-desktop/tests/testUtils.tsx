@@ -16,6 +16,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import { getFeature } from "./featureFlags";
+import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 
 config.disabled = true;
 
@@ -58,7 +59,9 @@ function render(
               <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                 <StyleProvider selectedPalette="dark">
                   <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                    <MemoryRouter>{children}</MemoryRouter>
+                    <ContextMenuWrapper>
+                      <MemoryRouter>{children}</MemoryRouter>
+                    </ContextMenuWrapper>
                   </FirebaseFeatureFlagsProvider>
                 </StyleProvider>
               </NftMetadataProvider>

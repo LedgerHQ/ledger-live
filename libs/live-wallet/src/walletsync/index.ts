@@ -13,7 +13,7 @@ export * from "./incrementalUpdates";
 import accounts from "./modules/accounts";
 import accountNames from "./modules/accountNames";
 import { CloudSyncSDK } from "../cloudsync";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 const modules = {
   accounts,

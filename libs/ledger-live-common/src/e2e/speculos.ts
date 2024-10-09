@@ -52,7 +52,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-
   Exchange: {
     appQuery: {
       model: DeviceModelId.nanoSP,
@@ -60,7 +59,6 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-
   LedgerSync: {
     appQuery: {
       model: DeviceModelId.nanoX,
@@ -68,7 +66,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
@@ -218,6 +215,14 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "TON",
+    },
+    dependency: "",
+  },
+  Near: {
+    currency: getCryptoCurrencyById("near"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "NEAR",
     },
     dependency: "",
   },

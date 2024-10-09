@@ -22,7 +22,7 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/ty
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
-import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
+import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 

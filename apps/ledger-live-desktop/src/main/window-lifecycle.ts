@@ -114,7 +114,13 @@ function restorePosition(
   ) {
     x = bounds.x;
     y = bounds.y;
+  } else {
+    // If the saved position is not valid, move the window to the primary display.
+    const primaryDisplay = screen.getPrimaryDisplay().workArea;
+    x = primaryDisplay.x;
+    y = primaryDisplay.y;
   }
+
   // If the saved size is still valid, use it.
   if (bounds.width <= area.width || bounds.height <= area.height) {
     width = bounds.width;

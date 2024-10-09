@@ -276,7 +276,8 @@
     "src/wallet-api/tracking.ts",
     "src/wallet-api/useDappLogic.ts",
     "src/wallet-api/types.ts",
-    "src/wallet-api/version.ts"
+    "src/wallet-api/version.ts",
+    "src/errors/sendFlow.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [

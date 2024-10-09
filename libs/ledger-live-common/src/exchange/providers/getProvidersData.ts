@@ -6,6 +6,7 @@ export type ProvidersDataResponse = {
   signature: string;
   public_key: string;
   public_key_curve: string;
+  service_app_version: number;
 }[];
 
 export function transformData(
@@ -20,6 +21,7 @@ export function transformData(
         curve: provider.public_key_curve,
         data: Buffer.from(provider.public_key, "hex"),
       },
+      version: provider.service_app_version,
       signature: Buffer.from(provider.signature, "hex"),
     };
   });
@@ -33,7 +35,7 @@ export const getProvidersData = async (
     method: "GET",
     url: "https://crypto-assets-service.api.ledger.com/v1/partners",
     params: {
-      output: "name,signature,public_key,public_key_curve",
+      output: "name,signature,public_key,public_key_curve,service_app_version",
       service_name: type,
     },
   });

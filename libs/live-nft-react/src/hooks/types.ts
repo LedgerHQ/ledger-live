@@ -18,11 +18,19 @@ export type HookProps = {
   nftsOwned: ProtoNFT[];
   chains: string[];
   threshold: number;
+  action?: (collection: string) => void;
 };
 
 export type PartialProtoNFT = Partial<ProtoNFT>;
 
 export type NftGalleryFilterResult = UseInfiniteQueryResult<
+  InfiniteData<SimpleHashResponse, unknown>,
+  Error
+> & {
+  nfts: ProtoNFT[];
+};
+
+export type NftsFilterResult = UseInfiniteQueryResult<
   InfiniteData<SimpleHashResponse, unknown>,
   Error
 > & {

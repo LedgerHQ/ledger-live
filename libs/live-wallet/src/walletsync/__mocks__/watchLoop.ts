@@ -2,7 +2,7 @@ import { CloudSyncSDKInterface } from "../../cloudsync";
 import { z } from "zod";
 import { Observable, never } from "rxjs";
 import { WalletSyncDataManager } from "../types";
-import { Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
+import { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { CreateWalletSyncWatchLoopParams } from "../createWalletSyncWatchLoop";
 
 export const getWalletSyncWatchLoopConfig = () => {

@@ -8,7 +8,7 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
       status: {
         type: "active",
       },
-      node: "https://xrplcluster.com/ledgerlive",
+      node: "https://xrp.coin.ledger.com",
     } as XrpCoinConfig,
   },
 };

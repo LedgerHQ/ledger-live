@@ -14,7 +14,7 @@ import wallet from "./wallet";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
-import { TrustchainStore } from "@ledgerhq/trustchain/store";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 export type State = {
   accounts: AccountsState;

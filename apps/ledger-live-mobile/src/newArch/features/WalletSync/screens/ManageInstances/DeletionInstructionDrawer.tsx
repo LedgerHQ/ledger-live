@@ -2,7 +2,7 @@ import React from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import GenericFollowInstructionsDrawer from "../FollowInstructions";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useRemoveMember } from "../../hooks/useRemoveMember";
 
 type Props = {

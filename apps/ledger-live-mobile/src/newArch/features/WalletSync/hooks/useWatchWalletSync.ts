@@ -12,7 +12,10 @@ import walletsync, {
   makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   setAccountNames,
   setNonImportedAccounts,

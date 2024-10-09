@@ -16,6 +16,7 @@ export type ContentCard = {
   location?: LocationContentCard;
   order?: number;
   created: Date;
+  isMock?: boolean;
 };
 
 export type ActionContentCard = ContentCard & {

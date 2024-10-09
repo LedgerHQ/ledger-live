@@ -16,7 +16,7 @@ export const MissingIconWrapper = styled.View<{ size: number; borderRadius?: num
 `;
 
 /** Display a single letter as a fallback if an icon cannot be found */
-export default function MissingIcon({
+export function MissingIcon({
   initialLetter,
   size = 32,
   borderRadius = 12,
@@ -34,3 +34,5 @@ export default function MissingIcon({
     </MissingIconWrapper>
   );
 }
+
+export default MissingIcon;

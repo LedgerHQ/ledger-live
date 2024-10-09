@@ -92,14 +92,13 @@ export const useDefaultSlides = (): {
               : currentCard.id &&
                 dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
             setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-            dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
           }
+          dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
         }
       }
     },
     [portfolioCards, cachedContentCards, isTrackedUser, dispatch],
   );
-
   const logSlideClick = useCallback(
     (cardId: string) => {
       const currentCard = cachedContentCards.find(card => card.id === cardId);

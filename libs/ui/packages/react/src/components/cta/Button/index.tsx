@@ -13,7 +13,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
-  size?: "small" | "medium" | "large";
+  size?: "xs" | "small" | "medium" | "large";
   fontSize?: number;
   variant?: ButtonVariants;
   outline?: boolean;
@@ -288,6 +288,10 @@ export const buttonSizeStyle: {
     height: string;
   };
 } = {
+  xs: {
+    padding: "0 12px",
+    height: "28px",
+  },
   small: {
     padding: "0 20px",
     height: "32px",

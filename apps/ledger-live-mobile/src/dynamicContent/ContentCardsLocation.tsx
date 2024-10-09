@@ -25,10 +25,9 @@ const ContentCardsLocationComponent = ({ locationId, ...containerProps }: Props)
   const { categoriesCards, mobileCards } = useDynamicContent();
 
   const categoriesToDisplay = filterCategoriesByLocation(categoriesCards, locationId);
-
-  if (categoriesToDisplay.length === 0) return null;
-
   const categoriesFormatted = formatCategories(categoriesToDisplay, mobileCards);
+
+  if (categoriesFormatted.length === 0) return null;
 
   return (
     <Flex {...containerProps}>

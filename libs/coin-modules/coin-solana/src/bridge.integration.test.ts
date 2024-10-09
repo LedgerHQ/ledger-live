@@ -952,6 +952,19 @@ const baseTx = {
 const baseAPI = {
   getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
   getFeeForMessage: (_msg: unknown) => Promise.resolve(testOnChainData.fees.lamportsPerSignature),
+  getRecentPrioritizationFees: (_: string[]) => {
+    return Promise.resolve([
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+    ]);
+  },
+  getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
 } as ChainAPI;
 
 type StakeTestSpec = {

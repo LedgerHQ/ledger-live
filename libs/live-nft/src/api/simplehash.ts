@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import {
   SimpleHashRefreshResponse,
   SimpleHashResponse,
@@ -37,7 +37,7 @@ type NftFetchOpts = {
   /**
    * wallet addresses to get NFTs from. separated by a ","
    */
-  addresses: string;
+  addresses?: string;
   /**
    * cursor used to paginate the API
    */
@@ -54,6 +54,14 @@ type NftFetchOpts = {
    * spam filtering threshold, defaults to a constant %
    */
   threshold?: number;
+  /**
+   * token id to look for
+   */
+  token_id?: string;
+  /**
+   * contract address to look for
+   */
+  contract_address?: string;
 };
 const defaultOpts = {
   limit: PAGE_SIZE,
@@ -187,6 +195,20 @@ export async function getSpamScore(opts: CheckSpamScoreOpts): Promise<SimpleHash
       accept: "application/json",
       "content-type": "application/json",
     },
+  });
+
+  return data;
+}
+
+/**
+ * Fetch NFTs for a list of token id and a specific chain
+ * using SimpleHash API.
+ */
+export async function fetchNftsFromSimpleHashById(opts: NftFetchOpts): Promise<SimpleHashResponse> {
+  const { chains, contract_address, token_id } = { ...defaultOpts, ...opts };
+  const { data } = await network<SimpleHashResponse>({
+    method: "GET",
+    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/${chains[0]}/${contract_address}/${token_id}`,
   });
 
   return data;

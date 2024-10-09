@@ -7,7 +7,7 @@ export function getInscriptionsData(
 ) {
   return inscriptions.map(item => ({
     tokenName: item.name || item.contract.name || "",
-    nftId: item.nft_id,
+    nftId: String(item.extra_metadata?.ordinal_details?.inscription_id),
     collectionName: item.collection.name,
     media: {
       uri: item.image_url || item.previews?.image_small_url,

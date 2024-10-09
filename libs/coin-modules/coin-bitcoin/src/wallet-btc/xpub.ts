@@ -199,6 +199,17 @@ class Xpub {
       sequence,
     } = params;
 
+    if (opReturnData) {
+      const opReturnOutput: OutputInfo = {
+        script: this.crypto.toOpReturnOutputScript(opReturnData),
+        value: new BigNumber(0),
+        address: null,
+        isChange: false,
+      };
+
+      outputs.push(opReturnOutput);
+    }
+
     // outputs splitting
     // btc only support value fitting in uint64 and the lib
     // we use to serialize output only take js number in params
@@ -223,17 +234,6 @@ class Xpub {
 
     if (desiredOutputLeftToFit.value.gt(0)) {
       outputs.push(desiredOutputLeftToFit);
-    }
-
-    if (opReturnData) {
-      const opReturnOutput: OutputInfo = {
-        script: this.crypto.toOpReturnOutputScript(opReturnData),
-        value: new BigNumber(0),
-        address: null,
-        isChange: false,
-      };
-
-      outputs.push(opReturnOutput);
     }
 
     // now we select only the output needed to cover the amount + fee

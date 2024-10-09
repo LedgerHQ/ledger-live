@@ -1,11 +1,14 @@
-import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useLifeCycle } from "./walletSync.hooks";
 import { useEffect } from "react";
-import { TrustchainNotFound } from "@ledgerhq/trustchain/errors";
+import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();

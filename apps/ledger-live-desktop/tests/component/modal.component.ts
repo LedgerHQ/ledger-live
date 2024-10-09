@@ -15,18 +15,10 @@ export class Modal extends Component {
   protected confirmButton = this.page.getByTestId("modal-confirm-button");
   protected closeButton = this.page.getByTestId("modal-close-button");
   protected backButton = this.page.getByTestId("modal-back-button");
-  protected titleProvider = this.page.getByTestId("modal-provider-title");
-  protected rowProvider = this.page.getByTestId("modal-provider-row");
-  protected delegateContinueButton = this.page.locator("id=delegate-continue-button");
   protected spendableBanner = this.page.getByTestId("modal-spendable-banner");
   protected maxAmountCheckbox = this.page.getByTestId("modal-max-checkbox");
   protected cryptoAmountField = this.page.getByTestId("modal-amount-field");
   protected continueAmountButton = this.page.locator("id=send-amount-continue-button");
-  protected searchOpenButton = this.page.getByText("Show all");
-  protected searchCloseButton = this.page.getByText("Show less");
-  protected inputSearchField = this.page.getByPlaceholder("Search by name or address...");
-  protected stakeProviderContainer = (stakeProviderID: string) =>
-    this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   protected signContinueButton = this.page.locator("text=Continue");
   protected confirmText = this.page.locator(
     "text=Please confirm the operation on your device to finalize it",
@@ -71,19 +63,6 @@ export class Modal extends Component {
     await this.container.waitFor({ state: "detached" });
   }
 
-  async chooseStakeProvider(stakeProvider: string) {
-    await this.stakeProviderContainer(stakeProvider).click();
-  }
-
-  async getTitleProvider() {
-    await this.titleProvider.waitFor();
-    return await this.titleProvider.textContent();
-  }
-
-  async continueDelegate() {
-    await this.delegateContinueButton.click();
-  }
-
   async getSpendableBannerValue() {
     const amountValue = await this.spendableBanner.textContent();
     // removing non numerical values
@@ -101,19 +80,6 @@ export class Modal extends Component {
 
   async countinueSendAmount() {
     await this.continueAmountButton.click();
-  }
-
-  async openSearchProviderModal() {
-    await this.searchOpenButton.click();
-  }
-
-  async inputProvider(provider: string) {
-    await this.inputSearchField.fill(provider);
-  }
-
-  async selectProvider(providerIndex: number) {
-    await this.rowProvider.nth(providerIndex).click();
-    await this.searchCloseButton.click();
   }
 
   async continueToSignTransaction() {

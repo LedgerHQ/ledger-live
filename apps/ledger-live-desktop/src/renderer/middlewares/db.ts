@@ -15,7 +15,7 @@ import {
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 
 import { marketStoreSelector } from "../reducers/market";
 

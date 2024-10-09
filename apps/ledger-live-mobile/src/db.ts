@@ -12,7 +12,7 @@ import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
-import { TrustchainStore } from "@ledgerhq/trustchain/store";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
 export type Notifications = {

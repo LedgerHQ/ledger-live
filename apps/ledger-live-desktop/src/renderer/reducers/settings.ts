@@ -82,6 +82,7 @@ export type SettingsState = {
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
     size: number;
@@ -181,6 +182,7 @@ export const INITIAL_STATE: SettingsState = {
   latestFirmware: null,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
+  hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
   showClearCacheBanner: false,
@@ -226,6 +228,8 @@ type HandlersPayloads = {
   BLACKLIST_TOKEN: string;
   UNHIDE_NFT_COLLECTION: string;
   HIDE_NFT_COLLECTION: string;
+  UNHIDE_ORDINALS_ASSET: string;
+  HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
     lastSeenDevice: DeviceModelInfo;
     latestFirmware: FirmwareUpdateContext;
@@ -331,6 +335,20 @@ const handlers: SettingsHandlers = {
     return {
       ...state,
       hiddenNftCollections: [...collections, collectionId],
+    };
+  },
+  UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
+    const ids = state.hiddenOrdinalsAsset;
+    return {
+      ...state,
+      hiddenOrdinalsAsset: ids.filter(id => id !== inscriptionId),
+    };
+  },
+  HIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
+    const collections = state.hiddenOrdinalsAsset;
+    return {
+      ...state,
+      hiddenOrdinalsAsset: [...collections, inscriptionId],
     };
   },
   LAST_SEEN_DEVICE_INFO: (state, { payload }) => ({
@@ -743,6 +761,7 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
+export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];

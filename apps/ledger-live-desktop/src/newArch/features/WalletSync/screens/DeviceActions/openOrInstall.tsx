@@ -5,7 +5,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
+import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 

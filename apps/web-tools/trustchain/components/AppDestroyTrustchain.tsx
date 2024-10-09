@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 

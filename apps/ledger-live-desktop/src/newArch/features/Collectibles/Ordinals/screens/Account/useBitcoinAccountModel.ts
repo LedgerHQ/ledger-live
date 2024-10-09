@@ -7,6 +7,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { setHasSeenOrdinalsDiscoveryDrawer } from "~/renderer/actions/settings";
 import { hasSeenOrdinalsDiscoveryDrawerSelector } from "~/renderer/reducers/settings";
 import { findCorrespondingSat } from "LLD/features/Collectibles/utils/findCorrespondingSat";
+import { useHideInscriptions } from "LLD/features/Collectibles/hooks/useHideInscriptions";
 
 interface Props {
   account: BitcoinAccount;
@@ -14,6 +15,7 @@ interface Props {
 
 export const useBitcoinAccountModel = ({ account }: Props) => {
   const dispatch = useDispatch();
+
   const hasSeenDiscoveryDrawer = useSelector(hasSeenOrdinalsDiscoveryDrawerSelector);
   const [selectedInscription, setSelectedInscription] = useState<SimpleHashNft | null>(null);
   const [correspondingRareSat, setCorrespondingRareSat] = useState<
@@ -24,6 +26,8 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
     account,
   });
 
+  const { filterInscriptions } = useHideInscriptions();
+  const filteredInscriptions = filterInscriptions(inscriptions);
   const [isDrawerOpen, setIsDrawerOpen] = useState(!hasSeenDiscoveryDrawer);
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
 
   return {
     rareSats,
-    inscriptions,
+    inscriptions: filteredInscriptions,
     rest,
     isDrawerOpen,
     selectedInscription,

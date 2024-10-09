@@ -4,9 +4,11 @@ import { AccountsPage } from "../../page/accounts.page";
 import { Layout } from "../../component/layout.component";
 import { AccountPage } from "../../page/account.page";
 import { Modal } from "../../component/modal.component";
+import { delegateModal } from "tests/page/modal/delegate.modal";
 
 test.use({ userdata: "accountCosmos" });
 let modalPage: Modal;
+let delegate: delegateModal;
 
 test.beforeEach(async ({ page }) => {
   const layout = new Layout(page);
@@ -16,6 +18,7 @@ test.beforeEach(async ({ page }) => {
   const accountsPage = new AccountsPage(page);
   await accountsPage.navigateToAccountByName("Cosmos 1");
   await accountPage.startCosmosStakingFlow();
+  delegate = new delegateModal(page);
 });
 
 test("Delegate flow using max amount", async () => {
@@ -25,12 +28,12 @@ test("Delegate flow using max amount", async () => {
 
   await test.step("Check Ledger is the provider by default", async () => {
     await modalPage.continue();
-    const defaultprovider = await modalPage.getTitleProvider();
+    const defaultprovider = await delegate.getTitleProvider();
     expect(defaultprovider).toEqual("Ledger");
   });
 
   await test.step("Toggle max amount to be filled in the amount field", async () => {
-    await modalPage.continueDelegate();
+    await delegate.continueDelegate();
     await modalPage.toggleMaxAmount();
     const availableMaxAmount = await modalPage.getSpendableBannerValue();
     const filledMaxAmount = await modalPage.getCryptoAmount();
@@ -47,10 +50,10 @@ test("The user search and select a provider", async () => {
 
   await test.step("search for new provider", async () => {
     const providerResearched = "Figment";
-    await modalPage.openSearchProviderModal();
-    await modalPage.inputProvider(providerResearched);
-    await modalPage.selectProvider(0);
-    const providerSelected = await modalPage.getTitleProvider();
+    await delegate.openSearchProviderModal();
+    await delegate.inputProvider(providerResearched);
+    await delegate.selectProvider(0);
+    const providerSelected = await delegate.getTitleProvider();
     expect(providerSelected).toEqual(providerResearched);
   });
 });

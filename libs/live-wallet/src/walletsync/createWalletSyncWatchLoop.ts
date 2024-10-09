@@ -1,9 +1,9 @@
 import { ZodType, z } from "zod";
 import { CloudSyncSDKInterface } from "../cloudsync";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
-import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Subscription } from "rxjs";
 
 export type WatchConfig = {

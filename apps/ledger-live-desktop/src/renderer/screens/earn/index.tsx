@@ -46,6 +46,7 @@ const Earn = () => {
             locale: locale,
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
+            OS: "web",
           }}
         />
       ) : null}

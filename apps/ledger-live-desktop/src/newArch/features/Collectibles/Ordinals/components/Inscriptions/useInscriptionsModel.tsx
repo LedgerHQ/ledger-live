@@ -22,11 +22,17 @@ export const useInscriptionsModel = ({ inscriptions, onInscriptionClick }: Props
     useState<InscriptionsItemProps[]>(initialDisplayedObjects);
 
   useEffect(() => {
-    if (displayedObjects.length === 0) {
-      if (items.length > 3) setDisplayShowMore(true);
+    const filteredDisplayedObjects = displayedObjects.filter(displayedObject =>
+      items.some(item => item.nftId === displayedObject.nftId),
+    );
+    if (filteredDisplayedObjects.length !== displayedObjects.length) {
+      setDisplayedObjects(items.slice(0, filteredDisplayedObjects.length + 1));
+    } else if (displayedObjects.length === 0 && items.length > 3) {
+      setDisplayShowMore(true);
       setDisplayedObjects(items.slice(0, 3));
     }
-  }, [items, displayedObjects.length]);
+    if (displayedObjects.length === items.length) setDisplayShowMore(false);
+  }, [items, displayedObjects]);
 
   const onShowMore = () => {
     setDisplayedObjects(prevDisplayedObjects => {

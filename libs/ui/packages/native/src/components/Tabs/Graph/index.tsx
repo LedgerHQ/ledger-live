@@ -3,16 +3,6 @@ import styled from "styled-components/native";
 import Text from "../../Text";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
-type GraphTabSize = "small" | "medium";
-
-type GraphTabsProps = BaseTabsProps & {
-  size?: GraphTabSize;
-};
-
-type GraphTabItemProps = TabItemProps & {
-  size?: GraphTabSize;
-};
-
 const TabBox = styled.TouchableOpacity`
   text-align: center;
   border-radius: ${(p) => p.theme.radii[1]}px;
@@ -21,7 +11,7 @@ const TabBox = styled.TouchableOpacity`
   margin-left: ${(p) => p.theme.space[1]}px;
 `;
 
-const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
+const TabText = styled(Text).attrs<TabItemProps>((p) => ({
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,
   lineHeight: p.size === "medium" ? "40px" : "26px",
@@ -43,7 +33,7 @@ export const GraphTab = ({
   activeBg = "neutral.c30",
   size = "medium",
   disabled,
-}: GraphTabItemProps): React.ReactElement => {
+}: TabItemProps): React.ReactElement => {
   return (
     <TabBox onPress={onPress} disabled={disabled}>
       {isActive ? (
@@ -72,7 +62,7 @@ export const GraphTab = ({
   );
 };
 
-const GraphTabs = (props: GraphTabsProps): React.ReactElement => (
+const GraphTabs = (props: BaseTabsProps): React.ReactElement => (
   <StyledTabs {...props} Item={GraphTab} />
 );
 

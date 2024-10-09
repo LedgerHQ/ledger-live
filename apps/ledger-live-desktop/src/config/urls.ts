@@ -168,6 +168,11 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  ledgerAcademy: {
+    whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
+    ethereumStakingHowToStakeEth:
+      "https://www.ledger.com/academy/ethereum-staking-how-to-stake-eth",
+  },
   ledgerByFigmentTC:
     "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   ens: "https://support.ledger.com/article/9710787581469-zd",

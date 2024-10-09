@@ -27,4 +27,5 @@ export enum DeviceLabels {
   GET = "Get",
   FEES = "Fees",
   ACCEPT_AND_SEND = "Accept and send",
+  WALLET_ID = "Wallet ID",
 }

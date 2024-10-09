@@ -130,6 +130,18 @@ platform :ios do
       keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
       git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
     )
+    match(
+      type: "appstore",
+      app_identifier: "com.ledger.live.nightly",
+      force: true,
+      generate_apple_certs: true,
+      git_url: ENV["GIT_REPO_URL"],
+      username: ENV["APPLE_ID"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
   end
 
   desc "buid for deployment (app-store or ad-hoc)"
@@ -151,7 +163,10 @@ platform :ios do
 
       build_number = latest_testflight_build_number(
         version: trim_version_number(package["version"]),
-        app_identifier: "com.ledger.live"
+        # we are moving to using ENV["APP_IDENTIFIER"] but staging + prerelease still override their own
+        # app identifier to publish to com.ledger.live . This will be removed once we are are fully publishing
+        # to separate apps
+        app_identifier: options[:nightly] ? ENV["APP_IDENTIFIER"] : "com.ledger.live"
       )
 
       increment_build_number({
@@ -243,6 +258,9 @@ platform :ios do
         gym(
           scheme: PROJECT_NAME,
           workspace: XCODE_WORKSPACE,
+          # This should come from env files - as we move each release type to its own app we will
+          # move them away from "Release" and to their own .env-file defined configuration
+          configuration: options[:nightly] ? ENV["APP_CONFIGURATION"] : "Release",
           silent: true,
           xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
           output_directory: OUTPUT_DIRECTORY,
@@ -279,9 +297,8 @@ platform :ios do
       begin
         pilot(
           skip_submission: false,
-          app_identifier: "com.ledger.live",
+          app_identifier: ENV["APP_IDENTIFIER"],
           skip_waiting_for_build_processing: true,
-          # wait_processing_timeout_duration: 1800, # 30mn
           ipa: IPA_DIRECTORY,
           changelog: "Nightly Build v#{package['version']} (#{build_number})",
           beta_app_review_info: {
@@ -290,20 +307,6 @@ platform :ios do
             notes: "test nightly builds"
           }
         )
-
-        # pilot(
-        #   distribute_only: true,
-        #   groups: ["External Nightly"],
-        #   distribute_external: true,
-        #   app_identifier: "com.ledger.live",
-        #   app_platform: 'ios',
-        #   app_version: package["version"],
-        #   build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
-        #   notify_external_testers: true,
-        #   reject_build_waiting_for_review: !options[:ci],
-        #   skip_waiting_for_build_processing: false,
-        #   wait_processing_timeout_duration: 1800, # 30mn
-        # )
       rescue => e
         raise unless e.message.include? "Another build is in review"
 
@@ -341,7 +344,10 @@ platform :ios do
   desc "ci: create nightly version"
   lane :ci_nightly do |options|
     setup_ios_ci
-    build(ci: true)
+    build(
+      nightly: true,
+      ci: true
+    )
     upload(
       nightly: true,
       ci: true

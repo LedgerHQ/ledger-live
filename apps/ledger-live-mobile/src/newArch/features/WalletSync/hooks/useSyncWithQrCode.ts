@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { MemberCredentials, TrustchainMember } from "@ledgerhq/trustchain/types";
-import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
+import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
   ScannedOldImportQrCode,
   ScannedInvalidQrCode,
@@ -8,8 +8,8 @@ import {
   NoTrustchainInitialized,
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
-} from "@ledgerhq/trustchain/errors";
-import { setTrustchain, trustchainSelector } from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Steps } from "../types/Activation";

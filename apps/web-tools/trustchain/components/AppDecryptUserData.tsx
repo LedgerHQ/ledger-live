@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { crypto } from "@ledgerhq/hw-trustchain";
-import { JWT, Trustchain } from "@ledgerhq/trustchain/types";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { JWT, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { Input } from "./Input";
 import { useTrustchainSDK } from "../context";

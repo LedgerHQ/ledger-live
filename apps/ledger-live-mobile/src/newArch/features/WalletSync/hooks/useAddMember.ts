@@ -2,7 +2,7 @@ import {
   memberCredentialsSelector,
   setTrustchain,
   trustchainSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import {
@@ -10,8 +10,8 @@ import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
   TrustchainNotAllowed,
-} from "@ledgerhq/trustchain/errors";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";

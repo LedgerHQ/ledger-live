@@ -11,7 +11,7 @@ jest.mock("../hooks/useQRCodeHost", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/trustchain/qrcode/index", () => ({
+jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeHostInstance: () =>
     Promise.resolve({
       trustchainApiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,

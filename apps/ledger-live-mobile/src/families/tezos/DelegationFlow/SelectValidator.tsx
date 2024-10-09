@@ -323,7 +323,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       <View style={styles.footer}>
         <Button
           type="secondary"
-          title="+ Add custom validator"
+          title={<Trans i18nKey="tezos.delegation.addCustomValidator" />}
           event="DelegationFlowAddCustom"
           onPress={enableCustomValidator}
         />
