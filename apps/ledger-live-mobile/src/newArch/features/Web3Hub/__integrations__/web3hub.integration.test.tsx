@@ -4,6 +4,8 @@ import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { Web3HubTest } from "./shared";
 import { Text } from "@ledgerhq/native-ui";
+import deviceStorage from "~/logic/storeWrapper";
+import { WEB3HUB_STORE_KEY } from "../constants";
 
 // Need to fix some stuff if we want to test the player too
 jest.mock(
@@ -25,6 +27,10 @@ async function waitForLoader() {
 }
 
 describe("Web3Hub integration test", () => {
+  afterEach(() => {
+    deviceStorage.delete(WEB3HUB_STORE_KEY);
+  });
+
   it("Should list manifests and navigate to app page", async () => {
     const { user } = render(<Web3HubTest />);
 
@@ -315,5 +321,51 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("button", { name: /back/i }));
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+  });
+
+  /** @TODO https://github.com/LedgerHQ/ledger-live/pull/8050 : unskip after adding state manager to the DB */
+  it.skip("Should list manifests, add to recently used, go to search and display them", async () => {
+    const { user } = render(<Web3HubTest />);
+
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    await waitForLoader();
+
+    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+    expect(screen.getByRole("searchbox")).toBeDisabled();
+    await user.press(screen.getByRole("searchbox"));
+    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+    expect(screen.getByRole("searchbox")).toBeEnabled();
+
+    expect(screen.queryByText("Recently used")).toBeNull();
+
+    expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+    expect(await screen.findByText("Do not remind me again.")).toBeOnTheScreen();
+    expect(await screen.findByText("Open Dummy Wallet App")).toBeOnTheScreen();
+    await user.press(screen.getByText("Open Dummy Wallet App"));
+    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+    expect(screen.getByRole("searchbox")).toBeDisabled();
+    await user.press(screen.getByRole("searchbox"));
+    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+    expect(screen.getByRole("searchbox")).toBeEnabled();
+
+    expect(await screen.findByText("Recently used")).toBeOnTheScreen();
+    expect(await screen.findByTestId("recently-used-dummy-0")).toBeOnTheScreen();
+
+    expect(await screen.findByText("Clear all")).toBeOnTheScreen();
+    await user.press(screen.getByText("Clear all"));
+    expect(screen.queryByText("Recently used")).toBeNull();
   });
 });

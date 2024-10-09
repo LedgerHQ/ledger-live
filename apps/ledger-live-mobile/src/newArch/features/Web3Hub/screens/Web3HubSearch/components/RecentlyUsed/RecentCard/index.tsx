@@ -16,7 +16,7 @@ export default function RecentCard({
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} testID={`${item.id}-recently-used`}>
       <Flex
         bg={colors.lightGrey}
         flexDirection={"row"}
@@ -29,7 +29,7 @@ export default function RecentCard({
         borderRadius={16}
         columnGap={10}
       >
-        {!item.icon ? (
+        {item.icon ? (
           <Image
             style={{ height: 20, width: 20, borderRadius: 4 }}
             source={{
