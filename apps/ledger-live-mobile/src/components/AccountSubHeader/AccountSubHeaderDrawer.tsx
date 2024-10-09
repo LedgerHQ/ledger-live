@@ -23,7 +23,7 @@ type TeamLinkProps = {
 const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
   const { t } = useTranslation();
 
-  const onOpenHelp = useCallback(() => {
+  const onOpenTeam = useCallback(() => {
     Linking.openURL(teamLink);
   }, [teamLink]);
 
@@ -31,7 +31,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
     <>
       <Flex flexDirection="row" alignItems="center">
         <Text>{t("account.subHeader.drawer.descriptionLink.integration")} </Text>
-        <ExternalLink type="color" text={team} onPress={onOpenHelp} />
+        <ExternalLink type="color" text={team} onPress={onOpenTeam} />
       </Flex>
       <Text>{t("account.subHeader.drawer.descriptionLink.collab")}</Text>
     </>

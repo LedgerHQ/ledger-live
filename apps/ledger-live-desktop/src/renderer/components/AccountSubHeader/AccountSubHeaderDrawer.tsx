@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
@@ -38,12 +38,17 @@ type TeamLinkProps = {
 
 const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
   const { t } = useTranslation();
+
+  const onOpenTeam = useCallback(() => {
+    openURL(teamLink);
+  }, [teamLink]);
+
   return (
     <>
       <Description>{t("account.subHeader.drawer.descriptionLink.integration")}</Description>{" "}
       <Link
         verticalAlign={"bottom"}
-        onClick={() => openURL(teamLink)}
+        onClick={() => onOpenTeam}
         justifyContent="center"
         color={"palette.primary.main"}
       >
@@ -86,11 +91,9 @@ export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team, team
             {teamLink ? (
               <TeamLink team={team} teamLink={teamLink} />
             ) : (
-              <>
-                {t("account.subHeader.drawer.description3", {
-                  team,
-                })}
-              </>
+              t("account.subHeader.drawer.description3", {
+                team,
+              })
             )}
           </Description>
         </Box>
