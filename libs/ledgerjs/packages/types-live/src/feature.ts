@@ -189,6 +189,7 @@ export type Features = CurrencyFeatures & {
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
+  ldmkTransport: DefaultFeature;
 };
 
 /**
