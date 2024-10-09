@@ -491,6 +491,16 @@ function useUiHook(): UiHook {
           },
         });
       },
+      "bitcoin.getAddress": ({ account, path, onSuccess, onCancel }) => {
+        navigation.navigate(ScreenName.GetAddress, {
+          account,
+          path,
+          onSuccess: ({ address, publicKey }) => {
+            onSuccess(address, publicKey);
+          },
+          onError: onCancel,
+        });
+      },
     }),
     [navigation, device],
   );
