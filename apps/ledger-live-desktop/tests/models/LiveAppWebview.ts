@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
-import { waitFor } from "../utils/waitFor";
+
 import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
@@ -106,11 +106,11 @@ export class LiveAppWebview {
   }
 
   async waitForCorrectTextInWebview(textToCheck: string) {
-    return waitFor(() => this.textIsPresent(textToCheck));
+    return this.page.getByText(textToCheck);
   }
 
   async waitForLoaded() {
-    return this.page.waitForLoadState("domcontentloaded");
+    return this.page.waitForLoadState("load");
   }
 
   async textIsPresent(textToCheck: string) {

@@ -39,8 +39,10 @@ test("Earn @smoke", async ({ page }) => {
   const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);
 
-  await test.step("Navigate to Buy app from portfolio banner", async () => {
+  await test.step("Navigate to Earn app from main side drawer navigation", async () => {
     await layout.goToEarn();
+    await liveAppWebview.waitForLoaded();
+
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
