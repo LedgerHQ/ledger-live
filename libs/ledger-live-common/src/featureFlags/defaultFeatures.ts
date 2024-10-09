@@ -6,8 +6,8 @@ import {
   Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
-import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
+import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 
 /**
  * Default disabled feature.
