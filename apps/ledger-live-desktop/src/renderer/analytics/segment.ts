@@ -48,6 +48,7 @@ const getContext = () => ({
     url: "",
   },
 });
+console.log("hello");
 
 type ReduxStore = ReturnType<typeof createStore>;
 
