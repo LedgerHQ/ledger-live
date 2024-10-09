@@ -57,4 +57,13 @@ export class delegateModal extends Modal {
   async clickViewDetailsButton() {
     await this.detailsButton.click();
   }
+
+  @step("Fill amount $0")
+  async fillAmount(amount: string) {
+    if (amount == "send max") {
+      await this.toggleMaxAmount();
+    } else {
+      await this.cryptoAmountField.fill(amount);
+    }
+  }
 }

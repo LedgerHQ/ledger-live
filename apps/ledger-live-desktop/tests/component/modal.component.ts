@@ -100,13 +100,4 @@ export class Modal extends Component {
       isVisible = await element.isVisible();
     }
   }
-
-  @step("Fill amount")
-  async fillAmount(amount: string) {
-    if (amount == "send max") {
-      await this.toggleMaxAmount();
-    } else {
-      await this.cryptoAmountField.fill(amount);
-    }
-  }
 }

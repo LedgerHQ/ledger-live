@@ -85,4 +85,13 @@ export class SendModal extends Modal {
   async checkContinueButtonDisabled() {
     await expect(this.continueButton).toBeDisabled();
   }
+
+  @step("Fill amount $0")
+  async fillAmount(amount: string) {
+    if (amount == "send max") {
+      await this.toggleMaxAmount();
+    } else {
+      await this.cryptoAmountField.fill(amount);
+    }
+  }
 }

@@ -43,21 +43,21 @@ for (const account of accounts) {
         await app.delegate.verifyProvider(account.delegate.provider);
 
         await app.delegate.continueDelegate();
-        await app.modal.fillAmount(account.delegate.amount);
+        await app.delegate.fillAmount(account.delegate.amount);
         await app.modal.countinueSendAmount();
 
         await app.speculos.signDelegationTransaction(account.delegate);
         await app.delegate.clickViewDetailsButton();
 
         await app.drawer.waitForDrawerToBeVisible();
-        await app.drawer.transactionTypeIsVisible();
-        await app.drawer.providerIsVisible(account.delegate);
-        await app.drawer.amountValueIsVisible();
+        await app.delegateDrawer.transactionTypeIsVisible();
+        await app.delegateDrawer.providerIsVisible(account.delegate);
+        await app.delegateDrawer.amountValueIsVisible();
         await app.drawer.close();
 
         await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
-        await app.drawer.expectDelegationInfos(account.delegate);
+        await app.delegateDrawer.expectDelegationInfos(account.delegate);
       },
     );
   });

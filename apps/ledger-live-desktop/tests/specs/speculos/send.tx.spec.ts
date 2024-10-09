@@ -185,7 +185,7 @@ for (const transaction of transactionE2E) {
         await app.speculos.expectValidTxInfo(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
-        await app.drawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
+        await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
         await app.drawer.close();
 
         await app.layout.goToAccounts();
@@ -194,7 +194,7 @@ for (const transaction of transactionE2E) {
         );
         await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
-        await app.drawer.expectReceiverInfos(transaction.transaction);
+        await app.sendDrawer.expectReceiverInfos(transaction.transaction);
       },
     );
   });
@@ -272,7 +272,7 @@ test.describe("Send token (subAccount) - invalid amount input", () => {
         await app.account.clickSend();
         await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
         await app.send.clickContinue();
-        await app.modal.fillAmount(transaction.transaction.amount);
+        await app.send.fillAmount(transaction.transaction.amount);
         await app.send.checkContinueButtonDisabled();
         await app.layout.checkAmoutWarningMessage(transaction.expectedWarningMessage);
       },
@@ -308,7 +308,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.send.checkContinueButtonEnable();
       await app.layout.checkInputErrorNotVisible();
       await app.send.clickContinue();
-      await app.modal.fillAmount(tokenTransactionValid.amount);
+      await app.send.fillAmount(tokenTransactionValid.amount);
       await app.send.checkContinueButtonEnable();
     },
   );
@@ -337,7 +337,7 @@ for (const transaction of transactionsAmountInvalid) {
         await app.account.clickSend();
         await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
         await app.send.clickContinue();
-        await app.modal.fillAmount(transaction.transaction.amount);
+        await app.send.fillAmount(transaction.transaction.amount);
         await app.send.checkContinueButtonDisabled();
         await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
       },
@@ -373,7 +373,7 @@ test.describe("Verify send max user flow", () => {
       await app.account.clickSend();
       await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
       await app.send.clickContinue();
-      await app.modal.fillAmount(transactionInputValid.amount);
+      await app.send.fillAmount(transactionInputValid.amount);
       await app.send.checkContinueButtonEnable();
       await app.layout.checkInputErrorNotVisible();
     },

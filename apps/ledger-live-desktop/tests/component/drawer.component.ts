@@ -1,9 +1,5 @@
 import { Component } from "tests/page/abstractClasses";
-import { expect } from "@playwright/test";
-import { Transaction } from "tests/models/Transaction";
-import { Delegate } from "tests/models/Delegate";
 import { step } from "tests/misc/reporters/step";
-import { Currency } from "tests/enum/Currency";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -12,9 +8,6 @@ export class Drawer extends Component {
   private closeButton = this.page.getByTestId("drawer-close-button");
   private currencyButton = (currency: string) =>
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
-  private addressValue = (address: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
   readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
@@ -22,47 +15,9 @@ export class Drawer extends Component {
   readonly swapAccountFrom = this.page.getByTestId("swap-account-from").first();
   readonly swapAccountTo = this.page.getByTestId("swap-account-to").first();
   readonly backButton = this.page.getByRole("button", { name: "Back" });
-  private provider = (provider: string) =>
-    this.page.getByTestId("drawer-content").locator(`text=${provider}`);
-  private transactionType = this.page.getByTestId("transaction-type");
 
   async continue() {
     await this.continueButton.click();
-  }
-
-  @step("Verify address is visible")
-  async addressValueIsVisible(address: string) {
-    await this.addressValue(address).waitFor({ state: "visible" });
-  }
-
-  @step("Verify provider is visible")
-  async providerIsVisible(account: Delegate) {
-    if (account.account.currency === Currency.SOL || account.account.currency === Currency.ATOM) {
-      await this.provider(account.provider).waitFor({ state: "visible" });
-    }
-  }
-
-  @step("Verify amount is visible")
-  async amountValueIsVisible() {
-    await this.amountValue.waitFor({ state: "visible" });
-  }
-
-  @step("Verify transaction type is correct")
-  async transactionTypeIsVisible() {
-    await this.transactionType.waitFor({ state: "visible" });
-  }
-
-  @step("Verify that the information of the delegation is visible")
-  async expectDelegationInfos(delegationInfo: Delegate) {
-    await this.providerIsVisible(delegationInfo);
-    await this.amountValueIsVisible();
-    await this.transactionTypeIsVisible();
-  }
-
-  @step("Verify that the information of the transaction is visible")
-  async expectReceiverInfos(tx: Transaction) {
-    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
-    await expect(this.amountValue).toBeVisible();
   }
 
   async waitForDrawerToBeVisible() {
