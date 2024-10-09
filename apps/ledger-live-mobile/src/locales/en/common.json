@@ -3112,6 +3112,9 @@
       "input": "Enter address",
       "inputEns": "Enter address or ENS"
     },
+    "memoTag": {
+      "input": "Enter Tag / Memo"
+    },
     "send": {
       "title": "Send",
       "description": "Send crypto to another wallet."

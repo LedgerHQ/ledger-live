@@ -7,6 +7,7 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-nft";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
@@ -29,6 +30,7 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import KeyboardView from "~/components/KeyboardView";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
+import { MemoTagInpput } from "~/components/MemoTagInpput";
 import RetryButton from "~/components/RetryButton";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -36,7 +38,9 @@ import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
+import { MEMO_TAG_COINS } from "~/utils/constants";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
+import { MemoTagInput } from "./MemoTagInput";
 import RecipientRow from "./RecipientRow";
 
 const withoutHiddenError = (error: Error): Error | null =>
@@ -125,6 +129,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         }),
       );
       setValue(recipient);
+    },
+    [account, parentAccount, setTransaction, transaction],
+  );
+
+  const onChangeMemoTag = useCallback(
+    (tag: number | undefined) => {
+      const bridge = getAccountBridge(account, parentAccount);
+      setTransaction(bridge.updateTransaction(transaction, { tag }));
     },
     [account, parentAccount, setTransaction, transaction],
   );
@@ -283,6 +295,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+
+            <FeatureToggle featureId="llmMemoTag">
+              {"id" in currency && MEMO_TAG_COINS.includes(currency.id) && (
+                <MemoTagInput onChange={onChangeMemoTag} />
+              )}
+            </FeatureToggle>
+
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
