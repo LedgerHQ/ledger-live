@@ -526,6 +526,9 @@ export enum ScreenName {
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",
 
+  // Wallet API
+  GetAddress = "GetAddress",
+
   // Web3Hub
   Web3HubMain = "Web3HubMain",
   Web3HubSearch = "Web3HubSearch",

@@ -4,7 +4,7 @@ import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { Account, AnyMessage, Bridge } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import Acre from "@blooo/hw-app-acre";
+import Acre from "@blooo/hw-app-acre/lib/index";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { BitcoinSignature, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";

@@ -198,6 +198,24 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     deviceCloseFail: (manifest: AppManifest) => {
       track("WalletAPI device close fail", getEventData(manifest));
     },
+    bitcoinFamilyAccountAddressRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressSuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address success", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeyRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeyFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeySuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey success", getEventData(manifest));
+    },
     bitcoinFamilyAccountXpubRequested: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account xpub requested", getEventData(manifest));
     },
