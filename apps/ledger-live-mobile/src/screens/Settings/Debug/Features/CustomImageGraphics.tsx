@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,
@@ -56,14 +56,13 @@ export default function DebugCustomImageGraphics() {
   const insets = useSafeAreaInsets();
 
   const slider = (
-    <></>
-    // <Slider
-    //   value={progress}
-    //   minimumValue={0}
-    //   maximumValue={1}
-    //   step={0.01}
-    //   onValueChange={val => typeof val === "number" && setProgress(val)}
-    // />
+    <Slider
+      value={progress}
+      minimumValue={0}
+      maximumValue={1}
+      step={0.01}
+      onValueChange={val => typeof val === "number" && setProgress(val)}
+    />
   );
 
   const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId, theme);
