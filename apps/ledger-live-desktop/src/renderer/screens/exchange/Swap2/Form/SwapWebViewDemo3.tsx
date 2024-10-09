@@ -33,7 +33,6 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
@@ -92,11 +91,6 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
-// remove the account id from the from path
-function simplifyFromPath(path: string): string {
-  return path.replace(/^\/account.*/, "/account/{id}");
-}
-
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
@@ -118,13 +112,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { state } = useLocation<{
-    defaultAccount?: AccountLike;
-    defaultParentAccount?: Account;
-    from?: string;
-  }>();
+  const { state } = useLocation<{ defaultAccount?: AccountLike; defaultParentAccount?: Account }>();
   const redirectToHistory = useRedirectToSwapHistory();
-  const swapLiveEnabledFlag = useSwapLiveConfig();
 
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -289,26 +278,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           ? {
               fromAccountId: accountToWalletAPIAccount(
                 walletState,
-                state?.defaultAccount,
+                state.defaultAccount,
                 state?.defaultParentAccount,
               ).id,
             }
           : {}),
-        ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
-        ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
-          ? {
-              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
-            }
-          : {}),
       }).toString(),
-    [
-      isOffline,
-      state?.defaultAccount,
-      state?.defaultParentAccount,
-      state?.from,
-      walletState,
-      swapLiveEnabledFlag,
-    ],
+    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
@@ -320,7 +296,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);
 
-    if (!state?.loading && state?.isAppUnavailable) {
+    if (!state.loading && state.isAppUnavailable) {
       liveAppUnavailable();
       captureException(
         new UnableToLoadSwapLiveError(
@@ -331,12 +307,12 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   };
 
   useEffect(() => {
-    if (webviewState?.url.includes("/unknown-error")) {
+    if (webviewState.url.includes("/unknown-error")) {
       // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
       onSwapWebviewError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [webviewState?.url]);
+  }, [webviewState.url]);
 
   return (
     <>
