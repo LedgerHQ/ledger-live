@@ -19,7 +19,8 @@ export class AcreModule extends CustomModule {
    * Let the user sign the provided message.
    * @param accountId - Ledger Live id of the account
    * @param message - Message the user should sign
-   * @param derivationPath - Derivation path to sign the message with
+   * @param derivationPath - The derivation path is a relative derivation path from the account
+   * e.g to use the first address of an account, one will request for the “0/0“ derivation path
    * @param options - Extra parameters
    *
    * @returns Message signed
