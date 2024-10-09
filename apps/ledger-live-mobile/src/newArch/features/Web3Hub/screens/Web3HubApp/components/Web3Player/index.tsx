@@ -1,37 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Flex } from "@ledgerhq/native-ui";
+import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { StyleSheet, View, BackHandler, Platform } from "react-native";
+import { SharedValue } from "react-native-reanimated";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import HeaderTitle from "~/components/HeaderTitle";
-import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
-import { RightHeader } from "./RightHeader";
 import { BottomBar } from "./BottomBar";
 import { InfoPanel } from "./InfoPanel";
 
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
+  onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
+  layoutY: SharedValue<number>;
+  webviewState: WebviewState;
+  setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
-const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
+const WebPlatformPlayer = ({
+  manifest,
+  inputs,
+  onScroll,
+  layoutY,
+  webviewState,
+  setWebviewState,
+}: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
-
-  const navigation =
-    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
 
@@ -57,27 +55,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitleAlign: "left",
-      headerLeft: () => null,
-      headerTitleContainerStyle: { marginHorizontal: 0 },
-      headerTitle: () => (
-        <Flex justifyContent={"center"} flex={1}>
-          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
-        </Flex>
-      ),
-      headerRight: () => (
-        <RightHeader
-          webviewAPIRef={webviewAPIRef}
-          webviewState={webviewState}
-          handlePressInfo={() => setIsInfoPanelOpened(true)}
-        />
-      ),
-      headerShown: true,
-    });
-  }, [manifest, navigation, webviewState]);
-
   const customPTXHandlers = usePTXCustomHandlers(manifest);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -88,9 +65,10 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [customPTXHandlers]);
 
   return (
-    <SafeAreaView style={[styles.root]}>
+    <View style={styles.root}>
       <Web3AppWebview
         ref={webviewAPIRef}
+        onScroll={onScroll}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
@@ -102,6 +80,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         currentAccountHistDb={currentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
+        layoutY={layoutY}
       />
       <InfoPanel
         name={manifest.name}
@@ -112,7 +91,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         isOpened={isInfoPanelOpened}
         setIsOpened={setIsInfoPanelOpened}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

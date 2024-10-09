@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
+import { Observable } from "rxjs";
 import { RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 import { restoreAppData } from "./restoreAppData";
 
@@ -29,7 +29,7 @@ describe("restoreAppData", () => {
     jest.clearAllMocks();
   });
 
-  it("should restore the app data by emitting relative events sequentially when data size > 255", async () => {
+  it("should restore the app data by emitting relative events sequentially when data size > 255", done => {
     const restoreObservable: Observable<RestoreAppDataEvent> = restoreAppData(
       transport,
       appName,
@@ -37,57 +37,67 @@ describe("restoreAppData", () => {
     );
     const events: RestoreAppDataEvent[] = [];
 
-    // Subscribe to the observable to receive the restore events
-    restoreObservable.subscribe((event: RestoreAppDataEvent) => {
-      events.push(event);
-    });
+    const expectedEvents = [
+      { type: RestoreAppDataEventType.AppDataInitialized },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.AppDataRestored },
+    ];
 
-    const firstValue: RestoreAppDataEvent = await firstValueFrom(restoreObservable);
-    expect(firstValue).toEqual({
-      type: RestoreAppDataEventType.AppDataInitialized,
+    // Subscribe to the observable to receive the restore and delete events
+    restoreObservable.subscribe({
+      next: (event: RestoreAppDataEvent) => {
+        events.push(event);
+      },
+      complete: () => {
+        try {
+          expect(events).toHaveLength(5);
+          expect(events).toEqual(expectedEvents);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+      error: (e: Error) => {
+        done(e);
+      },
     });
-
-    const lastValue: RestoreAppDataEvent = await lastValueFrom(restoreObservable);
-    expect(lastValue).toEqual({
-      type: RestoreAppDataEventType.AppDataRestored,
-    });
-
-    expect(events).toContainEqual({
-      type: RestoreAppDataEventType.Progress,
-      data: expect.any(Number),
-    });
-
-    expect(events).toHaveLength(5);
   });
 
-  it("should restore the app data by emitting relative events sequentially when data size < 255", async () => {
+  it("should restore the app data by emitting relative events sequentially when data size < 255", done => {
     const restoreObservable: Observable<RestoreAppDataEvent> = restoreAppData(
       transport,
       appName,
-      "Ledger Flex",
+      appData,
     );
     const events: RestoreAppDataEvent[] = [];
 
+    const expectedEvents = [
+      { type: RestoreAppDataEventType.AppDataInitialized },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.Progress, data: expect.any(Number) },
+      { type: RestoreAppDataEventType.AppDataRestored },
+    ];
+
     // Subscribe to the observable to receive the restore events
-    restoreObservable.subscribe((event: RestoreAppDataEvent) => {
-      events.push(event);
+    restoreObservable.subscribe({
+      next: (event: RestoreAppDataEvent) => {
+        events.push(event);
+      },
+      complete: () => {
+        try {
+          expect(events).toHaveLength(5);
+          expect(events).toEqual(expectedEvents);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+      error: (e: Error) => {
+        done(e);
+      },
     });
-
-    const firstValue: RestoreAppDataEvent = await firstValueFrom(restoreObservable);
-    expect(firstValue).toEqual({
-      type: RestoreAppDataEventType.AppDataInitialized,
-    });
-
-    const lastValue: RestoreAppDataEvent = await lastValueFrom(restoreObservable);
-    expect(lastValue).toEqual({
-      type: RestoreAppDataEventType.AppDataRestored,
-    });
-
-    expect(events).toContainEqual({
-      type: RestoreAppDataEventType.Progress,
-      data: expect.any(Number),
-    });
-
-    expect(events).toHaveLength(3);
   });
 });

@@ -20,7 +20,7 @@ export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
     onPressWhenDisabled?: TouchableOpacityProps["onPress"];
     iconName?: string;
-    type?: "main" | "shade" | "error" | "color" | "default";
+    type?: "main" | "shade" | "error" | "color" | "accent" | "default";
     size?: "small" | "medium" | "large";
     iconPosition?: "right" | "left";
     outline?: boolean;
@@ -141,6 +141,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
           variant={ctaTextType[size]}
           fontWeight={"semiBold"}
           color={textColor}
+          {...(!Icon && { textAlign: "center" })}
         >
           {children}
         </Text>

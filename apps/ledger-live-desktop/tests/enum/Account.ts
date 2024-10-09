@@ -7,16 +7,52 @@ export class Account {
     public readonly address: string,
   ) {}
 
-  static readonly BTC_1 = new Account(
+  static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
     "bc1qx7f9plgr8msjatkv0dw2ne8gguwfjqr6xyjp50",
   );
 
-  static readonly BTC_2 = new Account(
+  static readonly BTC_NATIVE_SEGWIT_2 = new Account(
     Currency.BTC,
     "Bitcoin 2",
     "bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r",
+  );
+
+  static readonly BTC_LEGACY_1 = new Account(
+    Currency.BTC,
+    "Bitcoin Legacy 1",
+    "1FMx2XwRHKXhbJcaekgPqN111wtRftkHyw",
+  );
+
+  static readonly BTC_LEGACY_2 = new Account(
+    Currency.BTC,
+    "Bitcoin Legacy 2",
+    "1Nen8hLiZysV6TWi6o6hTBp6dtkRXrJyWh",
+  );
+
+  static readonly BTC_SEGWIT_1 = new Account(
+    Currency.BTC,
+    "Bitcoin Segwit 1",
+    "3C7fQ47BiZuZN7V2WTgHLq4sqpb5BEp91i",
+  );
+
+  static readonly BTC_SEGWIT_2 = new Account(
+    Currency.BTC,
+    "Bitcoin Segwit 2",
+    "3B5psxZfUkU6AzPJoirgPQS7dC9vv7ohcK",
+  );
+
+  static readonly BTC_TAPROOT_1 = new Account(
+    Currency.BTC,
+    "Bitcoin Taproot 1",
+    "bc1pv4aytu7u4pk4nvelymxp65vndxqh4e3xsn0v7cguy6t98k5vynks5td23j",
+  );
+
+  static readonly BTC_TAPROOT_2 = new Account(
+    Currency.BTC,
+    "Bitcoin Taproot 2",
+    "bc1pywrw64mkvpzxkje5fkcz7vafj03yyzyvx4vg8wy2klvq8wtyfe7sq2jgzd",
   );
 
   static readonly tBTC_1 = new Account(
@@ -53,6 +89,12 @@ export class Account {
     Currency.ETH,
     "Ethereum 2",
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+  );
+
+  static readonly ETH_3 = new Account(
+    Currency.ETH,
+    "Ethereum 3",
+    "0x50F293e4C3815F5214dac1Bae8F8FC3F24b8BA59",
   );
 
   static readonly tETH_1 = new Account(
@@ -193,8 +235,8 @@ export class Account {
     "Tezos 2",
     "tz1g3uEPZ9T3AhUZDTbGW9V43JRfizJmSnPv",
   );
-  static readonly MATIC_1 = new Account(
-    Currency.MATIC,
+  static readonly POL_1 = new Account(
+    Currency.POL,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
@@ -205,10 +247,22 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly ETH_USDT = new Account(
+  static readonly NEAR_1 = new Account(
+    Currency.NEAR,
+    "NEAR 1",
+    "70b2982a31cfcffc773145d2143392612bb83a22926c912e2ce3ec0634f637e2",
+  );
+
+  static readonly ETH_USDT_1 = new Account(
     Currency.ETH_USDT,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly ETH_USDT_2 = new Account(
+    Currency.ETH_USDT,
+    "Ethereum 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
   );
 
   static readonly ETH_LIDO = new Account(
@@ -253,10 +307,16 @@ export class Account {
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
   );
 
-  static readonly BSC_BUSD = new Account(
+  static readonly BSC_BUSD_1 = new Account(
     Currency.BSC_BUSD,
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly BSC_BUSD_2 = new Account(
+    Currency.BSC_BUSD,
+    "Binance Smart Chain 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
   );
 
   static readonly BSC_SHIBA = new Account(
@@ -265,15 +325,23 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly MATIC_DAI = new Account(
-    Currency.MATIC_DAI,
+  static readonly POL_DAI_1 = new Account(
+    Currency.POL_DAI,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly MATIC_UNI = new Account(
-    Currency.MATIC_UNI,
+  static readonly POL_UNI = new Account(
+    Currency.POL_UNI,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly EMPTY = new Account(Currency.BTC, "Empty", " ");
+
+  static readonly ETH_2_LOWER_CASE = new Account(
+    Currency.ETH,
+    "Ethereum 2",
+    "0x43047a5023d55a8658fcb1c1cea468311adaa3ad",
   );
 }

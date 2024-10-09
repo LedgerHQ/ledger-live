@@ -92,14 +92,13 @@ export const useDefaultSlides = (): {
               : currentCard.id &&
                 dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
             setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-            dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
           }
+          dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
         }
       }
     },
     [portfolioCards, cachedContentCards, isTrackedUser, dispatch],
   );
-
   const logSlideClick = useCallback(
     (cardId: string) => {
       const currentCard = cachedContentCards.find(card => card.id === cardId);
@@ -107,8 +106,10 @@ export const useDefaultSlides = (): {
       if (currentCard) {
         // For some reason braze won't log the click event if the card url is empty
         // Setting it as the card id just to have a dummy non empty value
-        isTrackedUser &&
-          braze.logContentCardClick({ ...currentCard, url: currentCard.id } as braze.ClassicCard);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        currentCard.url = currentCard.id;
+        isTrackedUser && braze.logContentCardClick(currentCard as braze.ClassicCard);
       }
     },
     [cachedContentCards, isTrackedUser],

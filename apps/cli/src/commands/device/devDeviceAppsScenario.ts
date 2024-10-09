@@ -4,10 +4,8 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { initState, ListAppsResult, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import {
-  listAppsUseCase,
-  execWithTransport,
-} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import { deviceOpt } from "../../scan";
 import { Application } from "@ledgerhq/types-live";

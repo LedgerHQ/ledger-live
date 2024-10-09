@@ -28,7 +28,8 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { TrustchainStore } from "@ledgerhq/trustchain/store";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 // === ACCOUNT STATE ===
 
@@ -263,6 +264,7 @@ export type SettingsState = {
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
+  fromLedgerSyncOnboarding: boolean;
 };
 
 export type NotificationsSettings = {
@@ -294,6 +296,7 @@ export type EarnState = {
   infoModal: {
     message?: string;
     messageTitle?: string;
+    learnMoreLink?: string;
   };
 };
 
@@ -345,6 +348,8 @@ export type MarketState = {
 
 export type WalletSyncState = {
   isManageKeyDrawerOpen: boolean;
+  isActivateDrawerOpen: boolean;
+  activateDrawerStep: Steps;
 };
 
 // === ROOT STATE ===

@@ -1,4 +1,5 @@
 import { MediaProps } from "./Media";
+import { MappingKeys } from "./Ordinals";
 
 export type NftRowProps = {
   media: MediaProps;
@@ -7,16 +8,23 @@ export type NftRowProps = {
   onClick: () => void;
 };
 
+export interface IconProps {
+  size: "S" | "XS" | "M" | "L" | "XL" | undefined;
+  color: string;
+  style?: React.CSSProperties;
+}
+
 export type OrdinalsRowProps = {
   media: MediaProps;
   tokenName: string;
   collectionName: string;
-  tokenIcons: string[];
+  tokenIcons: Array<({ size, color, style }: IconProps) => JSX.Element>;
+  rareSatName: MappingKeys[];
   onClick: () => void;
 };
 
 export type RareSatsRowProps = {
-  tokenIcons: string[];
+  tokenIcons: Array<({ size, color, style }: IconProps) => JSX.Element>;
   tokenName: string[];
   numberOfSats: number[];
   yearOfCreation: number[];
@@ -35,6 +43,8 @@ export type TableHeaderActionsProps = {
 
 export enum TableHeaderTitleKey {
   NFTCollections = "NFT.collections.title",
+  Inscriptions = "Inscriptions",
+  RareSats = "ordinals.rareSats.title",
 }
 
 export type TableHeaderProps = {

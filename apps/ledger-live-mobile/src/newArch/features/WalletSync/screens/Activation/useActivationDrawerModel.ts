@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Steps } from "../../types/Activation";
 import {
   AnalyticsButton,
@@ -7,6 +7,13 @@ import {
 } from "../../hooks/useLedgerSyncAnalytics";
 import { useQRCodeHost } from "../../hooks/useQRCodeHost";
 import { Options } from "LLM/features/WalletSync/types/Activation";
+import { NavigatorName, ScreenName } from "~/const";
+import { useNavigation } from "@react-navigation/native";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { useCurrentStep } from "../../hooks/useCurrentStep";
+import { useDispatch } from "react-redux";
+import { blockPasswordLock } from "~/actions/appstate";
 
 type Props = {
   isOpen: boolean;
@@ -14,11 +21,22 @@ type Props = {
   handleClose: () => void;
 };
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+>;
+
 const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
-  const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
-  const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
+  const { currentStep, setCurrentStep } = useCurrentStep();
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setCurrentStep(startingStep);
+  }, [startingStep, isOpen, setCurrentStep]);
+
+  const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
   const canGoBack = useMemo(
     () => currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation,
@@ -46,6 +64,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
       button: AnalyticsButton.ScanQRCode,
       page: AnalyticsPage.ChooseSyncMethod,
     });
+
+    dispatch(blockPasswordLock(true));
     setCurrentStep(Steps.QrCodeMethod);
   };
 
@@ -56,20 +76,24 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
   const onCloseDrawer = () => {
+    dispatch(blockPasswordLock(false));
     resetStep();
     resetOption();
     handleClose();
   };
 
+  const onCreateKey = () => {
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncActivationProcess,
+    });
+  };
+
   const { url, error, isLoading, pinCode } = useQRCodeHost({
-    setCurrentStep,
-    currentStep,
     currentOption,
   });
 
   return {
     isOpen,
-    currentStep,
     hasCustomHeader,
     canGoBack,
     navigateToChooseSyncMethod,
@@ -81,7 +105,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     qrProcess: { url, error, isLoading, pinCode },
     currentOption,
     setCurrentOption,
-    setCurrentStep,
+    onCreateKey,
   };
 };
 

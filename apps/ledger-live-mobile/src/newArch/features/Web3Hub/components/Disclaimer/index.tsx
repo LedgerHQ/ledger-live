@@ -25,6 +25,10 @@ export default function Disclaimer({
       : undefined;
   }, [locale, manifest?.content.description]);
 
+  const clearSigningEnabled = useMemo(() => {
+    return manifest?.categories.includes("clear signing");
+  }, [manifest?.categories]);
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       {manifest ? (
@@ -35,7 +39,7 @@ export default function Disclaimer({
 
       {description ? (
         <Flex mt={6}>
-          <Text fontSize={14} lineHeight={"22px"} color="smoke">
+          <Text numberOfLines={12} fontSize={14} lineHeight={"22px"} color="smoke">
             {description}
           </Text>
         </Flex>
@@ -43,18 +47,29 @@ export default function Disclaimer({
 
       <Box mt={6} height="1px" width="100%" backgroundColor={"translucentGrey"} />
 
-      <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
-        <Box mr={2}>
-          <Icons.Eye color={"smoke"} />
-        </Box>
-        <Text fontSize={14} color="smoke">
-          {t("web3hub.disclaimer.clearSigningEnabled")}
-        </Text>
-      </Flex>
+      {clearSigningEnabled ? (
+        <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
+          <Box mr={2}>
+            <Icons.Eye color={"smoke"} />
+          </Box>
+          <Text fontSize={14} color="smoke">
+            {t("web3hub.components.disclaimer.clearSigningEnabled")}
+          </Text>
+        </Flex>
+      ) : (
+        <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
+          <Box mr={2}>
+            <Icons.EyeCross color={"smoke"} />
+          </Box>
+          <Text fontSize={14} color="smoke">
+            {t("web3hub.components.disclaimer.clearSigningDisabled")}
+          </Text>
+        </Flex>
+      )}
 
       <Flex mt={6}>
         <Checkbox
-          label={"  " + t("web3hub.disclaimer.checkbox")}
+          label={"  " + t("web3hub.components.disclaimer.checkbox")}
           checked={isChecked}
           onChange={toggleCheck}
         />
@@ -62,7 +77,7 @@ export default function Disclaimer({
 
       <Flex mt={6}>
         <Button type="main" onPress={onConfirm}>
-          {t("web3hub.disclaimer.CTA", { app: manifest?.name })}
+          {t("web3hub.components.disclaimer.CTA", { app: manifest?.name })}
         </Button>
       </Flex>
     </QueuedDrawer>

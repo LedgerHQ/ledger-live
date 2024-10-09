@@ -43,14 +43,14 @@ runs:
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
-    - uses: actions/setup-dotnet@v3.2.0
+    - uses: actions/setup-dotnet@v4
       if: inputs.install-dotnet != ''
       with:
         dotnet-version: 2.1.816
 
     - uses: pnpm/action-setup@v4
       with:
-        version: 9.4.0
+        version: 9.11.0
     - name: Get pnpm store directory
       shell: bash
       run: |
@@ -79,7 +79,7 @@ runs:
         region: ${{ inputs.region }}
         use-fallback: false
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 20.11.0
         registry-url: "https://registry.npmjs.org"

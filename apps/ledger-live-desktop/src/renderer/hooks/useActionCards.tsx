@@ -8,6 +8,7 @@ import { openURL } from "~/renderer/linking";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { setDismissedContentCards } from "../actions/settings";
+import { ActionContentCard } from "~/types/dynamicContent";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
@@ -37,9 +38,10 @@ const useActionCards = () => {
         : currentCard.id &&
           dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-      dispatch(setActionCards(actionCards.filter(n => n.id !== currentCard.id)));
     }
-    if (actionCard) {
+    dispatch(setActionCards(actionCards.filter((n: ActionContentCard) => n.id !== actionCard?.id)));
+
+    if (actionCard && !actionCard.isMock) {
       track("contentcard_dismissed", {
         contentcard: actionCard.title,
         campaign: actionCard.id,
@@ -53,11 +55,17 @@ const useActionCards = () => {
     const currentCard = findCard(cardId);
     const actionCard = findActionCard(cardId);
 
+    if (actionCard?.isMock) {
+      link && openURL(link);
+    }
+
     if (currentCard) {
       // For some reason braze won't log the click event if the card url is empty
       // Setting it as the card id just to have a dummy non empty value
-      isTrackedUser &&
-        braze.logContentCardClick({ ...currentCard, url: currentCard.id } as braze.ClassicCard);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      currentCard.url = currentCard.id;
+      isTrackedUser && braze.logContentCardClick(currentCard as braze.ClassicCard);
       link && openURL(link);
     }
     if (actionCard) {

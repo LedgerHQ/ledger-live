@@ -1,20 +1,27 @@
-import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { QueryKey } from "./type.hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useLifeCycle } from "./walletSync.hooks";
+import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const errorHandler = useLifeCycle();
+  const { handleError } = useLifeCycle();
 
   function fetchMembers() {
-    if (!trustchain || !memberCredentials) {
-      throw new Error("Trustchain or MemberCredentials is falsy");
+    if (!memberCredentials) {
+      return;
+    }
+    if (!trustchain) {
+      throw new TrustchainNotFound();
     }
 
     return sdk.getMembers(trustchain, memberCredentials);
@@ -32,13 +39,14 @@ export function useGetMembers() {
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     retry: false,
+    enabled: !!trustchain && !!memberCredentials,
   });
 
   useEffect(() => {
     if (isErrorGetMembers) {
-      errorHandler.handleError(getMembersError);
+      handleError(getMembersError);
     }
-  }, [errorHandler, getMembersError, isErrorGetMembers]);
+  }, [handleError, getMembersError, isErrorGetMembers]);
 
   return {
     isMembersLoading: isMembersLoading,

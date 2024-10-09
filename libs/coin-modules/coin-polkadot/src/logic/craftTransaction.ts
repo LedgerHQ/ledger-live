@@ -5,7 +5,7 @@ import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
 import { hexToU8a } from "@polkadot/util";
-import { CoreTransasctionInfo, TransasctionPayloadInfo } from "../types";
+import { TransactionPayloadInfo } from "../types";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
@@ -169,7 +169,6 @@ export async function craftTransaction(
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
-  runtimeUpgraded: boolean = false,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
 
@@ -180,16 +179,13 @@ export async function craftTransaction(
   // Get the correct extrinsics params depending on transaction
   const extrinsicParams = getExtrinsicParams(extractExtrinsicArg);
 
-  const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
   const era = registry
     .createType("ExtrinsicEra", {
       current: info.blockNumber,
       period: DEFAULTS.eraPeriod,
     })
     .toHex();
-  const nonce = registry.createType("Compact<Index>", nonceToUse).toHex();
   const specVersion = registry.createType("u32", info.specVersion).toHex();
-  const tip = registry.createType("Compact<Balance>", DEFAULTS.tip).toHex();
   const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
   const methodFunction = extrinsics[extrinsicParams.pallet][extrinsicParams.name];
   const methodArgs = methodFunction.meta.args;
@@ -209,36 +205,20 @@ export async function craftTransaction(
   ).toHex();
 
   const { blockHash, genesisHash } = info;
-  let unsigned: CoreTransasctionInfo | TransasctionPayloadInfo = {
+  const metadataHash = await polkadotAPI.metadataHash();
+  const unsigned: TransactionPayloadInfo = {
     address,
     blockHash,
-    blockNumber,
     era,
     genesisHash,
     method,
-    nonce,
-    signedExtensions: registry.signedExtensions,
-    specVersion,
-    tip,
+    nonce: nonceToUse,
     transactionVersion,
+    specVersion,
     version: EXTRINSIC_VERSION,
+    metadataHash: hexToU8a("01" + metadataHash),
+    mode: 1,
   };
-  if (runtimeUpgraded) {
-    const metadataHash = await polkadotAPI.metadataHash();
-    unsigned = {
-      address,
-      blockHash,
-      era,
-      genesisHash,
-      method,
-      nonce: nonceToUse,
-      transactionVersion,
-      specVersion,
-      version: EXTRINSIC_VERSION,
-      metadataHash: hexToU8a("01" + metadataHash),
-      mode: 1,
-    } as TransasctionPayloadInfo;
-  }
 
   return {
     registry,
@@ -247,7 +227,7 @@ export async function craftTransaction(
 }
 
 /**
- * Transasction using a fake recipient to estimate fees
+ * Transaction using a fake recipient to estimate fees
  * @param account source address
  * @param amount
  */

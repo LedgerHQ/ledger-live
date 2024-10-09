@@ -3,10 +3,10 @@ import WebSocket from "ws";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { CloudSyncSDK, UpdateEvent } from "../sdk";
-import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
+import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
-import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 describe("CloudSyncSDK basics", () => {
   const port = 54034;

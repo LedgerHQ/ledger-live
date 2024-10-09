@@ -55,6 +55,7 @@ import {
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -76,7 +77,9 @@ const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
 const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
+const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Gallery"));
 const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
+const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -188,6 +191,7 @@ export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const accounts = useSelector(accountsSelector);
+  const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useListenToHidDevices();
@@ -200,9 +204,10 @@ export default function Default() {
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
-
+  const isNftReworkedEnabled = nftReworked?.enabled;
   useEffect(() => {
     if (
       !isLocked &&
@@ -325,7 +330,7 @@ export default function Default() {
                               <Route path="/" exact render={withSuspense(Dashboard)} />
                               <Route path="/settings" render={withSuspense(Settings)} />
                               <Route path="/accounts" render={withSuspense(Accounts)} />
-                              <Route path="/card" render={withSuspense(Card)} />
+                              <Route exact path="/card/:appId?" render={withSuspense(Card)} />
                               <Redirect from="/manager/reload" to="/manager" />
                               <Route path="/manager" render={withSuspense(Manager)} />
                               <Route
@@ -343,12 +348,16 @@ export default function Default() {
                               <Route
                                 exact
                                 path="/account/:id/nft-collection"
-                                render={withSuspense(NFTGallery)}
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
+                                )}
                               />
                               <Route path="/swap-web" render={withSuspense(SwapWeb)} />
                               <Route
                                 path="/account/:id/nft-collection/:collectionAddress?"
-                                render={withSuspense(NFTCollection)}
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
+                                )}
                               />
                               <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
                               <Route path="/account/:id" render={withSuspense(Account)} />
@@ -387,7 +396,7 @@ export default function Default() {
         </BridgeSyncProvider>
       </IsUnlocked>
 
-      {process.env.ANALYTICS_CONSOLE ? <AnalyticsConsole /> : null}
+      {analyticsConsoleActive ? <AnalyticsConsole /> : null}
     </>
   );
 }

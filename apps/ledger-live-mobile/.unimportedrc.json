@@ -30,7 +30,7 @@
     "expo-image-loader",
     "expo-modules-autolinking",
     "expo-modules-core",
-    "expo-random",
+    "expo-crypto",
     "prop-types",
     "react-native-codegen",
     "react-native-fast-pbkdf2",

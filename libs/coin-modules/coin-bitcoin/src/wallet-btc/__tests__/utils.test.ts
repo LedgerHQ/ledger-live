@@ -140,7 +140,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhct"], "digibyte", true);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFc"], "komodo", true);
-    validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjS"], "pivx", true);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dc"], "zencash", true);
     validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
     validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
@@ -159,7 +158,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaa"], "dogecoin", false);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhcc"], "digibyte", false);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFF"], "komodo", false);
-    validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjj"], "pivx", false);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dd"], "zencash", false);
     validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
     validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);

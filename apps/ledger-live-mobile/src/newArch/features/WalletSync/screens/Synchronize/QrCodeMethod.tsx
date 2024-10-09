@@ -15,19 +15,26 @@ interface Props {
   setSelectedOption: (option: OptionsType) => void;
   onQrCodeScanned: (data: string) => void;
   currentOption: Options;
+  qrCodeValue?: string | null;
 }
 
-const QrCodeMethod = ({ setSelectedOption, onQrCodeScanned, currentOption }: Props) => {
+const QrCodeMethod = ({
+  setSelectedOption,
+  onQrCodeScanned,
+  currentOption,
+  qrCodeValue,
+}: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
 
   const handleSelectOption = (option: OptionsType) => {
     setSelectedOption(option);
     const button =
-      option === Options.SCAN ? AnalyticsButton.ScanQRCode : AnalyticsButton.ShowQRCode;
+      option === Options.SCAN ? AnalyticsButton.ShowQRCode : AnalyticsButton.ScanQRCode;
+    const page = option === Options.SCAN ? AnalyticsPage.ShowQRCode : AnalyticsPage.ScanQRCode;
     onClickTrack({
       button,
-      page: AnalyticsPage.ScanQRCode,
+      page,
     });
   };
 
@@ -36,15 +43,15 @@ const QrCodeMethod = ({ setSelectedOption, onQrCodeScanned, currentOption }: Pro
       case Options.SCAN:
         return (
           <>
-            <TrackScreen category={AnalyticsPage.ScanQRCode} />
+            <TrackScreen name={AnalyticsPage.ScanQRCode} />
             <ScanQrCode onQrCodeScanned={onQrCodeScanned} />
           </>
         );
       case Options.SHOW_QR:
         return (
           <>
-            <TrackScreen category={AnalyticsPage.ShowQRCode} />
-            <QrCode qrCodeValue="ledger.com" />
+            <TrackScreen name={AnalyticsPage.ShowQRCode} />
+            <QrCode qrCodeValue={qrCodeValue} />
           </>
         );
     }

@@ -99,7 +99,7 @@ export function useMarket() {
 
   const updateSearch = useCallback(
     (value: string) => {
-      refresh({ search: value, starred: [], liveCompatible: false });
+      refresh({ search: value });
     },
     [refresh],
   );
@@ -116,7 +116,7 @@ export function useMarket() {
   const toggleFilterByStarredAccounts = useCallback(() => {
     if (starredMarketCoins.length > 0 || starFilterOn) {
       const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, search: "", page: 1 });
+      refresh({ starred, page: 1 });
     }
   }, [refresh, starFilterOn, starredMarketCoins]);
 

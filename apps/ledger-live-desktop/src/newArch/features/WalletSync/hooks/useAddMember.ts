@@ -1,21 +1,31 @@
-import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  setTrustchain,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const trustchain = useSelector(trustchainSelector);
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
   const sdkRef = useRef(sdk);
   const deviceRef = useRef(device);
+  const trustchainRef = useRef(trustchain);
   const memberCredentialsRef = useRef(memberCredentials);
 
   const transitionToNextScreen = useCallback(
@@ -24,10 +34,12 @@ export function useAddMember({ device }: { device: Device | null }) {
       dispatch(
         setFlow({
           flow: Flow.Activation,
-          step:
+          step: Step.ActivationLoading,
+          nextStep:
             trustchainResult.type === TrustchainResultType.created
               ? Step.ActivationFinal
               : Step.SynchronizationFinal,
+          hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
         }),
       );
     },
@@ -63,11 +75,19 @@ export function useAddMember({ device }: { device: Device | null }) {
             onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
             onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
           },
+          undefined,
+          trustchainRef.current ?? undefined,
         );
 
         transitionToNextScreen(trustchainResult);
       } catch (error) {
-        setError(error as Error);
+        if (error instanceof TrustchainAlreadyInitialized) {
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
+        } else if (error instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
+        } else {
+          setError(error as Error);
+        }
       }
     };
 

@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { useHistory, useRouteMatch } from "react-router";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
@@ -101,6 +101,7 @@ export type Props = {
 };
 
 export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+  const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
   const history = useHistory();
   const match = useRouteMatch();
@@ -142,8 +143,9 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         flow: flowName,
       });
 
+      const pathname = match.path.replace("/:appId?", "");
       history.replace({
-        pathname: "/exchange",
+        pathname,
         search: `?referrer=isExternal`,
         state: {
           mode: flowName,
@@ -166,13 +168,20 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       await webview.loadURL(safeUrl);
       webview.clearHistory();
     }
-  }, [localStorage, history, webviewAPIRef, webviewState.url]);
+  }, [localStorage, history, match.path, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    return lastScreen === "compare_providers" ? "Quote" : manifest.name;
-  }, [localStorage, manifest]);
+    const screenMap: {
+      [key: string]: string;
+    } = {
+      compare_providers: t("common.quote"),
+      card: t("card.backToCard"),
+    };
+
+    return screenMap[lastScreen] || manifest.name;
+  }, [localStorage, manifest, t]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -191,7 +200,10 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         if (goToURL) {
           localStorage.setItem("manifest-id", manifestId);
           localStorage.setItem("flow-name", url.searchParams.get("flowName") || "buy");
-          localStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+          localStorage.setItem(
+            "last-screen",
+            url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
+          );
 
           history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
         }

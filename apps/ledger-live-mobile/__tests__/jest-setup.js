@@ -70,6 +70,12 @@ jest.mock("expo-barcode-scanner", () => ({
   },
 }));
 
+jest.mock("expo-camera/next", () => {
+  return {
+    CameraView: jest.fn(() => null),
+  };
+});
+
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
   getTimeZone: jest.fn(),
@@ -131,6 +137,10 @@ jest.mock("@react-native-firebase/messaging", () => ({
 jest.mock("@braze/react-native-sdk", () => ({}));
 
 jest.mock("react-native-webview", () => jest.fn());
+
+jest.mock("react-native-device-info", () => ({
+  getDeviceNameSync: jest.fn(() => "Mocked Device"),
+}));
 
 const originalError = console.error;
 const originalWarn = console.warn;

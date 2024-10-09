@@ -3,4 +3,6 @@ export const NFTS_QUERY_KEY = {
   SpamReport: "SpamReport",
   FloorPrice: "FloorPrice",
   CheckSpamScore: "CheckSpamScore",
+  FetchOrdinals: "FetchOrdinals",
+  FectchOrdinalsByTokenId: "FectchOrdinalsByTokenId",
 };

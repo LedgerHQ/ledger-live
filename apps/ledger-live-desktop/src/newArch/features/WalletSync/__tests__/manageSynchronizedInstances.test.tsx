@@ -1,34 +1,13 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
-import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
-import { mockedSdk, simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
-
-const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
-
-const INSTANCES: Array<TrustchainMember> = [
-  {
-    id: "currentInstance",
-    name: "macOS",
-    permissions: 112,
-  },
-  {
-    id: "2",
-    name: "Ipone 15",
-    permissions: 112,
-  },
-];
+import { render, screen } from "tests/testUtils";
+import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
+import { INSTANCES } from "./shared";
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
     getMembers: (mockedSdk.getMembers = jest.fn()),
     removeMember: (mockedSdk.removeMember = jest.fn()),
+    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
   }),
 }));
 
@@ -69,17 +48,15 @@ describe("manageSynchronizedInstances", () => {
     const button = screen.getByRole("button", { name: "Manage" });
     await user.click(button);
 
-    const row = screen.getByTestId("walletSync-manage-instances");
+    const row = await screen.findByTestId("walletSync-manage-instances");
 
-    await waitFor(() => expect(row).toBeDefined());
-
-    expect(screen.getByText("2 Synchronized instances")).toBeDefined();
+    expect(screen.getByText("2 Ledger Live apps synched")).toBeDefined();
 
     await user.click(row);
 
     //Manage Synch Instances Step
 
-    await waitFor(() => expect(screen.getByText("Manage synchronized instances")).toBeDefined());
+    expect(await screen.findByText("Ledger Live is synched across")).toBeDefined();
 
     const instance = screen.getByTestId("walletSync-manage-instance-currentInstance");
     expect(instance).toBeDefined();
@@ -87,7 +64,7 @@ describe("manageSynchronizedInstances", () => {
     await user.click(screen.getAllByText("Remove")[0]);
 
     // Auto remove check handled
-    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
+    expect(screen.getByText(/You can’t remove this computer while you’re using it/i)).toBeDefined();
 
     await user.click(
       screen.getByRole("button", {

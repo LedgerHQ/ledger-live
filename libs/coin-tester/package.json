@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
-    "axios": "^1.5.0",
+    "axios": "1.7.7",
     "chalk": "^4.1.2",
     "docker-compose": "^0.24.2",
     "lodash": "^4.17.21",

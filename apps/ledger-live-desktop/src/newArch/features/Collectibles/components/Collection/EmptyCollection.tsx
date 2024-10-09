@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { CollectibleTypeEnum, CollectibleType } from "LLD/features/Collectibles/types/Collectibles";
+import { CollectibleType } from "LLD/features/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
 import Text from "~/renderer/components/Text";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { supportLinkByTokenType } from "~/config/urls";
@@ -29,7 +30,7 @@ const Placeholder = styled.div`
 
 type Props = {
   collectionType: CollectibleType;
-  currencyName: string;
+  currencyName?: string;
   children?: ReactNode;
 };
 
@@ -58,8 +59,22 @@ const EmptyCollection: React.FC<Props> = ({ collectionType, currencyName, childr
             </Text>
           </Placeholder>
         );
-      case CollectibleTypeEnum.Ordinal:
-        return null;
+      case CollectibleTypeEnum.Inscriptions:
+        return (
+          <Placeholder>
+            <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              {t("ordinals.inscriptions.empty")}
+            </Text>
+          </Placeholder>
+        );
+      case CollectibleTypeEnum.RareSat:
+        return (
+          <Placeholder>
+            <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              {t("ordinals.rareSats.empty")}
+            </Text>
+          </Placeholder>
+        );
       default:
         return t("collectibles.emptyState.default");
     }

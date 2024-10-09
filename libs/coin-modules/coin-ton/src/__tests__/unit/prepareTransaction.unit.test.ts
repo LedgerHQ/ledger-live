@@ -5,6 +5,7 @@ import {
   accountInfo,
   transaction as baseTransaction,
   fees,
+  jettonTransaction,
   totalFees,
 } from "../fixtures/common.fixtures";
 
@@ -46,6 +47,38 @@ describe("prepareTransaction", () => {
         useAllAmount: true,
         fees: totalFees,
         amount: account.spendableBalance.minus(totalFees),
+      });
+    });
+  });
+
+  describe("Jetton Transaction", () => {
+    it("should return the transaction with the updated amount and fees", async () => {
+      const transaction = await prepareTransaction(account, jettonTransaction);
+
+      expect(transaction).toEqual({
+        ...jettonTransaction,
+        fees: totalFees,
+      });
+    });
+
+    it("should preserve the reference when no change is detected on the transaction", async () => {
+      const transaction = await prepareTransaction(account, { ...jettonTransaction });
+      const transaction2 = await prepareTransaction(account, transaction);
+
+      expect(transaction).toBe(transaction2);
+    });
+
+    it("should create a coin transaction using the spendableBalance in the account", async () => {
+      const transaction = await prepareTransaction(account, {
+        ...jettonTransaction,
+        useAllAmount: true,
+      });
+
+      expect(transaction).toEqual({
+        ...jettonTransaction,
+        useAllAmount: true,
+        fees: totalFees,
+        amount: account.subAccounts?.[0].spendableBalance,
       });
     });
   });

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
@@ -27,7 +28,7 @@ function ConnectDevice({
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const { appName, onSuccess } = route.params;
+  const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
@@ -46,10 +47,22 @@ function ConnectDevice({
       transaction,
       status,
       tokenCurrency,
-      dependencies: [mainAccount],
+      dependencies: [
+        { currency: mainAccount.currency },
+        ...dependenciesToAppRequests(dependencies),
+      ],
       requireLatestFirmware: true,
     }),
-    [account, appName, mainAccount, parentAccount, status, tokenCurrency, transaction],
+    [
+      account,
+      appName,
+      dependencies,
+      mainAccount,
+      parentAccount,
+      status,
+      tokenCurrency,
+      transaction,
+    ],
   );
   return transaction ? (
     <SafeAreaView

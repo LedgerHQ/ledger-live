@@ -117,8 +117,6 @@ export async function useBraze() {
 
     if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
 
-    braze.requestPushPermission();
-
     braze.requestContentCardsRefresh();
 
     braze.subscribeToContentCardsUpdates(cards => {

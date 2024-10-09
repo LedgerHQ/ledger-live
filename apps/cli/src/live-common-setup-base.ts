@@ -34,7 +34,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "bitcoin_testnet",
   "ethereum_sepolia",
@@ -99,6 +98,7 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "etherlink",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

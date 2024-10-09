@@ -99,8 +99,9 @@ apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/wallet-api
 # Devices team
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices
 **/src/renderer/screens/manager/                                   @ledgerhq/live-devices
-**/screens/CustomImage                                             @ledgerhq/live-devices
-**/components/CustomImage                                          @ledgerhq/live-devices
+**/screens/customImage 																				 		 @ledgerhq/live-devices
+**/components/CustomImage																		 	 		 @ledgerhq/live-devices
+**/screens/CustomImage 																				 		 @ledgerhq/live-devices
 **/SyncOnboarding/**                                               @ledgerhq/live-devices
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
@@ -120,7 +121,7 @@ libs/ledger-live-common/src/device/                                @ledgerhq/liv
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
-libs/speculos-transport/                                           @ledgerhq/live-devices
+libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software

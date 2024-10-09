@@ -69,6 +69,7 @@ export type FirmwareUpdateParams = {
 export type UpdateStep =
   | "start"
   | "appsBackup"
+  // | "appsDataBackup"
   | "imageBackup"
   | "firmwareUpdate"
   | "languageRestore"
@@ -233,6 +234,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToImageBackup();
         }
         break;
+
+      // TODO: Implement apps data backup
+      // case "appsDataBackup":
+      //   break;
 
       case "imageBackup":
         hasUnrecoverableError =

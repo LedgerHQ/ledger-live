@@ -19,10 +19,6 @@ import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import { useTrack } from "~/renderer/analytics/segment";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import RemoveCustomImage from "../manager/DeviceDashboard/DeviceInformationSummary/RemoveCustomImage";
-import { useSelector } from "react-redux";
-import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
@@ -30,6 +26,8 @@ type Props = StepProps & {
   isShowingNftGallery?: boolean;
   setIsShowingNftGallery: (_: boolean) => void;
   loading?: boolean;
+  hasCustomLockScreen?: boolean;
+  onClickRemoveCustomImage: () => void;
 };
 
 const defaultMediaTypes = ["original", "big", "preview"];
@@ -47,8 +45,16 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
 };
 
 const StepChooseImage: React.FC<Props> = props => {
-  const { loading, setLoading, onResult, onError, isShowingNftGallery, setIsShowingNftGallery } =
-    props;
+  const {
+    loading,
+    setLoading,
+    onResult,
+    onError,
+    isShowingNftGallery,
+    setIsShowingNftGallery,
+    hasCustomLockScreen,
+    onClickRemoveCustomImage,
+  } = props;
   const isMounted = useIsMounted();
   const { t } = useTranslation();
   const track = useTrack();
@@ -103,12 +109,6 @@ const StepChooseImage: React.FC<Props> = props => {
     [isMounted, onError, selectedNftId],
   );
 
-  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
-
-  const onRemove = useCallback(() => {
-    setDrawer(RemoveCustomImage, {});
-  }, []);
-
   return (
     <StepContainer
       footer={
@@ -158,12 +158,12 @@ const StepChooseImage: React.FC<Props> = props => {
               });
             }}
           />
-          {lastSeenCustomImage?.size ? (
+          {hasCustomLockScreen ? (
             <Link
               size="medium"
               color="error.c60"
               mt={10}
-              onClick={onRemove}
+              onClick={onClickRemoveCustomImage}
               Icon={IconsLegacy.TrashMedium}
             >
               {t("removeCurrentPicture.cta")}

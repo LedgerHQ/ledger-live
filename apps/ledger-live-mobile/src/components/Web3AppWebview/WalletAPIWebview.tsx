@@ -5,7 +5,7 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
@@ -19,6 +19,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       customHandlers,
       onStateChange,
       allowsBackForwardNavigationGestures = true,
+      onScroll,
     },
     ref,
   ) => {
@@ -40,7 +41,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
-    const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
+    const javaScriptCanOpenWindowsAutomatically =
+      internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
@@ -49,6 +51,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <RNWebView
         ref={webviewRef}
+        onScroll={onScroll}
+        decelerationRate="normal"
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "0.4.1",
+  "version": "0.6.2",
   "description": "Ledger Live wallet",
   "keywords": [
     "Ledger"
@@ -29,7 +29,7 @@
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
-    "@ledgerhq/trustchain": "workspace:*",
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
     "base64-js": "1",

@@ -1,22 +1,13 @@
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { CollectibleType } from "./Collectibles";
-
-export enum FieldStatus {
-  Loading = "loading",
-  Loaded = "loaded",
-}
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
 
 export type ExternalViewerButtonProps = {
-  nft: ProtoNFT;
+  nft: ProtoNFT | SimpleHashNft;
   account: Account;
-  metadata: NFTMetadata;
+  metadata: NFTMetadata | SimpleHashNft["extra_metadata"];
 };
-
-export enum ItemType {
-  Separator = "separator",
-  ExternalLink = "externalLink",
-}
 
 export type CopyableFieldProps = {
   value: string;

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { TrustchainSDKContext } from "@ledgerhq/trustchain/types";
-import { TrustchainStore, getInitialStore } from "@ledgerhq/trustchain/store";
+import { TrustchainSDKContext } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainStore, getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 const IdentityLabel = styled.label`
   display: block;
@@ -32,11 +32,17 @@ type Identities = { [_: string]: TrustchainStore };
 
 const initialObject: Identities = {};
 
-export function DisplayName({ pubkey }: { pubkey?: string }) {
+export function DisplayName({
+  pubkey,
+  overridesName,
+}: {
+  pubkey?: string;
+  overridesName?: string;
+}) {
   if (!pubkey) return null;
   return (
     <>
-      <code>{memberNameForPubKey(pubkey)}</code> <IdentityColor pubkey={pubkey} />
+      <code>{overridesName || memberNameForPubKey(pubkey)}</code> <IdentityColor pubkey={pubkey} />
     </>
   );
 }

@@ -30,6 +30,7 @@ import CompleteExchange, {
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
+import { renderLoading } from "./DeviceAction/rendering";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -61,6 +62,9 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   // @ts-expect-error how to type payload?
   const {
     isOpen,
@@ -77,8 +81,6 @@ export const LiveAppDrawer = () => {
     };
   } = useSelector(platformAppDrawerStateSelector);
 
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
   const onContinue = useCallback(() => {
     if (payload && payload.type === "DAPP_DISCLAIMER") {
       const { manifest, disclaimerId, next } = payload;
@@ -89,11 +91,14 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
+
   const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
     }
+
     const { type, manifest, data } = payload;
+
     const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
@@ -156,6 +161,7 @@ export const LiveAppDrawer = () => {
           <DeviceAction
             action={action}
             request={data}
+            Result={() => renderLoading()}
             onResult={result => {
               if ("startExchangeResult" in result) {
                 data.onResult(result.startExchangeResult);

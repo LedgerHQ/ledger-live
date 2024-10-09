@@ -30,7 +30,7 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
               break;
             }
             default: {
-              const providerConfig = getProviderConfig(exchangeType, provider);
+              const providerConfig = await getProviderConfig(exchangeType, provider);
               version = providerConfig.version;
             }
           }

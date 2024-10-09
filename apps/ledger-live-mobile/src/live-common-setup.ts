@@ -74,7 +74,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "bitcoin_testnet",
   "ethereum_sepolia",
@@ -126,6 +125,7 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "etherlink",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

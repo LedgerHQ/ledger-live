@@ -33,7 +33,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   komodo: "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
   litecoin: "LUWPbpM43E2p7ZSh8cyTBEkvpHmr3cB8Ez",
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
-  pivx: "DDBxSas734KhMp1Btga3LdwWAc1igSER8o",
   polkadot: "111111111111111111111111111111111HC1",
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
   stratis: "Sdo6x9k5AxWtfyJe5B9SZPteYTKgUoMMr1",
@@ -110,6 +109,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   blast_sepolia: EVM_DEAD_ADDRESS,
   scroll: EVM_DEAD_ADDRESS,
   scroll_sepolia: EVM_DEAD_ADDRESS,
+  etherlink: EVM_DEAD_ADDRESS,
 };
 
 /**

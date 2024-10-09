@@ -1,11 +1,20 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { Currency } from "../enum/Currency";
 
 export class AccountsPage extends AppPage {
   private addAccountButton = this.page.getByTestId("accounts-add-account-button");
   private accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
+  private tokenRow = (parentName: string, childCurrency: Currency) =>
+    this.accountComponent(parentName)
+      .locator(`xpath=following::div`)
+      .getByTestId(`token-row-${childCurrency.ticker}`);
+  private tokenRowBalance = (parentName: string, childCurrency: Currency) =>
+    this.tokenRow(parentName, childCurrency).getByText(`${childCurrency.ticker}`);
+  private showTokensButton = (parentName: string) =>
+    this.accountComponent(parentName).locator("xpath=following-sibling::button").first();
   private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
   // Accounts context menu
   private contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
@@ -20,6 +29,30 @@ export class AccountsPage extends AppPage {
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
     await this.accountComponent(accountName).click();
+  }
+
+  @step("Click show Account $0 tokens button")
+  async showParentAccountTokens(parentName: string) {
+    await this.accountComponent(parentName).scrollIntoViewIfNeeded();
+    await this.showTokensButton(parentName).click();
+  }
+
+  @step("Verify $0 children token accounts are not visible")
+  async verifyChildrenTokensAreNotVisible(parentName: string) {
+    await this.accountComponent(parentName).scrollIntoViewIfNeeded();
+    await expect(this.showTokensButton(parentName)).not.toBeVisible();
+  }
+
+  @step("Verify token visibility having parent $0")
+  async verifyTokenVisibility(parentName: string, childCurrency: Currency) {
+    await expect(this.tokenRow(parentName, childCurrency)).toBeVisible();
+  }
+
+  @step("Expect token balance to be null")
+  async expectTokenBalanceToBeNull(parentName: string, childCurrency: Currency) {
+    await expect(this.tokenRowBalance(parentName, childCurrency)).toHaveText(
+      `0 ${childCurrency.ticker}`,
+    );
   }
 
   @step("Check $0 account was deleted ")

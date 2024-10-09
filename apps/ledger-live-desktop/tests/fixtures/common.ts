@@ -1,24 +1,26 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import fsPromises from "fs/promises";
+import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
-import { Currency } from "tests/enum/Currency";
 import { randomUUID } from "crypto";
+import { AppInfos } from "tests/enum/AppInfos";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosCurrency: Currency;
-  userdata: string;
+  speculosApp: AppInfos;
+  userdata?: string;
+  settings: Record<string, unknown>;
   userdataDestinationPath: string;
-  userdataOriginalFile: string;
+  userdataOriginalFile?: string;
   userdataFile: string;
   env: Record<string, string>;
   electronApp: ElectronApplication;
@@ -40,9 +42,10 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
+  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
-  speculosCurrency: undefined,
+  speculosApp: undefined,
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -53,7 +56,7 @@ export const test = base.extend<TestFixtures>({
     await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    await use(path.join(__dirname, "../userdata/", `${userdata}.json`));
+    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
@@ -63,13 +66,13 @@ export const test = base.extend<TestFixtures>({
     {
       lang,
       theme,
-      userdata,
       userdataDestinationPath,
       userdataOriginalFile,
+      settings,
       env,
       featureFlags,
       simulateCamera,
-      speculosCurrency,
+      speculosApp,
     },
     use,
     testInfo,
@@ -77,13 +80,15 @@ export const test = base.extend<TestFixtures>({
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
-    if (userdata) {
-      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
-    }
+    const fileUserData = userdataOriginalFile
+      ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
+      : {};
+    const userData = merge({ data: { settings } }, fileUserData);
+    await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     let device: any | undefined;
 
-    if (IS_NOT_MOCK && speculosCurrency) {
+    if (IS_NOT_MOCK && speculosApp) {
       // Ensure the portCounter stays within the valid port range
       if (portCounter > MAX_PORT) {
         portCounter = BASE_PORT;
@@ -95,7 +100,7 @@ export const test = base.extend<TestFixtures>({
       );
       device = await startSpeculos(
         testInfo.title.replace(/ /g, "_"),
-        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
+        specs[speculosApp.name.replace(/ /g, "_")],
       );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }

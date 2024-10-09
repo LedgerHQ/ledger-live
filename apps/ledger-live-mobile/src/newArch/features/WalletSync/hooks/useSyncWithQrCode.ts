@@ -1,18 +1,30 @@
 import { useCallback, useState } from "react";
-import { MemberCredentials } from "@ledgerhq/trustchain/types";
-import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { setTrustchain } from "@ledgerhq/trustchain/store";
-import { useDispatch } from "react-redux";
+import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import {
+  ScannedOldImportQrCode,
+  ScannedInvalidQrCode,
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useCurrentStep } from "./useCurrentStep";
 
 export const useSyncWithQrCode = () => {
+  const { setCurrentStep } = useCurrentStep();
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
+  const trustchain = useSelector(trustchainSelector);
+  const sdk = useTrustchainSdk();
 
   const navigation = useNavigation();
 
@@ -32,7 +44,7 @@ export const useSyncWithQrCode = () => {
     setInput(null);
     setInputCallback(null);
     navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncSuccess,
+      screen: ScreenName.WalletSyncLoading,
       params: {
         created: false,
       },
@@ -40,30 +52,53 @@ export const useSyncWithQrCode = () => {
   }, [navigation]);
 
   const handleStart = useCallback(
-    async (
-      url: string,
-      memberCredentials: MemberCredentials,
-      setCurrentStep: (step: Steps) => void,
-    ) => {
+    async (url: string, memberCredentials: MemberCredentials) => {
       try {
-        const trustchain = await createQRCodeCandidateInstance({
+        const newTrustchain = await createQRCodeCandidateInstance({
           memberCredentials,
           scannedUrl: url,
           memberName: instanceName,
           onRequestQRCodeInput,
+          addMember: async (member: TrustchainMember) => {
+            if (trustchain) {
+              await sdk.addMember(trustchain, memberCredentials, member);
+              return trustchain;
+            }
+            throw new NoTrustchainInitialized();
+          },
+          initialTrustchainId: trustchain?.rootId,
         });
-        dispatch(setTrustchain(trustchain));
+        if (newTrustchain) {
+          dispatch(setTrustchain(newTrustchain));
+        }
         onSyncFinished();
         return true;
       } catch (e) {
-        if (e instanceof InvalidDigitsError) {
+        if (e instanceof ScannedOldImportQrCode) {
+          setCurrentStep(Steps.ScannedOldImportQrCode);
+        } else if (e instanceof ScannedInvalidQrCode) {
+          setCurrentStep(Steps.ScannedInvalidQrCode);
+        } else if (e instanceof InvalidDigitsError) {
           setCurrentStep(Steps.SyncError);
+          return;
+        } else if (e instanceof NoTrustchainInitialized) {
+          setCurrentStep(Steps.UnbackedError);
+          return;
+        } else if (e instanceof TrustchainAlreadyInitialized) {
+          if (e.message === trustchain?.rootId) {
+            setCurrentStep(Steps.AlreadyBacked);
+          } else {
+            setCurrentStep(Steps.BackedWithDifferentSeeds);
+          }
+          return;
+        } else if (e instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+          setCurrentStep(Steps.BackedWithDifferentSeeds);
           return;
         }
         throw e;
       }
     },
-    [instanceName, onRequestQRCodeInput, onSyncFinished, dispatch],
+    [instanceName, onRequestQRCodeInput, trustchain, onSyncFinished, sdk, dispatch, setCurrentStep],
   );
 
   const handleSendDigits = useCallback(

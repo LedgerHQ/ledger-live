@@ -38,7 +38,6 @@ setSupportedCurrencies([
   "dogecoin",
   "digibyte",
   "komodo",
-  "pivx",
   "zencash",
   "decred",
   "tron",
@@ -101,6 +100,7 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "etherlink",
 ]);
 LiveConfig.setConfig(liveConfig);
 

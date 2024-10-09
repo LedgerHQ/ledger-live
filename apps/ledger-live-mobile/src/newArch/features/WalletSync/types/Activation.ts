@@ -14,4 +14,9 @@ export enum Steps {
   PinDisplay = "PinDisplay",
   PinInput = "PinInput",
   SyncError = "SyncError",
+  ScannedInvalidQrCode = "ScannedInvalidQrCode",
+  ScannedOldImportQrCode = "ScannedOldImportQrCode",
+  UnbackedError = "UnbackedError",
+  AlreadyBacked = "AlreadyBacked",
+  BackedWithDifferentSeeds = "BackedWithDifferentSeeds",
 }

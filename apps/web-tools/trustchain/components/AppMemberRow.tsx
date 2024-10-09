@@ -5,7 +5,7 @@ import {
   Trustchain,
   TrustchainDeviceCallbacks,
   TrustchainMember,
-} from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
 import { useTrustchainSDK } from "../context";
@@ -49,7 +49,7 @@ export function AppMemberRow({
         inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
         action={action}
         value={member}
-        valueDisplay={member => <DisplayName pubkey={member.id} />}
+        valueDisplay={member => <DisplayName pubkey={member.id} overridesName={member.name} />}
         buttonProps={{
           "data-tooltip-id": "tooltip",
           "data-tooltip-content":

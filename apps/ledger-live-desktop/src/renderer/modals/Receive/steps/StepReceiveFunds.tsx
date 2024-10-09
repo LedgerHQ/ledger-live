@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { AccountLike, PostOnboardingActionId } from "@ledgerhq/types-live";
+import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -39,6 +39,8 @@ import { firstValueFrom } from "rxjs";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
+import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -54,17 +56,19 @@ const QRCodeWrapper = styled.div`
   width: 208px;
   background: white;
 `;
+
 const Receive1ShareAddress = ({
   account,
   name,
   address,
   showQRCodeModal,
 }: {
-  account: AccountLike;
+  account: Account;
   name: string;
   address: string;
   showQRCodeModal: () => void;
 }) => {
+  const isUTXOCompliantCurrency = isUTXOCompliant(account.currency.family);
   return (
     <>
       <Box horizontal alignItems="center" flow={2} mb={4}>
@@ -93,6 +97,12 @@ const Receive1ShareAddress = ({
         <LinkShowQRCode onClick={showQRCodeModal} address={address} />
       </Box>
       <ReadOnlyAddressField address={address} />
+
+      {isUTXOCompliantCurrency && (
+        <Box mt={3}>
+          <UTXOAddressAlert />
+        </Box>
+      )}
     </>
   );
 };

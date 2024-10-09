@@ -1,18 +1,25 @@
 import React, { useCallback, useState } from "react";
-import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { memberNameForPubKey } from "./IdentityManager";
 import { Input } from "./Input";
+import { useTrustchainSDK } from "../context";
 
 export function AppQRCodeCandidate({
   memberCredentials,
   setTrustchain,
+  trustchain,
 }: {
   memberCredentials: MemberCredentials | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
+  trustchain: Trustchain | null;
 }) {
+  const sdk = useTrustchainSDK();
   const [scannedUrl, setScannedUrl] = useState<string | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const [digits, setDigits] = useState<number | null>(null);
@@ -33,9 +40,19 @@ export function AppQRCodeCandidate({
         scannedUrl,
         memberName: memberNameForPubKey(memberCredentials.pubkey),
         onRequestQRCodeInput,
+        addMember: async member => {
+          if (trustchain) {
+            await sdk.addMember(trustchain, memberCredentials, member);
+            return trustchain;
+          }
+          throw new NoTrustchainInitialized();
+        },
+        initialTrustchainId: trustchain?.rootId,
       })
         .then(trustchain => {
-          setTrustchain(trustchain);
+          if (trustchain) {
+            setTrustchain(trustchain);
+          }
           return true;
         })
         .catch(e => {
@@ -54,7 +71,7 @@ export function AppQRCodeCandidate({
           setInputCallback(null);
         });
     },
-    [onRequestQRCodeInput, setTrustchain],
+    [onRequestQRCodeInput, sdk, setTrustchain, trustchain],
   );
 
   const handleSendDigits = useCallback(

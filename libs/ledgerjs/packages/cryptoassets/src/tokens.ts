@@ -1,16 +1,20 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
-import asatokens, { AlgorandASAToken } from "./data/asa";
-import bep20tokens, { BEP20Token } from "./data/bep20";
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
-import casperTokens, { CasperToken } from "./data/casper";
-import erc20tokens, { ERC20Token } from "./data/erc20";
-import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
+import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
+import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import vechainTokens, { Vip180Token } from "./data/vip180";
+import esdttokens, { ElrondESDTToken } from "./data/esdt";
+import casperTokens, { CasperToken } from "./data/casper";
+import asatokens, { AlgorandASAToken } from "./data/asa";
+import { tokens as polygonTokens } from "./data/evm/137";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
-import vechainTokens, { vip180Token } from "./data/vip180";
+import { tokens as mainnetTokens } from "./data/evm/1";
+import { tokens as bnbTokens } from "./data/evm/56";
+import filecoinTokens from "./data/filecoin-erc20";
+import { ERC20Token } from "./types";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -23,17 +27,33 @@ const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
 const tokenListHashes = new Set();
 
-addTokens(erc20tokens.map(convertERC20));
+// Ethereum mainnet tokens
+addTokens(mainnetTokens.map(convertERC20));
+// Ethereum Sepolia testnet tokens
+addTokens(sepoliaTokens.map(convertERC20));
+// Polygon tokens
 addTokens(polygonTokens.map(convertERC20));
+// Binance Smart Chain tokens
+addTokens(bnbTokens.map(convertERC20));
+// Tron tokens
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
-addTokens(bep20tokens.map(convertBEP20));
+// Algoland tokens
 addTokens(asatokens.map(convertAlgorandASATokens));
+// Elrond tokens
 addTokens(esdttokens.map(convertElrondESDTTokens));
+// Cardano tokens
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
+// Stellar tokens
 addTokens(stellarTokens.map(convertStellarTokens));
+// Casper tokens
 addTokens(casperTokens.map(convertCasperTokens));
+// VeChain tokens
 addTokens(vechainTokens.map(convertVechainToken));
+// Ton tokens
+addTokens(jettonTokens.map(convertJettonToken));
+// Filecoin tokens
+addTokens(filecoinTokens.map(convertERC20));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -241,58 +261,22 @@ export function convertERC20([
   contractAddress,
   disableCountervalue,
   delisted,
-]: ERC20Token | PolygonERC20Token): TokenCurrency | undefined {
+]: ERC20Token): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
 
   if (!parentCurrency) {
     return;
   }
 
-  return {
-    type: "TokenCurrency",
-    id: parentCurrencyId + "/erc20/" + token,
-    ledgerSignature,
-    contractAddress,
-    parentCurrency,
-    tokenType: "erc20",
-    name,
-    ticker,
-    delisted,
-    disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    units: [
-      {
-        name,
-        code: ticker,
-        magnitude,
-      },
-    ],
-  };
-}
-
-export function convertBEP20([
-  parentCurrencyId,
-  token,
-  ticker,
-  magnitude,
-  name,
-  ledgerSignature,
-  contractAddress,
-  disableCountervalue,
-  delisted,
-]: BEP20Token): TokenCurrency | undefined {
-  const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
-
-  if (!parentCurrency) {
-    return;
-  }
+  const tokenType = parentCurrencyId === "bsc" ? "bep20" : "erc20";
 
   return {
     type: "TokenCurrency",
-    id: parentCurrencyId + "/bep20/" + token,
+    id: `${parentCurrencyId}/${tokenType}/${token}`,
     ledgerSignature,
     contractAddress,
     parentCurrency,
-    tokenType: "bep20",
+    tokenType,
     name,
     ticker,
     delisted,
@@ -313,7 +297,6 @@ function convertAlgorandASATokens([
   name,
   contractAddress,
   precision,
-  enableCountervalues,
 ]: AlgorandASAToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("algorand");
 
@@ -325,7 +308,7 @@ function convertAlgorandASATokens([
     tokenType: "asa",
     name,
     ticker: abbr,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,
@@ -337,21 +320,21 @@ function convertAlgorandASATokens([
 }
 
 function convertVechainToken([
+  tokenIdenfitier,
   ticker,
   name,
   contractAddress,
   precision,
-  enableCountervalues,
-]: vip180Token): TokenCurrency {
+]: Vip180Token): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "vechain/vip180/vtho",
+    id: `vechain/vip180/${tokenIdenfitier}`,
     contractAddress: contractAddress,
     parentCurrency: getCryptoCurrencyById("vechain"),
     tokenType: "vip180",
     name,
     ticker,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,
@@ -396,7 +379,6 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
-  disableCountervalue,
 ]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
   const parentCurrency = getCryptoCurrencyById("elrond");
@@ -408,7 +390,7 @@ function convertElrondESDTTokens([
     ledgerSignature: signature,
     parentCurrency,
     tokenType: "esdt",
-    disableCountervalue,
+    disableCountervalue: false,
     name,
     ticker,
     units: [
@@ -429,7 +411,6 @@ function convertCardanoNativeTokens([
   ticker,
   decimals,
   delisted,
-  disableCountervalue,
 ]: CardanoNativeToken): TokenCurrency | undefined {
   const assetId = policyId + assetName;
 
@@ -450,7 +431,7 @@ function convertCardanoNativeTokens([
     name,
     ticker,
     delisted,
-    disableCountervalue,
+    disableCountervalue: false,
     units: [
       {
         name,
@@ -467,7 +448,6 @@ function convertStellarTokens([
   assetType,
   name,
   precision,
-  enableCountervalues,
 ]: StellarToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("stellar");
 
@@ -480,7 +460,7 @@ function convertStellarTokens([
     tokenType: assetType,
     name,
     ticker: assetCode,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,
@@ -515,6 +495,35 @@ function convertCasperTokens([
         name,
         code: assetCode,
         magnitude: precision,
+      },
+    ],
+  };
+}
+
+export function convertJettonToken([address, name, ticker, magnitude, delisted]: TonJettonToken):
+  | TokenCurrency
+  | undefined {
+  const parentCurrency = findCryptoCurrencyById("ton");
+
+  if (!parentCurrency) {
+    return;
+  }
+
+  return {
+    type: "TokenCurrency",
+    id: "ton/jetton/" + address.toLocaleLowerCase(),
+    contractAddress: address,
+    parentCurrency,
+    tokenType: "jetton",
+    name,
+    ticker,
+    delisted,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude,
       },
     ],
   };

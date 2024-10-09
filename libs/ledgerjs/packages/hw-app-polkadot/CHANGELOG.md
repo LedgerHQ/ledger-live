@@ -1,5 +1,49 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.32.0
+
+### Minor Changes
+
+- [#7812](https://github.com/LedgerHQ/ledger-live/pull/7812) [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot code cleanup
+
+## 6.32.0-next.0
+
+### Minor Changes
+
+- [#7812](https://github.com/LedgerHQ/ledger-live/pull/7812) [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot code cleanup
+
+## 6.31.4
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/hw-transport@6.31.4
+
+## 6.31.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1-next.0
+  - @ledgerhq/hw-transport@6.31.4-next.0
+
+## 6.31.3
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/hw-transport@6.31.3
+
+## 6.31.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
 ## 6.31.2
 
 ### Patch Changes

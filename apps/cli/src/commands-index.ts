@@ -47,12 +47,15 @@ import i18n from "./commands/device/i18n";
 import listApps from "./commands/device/listApps";
 import managerListApps from "./commands/device/managerListApps";
 import proxy from "./commands/device/proxy";
+import reinstallConfigurationConsent from "./commands/device/reinstallConfigurationConsent";
 import repl from "./commands/device/repl";
 import speculosList from "./commands/device/speculosList";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
 import exportAccounts from "./commands/live/exportAccounts";
+import ledgerKeyRingProtocol from "./commands/live/ledgerKeyRingProtocol";
+import ledgerSync from "./commands/live/ledgerSync";
 import liveData from "./commands/live/liveData";
 import portfolio from "./commands/live/portfolio";
 import synchronousOnboarding from "./commands/live/synchronousOnboarding";
@@ -110,12 +113,15 @@ export default {
   listApps,
   managerListApps,
   proxy,
+  reinstallConfigurationConsent,
   repl,
   speculosList,
   balanceHistory,
   countervalues,
   envs,
   exportAccounts,
+  ledgerKeyRingProtocol,
+  ledgerSync,
   liveData,
   portfolio,
   synchronousOnboarding,

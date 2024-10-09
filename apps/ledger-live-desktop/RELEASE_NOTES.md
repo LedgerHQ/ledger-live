@@ -1,3 +1,35 @@
+# 2.87.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.87.0
+
+This release includes minor bug fixes.
+
+# 2.86.0
+
+### 🚀 Features
+
+You can now swap cross-chain with Exodus as a new provider.
+
+We’ve added support for TON tokens.
+
+FIL tokens are now also supported but limited to f0, f4 & 0x addresses.
+
+### 🌷 Improvements
+
+We’ve made it easier to reach your favorite provider quickly using the Buy flow.
+
+MATIC has been renamed to POL across the platform.
+
+# 2.85.1
+
+Some Windows users reported issues with device interactions. This has been fixed.
+
+# 2.85.0
+
+This release includes minor bug fixes and security improvements.
+
 # 2.84.1
 
 ### 🐛 Fix

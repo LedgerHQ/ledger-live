@@ -11,11 +11,16 @@ import {
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
+  TransactionInstruction,
+  ComputeBudgetProgram,
+  VersionedTransaction,
+  TransactionMessage,
 } from "@solana/web3.js";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
+import { getStakeActivation } from "./stake-activation";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
@@ -44,7 +49,7 @@ export type ChainAPI = Readonly<{
     authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
-  getStakeActivation: (stakeAccAddr: string) => ReturnType<Connection["getStakeActivation"]>;
+  getStakeActivation: (stakeAccAddr: string) => ReturnType<typeof getStakeActivation>;
 
   getInflationReward: (addresses: string[]) => ReturnType<Connection["getInflationReward"]>;
 
@@ -71,6 +76,15 @@ export type ChainAPI = Readonly<{
 
   getEpochInfo: () => ReturnType<Connection["getEpochInfo"]>;
 
+  getRecentPrioritizationFees: (
+    accounts: string[],
+  ) => ReturnType<Connection["getRecentPrioritizationFees"]>;
+
+  getSimulationComputeUnits: (
+    instructions: Array<TransactionInstruction>,
+    payer: PublicKey,
+  ) => Promise<number | null>;
+
   config: Config;
 }>;
 
@@ -87,7 +101,7 @@ export function getChainAPI(
     logger === undefined
       ? undefined
       : (url, options, fetch) => {
-          logger(url, options);
+          logger(url.toString(), options);
           fetch(url, options);
         };
 
@@ -162,7 +176,7 @@ export function getChainAPI(
     ),
 
     getStakeActivation: (stakeAccAddr: string) =>
-      connection().getStakeActivation(new PublicKey(stakeAccAddr)).catch(remapErrors),
+      getStakeActivation(connection(), new PublicKey(stakeAccAddr)).catch(remapErrors),
 
     getInflationReward: (addresses: string[]) =>
       connection()
@@ -206,6 +220,39 @@ export function getChainAPI(
       connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
 
     getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
+
+    getRecentPrioritizationFees: (accounts: string[]) => {
+      return connection()
+        .getRecentPrioritizationFees({
+          lockedWritableAccounts: accounts.map(acc => new PublicKey(acc)),
+        })
+        .catch(remapErrors);
+    },
+
+    getSimulationComputeUnits: async (instructions, payer) => {
+      // https://solana.com/developers/guides/advanced/how-to-request-optimal-compute
+      const testInstructions = [
+        // Set an arbitrarily high number in simulation
+        // so we can be sure the transaction will succeed
+        // and get the real compute units used
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
+        ...instructions,
+      ];
+      const testTransaction = new VersionedTransaction(
+        new TransactionMessage({
+          instructions: testInstructions,
+          payerKey: payer,
+          // RecentBlockhash can by any public key during simulation
+          // since 'replaceRecentBlockhash' is set to 'true' below
+          recentBlockhash: PublicKey.default.toString(),
+        }).compileToV0Message(),
+      );
+      const rpcResponse = await connection().simulateTransaction(testTransaction, {
+        replaceRecentBlockhash: true,
+        sigVerify: false,
+      });
+      return rpcResponse.value.err ? null : rpcResponse.value.unitsConsumed || null;
+    },
 
     config,
   };

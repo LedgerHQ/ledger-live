@@ -3,13 +3,10 @@ import { Media, Skeleton } from "../../index";
 import { Box, Text } from "@ledgerhq/react-ui";
 import { rgba } from "~/renderer/styles/helpers";
 import styled from "styled-components";
-import {
-  isNFTRow,
-  isOrdinalsRow,
-  isRareSatsRow,
-} from "LLD/features/Collectibles/utils/typeGuardsChecker";
+import { isNFTRow, isOrdinalsRow } from "LLD/features/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/features/Collectibles/types/Collection";
 import TokenTitle from "./TokenTitle";
+import IconContainer from "./IconContainer";
 
 const Container = styled(Box)`
   &.disabled {
@@ -27,24 +24,23 @@ const Container = styled(Box)`
 
 const TableRow: React.FC<Props> = props => {
   const mediaBox = () => {
-    return (
-      <>
-        {(isNFTRow(props) || isOrdinalsRow(props)) && <Media size={32} {...props.media} />}
-        {isRareSatsRow(props) && null}
-      </>
-    );
+    return <>{(isNFTRow(props) || isOrdinalsRow(props)) && <Media size={32} {...props.media} />}</>;
   };
 
   const nftCount = () => {
     return (
-      <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
+      <>
         {isNFTRow(props) && (
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
-            {props.numberOfNfts || 0}
-          </Text>
+          <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
+            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
+              {props.numberOfNfts || 0}
+            </Text>
+          </Skeleton>
         )}
-        {isOrdinalsRow(props) && null}
-      </Skeleton>
+        {isOrdinalsRow(props) && props.tokenIcons.length != 0 && (
+          <IconContainer icons={props.tokenIcons} iconNames={props.rareSatName} />
+        )}
+      </>
     );
   };
 
@@ -59,7 +55,11 @@ const TableRow: React.FC<Props> = props => {
     >
       {mediaBox()}
       <Box ml={3} flex={1}>
-        <TokenTitle tokenName={props.tokenName} isLoading={props.isLoading} />
+        <TokenTitle
+          tokenName={props.tokenName}
+          isLoading={props.isLoading}
+          collectionName={isOrdinalsRow(props) ? props.collectionName : undefined}
+        />
       </Box>
       {nftCount()}
     </Container>

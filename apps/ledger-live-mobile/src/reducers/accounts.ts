@@ -248,13 +248,16 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
       : accounts;
   },
 );
-const emptyArray: AccountLike[] = [];
+
+const emptyTuples: ReturnType<typeof accountsTuplesByCurrencySelector> = [];
 export const accountsByCryptoCurrencyScreenSelector =
   (currency: CryptoOrTokenCurrency, accountIds?: Map<string, boolean>) => (state: State) => {
-    if (!currency) return emptyArray;
+    // TODO look if we can remove this check as the types should already protect here
+    if (!currency) return emptyTuples;
     return accountsTuplesByCurrencySelector(state, currency, accountIds);
   };
 
+const emptyArray: AccountLike[] = [];
 export const flattenAccountsByCryptoCurrencyScreenSelector =
   (currency?: CryptoCurrency | TokenCurrency) => (state: State) => {
     if (!currency) return emptyArray;

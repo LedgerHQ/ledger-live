@@ -17,11 +17,11 @@ type Props = {
 
 function View({
   isOpen,
-  currentStep,
   hasCustomHeader,
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  onCreateKey,
   onQrCodeScanned,
   goBackToPreviousStep,
   handleClose,
@@ -29,7 +29,6 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
-  setCurrentStep,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
@@ -38,21 +37,20 @@ function View({
       <TrackScreen />
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
-        onClose={onCloseDrawer}
+        onClose={hasCustomHeader ? undefined : onCloseDrawer}
         CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
         hasBackButton={canGoBack}
         onBack={goBackToPreviousStep}
       >
         <Flex maxHeight={"90%"}>
           <ActivationFlow
-            currentStep={currentStep}
             navigateToChooseSyncMethod={navigateToChooseSyncMethod}
             navigateToQrCodeMethod={navigateToQrCodeMethod}
             qrProcess={qrProcess}
             currentOption={currentOption}
             setOption={setCurrentOption}
             onQrCodeScanned={onQrCodeScanned}
-            setCurrentStep={setCurrentStep}
+            onCreateKey={onCreateKey}
           />
         </Flex>
       </QueuedDrawer>

@@ -11,16 +11,22 @@ import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeD
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
+import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";
+import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
+import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
+import ScannedInvalidQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
+import { useSelector } from "react-redux";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 type Props = {
-  currentStep: Steps;
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
-  setCurrentStep: (step: Steps) => void;
   setCurrentOption: (option: Options) => void;
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
+  onCreateKey: () => void;
   onQrCodeScanned: () => void;
   qrProcess: {
     url: string | null;
@@ -33,22 +39,23 @@ type Props = {
 const StepFlow = ({
   doesNotHaveAccount,
   currency,
-  currentStep,
   setCurrentOption,
   currentOption,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
   onQrCodeScanned,
   qrProcess,
-  setCurrentStep,
+  onCreateKey,
 }: Props) => {
+  const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
+  const trustchain = useSelector(trustchainSelector);
 
   const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+    if (memberCredentials) handleStart(data, memberCredentials);
   };
 
   const handlePinCodeSubmit = (input: string) => {
@@ -64,7 +71,9 @@ const StepFlow = ({
             <SelectAddAccountMethod
               doesNotHaveAccount={doesNotHaveAccount}
               currency={currency}
-              setWalletSyncDrawerVisible={navigateToChooseSyncMethod}
+              setWalletSyncDrawerVisible={
+                trustchain?.rootId ? navigateToQrCodeMethod : navigateToChooseSyncMethod
+              }
             />
           </>
         );
@@ -95,6 +104,30 @@ const StepFlow = ({
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
+      case Steps.ScannedInvalidQrCode:
+        return <ScannedInvalidQrCode tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.ScannedOldImportQrCode:
+        return <ScannedOldImportQrCode tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.UnbackedError:
+        return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
+
+      case Steps.AlreadyBacked:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.ALREADY_BACKED_SCAN}
+          />
+        );
+
+      case Steps.BackedWithDifferentSeeds:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.DIFFERENT_BACKUPS}
+          />
+        );
       default:
         return null;
     }

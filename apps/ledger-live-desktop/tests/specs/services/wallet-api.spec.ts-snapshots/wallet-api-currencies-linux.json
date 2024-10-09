@@ -164,7 +164,7 @@
   {
     "type": "CryptoCurrency",
     "id": "polygon",
-    "ticker": "MATIC",
+    "ticker": "POL",
     "name": "Polygon",
     "family": "ethereum",
     "color": "#6d29de",
@@ -339,15 +339,6 @@
     "name": "Komodo",
     "family": "bitcoin",
     "color": "#326464",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "pivx",
-    "ticker": "PIVX",
-    "name": "PivX",
-    "family": "bitcoin",
-    "color": "#46385d",
     "decimals": 8
   },
   {
@@ -771,6 +762,15 @@
     "name": "Scroll Sepolia",
     "family": "ethereum",
     "color": "#ff0000",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "etherlink",
+    "ticker": "XTZ",
+    "name": "Etherlink",
+    "family": "ethereum",
+    "color": "#38FF9C",
     "decimals": 18
   }
 ]

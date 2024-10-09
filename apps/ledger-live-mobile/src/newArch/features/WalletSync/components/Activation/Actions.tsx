@@ -5,15 +5,19 @@ import {
   useLedgerSyncAnalytics,
   AnalyticsButton,
   AnalyticsPage,
-  AnalyticsFlow,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type Props = {
   onPressSyncAccounts: () => void;
   onPressHasAlreadyCreatedAKey: () => void;
+  onPressLearnMore?: () => void;
 };
 
-const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) => {
+const Actions = ({
+  onPressSyncAccounts,
+  onPressHasAlreadyCreatedAKey,
+  onPressLearnMore,
+}: Props) => {
   const { t } = useTranslation();
   const { onClickTrack } = useLedgerSyncAnalytics();
 
@@ -21,7 +25,7 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
     onClickTrack({
       button: AnalyticsButton.SyncYourAccounts,
       page: AnalyticsPage.ActivateLedgerSync,
-      flow: AnalyticsFlow.LedgerSync,
+      hasFlow: true,
     });
     onPressSyncAccounts();
   };
@@ -30,26 +34,51 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
     onClickTrack({
       button: AnalyticsButton.AlreadyCreatedKey,
       page: AnalyticsPage.ActivateLedgerSync,
-      flow: AnalyticsFlow.LedgerSync,
+      hasFlow: true,
     });
     onPressHasAlreadyCreatedAKey();
   };
 
+  const onPressMore = () => {
+    onClickTrack({
+      button: AnalyticsButton.LearnMore,
+      page: AnalyticsPage.ActivateLedgerSync,
+      hasFlow: true,
+    });
+    onPressLearnMore?.();
+  };
+
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={32}>
-      <Button
-        type="main"
-        alignSelf={"stretch"}
-        minWidth={"100%"}
-        size="large"
-        onPress={onPressSync}
-        accessibilityRole="button"
-      >
-        {t("walletSync.activation.screen.mainCta")}
-      </Button>
-      <Link size="large" onPress={onPressHasAlreadyAKey}>
-        {t("walletSync.activation.screen.secondCta")}
-      </Link>
+      <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={16}>
+        <Button
+          type="main"
+          alignSelf={"stretch"}
+          minWidth={"100%"}
+          size="large"
+          onPress={onPressSync}
+          accessibilityRole="button"
+        >
+          {t("walletSync.activation.screen.mainCta")}
+        </Button>
+        <Button
+          type={"default"}
+          border={"1px solid"}
+          borderColor={"neutral.c50"}
+          alignSelf={"stretch"}
+          minWidth={"100%"}
+          size="large"
+          onPress={onPressHasAlreadyAKey}
+          accessibilityRole="button"
+        >
+          {t("walletSync.activation.screen.secondCta")}
+        </Button>
+      </Flex>
+      {onPressLearnMore && (
+        <Link size="medium" onPress={onPressMore}>
+          {t("walletSync.activation.screen.learnMore")}
+        </Link>
+      )}
     </Flex>
   );
 };

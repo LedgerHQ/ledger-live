@@ -1,23 +1,30 @@
 import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { useTheme } from "styled-components/native";
-import { Trans } from "react-i18next";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolation,
+  SharedValue,
+} from "react-native-reanimated";
+import { Flex } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
-import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
-import Button from "~/components/Button";
-import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import { useSelectAccount } from "~/components/Web3AppWebview/helpers";
-import { useMaybeAccountName } from "~/reducers/wallet";
+import SelectAccountButton from "./SelectAccountButton";
+import { TOTAL_HEADER_HEIGHT } from "../Header";
+
+const BAR_HEIGHT = 64;
+const ANIMATION_HEIGHT = TOTAL_HEADER_HEIGHT;
+const LAYOUT_RANGE = [0, ANIMATION_HEIGHT];
 
 type BottomBarProps = {
   manifest: AppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
   currentAccountHistDb: CurrentAccountHistDB;
+  layoutY: SharedValue<number>;
 };
 
 function IconButton({
@@ -46,9 +53,9 @@ export function BottomBar({
   webviewAPIRef,
   webviewState,
   currentAccountHistDb,
+  layoutY,
 }: BottomBarProps) {
   const { colors } = useTheme();
-  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
@@ -69,55 +76,67 @@ export function BottomBar({
     webview.reload();
   }, [webviewAPIRef]);
 
-  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const heightStyle = useAnimatedStyle(() => {
+    if (!layoutY) return {};
 
-  const currentAccountName = useMaybeAccountName(currentAccount);
+    const headerHeight = interpolate(
+      layoutY.value,
+      LAYOUT_RANGE,
+      [BAR_HEIGHT, BAR_HEIGHT - ANIMATION_HEIGHT],
+      Extrapolation.CLAMP,
+    );
+
+    return {
+      backgroundColor: colors.background,
+      height: headerHeight,
+    };
+  });
+
+  const opacityStyle = useAnimatedStyle(() => {
+    if (!layoutY) return {};
+
+    return {
+      height: BAR_HEIGHT,
+      opacity: interpolate(layoutY.value, LAYOUT_RANGE, [1, 0], Extrapolation.CLAMP),
+    };
+  });
 
   return (
-    <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
-      <Flex flexDirection="row" flex={1}>
-        <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
-          <ArrowLeftMedium
-            size={24}
-            color={webviewState.canGoBack ? colors.neutral.c100 : colors.neutral.c50}
-          />
-        </IconButton>
-
-        <IconButton onPress={handleForward} disabled={!webviewState.canGoForward}>
-          <ArrowRightMedium
-            size={24}
-            color={webviewState.canGoForward ? colors.neutral.c100 : colors.neutral.c50}
-          />
-        </IconButton>
-      </Flex>
-
-      {shouldDisplaySelectAccount ? (
-        <Button type="primary" onPress={onSelectAccount}>
-          {!currentAccount ? (
-            <Text>
-              <Trans i18nKey="common.selectAccount" />
-            </Text>
-          ) : (
-            <Flex flexDirection="row" height={50} alignItems="center" justifyContent="center">
-              <CircleCurrencyIcon
+    <Animated.View style={heightStyle}>
+      <Animated.View style={opacityStyle}>
+        <Flex flexDirection="row" height={BAR_HEIGHT} paddingX={4} alignItems="center">
+          <Flex flexDirection="row">
+            <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
+              <ArrowLeftMedium
                 size={24}
-                currency={
-                  currentAccount.type === "TokenAccount"
-                    ? currentAccount.token
-                    : currentAccount.currency
-                }
+                color={webviewState.canGoBack ? colors.darkBlue : colors.grey}
               />
-              <Text color={"neutral.c20"} ml={4}>
-                {currentAccountName}
-              </Text>
-            </Flex>
-          )}
-        </Button>
-      ) : null}
+            </IconButton>
 
-      <IconButton onPress={handleReload} alignSelf="flex-end">
-        <ReverseMedium size={24} color="neutral.c100" />
-      </IconButton>
-    </Flex>
+            <IconButton onPress={handleForward} disabled={!webviewState.canGoForward}>
+              <ArrowRightMedium
+                size={24}
+                color={webviewState.canGoForward ? colors.darkBlue : colors.grey}
+              />
+            </IconButton>
+          </Flex>
+
+          {shouldDisplaySelectAccount ? (
+            <Flex flex={1} mx={4} alignItems={"flex-center"}>
+              <SelectAccountButton
+                manifest={manifest}
+                currentAccountHistDb={currentAccountHistDb}
+              />
+            </Flex>
+          ) : (
+            <Flex flex={1} />
+          )}
+
+          <IconButton onPress={handleReload} alignSelf="flex-end">
+            <ReverseMedium size={24} color="neutral.c100" />
+          </IconButton>
+        </Flex>
+      </Animated.View>
+    </Animated.View>
   );
 }

@@ -8,7 +8,7 @@ import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
 import { DeletionError, ErrorReason } from "./04-DeletionError";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 
 const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) => {
@@ -28,7 +28,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.ManageInstances].steps[1]) {
-      goToWelcomeScreenWalletSync(true);
+      goToWelcomeScreenWalletSync();
     } else {
       goToPreviousScene();
     }

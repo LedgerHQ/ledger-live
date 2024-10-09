@@ -72,7 +72,7 @@ export const decodeTxInfo = (rawTx: Buffer) => {
       data: rlpDecoded[5],
       to: rlpDecoded[3],
       // Default to 1 for non EIP 155 txs
-      chainId: rlpTx.length > 6 ? rlpTx[6] : Buffer.from("0x01", "hex"),
+      chainId: rlpTx.length > 6 ? rlpTx[6] : Buffer.from("01", "hex"),
     };
   }
 

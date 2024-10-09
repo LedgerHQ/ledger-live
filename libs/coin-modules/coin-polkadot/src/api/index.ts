@@ -30,13 +30,16 @@ export function createApi(config: PolkadotConfig): Api {
 async function craft(
   address: string,
   transaction: {
+    mode: string;
     recipient: string;
     amount: bigint;
+    fee: bigint;
+    supplement?: unknown;
   },
 ): Promise<string> {
   const extrinsicArg = defaultExtrinsicArg(transaction.amount, transaction.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
-  const nonce = -1;
+  const nonce = 0;
   const tx = await craftTransaction(address, nonce, extrinsicArg);
   const extrinsic = tx.registry.createType("Extrinsic", tx.unsigned, {
     version: tx.unsigned.version,

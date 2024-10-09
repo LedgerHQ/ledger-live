@@ -90,7 +90,6 @@ export const mocks: AppManifest[] = [
       "qtum",
       "bitcoin_gold",
       "komodo",
-      "pivx",
       "zencash",
       "vertcoin",
       "peercoin",
@@ -196,6 +195,37 @@ export const mocks: AppManifest[] = [
     manifestVersion: "2",
     branch: "stable",
     categories: ["defi"],
+    currencies: ["ethereum", "ethereum/erc20/bnb", "bsc"],
+    content: {
+      shortDescription: {
+        en: "Our liquid staking solution allows users to stake ETH and get a fungible liquid token(ETHx) back that shows their claim to the underlying staked assets. We work with the ecosystem projects to ensure wide usability of these tokens on DEXs, lending/borrowing protocols, yield aggregators and more.",
+      },
+      description: {
+        en: "About Stader - Stader is a non-custodial, smart contract-based staking platform that helps retail and institutions conveniently discover and access staking solutions. In addition to its own platform, Stader’s modular smart contracts and staking middleware infrastructure for Proof-of-Stake (PoS) networks can be leveraged for retail crypto users, exchanges, custodians, and mainstream FinTech players Our Project - Stader Liquid staking helps us build a future where community members will no longer have to choose between securing the network through staking or participating in the thriving DeFi, NFT and gaming protocols on Polygon. Instead, users can access both staking and DeFi rewards using the liquid token across liquidity pools, yield farming, lending and borrowing. Stader provides a convenient way for the community to stake with multiple validators at once, helping them reduce risk & costs while increasing returns. Our liquid staking solution allows users to stake Matic and get a fungible liquid token MaticX that shows their claim to the underlying staked assets. The MaticX token can be leveraged on the multiple Defi opportunities.",
+      },
+    },
+    permissions: [
+      "account.list",
+      "account.request",
+      "currency.list",
+      "message.sign",
+      "transaction.signAndBroadcast",
+    ],
+    domains: ["https://"],
+    visibility: "complete",
+  },
+  {
+    id: "clear-signing",
+    name: "Clear-signing",
+    private: false,
+    url: "https://www.staderlabs.com/eth/stake/",
+    homepageUrl: "https://www.staderlabs.com/eth/",
+    icon: "https://cdn.live.ledger.com/icons/platform/stader-bnb.png",
+    platforms: ["android", "ios", "desktop"],
+    apiVersion: "^2.0.0 || ^1.0.0",
+    manifestVersion: "2",
+    branch: "stable",
+    categories: ["defi", "clear signing"],
     currencies: ["ethereum", "ethereum/erc20/bnb", "bsc"],
     content: {
       shortDescription: {

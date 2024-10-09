@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
 import { useTrustchainSDK } from "../context";
@@ -30,9 +33,15 @@ export function AppQRCodeHost({
         setDigits(digits);
       },
       addMember: async member => {
-        await sdk.addMember(trustchain, memberCredentials, member);
-        return trustchain;
+        if (trustchain) {
+          await sdk.addMember(trustchain, memberCredentials, member);
+          return trustchain;
+        }
+        throw new NoTrustchainInitialized();
       },
+      memberCredentials,
+      memberName: "WebTools",
+      initialTrustchainId: trustchain.rootId,
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {

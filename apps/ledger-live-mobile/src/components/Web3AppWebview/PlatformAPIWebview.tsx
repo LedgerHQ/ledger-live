@@ -58,7 +58,7 @@ function renderLoading() {
   );
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, onStateChange, onScroll }, ref) => {
     const tracking = useMemo(
       () =>
         trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
@@ -120,7 +120,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             currencies: safeCurrencyIds,
             includeTokens,
           });
-          // handle no curencies selected case
+          // handle no currencies selected case
           const cryptoCurrencyIds =
             safeCurrencyIds && safeCurrencyIds.length > 0
               ? safeCurrencyIds
@@ -507,13 +507,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
       const { targetUrl } = event.nativeEvent;
-      Linking.canOpenURL(targetUrl).then(supported => {
-        if (supported) {
-          Linking.openURL(targetUrl);
-        } else {
-          console.error(`Don't know how to open URI: ${targetUrl}`);
-        }
-      });
+      // Don't use canOpenURL as we cannot check unknown apps on the phone
+      // Without listing everything in plist and android manifest
+      Linking.openURL(targetUrl);
     }, []);
 
     useEffect(() => {
@@ -527,6 +523,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <RNWebView
         ref={webviewRef}
+        onScroll={onScroll}
+        decelerationRate="normal"
         allowsBackForwardNavigationGestures
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}

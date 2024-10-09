@@ -42,7 +42,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "bitcoin_testnet",
   "ethereum_sepolia",
@@ -93,4 +92,5 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "etherlink",
 ]);

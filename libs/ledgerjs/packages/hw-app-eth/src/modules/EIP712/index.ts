@@ -26,6 +26,7 @@ import {
   makeTypeEntryStructBuffer,
 } from "./utils";
 import {
+  FilteringInfoDiscardField,
   FilteringInfoContractName,
   FilteringInfoShowField,
   StructImplemData,
@@ -40,6 +41,7 @@ type MakeRecursiveFieldStructImplemParams = {
   types: EIP712MessageTypes;
   filters: MessageFilters | undefined;
   shouldUseV1Filters: boolean;
+  shouldUseDiscardedFields: boolean;
   coinRefsTokensMap: Record<number, { token: string; coinRefMemorySlot?: number }>;
 };
 
@@ -61,6 +63,7 @@ const makeRecursiveFieldStructImplem = ({
   types,
   filters,
   shouldUseV1Filters,
+  shouldUseDiscardedFields,
   coinRefsTokensMap,
 }: MakeRecursiveFieldStructImplemParams): ((
   destructedType: ReturnType<typeof destructTypeFromString>,
@@ -88,8 +91,33 @@ const makeRecursiveFieldStructImplem = ({
         structType: "array",
         value: data.length,
       });
+
+      const entryPath = `${path}.[]`;
+      if (!data.length) {
+        // If the array is empty and a filter exists, we need to let the app know that the filter can be discarded
+        const entryFilters = filters?.fields.filter(f => f.path.startsWith(entryPath));
+        if (entryFilters && shouldUseDiscardedFields) {
+          for (const entryFilter of entryFilters) {
+            await sendFilteringInfo(transport, "discardField", loadConfig, {
+              path: entryFilter.path,
+            });
+            await sendFilteringInfo(transport, "showField", loadConfig, {
+              displayName: entryFilter.label,
+              sig: entryFilter.signature,
+              format: entryFilter.format,
+              coinRef: entryFilter.coin_ref,
+              chainId,
+              erc20SignaturesBlob,
+              shouldUseV1Filters,
+              coinRefsTokensMap,
+              isDiscarded: true,
+            });
+          }
+        }
+      }
+      // If the array is not empty, we need to send the struct implementation for each entry
       for (const entry of data) {
-        await recursiveFieldStructImplem([typeDescription, restSizes], entry, `${path}.[]`);
+        await recursiveFieldStructImplem([typeDescription, restSizes], entry, entryPath);
       }
     } else if (isCustomType) {
       for (const [fieldName, fieldValue] of Object.entries(data as EIP712Message["message"])) {
@@ -116,6 +144,7 @@ const makeRecursiveFieldStructImplem = ({
           erc20SignaturesBlob,
           shouldUseV1Filters,
           coinRefsTokensMap,
+          isDiscarded: false,
         });
       }
 
@@ -124,7 +153,7 @@ const makeRecursiveFieldStructImplem = ({
         value: {
           data,
           type: typeDescription?.name || "",
-          sizeInBits: typeDescription?.bits,
+          sizeInBits: typeDescription?.size,
         },
       });
     }
@@ -282,15 +311,23 @@ async function sendFilteringInfo(
 ): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
-  type: "activate" | "contractName" | "showField",
+  type: "discardField",
   loadConfig: LoadConfig,
-  data?: FilteringInfoContractName | FilteringInfoShowField,
+  data: FilteringInfoDiscardField,
+): Promise<Buffer>;
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "activate" | "contractName" | "showField" | "discardField",
+  loadConfig: LoadConfig,
+  data?: FilteringInfoContractName | FilteringInfoShowField | FilteringInfoDiscardField,
 ): Promise<Buffer | void> {
   enum APDU_FIELDS {
     CLA = 0xe0,
     INS = 0x1e,
-    P1 = 0x00,
+    P1_standard = 0x00,
+    P1_discarded = 0x01,
     P2_activate = 0x00,
+    P2_discarded = 0x01,
     P2_show_field = 0xff, // for v1 of filters
     P2_message_info = 0x0f,
     P2_datetime = 0xfc,
@@ -304,7 +341,7 @@ async function sendFilteringInfo(
       return transport.send(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
-        APDU_FIELDS.P1,
+        APDU_FIELDS.P1_discarded,
         APDU_FIELDS.P2_activate,
       );
 
@@ -317,7 +354,7 @@ async function sendFilteringInfo(
       return transport.send(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
-        APDU_FIELDS.P1,
+        APDU_FIELDS.P1_standard,
         APDU_FIELDS.P2_message_info,
         payload,
       );
@@ -333,6 +370,7 @@ async function sendFilteringInfo(
         coinRefsTokensMap,
         shouldUseV1Filters,
         erc20SignaturesBlob,
+        isDiscarded,
       } = data as FilteringInfoShowField;
       const { displayNameBuffer, sigBuffer } = getFilterDisplayNameAndSigBuffers(displayName, sig);
 
@@ -341,7 +379,7 @@ async function sendFilteringInfo(
         return transport.send(
           APDU_FIELDS.CLA,
           APDU_FIELDS.INS,
-          APDU_FIELDS.P1,
+          APDU_FIELDS.P1_standard,
           APDU_FIELDS.P2_show_field,
           payload,
         );
@@ -408,8 +446,23 @@ async function sendFilteringInfo(
       return transport.send(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
-        APDU_FIELDS.P1,
+        isDiscarded ? APDU_FIELDS.P1_discarded : APDU_FIELDS.P1_standard,
         P2FormatMap[format],
+        payload,
+      );
+    }
+
+    case "discardField": {
+      const { path } = data as FilteringInfoDiscardField;
+      const pathBuffer = Buffer.from(path);
+      const pathLengthBuffer = Buffer.from(intAsHexBytes(pathBuffer.length, 1), "hex");
+
+      const payload = Buffer.concat([pathLengthBuffer, pathBuffer]);
+      return transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1_standard,
+        APDU_FIELDS.P2_discarded,
         payload,
       );
     }
@@ -474,6 +527,7 @@ export const signEIP712Message = async (
 
   const { version } = await getAppAndVersion(transport);
   const shouldUseV1Filters = !semver.gte(version, "1.11.1-0", { includePrerelease: true });
+  const shouldUseDiscardedFields = semver.gte(version, "1.12.0-0", { includePrerelease: true });
   const filters = await getFiltersForMessage(typedMessage, shouldUseV1Filters, calServiceURL);
   const coinRefsTokensMap = getCoinRefTokensMap(filters, shouldUseV1Filters, typedMessage);
 
@@ -514,6 +568,7 @@ export const signEIP712Message = async (
     types,
     filters,
     shouldUseV1Filters,
+    shouldUseDiscardedFields,
     coinRefsTokensMap,
   });
 

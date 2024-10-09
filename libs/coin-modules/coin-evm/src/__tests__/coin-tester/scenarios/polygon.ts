@@ -1,16 +1,17 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
+import { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { Account } from "@ledgerhq/types-live";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { Transaction as EvmTransaction } from "../../../types";
 import { getCoinConfig, setCoinConfig } from "../../../config";
 import { makeAccount } from "../../fixtures/common.fixtures";
+import { defaultNanoApp } from "../scenarios.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "../../../hw-getAddress";
 import {
@@ -21,13 +22,12 @@ import {
   impersonnateAccount,
   polygon,
 } from "../helpers";
-import { defaultNanoApp } from "../scenarios.test";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
   const send1MaticTransaction: PolygonScenarioTransaction = {
-    name: "Send 1 Matic",
+    name: "Send 1 POL",
     amount: new BigNumber(ethers.utils.parseEther("1").toString()),
     recipient: ethers.constants.AddressZero,
     expect: (previousAccount, currentAccount) => {

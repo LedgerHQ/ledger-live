@@ -6,6 +6,7 @@ import { Transaction } from "../../models/Transaction";
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
   readonly recipientInput = this.page.getByPlaceholder("Enter");
+  readonly tagInput = this.page.getByPlaceholder("Optional");
   readonly continueButton = this.page.getByRole("button", { name: "continue" });
   private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(
@@ -14,8 +15,6 @@ export class SendModal extends Modal {
   private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private invalidAddressErrorMessage = (network: string) =>
-    this.page.getByText(`This is not a valid ${network} address`);
   private feeStrategy = (fee: string) => this.page.getByText(fee);
 
   async selectAccount(name: string) {
@@ -39,9 +38,18 @@ export class SendModal extends Modal {
     await this.recipientInput.fill(recipient);
   }
 
+  @step("Enter recipient and tag")
+  async fillRecipientInfo(transaction: Transaction) {
+    await this.fillRecipient(transaction.accountToCredit.address);
+    if (transaction.memoTag) {
+      await this.tagInput.clear();
+      await this.tagInput.fill(transaction.memoTag);
+    }
+  }
+
   @step("Fill tx information")
-  async fillTxInfo(tx: Transaction) {
-    await this.fillRecipient(tx.accountToCredit.address);
+  async craftTx(tx: Transaction) {
+    await this.fillRecipientInfo(tx);
     await this.continueButton.click();
     await this.cryptoAmountField.fill(tx.amount);
     await this.feeStrategy(tx.speed).click();
@@ -61,14 +69,6 @@ export class SendModal extends Modal {
   @step("Verify tx sent text")
   async expectTxSent() {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
-  }
-
-  @step("Check invalid address error message")
-  async checkInvalidAddressError(tx: Transaction) {
-    await this.checkContinueButtonDisabled();
-    await expect(
-      this.invalidAddressErrorMessage(tx.accountToDebit.currency.deviceLabel),
-    ).toBeVisible();
   }
 
   @step("Check continue button enable")

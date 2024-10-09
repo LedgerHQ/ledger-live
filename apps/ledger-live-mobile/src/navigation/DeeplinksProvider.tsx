@@ -13,10 +13,7 @@ import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  BUY_SELL_UI_APP_ID,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -73,8 +70,8 @@ function getProxyURL(url: string, customBuySellUiAppId?: string) {
   }
 
   const buySellAppIds = customBuySellUiAppId
-    ? [customBuySellUiAppId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
-    : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+    ? [customBuySellUiAppId, BUY_SELL_UI_APP_ID]
+    : [BUY_SELL_UI_APP_ID];
 
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
@@ -362,6 +359,12 @@ const linkingOptions = () => ({
               [ScreenName.GenericLandingPage]: "landing-page",
             },
           },
+
+          [NavigatorName.WalletSync]: {
+            screens: {
+              [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
+            },
+          },
         },
       },
     },
@@ -456,7 +459,7 @@ export const DeeplinksProvider = ({
             ) {
               const uri = isWalletConnectUrl(url) ? url : new URL(url).searchParams.get("uri");
               // Only update for a connection not a request
-              if (uri && !new URL(uri).searchParams.get("requestId")) {
+              if (uri && uri !== "wc:" && !new URL(uri).searchParams.get("requestId")) {
                 // TODO use wallet-api to push event instead of reloading the webview
                 dispatch(setWallectConnectUri(uri));
               }
@@ -513,15 +516,21 @@ export const DeeplinksProvider = ({
           }
           const platform = pathname.split("/")[1];
 
+          if (isStorylyLink(url.toString())) {
+            storylyContext.setUrl(url.toString());
+          }
+
           if (hostname === "earn") {
             if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") || "";
-              const messageTitle = searchParams.get("messageTitle") || "";
+              const message = searchParams.get("message") ?? "";
+              const messageTitle = searchParams.get("messageTitle") ?? "";
+              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
 
               dispatch(
                 setEarnInfoModal({
                   message,
                   messageTitle,
+                  learnMoreLink,
                 }),
               );
               return;

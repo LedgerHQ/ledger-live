@@ -2088,42 +2088,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  pivx: {
-    type: "CryptoCurrency",
-    id: "pivx",
-    coinType: CoinType.PIVX,
-    name: "PivX",
-    managerAppName: "PivX",
-    ticker: "PIVX",
-    scheme: "pivx",
-    color: "#46385d",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 30,
-      P2SH: 13,
-      XPUBVersion: 0x022d2533,
-    },
-    units: [
-      {
-        name: "pivx",
-        code: "PIVX",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm",
-        address: "https://chainz.cryptoid.info/pivx/address.dws?$address.htm",
-      },
-    ],
-    explorerId: "pivx",
-  },
   poa: {
     type: "CryptoCurrency",
     id: "poa",
@@ -2187,14 +2151,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ETH,
     name: "Polygon",
     managerAppName: "Ethereum",
-    ticker: "MATIC",
+    ticker: "POL",
     scheme: "polygon",
     color: "#6d29de",
     family: "evm",
     ethereumLikeInfo: {
       chainId: 137,
     },
-    units: ethereumUnits("MATIC", "MATIC"),
+    units: ethereumUnits("POL", "POL"),
     explorerViews: [
       {
         tx: "https://polygonscan.com/tx/$hash",
@@ -3046,8 +3010,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://zcashblockexplorer.com/transactions/$hash",
-        address: "https://zcashblockexplorer.com/address/$address",
+        tx: "https://blockchair.com/zcash/transaction/$hash",
+        address: "https://blockchair.com/zcash/address/$address",
       },
     ],
     explorerId: "zec",
@@ -4286,6 +4250,28 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://binance.mintscan.io/txs/$hash",
         address: "https://binance.mintscan.io/validators/$address",
+      },
+    ],
+  },
+  etherlink: {
+    type: "CryptoCurrency",
+    id: "etherlink",
+    coinType: CoinType.ETH,
+    name: "Etherlink",
+    managerAppName: "Ethereum",
+    ticker: "XTZ",
+    scheme: "etherlink",
+    color: "#38FF9C",
+    family: "evm",
+    units: ethereumUnits("XTZ", "XTZ"),
+    ethereumLikeInfo: {
+      chainId: 42793,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.etherlink.com/tx/$hash",
+        address: "https://explorer.etherlink.com/address/$address",
+        token: "https://explorer.etherlink.com/token/$contractAddress?a=$address",
       },
     ],
   },

@@ -1,5 +1,51 @@
 # next.js-example
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [[`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/react-ui@0.16.1
+
+## 0.1.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/react-ui@0.16.1-next.0
+
+## 0.1.5
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c)]:
+  - @ledgerhq/react-ui@0.16.0
+
+## 0.1.5-next.0
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c)]:
+  - @ledgerhq/react-ui@0.16.0-next.0
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d)]:
+  - @ledgerhq/react-ui@0.15.4
+
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d)]:
+  - @ledgerhq/react-ui@0.15.4-next.0
+
 ## 0.1.3
 
 ### Patch Changes

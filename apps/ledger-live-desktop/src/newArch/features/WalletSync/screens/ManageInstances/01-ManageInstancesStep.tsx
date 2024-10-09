@@ -1,13 +1,13 @@
 import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
-import { memberCredentialsSelector } from "@ledgerhq/trustchain/store";
+import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import styled from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -23,7 +23,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
 
   const dispatch = useDispatch();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleGoDeleteInstance = (instance: TrustchainMember) => {
     onClickTrack({ button: "remove instance", page: AnalyticsPage.ManageInstances });

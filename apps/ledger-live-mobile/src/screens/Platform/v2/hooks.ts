@@ -5,6 +5,7 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
+  Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
@@ -13,6 +14,7 @@ import {
   DAPP_DISCLAIMER_ID,
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
+  WC_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -25,13 +27,13 @@ import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
-export function useCatalog() {
+export function useCatalog(initialCategory?: Categories["selected"] | null) {
   const recentlyUsedDB = useRecentlyUsedDB();
   const { state: localLiveApps } = useLocalLiveAppContext();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
-  const categories = useCategories(completeManifests);
+  const categories = useCategories(completeManifests, initialCategory);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
 
   const search = useSearch<AppManifest, TextInput>({
@@ -99,8 +101,6 @@ export type Disclaimer = DisclaimerRaw & {
   openApp: (manifest: AppManifest) => void;
 };
 
-const WALLET_CONNECT_LIVE_APP = "ledger-wallet-connect";
-
 function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
@@ -116,7 +116,7 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
     (manifest: AppManifest) => {
       // Navigate to the WalletConnect navigator screen instead of the discover one
       // In order to avoid issue with deeplinks opening wallet-connect multiple times
-      if (manifest.id === WALLET_CONNECT_LIVE_APP) {
+      if (manifest.id === WC_ID) {
         navigation.navigate(NavigatorName.WalletConnect, {
           screen: ScreenName.WalletConnectConnect,
           params: {},

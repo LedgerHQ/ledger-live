@@ -1,11 +1,11 @@
 {
   "name": "@actions/live-common-affected",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Returns a list of main paths affected by code changes",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup -d build src/main.ts",
+    "build": "tsup --target node20 -d build src/main.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },

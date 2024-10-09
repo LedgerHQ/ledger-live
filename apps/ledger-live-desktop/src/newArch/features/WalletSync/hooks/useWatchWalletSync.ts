@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import noop from "lodash/noop";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -13,7 +13,10 @@ import walletsync, {
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { State } from "~/renderer/reducers";
 import { cache as bridgeCache } from "~/renderer/bridge/cache";
 import {
@@ -24,7 +27,10 @@ import {
   WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
-import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
+import {
+  latestDistantStateSelector,
+  latestDistantVersionSelector,
+} from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
@@ -80,6 +86,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         ctx,
         getState,
         latestDistantStateSelector,
+        latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),
@@ -120,16 +127,17 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   const [visualPending, setVisualPending] = useState(true);
   const [walletSyncError, setWalletSyncError] = useState<Error | null>(null);
-  const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => noop);
+  const onUserRefreshRef = useRef<() => void>(noop);
   const state = useMemo(
-    () => ({ visualPending, walletSyncError, onUserRefresh }),
-    [visualPending, walletSyncError, onUserRefresh],
+    () => ({ visualPending, walletSyncError, onUserRefresh: onUserRefreshRef.current }),
+    [visualPending, walletSyncError],
   );
 
   // pull and push wallet sync loop
   useEffect(() => {
-    if (!trustchain || !memberCredentials) {
-      setOnUserRefresh(() => noop);
+    const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
+    if (canNotRunWatchLoop) {
+      onUserRefreshRef.current = noop;
       setVisualPending(false);
       setWalletSyncError(null);
       return;
@@ -158,7 +166,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
       onTrustchainRefreshNeeded,
     });
 
-    setOnUserRefresh(() => onUserRefreshIntent);
+    onUserRefreshRef.current = onUserRefreshIntent;
 
     return unsubscribe;
   }, [
@@ -169,7 +177,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
     memberCredentials,
     onTrustchainRefreshNeeded,
     saveUpdate,
-    featureWalletSync?.params?.watchConfig,
+    featureWalletSync,
   ]);
 
   return state;

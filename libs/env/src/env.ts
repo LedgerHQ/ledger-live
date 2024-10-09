@@ -338,7 +338,7 @@ const envDefinitions = {
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   EIP1559_BASE_FEE_MULTIPLIER: {
-    def: 1.5,
+    def: 1.27,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
   },
@@ -627,6 +627,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "Swap IP",
+  },
+  SWAP_DISABLE_APPS_INSTALL: {
+    def: false,
+    parser: boolParser,
+    desc: "bypass app checks on Nano for speculos swap tests",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,

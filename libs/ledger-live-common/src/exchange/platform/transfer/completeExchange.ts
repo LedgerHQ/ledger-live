@@ -46,7 +46,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = getProviderConfig(exchangeType, provider);
+        const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
@@ -82,7 +82,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerNameAndSignature.signature);
+        await exchange.checkPartner(providerNameAndSignature.signature!);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
@@ -102,7 +102,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           o.next({

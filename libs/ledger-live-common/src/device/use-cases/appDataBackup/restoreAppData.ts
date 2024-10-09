@@ -1,10 +1,12 @@
 import {
+  AppNotFound,
+  UserRefusedOnDevice,
   restoreAppStorage,
   restoreAppStorageCommit,
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, switchMap } from "rxjs";
+import { Observable, catchError, from, of, switchMap } from "rxjs";
 import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 
 /**
@@ -53,6 +55,31 @@ export function restoreAppData(
             type: RestoreAppDataEventType.AppDataRestored,
           });
           subscriber.complete();
+        }),
+        catchError(e => {
+          // No app data found on the app or the app does not support it
+          if (e instanceof AppNotFound) {
+            subscriber.next({
+              type: RestoreAppDataEventType.NoAppDataToRestore,
+            });
+            subscriber.complete();
+            return of(null);
+          }
+
+          // User refused on device
+          if (e instanceof UserRefusedOnDevice) {
+            // NOTE: Display a message to the user to retry the restore process
+            // If he does not, we should delete the app data (in another flow)
+            subscriber.next({
+              type: RestoreAppDataEventType.UserRefused,
+            });
+
+            subscriber.complete();
+            return of(null);
+          }
+
+          subscriber.complete();
+          throw e;
         }),
       )
       .subscribe();

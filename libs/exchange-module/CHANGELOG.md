@@ -1,5 +1,17 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.7.1
+
+### Patch Changes
+
+- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api deps
+
+## 0.7.1-next.0
+
+### Patch Changes
+
+- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api deps
+
 ## 0.7.0
 
 ### Minor Changes

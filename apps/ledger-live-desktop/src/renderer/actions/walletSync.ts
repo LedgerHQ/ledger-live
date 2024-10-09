@@ -1,7 +1,7 @@
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
-import { Flow, Step } from "../reducers/walletSync";
+import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { ChangeFlowPayload } from "../reducers/walletSync";
 
-export const setFlow = (payload: { flow: Flow; step: Step }) => ({
+export const setFlow = (payload: ChangeFlowPayload) => ({
   type: "WALLET_SYNC_CHANGE_FLOW",
   payload,
 });

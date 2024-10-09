@@ -1,5 +1,45 @@
 # @ledgerhq/icons-ui
 
+## 0.7.4
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+## 0.7.4-next.0
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+## 0.7.3
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
+## 0.7.3-next.0
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
+## 0.7.2
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.2-next.0
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
 ## 0.7.1
 
 ### Patch Changes

@@ -98,7 +98,8 @@
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
-    }
+    },
+    "quote": "Quote"
   },
   "errors": {
     "ReplacementTransactionUnderpriced": {
@@ -788,6 +789,18 @@
     "CardanoStakeKeyDepositError": {
       "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
     },
+    "CardanoFeeHigh": {
+      "title": "Abnormally high network fees.",
+      "description": "Network fees unusually high please double check your transaction."
+    },
+    "CardanoFeeTooHigh": {
+      "title": "Abnormally high network fees.",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
+    "CardanoInvalidProtoParams": {
+      "title": "Cardano invalid protocol parameters",
+      "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -892,6 +905,9 @@
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
     },
+    "PinNotSet": {
+      "title": "PIN not set"
+    },
     "PriorityFeeTooLow": {
       "title": "Priority fee is lower than the recommended value"
     },
@@ -919,6 +935,13 @@
     "InvalidMemoICP": {
       "title": "Memo is required to be a number"
     },
+    "InvalidRecipientForTokenTransfer": {
+      "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
@@ -936,7 +959,41 @@
     "CustomError": {
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
-      "errorCode": "Code: {{errorCode}}"
+      "errorCode": "Code: {{errorCode}}",
+      "errorMessage": "{{errorMessage}}"
+    },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+    },
+    "TonNotEnoughBalanceInParentAccount": {
+      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+    },
+    "TonMinimumRequired": {
+      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "BackupAppDataError": {
+      "title": "Error during app data backup"
+    },
+    "RestoreAppDataError": {
+      "title": "Error restoring app data"
+    },
+    "DeleteAppDataError": {
+      "title": "Error deleting app data"
+    },
+    "ScannedNewImportQrCode": {
+      "title": "Update required",
+      "description": "To sync your apps, please make sure both are updated to the latest version."
     }
   },
   "crash": {
@@ -1351,10 +1408,10 @@
     },
     "welcomeBackStep": {
       "title": "Welcome back",
-      "subtitle": "Select how you’d like to access your wallet:",
+      "subtitle": "Tell us how you prefer to access your wallet:",
       "connect": "Connect your Ledger",
       "sync": "Sync with Ledger Live desktop",
-      "walletSync": "Sync with another Ledger Live app"
+      "walletSync": "Use Ledger Sync"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2274,10 +2331,12 @@
     },
     "quickActions": {
       "buy": "Buy",
+      "sell": "Sell",
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake"
+      "stake": "Stake",
+      "yield": "Yield"
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2315,12 +2374,11 @@
         "description": "Import asset from Ledger Live Desktop"
       },
       "add": {
-        "title": "Add with your Ledger",
-        "description": "Create or import your assets using your Ledger device"
+        "title": "Use your Ledger device",
+        "description": "Create or import your crypto account using your Ledger device"
       },
       "walletSync": {
-        "title": "Import via another Ledger Live app",
-        "description": "Activate Ledger Sync"
+        "title": "Use Ledger Sync"
       }
     }
   },
@@ -2534,6 +2592,7 @@
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
+    "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
@@ -2760,7 +2819,7 @@
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -3075,6 +3134,13 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "memoTag": {
+        "link": "Need a Tag/Memo?",
+        "title": "Need a Tag/Memo?",
+        "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta": "I understand",
+        "learnMore": "Learn more about Tags"
+      },
       "selectCrypto": {
         "title": "Choose a crypto you want to receive"
       },
@@ -3113,6 +3179,7 @@
         }
       },
       "receiveConfirmation": {
+        "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid.",
         "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
@@ -5871,7 +5938,6 @@
         "status": "Status",
         "active": "Active",
         "inactive": "Inactive",
-        "rewards": "Rewards",
         "pending": "Pending",
         "available": "Withdrawable"
       },
@@ -6216,6 +6282,9 @@
     "webPlatformPlayer": {
       "infoPanel": {
         "website": "website"
+      },
+      "back": {
+        "card": "all cards"
       }
     }
   },
@@ -6561,7 +6630,7 @@
     "title": "Connect device"
   },
   "stake": {
-    "ethereum": {
+    "ethereum_deprecated": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
       "tagMinimum": "Requires {{min}} ETH",
@@ -6594,6 +6663,72 @@
           "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
           "supportLink": "Learn more about Kiln"
         }
+      }
+    },
+    "ethereum": {
+      "title": "Select staking provider",
+      "category": {
+        "all": {
+          "name": "All",
+          "description": "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid": {
+          "name": "Liquid",
+          "description": "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
+        },
+        "protocol": {
+          "name": "Protocol",
+          "description": "You can stake a batch of 32 ETH and get full node rewards in ETH."
+        },
+        "pooling": {
+          "name": "Pooling",
+          "description": "You can join a pool to stake any amount of ETH and get rewards."
+        },
+        "restaking": {
+          "name": "Restaking",
+          "description": "You can restake your liquid token to get additional rewards."
+        }
+      },
+      "howItWorks": "How ETH staking works",
+      "lst": "Liquid token needed",
+      "noMinimum": "No minimum",
+      "provider": {
+        "figment": {
+          "title": "Figment"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking Pool"
+        },
+        "kiln_restaking": {
+          "title": "Kiln Liquid restaking"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking"
+        },
+        "kelpdao": {
+          "title": "Kelp DAO"
+        },
+        "lido": {
+          "title": "Lido"
+        },
+        "p2p": {
+          "title": "P2P"
+        },
+        "rocket_pool": {
+          "title": "Rocket Pool"
+        },
+        "stader-eth": {
+          "title": "Stader Labs"
+        }
+      },
+      "readAbout": "Strategies and tactics to know",
+      "requiredMinimum": "Requires {{min}} ETH",
+      "rewardsStrategy": {
+        "auto-compounded": "Auto-compounded rewards",
+        "basic": "Rewards",
+        "daily": "Daily rewards",
+        "eigenlayer_points": "Eigenlayer points",
+        "validator": "Validator rewards"
       }
     },
     "noFundsModal": {
@@ -6652,7 +6787,7 @@
         "title": "Manage your preferences",
         "analytics": {
           "title": "Analytics",
-          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
+          "description": "To measure Ledger Live’s performance and improve both app and your experience, I agree to the collection of my data, including page visits and clicks"
         },
         "personalizedExp": {
           "title": "Personalization",
@@ -6662,7 +6797,7 @@
           "notNow": "Not now",
           "accept": "Accept",
           "acceptAll": "Accept All",
-          "confirm": "Share"
+          "confirm": "Validate"
         },
         "infoText": {
           "info": "You can revoke your consent any time in the app settings.",
@@ -6710,102 +6845,98 @@
     "title": "Ledger Sync",
     "activation": {
       "screen": {
-        "title": "Sync your accounts across all platforms",
-        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
-        "mainCta": "Sync your accounts",
-        "secondCta": "Already created a key?"
+        "title": "Turn on Ledger Sync for this phone?",
+        "description": "This automatically syncs your crypto accounts across all your phones and computers, even when transitioning to a new device.",
+        "mainCta": "Turn on Ledger Sync",
+        "secondCta": "I already turned it on",
+        "learnMore": "How does Ledger Sync work?"
       }
     },
     "deviceSelection": {
-      "title": "Choose the Ledger device you will use to secure your backup",
-      "description": "You can retrieve your backup by simply connecting your Ledger to the Ledger Live mobile and desktop apps."
+      "title": "Choose a Ledger device"
     },
     "deviceAction": {
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "This can take up to 30 seconds.\nPlease stay on this screen.",
+      "synch": "We are updating the synched instances..."
+    },
     "success": {
-      "sync": "Synchronization successful!",
-      "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",
-      "activation": "Success!",
-      "activationDesc": "You successfully enabled Ledger Sync.",
+      "sync": "Sync successful",
+      "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
+      "activation": "Ledger Sync turned on for this phone",
       "syncAnother": "Sync with another Ledger Live app",
       "close": "Close"
     },
     "walletSyncActivated": {
       "synchronize": {
-        "title": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seamless experience. "
+        "title": "Sync with another Ledger Live app",
+        "description": "Sync your Ledger Live crypto accounts across different phones and computers."
       },
       "manageKey": {
-        "title": "Manage Key",
-        "description": "Secure or delete your encryption key via another Ledger.",
-        "success": "Your devices have been unsynchronized and your key has been deleted",
-        "drawer": {
-          "step1": {
-            "title": "Manage your key",
-            "titleCta": "Delete your key",
-            "descCta": "All your synced data will be deleted."
-          },
-          "step2": {
-            "delete": "Delete",
-            "cancel": "Cancel",
-            "title": "Do you really want to delete your encryption key?",
-            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
-          }
+        "title": "Delete Sync",
+        "description": "Your crypto accounts across different phones and computers will stop synching.",
+        "success": "Your Ledger Live apps are no longer synched",
+        "successHint": "You can turn on sync again anytime.",
+        "confirm": {
+          "delete": "Yes, delete",
+          "cancel": "Keep sync",
+          "title": "Sure you want delete sync?",
+          "desc": "Your crypto accounts on different phones and computers will stop being in sync. This does not impact your funds in any way."
         }
       },
       "manageInstances": {
-        "title": "Manage synchronized instances",
+        "title": "Ledger Live is synched across:",
         "remove": "Remove"
       },
       "synchronizedInstances": {
-        "cta": "Manage now",
-        "title": "{{count}} Synchronized Instance",
-        "title_plural": "{{count}} Synchronized Instances",
+        "cta": "Manage",
+        "title": "{{count}} Ledger Live app synched",
+        "title_plural": "{{count}} Ledger Live apps synched",
         "error": "Instances",
         "unsecuredError": {
-          "title": "The synchronization isn't secured by this Ledger",
-          "description": "Please connect the Ledger device you used to create your encryption key.",
-          "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+          "title": "Connect the same Ledger device you used for enabling Ledger Sync",
+          "description": "If you don’t have the same Ledger device, select “Delete sync”.",
           "cta": "Connect another Ledger",
-          "ctaDelete": "Delete my encryption key"
+          "ctaDelete": "Delete sync"
         },
         "autoRemoveError": {
-          "title": "You can’t remove the current instance",
-          "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+          "title": "You can’t remove this phone while you’re using it",
+          "description": "To remove, use another phone or computer with Ledger Sync enabled. If you don’t have another device, select 'Delete sync'.",
           "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
           "cta": "I understand",
-          "ctaDelete": "Delete my encryption key"
+          "ctaDelete": "Delete sync"
         },
-        "success": "Your {{member}} is no longer synchronized"
+        "success": "Your Ledger Live app on {{member}} is no longer connected to Ledger Sync"
       },
       "errors": {
         "fetching": "Something went wrong while fetching your synchronized instances.",
-        "trustchain": "Unexpected falsy trustchain",
-        "memberCredentials": "Unexpected falsy member credentials",
-        "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+        "ledgerSyncUnavailable": "Ledger Sync is temporarily unavailable due to some technical issues on our end. We’re working on fixing it."
       }
     },
     "synchronize": {
       "chooseMethod": {
         "title": "Choose your sync method",
         "scan": {
-          "title": "Scan a QR code"
+          "title": "Scan QR code"
         },
         "connectDevice": {
-          "title": "Use your Ledger"
+          "title": "Use my Ledger device"
         }
       },
       "qrCode": {
+        "title": "Sync Ledger Live apps",
         "show": {
           "title": "Show QR",
           "explanation": {
             "title": "Scan and synchronize your accounts using another Ledger Live app",
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
+              "step3": "Scan QR code"
             }
           }
         },
@@ -6813,40 +6944,116 @@
           "title": "Scan",
           "description": "Scan QR code",
           "explanation": {
-            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "title": "To sync with Ledger Live on another phone or computer...",
             "steps": {
-              "step1": "Open the Ledger Live app you want to sync",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step1": "Open the Ledger Live you want to sync with.",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
+              "step3": "Scan QR code"
             }
           }
         },
         "pinCode": {
-          "title": "Enter your code",
-          "desc": "Type the code displayed on the Ledger Live you want to sync with.",
+          "title": "Enter Ledger Sync code",
+          "desc": "Enter the code shown on your computer to sync your crypto accounts across both apps.",
           "error": {
-            "title": "Codes do not match",
+            "title": "The codes don’t match",
             "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
             "tryAgain": "Try again"
           }
+        },
+        "scannedInvalidQrCode": {
+          "title": "Invalid QR Code",
+          "desc": "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
+          "info": "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
+          "cta": "I understand"
+        },
+        "scannedOldQrCode": {
+          "title": "Ledger Live update required",
+          "desc": "To continue with sync, update the Ledger Live app that’s not up to date.",
+          "info": "For more on how to update, <0>check out this article<0>.",
+          "cta": "I understand"
+        },
+        "unbacked": {
+          "title": "Sync not detected",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
+        },
+        "unbackedOnboarding": {
+          "title": "Sync not detected",
+          "description": "Come back here after you turn on sync for the other Ledger Live app, and then select “Try again”.",
+          "info": "If Ledger Sync is not enabled anywhere, then continue without it.",
+          "cta": "Try again",
+          "cancel": "Continue without sync"
+        },
+        "backedWithDifferentSeeds": {
+          "title": "Different Ledger devices were used to enable Ledger Sync on each app",
+          "description": "To sync the two Ledger Live apps, you need to use the same Ledger device.",
+          "info": "To fix this, delete sync for one of the apps and turn it on again by scanning the QR code.",
+          "cta": "I understand"
+        },
+        "alreadyBacked": {
+          "title": "Both Ledger Live apps are already synched",
+          "cta": "Got it"
         }
+      },
+      "unbackedOnboarding": {
+        "title": "Sync not detected",
+        "description": "If Ledger Sync is enabled, select “Try again” and make sure to connect the same Ledger device you used for enabling it.",
+        "info": "Or, continue without Ledger Sync.",
+        "cta": "Try again",
+        "cancel": "Continue without sync"
+      },
+      "alreadySecureError": {
+        "title": "This app is already secured by this Ledger",
+        "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+        "cta": "I understand"
+      },
+      "alreadySecureOtherSeedError": {
+        "title": "You can’t use this Ledger to sync",
+        "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+        "cta": "Delete my encryption key"
       }
     }
   },
   "web3hub": {
-    "disclaimer": {
-      "clearSigningEnabled": "Clear signing enabled",
-      "checkbox": "Do not remind me again.",
-      "CTA": "Open {{app}}"
-    },
-    "manifestsList": {
-      "title": "Explore",
-      "description": "Discover the best of web3 curated by Ledger"
+    "components": {
+      "disclaimer": {
+        "clearSigningEnabled": "Clear signing enabled",
+        "clearSigningDisabled": "Clear signing disabled",
+        "checkbox": "Do not remind me again.",
+        "CTA": "Open {{app}}"
+      },
+      "manifestsList": {
+        "title": "Explore",
+        "description": "Discover the best of web3 curated by Ledger"
+      },
+      "label": {
+        "clearSigning": "clear signing"
+      }
     },
     "main": {
+      "manifestsList": {
+        "title": "Discover"
+      },
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"
+      },
+      "clearSigning": {
+        "title": "Clear signing"
+      }
+    },
+    "app": {
+      "selectAccountModal": {
+        "networkHeader": {
+          "title": "Choose a network"
+        },
+        "accountHeader": {
+          "title": "Choose an account"
+        },
+        "addAccountItem": {
+          "name": "Add an account"
+        }
       }
     }
   }

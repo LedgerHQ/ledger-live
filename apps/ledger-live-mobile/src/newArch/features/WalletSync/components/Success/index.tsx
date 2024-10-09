@@ -1,6 +1,8 @@
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
+import { TrackScreen } from "~/analytics";
+import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
 type Props = {
   title: string;
@@ -14,13 +16,22 @@ type Props = {
     label: string;
     onPress: () => void;
   };
+  analyticsPage: string;
 };
 
-export function Success({ title, desc, mainButton, secondaryButton }: Props) {
+export function Success({ title, desc, mainButton, secondaryButton, analyticsPage }: Props) {
   const { colors } = useTheme();
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-      <Flex flexDirection="column" alignItems="center" justifyContent="space-between" flex={1}>
+      <PreventNativeBack />
+      <TrackScreen name={analyticsPage} />
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="space-between"
+        flex={1}
+        px={2}
+      >
         <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap={16}>
           <Container borderRadius={50}>
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />

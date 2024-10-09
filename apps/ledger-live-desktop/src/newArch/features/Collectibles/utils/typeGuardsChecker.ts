@@ -1,18 +1,17 @@
-import {
-  NftRowProps,
-  OrdinalsRowProps,
-  RareSatsRowProps,
-  RowProps as Props,
-} from "../types/Collection";
+import { NFTMetadata } from "@ledgerhq/types-live";
+import { NftRowProps, OrdinalsRowProps, RowProps as Props } from "../types/Collection";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
 
 export function isNFTRow(props: Props): props is Props & NftRowProps {
-  return "media" in props;
+  return "media" in props && !("collectionName" in props);
 }
 
 export function isOrdinalsRow(props: Props): props is Props & OrdinalsRowProps {
-  return "collectionName" in props;
+  return "rareSatName" in props;
 }
 
-export function isRareSatsRow(props: Props): props is Props & RareSatsRowProps {
-  return "tokenIcons" in props;
-}
+export const isNFTMetadata = (
+  metadata: NFTMetadata | SimpleHashNft["extra_metadata"],
+): metadata is NFTMetadata => {
+  return !!metadata && "links" in metadata;
+};

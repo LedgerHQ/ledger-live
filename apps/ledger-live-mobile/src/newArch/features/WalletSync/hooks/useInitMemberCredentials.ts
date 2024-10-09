@@ -1,4 +1,7 @@
-import { memberCredentialsSelector, setMemberCredentials } from "@ledgerhq/trustchain/store";
+import {
+  memberCredentialsSelector,
+  setMemberCredentials,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";

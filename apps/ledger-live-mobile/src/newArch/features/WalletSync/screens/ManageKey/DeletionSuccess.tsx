@@ -5,6 +5,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
 import { NavigatorName, ScreenName } from "~/const";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -25,10 +26,12 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
   return (
     <Success
       title={t("walletSync.walletSyncActivated.manageKey.success")}
+      desc={t("walletSync.walletSyncActivated.manageKey.successHint")}
       secondaryButton={{
         label: t("walletSync.success.close"),
         onPress: close,
       }}
+      analyticsPage={AnalyticsPage.DeleteBackupSuccess}
     />
   );
 }

@@ -113,4 +113,5 @@ const NumberContainer = styled(TextInput)<{ isFocused: boolean }>`
   width: 50px;
   border: 1px solid
     ${({ theme, isFocused }) => (isFocused ? theme.colors.primary.c80 : theme.colors.neutral.c40)};
+  color: ${({ theme }) => theme.colors.neutral.c100};
 `;

@@ -31,7 +31,6 @@ import {
 } from "../utils/index";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
-import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { NetworkDown } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -45,14 +44,14 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { track } from "~/renderer/analytics/segment";
-import { useTranslation } from "react-i18next";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -86,24 +85,26 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  liveAppUnavailable: () => void;
+  setQuoteState?: (next: CustomSwapQuotesState) => void;
   swapState?: Partial<SwapProps>;
-  liveAppUnavailable(): void;
   isMaxEnabled?: boolean;
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
-  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
-let lastGasOptions: GasOptions;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo3: "swap-live-app-demo-3",
 };
 
 const SwapWebAppWrapper = styled.div`
   width: 100%;
   flex: 1;
 `;
+
+const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const defaultContentSize: Record<string, number> = {};
 
@@ -181,7 +182,7 @@ const SwapWebView = ({
         const fromUnit = sourceCurrency?.units[0];
 
         if (!quote.params) {
-          setQuoteState({
+          setQuoteState?.({
             amountTo: undefined,
             swapError: undefined,
             counterValue: undefined,
@@ -192,7 +193,7 @@ const SwapWebView = ({
         if (quote.params?.code && fromUnit) {
           switch (quote.params.code) {
             case "minAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
@@ -209,7 +210,7 @@ const SwapWebView = ({
               });
               return Promise.resolve();
             case "maxAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
@@ -236,7 +237,7 @@ const SwapWebView = ({
               )
             : undefined;
 
-          setQuoteState({
+          setQuoteState?.({
             amountTo,
             counterValue: counterValue,
             swapError: undefined,
@@ -336,13 +337,15 @@ const SwapWebView = ({
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
-          recipient: getAbandonSeedAddress(mainAccount.currency.id),
+          recipient:
+            mainAccount.currency.id === "bitcoin"
+              ? getSegWitAbandonSeedAddress()
+              : getAbandonSeedAddress(mainAccount.currency.id),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
-          gasOptions: lastGasOptions,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -350,17 +353,17 @@ const SwapWebView = ({
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
-          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
-          finalTx = preparedTransaction;
-          lastGasOptions = preparedTransaction.gasOptions;
+          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
+          finalTx = newTransaction;
           return newTransaction;
         };
 
         if (!params.openDrawer) {
           // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
+          const config = ["evm", "bitcoin"].includes(transaction.family)
+            ? { hasDrawer: true, ...customFeeConfig }
+            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
@@ -386,7 +389,7 @@ const SwapWebView = ({
               page: "quoteSwap",
               ...swapDefaultTrack,
               swapVersion: params.SWAP_VERSION,
-              value: finalTx.feesStrategy,
+              value: finalTx.feesStrategy || "custom",
             });
             setDrawer(undefined);
             if (!save) {
@@ -402,7 +405,8 @@ const SwapWebView = ({
               });
             }
             resolve({
-              feesStrategy: finalTx.feesStrategy,
+              // little hack to make sure we do not return null (for bitcoin for instance)
+              feesStrategy: finalTx.feesStrategy || "custom",
               estimatedFees: convertToNonAtomicUnit({
                 amount: status.estimatedFees,
                 account: mainAccount,
@@ -417,7 +421,7 @@ const SwapWebView = ({
             FeesDrawerLiveApp,
             {
               setTransaction,
-              mainAccount: fromAccount,
+              account: fromAccount,
               parentAccount: fromParentAccount,
               status: status,
               provider: undefined,
@@ -427,7 +431,7 @@ const SwapWebView = ({
             },
             {
               title: t("swap2.form.details.label.fees"),
-              preventBackdropClick: true,
+              forceDisableFocusTrap: true,
               onRequestClose: () => performClose(false),
             },
           );
@@ -456,6 +460,8 @@ const SwapWebView = ({
       hasError: swapState?.error ? "true" : undefined, // append param only if error is true
       isMaxEnabled: isMaxEnabled,
       loading: swapState?.loading,
+      fromParentAccountId: swapState?.fromParentAccountId,
+      swapApiBase: process.env.SWAP_API_BASE,
       networkFees: swapState?.estimatedFees,
       networkFeesCurrency: fromCurrency,
       provider: swapState?.provider,
@@ -487,7 +493,7 @@ const SwapWebView = ({
 
   useEffect(() => {
     // Determine the new quote state based on network status
-    setQuoteState({
+    setQuoteState?.({
       amountTo: undefined,
       counterValue: undefined,
       ...{

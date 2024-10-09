@@ -19,7 +19,7 @@ export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
 
 export const createCustomErrorClass = <
   F extends { [key: string]: unknown },
-  T extends LedgerErrorConstructor<F>,
+  T extends LedgerErrorConstructor<F> = LedgerErrorConstructor<F>,
 >(
   name: string,
 ): T => {

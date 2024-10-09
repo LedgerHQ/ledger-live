@@ -1,6 +1,6 @@
 import React from "react";
 import FormField from "./FormField";
-import { Form } from "../helpers/commands";
+import { Form as FormType } from "../helpers/commands";
 
 const Form = ({
   form,
@@ -8,7 +8,7 @@ const Form = ({
   value,
   onChange,
 }: {
-  form: Form;
+  form: FormType;
   dependencies: Object;
   value: any;
   onChange: (v: any) => void;

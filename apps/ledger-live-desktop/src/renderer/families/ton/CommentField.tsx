@@ -38,7 +38,7 @@ const CommentField = ({
   // on the ledger-live mobile
   return (
     <Input
-      warning={status.warnings.comment}
+      warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.comment.text}
       placeholder={t("families.ton.commentPlaceholder")}

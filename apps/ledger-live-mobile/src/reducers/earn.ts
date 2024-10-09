@@ -9,9 +9,9 @@ export const INITIAL_STATE: EarnState = {
 };
 
 const handlers: ReducerMap<EarnState, EarnPayload> = {
-  [EarnActionTypes.EARN_INFO_MODAL]: (state, action) => ({
+  [EarnActionTypes.EARN_INFO_MODAL]: (state, action: Action<EarnSetInfoModalPayload>) => ({
     ...state,
-    infoModal: (action as Action<EarnSetInfoModalPayload>)?.payload || {},
+    infoModal: action.payload || {},
   }),
 };
 
@@ -21,6 +21,7 @@ export const exportSelector = storeSelector;
 
 export default handleActions<EarnState, EarnPayload>(handlers, INITIAL_STATE);
 
-export const earnInfoModalSelector = createSelector(storeSelector, (state: EarnState) => {
-  return state.infoModal;
-});
+export const earnInfoModalSelector = createSelector(
+  storeSelector,
+  (state: EarnState) => state.infoModal,
+);

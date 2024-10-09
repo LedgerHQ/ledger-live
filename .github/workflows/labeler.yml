@@ -20,7 +20,7 @@ jobs:
       - uses: actions/labeler@v4
         with:
           repo-token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         if: github.event.pull_request.head.repo.fork
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
