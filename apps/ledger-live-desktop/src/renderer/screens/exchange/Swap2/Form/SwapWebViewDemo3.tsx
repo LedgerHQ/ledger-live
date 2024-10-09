@@ -33,6 +33,7 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
@@ -123,6 +124,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     from?: string;
   }>();
   const redirectToHistory = useRedirectToSwapHistory();
+  const swapLiveEnabledFlag = useSwapLiveConfig();
 
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -292,9 +294,21 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               ).id,
             }
           : {}),
-        ...(state?.from ? { fromPath: simplifyFromPath(state.from) } : {}),
+        ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
+        ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
+          ? {
+              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
+            }
+          : {}),
       }).toString(),
-    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState, state?.from],
+    [
+      isOffline,
+      state?.defaultAccount,
+      state?.defaultParentAccount,
+      walletState,
+      state?.from,
+      swapLiveEnabledFlag,
+    ],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {

@@ -168,6 +168,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
+  ptxSwapCoreExperiment: Feature_PtxSwapCoreExperiment;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
@@ -463,6 +464,13 @@ export type Feature_PtxSwapLiveApp = Feature<{
 }>;
 
 export type Feature_PtxSwapLiveAppDemoZero = Feature<{
+  manifest_id: string;
+  currencies?: string[];
+  families?: string[];
+}>;
+
+export type Feature_PtxSwapCoreExperiment = Feature<{
+  variant: "Demo0" | "Demo3" | "Demo3Thorswap";
   manifest_id: string;
   currencies?: string[];
   families?: string[];
