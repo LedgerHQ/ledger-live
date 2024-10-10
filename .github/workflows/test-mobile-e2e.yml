@@ -39,10 +39,6 @@ on:
 # env:
 #   DEBUG_DETOX: true
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 permissions:
   id-token: write
   contents: read
@@ -50,5 +46,5 @@ permissions:
 jobs:
   test-mobile-e2e:
     name: "Test Mobile E2E"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@support/qaa_284_update_detox
     secrets: inherit
