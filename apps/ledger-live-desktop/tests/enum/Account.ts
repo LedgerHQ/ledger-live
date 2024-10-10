@@ -5,12 +5,14 @@ export class Account {
     public readonly currency: Currency,
     public readonly accountName: string,
     public readonly address: string,
+    public readonly index?: number,
   ) {}
 
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
     "bc1qm6tw2c0u842qjs7g2n2c7ulh76f6xn4sk0dsyt",
+    0,
   );
 
   static readonly BTC_NATIVE_SEGWIT_2 = new Account(
@@ -83,6 +85,7 @@ export class Account {
     Currency.ETH,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+    0,
   );
 
   static readonly ETH_2 = new Account(
@@ -125,6 +128,7 @@ export class Account {
     Currency.DOT,
     "Polkadot 1",
     "15NKsw4AoSEgBJ5NpHDkAjUmqLRfeSuqZBzZXH9uRg6MWbo3",
+    0,
   );
 
   static readonly DOT_2 = new Account(
@@ -143,6 +147,7 @@ export class Account {
     Currency.SOL,
     "Solana 1",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    0,
   );
 
   static readonly SOL_2 = new Account(
@@ -155,7 +160,12 @@ export class Account {
 
   static readonly TRX_2 = new Account(Currency.TRX, "Tron 2", "TMGGi8n7kDkB8ws9wgunKf2SGNP4PjEyLL");
 
-  static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", "rhQvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV");
+  static readonly XRP_1 = new Account(
+    Currency.XRP,
+    "XRP 1",
+    "rhQvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV",
+    0,
+  );
 
   static readonly XRP_2 = new Account(Currency.XRP, "XRP 2", "r36cgyrfC1xSQMvjuiSeFJEcBTq31imZS");
 
@@ -163,6 +173,7 @@ export class Account {
     Currency.ADA,
     "Cardano 1",
     "  addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
+    0,
   );
   static readonly ADA_2 = new Account(
     Currency.ADA,
@@ -174,6 +185,7 @@ export class Account {
     Currency.ALGO,
     "Algorand 1",
     "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU",
+    0,
   );
 
   static readonly ALGO_2 = new Account(
@@ -192,6 +204,7 @@ export class Account {
     Currency.XLM,
     "Stellar 1",
     "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX",
+    0,
   );
 
   static readonly XLM_2 = new Account(
@@ -204,6 +217,7 @@ export class Account {
     Currency.BCH,
     "Bitcoin Cash 1",
     "qz82kem69vdafku8xf4zpt9p5ytj8umwpujj7wjcv6",
+    0,
   );
 
   static readonly BCH_2 = new Account(
@@ -216,6 +230,7 @@ export class Account {
     Currency.ATOM,
     "Cosmos 1",
     "cosmos18sdl4lvyjtvpjkkt5smglux9sf4phdcpaddfae",
+    0,
   );
 
   static readonly ATOM_2 = new Account(
@@ -228,6 +243,7 @@ export class Account {
     Currency.XTZ,
     "Tezos 1",
     "tz1UD2zz5eFTW2Jy26kBnC3ZkdeazUgeFWST",
+    0,
   );
 
   static readonly XTZ_2 = new Account(
@@ -299,6 +315,7 @@ export class Account {
     Currency.TRX_USDT,
     "Tron 1",
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
+    0,
   );
 
   static readonly TRX_BTT = new Account(

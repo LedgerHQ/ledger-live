@@ -12,6 +12,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "tests/enum/AppInfos";
+import { runCliCommand } from "tests/utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -28,6 +29,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
+  cliCommand: string[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -46,6 +48,7 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
+  cliCommand: [],
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -62,6 +65,7 @@ export const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     await use(fullFilePath);
   },
+
   electronApp: async (
     {
       lang,
@@ -73,6 +77,7 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosApp,
+      cliCommand,
     },
     use,
     testInfo,
@@ -83,6 +88,7 @@ export const test = base.extend<TestFixtures>({
     const fileUserData = userdataOriginalFile
       ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
+
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
@@ -106,6 +112,9 @@ export const test = base.extend<TestFixtures>({
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
         process.env.SPECULOS_API_PORT = device?.ports.apiPort;
         process.env.MOCK = "";
+
+        const command = `${cliCommand} --appjson ${userdataDestinationPath}/app.json`;
+        await runCliCommand(command);
       }
 
       // default environment variables

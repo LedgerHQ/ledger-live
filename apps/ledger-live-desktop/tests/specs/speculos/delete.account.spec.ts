@@ -21,7 +21,11 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
+      cliCommand: [
+        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+      ],
+      speculosApp: account.account.currency.speculosApp,
     });
 
     test(
