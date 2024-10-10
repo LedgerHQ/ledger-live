@@ -19,7 +19,6 @@ import type {
   AssetsDistribution,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { log } from "@ledgerhq/logs";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
