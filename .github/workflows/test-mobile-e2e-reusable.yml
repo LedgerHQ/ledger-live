@@ -116,9 +116,6 @@ jobs:
         run: |
           ID=$(xcrun simctl create "iPhone 14" "iPhone 14")
           echo "id=$ID" >> $GITHUB_OUTPUT
-          xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
-          xcrun simctl create "iPhone 14" "iPhone 14"
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: pnpm mobile e2e:ci -p ios -b
@@ -165,138 +162,138 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
 
-  detox-tests-android:
-    name: "Ledger Live Mobile - Android Detox Tests"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
-    if: false
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      LANG: en_US.UTF-8
-      LANGUAGE: en_US.UTF-8
-      LC_ALL: en_US.UTF-8
-      AVD_API: 32
-      AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_6_pro
-      AVD_TARGET: google_apis
-      AVD_NAME: "Pixel_6_Pro_API_32"
-      AVD_CORES: 4
-      AVD_RAM_SIZE: 4096M
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
-      COINAPPS: ${{ github.workspace }}/coin-apps
-    outputs:
-      status: ${{ steps.detox.outcome }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        id: toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-        with:
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "17"
-          cache: "gradle"
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
-      - name: Gradle cache
-        uses: gradle/gradle-build-action@v2
+  # detox-tests-android:
+  #   name: "Ledger Live Mobile - Android Detox Tests"
+  #   runs-on: [ledger-live-linux-8CPU-32RAM]
+  #   if: false
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     LANG: en_US.UTF-8
+  #     LANGUAGE: en_US.UTF-8
+  #     LC_ALL: en_US.UTF-8
+  #     AVD_API: 32
+  #     AVD_ARCH: x86_64
+  #     AVD_PROFILE: pixel_6_pro
+  #     AVD_TARGET: google_apis
+  #     AVD_NAME: "Pixel_6_Pro_API_32"
+  #     AVD_CORES: 4
+  #     AVD_RAM_SIZE: 4096M
+  #     AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  #     SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
+  #     COINAPPS: ${{ github.workspace }}/coin-apps
+  #   outputs:
+  #     status: ${{ steps.detox.outcome }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ inputs.ref || github.sha }}
+  #     - name: Setup the toolchain
+  #       id: toolchain
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+  #       with:
+  #         skip-turbo-cache: "false"
+  #         accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+  #         roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #         turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #     - name: setup JDK 17
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: "zulu"
+  #         java-version: "17"
+  #         cache: "gradle"
+  #     - name: setup Android SDK
+  #       uses: android-actions/setup-android@v2.0.10
+  #     - name: Gradle cache
+  #       uses: gradle/gradle-build-action@v2
 
-        # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - name: Fix emulator directory permissions
-        continue-on-error: true
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+  #       # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
+  #     - name: Enable KVM group perms
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
+  #     - name: Fix emulator directory permissions
+  #       continue-on-error: true
+  #       run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
-      - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-      - name: Build dependencies
-        run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-        shell: bash
-      - name: Build Android app for Detox test run
-        run: |
-          pnpm mobile e2e:ci -p android -b
-      - name: cache android emulator
-        timeout-minutes: 5
-        uses: tespkg/actions-cache@v1
-        id: detox-avd
-        continue-on-error: true
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
-            /usr/local/lib/android/sdk/emulator/*
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ll-gha-s3-cache
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-      - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
-      - name: Setup Speculos image and Coin Apps
-        if: ${{ inputs.speculos_tests }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Run Android Tests
-        id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
-        timeout-minutes: 45
-        env:
-          DETOX_INSTALL_TIMEOUT: 120000
-          SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
-      - name: Generate single file Allure report
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
-      - name: Upload Allure single file report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: android-allure-report
-          path: allure-report/index.html
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: "android-test-artifacts"
-          path: apps/ledger-live-mobile/artifacts/
+  #     - name: Install dependencies
+  #       run: |
+  #         pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+  #     - name: Build dependencies
+  #       run: |
+  #         pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+  #     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+  #       run: |
+  #         pnpm build:dummy-apps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+  #       shell: bash
+  #     - name: Build Android app for Detox test run
+  #       run: |
+  #         pnpm mobile e2e:ci -p android -b
+  #     - name: cache android emulator
+  #       timeout-minutes: 5
+  #       uses: tespkg/actions-cache@v1
+  #       id: detox-avd
+  #       continue-on-error: true
+  #       with:
+  #         path: |
+  #           ~/.android/avd/*
+  #           ~/.android/adb*
+  #           /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
+  #           /usr/local/lib/android/sdk/emulator/*
+  #         key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+  #         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+  #         bucket: ll-gha-s3-cache
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #         use-fallback: false
+  #     - name: create AVD and generate snapshot for caching
+  #       if: steps.detox-avd.outputs.cache-hit != 'true'
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: ${{ env.AVD_API }}
+  #         arch: ${{ env.AVD_ARCH }}
+  #         profile: ${{ env.AVD_PROFILE }}
+  #         target: ${{ env.AVD_TARGET }}
+  #         avd-name: ${{ env.AVD_NAME }}
+  #         force-avd-creation: true
+  #         cores: ${{ env.AVD_CORES }}
+  #         ram-size: ${{ env.AVD_RAM_SIZE }}
+  #         disable-linux-hw-accel: false
+  #         emulator-options: ${{ env.AVD_OPTIONS }}
+  #         script: ./tools/scripts/wait_emulator_idle.sh
+  #     - name: Setup Speculos image and Coin Apps
+  #       if: ${{ inputs.speculos_tests }}
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+  #       with:
+  #         coinapps_path: ${{ env.COINAPPS }}
+  #         speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+  #         bot_id: ${{ secrets.GH_BOT_APP_ID }}
+  #         bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+  #     - name: Run Android Tests
+  #       id: detox
+  #       run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+  #       timeout-minutes: 45
+  #       env:
+  #         DETOX_INSTALL_TIMEOUT: 120000
+  #         SEED: ${{ secrets.SEED_QAA_B2C }}
+  #         INPUT_SPECULOS: ${{ inputs.speculos_tests }}
+  #     - name: Generate single file Allure report
+  #       if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+  #       run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
+  #     - name: Upload Allure single file report
+  #       uses: actions/upload-artifact@v4
+  #       if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+  #       with:
+  #         name: android-allure-report
+  #         path: allure-report/index.html
+  #     - name: Upload test artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+  #       with:
+  #         name: "android-test-artifacts"
+  #         path: apps/ledger-live-mobile/artifacts/
 
   allure-report-android:
     name: "Allure Reports Export on Server"
