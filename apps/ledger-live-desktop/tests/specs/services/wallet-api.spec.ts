@@ -23,6 +23,8 @@ const methods = [
   "device.open",
   "device.exchange",
   "device.close",
+  "bitcoin.getAddress",
+  "bitcoin.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
   "exchange.complete",

@@ -1,6 +1,7 @@
 export interface ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
+  getPubkeyAt(xpub: string, account: number, index: number): Promise<Buffer>;
   getAddress(derivationMode: string, xpub: string, account: number, index: number): Promise<string>;
   customGetAddress(
     derivationMode: string,
