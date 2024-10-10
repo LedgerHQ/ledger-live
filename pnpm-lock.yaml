@@ -1052,6 +1052,9 @@ importers:
       invariant:
         specifier: 2.2.4
         version: 2.2.4
+      jotai:
+        specifier: ^2.7.0
+        version: 2.7.1(@types/react@18.2.73)(react@18.2.0)
       json-rpc-2.0:
         specifier: ^0.2.19
         version: 0.2.19
