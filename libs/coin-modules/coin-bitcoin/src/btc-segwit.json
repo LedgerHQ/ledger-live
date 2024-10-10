@@ -1,0 +1,60 @@
+{
+  "txid": "19f08df92feb0f9ce2e63371c84523604cd72b83d6838a618da87dbc9a686376",
+  "size": 422,
+  "version": 2,
+  "locktime": 0,
+  "fee": 1813,
+  "inputs": [
+    {
+      "coinbase": false,
+      "txid": "4c4f10b4c74725e923aff59689efeafcc4e83488c80a099049fecc78d30ac73d",
+      "output": 2,
+      "sigscript": "1600145c88b4af50b660dd10e671ea1965c27bf797ce28",
+      "sequence": 4294967293,
+      "pkscript": "a91452026d49d7637fee86a591f0a50e51035b1801c387",
+      "value": 139783,
+      "address": "39AeEu4Nb7XBqVgxBM5pyuyTLJYH4Xnr8M",
+      "witness": [
+        "3045022100a84ce4a1303e9e7ad45751f043a49942ac7fc91911ddc3773f27465c4c39e01402203facc7085a69570274ce440c7d4ec858f950cc6359cb193143005bad50435cf201",
+        "0276e1059b957d91986947ac659704d150578ad8a8d3ca56cf3d2c9848d69bab82"
+      ]
+    },
+    {
+      "coinbase": false,
+      "txid": "5150438be25d35660ea7edb0c5f6207e7f2303c19ee732f887c99f8e8ef1f7c1",
+      "output": 0,
+      "sigscript": "1600145c88b4af50b660dd10e671ea1965c27bf797ce28",
+      "sequence": 4294967293,
+      "pkscript": "a91452026d49d7637fee86a591f0a50e51035b1801c387",
+      "value": 86612,
+      "address": "39AeEu4Nb7XBqVgxBM5pyuyTLJYH4Xnr8M",
+      "witness": [
+        "3045022100f54bc515cf38ed89891b5ba29b4e7a15a02aee43ef4ff03fb814518018834e5d02205047dde217f97911d57334c1c9b0b827538bb37f2f2299d730a3cec74d16461301",
+        "0276e1059b957d91986947ac659704d150578ad8a8d3ca56cf3d2c9848d69bab82"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "address": "1MAGBxDzTTucXKKBRbZTVtCWpUCwQKqYLe",
+      "pkscript": "76a914dd22f0364a269fc6d98d0bb533d198544b5c49a788ac",
+      "value": 188168,
+      "spent": false,
+      "spender": null
+    },
+    {
+      "address": "39AeEu4Nb7XBqVgxBM5pyuyTLJYH4Xnr8M",
+      "pkscript": "a91452026d49d7637fee86a591f0a50e51035b1801c387",
+      "value": 36414,
+      "spent": false,
+      "spender": null
+    }
+  ],
+  "block": {
+    "mempool": 1726734179
+  },
+  "deleted": false,
+  "time": 1726734179,
+  "rbf": true,
+  "weight": 1034
+}
