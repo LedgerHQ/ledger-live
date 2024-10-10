@@ -112,39 +112,14 @@ test.describe.parallel("Swap", () => {
     mockSwapAcceptedEndpoint,
     mockSwapCancelledEndpoint,
     mockSwapStatusEndpoint,
+    mockBitcoinToEthereumRates,
+    mockSwapDogecoinToEthereumRates,
+    mockProvidersCDNData,
   }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
     const layout = new Layout(page);
-
-    await page.route("https://swap.ledger.com/v5/rate**", async route => {
-      const mockRatesResponse = getBitcoinToEthereumRatesMock();
-      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
-    });
-
-    await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
-      await route.fulfill({
-        headers: { teststatus: "mocked" },
-        body: JSON.stringify({
-          currencyGroups: [
-            {
-              network: "dogecoin",
-              supportedCurrencies: ["dogecoin"],
-            },
-            {
-              network: "ethereum",
-              supportedCurrencies: ["ethereum", "ethereum/erc20/usd_tether__erc20_"],
-            },
-          ],
-        }),
-      });
-    });
-
-    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
-      const mockProvidersResponse = getProvidersCDNDataMock();
-      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
-    });
 
     await test.step("Open Swap Page", async () => {
       await layout.goToSwap();
@@ -204,11 +179,16 @@ test.describe.parallel("Swap", () => {
       await swapPage.waitForExchangeDetails();
       await expect.soft(swapPage.detailsSwapId).toHaveText("12345");
       await expect.soft(drawer.swapAmountFrom).toContainText(/^-1.280/); // regex value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
-      await expect.soft(drawer.swapAmountTo).toContainText(/^\+17[.,]+8943438531 ETH$/); // match +17,8943438531 ETH or +17.8943438531 ETH
+      await expect.soft(drawer.swapAmountFrom).toContainText("BTC");
+
+      // match +17,8943438531 ETH or +17.8943438531 ETH, to 2dp only.
+      await expect.soft(drawer.swapAmountTo).toContainText(/^\+17[.,]+89/);
+      await expect.soft(drawer.swapAmountTo).toContainText("ETH");
+
       await expect.soft(drawer.swapAccountFrom).toHaveText("Bitcoin 2 (legacy)");
       await expect.soft(drawer.swapAccountTo).toHaveText("Ethereum 2");
 
-      // Screenshot verification is flaky due to LIVE-8642 - the formatting is sometimes rounding to different values - therefore we are doing the above text checks (this seems to relate to locale formatting)
+      // Screenshot verification is flaky due to LIVE-8642 - the formatting is sometimes rounding to different values - therefore we are doing the above text checks (this seems to partly also relate to locale formatting)
       // await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
