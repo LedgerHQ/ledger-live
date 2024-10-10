@@ -142,13 +142,9 @@ export function getBalanceHistory(
   const t = new Date(conf.startOf(now).getTime() - 1).getTime(); // end of yesterday
 
   for (let i = 0; i < count - 1; i++) {
-    const value = balances[balances.length - 1 - i];
-    if (Number.isNaN(value)) {
-      log("countervalues-error", `Value is NaN for ${account.id}`);
-    }
     history.unshift({
       date: new Date(t - conf.increment * i),
-      value: value || 0,
+      value: balances[balances.length - 1 - i] || 0,
     });
   }
 
