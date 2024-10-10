@@ -187,12 +187,6 @@ export interface UiHook {
     onSuccess: (hash: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
-  "bitcoin.getAddress": (params: {
-    account: Account;
-    path: string;
-    onSuccess: (address: string, publicKey: string) => void;
-    onCancel: (error: Error) => void;
-  }) => void;
 }
 
 export function usePermission(manifest: AppManifest): Permission {
@@ -319,7 +313,6 @@ export function useWalletAPIServer({
     "device.select": uiDeviceSelect,
     "exchange.start": uiExchangeStart,
     "exchange.complete": uiExchangeComplete,
-    "bitcoin.getAddress": uiBitcoinGetAddress,
   },
   customHandlers,
 }: useWalletAPIServerOptions): {
@@ -710,58 +703,24 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
-    if (!uiBitcoinGetAddress) return;
-
     server.setHandler("bitcoin.getAddress", ({ accountId, derivationPath }) => {
       return bitcoinFamilyAccountGetAddressLogic(
         { manifest, accounts, tracking },
         accountId,
-        (account, path) =>
-          new Promise((resolve, reject) =>
-            uiBitcoinGetAddress({
-              account,
-              path,
-              onSuccess: address => {
-                tracking.bitcoinFamilyAccountAddressSuccess(manifest);
-                resolve(address);
-              },
-              onCancel: error => {
-                tracking.bitcoinFamilyAccountAddressFail(manifest);
-                reject(error);
-              },
-            }),
-          ),
         derivationPath,
       );
     });
-  }, [accounts, manifest, server, tracking, uiBitcoinGetAddress]);
+  }, [accounts, manifest, server, tracking]);
 
   useEffect(() => {
-    if (!uiBitcoinGetAddress) return;
-
     server.setHandler("bitcoin.getPublicKey", ({ accountId, derivationPath }) => {
       return bitcoinFamilyAccountGetPublicKeyLogic(
         { manifest, accounts, tracking },
         accountId,
-        (account, path) =>
-          new Promise((resolve, reject) =>
-            uiBitcoinGetAddress({
-              account,
-              path,
-              onSuccess: (_, publicKey) => {
-                tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
-                resolve(publicKey);
-              },
-              onCancel: error => {
-                tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
-                reject(error);
-              },
-            }),
-          ),
         derivationPath,
       );
     });
-  }, [accounts, manifest, server, tracking, uiBitcoinGetAddress]);
+  }, [accounts, manifest, server, tracking]);
 
   useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {

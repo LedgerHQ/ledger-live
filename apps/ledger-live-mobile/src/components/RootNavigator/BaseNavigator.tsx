@@ -91,7 +91,6 @@ import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import GetAddress from "~/screens/GetAddress";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -298,19 +297,6 @@ export default function BaseNavigator() {
               if (onClose && typeof onClose === "function") {
                 onClose();
               }
-            },
-          })}
-        />
-        <Stack.Screen
-          name={ScreenName.GetAddress}
-          component={GetAddress}
-          options={{
-            headerRight: () => null,
-            title: "",
-          }}
-          listeners={({ route }) => ({
-            beforeRemove: () => {
-              route.params.onError(new Error("Interrupted by user"));
             },
           })}
         />

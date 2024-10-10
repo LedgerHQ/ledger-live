@@ -29,7 +29,6 @@ import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
-import { fromRelativePath } from "../logic";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;
@@ -287,3 +286,12 @@ export const handlers = ({
     }),
   } as const satisfies Handlers;
 };
+
+function fromRelativePath(basePath: string, derivationPath?: string) {
+  if (!derivationPath) {
+    return basePath;
+  }
+  const splitPath = basePath.split("'/");
+  splitPath[splitPath.length - 1] = derivationPath;
+  return splitPath.join("'/");
+}

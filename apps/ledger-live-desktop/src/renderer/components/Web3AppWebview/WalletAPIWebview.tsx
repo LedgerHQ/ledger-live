@@ -204,19 +204,6 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           }),
         );
       },
-      "bitcoin.getAddress": ({ account, path, onSuccess, onCancel }) => {
-        ipcRenderer.send("show-app", {});
-        dispatch(
-          openModal("MODAL_GET_ADDRESS", {
-            path,
-            account,
-            onResult: ({ address, publicKey }) => {
-              onSuccess(address, publicKey);
-            },
-            onCancel,
-          }),
-        );
-      },
     }),
     [dispatch, manifest, pushToast, t, tracking],
   );

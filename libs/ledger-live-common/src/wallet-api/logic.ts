@@ -19,6 +19,7 @@ import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/lib/wallet-btc/index";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -201,19 +202,9 @@ export function signMessageLogic(
   return uiNavigation(account, formattedMessage);
 }
 
-export function fromRelativePath(basePath: string, derivationPath?: string) {
-  if (!derivationPath) {
-    return basePath;
-  }
-  const splitPath = basePath.split("'/");
-  splitPath[splitPath.length - 1] = derivationPath;
-  return splitPath.join("'/");
-}
-
 export const bitcoinFamilyAccountGetAddressLogic = (
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
-  uiNavigation: (account: Account, path: string) => Promise<string>,
   derivationPath?: string,
 ): Promise<string> => {
   tracking.bitcoinFamilyAccountAddressRequested(manifest);
@@ -235,16 +226,39 @@ export const bitcoinFamilyAccountGetAddressLogic = (
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
 
-  const path = fromRelativePath(account.freshAddressPath, derivationPath);
+  if (derivationPath) {
+    const path = derivationPath.split("/");
+    const accountNumber = Number(path[0]);
+    const index = Number(path[1]);
+
+    if (Number.isNaN(accountNumber) || Number.isNaN(index)) {
+      tracking.bitcoinFamilyAccountAddressFail(manifest);
+      return Promise.reject(new Error("Invalid derivationPath"));
+    }
+
+    const walletAccount = getWalletAccount(account);
+    const address = walletAccount.xpub.crypto.getAddress(
+      walletAccount.xpub.derivationMode,
+      walletAccount.xpub.xpub,
+      accountNumber,
+      index,
+    );
+    tracking.bitcoinFamilyAccountAddressSuccess(manifest);
+    return Promise.resolve(address);
+  }
 
   tracking.bitcoinFamilyAccountAddressSuccess(manifest);
-  return uiNavigation(account, path);
+  return Promise.resolve(account.freshAddress);
 };
 
-export const bitcoinFamilyAccountGetPublicKeyLogic = (
+function getRelativePath(path: string) {
+  const splitPath = path.split("'/");
+  return splitPath[splitPath.length - 1];
+}
+
+export const bitcoinFamilyAccountGetPublicKeyLogic = async (
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
-  uiNavigation: (account: Account, path: string) => Promise<string>,
   derivationPath?: string,
 ): Promise<string> => {
   tracking.bitcoinFamilyAccountPublicKeyRequested(manifest);
@@ -266,10 +280,23 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = (
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
 
-  const path = fromRelativePath(account.freshAddressPath, derivationPath);
+  const path = derivationPath?.split("/") ?? getRelativePath(account.freshAddressPath).split("/");
+  const accountNumber = Number(path[0]);
+  const index = Number(path[1]);
 
+  if (Number.isNaN(accountNumber) || Number.isNaN(index)) {
+    tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
+    return Promise.reject(new Error("Invalid derivationPath"));
+  }
+
+  const walletAccount = getWalletAccount(account);
+  const publicKey = await walletAccount.xpub.crypto.getPubkeyAt(
+    walletAccount.xpub.xpub,
+    accountNumber,
+    index,
+  );
   tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
-  return uiNavigation(account, path);
+  return publicKey.toString("hex");
 };
 
 export const bitcoinFamilyAccountGetXPubLogic = (
