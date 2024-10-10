@@ -8,6 +8,8 @@ import NftCollections from "../Nfts/Collections";
 import { account } from "./mockedAccount";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import { MockedbtcAccount } from "./mockedBTCAccount";
+import { MockedTransaction } from "./mockedTx";
+import { getMockedTxStatus } from "./mockedTxStatus";
 
 const NftCollectionNavigation = () => (
   <Switch>
@@ -42,3 +44,5 @@ export const BitcoinPage = () => (
     </Switch>
   </>
 );
+
+export { MockedbtcAccount, MockedTransaction, getMockedTxStatus };

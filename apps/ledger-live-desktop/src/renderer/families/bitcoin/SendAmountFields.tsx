@@ -15,6 +15,8 @@ import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CoinControlModal as NewArchCoinControlModal } from "LLD/features/Collectibles/Ordinals/components/CoinControlModal";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -36,6 +38,7 @@ const Fields: Props = ({
 }) => {
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
+  const isOrdinalsFFEnabled = useFeature("lldnewArchOrdinals")?.enabled;
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
@@ -133,16 +136,29 @@ const Fields: Props = ({
               </Box>
             </Box>
             <Separator />
-            <CoinControlModal
-              transaction={transaction}
-              account={account}
-              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
-              onChange={onChangeAndTrack}
-              status={status}
-              isOpened={coinControlOpened}
-              onClose={onCoinControlClose}
-              updateTransaction={updateTransaction}
-            />
+            {isOrdinalsFFEnabled ? (
+              <NewArchCoinControlModal
+                transaction={transaction}
+                account={account}
+                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
+                onChange={onChangeAndTrack}
+                status={status}
+                isOpened={coinControlOpened}
+                onClose={onCoinControlClose}
+                updateTransaction={updateTransaction}
+              />
+            ) : (
+              <CoinControlModal
+                transaction={transaction}
+                account={account}
+                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
+                onChange={onChangeAndTrack}
+                status={status}
+                isOpened={coinControlOpened}
+                onClose={onCoinControlClose}
+                updateTransaction={updateTransaction}
+              />
+            )}
           </Box>
         </Box>
       ) : (
