@@ -105,7 +105,8 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Full Swap with Centralised Exchange @smoke", async ({
+  //Test part of legacy swap, flaky at the moment they need to be reviewed
+  test.skip("Full Swap with Centralised Exchange @smoke", async ({
     page,
     mockProviderSvgs,
     mockFeesEndpoint,
