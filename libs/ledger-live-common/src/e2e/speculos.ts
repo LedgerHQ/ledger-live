@@ -391,9 +391,10 @@ export function verifySwapFeesAmount(currency: string, amount: string, text: str
       amountDevice = text[3];
       break;
   }
+  return amountDevice.includes(amount);
 }
 
-  export function verifyProvider(provider: string, text: string[]): boolean {
+export function verifyProvider(provider: string, text: string[]): boolean {
   const providerDevice = text.join("");
   return providerDevice.includes(provider);
 }
