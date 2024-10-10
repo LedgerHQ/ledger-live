@@ -706,9 +706,20 @@ describe("signMessageLogic", () => {
   });
 });
 
+jest.mock("@ledgerhq/coin-bitcoin/lib/wallet-btc/index", () => ({
+  ...jest.requireActual("@ledgerhq/coin-bitcoin/lib/wallet-btc/index"),
+  getWalletAccount: jest.fn().mockReturnValue({
+    xpub: {
+      crypto: {
+        getAddress: jest.fn().mockReturnValue("0x01"),
+        getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("testPubkey")),
+      },
+    },
+  }),
+}));
+
 describe("bitcoinFamilyAccountGetAddressLogic", () => {
   // Given
-  const uiNavigation = jest.fn();
   const mockBitcoinFamilyAccountAddressRequested = jest.fn();
   const mockBitcoinFamilyAccountAddressFail = jest.fn();
   const mockBitcoinFamilyAccountAddressSuccess = jest.fn();
@@ -761,7 +772,7 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
 
     // When
     await expect(async () => {
-      await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, uiNavigation);
+      await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId);
     }).rejects.toThrow(errorMessage);
 
     // Then
@@ -776,11 +787,22 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
-    const result = await bitcoinFamilyAccountGetAddressLogic(
-      context,
-      walletAccountId,
-      uiNavigation,
-    );
+    const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId);
+
+    // Then
+    expect(result).toEqual("0x01");
+    expect(mockBitcoinFamilyAccountAddressRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressFail).toHaveBeenCalledTimes(0);
+    expect(mockBitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return the address with a derivationPath", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+
+    // When
+    const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, "0/1");
 
     // Then
     expect(result).toEqual("0x01");
@@ -792,7 +814,6 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
 
 describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   // Given
-  const uiNavigation = jest.fn();
   const mockBitcoinFamilyAccountPublicKeyRequested = jest.fn();
   const mockBitcoinFamilyAccountPublicKeyFail = jest.fn();
   const mockBitcoinFamilyAccountPublicKeySuccess = jest.fn();
@@ -845,7 +866,7 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
 
     // When
     await expect(async () => {
-      await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId, uiNavigation);
+      await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId);
     }).rejects.toThrow(errorMessage);
 
     // Then
@@ -860,14 +881,25 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
-    const result = await bitcoinFamilyAccountGetPublicKeyLogic(
-      context,
-      walletAccountId,
-      uiNavigation,
-    );
+    const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId);
 
     // Then
-    expect(result).toEqual("44'/60'/0'/0/0");
+    expect(result).toEqual(Buffer.from("testPubkey").toString("hex"));
+    expect(mockBitcoinFamilyAccountPublicKeyRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(0);
+    expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return the PublicKey with a derivationPath", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+
+    // When
+    const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId, "0/1");
+
+    // Then
+    expect(result).toEqual(Buffer.from("testPubkey").toString("hex"));
     expect(mockBitcoinFamilyAccountPublicKeyRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);

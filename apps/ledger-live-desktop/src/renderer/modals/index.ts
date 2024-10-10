@@ -21,7 +21,6 @@ import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
-import MODAL_GET_ADDRESS from "./GetAddress";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_CREATE_LOCAL_APP from "./CreateLocalManifest";
 import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
@@ -73,7 +72,6 @@ const globalModals: GlobalModals = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
-  MODAL_GET_ADDRESS,
 
   // Vault,
   MODAL_VAULT_SIGNER,

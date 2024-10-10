@@ -10,7 +10,6 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { DeviceModelId } from "@ledgerhq/types-devices";
 // eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
-import type { Result } from "@ledgerhq/coin-framework/lib/derivation";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -136,12 +135,6 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (_: AccountLike) => void;
     onError: (_: Error) => void;
     onClose: () => void;
-  };
-  [ScreenName.GetAddress]: {
-    account: Account;
-    path: string;
-    onSuccess: (_: Result) => void;
-    onError: (_: Error) => void;
   };
   [ScreenName.OperationDetails]: {
     accountId?: string;
