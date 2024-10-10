@@ -994,6 +994,9 @@
     "ScannedNewImportQrCode": {
       "title": "Update required",
       "description": "To sync your apps, please make sure both are updated to the latest version."
+    },
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
     }
   },
   "crash": {

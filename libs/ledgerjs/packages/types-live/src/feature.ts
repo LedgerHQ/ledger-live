@@ -121,6 +121,7 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyMina: DefaultFeature;
 };
 
 /**

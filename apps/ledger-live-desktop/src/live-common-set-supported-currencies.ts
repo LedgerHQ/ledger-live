@@ -93,4 +93,5 @@ setSupportedCurrencies([
   "scroll_sepolia",
   "ton",
   "etherlink",
+  "mina",
 ]);
