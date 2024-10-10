@@ -194,6 +194,7 @@ export type Features = CurrencyFeatures & {
   spamFilteringTx: Feature_SpamFilteringTx;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
+  ldmkTransport: Feature_LdmkTransport;
 };
 
 /**
@@ -401,6 +402,10 @@ export type Feature_EditEvmTx = Feature<{
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
+}>;
+
+export type Feature_LdmkTransport = Feature<{
+  warningVisible: boolean;
 }>;
 
 export type Feature_NpsRatingsPrompt = Feature<{
