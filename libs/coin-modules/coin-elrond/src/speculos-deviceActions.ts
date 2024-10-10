@@ -2,11 +2,7 @@ import BigNumber from "bignumber.js";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import {
-  deviceActionFlow,
-  formatDeviceAmount,
-  SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "@ledgerhq/coin-framework/bot";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> = deviceActionFlow({

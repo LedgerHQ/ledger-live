@@ -8,9 +8,10 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
+  type AppSpec,
+  type MutationSpec,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec, MutationSpec } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/coin-framework/bot";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";

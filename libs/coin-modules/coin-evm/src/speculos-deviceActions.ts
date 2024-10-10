@@ -4,9 +4,10 @@ import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
+  type DeviceAction,
+  type State,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/coin-framework/bot";
 import { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
