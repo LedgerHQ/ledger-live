@@ -65,6 +65,7 @@ export type PutCommandsRequest = {
 };
 
 const getApi = (apiBaseURL: string) => {
+  console.log("hello");
   async function getAuthenticationChallenge(): Promise<{ json: Challenge; tlv: string }> {
     const { data } = await network<{ json: Challenge; tlv: string }>({
       url: `${apiBaseURL}/v1/challenge`,
