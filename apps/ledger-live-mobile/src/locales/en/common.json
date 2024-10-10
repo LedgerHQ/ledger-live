@@ -4516,7 +4516,7 @@
       "tr": "Türk",
       "ja": "日本",
       "ko": "한국인",
-      "pt": "Português"
+      "pt": "Português (Br)"
     }
   },
   "deviceLocalization": {
@@ -4535,8 +4535,12 @@
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
-      "french": "French",
-      "spanish": "Spanish"
+      "french": "Français",
+      "spanish": "Español",
+      "german": "Deutsch",
+      "brazilian": "Português (Br)",
+      "russian": "Русский",
+      "turkish": "Türkçe"
     }
   },
   "FirmwareUpdateCheckId": {
@@ -5411,6 +5415,9 @@
     "AccountHeader": {
       "title": "You can earn rewards by delegating your account",
       "btn": "Earn rewards"
+    },
+    "delegation": {
+      "addCustomValidator": "+ Add custom validator"
     }
   },
   "tron": {

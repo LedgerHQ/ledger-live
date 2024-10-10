@@ -142,6 +142,18 @@ platform :ios do
       keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
       git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
     )
+    match(
+      type: "appstore",
+      app_identifier: "com.ledger.live.prerelease",
+      force: true,
+      generate_apple_certs: true,
+      git_url: ENV["GIT_REPO_URL"],
+      username: ENV["APPLE_ID"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
   end
 
   desc "buid for deployment (app-store or ad-hoc)"
@@ -163,10 +175,9 @@ platform :ios do
 
       build_number = latest_testflight_build_number(
         version: trim_version_number(package["version"]),
-        # we are moving to using ENV["APP_IDENTIFIER"] but staging + prerelease still override their own
-        # app identifier to publish to com.ledger.live . This will be removed once we are are fully publishing
-        # to separate apps
-        app_identifier: options[:nightly] ? ENV["APP_IDENTIFIER"] : "com.ledger.live"
+        # we are moving to using ENV["APP_IDENTIFIER"] but staging still overrides its own app identifier to 
+        # publish to com.ledger.live . This will be removed once we are are fully publishing to separate apps
+        app_identifier: !options[:adhoc] ? ENV["APP_IDENTIFIER"] : "com.ledger.live"
       )
 
       increment_build_number({
@@ -258,9 +269,7 @@ platform :ios do
         gym(
           scheme: PROJECT_NAME,
           workspace: XCODE_WORKSPACE,
-          # This should come from env files - as we move each release type to its own app we will
-          # move them away from "Release" and to their own .env-file defined configuration
-          configuration: options[:nightly] ? ENV["APP_CONFIGURATION"] : "Release",
+          configuration: ENV["APP_CONFIGURATION"],
           silent: true,
           xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
           output_directory: OUTPUT_DIRECTORY,
@@ -312,6 +321,19 @@ platform :ios do
 
         UI.important("Another build is already in external beta review. Skipping external beta review submission")
       end
+    elsif (options[:prerelease])
+      pilot(
+        skip_submission: false,
+        app_identifier: ENV["APP_IDENTIFIER"],
+        skip_waiting_for_build_processing: true,
+        ipa: IPA_DIRECTORY,
+        changelog: "Prerelease Build v#{package['version']} (#{build_number})",
+        beta_app_review_info: {
+          contact_email: "team-live@ledger.fr",
+          contact_first_name: "Ledger Live",
+          notes: "test prerelease builds"
+        }
+      )
     else
       pilot(
         skip_submission: true,
@@ -338,16 +360,16 @@ platform :ios do
   lane :ci_testflight do |options|
     setup_ios_ci
     build(ci: true)
-    upload(ci: true)
+    upload(
+      prerelease: true,
+      ci: true
+    )
   end
 
   desc "ci: create nightly version"
   lane :ci_nightly do |options|
     setup_ios_ci
-    build(
-      nightly: true,
-      ci: true
-    )
+    build(ci: true)
     upload(
       nightly: true,
       ci: true

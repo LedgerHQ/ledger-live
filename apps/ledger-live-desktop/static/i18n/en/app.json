@@ -2253,7 +2253,12 @@
           "description": "Stake your CELO with Ledger by Figment validator. It guarantees complete cover against slashing, backed by Ledger’s uncompromising security."
         }
       }
-    }
+    },
+    "memoTag": {
+        "title": "Need a Tag/Memo?",
+        "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "learnMore": "Learn more about Tag/Memo"
+      }
   },
   "send": {
     "title": "Send",
@@ -2409,8 +2414,12 @@
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
-      "french": "French",
-      "spanish": "Spanish"
+      "french": "Français",
+      "spanish": "Español",
+      "german": "Deutsch",
+      "brazilian": "Português (Br)",
+      "russian": "Русский",
+      "turkish": "Türkçe"
     }
   },
   "distribution": {
