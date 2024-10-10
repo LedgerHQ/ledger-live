@@ -48,12 +48,18 @@ export const StakeModal = ({ account, source }: Props) => {
 
   const [selected, setSelected] = useState<Option>("all");
 
+  const filteredProviders = useMemo(() => (providers ?? []).filter(x => !x.disabled), [providers]);
+  const optionValues = useMemo(
+    () => OPTION_VALUES.filter(x => x === "all" || filteredProviders.some(y => y.category === x)),
+    [filteredProviders],
+  );
+
   const formattedProviders = useMemo(
     () =>
-      (providers ?? [])
-        .filter(x => !x.disabled && (selected === "all" || selected === x.category))
+      filteredProviders
+        .filter(x => selected === "all" || selected === x.category)
         .sort(hasMinValidatorEth ? descending : ascending),
-    [providers, hasMinValidatorEth, selected],
+    [filteredProviders, hasMinValidatorEth, selected],
   );
 
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
@@ -96,8 +102,8 @@ export const StakeModal = ({ account, source }: Props) => {
                 {t("ethereum.stake.title")}
               </Text>
               <Flex flexDirection="row" alignItems="center" height="24px" columnGap={2} mb={3}>
-                {OPTION_VALUES.map((x, i) => {
-                  const checked = i === OPTION_VALUES.indexOf(selected);
+                {optionValues.map((x, i) => {
+                  const checked = i === optionValues.indexOf(selected);
                   return (
                     <Button
                       borderRadius={2}
