@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import NanoS from "./NanoS";
 import NanoX from "./NanoX";
 import Blue from "./Blue";
@@ -23,9 +22,6 @@ export type Props = {
   width?: number;
   error?: Error | null;
 };
-export const Wrapper = styled.div`
-  position: relative;
-`;
 
 const usbMap = {
   wired: "plugged",

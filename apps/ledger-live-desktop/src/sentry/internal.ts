@@ -17,9 +17,6 @@ export default (shouldSendCallback: () => boolean, userId: string) => {
 export const captureException = (e: Error) => {
   Sentry.captureException(e);
 };
-export const captureBreadcrumb = (o: Sentry.Breadcrumb) => {
-  Sentry.addBreadcrumb(o);
-};
 export const setTags = (tags: { [key: string]: Primitive }) => {
   Sentry.setTags(tags);
 };

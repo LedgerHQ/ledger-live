@@ -74,6 +74,9 @@
     "unimported": {
       "cache": false
     },
+    "knip-check": {
+      "cache": false
+    },
     "android:apk:local": {
       "dependsOn": ["^build"]
     },

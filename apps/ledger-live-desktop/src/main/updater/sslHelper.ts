@@ -36,9 +36,3 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     throw new UpdateIncorrectSig();
   }
 }
-export async function sign(msgContent: string, privKeyContent: string) {
-  const sign = crypto.createSign("sha256");
-  sign.update(msgContent);
-  const signature = sign.sign(privKeyContent);
-  return signature;
-}

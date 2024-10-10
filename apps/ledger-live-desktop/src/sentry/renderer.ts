@@ -25,6 +25,3 @@ export const captureBreadcrumb = (o: Sentry.Breadcrumb) => {
 export const setTags = (tags: { [key: string]: Primitive }) => {
   Sentry.setTags(tags);
 };
-export const getSentryIfAvailable = (): typeof Sentry | null => {
-  return available ? Sentry : null;
-};

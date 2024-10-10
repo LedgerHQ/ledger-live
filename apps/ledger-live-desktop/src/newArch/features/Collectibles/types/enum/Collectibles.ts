@@ -4,9 +4,3 @@ export enum CollectibleTypeEnum {
   RareSat = "RareSat",
   Inscriptions = "Inscriptions",
 }
-
-export enum TanStackStatus {
-  Error = "error",
-  Success = "success",
-  Pending = "pending",
-}

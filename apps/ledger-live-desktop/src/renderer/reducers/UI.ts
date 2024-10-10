@@ -135,7 +135,6 @@ const handlers: UIHandlers = {
 
 // Selectors
 
-export const UIStateSelector = (state: State): UIState => state.UI;
 export const informationCenterStateSelector = (state: State): UIState["informationCenter"] =>
   state.UI.informationCenter;
 export const platformAppDrawerStateSelector = (state: State): UIState["platformAppDrawer"] =>

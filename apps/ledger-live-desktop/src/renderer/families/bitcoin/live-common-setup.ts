@@ -37,5 +37,3 @@ setSecp256k1Instance({
     return new Uint8Array(Buffer.from(response, "hex").toJSON().data);
   },
 });
-
-export default {};

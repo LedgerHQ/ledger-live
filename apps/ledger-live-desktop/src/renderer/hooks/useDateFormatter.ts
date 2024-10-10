@@ -160,6 +160,3 @@ export function fromNow(date: Date): string {
 
 export const useDateFromNow = (date?: Date | null | undefined): string =>
   useMemo(() => (date ? fromNow(date) : ""), [date]);
-
-export const useDateFromNowFn = (): ((date?: Date) => string) =>
-  useCallback(date => (date ? fromNow(date) : ""), []);

@@ -226,13 +226,6 @@ export const start = async (store: ReduxStore) => {
     context: getContext(),
   });
 };
-export const stop = () => {
-  logger.analyticsStop();
-  storeInstance = null;
-  const analytics = getAnalytics();
-  if (!analytics) return;
-  analytics.reset();
-};
 type Properties = Error | Record<string, unknown> | null;
 export type LoggableEvent = {
   eventName: string;

@@ -5,10 +5,6 @@ import { TFunction } from "i18next";
 import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import Breadcrumb from "./Breadcrumb";
-export type BasicStepProps = {
-  t: TFunction;
-  transitionTo: (a: string) => void;
-};
 export type Step<T, StepProps> = {
   id: T;
   label?: React.ReactNode;
