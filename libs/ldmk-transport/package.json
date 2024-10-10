@@ -1,0 +1,56 @@
+{
+  "name": "@ledgerhq/ldmk-transport",
+  "version": "0.1.0",
+  "description": "Ledger Device Managment Kit transport module",
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/env",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib-es/index.js",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported",
+    "test": "jest"
+  },
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
+  },
+  "dependencies": {
+    "@ledgerhq/device-management-kit": "^0.4.0",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "rxjs": "^7.8.1"
+  }
+}
