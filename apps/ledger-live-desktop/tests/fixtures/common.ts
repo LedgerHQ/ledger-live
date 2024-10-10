@@ -88,24 +88,26 @@ export const test = base.extend<TestFixtures>({
 
     let device: any | undefined;
 
-    if (IS_NOT_MOCK && speculosApp) {
-      // Ensure the portCounter stays within the valid port range
-      if (portCounter > MAX_PORT) {
-        portCounter = BASE_PORT;
-      }
-      const speculosPort = portCounter++;
-      setEnv(
-        "SPECULOS_PID_OFFSET",
-        (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-      );
-      device = await startSpeculos(
-        testInfo.title.replace(/ /g, "_"),
-        specs[speculosApp.name.replace(/ /g, "_")],
-      );
-      setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
-    }
-
     try {
+      if (IS_NOT_MOCK && speculosApp) {
+        // Ensure the portCounter stays within the valid port range
+        if (portCounter > MAX_PORT) {
+          portCounter = BASE_PORT;
+        }
+        const speculosPort = portCounter++;
+        setEnv(
+          "SPECULOS_PID_OFFSET",
+          (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        );
+        device = await startSpeculos(
+          testInfo.title.replace(/ /g, "_"),
+          specs[speculosApp.name.replace(/ /g, "_")],
+        );
+        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+        process.env.SPECULOS_API_PORT = device?.ports.apiPort;
+        process.env.MOCK = "";
+      }
+
       // default environment variables
       env = Object.assign(
         {
