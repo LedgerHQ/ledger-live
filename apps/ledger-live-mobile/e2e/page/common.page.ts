@@ -1,6 +1,7 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import {
   getElementById,
+  launchProxy,
   scrollToId,
   tapByElement,
   tapById,
@@ -12,6 +13,7 @@ import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";
 
 import { launchSpeculos, deleteSpeculos } from "../helpers";
+const proxyAddress = "localhost";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
@@ -73,13 +75,16 @@ export default class CommonPage {
   }
 
   async addSpeculos(nanoApp: string) {
-    const proxyAddress = await launchSpeculos(nanoApp);
-    await bridge.addKnownSpeculos(proxyAddress);
-    return proxyAddress;
+    const proxyPort = await bridge.findFreePort();
+    const speculosAddress = "localhost";
+    const speculosPort = await launchSpeculos(nanoApp, proxyPort);
+    await launchProxy(proxyPort, speculosAddress, speculosPort);
+    await bridge.addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    return proxyPort;
   }
 
-  async removeSpeculos(proxyAddress: string) {
-    await deleteSpeculos(proxyAddress);
-    await bridge.removeKnownSpeculos(proxyAddress);
+  async removeSpeculos(proxyPort: number) {
+    await deleteSpeculos(proxyPort);
+    await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
   }
 }

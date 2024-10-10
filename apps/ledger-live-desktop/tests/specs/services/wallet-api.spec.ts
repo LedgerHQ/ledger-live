@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";

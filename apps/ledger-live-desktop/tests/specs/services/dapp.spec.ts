@@ -4,7 +4,7 @@ import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { WebviewLayout } from "../../component/webviewLayout.component";
 
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app";

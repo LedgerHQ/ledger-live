@@ -5,6 +5,17 @@ import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 
 global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
 
+class ResizeObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserver;
+
 beforeAll(() =>
   server.listen({
     onUnhandledRequest(request, print) {
