@@ -119,7 +119,6 @@
     "@react-native/metro-config": "0.74.88",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/core": "^6.4.6",
-    "@react-navigation/devtools": "^6.0.10",
     "@react-navigation/elements": "^1.3.6",
     "@react-navigation/material-top-tabs": "^6.3.0",
     "@react-navigation/native": "^6.0.13",
