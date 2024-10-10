@@ -1,17 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { INITIAL_WEB3HUB_STATE, WEB3HUB_STORE_KEY } from "LLM/features/Web3Hub/constants";
 import { Web3HubDB } from "LLM/features/Web3Hub/types";
-import { useDB } from "~/db";
+import { useWeb3HubDB } from "LLM/features/Web3Hub/db";
 
 const dismissedManifestsSelector = (state: Web3HubDB) => state.dismissedManifests;
 
 export function useDismissedManifests() {
-  return useDB<Web3HubDB, Web3HubDB["dismissedManifests"]>(
-    WEB3HUB_STORE_KEY,
-    INITIAL_WEB3HUB_STATE,
-    dismissedManifestsSelector,
-  );
+  return useWeb3HubDB<Web3HubDB["dismissedManifests"]>(dismissedManifestsSelector);
 }
 
 export default function useDisclaimerViewModel(goToApp: (manifestId: string) => void) {
@@ -27,11 +22,6 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
       setIsChecked(false);
     }
   }, [disclaimerManifest, dismissedManifests]);
-
-  useEffect(() => {
-    setWeb3HubDB(INITIAL_WEB3HUB_STATE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onPressItem = useCallback(
     (manifest: AppManifest) => {
