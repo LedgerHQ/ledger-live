@@ -737,7 +737,11 @@
         "subTitle": "The {{family}} integration has been done by the {{team}} team",
         "description": "Ledger Live is an open-source platform.",
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
+        "descriptionLink": {
+          "integration": "This integration has been carried out by",
+          "collab": "in collaboration with Ledger"
+        }
       }
     },
     "willBeDeprecatedBanner": {

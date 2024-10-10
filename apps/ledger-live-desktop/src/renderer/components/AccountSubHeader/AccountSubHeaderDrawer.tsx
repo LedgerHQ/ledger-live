@@ -1,14 +1,25 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { SideDrawer } from "~/renderer/components/SideDrawer";
+import styled from "styled-components";
+
+import { Link } from "@ledgerhq/react-ui";
+
 import Box from "~/renderer/components/Box";
+import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Text from "~/renderer/components/Text";
+import IconExternalLink from "~/renderer/icons/ExternalLink";
+import { openURL } from "~/renderer/linking";
+
+const ExternalLinkIconContainer = styled.span`
+  display: inline-flex;
+  margin-left: 4px;
+`;
 type Props = {
   isOpen: boolean;
   closeDrawer: () => void;
   family: string;
   team: string;
+  teamLink?: string;
 };
 const Title = styled(Text)`
   font-style: normal;
@@ -19,7 +30,39 @@ const Title = styled(Text)`
 const Description = styled(Text)`
   font-size: 13px;
 `;
-export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team }: Props) {
+
+type TeamLinkProps = {
+  team: string;
+  teamLink: string;
+};
+
+const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
+  const { t } = useTranslation();
+
+  const onOpenTeam = useCallback(() => {
+    openURL(teamLink);
+  }, [teamLink]);
+
+  return (
+    <>
+      <Description>{t("account.subHeader.drawer.descriptionLink.integration")}</Description>{" "}
+      <Link
+        verticalAlign={"bottom"}
+        onClick={() => onOpenTeam}
+        justifyContent="center"
+        color={"palette.primary.main"}
+      >
+        {team}
+        <ExternalLinkIconContainer>
+          <IconExternalLink size={12} />
+        </ExternalLinkIconContainer>
+      </Link>{" "}
+      <Description>{t("account.subHeader.drawer.descriptionLink.collab")}</Description>
+    </>
+  );
+};
+
+export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team, teamLink }: Props) {
   const { t } = useTranslation();
   return (
     <SideDrawer
@@ -45,9 +88,13 @@ export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team }: Pr
         </Box>
         <Box py={2}>
           <Description>
-            {t("account.subHeader.drawer.description3", {
-              team,
-            })}
+            {teamLink ? (
+              <TeamLink team={team} teamLink={teamLink} />
+            ) : (
+              t("account.subHeader.drawer.description3", {
+                team,
+              })
+            )}
           </Description>
         </Box>
       </Box>
