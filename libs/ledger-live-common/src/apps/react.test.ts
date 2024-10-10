@@ -19,8 +19,8 @@ calculateDependencies();
 
 const mockedState = initState(
   mockListAppsResult(
-    "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain",
-    "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain",
+    "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain, PulseChain",
+    "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain, PulseChain",
     deviceInfo155,
   ),
 );
@@ -57,6 +57,7 @@ test("Apps hooks - useAppUninstallNeedsDeps - Expect dep apps", () => {
     "Aave",
     "Polygon",
     "Binance Smart Chain",
+    "PulseChain",
   ]);
 });
 test("Apps hooks - useAppUninstallNeedsDeps - Expect no dep apps", () => {
@@ -139,7 +140,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps", () => {
       },
     }),
   );
-  expect(result.current.device.length).toBe(6);
+  expect(result.current.device.length).toBe(7);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
   const { result } = renderHook(() =>
@@ -152,7 +153,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
       },
     }),
   );
-  expect(result.current.catalog.length).toBe(12);
+  expect(result.current.catalog.length).toBe(13);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps with query", () => {
   const { result } = renderHook(() =>
@@ -184,8 +185,8 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
 const mockedStateWithInstallQueue = {
   ...initState(
     mockListAppsResult(
-      "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain",
-      "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain",
+      "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain, PulseChain",
+      "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain, PulseChain",
       deviceInfo155,
     ),
   ),
@@ -214,6 +215,7 @@ test('Apps hooks - useAppsSections - Sort "device" category apps with installing
     "Aave",
     "Polygon",
     "Binance Smart Chain",
+    "PulseChain",
   ]);
   expect(installQueueResult.current.device.map(elt => elt.name)).toMatchObject([
     // Apps being installed
@@ -226,5 +228,6 @@ test('Apps hooks - useAppsSections - Sort "device" category apps with installing
     "Aave",
     "Polygon",
     "Binance Smart Chain",
+    "PulseChain",
   ]);
 });

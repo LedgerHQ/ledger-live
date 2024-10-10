@@ -87,6 +87,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const coreum = useFeature("currencyCoreum");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const pulseChain = useFeature("currencyPulseChain");
+  const pulseChainTestnet = useFeature("currencyPulseChainTestnet");
   const base = useFeature("currencyBase");
   const baseSepolia = useFeature("currencyBaseSepolia");
   const klaytn = useFeature("currencyKlaytn");
@@ -137,6 +139,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       coreum,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      pulsechain: pulseChain,
+      pulsechain_testnet: pulseChainTestnet,
       base,
       base_sepolia: baseSepolia,
       klaytn,
@@ -186,6 +190,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       coreum,
       polygonZkEvm,
       polygonZkEvmTestnet,
+      pulseChain,
+      pulseChainTestnet,
       base,
       baseSepolia,
       klaytn,
