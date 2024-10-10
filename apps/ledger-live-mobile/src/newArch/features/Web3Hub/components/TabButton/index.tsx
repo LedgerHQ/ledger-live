@@ -1,27 +1,46 @@
-import React, { useCallback } from "react";
-import { useTheme } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
+import { useTheme, useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { BorderlessButton } from "react-native-gesture-handler";
 import type { AppProps, MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
+import deviceStorage from "~/logic/storeWrapper";
+import { Web3HubTabType } from "../../screens/Web3HubTabs/components/TabItem";
 
 type Props = {
-  count: number;
+  count?: number;
+  onclick?: () => void;
   navigation: MainProps["navigation"] | SearchProps["navigation"] | AppProps["navigation"];
 };
 
-export default function TabButton({ count, navigation }: Props) {
+export default function TabButton({ navigation, onclick }: Props) {
   const { colors } = useTheme();
+  const [count, setCount] = useState(0);
 
-  const goToTabs = useCallback(() => {
+  useFocusEffect(
+    useCallback(() => {
+      const getTabCount = async () => {
+        const tabs = (await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[];
+        setCount(tabs?.length || 0);
+      };
+
+      getTabCount();
+    }, []),
+  );
+
+  const handleClick = () => {
+    if (onclick) {
+      onclick();
+    }
+
     navigation.push(NavigatorName.Web3Hub, {
       screen: ScreenName.Web3HubTabs,
     });
-  }, [navigation]);
+  };
 
   return (
-    <BorderlessButton onPress={goToTabs} activeOpacity={0.5} borderless={false}>
+    <BorderlessButton onPress={handleClick} activeOpacity={0.5} borderless={false}>
       <View
         accessible
         accessibilityRole="button"

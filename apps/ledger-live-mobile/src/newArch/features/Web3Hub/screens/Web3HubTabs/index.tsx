@@ -1,28 +1,115 @@
-import React from "react";
-import { View } from "react-native";
-import { Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
+import { FlashList } from "@shopify/flash-list";
+import type { TabData, TabsProps } from "LLM/features/Web3Hub/types";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { TabsProps } from "LLM/features/Web3Hub/types";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import Header from "./components/Header";
+import deviceStorage from "~/logic/storeWrapper";
+import TabItem, { Web3HubTabType } from "./components/TabItem";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
+const identityFn = (item: TabData) => item.id;
+
+const newTab = "New tab";
+
 export default function Web3HubTabs({ navigation }: TabsProps) {
+  const { colors } = useTheme();
+  const [tabs, setTabs] = useState<TabData[]>([]);
+
+  const listRef = useRef(null);
+
+  const handleItemClosePress = (itemId: string) => {
+    const filteredTabs = tabs.filter(item => item.id !== itemId);
+    deviceStorage.save("web3hub__TabHistory", filteredTabs);
+    setTabs(filteredTabs);
+  };
+  const goToSearch = useCallback(() => {
+    navigation.push(NavigatorName.Web3Hub, {
+      screen: ScreenName.Web3HubSearch,
+    });
+  }, [navigation]);
+  useEffect(() => {
+    const getTabs = async () => {
+      try {
+        const tabHistory =
+          ((await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[]) || [];
+        setTabs(tabHistory);
+      } catch (error) {
+        console.error("Error fetching tabs from storage:", error);
+      }
+    };
+    getTabs();
+    const timer = setTimeout(() => {
+      getTabs();
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
       <Header
-        title={"N Tabs"} // Temporary, will probably be changed
+        title={`${tabs.length} ${tabs.length > 1 ? "tabs" : "tab"}`}
         navigation={navigation}
       />
 
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
-        <Text>{ScreenName.Web3HubTabs}</Text>
+      <View style={styles.container}>
+        <FlashList
+          ref={listRef}
+          testID="web3hub-tabs-scroll"
+          keyExtractor={identityFn}
+          renderItem={({ item }) => (
+            <TabItem
+              item={item}
+              extraData={{ colors: colors }}
+              navigation={navigation}
+              onItemClosePress={handleItemClosePress}
+            />
+          )}
+          estimatedItemSize={50}
+          data={tabs}
+          numColumns={2}
+        />
       </View>
+
+      <TouchableOpacity onPress={goToSearch}>
+        <Flex
+          height={80}
+          flexDirection="row"
+          backgroundColor={colors.background}
+          justifyContent={"center"}
+          paddingY={5}
+        >
+          <Flex
+            style={{
+              height: 40,
+              backgroundColor: "#252424",
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderRadius: 30,
+            }}
+            flexDirection="row"
+            justifyContent={"center"}
+            alignItems={"center"}
+            columnGap={2}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>{newTab}</Text>
+            <IconsLegacy.PlusMedium size={16} color={"black"} />
+          </Flex>
+        </Flex>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingVertical: 10,
+  },
+});
