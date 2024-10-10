@@ -67,7 +67,9 @@ export class Drawer extends Component {
   }
 
   async selectAccountByName(account: Account, index = 0) {
-    await this.getAccountButton(account.currency.name, index).locator(`text=${account.accountName}`).click();
+    await this.getAccountButton(account.currency.name, index)
+      .locator(`text=${account.accountName}`)
+      .click();
   }
 
   back() {

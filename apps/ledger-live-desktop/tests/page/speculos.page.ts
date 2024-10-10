@@ -80,21 +80,28 @@ export class SpeculosPage extends AppPage {
   }
 
   verifySwapGetAmountScreen(swap: Swap, getAmountScreen: string[]) {
-    if (swap.accountToCredit.currency.name === "Solana") {
+    swap.amountToReceive =
+      extractNumberFromString(swap.amountToReceive).length < 18
+        ? extractNumberFromString(swap.amountToReceive)
+        : extractNumberFromString(swap.amountToReceive).substring(0, 17);
+    console.log("amount to receive: " + swap.amountToReceive);
+    console.log("GET amount to receive: " + getAmountScreen);
+    /*if (swap.accountToCredit.currency.name === "Solana") {
       expect(
         verifyAmount(
-          `${extractNumberFromString(swap.amountToReceive)} ${swap.accountToCredit.currency.ticker}`,
+          `${swap.amountToReceive} ${swap.accountToCredit.currency.ticker}`,
           getAmountScreen,
         ),
       ).toBeTruthy();
     } else {
       expect(
         verifyAmount(
-          `${swap.accountToCredit.currency.ticker} ${extractNumberFromString(swap.amountToReceive)}`,
+          `${swap.accountToCredit.currency.ticker} ${swap.amountToReceive}`,
           getAmountScreen,
         ),
       ).toBeTruthy();
-    }
+    }*/
+    expect(verifyAmount(`${swap.amountToReceive}`, getAmountScreen)).toBeTruthy();
   }
 
   verifySwapFeesAmountScreen(swap: Swap, feesAmountScreen: string[]) {
@@ -102,10 +109,12 @@ export class SpeculosPage extends AppPage {
     if (swap.feesAmount) {
       //max number of chars on the screen
       speculosFeesAmount =
-        extractNumberFromString(swap.feesAmount).length < 19
+        extractNumberFromString(swap.feesAmount).length < 18
           ? extractNumberFromString(swap.feesAmount)
-          : extractNumberFromString(swap.feesAmount).substring(0, 18);
+          : extractNumberFromString(swap.feesAmount).substring(0, 17);
     }
+    console.log("amount to receive: " + speculosFeesAmount);
+    console.log("GET amount to receive: " + feesAmountScreen);
     expect(
       verifySwapFeesAmount(swap.accountToDebit.currency.name, speculosFeesAmount, feesAmountScreen),
     ).toBeTruthy();

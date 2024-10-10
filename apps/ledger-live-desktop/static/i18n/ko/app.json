@@ -145,7 +145,8 @@
     "add" : "추가",
     "or" : "또는",
     "clearAll" : "모두 지우기",
-    "buyLedger" : "Ledger 구매"
+    "buyLedger" : "Ledger 구매",
+    "quote" : "호가"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -859,6 +860,9 @@
       "continue" : "계속"
     }
   },
+  "card" : {
+    "backToCard" : "모든 카드"
+  },
   "lend" : {
     "title" : "암호화폐를 대출",
     "tabs" : {
@@ -1526,7 +1530,8 @@
     "messageIfSkipped" : "귀하의 {{name}} 주소가 Ledger 장치에서 확인되지 않았습니다. 보안을 위해 주소를 인증하세요.",
     "showQrCode" : "QR 코드 보기",
     "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
-    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
+    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다",
+    "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1868,8 +1873,8 @@
       "targetAccount" : "보내는 계정"
     },
     "sell" : {
-      "notice" : "장치에서 매도 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-      "confirm" : "매도 트랜잭션을 확인하세요"
+      "notice" : "장치에서 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "confirm" : "트랜잭션을 확인하세요"
     },
     "fund" : {
       "notice" : "장치에서 자금 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "판매",
-    "titleCrypto" : "{{currency}} 매도"
+    "titleCrypto" : "{{currency}} 매도",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "트랜잭션 브로드캐스트 성공",
+        "description" : "확인을 위해 귀하의 거래를 네트워크로 전송했습니다. 거래가 확인되고 공급자가 이를 처리할 때까지 기다려 주세요."
+      }
+    }
   },
   "receive" : {
     "title" : "수령",
@@ -3979,7 +3990,7 @@
       "stock" : "지역 시장 지표",
       "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
       "walletSync" : "Ledger 동기화",
-      "walletSyncDesc" : "간단하게 앱 데이터를 보호하고 여러 Ledger Live 인스턴스를 동기화하세요.",
+      "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
       "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
       "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
@@ -4005,6 +4016,16 @@
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash 도구",
+          "description" : "SimpleHash를 사용해 유용한 도구 제공",
+          "cta" : "열기",
+          "tabs" : {
+            "spam" : "스팸 신고",
+            "refresh" : "메타데이터 갱신",
+            "check" : "스팸 점수"
+          }
+        },
         "debugSpamNft" : {
           "report" : "신고하기",
           "contractAddress" : "계약 주소",
@@ -4064,8 +4085,38 @@
         },
         "back" : "돌아가기"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger 동기화 디버거",
+        "description" : "특정 LedgerSync 흐름을 시작하거나 LedgerSync의 현재 상태를 확인할 수 있습니다.",
+        "cta" : "열기",
+        "modal" : {
+          "check" : {
+            "title" : "체커",
+            "trustchain" : {
+              "name" : "Trustchain ID : ",
+              "emptyId" : "비어있는 ID",
+              "applicationPath" : "애플리케이션 경로: ",
+              "emptyApplicationPath" : "비어있는 애플리케이션 경로",
+              "cloudSyncVersion" : "클라우드 동기화 버전: ",
+              "lastSyncInfo" : "지난 동기화 정보: ",
+              "uniported" : "가져오지 않은 계정: "
+            },
+            "copied" : "텍스트가 클립보드에 복사되었습니다!",
+            "export" : "내보내기"
+          },
+          "generator" : {
+            "title" : "생성기",
+            "flow" : "플로우 선택",
+            "step" : "단계 선택",
+            "instance" : "멤버 생성",
+            "cta" : "적용"
+          }
+        }
+      },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
+      "mockAppUpdate" : "모의 앱 업데이트",
+      "mockAppUpdateDesc" : "내 Ledger에 이용할 수 있는 앱 업데이트를 표시하세요. 같은 앱 버전이 재설치 됩니다",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "네트워크 로그 활성화",
           "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger 동기화 테스트",
-          "description" : "특정 Ledger 동기화 플로우를 시작할 수 있습니다.",
-          "cta" : "테스트",
-          "modal" : {
-            "flow" : "플로우 선택",
-            "step" : "단계 선택",
-            "instance" : "멤버 생성",
-            "cta" : "적용"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHash 도구",
-          "description" : "SimpleHash를 사용해 유용한 도구 제공",
-          "cta" : "열기",
-          "tabs" : {
-            "spam" : "스팸 신고",
-            "refresh" : "메타데이터 갱신",
-            "check" : "스팸 점수"
-          }
         }
       }
     },
@@ -5544,6 +5574,13 @@
       "title" : "금액 및 수수료 계산이 불가능합니다",
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "토큰 전송에 대한 수신자가 잘못되었습니다. 토큰 전송에 지원되는 계정 유형: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "죄송합니다, 수수료 추정에 실패했습니다",
+      "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "요율 만료",
-      "description" : "해당 요율이 만료되어 트랜잭션을 완료할 수 없습니다. 요율을 새로고침하고 다시 스왑해 보세요."
+      "description" : "환율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
     },
     "PayinExtraIdError" : {
       "message" : "스왑에 필요한 추가 ID를 찾을 수 없습니다"
     },
     "SwapGenericAPIError" : {
       "title" : "문제가 발생했습니다",
-      "description" : "교환 트랜잭션이 완료되지 않았습니다. 다시 시도하거나 지원에 연락하세요."
+      "description" : "트랜잭션을 수행하지 못했습니다. 다시 시도해 주세요."
     },
     "TimeoutError" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "동기화 해제됨"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "더 이상 동기화 상태가 아닙니다",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
+    },
+    "TrustchainNotFound" : {
+      "title" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
     },
     "DeviceShouldStayInApp" : {
       "title" : "{{appName}} 앱을 실행해주세요",
@@ -5777,7 +5825,7 @@
       "title" : "우선 수수료가 필요 이상으로 높습니다. 초과 금액을 지불할 수 있습니다."
     },
     "MaxFeeTooLow" : {
-      "title" : "최대 수수료가 권장 값보다 낮습니다."
+      "title" : "수수료가 권장 값보다 낮습니다."
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
@@ -6013,6 +6061,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "예치에 사용할 {{depositAmount}} ADA가 있는지 확인하세요"
     },
+    "CardanoFeeHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "네트워크 수수료가 비정상적으로 높습니다. 트랜잭션을 다시 확인해 주세요."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano 유효하지 않은 프로토콜 파라미터",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -6159,6 +6219,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
+    },
+    "TonExcessFee" : {
+      "title" : "진행할 경우, 토큰이 전송됩니다. 수수료로 0.1 TON을 지불하게 되며, 초과 금액은 반환됩니다."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "메인 계정(TON)에 수수료 계산에 사용할 잔액이 부족합니다. 필요한 최소 잔액은 0.1 TON입니다."
+    },
+    "TonMinimumRequired" : {
+      "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
+    },
+    "BackupAppDataError" : {
+      "title" : "앱 데이터 백업 중 오류가 발생했습니다"
+    },
+    "RestoreAppDataError" : {
+      "title" : "앱 데이터 복원 중 오류가 발생했습니다"
+    },
+    "DeleteAppDataError" : {
+      "title" : "앱 데이터 삭제 중 오류가 발생했습니다"
+    },
+    "PinNotSet" : {
+      "title" : "PIN이 설정되지 않았습니다"
     }
   },
   "cryptoOrg" : {
@@ -6354,82 +6435,84 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "close" : "닫기",
     "activate" : {
-      "title" : "모든 플랫폼에서 계정을 동기화하세요",
-      "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 보장합니다.",
-      "cta" : "계정 동기화"
+      "title" : "이 컴퓨터에서 Ledger 동기화를 켜시겠습니까?",
+      "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
+      "cta" : "Ledger 동기화 켜기",
+      "alreadySync" : "장치를 이미 켰습니다",
+      "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
     },
-    "alreadySync" : "이미 생성된 키가 있나요?",
     "manage" : {
       "cta" : "관리",
       "synchronize" : {
-        "label" : "동기화",
-        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐기세요."
+        "label" : "다른 Ledger Live 앱과 동기화",
+        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화"
       },
       "backup" : {
-        "label" : "키 관리",
-        "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요."
+        "label" : "동기화 삭제",
+        "description" : "여러 Ledger Live 앱에서 동기화된 암호화폐 계정의 동기화가 중지됩니다."
       },
       "instance" : {
-        "label" : "동기화된 인스턴스 1개",
-        "label_other" : "{{count}} 동기화된 인스턴스",
+        "label" : "1개 Ledger Live 앱 동기화",
+        "label_other" : "{{count}} Ledger Live 앱 동기화",
         "cta" : "관리"
       }
     },
     "loading" : {
       "title" : "조금만 기다려 주세요...",
-      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
-      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
+      "activation" : "최대 30초가 소요될 수 있습니다.\n이 화면을 떠나지 마세요."
     },
     "error" : {
       "title" : "문제가 발생했습니다",
       "description" : "나중에 다시 시도해 주세요.",
       "cta" : "다시 시도하세요",
       "fetching" : "데이터를 가져오는 중에 문제가 발생했습니다.",
-      "ledgerSyncDown" : "현재 Ledger 동기화를 사용할 수 없습니다.<br/>이는 귀하의 자산에 아무런 영향을 미치지 않습니다."
+      "ledgerSyncDown" : "당사 측의 기술적 문제로 인해 Ledger 동기화를 일시적으로 사용할 수 없으며, 현재 수정 중에 있습니다."
     },
     "unsecuredError" : {
-      "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
-      "description" : "암호화 키 생성에 사용된 Ledger 장치를 연결하세요.",
-      "info" : "Ledger 장치를 분실한 경우에도 키를 삭제할 수 있으니 걱정마세요! 이 작업을 수행하면 데이터가 동시에 삭제되고 현재 동기화된 모든 인스턴스의 동기화가 중단됩니다.",
+      "title" : "Ledger 동기화를 활성화하는 데 사용한 것과 동일한 Ledger 장치를 연결합니다.",
+      "description" : "동일한 Ledger 장치가 없으면 대신 \"동기화 삭제\"를 선택합니다.",
       "cta" : "다른 Ledger 장치 연결하기",
-      "ctaDelete" : "내 암호화 키 삭제"
+      "ctaDelete" : "동기화 삭제"
+    },
+    "alreadySecureError" : {
+      "title" : "이 앱은 이미 이 Ledger 장치로 보호되고 있습니다.",
+      "description" : "새로운 백업을 생성하려면, 다른 암호화 키를 생성하는 데 사용한 Ledger 장치를 연결하세요.",
+      "cta" : "이해합니다"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "이 Ledger를 사용하여 동기화할 수 없습니다",
+      "description" : "그래도 두 앱을 동기화하려면 키를 삭제하고 다시 시도하세요.",
+      "cta" : "동기화 삭제"
     },
     "autoRemoveError" : {
-      "title" : "현재 인스턴스를 제거할 수 없습니다.",
-      "description" : "보안상의 이유로 암호화 키를 삭제하지 않으면 현재 사용 중인 인스턴스를 제거할 수 없습니다.",
-      "info" : "암호화 키를 삭제하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 그러나 이는 귀하의 자금에 영향을 미치지 않습니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
+      "title" : "현재 사용 중인 컴퓨터는 삭제할 수 없습니다.",
+      "description" : "삭제하려면 Ledger 동기화가 활성화된 다른 휴대전화나 컴퓨터를 사용하세요. 다른 장치가 없으면 대신 '동기화 삭제'를 선택하세요.",
       "cta" : "이해합니다",
-      "ctaDelete" : "내 암호화 키 삭제"
+      "ctaDelete" : "동기화 삭제"
     },
     "success" : {
       "backup" : {
-        "title" : "완료",
-        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다."
+        "title" : "이 컴퓨터에서 Ledger Live에 대한 Ledger 동기화가 켜짐"
       },
       "synch" : {
-        "title" : "동기화 성공!",
-        "desc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다."
+        "title" : "동기화 성공",
+        "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대전화와 컴퓨터의 Ledger Live 앱에 자동으로 표시됩니다. "
       },
       "synchAnother" : "다른 Ledger Live 앱과 동기화",
       "close" : "닫기"
     },
     "manageBackup" : {
-      "title" : "키 관리",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "데이터 삭제",
-          "description" : "동기화된 모든 데이터가 삭제됩니다."
-        }
-      },
       "deleteBackup" : {
-        "title" : "암호화 키를 삭제하시겠습니까?",
-        "description" : "삭제를 클릭하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 비동기화하더라도 자금에는 영향이 없으므로 안심하시기 바랍니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
-        "delete" : "삭제",
-        "cancel" : "취소"
+        "title" : "정말 동기화를 삭제하시겠습니까?",
+        "description" : "여러 휴대폰 및 컴퓨터에서 Ledger Live 앱을 사용하는 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다. ",
+        "delete" : "네, 삭제하겠습니다",
+        "cancel" : "동기화 유지"
       },
       "deleteBackupSuccess" : {
-        "title" : "장치가 비동기화되었으며 키가 삭제되었습니다."
+        "title" : "Ledger Live 앱이 더 이상 동기화되지 않습니다",
+        "description" : "언제든지 동기화를 다시 켤 수 있습니다."
       },
       "deleteBackupError" : {
         "title" : "문제가 발생했습니다"
@@ -6440,7 +6523,7 @@
         "title" : "동기화 방법 선택",
         "description" : "Ledger 장치로 직접 동기화하거나 Ledger Live에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
         "scan" : {
-          "title" : "QR 코드 스캔",
+          "title" : "QR 코드 표시",
           "description" : "QR 코드를 스캔하여 동기화합니다"
         },
         "connectDevice" : {
@@ -6449,29 +6532,124 @@
         }
       },
       "qrCode" : {
-        "title" : "동기화",
-        "hint" : "두 개의 Ledger Live 데스크탑 앱을 동기화하려고 하시나요? 여기를 클릭하세요.",
-        "description" : "귀하의 계정을 다른 Ledger Live 앱과 스캔하고 동기화하세요",
-        "steps" : {
-          "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-          "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화</0> > <0>QR 표시</0>로 차례로 이동합니다",
-          "step3" : "100% 로딩될 때까지 QR 코드를 스캔하세요."
+        "title" : "Ledger Live 앱 동기화",
+        "options" : {
+          "mobile" : "휴대전화와 동기화",
+          "desktop" : "컴퓨터와 동기화"
+        },
+        "mobile" : {
+          "description" : "다른 전화기에서 Ledger Live와 동기화",
+          "steps" : {
+            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>QR 표시</0>로 차례로 이동합니다",
+            "step3" : "QR 코드 스캔"
+          }
+        },
+        "desktop" : {
+          "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
+          "steps" : {
+            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>\u001D Ledger 사용하기</0>로 차례로 이동합니다",
+            "step3" : "Ledger 장치에 연결합니다"
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "동기화가 감지되지 않음",
+        "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+        "cta" : "Ledger 동기화 켜기"
+      },
       "pinCode" : {
-        "title" : "코드 입력",
-        "description" : "동기화하려는 다른 Ledger Live에 표시된 코드를 입력합니다."
+        "title" : "Ledger 동기화 코드",
+        "description" : "두 Ledger Live 앱 모두에서 암호화폐 계정을 동기화하려면 휴대폰의 Ledger Live에 이 코드를 입력하세요.",
+        "error" : {
+          "title" : "코드가 일치하지 않습니다.",
+          "description" : "입력한 코드가 다른 Ledger Live 인스턴스에 표시된 코드와 일치하는지 확인해 주세요."
+        }
       }
     },
     "manageInstances" : {
-      "title" : "동기화된 인스턴스 관리",
+      "title" : "Ledger Live가 다음에서 동기화됨",
       "remove" : "제거",
-      "deleteInstanceSuccess" : "귀하의 {{instanceName}} 동기화가 중단되었습니다",
+      "deleteInstanceSuccess" : "{{instanceName}}의 Ledger Live 앱이 더 이상 Ledger 동기화에 연결되어 있지 않습니다.",
       "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
       "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "더 많은 인스크립션 보기",
+      "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
+      "receive" : "인스크립션 받기",
+      "discoveryDrawer" : {
+        "title" : "Ordinals 살펴보기",
+        "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
+        "learnMore" : "자세히 알아보기",
+        "protectTitle" : "Ordinals 자산 보호",
+        "protectDescription" : "트랜잭션에서 Ordinals 자산을 제외하세요."
+      },
+      "detailsDrawer" : {
+        "description" : "설명",
+        "collectionName" : "컬렉션명",
+        "inscriptionId" : "인스크립션 ID",
+        "inscriptionNumber" : "인스크립션 번호",
+        "mintedTo" : "민팅 대상",
+        "genesisTx" : "제네시스 트랜잭션",
+        "blockNumber" : "블록 번호",
+        "contentType" : "콘텐츠 유형",
+        "createdDate" : "생성 일자",
+        "satribute" : "Sat 희귀성",
+        "satNumber" : "Sat 번호",
+        "satName" : "Sat 이름",
+        "location" : "위치",
+        "outputValue" : "산출값",
+        "storedOnChain" : "온체인에 저장됨",
+        "hide" : "숨기기"
+      }
+    },
+    "rareSats" : {
+      "empty" : "내 Bitcoin 계정으로 전송하여 간편하게 Rare Sats를 추가할 수 있습니다.",
+      "receive" : "Rare Sat 받기",
+      "title" : "Rare Sats",
+      "table" : {
+        "type" : "Sat 유형 / 수량",
+        "year" : "년"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "Alpha로 각 비트코인의 탄생에 대해 자세히 들여다 보고, 최초 발행된 사토시의 탄생을 기려보세요. 이 라벨은 비트코인 유닛의 시작을 나타냅니다.",
+          "black_epic" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
+          "black_legendary" : "Black Legendary에 대한 설명 없음",
+          "black_mythic" : "Black Mythic에 대한 설명 없음",
+          "black_rare" : "각 채굴 난이도 조정 기간이 끝날 때의 마지막 사토시를 나타냅니다.",
+          "black_uncommon" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
+          "block_9" : "블록 9는 비트코인 역사에서 독특한 특징을 가지고 있습니다. 가장 초기에 채굴된 블록 중 하나로, 여기에는 유통 중인 가장 오래된 SAT 중 일부가 포함되어 있습니다. 이 SAT는 모든 것의 시작, 다시 말해 비트코인의 탄생 직후와 실질적으로 연관이 있습니다.",
+          "block_9_450x" : "블록 9 450x로 시간을 거슬러 올라가 9번째 블록에서 최초의 비트코인에 해당하는 SAT에 주목해 보겠습니다. 비트코인 역사상 중요한 순간 중 하나가 펼쳐질 것입니다.",
+          "block_78" : "블록 78은 비트코인 역사의 연대기에서 매우 의미 있는 위치에 존재합니다. 이 블록은 Hal Finney가 채굴했으며, 이는 사토시 나카모토가 아닌 다른 사람이 블록체인의 성장에 기여한 첫 번째 사례이기 때문입니다.",
+          "block_286" : "사토시 나카모토가 채굴한 두 번째 비트코인 트랜잭션 사토시인 블록 286의 중요성에 대해 알아보세요. 이 사토시이야말로 여전히 수수께끼로 남아 있는 비트코인 창시자와 그 기원에 대한 신비감을 더합니다.",
+          "block_666" : "블록 666에 대한 설명 없음",
+          "common" : "일반 블록에 대한 설명 없음",
+          "epic" : "4년마다 비트코인 네트워크에는 채굴 보상이 절반으로 줄어드는 \"반감기\" 이벤트가 발생합니다. 각각의 반감기 에포크에서 최초로 발행되는 사토시는 \"에픽\"이라는 라벨이 붙어 비트코인 경제 모델에서 중요한 순간을 표시합니다.",
+          "first_tx" : "2009년 1월 12일, 사토시 나카모토가 할 피니(Hal Finney)라는 컴퓨터 과학자에게 10개의 비트코인을 보냈는데,  이는 최초의 비트코인 트랜잭션으로 역사에 기록되었습니다. 이 상징적인 트랜잭션에서 유래한 사토시에는 \"첫 번째 트랜잭션\"이라는 라벨이 붙어 비트코인 P2P 거래의 기원이 되었습니다.",
+          "hitman" : "Hitman에 대한 설명 없음",
+          "jpeg" : "JPEG를 통한 과거로의 여행. 이 사토시는 2010년 2월 24일 이미지에 대한 최초의 비트코인 트랜잭션과 연관이 있을 수 있습니다. 이 라벨은 혁신에 대한 이야기를 담고 있으며, 비트코인이 비전통적인 트랜잭션과 교환에 대한 초기 시도를 보여줍니다.",
+          "legacy" : "Legacy에 대한 설명 없음",
+          "legendary" : "Legendary에 대한 설명 없음",
+          "mythic" : "Mythic에 대한 설명 없음",
+          "nakamoto" : "비트코인의 창시자로 알려진 사토시 나카모토의 정체는 여전히 베일에 쌓여 있습니다. 사토시가 직접 채굴한 SAT는 이 라벨이 붙어 있어 수집가들에게 큰 인기를 끌고 있습니다.",
+          "omega" : "마지막 사토시인, Omega로 모든 비트코인의 시적 끝을 체험해보세요. 비트코인 유닛의 마지막 사토시.",
+          "paliblock" : "PaliBlock Palindrome에 대한 설명 없음",
+          "palindrome" : "앞뒤로 같은 숫자를 읽을 수 있는 모든 SAT를 장난스럽게 \"Palindrome\"이라고 부릅니다. 예를 들어, 12321 또는 45654로 번호가 매겨진 SAT가 이에 해당합니다. 이러한 고유한 숫자 속성은 라벨이 붙은 SAT에 희소성과 호기심을 더합니다.",
+          "palinception" : "각 SAT가 Palindrome의 배열을 형성하는 매혹적인 사토시 세계를 탐구해보세요. 이러한 복잡하게 구성된 SAT는 동일한 숫자로 구성된 매혹적인 태피스트리와 같습니다.",
+          "pizza" : "비트코인 커뮤니티에서 가장 상징적인 이야기 중 하나는 2010년 5월 22일에 파파존스 피자 두 개를 사기 위해 10,000비트코인을 지불한 프로그래머의 사례입니다. 이 사건은 비트코인 가치의 급격한 폭등을 보여주는 데 이용됩니다. 이 전설적인 트랜잭션에 사용된 SAT에는 \"피자\"라는 라벨이 붙어 있습니다.",
+          "rare" : "비트코인 네트워크는 블록이 약 10분마다 추가되도록 채굴 난이도를 주기적으로 조정합니다. 이러한 각 조정 기간의 첫 번째 SAT에는 \"Rare(진귀한)\"라고 표시됩니다. 이는 네트워크의 보안 및 합의 메커니즘이 끊임없이 진화한다는 사실을 잘 보여줍니다. ",
+          "uncommon" : "이 라벨은 모든 블록의 첫 번째 사토시에 붙습니다. 비트코인 블록체인에 약 10분마다 새로운 블록이 추가된다는 점을 감안할 때 이 SAT를 통해 해당 기간의 시작을 알 수 있습니다.",
+          "vintage" : "비트코인은 최초 1,000개의 블록으로 그 시작을 표시했습니다. 이 기간 내에 채굴된 SAT에는 \"Vintage\"라는 표식이 붙습니다."
+        }
+      }
     }
   }
 }

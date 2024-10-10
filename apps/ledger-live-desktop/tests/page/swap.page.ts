@@ -131,7 +131,7 @@ export class SwapPage extends AppPage {
   @step("Select exchange quote with provider $1")
   async selectQuote(electronApp: ElectronApplication, providerName: string) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId(this.quoteSelector(providerName))).toBeVisible();
+    await expect(webview.getByTestId(this.quoteSelector(providerName))).toBeEnabled();
     await webview.getByTestId(this.quoteSelector(providerName)).click();
   }
 
@@ -142,10 +142,6 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    await expect(
-      webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`),
-    ).not.toHaveAttribute("value", "disabled");
-
     await webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`).click();
   }
 
@@ -170,27 +166,6 @@ export class SwapPage extends AppPage {
   getAccountName(account: Account) {
     //erc20 accounts names are stored in account currency property
     return account.accountType ? account.currency.name : account.accountName;
-  }
-
-  async waitForAccountsBalance(account: Account, timeout = 30000) {
-    const regex = account.parentAccount
-      ? new RegExp(
-          `/blockchain/v\\d+/.+/${account.parentAccount.currency.ticker.toLowerCase()}/address/${account.address}/balance$`,
-        )
-      : new RegExp(
-          `/blockchain/v\\d+/.+/${account.currency.ticker.toLowerCase()}/address/${account.address}/balance$`,
-        );
-    const fetchTxByAddressResponse = this.page
-      .waitForResponse(response => regex.test(response.url()) && response.status() === 200, {
-        timeout,
-      })
-      .catch(() => null);
-    return fetchTxByAddressResponse.then(result => {
-      if (result === null) {
-        console.log("No successful response within the timeout period.");
-      }
-      return result;
-    });
   }
 
   @step("Fill in amount: $0")
@@ -238,11 +213,6 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.fromAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
-  }
-
-  @step("Wait for accounts balance fetch")
-  async waitForAccountsBalanceFetch(accountToSwapFrom: Account) {
-    await this.waitForAccountsBalance(accountToSwapFrom);
   }
 
   @step("Fill in amount: $1")

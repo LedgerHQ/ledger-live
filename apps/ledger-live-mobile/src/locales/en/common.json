@@ -2335,7 +2335,8 @@
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake"
+      "stake": "Stake",
+      "yield": "Yield"
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2591,6 +2592,7 @@
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
+    "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
@@ -3132,6 +3134,13 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "memoTag": {
+        "link": "Need a Tag/Memo?",
+        "title": "Need a Tag/Memo?",
+        "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+        "cta": "I understand",
+        "learnMore": "Learn more about Tags"
+      },
       "selectCrypto": {
         "title": "Choose a crypto you want to receive"
       },
@@ -6621,7 +6630,7 @@
     "title": "Connect device"
   },
   "stake": {
-    "ethereum": {
+    "ethereum_deprecated": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
       "tagMinimum": "Requires {{min}} ETH",
@@ -6654,6 +6663,72 @@
           "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
           "supportLink": "Learn more about Kiln"
         }
+      }
+    },
+    "ethereum": {
+      "title": "Select staking provider",
+      "category": {
+        "all": {
+          "name": "All",
+          "description": "All ethereum staking providers available on Ledger Live."
+        },
+        "liquid": {
+          "name": "Liquid",
+          "description": "You can stake ETH and get rewards in liquid token. You will still be able to trade and participate in DeFi activities."
+        },
+        "protocol": {
+          "name": "Protocol",
+          "description": "You can stake a batch of 32 ETH and get full node rewards in ETH."
+        },
+        "pooling": {
+          "name": "Pooling",
+          "description": "You can join a pool to stake any amount of ETH and get rewards."
+        },
+        "restaking": {
+          "name": "Restaking",
+          "description": "You can restake your liquid token to get additional rewards."
+        }
+      },
+      "howItWorks": "How ETH staking works",
+      "lst": "Liquid token needed",
+      "noMinimum": "No minimum",
+      "provider": {
+        "figment": {
+          "title": "Figment"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking Pool"
+        },
+        "kiln_restaking": {
+          "title": "Kiln Liquid restaking"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking"
+        },
+        "kelpdao": {
+          "title": "Kelp DAO"
+        },
+        "lido": {
+          "title": "Lido"
+        },
+        "p2p": {
+          "title": "P2P"
+        },
+        "rocket_pool": {
+          "title": "Rocket Pool"
+        },
+        "stader-eth": {
+          "title": "Stader Labs"
+        }
+      },
+      "readAbout": "Strategies and tactics to know",
+      "requiredMinimum": "Requires {{min}} ETH",
+      "rewardsStrategy": {
+        "auto-compounded": "Auto-compounded rewards",
+        "basic": "Rewards",
+        "daily": "Daily rewards",
+        "eigenlayer_points": "Eigenlayer points",
+        "validator": "Validator rewards"
       }
     },
     "noFundsModal": {
