@@ -13,7 +13,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "operationsCount": 55,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064512",
+    "spendableBalance": "311061665",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,

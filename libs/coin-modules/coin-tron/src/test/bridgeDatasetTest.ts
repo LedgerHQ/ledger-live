@@ -493,7 +493,6 @@ const tron: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("1000000"),
             errors: {
-              // recipient: new TronSendTrc20ToNewAccountForbidden(),
               gasLimit: new NotEnoughGas(),
             },
             warnings: {},
