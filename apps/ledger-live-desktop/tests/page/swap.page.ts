@@ -3,6 +3,7 @@ import { waitFor } from "../utils/waitFor";
 import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
+import { Account } from "tests/enum/Account";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -115,10 +116,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Select exchange quote $0 with rate $1")
-  async selectExchangeQuote(
-    providerName: "changelly" | "cic" | "oneinch" | "paraswap",
-    exchangeType: "fixed" | "float",
-  ) {
+  async selectExchangeQuote(providerName: string, exchangeType: "fixed" | "float") {
     await this.quoteContainer(providerName, exchangeType).click();
   }
 
@@ -150,13 +148,25 @@ export class SwapPage extends AppPage {
     return this.detailsSwapId.innerText();
   }
 
-  @step("Select account to swap from: $0")
-  async selectAccountToSwapFrom(accountToSwapFrom: string) {
+  getAccountName(account: Account) {
+    //erc20 accounts names are stored in account currency property
+    return account.accountType ? account.currency.name : account.accountName;
+  }
+
+  @step("Select account to swap from")
+  async selectAccountToSwapFrom(accountToSwapFrom: Account) {
     await this.originCurrencyDropdown.click();
-    await this.dropdownOptions.locator(this.optionWithText(accountToSwapFrom)).click();
+    const accName = this.getAccountName(accountToSwapFrom);
+    if (accountToSwapFrom.accountType) {
+      await this.dropdownOptions
+        .locator(this.optionWithTextAndFollowingText(accountToSwapFrom.accountName, accName))
+        .first()
+        .click();
+    } else {
+      await this.dropdownOptions.locator(this.optionWithText(accName)).first().click();
+    }
     const selectedAccountFrom = this.originCurrencyDropdown.locator(this.dropdownSelectedValue);
-    await expect(selectedAccountFrom).toHaveText(accountToSwapFrom);
-    await this.waitForPageLoadState();
+    await expect(selectedAccountFrom).toHaveText(accName);
   }
 
   @step("Fill in amount: $0")

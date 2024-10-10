@@ -1,10 +1,12 @@
 import { Currency } from "./Currency";
+import { AccountType } from "tests/enum/AccountType";
 
 export class Account {
   constructor(
     public readonly currency: Currency,
     public readonly accountName: string,
     public readonly address: string,
+    public readonly accountType?: AccountType,
   ) {}
 
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
@@ -257,12 +259,14 @@ export class Account {
     Currency.ETH_USDT,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+    AccountType.ERC20,
   );
 
   static readonly ETH_USDT_2 = new Account(
     Currency.ETH_USDT,
     "Ethereum 2",
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+    AccountType.ERC20,
   );
 
   static readonly ETH_LIDO = new Account(
@@ -299,6 +303,7 @@ export class Account {
     Currency.TRX_USDT,
     "Tron 1",
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
+    AccountType.TRC20,
   );
 
   static readonly TRX_BTT = new Account(
