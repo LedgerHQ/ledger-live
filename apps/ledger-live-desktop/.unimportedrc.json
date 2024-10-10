@@ -29,7 +29,6 @@
     "@types/qrcode",
     "@types/react-key-handler",
     "prop-types",
-    "allure-commandline",
     "msw",
     "undici"
   ],
