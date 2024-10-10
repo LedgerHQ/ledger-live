@@ -375,6 +375,11 @@ export function verifyAmount(amount: string, text: string[]): boolean {
   return amountDevice.includes(amount);
 }
 
+export function verifyProvider(provider: string, text: string[]): boolean {
+  const providerDevice = text.join("");
+  return providerDevice.includes(provider);
+}
+
 export function verifySwapFeesAmount(amount: string, text: string[]): boolean {
   const amountDevice = text[3];
   return amountDevice.includes(amount);
