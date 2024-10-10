@@ -4,7 +4,7 @@ import { Flex, Switch, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/nativ
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import EventList from "./EventList";
 import Status from "./Status";
 import FloatingPerformanceButton from "./FloatingPerformanceButton";
