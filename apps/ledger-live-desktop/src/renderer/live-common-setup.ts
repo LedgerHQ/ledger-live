@@ -1,6 +1,6 @@
 import "~/live-common-setup-base";
 import "~/live-common-set-supported-currencies";
-import "./families"; // families may set up their own things
+import "./families";
 
 import VaultTransport from "@ledgerhq/hw-transport-vault";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
@@ -11,27 +11,28 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getEnv } from "@ledgerhq/live-env";
 
 setEnvOnAllThreads("USER_ID", getUserId());
-
-const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
+const isSpeculosEnabled = !!getEnv("SPECULOS_API_PORT");
+const isProxyEnabled = !!getEnv("DEVICE_PROXY_URL");
 
 // Listens to logs from `@ledgerhq/logs` (happening on the renderer process) and transfers them to the LLD logger system
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
-
   logger.debug(log);
 });
-
-// listenLogs(log => {
-//   console.log(log.type + ": " + log.message);
-// });
 
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({
   id: "ipc",
   open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+    const ldmkFeatureFlag = getFeature({ key: "ldmkTransport" });
+    if (ldmkFeatureFlag.enabled === true && !isSpeculosEnabled && !isProxyEnabled) return;
+
+    const originalDeviceMode = currentMode;
     // id could be another type of transport such as vault-transport
     if (id.startsWith(vaultTransportPrefixID)) return;
 

@@ -194,6 +194,7 @@ export type Features = CurrencyFeatures & {
   spamFilteringTx: Feature_SpamFilteringTx;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
+  ldmkTransport: DefaultFeature;
 };
 
 /**
