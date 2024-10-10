@@ -70,7 +70,7 @@ jest.mock("expo-barcode-scanner", () => ({
   },
 }));
 
-jest.mock("expo-camera/next", () => {
+jest.mock("expo-camera", () => {
   return {
     CameraView: jest.fn(() => null),
   };
