@@ -1,9 +1,12 @@
 import "~/live-common-setup-base";
 import "~/live-common-set-supported-currencies";
-import "./families"; // families may set up their own things
+import "./families";
 
 import VaultTransport from "@ledgerhq/hw-transport-vault";
-import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import {
+  registerTransportModule,
+  brutallyUnregisterTransportModuleById,
+} from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
@@ -11,27 +14,51 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getEnv } from "@ledgerhq/live-env";
 
 setEnvOnAllThreads("USER_ID", getUserId());
-
-const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
+const isSpeculosEnabled = !!getEnv("SPECULOS_API_PORT");
+const isProxyEnabled = !!getEnv("DEVICE_PROXY_URL");
 
 // Listens to logs from `@ledgerhq/logs` (happening on the renderer process) and transfers them to the LLD logger system
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
-
   logger.debug(log);
 });
 
-// listenLogs(log => {
-//   console.log(log.type + ": " + log.message);
-// });
+const getNonStaleFeatureFlagValue = async (
+  key: FeatureId,
+  maxAttempts: number = 100,
+  interval: number = 100,
+): Promise<Feature> =>
+  new Promise((resolve, reject) => {
+    const attempt = (remainingAttempts: number) => {
+      const value = getFeature({ key });
+      if (value?.params?.stale === false) {
+        resolve(value);
+      } else if (remainingAttempts <= 0) {
+        reject(new Error("Max attempts reached without resolving getFeatureValue"));
+      } else {
+        setTimeout(() => attempt(remainingAttempts - 1), interval);
+      }
+    };
+    attempt(maxAttempts);
+  });
+
+getNonStaleFeatureFlagValue("ldmkTransport").then(ldmkFeatureFlag => {
+  if (ldmkFeatureFlag.enabled === true && !isSpeculosEnabled && !isProxyEnabled) {
+    brutallyUnregisterTransportModuleById("ipc");
+    throw new Error("Transport module not implemented");
+  }
+});
 
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({
   id: "ipc",
   open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+    const originalDeviceMode = currentMode;
     // id could be another type of transport such as vault-transport
     if (id.startsWith(vaultTransportPrefixID)) return;
 
