@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFeature } from "../../../../featureFlags";
 import { fetchAndMergeProviderData } from "../../../providers/swap";
 
@@ -9,7 +9,6 @@ export const useFilteredProviders = () => {
 
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
-  const ptxSwapThorswapProviderFlag = useFeature("ptxSwapThorswapProvider");
 
   const fetchProviders = useCallback(async () => {
     try {
@@ -22,9 +21,6 @@ export const useFilteredProviders = () => {
       if (!ptxSwapExodusProviderFlag?.enabled) {
         filteredProviders = filteredProviders.filter(provider => provider !== "exodus");
       }
-      if (!ptxSwapThorswapProviderFlag?.enabled) {
-        filteredProviders = filteredProviders.filter(provider => provider !== "thorswap");
-      }
 
       setProviders(filteredProviders);
     } catch (error) {
@@ -32,7 +28,7 @@ export const useFilteredProviders = () => {
     } finally {
       setLoading(false);
     }
-  }, [ptxSwapMoonpayProviderFlag, ptxSwapExodusProviderFlag, ptxSwapThorswapProviderFlag]);
+  }, [ptxSwapMoonpayProviderFlag, ptxSwapExodusProviderFlag]);
 
   useEffect(() => {
     fetchProviders();

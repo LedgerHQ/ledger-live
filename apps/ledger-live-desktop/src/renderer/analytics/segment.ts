@@ -1,36 +1,36 @@
-import { v4 as uuid } from "uuid";
-import invariant from "invariant";
-import { ReplaySubject } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
-import logger from "~/renderer/logger";
-import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import user from "~/helpers/user";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import {
-  sidebarCollapsedSelector,
-  shareAnalyticsSelector,
-  lastSeenDeviceSelector,
-  localeSelector,
-  languageSelector,
-  devicesModelListSelector,
-  sharePersonalizedRecommendationsSelector,
-  hasSeenAnalyticsOptInPromptSelector,
-  trackingEnabledSelector,
-  developerModeSelector,
-} from "~/renderer/reducers/settings";
-import { State } from "~/renderer/reducers";
-import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import { accountsSelector } from "../reducers/accounts";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   GENESIS_PASS_COLLECTION_CONTRACT,
   hasNftInAccounts,
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
-import createStore from "../createStore";
-import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
-import { useCallback, useContext } from "react";
-import { analyticsDrawerContext } from "../drawers/Provider";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { useCallback, useContext } from "react";
+import { ReplaySubject } from "rxjs";
+import { v4 as uuid } from "uuid";
+import { getParsedSystemLocale } from "~/helpers/systemLocale";
+import user from "~/helpers/user";
+import logger from "~/renderer/logger";
+import { State } from "~/renderer/reducers";
+import {
+  developerModeSelector,
+  devicesModelListSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  languageSelector,
+  lastSeenDeviceSelector,
+  localeSelector,
+  shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
+  sidebarCollapsedSelector,
+  trackingEnabledSelector,
+} from "~/renderer/reducers/settings";
+import createStore from "../createStore";
+import { analyticsDrawerContext } from "../drawers/Provider";
+import { accountsSelector } from "../reducers/accounts";
+import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -87,8 +87,10 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
   const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
   const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
-  const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
   const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
+  const ptxSwapCoreExperimentFlag = analyticsFeatureFlagMethod("ptxSwapCoreExperiment");
+  const ptxSwapCoreExperiment =
+    ptxSwapCoreExperimentFlag?.enabled && ptxSwapCoreExperimentFlag?.params?.variant;
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -113,7 +115,7 @@ const getPtxAttributes = () => {
     ptxSwapLiveAppDemoZero,
     ptxSwapLiveAppDemoOne,
     ptxSwapLiveAppDemoThree,
-    ptxSwapThorswapProvider,
+    ptxSwapCoreExperiment,
     ptxSwapExodusProvider,
   };
 };
