@@ -1203,8 +1203,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))
       react-native-vector-icons:
-        specifier: ^10.0.0
-        version: 10.0.3
+        specifier: ^10.2.0
+        version: 10.2.0
       react-native-version-number:
         specifier: ^0.3.6
         version: 0.3.6
@@ -20180,8 +20180,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.74.5
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -26314,8 +26314,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -26325,8 +26325,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -26594,8 +26594,8 @@ packages:
     peerDependencies:
       react-native: '*'
 
-  react-native-vector-icons@10.0.3:
-    resolution: {integrity: sha512-ZgVlV5AdQgnPHHvBEihGf2xwyziT1acpXV1U+WfCgCv3lcEeCRsmwAsBU+kUSNsU+8TcWVsX04kdI6qUaS8D7w==}
+  react-native-vector-icons@10.2.0:
+    resolution: {integrity: sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==}
     hasBin: true
 
   react-native-version-number@0.3.6:
@@ -60787,7 +60787,7 @@ snapshots:
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0)
       whatwg-url-without-unicode: 8.0.0-3
 
-  react-native-vector-icons@10.0.3:
+  react-native-vector-icons@10.2.0:
     dependencies:
       prop-types: 15.8.1
       yargs: 16.2.0
