@@ -25,6 +25,10 @@ export abstract class Component extends PageHolder {
   async waitForPageLoadState() {
     return await this.page.waitForLoadState("load");
   }
+
+  async waitForPageNetworkidleState() {
+    return await this.page.waitForLoadState("networkidle");
+  }
 }
 
 export abstract class AppPage extends Component {}
