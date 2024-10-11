@@ -1,42 +1,44 @@
-import invariant from "invariant";
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import KeyboardView from "~/components/KeyboardView";
+import i18next from "i18next";
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 import Button from "~/components/Button";
-import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
+import KeyboardView from "~/components/KeyboardView";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
     SendFundsNavigatorStackParamList | SignTransactionNavigatorParamList | SwapNavigatorParamList,
-    ScreenName.KadenaEditChainID
+    ScreenName.KadenaEditReceiverChainId
   >
 >;
 
-function KadenaEditChainID({ navigation, route }: NavigationProps) {
+function KadenaEditReceiverChainId({ navigation, route }: NavigationProps) {
   const isFocused = useIsFocused();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
-  const [senderChainID, setSenderChainID] = useState(route.params?.transaction.senderChainID);
-  const [receiverChainID, setReceiverChainID] = useState(route.params?.transaction.receiverChainID);
-
-  const onValidateSenderChainID = useCallback((str: string) => {
-    let value: string = str;
-    setSenderChainID(value === "" ? undefined : new Number(value));
+  const [receiverChainId, setReceiverChainId] = useState<number | null>(
+    route.params?.transaction.receiverChainId ?? 0,
+  );
+  const onValidateReceiverChainID = useCallback((value: string) => {
+    const parsedValue = parseInt(value);
+    if (!isNaN(parsedValue) || value === "") {
+      setReceiverChainId(value !== "" ? parsedValue : null);
+    }
   }, []);
 
   const onValidateChainID = useCallback(() => {
@@ -46,10 +48,11 @@ function KadenaEditChainID({ navigation, route }: NavigationProps) {
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
-        senderChainID: 0,
+        receiverChainId,
       }),
     });
-  }, [navigation, route.params, account]);
+  }, [navigation, route.params, account, receiverChainId]);
+
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView
@@ -60,42 +63,46 @@ function KadenaEditChainID({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-      {isFocused && (
-        <TextInput
-          allowFontScaling={false}
-          autoFocus
-          style={[
-            styles.textInputAS,
-            {
-              color: colors.darkBlue,
-            },
-          ]}
-          value={senderChainID?.toString() ?? ""}
-          placeholder="Eg: 1"
-          keyboardType="number-pad"
-          returnKeyType="done"
-          onChangeText={onValidateSenderChainID}
-          onSubmitEditing={onValidateChainID}
-        />)}
-          <View style={styles.flex}>
-            <Button
-              event="InternetComputerEditMemo"
-              type="primary"
-              title={t("send.summary.validateMemo")}
-              onPress={onValidateChainID}
-              containerStyle={styles.buttonContainer}
-            />
-          </View>
+        {isFocused && (
+          <TextInput
+            allowFontScaling={false}
+            autoFocus
+            style={[
+              styles.textInputAS,
+              {
+                color: colors.darkBlue,
+              },
+            ]}
+            value={receiverChainId?.toString() ?? ""}
+            keyboardType="number-pad"
+            maxLength={String(2).length}
+            placeholder="Eg: 1"
+            returnKeyType="done"
+            onChangeText={onValidateReceiverChainID}
+            onSubmitEditing={onValidateChainID}
+          />
+        )}
+        <View style={styles.flex}>
+          <Button
+            event="KadenaReceiverChainId"
+            type="primary"
+            title={t("send.summary.validateChainId")}
+            onPress={onValidateChainID}
+            containerStyle={styles.buttonContainer}
+            disabled={receiverChainId === null}
+          />
+        </View>
       </KeyboardView>
     </SafeAreaView>
   );
 }
 
 const options = {
-  title: i18next.t("send.summary.senderchainId"),
+  title: i18next.t("operationDetails.extra.receiverChainId"),
   headerLeft: undefined,
 };
-export { KadenaEditChainID as component, options };
+export { KadenaEditReceiverChainId as component, options };
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,

@@ -8,9 +8,9 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import broadcast from "../broadcast";
+import estimateMaxSpendable from "../estimateMaxSpendable";
+import getTransactionStatus from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
 import { createTransaction, prepareTransaction } from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronisation";

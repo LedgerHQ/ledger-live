@@ -96,12 +96,12 @@ export const fetchTransactions = async (address: string) => {
   for (;;) {
     let query = "";
     if (next === "") {
-      query = `${url}/${address}?limit=100&token=coin`;
+      query = `${url}/${address}?limit=50&token=coin`;
     } else {
-      query = `${url}/${address}?next=${next}&limit=100&token=coin`;
+      query = `${url}/${address}?next=${next}&limit=50&token=coin`;
     }
 
-    const res = await KadenaApiWrapper<GetTxnsResponse[]>(query, {}, "GET");
+    const res = await KadenaApiWrapper<GetTxnsResponse[]>(query, undefined, "GET");
 
     result.push(...res.data);
 

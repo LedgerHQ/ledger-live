@@ -551,7 +551,8 @@ export enum ScreenName {
   LargeMoverLandingPage = "LargeMoverLandingPage",
 
   // Kadena
-  KadenaEditChainID = "KadenaEditChainID",
+  KadenaEditSenderChainId = "KadenaEditSenderChainId",
+  KadenaEditReceiverChainId = "KadenaEditReceiverChainId",
 }
 
 export enum NavigatorName {

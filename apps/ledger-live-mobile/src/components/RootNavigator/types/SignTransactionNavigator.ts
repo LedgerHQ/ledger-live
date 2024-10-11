@@ -1,22 +1,23 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
-import type {
-  CardanoAccount,
-  Transaction as CardanoTransaction,
-} from "@ledgerhq/live-common/families/cardano/types";
-import type {
-  Transaction as BitcoinTransaction,
-  TransactionStatus as BitcoinTransactionStatus,
-} from "@ledgerhq/live-common/families/bitcoin/types";
 import type {
   AlgorandAccount,
   AlgorandTransaction,
   TransactionStatus as AlgorandTransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
+import type {
+  Transaction as BitcoinTransaction,
+  TransactionStatus as BitcoinTransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+import type {
+  CardanoAccount,
+  Transaction as CardanoTransaction,
+} from "@ledgerhq/live-common/families/cardano/types";
+import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import { Transaction as KadenaTransaction } from "@ledgerhq/live-common/families/kadena/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
@@ -26,9 +27,9 @@ import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/famili
 import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
-import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
-import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -297,6 +298,34 @@ export type SignTransactionNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: TonTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.KadenaEditReceiverChainId]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: KadenaTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.KadenaEditSenderChainId]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: KadenaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

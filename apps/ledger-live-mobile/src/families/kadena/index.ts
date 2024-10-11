@@ -1,3 +1,4 @@
-import * as KadenaEditChainID from "./ScreenEditChainID";
+import * as KadenaEditReceiverChainId from "./ScreenEditReceiverChainId";
+import * as KadenaEditSenderChainId from "./ScreenEditSenderChainId";
 
-export { KadenaEditChainID };
+export { KadenaEditReceiverChainId, KadenaEditSenderChainId };
