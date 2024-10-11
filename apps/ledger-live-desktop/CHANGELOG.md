@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.89.0-next.2
+
+### Patch Changes
+
+- [#8074](https://github.com/LedgerHQ/ledger-live/pull/8074) [`389fa47`](https://github.com/LedgerHQ/ledger-live/commit/389fa47806680b6f8e99052f165860332aa00131) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Fix on Yield button displayed for Bitcoin on the Account screen when not in stakePrograms
+
 ## 2.89.0-next.1
 
 ### Patch Changes
