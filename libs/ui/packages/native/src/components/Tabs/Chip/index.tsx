@@ -9,7 +9,7 @@ const TabBox = styled(TouchableOpacity)<
 >`
   text-align: center;
   flex-grow: ${(p) => (p.stretchItems ? "1" : "0")};
-  margin: auto;
+  ${(p) => (p.stretchItems ? "margin: auto;" : "margin: auto 0;")}
   padding: ${(p) => p.theme.space[p.size === "small" ? 3 : 5]}px;
   border-radius: 8px;
   background-color: ${(p) =>

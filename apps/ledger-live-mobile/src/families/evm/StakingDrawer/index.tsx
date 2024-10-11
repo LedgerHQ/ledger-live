@@ -94,7 +94,7 @@ function Content({ accountId, has32Eth, providers }: Props) {
             activeBg={colors.primary.c80}
             activeColor={colors.neutral.c00}
             inactiveColor={colors.neutral.c100}
-            gap={4}
+            gap={8}
             inactiveBg={colors.neutral.c40}
             activeIndex={selectedIndex}
             onChange={index => {
