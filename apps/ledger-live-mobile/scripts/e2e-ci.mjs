@@ -36,6 +36,7 @@ const bundle_ios_with_cache = async () => {
 
 const test_ios = async () => {
   await $`echo 'Starting detox tests with 1 worker...' && pnpm mobile e2e:test${speculos} \
+    apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts \
     -c ios.sim.release \
     --loglevel error \
     --record-logs all \
@@ -45,7 +46,7 @@ const test_ios = async () => {
     --retries 1 \
     --cleanup \
     --maxWorkers 1 \
-    --specs apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts`;
+    `;
 };
 
 const build_android = async () => {
