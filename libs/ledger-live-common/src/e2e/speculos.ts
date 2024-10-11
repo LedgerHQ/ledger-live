@@ -30,7 +30,13 @@ export type Spec = {
 export type Dependency = { name: string; appVersion?: string };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
-  specs["Exchange"].dependencies = dependencies;
+  const map = new Map<string, Dependency>();
+  for (const dep of dependencies) {
+    if (!map.has(dep.name)) {
+      map.set(dep.name, dep);
+    }
+  }
+  specs["Exchange"].dependencies = Array.from(map.values());
 }
 
 type Specs = {
@@ -380,8 +386,16 @@ export function verifyProvider(provider: string, text: string[]): boolean {
   return providerDevice.includes(provider);
 }
 
-export function verifySwapFeesAmount(amount: string, text: string[]): boolean {
-  const amountDevice = text[3];
+export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {
+  let amountDevice = text[1];
+  switch (currency) {
+    case "Ethereum":
+      amountDevice = text[3];
+      break;
+    case "Tether USD":
+      amountDevice = text[3];
+      break;
+  }
   return amountDevice.includes(amount);
 }
 
