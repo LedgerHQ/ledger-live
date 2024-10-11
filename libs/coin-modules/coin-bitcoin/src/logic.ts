@@ -66,9 +66,8 @@ type UTXOStatus =
       excluded: true;
       reason: "pickPendingUtxo" | "userExclusion";
     }
-  | {
-      excluded: false;
-    };
+  | { excluded: false; reason?: undefined };
+
 export const getUTXOStatus = (utxo: BitcoinOutput, utxoStrategy: UtxoStrategy): UTXOStatus => {
   if (!utxo.blockHeight && !utxo.isChange) {
     // exclude pending and not change utxo

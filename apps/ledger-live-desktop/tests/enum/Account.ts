@@ -10,7 +10,7 @@ export class Account {
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
-    "bc1qx7f9plgr8msjatkv0dw2ne8gguwfjqr6xyjp50",
+    "bc1qm6tw2c0u842qjs7g2n2c7ulh76f6xn4sk0dsyt",
   );
 
   static readonly BTC_NATIVE_SEGWIT_2 = new Account(

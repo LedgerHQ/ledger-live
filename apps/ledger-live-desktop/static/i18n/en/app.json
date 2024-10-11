@@ -6790,6 +6790,17 @@
           "vintage": "The dawn of Bitcoin was marked by its initial 1,000 blocks. Sats mined within this period are branded \"Vintage,\"."
         }
       }
+    },
+    "coinControl": {
+      "amountToSend": "Amount to send:",
+      "of": "of",
+      "excludeAssets": "Exclude Ordinals assets",
+      "selectDesc": "Select the UTXO you want to use when you do transactions. Unchecked UTXO wont be used.",
+      "utxos": "UTXOs",
+      "learnMore": "Learn more about this setting",
+      "confirm": "Confirm",
+      "address": "Address",
+      "transactionId": "Transaction ID"
     }
   }
 }

@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { SendModal } from "../../page/modal/send.modal";
 import { ReceiveModal } from "../../page/modal/receive.modal";
 import { SettingsPage } from "../../page/settings.page";

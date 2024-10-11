@@ -3,7 +3,7 @@ import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
 
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
-import { SpeculosDevice } from "../../../libs/speculos-transport/lib";
+import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "./bridge/proxy";
@@ -24,7 +24,7 @@ export const accountIdParam = "?accountId=";
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
-const speculosDevices: [string, SpeculosDevice][] = [];
+const speculosDevices: [number, SpeculosDevice][] = [];
 
 export async function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
   return await waitFor(getElementById(id)).toBeVisible().withTimeout(timeout);
@@ -164,16 +164,15 @@ export async function launchApp() {
   return port;
 }
 
-export async function launchSpeculos(appName: string) {
+export async function launchSpeculos(appName: string, proxyPort: number) {
   // Ensure the portCounter stays within the valid port range
   if (portCounter > MAX_PORT) {
     portCounter = BASE_PORT;
   }
   const speculosPort = portCounter++;
-  setEnv(
-    "SPECULOS_PID_OFFSET",
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-  );
+  const speculosPidOffset =
+    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100;
+  setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = expect.getState().testPath || "unknown";
   const speculosDevice = await startSpeculos(testName, specs[appName]);
@@ -182,30 +181,33 @@ export async function launchSpeculos(appName: string) {
   const speculosApiPort = speculosDevice.ports.apiPort;
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
   setEnv("SPECULOS_API_PORT", speculosApiPort);
-
-  const proxyPort = await findFreePort();
-  await device.reverseTcpPort(proxyPort);
-  await startProxy(proxyPort.toString());
-  const proxyAddress = `localhost:${proxyPort}`;
-  speculosDevices.push([proxyAddress, speculosDevice]);
-  console.warn(`Speculos started on ${proxyAddress}`);
-  return proxyAddress;
+  speculosDevices.push([proxyPort, speculosDevice]);
+  console.warn(`Speculos started on ${proxyPort}`);
+  return speculosApiPort;
 }
 
-export async function deleteSpeculos(deviceAddress?: string) {
-  if (!deviceAddress) {
+export async function launchProxy(
+  proxyPort: number,
+  speculosAddress?: string,
+  speculosPort?: number,
+) {
+  await device.reverseTcpPort(proxyPort);
+  await startProxy(proxyPort, speculosAddress, speculosPort);
+}
+
+export async function deleteSpeculos(proxyPort?: number) {
+  if (!proxyPort) {
     for (const [address] of speculosDevices) {
       await deleteSpeculos(address);
     }
     return;
   }
-  const proxyPort = deviceAddress.match(/:(\d+)$/)?.[1];
   if (proxyPort) closeProxy(proxyPort);
-  const speculosDevice = speculosDevices.find(([string]) => string === deviceAddress)?.[1];
+  const speculosDevice = speculosDevices.find(([number]) => number === proxyPort)?.[1];
   if (speculosDevice) {
     await stopSpeculos(speculosDevice);
-    speculosDevices.splice(speculosDevices.indexOf([deviceAddress, speculosDevice]));
-    console.warn(`Speculos stopped on ${deviceAddress}`);
+    speculosDevices.splice(speculosDevices.indexOf([proxyPort, speculosDevice]));
+    console.warn(`Speculos stopped on ${proxyPort}`);
   }
   setEnv("SPECULOS_API_PORT", 0);
 }
