@@ -11,10 +11,6 @@ import {
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
-  TransactionInstruction,
-  ComputeBudgetProgram,
-  VersionedTransaction,
-  TransactionMessage,
 } from "@solana/web3.js";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
@@ -76,15 +72,6 @@ export type ChainAPI = Readonly<{
 
   getEpochInfo: () => ReturnType<Connection["getEpochInfo"]>;
 
-  getRecentPrioritizationFees: (
-    accounts: string[],
-  ) => ReturnType<Connection["getRecentPrioritizationFees"]>;
-
-  getSimulationComputeUnits: (
-    instructions: Array<TransactionInstruction>,
-    payer: PublicKey,
-  ) => Promise<number | null>;
-
   config: Config;
 }>;
 
@@ -101,7 +88,7 @@ export function getChainAPI(
     logger === undefined
       ? undefined
       : (url, options, fetch) => {
-          logger(url.toString(), options);
+          logger(url, options);
           fetch(url, options);
         };
 
@@ -220,39 +207,6 @@ export function getChainAPI(
       connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
 
     getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
-
-    getRecentPrioritizationFees: (accounts: string[]) => {
-      return connection()
-        .getRecentPrioritizationFees({
-          lockedWritableAccounts: accounts.map(acc => new PublicKey(acc)),
-        })
-        .catch(remapErrors);
-    },
-
-    getSimulationComputeUnits: async (instructions, payer) => {
-      // https://solana.com/developers/guides/advanced/how-to-request-optimal-compute
-      const testInstructions = [
-        // Set an arbitrarily high number in simulation
-        // so we can be sure the transaction will succeed
-        // and get the real compute units used
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
-        ...instructions,
-      ];
-      const testTransaction = new VersionedTransaction(
-        new TransactionMessage({
-          instructions: testInstructions,
-          payerKey: payer,
-          // RecentBlockhash can by any public key during simulation
-          // since 'replaceRecentBlockhash' is set to 'true' below
-          recentBlockhash: PublicKey.default.toString(),
-        }).compileToV0Message(),
-      );
-      const rpcResponse = await connection().simulateTransaction(testTransaction, {
-        replaceRecentBlockhash: true,
-        sigVerify: false,
-      });
-      return rpcResponse.value.err ? null : rpcResponse.value.unitsConsumed || null;
-    },
 
     config,
   };
