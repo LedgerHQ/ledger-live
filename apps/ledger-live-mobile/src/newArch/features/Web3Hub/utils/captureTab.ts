@@ -1,7 +1,7 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { captureScreen } from "react-native-view-shot";
 import deviceStorage from "~/logic/storeWrapper";
-import { Web3HubTabType } from "../screens/Web3HubTabs/components/TabItem";
+import { TabData } from "../types";
 
 export const captureTab = async (manifest: AppManifest | undefined) => {
   try {
@@ -13,7 +13,7 @@ export const captureTab = async (manifest: AppManifest | undefined) => {
       result: "data-uri",
     });
 
-    let tabHistory = (await deviceStorage.get("web3hub__TabHistory")) as Web3HubTabType[];
+    let tabHistory = (await deviceStorage.get("web3hub__TabHistory")) as TabData[];
 
     if (!tabHistory || Object.keys(tabHistory).length === 0) {
       tabHistory = [];

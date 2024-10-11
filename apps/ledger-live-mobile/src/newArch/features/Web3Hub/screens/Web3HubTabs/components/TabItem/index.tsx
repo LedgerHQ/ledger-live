@@ -1,34 +1,23 @@
-import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import type { TabsProps } from "LLM/features/Web3Hub/types";
-import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Theme } from "~/colors";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
+import type { TabData, TabsProps } from "LLM/features/Web3Hub/types";
+import React, { useCallback, useState } from "react";
 import { NavigatorName, ScreenName } from "~/const";
-
-export type Web3HubTabType = {
-  id: string;
-  manifestId: string;
-  icon: string | null | undefined;
-  title: string;
-  previewUri: string;
-  url: string | URL;
-};
 
 export default function TabItem({
   item,
-  onItemClosePress,
-  extraData,
   navigation,
+  onItemClosePress,
 }: {
-  item: Web3HubTabType;
-  onItemClosePress: (itemId: string) => void;
+  item: TabData;
   navigation: TabsProps["navigation"];
-  extraData: { colors: Theme["colors"] };
+  onItemClosePress: (itemId: string) => void;
 }) {
   const [imageLoaded, setImageLoaded] = useState(true);
   const handleImageLoad = useCallback(() => setImageLoaded(true), []);
   const handleImageError = useCallback(() => setImageLoaded(false), []);
-  const { colors } = extraData;
+  const { colors } = useTheme();
 
   const goToApp = useCallback(() => {
     navigation.push(NavigatorName.Web3Hub, {
@@ -39,9 +28,9 @@ export default function TabItem({
     });
   }, [navigation, item?.manifestId]);
 
-  const handleClosePress = () => {
+  const handleClosePress = useCallback(() => {
     onItemClosePress(item.id);
-  };
+  }, [item.id, onItemClosePress]);
 
   return (
     <TouchableOpacity

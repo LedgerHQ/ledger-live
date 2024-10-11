@@ -45,3 +45,12 @@ export type RecentlyUsed = {
 export type DismissedManifests = {
   [id: string]: boolean;
 };
+
+export type TabData = {
+  id: string;
+  manifestId: string;
+  icon: string | null | undefined;
+  title: string;
+  previewUri: string;
+  url: string | URL;
+};

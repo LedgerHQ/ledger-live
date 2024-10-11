@@ -65,7 +65,7 @@ export default function Web3HubAppHeader({
             )}
           </Flex>
 
-          <TabButton count={2} navigation={navigation} onclick={() => captureTab(manifest)} />
+          <TabButton navigation={navigation} onClick={() => captureTab(manifest)} />
         </Flex>
       }
     />

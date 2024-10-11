@@ -61,7 +61,7 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
             />
           </View>
         </TouchableOpacity>
-        <TabButton count={2} navigation={navigation} />
+        <TabButton navigation={navigation} />
       </Flex>
     </AnimatedBar>
   );
