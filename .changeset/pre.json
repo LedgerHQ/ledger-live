@@ -122,6 +122,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "beige-planes-shake",
     "bright-months-fold",
     "cool-cougars-push",
     "curly-bats-work",
