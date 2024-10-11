@@ -277,7 +277,7 @@
     "src/wallet-api/useDappLogic.ts",
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts",
-    "src/errors/sendFlow.ts"
+    "src/errors/transactionBroadcastErrors.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
