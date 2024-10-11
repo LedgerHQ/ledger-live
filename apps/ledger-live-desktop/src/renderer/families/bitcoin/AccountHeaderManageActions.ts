@@ -7,6 +7,7 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   account: BitcoinAccount | TokenAccount;
@@ -14,6 +15,10 @@ type Props = {
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+  const availableOnStake = stakeProgramsEnabled && listFlag.includes("bitcoin");
   const history = useHistory();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -43,18 +48,20 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     });
   };
 
-  return [
-    {
-      key: "Stake",
-      icon: IconCoins,
-      label: t("accounts.contextMenu.yield"),
-      event: "button_clicked2",
-      eventProperties: {
-        button: "stake",
-      },
-      onClick: stakeOnClick,
-    },
-  ];
+  return availableOnStake
+    ? [
+        {
+          key: "Stake",
+          icon: IconCoins,
+          label: t("accounts.contextMenu.yield"),
+          event: "button_clicked2",
+          eventProperties: {
+            button: "stake",
+          },
+          onClick: stakeOnClick,
+        },
+      ]
+    : [];
 };
 
 export default AccountHeaderActions;
