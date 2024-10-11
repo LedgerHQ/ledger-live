@@ -58,20 +58,26 @@ function Content({ accountId, has32Eth, providers }: Props) {
   const { t } = useTranslation();
   const { theme: themeName, colors } = useTheme();
 
+  const filteredProviders = useMemo(() => (providers ?? []).filter(x => !x.disabled), [providers]);
+  const optionValues = useMemo(
+    () => OPTION_VALUES.filter(x => x === "all" || filteredProviders.some(y => y.category === x)),
+    [filteredProviders],
+  );
+
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const selected = OPTION_VALUES[selectedIndex];
+  const selected = optionValues[selectedIndex];
 
   const OPTION_LABELS = useMemo(
-    () => OPTION_VALUES.map(value => t(`stake.ethereum.category.${value}.name`)),
-    [t],
+    () => optionValues.map(value => t(`stake.ethereum.category.${value}.name`)),
+    [t, optionValues],
   );
 
   const listProvidersSorted: ListProvider[] = useMemo(
     () =>
-      providers
+      filteredProviders
         .sort(has32Eth ? descending : ascending)
-        .filter(x => !x.disabled && (selected === "all" || selected === x.category)),
-    [has32Eth, providers, selected],
+        .filter(x => selected === "all" || selected === x.category),
+    [has32Eth, filteredProviders, selected],
   );
 
   return (
@@ -88,13 +94,13 @@ function Content({ accountId, has32Eth, providers }: Props) {
             activeBg={colors.primary.c80}
             activeColor={colors.neutral.c00}
             inactiveColor={colors.neutral.c100}
-            gap={4}
+            gap={8}
             inactiveBg={colors.neutral.c40}
             activeIndex={selectedIndex}
             onChange={index => {
               setSelectedIndex(index);
               track(BUTTON_CLICKED_TRACK_EVENT, {
-                button: `filter_${OPTION_VALUES[index]}`,
+                button: `filter_${optionValues[index]}`,
               });
             }}
             stretchItems={false}
