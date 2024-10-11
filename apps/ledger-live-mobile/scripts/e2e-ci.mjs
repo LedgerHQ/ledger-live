@@ -44,7 +44,8 @@ const test_ios = async () => {
     --headless \
     --retries 1 \
     --cleanup \
-    --maxWorkers 1`;
+    --maxWorkers 1 \
+    --specs apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts`;
 };
 
 const build_android = async () => {
