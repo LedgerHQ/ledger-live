@@ -40,6 +40,7 @@ import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -189,6 +190,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
 
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+
   const manage = specific?.accountHeaderManageActions;
   let manageList: ManageAction[] = [];
   if (manage) {
@@ -204,6 +209,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
+  const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency.id || "");
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
@@ -278,8 +284,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const manageActions: RenderActionParams[] = [
-    ...manageList.map(item => ({
+  const manageActions: RenderActionParams[] = manageList
+    .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake")
+    .map(item => ({
       ...item,
       contrastText,
       currency,
@@ -287,8 +294,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         ...buttonSharedTrackingFields,
         ...item.eventProperties,
       },
-    })),
-  ];
+    }));
 
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
