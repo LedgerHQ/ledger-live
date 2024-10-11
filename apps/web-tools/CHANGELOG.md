@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.10.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ea4edf3`](https://github.com/LedgerHQ/ledger-live/commit/ea4edf306a52fad556273afae7fd907f610c9aba)]:
+  - @ledgerhq/live-common@34.11.0-next.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes
