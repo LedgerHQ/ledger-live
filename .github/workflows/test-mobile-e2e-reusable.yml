@@ -91,9 +91,13 @@ jobs:
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-      - name: install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
