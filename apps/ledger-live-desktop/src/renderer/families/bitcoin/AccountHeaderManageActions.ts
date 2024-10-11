@@ -48,22 +48,20 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     });
   };
 
-  return [
-    ...(availableOnStake
-      ? [
-          {
-            key: "Stake",
-            icon: IconCoins,
-            label: t("accounts.contextMenu.yield"),
-            event: "button_clicked2",
-            eventProperties: {
-              button: "stake",
-            },
-            onClick: stakeOnClick,
+  return availableOnStake
+    ? [
+        {
+          key: "Stake",
+          icon: IconCoins,
+          label: t("accounts.contextMenu.yield"),
+          event: "button_clicked2",
+          eventProperties: {
+            button: "stake",
           },
-        ]
-      : []),
-  ];
+          onClick: stakeOnClick,
+        },
+      ]
+    : [];
 };
 
 export default AccountHeaderActions;

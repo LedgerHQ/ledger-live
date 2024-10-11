@@ -284,19 +284,17 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const manageActions: RenderActionParams[] = [
-    ...manageList
-      .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake")
-      .map(item => ({
-        ...item,
-        contrastText,
-        currency,
-        eventProperties: {
-          ...buttonSharedTrackingFields,
-          ...item.eventProperties,
-        },
-      })),
-  ];
+  const manageActions: RenderActionParams[] = manageList
+    .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake")
+    .map(item => ({
+      ...item,
+      contrastText,
+      currency,
+      eventProperties: {
+        ...buttonSharedTrackingFields,
+        ...item.eventProperties,
+      },
+    }));
 
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
