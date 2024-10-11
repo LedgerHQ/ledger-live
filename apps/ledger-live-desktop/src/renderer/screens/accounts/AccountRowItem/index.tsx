@@ -223,7 +223,7 @@ const AccountRowItem = (props: Props) => {
           >
             <Header account={account} />
             <Box flex="12%">
-              <div>
+              <div data-testid={"sync-button"}>
                 <AccountSyncStatusIndicator accountId={mainAccount.id} account={account} />
               </div>
             </Box>
