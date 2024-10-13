@@ -82,6 +82,7 @@ export type StartSpan = (
 ) => {
   finish: () => void;
 };
+
 export function makeGetAccountShape(
   signerContext: SignerContext,
   startSpan: StartSpan,
@@ -196,6 +197,7 @@ type XpubGenerateParameter = {
   signerContext: SignerContext;
   accountPath: string;
 };
+
 async function generateXpubIfNeeded(
   providedXpub: string | undefined,
   params: XpubGenerateParameter,

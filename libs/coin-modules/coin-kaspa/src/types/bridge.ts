@@ -13,9 +13,7 @@ import type {
 
 import type { BigNumber } from "bignumber.js";
 
-export type KaspaAccount = Account & {
-  later: "maybe";
-};
+export type KaspaAccount = Account;
 
 export type KaspaAccountRaw = AccountRaw & {
   later: "maybe";

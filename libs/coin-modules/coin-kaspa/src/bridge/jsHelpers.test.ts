@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
+import { defaultUpdateTransaction, makeSync } from "./jsHelpers";
+import { KaspaAccount } from "../types/bridge";
+import { getAccountShape } from "./synchronization";
 
 describe("jsHelpers", () => {
   describe("defaultUpdateTransaction", () => {
@@ -44,14 +46,15 @@ describe("jsHelpers", () => {
     it("returns a function to update account that give a new instance of account", async () => {
       // Given
       const account = createAccount({
-        id: "12",
-        creationDate: new Date("2024-05-12T17:04:12"),
-        lastSyncDate: new Date("2024-05-12T17:04:12"),
+        id: "kaspa",
+        creationDate: new Date("2024-05-14T17:04:12"),
+        lastSyncDate: new Date("2024-05-14T17:04:12"),
+        xpub: "035a19ab1842af431d3b4fa88a15b1fe7d7c3f6e26e808124a10dc0523352d462d0ba599a9c5bad1106065eab47b48efa070f4b31e9639c9d096f7756b248a6ff4",
       });
 
       // When
       const accountUpdater = makeSync({
-        getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+        getAccountShape: getAccountShape,
       })(account, {} as SyncConfig);
       const updater = await firstValueFrom(accountUpdater);
       const newAccount = updater(account);
@@ -73,14 +76,15 @@ describe("jsHelpers", () => {
     it("returns a account with a corrected formatted id", async () => {
       // Given
       const account = createAccount({
-        id: "12",
-        creationDate: new Date("2024-05-12T17:04:12"),
-        lastSyncDate: new Date("2024-05-12T17:04:12"),
+        id: "kaspa",
+        creationDate: new Date("2024-05-14T17:04:12"),
+        lastSyncDate: new Date("2024-05-14T17:04:12"),
+        xpub: "035a19ab1842af431d3b4fa88a15b1fe7d7c3f6e26e808124a10dc0523352d462d0ba599a9c5bad1106065eab47b48efa070f4b31e9639c9d096f7756b248a6ff4",
       });
 
       // When
       const accountUpdater = makeSync({
-        getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+        getAccountShape: getAccountShape,
       })(account, {} as SyncConfig);
       const updater = await firstValueFrom(accountUpdater);
       const newAccount = updater(account);
@@ -88,7 +92,7 @@ describe("jsHelpers", () => {
       // Then
       const expectedAccount = {
         ...account,
-        id: "js:2:bitcoin::",
+        id: "js:2:kaspa::",
         subAccounts: undefined,
       };
       expect(newAccount.id).toEqual(expectedAccount.id);
@@ -112,9 +116,10 @@ const emptyHistoryCache = {
 };
 
 // Call once for all tests the currencies. Relies on real implementation to check also consistency.
-const bitcoinCurrency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
-function createAccount(init: Partial<Account>): Account {
-  const currency = bitcoinCurrency;
+const kaspaCurrency = listCryptoCurrencies(true).find(c => c.id === "kaspa")!;
+
+function createAccount(init: Partial<Account>): KaspaAccount {
+  const currency = kaspaCurrency;
 
   return {
     type: "Account",
@@ -137,5 +142,6 @@ function createAccount(init: Partial<Account>): Account {
     // subAccounts: [],
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
+    xpub: init.xpub ?? "",
   };
 }

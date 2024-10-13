@@ -1,19 +1,20 @@
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, Observer, from } from "rxjs";
+import { from, Observable, Observer } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import type { Result } from "../derivation";
 import {
-  getSeedIdentifierDerivation,
-  getDerivationModesForCurrency,
-  getDerivationScheme,
-  runDerivationScheme,
-  isIterableDerivationMode,
   derivationModeSupportsIndex,
-  getMandatoryEmptyAccountSkip,
+  getDerivationModesForCurrency,
   getDerivationModeStartsAt,
+  getDerivationScheme,
+  getMandatoryEmptyAccountSkip,
+  getSeedIdentifierDerivation,
+  isIterableDerivationMode,
+  runDerivationScheme,
 } from "../derivation";
-import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
+import { clearAccount, emptyHistoryCache, encodeAccountId, isAccountEmpty } from "../account";
 import {
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
@@ -22,7 +23,6 @@ import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
 import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
-import type { Result } from "../derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
@@ -31,12 +31,12 @@ import type {
   CurrencyBridge,
   DerivationMode,
   Operation,
-  ProtoNFT,
   ScanAccountEvent,
   SyncConfig,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
+import { KaspaAccount, KaspaAccountRaw, KaspaTransactionCommon, KaspaTransactionStatusCommon } from "../types/bridge";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -145,41 +145,12 @@ Operation[] {
   return all;
 }
 
-export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] => {
-  // Getting a map of id => NFT
-  const newNftsPerId: Record<string, ProtoNFT> = {};
-  newNfts.forEach(n => {
-    newNftsPerId[n.id] = n;
-  });
-
-  // copying the argument to avoid mutating it
-  const nfts = oldNfts.slice();
-  for (let i = 0; i < nfts.length; i++) {
-    const nft = nfts[i];
-
-    // The NFTs are the same, do don't anything
-    if (!newNftsPerId[nft.id]) {
-      nfts.splice(i, 1);
-      i--;
-    } else if (!isEqual(nft, newNftsPerId[nft.id])) {
-      // Use the new NFT instead
-      nfts[i] = newNftsPerId[nft.id];
-    }
-
-    // Delete it from the newNfts to keep only the un-added ones at the end
-    delete newNftsPerId[nft.id];
-  }
-
-  // Prepending newNfts to respect nfts's newest to oldest order
-  return Object.values(newNftsPerId).concat(nfts);
-};
-
 export const makeSync =
   <
-    T extends TransactionCommon = TransactionCommon,
-    A extends Account = Account,
-    U extends TransactionStatusCommon = TransactionStatusCommon,
-    R extends AccountRaw = AccountRaw,
+    T extends KaspaTransactionCommon = KaspaTransactionCommon,
+    A extends KaspaAccount = KaspaAccount,
+    U extends KaspaTransactionStatusCommon = KaspaTransactionStatusCommon,
+    R extends KaspaAccountRaw = KaspaAccountRaw,
   >({
     getAccountShape,
     postSync = (_, a) => a,
