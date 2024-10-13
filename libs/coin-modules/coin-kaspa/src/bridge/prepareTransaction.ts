@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { KaspaAccount, KaspaTransactionCommon } from "../types/bridge";
-import { getFees } from "../network";
+import { getFeeEstimate } from "../network";
 
 /**
  * Calculate fees for the current transaction
@@ -12,7 +12,7 @@ export const prepareTransaction: AccountBridge<
   KaspaAccount
 >["prepareTransaction"] = async (account, transaction) => {
 
-  const fees = getFees()
+  const fees = getFeeEstimate()
   // transaction.feeStrategy in here
   transaction.fees = 0.00002035
 

@@ -1,7 +1,7 @@
 export {
-  getAccount,
+  fee,
   getOperations,
-  getFees,
   submit,
   disconnect, // if using persisting connection
 } from "./sdk";
+export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
