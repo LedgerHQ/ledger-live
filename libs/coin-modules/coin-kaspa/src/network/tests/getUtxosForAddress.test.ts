@@ -41,7 +41,7 @@ describe("getUtxosForAddress function", () => {
       {
         address: "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
         outpoint: {
-          transactionId: "e6de0cd3b55b50a15805945eecc0c5e944564a932a6bb700f880c82a148bbbbf6",
+          transactionId: "e6de0cd3b55b50a15805945eecc0c5e944564a932a6bb700f880c82a148bbbbf",
           index: 0,
         },
         utxoEntry: {
