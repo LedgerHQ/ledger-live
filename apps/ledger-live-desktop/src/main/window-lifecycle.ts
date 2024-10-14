@@ -3,6 +3,7 @@ import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
+import { ledgerUSBVendorId } from "@ledgerhq/devices";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -120,7 +121,6 @@ function restorePosition(
     x = primaryDisplay.x;
     y = primaryDisplay.y;
   }
-
   // If the saved size is still valid, use it.
   if (bounds.width <= area.width || bounds.height <= area.height) {
     width = bounds.width;
@@ -160,6 +160,30 @@ export async function createMainWindow(
     },
   };
   mainWindow = new BrowserWindow(windowOptions);
+
+  mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
+    event.preventDefault();
+    const ledgerDevices = details.deviceList.filter(
+      device => device.vendorId === ledgerUSBVendorId,
+    );
+    if (ledgerDevices.length > 0) {
+      callback(ledgerDevices[0].deviceId);
+    } else {
+      console.warn("No Ledger HID devices found.");
+    }
+  });
+
+  mainWindow.webContents.session.setPermissionCheckHandler((_, permission) => {
+    if (permission === "hid") return true;
+    return false;
+  });
+
+  mainWindow.webContents.session.setDevicePermissionHandler(details => {
+    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+      return true;
+    }
+    return false;
+  });
 
   mainWindow.name = "MainWindow";
   loadWindow();
