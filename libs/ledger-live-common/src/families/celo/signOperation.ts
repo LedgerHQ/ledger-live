@@ -28,19 +28,22 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
             throw new FeeNotLoaded();
           }
 
-          const celo = new Eth(transport);
+          // TODO need to check legacy token info too, based on what we found in celo dev
+          // tooling tepo dont legacy prefix token data when providing to the app
+
+          const eth = new Eth(transport);
           const unsignedTransaction = await buildTransaction(account, transaction);
           const { chainId, to } = unsignedTransaction;
           const rlpEncodedTransaction = rlpEncodedTx(unsignedTransaction);
 
           const tokenInfo = tokenInfoByAddressAndChainId(to!, chainId!);
           if (tokenInfo) {
-            await celo.provideERC20TokenInformation(`0x${tokenInfo.data.toString("hex")}`);
+            await eth.provideERC20TokenInformation(`0x${tokenInfo.data.toString("hex")}`);
           }
 
           o.next({ type: "device-signature-requested" });
 
-          const response = await celo.signTransaction(
+          const response = await eth.signTransaction(
             account.freshAddressPath,
             trimLeading0x(rlpEncodedTransaction.rlpEncode),
           );
