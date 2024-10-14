@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "Cotización"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -788,6 +789,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "Asegúrate de que tienes {{depositAmount}} ADA disponibles para depositar"
     },
+    "CardanoFeeHigh" : {
+      "title" : "Tarifas de red anormalmente elevadas.",
+      "description" : "Las tarifas de red son inusualmente elevadas. Revisa tu transacción."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "Tarifas de red anormalmente elevadas.",
+      "description" : "Las transacciones con ADA no están disponibles en este momento. Sincroniza tu cuenta de nuevo e inténtalo otra vez, o contacta al equipo de Soporte si necesitas ayuda."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Parámetros de protocolo no válidos para Cardano",
+      "description" : "Las transacciones con ADA no están disponibles en este momento. Sincroniza tu cuenta de nuevo e inténtalo otra vez, o contacta al equipo de Soporte si necesitas ayuda."
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -892,6 +905,9 @@
     "NearStakingThresholdNotMet" : {
       "title" : "La cantidad debe ser de {{threshold}} como mínimo."
     },
+    "PinNotSet" : {
+      "title" : "PIN no establecido"
+    },
     "PriorityFeeTooLow" : {
       "title" : "La tarifa de prioridad es inferior al valor recomendado."
     },
@@ -919,6 +935,13 @@
     "InvalidMemoICP" : {
       "title" : "El memo debe ser un número."
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Destinatario no válido para transferencia de tokens. Tipos de cuenta admitidos para la transferencia de tokens: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "El cálculo de tarifas ha fallado",
+      "description" : "La estimación de tarifas falló en la red. Comprueba la información aportada; lo más probable es que la transacción falle"
+    },
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
@@ -936,7 +959,41 @@
     "CustomError" : {
       "title" : "Inténtalo de nuevo.",
       "description" : "El servidor no ha podido gestionar tu solicitud. Inténtalo de nuevo o contacta al Soporte de Ledger.",
-      "errorCode" : "Código: {{errorCode}}"
+      "errorCode" : "Código: {{errorCode}}",
+      "errorMessage" : "{{errorMessage}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "Ya no está en sincronización"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "Ya no estás en sincronización",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger."
+    },
+    "TrustchainNotFound" : {
+      "title" : "Se ha producido un error al recuperar tus datos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger."
+    },
+    "TonExcessFee" : {
+      "title" : "Representa una transferencia de tokens. Pagarás una tarifa de 0,1 TON y los tokens extra se te devolverán."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "No tienes fondos suficientes en la cuenta principal (TON) para calcular las tarifas. El saldo mínimo requerido es de 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Fondos insuficientes. El saldo mínimo requerido es de 0,02 TON."
+    },
+    "BackupAppDataError" : {
+      "title" : "Error al hacer la copia de respaldo de datos de la aplicación"
+    },
+    "RestoreAppDataError" : {
+      "title" : "Error al restaurar los datos de la aplicación"
+    },
+    "DeleteAppDataError" : {
+      "title" : "Error al eliminar los datos de la aplicación"
+    },
+    "ScannedNewImportQrCode" : {
+      "title" : "Actualización necesaria",
+      "description" : "Para sincronizar tus aplicaciones, asegúrate de que ambas estén actualizadas a la versión más reciente."
     }
   },
   "crash" : {
@@ -1351,10 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "Bienvenidos",
-      "subtitle" : "Elige cómo quieres acceder a tu billetera:",
+      "subtitle" : "Dinos cómo prefieres acceder a tu billetera:",
       "connect" : "Conectar tu Ledger",
       "sync" : "Sincronizar con Ledger Live Desktop",
-      "walletSync" : "Sincronizar con otra aplicación Ledger Live"
+      "walletSync" : "Usar Ledger Sync"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Explora sin necesidad de un dispositivo",
@@ -2274,6 +2331,7 @@
     },
     "quickActions" : {
       "buy" : "Comprar",
+      "sell" : "Vender",
       "swap" : "Permutar",
       "send" : "Enviar",
       "deposit" : "Recibir",
@@ -2315,12 +2373,11 @@
         "description" : "Importar cuentas desde Ledger Live Desktop"
       },
       "add" : {
-        "title" : "Agregar con tu Ledger",
-        "description" : "Crear o importar tus activos usando tu dispositivo Ledger"
+        "title" : "Usar tu dispositivo Ledger",
+        "description" : "Crear o importar tu cuenta de cripto usando tu dispositivo Ledger"
       },
       "walletSync" : {
-        "title" : "Importar con otra aplicación Ledger Live",
-        "description" : "Activar Ledger Sync"
+        "title" : "Usar Ledger Sync"
       }
     }
   },
@@ -2760,7 +2817,7 @@
       "dateFormat" : "Formato de fecha",
       "dateFormatDesc" : "Ajusta el formato de fecha de Ledger Live",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Protege los datos de tus aplicaciones y sincroniza varias instancias de Ledger Live de forma sencilla.",
+      "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "password" : "Bloqueo de aplicaciones",
@@ -2993,6 +3050,10 @@
         },
         "platformManifest" : {
           "title" : "Carga el Manifiesto de la plataforma"
+        },
+        "mockAppUpdate" : {
+          "title" : "Actualización ficticia de la aplicación",
+          "description" : "Mostrar actualización de la aplicación disponible en Mi Ledger, se volverá a instalar la misma versión de la aplicación"
         }
       }
     },
@@ -3109,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "Por motivos de privacidad, se genera una dirección nueva para cada transacción. Las anteriores siguen siendo válidas.",
         "title" : "Recibir {{currencyTicker}}",
         "onCurrencyName" : "En {{currencyName}}",
         "copyAdress" : "Copiar dirección",
@@ -5865,7 +5927,6 @@
         "status" : "Estado",
         "active" : "Activo",
         "inactive" : "Inactivo",
-        "rewards" : "Recompensas",
         "pending" : "Pendiente",
         "available" : "Puede retirarse"
       },
@@ -6206,6 +6267,9 @@
     "webPlatformPlayer" : {
       "infoPanel" : {
         "website" : "Sitio web"
+      },
+      "back" : {
+        "card" : "todas las tarjetas"
       }
     }
   },
@@ -6642,7 +6706,7 @@
         "title" : "Gestiona tus preferencias",
         "analytics" : {
           "title" : "Análisis",
-          "description" : "Para medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia, compartimos datos de uso, incluidas las visitas a páginas y los clics."
+          "description" : "A fines de medir el rendimiento de Ledger Live y mejorar tanto la aplicación como mi experiencia, acepto que se recopilen mis datos, incluidas las visitas a páginas y los clics."
         },
         "personalizedExp" : {
           "title" : "Personalización",
@@ -6652,7 +6716,7 @@
           "notNow" : "Ahora no",
           "accept" : "Aceptar",
           "acceptAll" : "Aceptar todo",
-          "confirm" : "Compartir"
+          "confirm" : "Validar"
         },
         "infoText" : {
           "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
@@ -6700,109 +6764,215 @@
     "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
-        "title" : "Sincroniza tus cuentas en todas las plataformas",
-        "description" : "Tu Ledger generará una clave de cifrado, para garantizar la privacidad de tus datos, que solo tú podrás recuperar.",
-        "mainCta" : "Sincroniza tus cuentas",
-        "secondCta" : "¿Ya has creado una clave?"
+        "title" : "¿Activar Ledger Sync para este teléfono?",
+        "description" : "Esto sincronizará automáticamente tus cuentas de cripto en todos tus teléfonos y PCs, incluso cuando cambies a un dispositivo nuevo.",
+        "mainCta" : "Activar Ledger Sync",
+        "secondCta" : "Ya lo he activado",
+        "learnMore" : "¿Cómo funciona Ledger Sync?"
       }
     },
     "deviceSelection" : {
-      "title" : "Elige el dispositivo Ledger que vas a usar para proteger tu copia de respaldo",
-      "description" : "Para recuperar tu copia de respaldo, sólo tienes que conectar tu Ledger a las aplicaciones Ledger Live Mobile y Desktop."
+      "title" : "Elige un dispositivo Ledger"
     },
     "deviceAction" : {
       "title" : "Continúa en tu Ledger {{wording}}",
       "description" : "Sigue las instrucciones que aparecen en la pantalla confiable de tu Ledger."
     },
+    "loading" : {
+      "title" : "Ten paciencia…",
+      "activation" : "Esto puede tardar hasta 30 segundos.\nEspera en esta pantalla.",
+      "synch" : "Estamos actualizando las instancias sincronizadas…"
+    },
     "success" : {
       "sync" : "Sincronización correcta",
-      "syncDesc" : "Ahora, los cambios de tus cuentas aparecerán automáticamente en todas las aplicaciones y plataformas.",
-      "activation" : "¡Completado!",
-      "activationDesc" : "Has activado correctamente Ledger Sync.",
+      "syncDesc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Live en los teléfonos y PCs sincronizados.",
+      "activation" : "Ledger Sync activado para este teléfono",
       "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
       "close" : "Cerrar"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "Sincronizar",
-        "description" : "Sincroniza los datos de tu aplicación con otra aplicación Ledger Live para disfrutar de una experiencia sin fisuras. "
+        "title" : "Sincronizar con otra aplicación Ledger Live",
+        "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
       "manageKey" : {
-        "title" : "Administra la clave",
-        "description" : "Protege o elimina tu clave de cifrado con otro Ledger.",
-        "success" : "Se ha anulado la sincronización de tus dispositivos y se ha eliminado tu clave",
-        "drawer" : {
-          "step1" : {
-            "title" : "Administra tu clave",
-            "titleCta" : "Eliminar tu clave",
-            "descCta" : "Se eliminarán todos tus datos sincronizados."
-          },
-          "step2" : {
-            "delete" : "Borrar",
-            "cancel" : "Cancelar",
-            "title" : "¿Seguro que quieres eliminar tu clave de cifrado?",
-            "desc" : "Si haces clic en Eliminar, se anulará la sincronización de tus dispositivos y se eliminarán todos los datos sincronizados. Esta acción no afecta a tus fondos. Puedes volver a sincronizar tus cuentas en cualquier momento."
-          }
+        "title" : "Eliminar sincronización",
+        "description" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de sincronizarse.",
+        "success" : "Tus aplicaciones de Ledger Live dejarán de sincronizarse",
+        "successHint" : "Puedes activar la sincronización de nuevo en cualquier momento.",
+        "confirm" : {
+          "delete" : "Sí, eliminar",
+          "cancel" : "Mantener sincronización",
+          "title" : "¿Seguro que quieres eliminar la sincronización?",
+          "desc" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de estar sincronizadas. Esto no afecta a tus fondos en modo alguno."
         }
       },
       "manageInstances" : {
-        "title" : "Gestionar instancias sincronizadas",
+        "title" : "Ledger Live está sincronizado en:",
         "remove" : "Eliminar"
       },
       "synchronizedInstances" : {
-        "cta" : "Gestionar ahora",
-        "title" : "{{count}} instancia sincronizada",
-        "title_plural" : "{{count}} instancias sincronizadas",
+        "cta" : "Gestionar",
+        "title" : "{{count}} aplicación Ledger Live sincronizada",
+        "title_plural" : "{{count}} aplicaciones Ledger Live sincronizadas",
         "error" : "Instancias",
         "unsecuredError" : {
-          "title" : "Este Ledger no protege la sincronización",
-          "description" : "Conecta el dispositivo Ledger utilizado para crear tu clave de cifrado.",
-          "info" : "Si has perdido tu Ledger, no te preocupes. Puedes eliminar tu clave de todos modos. Esta acción eliminará tus datos y, simultáneamente, anulará la sincronización de todas las instancias sincronizadas.",
+          "title" : "Conecta el mismo dispositivo Ledger que usaste para activar Ledger Sync",
+          "description" : "Si no tienes el mismo dispositivo Ledger, selecciona “Eliminar sincronización”.",
           "cta" : "Conectar otro Ledger",
-          "ctaDelete" : "Eliminar mi clave de cifrado"
+          "ctaDelete" : "Eliminar sincronización"
         },
         "autoRemoveError" : {
-          "title" : "No puedes quitar la instancia actual",
-          "description" : "Por motivos de seguridad, no puedes quitar la instancia que estás usando sin eliminar tu clave de cifrado.",
+          "title" : "No puedes quitar este teléfono mientras lo estás usando",
+          "description" : "Para quitarlo, usa otro teléfono o PC con Ledger Sync activado. Si no tienes otro dispositivo, selecciona \"Eliminar Sync\".",
           "info" : "Si eliminas tu clave de cifrado, tus dispositivos dejarán de estar sincronizados y se eliminarán todos los datos sincronizados. Sin embargo, esto no afecta a tus fondos. Puedes volver a sincronizar tus cuentas en cualquier momento.",
           "cta" : "Entiendo",
-          "ctaDelete" : "Eliminar mi clave de cifrado"
+          "ctaDelete" : "Eliminar sincronización"
         },
-        "success" : "Tu {{member}} ya no está sincronizado"
+        "success" : "Tu aplicación Ledger Live en {{member}} ya no está conectada a Ledger Sync"
       },
       "errors" : {
         "fetching" : "Se ha producido un error al recuperar tus instancias sincronizadas.",
-        "trustchain" : "Unexpected falsy trustchain",
-        "memberCredentials" : "Unexpected falsy member credentials",
-        "ledgerSyncUnavailable" : "Ledger Sync no está disponible en este momento. Esto no afecta de ninguna manera a tus activos."
+        "ledgerSyncUnavailable" : "Ledger Sync no está disponible temporalmente debido a problemas técnicos en nuestros sistemas. Estamos trabajando para que vuelva a estar en funcionamiento."
       }
     },
     "synchronize" : {
       "chooseMethod" : {
         "title" : "Elige tu método de sincronización",
         "scan" : {
-          "title" : "Escanear un código QR"
+          "title" : "Escanear código QR"
         },
         "connectDevice" : {
-          "title" : "Usa tu Ledger"
+          "title" : "Usar mi dispositivo Ledger"
         }
+      },
+      "qrCode" : {
+        "title" : "Sincronizar aplicaciones Ledger Live",
+        "show" : {
+          "title" : "Mostrar QR",
+          "explanation" : {
+            "title" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
+            "steps" : {
+              "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
+              "step2" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activar Ledger Sync</0> <1>></1> <0>Escanear código QR</0>",
+              "step3" : "Escanear código QR"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "Escanear",
+          "description" : "Escanear código QR",
+          "explanation" : {
+            "title" : "Para sincronizar con Ledger Live en otro teléfono o PC...",
+            "steps" : {
+              "step1" : "Abre el Ledger Live con el que quieras sincronizar.",
+              "step2" : "Ve a <0>Ajustes/0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activar Ledger Sync</0> <1>></1> <0>Mostrar QR</0>",
+              "step3" : "Escanear código QR"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Ingresar código de Ledger Sync",
+          "desc" : "Ingresa el código mostrado en tu PC para sincronizar tus cuentas de cripto entre ambas aplicaciones.",
+          "error" : {
+            "title" : "Los códigos no coinciden",
+            "desc" : "Asegúrate de que el código que escribes es el que se muestra en la otra instancia de Ledger Live.",
+            "tryAgain" : "Inténtalo de nuevo"
+          }
+        },
+        "scannedInvalidQrCode" : {
+          "title" : "Código QR no válido",
+          "desc" : "Escanea solo el código QR mostrado en Ledger Live para sincronizar tus aplicaciones Ledger Live.",
+          "info" : "Para obtener el código QR, abre “Ajustes”, selecciona “General” y, a continuación, selecciona “Ledger Sync”, “Activar Sync” y “Mostrar QR”.",
+          "cta" : "Entiendo"
+        },
+        "scannedOldQrCode" : {
+          "title" : "Es necesario actualizar Ledger Live",
+          "desc" : "Para continuar con la sincronización, actualiza la aplicación Ledger Live que no está actualizada.",
+          "info" : "Si deseas más información sobre cómo actualizarla, <0>consulta este artículo<0>.",
+          "cta" : "Entiendo"
+        },
+        "unbacked" : {
+          "title" : "Sync no detectado",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
+        },
+        "unbackedOnboarding" : {
+          "title" : "Sync no detectado",
+          "description" : "Vuelve aquí después de activar Sync para la otra aplicación Ledger Live y, a continuación, selecciona “Intentarlo de nuevo”.",
+          "info" : "Si Ledger Sync sigue sin estar activado, continúa sin activarlo.",
+          "cta" : "Inténtalo de nuevo",
+          "cancel" : "Continuar sin sincronizar"
+        },
+        "backedWithDifferentSeeds" : {
+          "title" : "Se usaron diferentes dispositivos Ledger para activar Ledger Sync en cada aplicación",
+          "description" : "Para sincronizar las dos aplicaciones Ledger Live, debes usar el mismo dispositivo Ledger.",
+          "info" : "Para solucionar este problema, elimina Sync para una de las aplicaciones y actívalo de nuevo escaneando el código QR.",
+          "cta" : "Entiendo"
+        },
+        "alreadyBacked" : {
+          "title" : "Las dos aplicaciones Ledger Live ya están sincronizadas",
+          "cta" : "Entendido"
+        }
+      },
+      "unbackedOnboarding" : {
+        "title" : "Sync no detectado",
+        "description" : "Si Ledger Sync está activado, selecciona “Intentarlo de nuevo” y asegúrate de conectar el dispositivo Ledger que usaste para activar Ledger Sync.",
+        "info" : "También puedes continuar sin Ledger Sync.",
+        "cta" : "Inténtalo de nuevo",
+        "cancel" : "Continuar sin sincronizar"
+      },
+      "alreadySecureError" : {
+        "title" : "Este Ledger ya protege esta aplicación",
+        "description" : "Si estás intentando crear una nueva copia de respaldo, conecta el dispositivo Ledger que usaste para crear tu otra clave de cifrado.",
+        "cta" : "Entiendo"
+      },
+      "alreadySecureOtherSeedError" : {
+        "title" : "No puedes usar este Ledger para la sincronización",
+        "description" : "Si quieres sincronizar las dos aplicaciones, elimina tu clave e inténtalo de nuevo.",
+        "cta" : "Eliminar mi clave de cifrado"
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "Firma visible activada",
-      "checkbox" : "No recordarme de nuevo.",
-      "CTA" : "Abrir {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "Explorar",
-      "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "Firma visible activada",
+        "clearSigningDisabled" : "Firma visible desactivada",
+        "checkbox" : "No recordarme de nuevo.",
+        "CTA" : "Abrir {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "Explorar",
+        "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+      },
+      "label" : {
+        "clearSigning" : "firma visible"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "Discover"
+      },
       "header" : {
         "title" : "Explora la web3",
         "placeholder" : "Busca o escribe una URL"
+      },
+      "clearSigning" : {
+        "title" : "Firma visible"
+      }
+    },
+    "app" : {
+      "selectAccountModal" : {
+        "networkHeader" : {
+          "title" : "Elegir una red"
+        },
+        "accountHeader" : {
+          "title" : "Elige una cuenta"
+        },
+        "addAccountItem" : {
+          "name" : "Agregar una cuenta"
+        }
       }
     }
   }

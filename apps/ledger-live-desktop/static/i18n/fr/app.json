@@ -145,7 +145,8 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un wallet Ledger"
+    "buyLedger" : "Acheter un wallet Ledger",
+    "quote" : "Prix"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -740,7 +741,7 @@
       }
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
+      "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
       "contactSupport" : "Contacter l’Assistance"
     },
     "lastOperations" : "Dernières opérations",
@@ -858,6 +859,9 @@
       "selectAccount" : "Sélectionner un compte",
       "continue" : "Continuer"
     }
+  },
+  "card" : {
+    "backToCard" : "toutes les cartes"
   },
   "lend" : {
     "title" : "Prêter",
@@ -1524,9 +1528,10 @@
     "for" : "Adresse pour <1><0>{{name}}</0></1>",
     "messageIfUnverified" : "Vérifiez que cette adresse est identique à celle affichée sur votre appareil",
     "messageIfSkipped" : "Vous n’avez pas vérifié votre adresse {{name}} sur votre appareil Ledger. Vérifiez-la pour une sécurité optimale.",
-    "showQrCode" : "Afficher le code QR",
+    "showQrCode" : "Voir le code QR",
     "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
-    "dashStakingWarning" : "N’utilisez pas cette adresse pour recevoir vos récompenses de staking."
+    "dashStakingWarning" : "N’utilisez pas cette adresse pour recevoir vos récompenses de staking.",
+    "utxoWarning" : "Pour préserver votre vie privée, une nouvelle adresse est générée pour chaque transaction. Les précédentes restent toujours valides."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1833,12 +1838,12 @@
     "quitApp" : "Sortez de l’app sur votre appareil.",
     "appNotInstalledTitle" : "App nécessaire manquante",
     "appNotInstalledTitle_plural" : "Apps nécessaires manquantes",
-    "appNotInstalled" : "L’app {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
-    "appNotInstalled_plural" : "Les apps {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
+    "appNotInstalled" : "L’app {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre appareil Ledger.",
+    "appNotInstalled_plural" : "Les apps {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre appareil Ledger.",
     "openManager" : "Ouvrir My Ledger",
     "openOnboarding" : "Configurer un appareil",
     "outdated" : "Version de l’app obsolète",
-    "outdatedDesc" : "Une mise à jour importante est disponible pour l’app {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
+    "outdatedDesc" : "Une mise à jour importante est disponible pour l’app {{appName}} sur votre appareil Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
     "installApp" : "Installation de l’app {{appName}}",
     "installAppDescription" : "Merci d’attendre la fin de l’installation.",
     "listApps" : "Vérification en cours des apps nécessaires",
@@ -1868,8 +1873,8 @@
       "targetAccount" : "Compte bénéficiaire"
     },
     "sell" : {
-      "notice" : "Vérifiez les détails de la vente sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-      "confirm" : "Confirmer la transaction de vente"
+      "notice" : "Vérifiez les détails sur votre appareil avant l’envoi. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+      "confirm" : "Confirmer la transaction"
     },
     "fund" : {
       "notice" : "Vérifiez les détails du dépôt sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "Vendre",
-    "titleCrypto" : "Vendre des {{currency}}"
+    "titleCrypto" : "Vendre des {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre opération a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire la traite."
+      }
+    }
   },
   "receive" : {
     "title" : "Recevoir",
@@ -3673,7 +3684,7 @@
   "ethereum" : {
     "stake" : {
       "title" : "Faites fructifier vos ETH",
-      "subTitle" : "Stakez vos ETH et et recevez des récompenses quotidiennes directement via Ledger Live.",
+      "subTitle" : "Stakez vos ETH et recevez des récompenses quotidiennes directement via Ledger Live.",
       "tagMinimum" : "{{min}} ETH minimum",
       "kiln_pooling" : {
         "title" : "Staker avec un pool sur Kiln",
@@ -3979,7 +3990,7 @@
       "stock" : "Indicateur de marché régional",
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Sécurisez vos données Ledger Live en toute simplicité et synchronisez-les avec plusieurs appareils.",
+      "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs.",
       "marketPerformanceWidget" : "Widget de suivi du marché",
       "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
@@ -4005,12 +4016,22 @@
         "placeholder" : "Infos prestataire Exchange (CAL)"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "Outils SimpleHash",
+          "description" : "Utilisez quelques outils pratiques avec SimpleHash.",
+          "cta" : "Ouvrir",
+          "tabs" : {
+            "spam" : "Signaler spam",
+            "refresh" : "Actualiser métadonnées",
+            "check" : "Score de spam"
+          }
+        },
         "debugSpamNft" : {
           "report" : "Signaler",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT signalé ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT signalé/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé/de son contrat",
           "collectionId" : "Identifiant de la collection",
           "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
           "tokenId" : "Identifiant du token",
@@ -4021,7 +4042,7 @@
           "error" : "Une erreur est survenue lors de l’envoi du signalement. Veuillez réessayer plus tard.",
           "reportType" : {
             "title" : "Que souhaiteriez-vous signaler ?",
-            "desc" : "Sélectionnez le type de signalement à faire",
+            "desc" : "Sélectionnez le type de signalement",
             "individual" : "Signaler un NFT comme spam",
             "contract" : "Signaler un contrat comme spam",
             "collection" : "Signaler une collection comme spam"
@@ -4030,9 +4051,9 @@
         "debugRefreshMetadata" : {
           "refresh" : "Actualiser",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à actualiser, ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT à actualiser/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser, ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser/de son contrat",
           "tokenId" : "Identifiant du token",
           "tokenIdDesc" : "token_id du NFT à actualiser",
           "success" : "Votre actualisation a bien été envoyée. Elle prendra effet dans un délai de 5 à 10 minutes.",
@@ -4046,9 +4067,9 @@
         "debugCheckSpamScore" : {
           "check" : "Consulter",
           "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à consulter, ou de son contrat",
+          "contractAddressDesc" : "contract_address du NFT à consulter/de son contrat",
           "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter, ou de son contrat",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter/de son contrat",
           "tokenId" : "Identifiant du token",
           "tokenIdDesc" : "token_id du NFT à consulter",
           "result" : {
@@ -4064,8 +4085,38 @@
         },
         "back" : "Retour"
       },
+      "debugWalletSync" : {
+        "title" : "Débuggeur Ledger Sync",
+        "description" : "Permet de lancer un processus Ledger Sync spécifique ou de vérifier l’état actuel de Ledger Sync.",
+        "cta" : "Ouvrir",
+        "modal" : {
+          "check" : {
+            "title" : "Vérificateur",
+            "trustchain" : {
+              "name" : "ID trustchain : ",
+              "emptyId" : "Identifiant manquant",
+              "applicationPath" : "Chemin de l’application : ",
+              "emptyApplicationPath" : "Chemin de l’application vide",
+              "cloudSyncVersion" : "Version synchro cloud : ",
+              "lastSyncInfo" : "Dernière synchro : ",
+              "uniported" : "Comptes non importés : "
+            },
+            "copied" : "Texte copié dans le presse-papiers !",
+            "export" : "Exporter"
+          },
+          "generator" : {
+            "title" : "Générateur",
+            "flow" : "Choisissez un processus",
+            "step" : "Choisissez une étape",
+            "instance" : "Créer des membres",
+            "cta" : "Appliquer"
+          }
+        }
+      },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
+      "mockAppUpdate" : "Simuler des mises à jour d’app",
+      "mockAppUpdateDesc" : "Permet d’afficher « Mises à jour d’apps disponibles » dans My Ledger, pour réinstaller la même version d’une app.",
       "catalogUrl" : "Définir le fournisseur du Catalogue d’apps",
       "catalogUrlDesc" : "Saisissez l’URL de votre fournisseur du Catalogue personnalisé.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
@@ -4146,7 +4197,7 @@
       "termsBtn" : "Lire",
       "faq" : "Assistance Ledger",
       "chatbot" : "Chatbot Ledger",
-      "faqDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre wallet physique.",
+      "faqDesc" : "En cas de problème, bénéficiez d’une aide pour utiliser Ledger Live avec votre appareil Ledger.",
       "terms" : "Conditions d’utilisation",
       "termsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions d’utilisation.",
       "privacy" : "Politique de confidentialité",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "Activer les logs réseau",
           "description" : "Activez les logs réseau dans la console (les logs d’erreur sont toujours activés)."
-        },
-        "testWalletSync" : {
-          "title" : "Tester Ledger Sync",
-          "description" : "Permet de lancer un processus Ledger Sync spécifique.",
-          "cta" : "Tester",
-          "modal" : {
-            "flow" : "Sélectionner un processus",
-            "step" : "Sélectionner une étape",
-            "instance" : "Créer des membres",
-            "cta" : "Appliquer"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "Outils SimpleHash",
-          "description" : "Utilisez quelques outils pratiques avec SimpleHash.",
-          "cta" : "Ouvrir",
-          "tabs" : {
-            "spam" : "Signalement de spam",
-            "refresh" : "Actualiser métadonnées",
-            "check" : "Score de spam"
-          }
         }
       }
     },
@@ -5426,7 +5456,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "Fournisseur non valide",
-      "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur.",
+      "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur.",
       "goToSettingsCTA" : "Accéder aux Paramètres"
     },
     "HardResetFail" : {
@@ -5544,6 +5574,13 @@
       "title" : "Impossible de calculer le montant et les frais",
       "description" : "Impossible de calculer le montant et les frais"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Bénéficiaire invalide pour le transfert de tokens. Types de comptes pris en charge pour le transfert de tokens : [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Échec de l’estimation des frais",
+      "description" : "Échec de l’estimation des frais sur le réseau. Vérifiez les entrées, la transaction risque de ne pas aboutir."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "Taux expiré",
-      "description" : "L’échange n’a pas pu être réalisé car le taux a expiré. Veuillez actualiser les taux et réessayer votre échange."
+      "description" : "Taux de change expiré. Veuillez actualiser et réessayer."
     },
     "PayinExtraIdError" : {
       "message" : "ExtraId manquant et requis pour l’échange"
     },
     "SwapGenericAPIError" : {
       "title" : "Une erreur est survenue.",
-      "description" : "L’échange n’a pas été effectué. Veuillez réessayer ou contacter l’Assistance."
+      "description" : "Échec de la transaction. Veuillez réessayer."
     },
     "TimeoutError" : {
       "title" : "Le serveur a mis trop longtemps à répondre.",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "Une erreur est survenue. Veuillez reconnecter votre appareil.",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "Synchronisation inactive"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "Votre synchronisation n’est plus active.",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "TrustchainNotFound" : {
+      "title" : "Erreur lors de la récupération de vos données",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Merci d’ouvrir l’app {{appName}}",
@@ -5777,7 +5825,7 @@
       "title" : "Frais de priorité plus élevés que nécessaire. Vous pourriez payer trop cher."
     },
     "MaxFeeTooLow" : {
-      "title" : "Les frais maximaux sont inférieurs au montant recommandé"
+      "title" : "Les frais sont inférieurs au montant recommandé"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Les frais de priorité max. doivent être inférieurs aux frais max."
@@ -5899,7 +5947,7 @@
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\" > \"Enabled\")."
+      "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\")."
     },
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
@@ -6012,6 +6060,18 @@
     },
     "CardanoStakeKeyDepositError" : {
       "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce dépôt"
+    },
+    "CardanoFeeHigh" : {
+      "title" : "Frais de réseau anormalement élevés",
+      "description" : "Frais de réseau anormalement élevés. Veuillez vérifier votre transaction."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "Frais de réseau anormalement élevés",
+      "description" : "Les opérations en ADA sont temporairement indisponibles. Veuillez synchroniser votre compte et réessayer, ou contactez l’Assistance Ledger si vous avez besoin d’aide."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Paramètres de protocole invalides pour Cardano",
+      "description" : "Les opérations en ADA sont temporairement indisponibles. Veuillez synchroniser votre compte et réessayer, ou contactez l’Assistance Ledger si vous avez besoin d’aide."
     },
     "StacksMemoTooLong" : {
       "title" : "Mémo trop long"
@@ -6159,6 +6219,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "Notre infrastructure Bitcoin rencontre actuellement des difficultés. Veuillez réessayer plus tard."
+    },
+    "TonExcessFee" : {
+      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+    },
+    "BackupAppDataError" : {
+      "title" : "Erreur de synchronisation des données de l’app"
+    },
+    "RestoreAppDataError" : {
+      "title" : "Erreur de restauration des données de l’app"
+    },
+    "DeleteAppDataError" : {
+      "title" : "Erreur de suppression des données de l’app"
+    },
+    "PinNotSet" : {
+      "title" : "Code PIN non configuré"
     }
   },
   "cryptoOrg" : {
@@ -6333,7 +6414,7 @@
       },
       "personalRecommendations" : {
         "title" : "Profitez d’une expérience personnalisée",
-        "description" : "Le partage des données de personnalisation de Ledger Live nous permet de vous proposer un contenu qui correspond à vos préférences.",
+        "description" : "Le partage des données de personnalisation de Ledger Live nous permet de vous proposer un contenu qui correspond à vos préférences.",
         "details" : {
           "1" : "Les données de personnalisation incluent les données de conversion, les clics et les visites de pages.",
           "2" : "Nous ne pouvons pas suivre ni collecter vos données personnelles ni celles relatives à votre portefeuille."
@@ -6354,82 +6435,84 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "close" : "Fermer",
     "activate" : {
-      "title" : "Synchronisez vos comptes sur toutes les plateformes",
-      "description" : "Votre appareil Ledger va générer une clé de chiffrement. Vos données restent privées, et vous seul(e) pouvez les récupérer.",
-      "cta" : "Synchroniser les comptes"
+      "title" : "Activer Ledger Sync pour cet ordinateur ?",
+      "description" : "Vos comptes crypto seront automatiquement synchronisés sur tous vos téléphones et ordinateurs, même si vous changez d’appareil.",
+      "cta" : "Activer Ledger Sync",
+      "alreadySync" : "Je l’ai déjà activé",
+      "learnMore" : "Comment fonctionne Ledger Sync ?"
     },
-    "alreadySync" : "Vous avez déjà créé une clé ?",
     "manage" : {
       "cta" : "Gérer",
       "synchronize" : {
-        "label" : "Synchroniser",
-        "description" : "Synchronisez vos données Ledger Live avec celles d’un autre appareil pour une expérience fluide."
+        "label" : "Synchroniser avec une autre application Ledger Live",
+        "description" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs."
       },
       "backup" : {
-        "label" : "Gérer votre clé",
-        "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
+        "label" : "Supprimer la synchronisation",
+        "description" : "Vos comptes crypto sur différentes applications Ledger Live ne seront plus synchronisés."
       },
       "instance" : {
-        "label" : "1 synchronisation",
-        "label_other" : "{{count}} synchronisations",
+        "label" : "1 application Ledger Live synchronisée",
+        "label_other" : "{{count}} applications Ledger Live synchronisées",
         "cta" : "Gérer"
       }
     },
     "loading" : {
       "title" : "Quelques secondes...",
-      "activation" : "Chiffrement de vos données de bout en bout... ",
-      "synch" : "Mise à jour de vos synchronisations..."
+      "activation" : "Cela peut prendre jusqu’à 30 secondes.\nVeuillez ne pas quitter cet écran."
     },
     "error" : {
       "title" : "Une erreur est survenue",
       "description" : "Veuillez réessayer plus tard.",
       "cta" : "Réessayer",
       "fetching" : "Une erreur est survenue lors de la récupération de vos données.",
-      "ledgerSyncDown" : "Ledger Sync n’est actuellement pas disponible.<br/>Cela n’a aucune incidence sur vos actifs."
+      "ledgerSyncDown" : "Ledger Sync est temporairement indisponible en raison de difficultés techniques. Une résolution est en cours."
     },
     "unsecuredError" : {
-      "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
-      "description" : "Veuillez connecter l’appareil Ledger que vous avez utilisé pour créer votre clé de chiffrement.",
-      "info" : "Si vous avez perdu votre appareil Ledger, ne vous inquiétez pas ! Vous pouvez quand même supprimer votre clé. En poursuivant, vos données et synchronisations seront supprimées.",
+      "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
+      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt « Supprimer la synchronisation ».",
       "cta" : "Connecter un autre appareil Ledger",
-      "ctaDelete" : "Supprimer ma clé de chiffrement"
+      "ctaDelete" : "Supprimer la synchronisation"
+    },
+    "alreadySecureError" : {
+      "title" : "Cette app est déjà sécurisée par cet appareil Ledger",
+      "description" : "Si vous essayer de créer une nouvelle synchronisation, veuillez connecter l’appareil Ledger que vous avez utilisé pour créer votre autre clé de chiffrement.",
+      "cta" : "Compris"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "Impossible d’utiliser cet appareil Ledger pour la synchronisation",
+      "description" : "Pour synchroniser les deux apps, veuillez supprimer votre clé et réessayer.",
+      "cta" : "Supprimer la synchronisation"
     },
     "autoRemoveError" : {
-      "title" : "Suppression de la synchronisation impossible",
-      "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer la synchronisation que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
-      "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+      "title" : "Impossible de retirer cet ordinateur pendant que vous l’utilisez",
+      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt « Supprimer la synchronisation ».",
       "cta" : "Compris",
-      "ctaDelete" : "Supprimer ma clé de chiffrement"
+      "ctaDelete" : "Supprimer la synchronisation"
     },
     "success" : {
       "backup" : {
-        "title" : "Succès",
-        "desc" : "Activation de Ledger Sync réussie."
+        "title" : "Ledger Sync est activé pour Ledger Live sur cet ordinateur"
       },
       "synch" : {
         "title" : "Synchronisation réussie !",
-        "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
+        "desc" : "Les mouvements sur vos comptes crypto apparaîtront automatiquement sur toutes les applications Ledger Live de vos téléphones et ordinateurs synchronisés. "
       },
       "synchAnother" : "Synchroniser avec une autre application Ledger Live",
       "close" : "Fermer"
     },
     "manageBackup" : {
-      "title" : "Gérer votre clé",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "Supprimer vos données",
-          "description" : "Toutes les données synchronisées seront supprimées."
-        }
-      },
       "deleteBackup" : {
-        "title" : "Voulez-vous vraiment supprimer votre clé de chiffrement ?",
-        "description" : "En cliquant sur Supprimer, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
-        "delete" : "Supprimer",
-        "cancel" : "Annuler"
+        "title" : "Voulez-vous vraiment supprimer la synchronisation ?",
+        "description" : "Vos comptes crypto Ledger Live sur différents téléphones et ordinateurs ne seront plus synchronisés. Cela n’a absolument aucun impact sur vos actifs. ",
+        "delete" : "Oui, supprimer",
+        "cancel" : "Non, conserver"
       },
       "deleteBackupSuccess" : {
-        "title" : "Vos appareils ont été désynchronisés, et votre clé a été supprimée"
+        "title" : "Vos applications Ledger Live ne sont plus synchronisées",
+        "description" : "Vous pouvez activer la synchronisation à tout moment"
       },
       "deleteBackupError" : {
         "title" : "Une erreur est survenue"
@@ -6440,7 +6523,7 @@
         "title" : "Choisissez votre méthode de synchronisation",
         "description" : "Vous pouvez soit effectuer la synchronisation avec votre appareil Ledger, soit scanner un code QR sur Ledger Live.",
         "scan" : {
-          "title" : "Scanner un code QR",
+          "title" : "Voir le code QR",
           "description" : "Synchronisez. en scannant un code QR"
         },
         "connectDevice" : {
@@ -6449,29 +6532,124 @@
         }
       },
       "qrCode" : {
-        "title" : "Synchroniser",
-        "hint" : "Essayez-vous de synchroniser deux applications Ledger Live pour l’ordinateur ? Cliquez ici.",
-        "description" : "Scannez et synchronisez vos comptes avec une autre application Ledger Live",
-        "steps" : {
-          "step1" : "Ouvrez l’application Ledger Live à synchroniser",
-          "step2" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Synchroniser</0> > <0>Afficher le code QR</0>",
-          "step3" : "Scannez le code QR jusqu’à ce que la barre soit à 100 %."
+        "title" : "Synchroniser vos applications Ledger Live",
+        "options" : {
+          "mobile" : "Avec un téléphone",
+          "desktop" : "Avec un ordinateur"
+        },
+        "mobile" : {
+          "description" : "Synchronisez avec l’application Ledger Live d’un autre téléphone",
+          "steps" : {
+            "step1" : "Ouvrez l’application Ledger Live à synchroniser.",
+            "step2" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Activer Sync</0> > <0>Voir le code QR</0>.",
+            "step3" : "Scannez le code QR."
+          }
+        },
+        "desktop" : {
+          "description" : "Synchronisez vos comptes avec une autre application Ledger Live",
+          "steps" : {
+            "step1" : "Ouvrez l’application Ledger Live à synchroniser.",
+            "step2" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Activer Sync</0> > <0>Utiliser mon wallet Ledger</0>.",
+            "step3" : "Connectez votre appareil Ledger."
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "Aucune synchronisation détectée",
+        "description" : "Activez Ledger Sync sur cette application Ledger Live ou sur celle avec laquelle vous effectuez une synchronisation.",
+        "cta" : "Activer Ledger Sync"
+      },
       "pinCode" : {
-        "title" : "Saisie du code",
-        "description" : "Saisissez le code sur l’autre application Ledger Live que vous voulez synchroniser."
+        "title" : "Votre code Ledger Sync",
+        "description" : "Pour synchroniser vos comptes crypto sur deux applications Ledger Live, saisissez ce code dans Ledger Live sur votre téléphone.",
+        "error" : {
+          "title" : "Les codes ne sont pas identiques",
+          "description" : "Le code que vous saisissez doit être identique à celui affiché sur l’autre application Ledger Live."
+        }
       }
     },
     "manageInstances" : {
-      "title" : "Gérer les synchronisations",
+      "title" : "Ledger Live est synchronisé sur :",
       "remove" : "Retirer",
-      "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisé.",
+      "deleteInstanceSuccess" : "Votre application Ledger Live sur {{instanceName}} n’est plus connectée à Ledger Sync",
       "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
     },
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",
       "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "Voir plus d’inscriptions",
+      "empty" : "Pour ajouter des inscriptions, il vous suffit de les recevoir sur votre adresse Bitcoin.",
+      "receive" : "Recevoir une inscription",
+      "discoveryDrawer" : {
+        "title" : "Découvrez les ordinals",
+        "description" : "Savez-vous que vous possédez peut-être des rare sats et des inscriptions de grande valeur ?",
+        "learnMore" : "En savoir plus",
+        "protectTitle" : "Protégez vos ordinals",
+        "protectDescription" : "Excluez vos ordinals de vos transactions."
+      },
+      "detailsDrawer" : {
+        "description" : "Description",
+        "collectionName" : "Nom de la collection",
+        "inscriptionId" : "ID de l’inscription",
+        "inscriptionNumber" : "Numéro de l’inscription",
+        "mintedTo" : "Minté sur",
+        "genesisTx" : "Transaction de création",
+        "blockNumber" : "Numéro du bloc",
+        "contentType" : "Type de contenu",
+        "createdDate" : "Date de création",
+        "satribute" : "Rareté du sat",
+        "satNumber" : "Numéro du sat",
+        "satName" : "Nom du sat",
+        "location" : "Emplacement",
+        "outputValue" : "Valeur de l’output",
+        "storedOnChain" : "Stockée en chaîne",
+        "hide" : "Masquer"
+      }
+    },
+    "rareSats" : {
+      "empty" : "Pour ajouter des Rare Sats, il vous suffit de les recevoir sur votre adresse Bitcoin.",
+      "receive" : "Recevoir un Rare Sat",
+      "title" : "Rare Sats",
+      "table" : {
+        "type" : "Type/Nombre de sat",
+        "year" : "Année"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "Découvrez la naissance de chaque bitcoin avec Alpha, qui désigne le premier satoshi. Cette mention marque la genèse d’une unité Bitcoin.",
+          "black_epic" : "Le dernier satoshi de chaque halving, qui se produit à peu près tous les quatre ans. À cette occasion, la récompense de minage du Bitcoin est réduite de moitié.",
+          "black_legendary" : "Aucune description pour Black Legendary",
+          "black_mythic" : "Aucune description pour Black Mythic",
+          "black_rare" : "Correspond au dernier satoshi à la fin de chaque période d’ajustement de la difficulté de minage.",
+          "black_uncommon" : "Le dernier satoshi de chaque halving, qui se produit à peu près tous les quatre ans. À cette occasion, la récompense de minage du Bitcoin est réduite de moitié.",
+          "block_9" : "Le bloc 9 est unique dans l’histoire de Bitcoin. Comme il s’agit de l’un des premiers blocs minés, les satoshis qu’il contient sont parmi les plus anciens sats en circulation. Ces sats constituent un lien tangible avec les débuts de Bitcoin, peu de temps après sa création.",
+          "block_9_450x" : "Remontez le temps avec Block 9 450x, qui met en évidence les sats du premier bitcoin du 9e bloc. Cette mention révèle un chapitre captivant de l’histoire de Bitcoin.",
+          "block_78" : "Le bloc 78 occupe une place importante dans les annales de l’histoire de Bitcoin. Ce bloc a été miné par Hal Finney, et constitue le premier cas où quelqu’un d’autre que le mystérieux Satoshi Nakamoto a contribué à la croissance de la blockchain.",
+          "block_286" : "Levez le voile sur le bloc 286, constitué de satoshis issus de la deuxième transaction Bitcoin minée par Satoshi Nakamoto. Ces sats représentent l’héritage du mystérieux inventeur du Bitcoin et participent à la légende de ses origines énigmatiques.",
+          "block_666" : "Aucune description pour Block 666",
+          "common" : "Aucune description pour Common",
+          "epic" : "Tous les quatre ans, le réseau Bitcoin procède à un « halving », qui consiste à diviser par deux la récompense de minage. Le premier sat de chacune de ces epoch de halving est un Epic, et indique ce moment important dans le modèle économique de Bitcoin.",
+          "first_tx" : "La date du 12 janvier 2009 est entrée dans l’histoire lorsque Satoshi Nakamoto a envoyé 10 bitcoins à un informaticien du nom d’Hal Finney. Il s’agit de la toute première transaction Bitcoin. Les sats issus de celle-ci portent la mention First Transaction, et symbolisent la genèse de l’échange de pair à pair sur Bitcoin.",
+          "hitman" : "Aucune description pour Hitman",
+          "jpeg" : "Remontez le temps avec les JPEG. Ces satoshis pourraient être liés au premier échange de bitcoins contre une image, qui a eu lieu le 24 février 2010. Cette mention relate l’histoire d’une innovation, retraçant les premières incursions de Bitcoin dans le monde des transactions et des échanges non conventionnels.",
+          "legacy" : "Aucune description pour Legacy",
+          "legendary" : "Aucune description pour Legendary",
+          "mythic" : "Aucune description pour Mythic",
+          "nakamoto" : "Le mystère qui entoure l’inventeur du Bitcoin, connu sous le pseudonyme de Satoshi Nakamoto, reste entier. Les sats minés par Nakamoto portent cette mention. Ils sont donc très recherchés par les collectionneurs.",
+          "omega" : "Découvrez l’achèvement de chaque bitcoin avec Omega. Il s’agit du dernier satoshi d’une unité de bitcoin.",
+          "paliblock" : "Aucune description pour PaliBlock Palindrome",
+          "palindrome" : "Un Palindrome est le nom donné à tout sat dont le numéro peut être lu de la même manière dans les deux sens. Par exemple : les sat numéro 12321 et 45654. Ces attributs numériques uniques rendent ces sats plus rares et plus singuliers.",
+          "palinception" : "Plongez dans le monde fascinant des Uniform Palinceptions, où chaque satoshi forme un palindrome de palindromes. Ces sats à la structure complexe créent une fascinante mosaïque de chiffres à effet miroir.",
+          "pizza" : "L’une des histoires les plus célèbres de la communauté Bitcoin est celle d’un programmeur qui a payé 10 000 bitcoins pour deux pizzas Papa John’s le 22 mai 2010. Cette anecdote est souvent citée pour illustrer l’ascension fulgurante de la valeur du bitcoin. Les sats issus de cette transaction légendaire portent la mention Pizza.",
+          "rare" : "Le réseau Bitcoin ajuste périodiquement le niveau de la difficulté de minage pour s’assurer que des blocs soient créés toutes les dix minutes environ. Le premier sat de chaque période de réajustement porte la mention Rare. Cela permet de souligner la nature dynamique de la sécurité du réseau et des mécanismes de consensus. ",
+          "uncommon" : "Cette mention est donc attribuée au premier satoshi de chaque bloc. Un nouveau bloc est ajouté à la blockchain Bitcoin toutes les 10 minutes environ, ces sats indiquent donc le tout début de cette période.",
+          "vintage" : "L’avènement du bitcoin a été marqué par ses 1 000 premiers blocs. Les sats minés durant cette période portent la mention Vintage."
+        }
+      }
     }
   }
 }

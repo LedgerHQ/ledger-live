@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.9.0",
+  "version": "34.10.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -119,6 +119,7 @@
     "https": false
   },
   "dependencies": {
+    "@blooo/hw-app-acre": "^1.0.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
@@ -149,7 +150,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -180,10 +181,11 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.5.10",
-    "@ledgerhq/wallet-api-core": "^1.11.0",
+    "@ledgerhq/wallet-api-acre-module": "workspace:^",
+    "@ledgerhq/wallet-api-client": "^1.6.0",
+    "@ledgerhq/wallet-api-core": "^1.13.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^1.5.11",
+    "@ledgerhq/wallet-api-server": "^1.6.0",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
     "@stricahq/typhonjs": "^2.0.0",

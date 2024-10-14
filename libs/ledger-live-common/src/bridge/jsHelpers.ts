@@ -1,4 +1,4 @@
-import { Observable, firstValueFrom, from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import {
   GetAccountShape,
   IterateResultBuilder,
@@ -45,18 +45,7 @@ export function makeAccountBridgeReceive({
   injectGetAddressParams,
 }: {
   injectGetAddressParams?: (account: Account) => any;
-} = {}): (
-  account: Account,
-  option: {
-    verify?: boolean;
-    deviceId: string;
-    subAccountId?: string;
-    freshAddressIndex?: number;
-  },
-) => Observable<{
-  address: string;
-  path: string;
-}> {
+} = {}) {
   return commonMakeAccountBridgeReceive(getAddr, {
     injectGetAddressParams,
   });

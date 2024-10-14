@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -84,7 +84,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -96,7 +96,6 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
     "rxjs": "^7.8.1"
   },

@@ -325,6 +325,7 @@ const OperationD = (props: Props) => {
         color="palette.text.shade60"
         mt={0}
         mb={1}
+        data-testid="transaction-type"
       >
         <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
@@ -492,7 +493,13 @@ const OperationD = (props: Props) => {
               />
             </Box>
           ) : undefined}
-          <Text ff="Inter|SemiBold" textAlign="center" fontSize={4} color="palette.text.shade60">
+          <Text
+            data-testid="operation-type"
+            ff="Inter|SemiBold"
+            textAlign="center"
+            fontSize={4}
+            color="palette.text.shade60"
+          >
             <Trans i18nKey={`operation.type.${operation.type}`} />
           </Text>
         </OpDetailsData>

@@ -10,9 +10,11 @@ import Stepper from "~/renderer/components/Stepper";
 export type Data = {
   account: AccountLike;
   message: AnyMessage;
-  onConfirmationHandler: Function;
-  onFailHandler: Function;
+  onConfirmationHandler: (arg: string) => void;
+  onFailHandler: (arg: Error) => void;
   onClose: () => void;
+  useApp?: string;
+  dependencies?: string[];
 };
 
 type OwnProps = {
@@ -54,6 +56,8 @@ const Body = ({ onClose, data }: Props) => {
     onStepChange: handleStepChange,
     stepId,
     steps,
+    useApp: data.useApp,
+    dependencies: data.dependencies,
     message: data.message,
     onConfirmationHandler: data.onConfirmationHandler,
     onFailHandler: data.onFailHandler,

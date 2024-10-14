@@ -1,12 +1,12 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { Drawer } from "tests/page/drawer/drawer";
+import { Drawer } from "tests/component/drawer.component";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 
 export class SwapConfirmationDrawer extends Drawer {
   private amountSent = this.page.getByTestId("amountSent");
   private amountReceived = this.page.getByTestId("amountReceived");
-  private provider = this.page.getByTestId("provider");
+  private swapProvider = this.page.getByTestId("provider");
   private fees = this.page.getByTestId("fees");
   private sourceAccount = this.page.getByTestId("sourceAccount");
   private targetAccount = this.page.getByTestId("targetAccount");
@@ -24,7 +24,7 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Verify provider: $0")
   async verifyProvider(provider: string) {
-    await expect(this.provider).toHaveText(capitalizeFirstLetter(provider));
+    await expect(this.swapProvider).toHaveText(capitalizeFirstLetter(provider));
   }
 
   @step("Verify source currency: $0")
