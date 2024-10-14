@@ -33,6 +33,7 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
@@ -123,6 +124,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     from?: string;
   }>();
   const redirectToHistory = useRedirectToSwapHistory();
+  const swapLiveEnabledFlag = useSwapLiveConfig();
 
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -287,14 +289,26 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           ? {
               fromAccountId: accountToWalletAPIAccount(
                 walletState,
-                state.defaultAccount,
+                state?.defaultAccount,
                 state?.defaultParentAccount,
               ).id,
             }
           : {}),
-        ...(state?.from ? { fromPath: simplifyFromPath(state.from) } : {}),
+        ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
+        ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
+          ? {
+              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
+            }
+          : {}),
       }).toString(),
-    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState, state?.from],
+    [
+      isOffline,
+      state?.defaultAccount,
+      state?.defaultParentAccount,
+      state?.from,
+      walletState,
+      swapLiveEnabledFlag,
+    ],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
@@ -306,7 +320,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);
 
-    if (!state.loading && state.isAppUnavailable) {
+    if (!state?.loading && state?.isAppUnavailable) {
       liveAppUnavailable();
       captureException(
         new UnableToLoadSwapLiveError(
@@ -317,12 +331,12 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   };
 
   useEffect(() => {
-    if (webviewState.url.includes("/unknown-error")) {
+    if (webviewState?.url.includes("/unknown-error")) {
       // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
       onSwapWebviewError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [webviewState.url]);
+  }, [webviewState?.url]);
 
   return (
     <>

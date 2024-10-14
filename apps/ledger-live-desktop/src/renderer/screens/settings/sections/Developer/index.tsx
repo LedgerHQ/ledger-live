@@ -25,6 +25,7 @@ import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
+import BrazeTools from "./BrazeTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -107,6 +108,7 @@ const Default = () => {
       </FeatureToggle>
 
       <SimpleHashTools />
+      <BrazeTools />
 
       {__DEV__ && (
         <Row

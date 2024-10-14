@@ -165,6 +165,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -1293,6 +1296,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
+      '@ledgerhq/speculos-transport':
+        specifier: workspace:^
+        version: link:../../libs/speculos-transport
       '@ledgerhq/test-utils':
         specifier: workspace:^
         version: link:../../libs/test-utils
@@ -6056,6 +6062,9 @@ importers:
 
   libs/live-nft-react:
     dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
@@ -6069,9 +6078,6 @@ importers:
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
     devDependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:*
-        version: link:../coin-framework
       '@tanstack/react-query':
         specifier: ^5.28.9
         version: 5.28.9(react@18.2.0)

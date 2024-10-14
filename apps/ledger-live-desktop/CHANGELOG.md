@@ -1,5 +1,137 @@
 # ledger-live-desktop
 
+## 2.88.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+- [#7953](https://github.com/LedgerHQ/ledger-live/pull/7953) [`b8ccbe0`](https://github.com/LedgerHQ/ledger-live/commit/b8ccbe0156a507d96fc50993126a3e8081fb33bb) Thanks [@KVNLS](https://github.com/KVNLS)! - LLD - Change loading screen wording for Ledger Sync
+
+### Patch Changes
+
+- [#7910](https://github.com/LedgerHQ/ledger-live/pull/7910) [`8b3fd36`](https://github.com/LedgerHQ/ledger-live/commit/8b3fd36ff06b9777d6428c8b887fec7643d97349) Thanks [@thesan](https://github.com/thesan)! - Always skip the analytics prompt in e2e tests
+
+- [#7929](https://github.com/LedgerHQ/ledger-live/pull/7929) [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Fixed side effect that caused the synchronization to stop working
+
+- [#7896](https://github.com/LedgerHQ/ledger-live/pull/7896) [`521c394`](https://github.com/LedgerHQ/ledger-live/commit/521c394f7d35f61d07b9e907b2085d329bff2cab) Thanks [@themooneer](https://github.com/themooneer)! - bump storyly version
+
+- [#7908](https://github.com/LedgerHQ/ledger-live/pull/7908) [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add detail drawers for inscriptions of ordinals protocol
+
+- [#7881](https://github.com/LedgerHQ/ledger-live/pull/7881) [`c55d0b3`](https://github.com/LedgerHQ/ledger-live/commit/c55d0b356beb03698e3cca04db0e9522ece46440) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add ui for empty rare sats and inscriptions. Add error message from Error when inscriptions / rare sats can't load. Add dumy drawer for inscriptions
+
+- [#7914](https://github.com/LedgerHQ/ledger-live/pull/7914) [`d3fa14f`](https://github.com/LedgerHQ/ledger-live/commit/d3fa14f536533dd961c9eb829ed4465bda5569e4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix unstable integration test
+
+- [#7950](https://github.com/LedgerHQ/ledger-live/pull/7950) [`7c12a08`](https://github.com/LedgerHQ/ledger-live/commit/7c12a08a610edeceb3961155aca98384dafcdbf9) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Shows swap loader
+
+- [#7951](https://github.com/LedgerHQ/ledger-live/pull/7951) [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Refactor nft links to use it for ordinals and simplehash
+
+- [#7884](https://github.com/LedgerHQ/ledger-live/pull/7884) [`f9811e0`](https://github.com/LedgerHQ/ledger-live/commit/f9811e02ffe68c4acb165d0932059d020bbca2f4) Thanks [@valpinkman](https://github.com/valpinkman)! - Update turbo.json to accept envs
+
+- [#7882](https://github.com/LedgerHQ/ledger-live/pull/7882) [`03c3a53`](https://github.com/LedgerHQ/ledger-live/commit/03c3a53559a81d77b046bf6e31d75184af8495d9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - pass from and default accounts to all instances of redirect to /swap
+
+- [#7900](https://github.com/LedgerHQ/ledger-live/pull/7900) [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818) Thanks [@qperrot](https://github.com/qperrot)! - remove rewards feature from near
+
+- [#7907](https://github.com/LedgerHQ/ledger-live/pull/7907) [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): allow wallet-connect live-app to open a deep-link at any time
+
+  Refactor by sharing a single constant for wallet-connect live-app manifest id
+
+- [#7923](https://github.com/LedgerHQ/ledger-live/pull/7923) [`7364333`](https://github.com/LedgerHQ/ledger-live/commit/73643335439f0bad460e17fe76dea52e1578db73) Thanks [@themooneer](https://github.com/themooneer)! - storyly stories localization
+
+- [#7924](https://github.com/LedgerHQ/ledger-live/pull/7924) [`600c7b6`](https://github.com/LedgerHQ/ledger-live/commit/600c7b67afabeb951b10132e5090072c7fd46cf3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add protectBox to protect ordinals in discovery drawer
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892), [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415), [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818), [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901)]:
+  - @ledgerhq/types-cryptoassets@7.16.0
+  - @ledgerhq/types-live@6.52.0
+  - @ledgerhq/live-common@34.10.0
+  - @ledgerhq/live-wallet@0.6.2
+  - @ledgerhq/react-ui@0.16.1
+  - @ledgerhq/live-nft@0.4.7
+  - @ledgerhq/coin-evm@2.3.1
+  - @ledgerhq/trustchain@0.4.1
+  - @ledgerhq/coin-framework@0.18.2
+  - @ledgerhq/coin-bitcoin@0.8.2
+  - @ledgerhq/coin-cosmos@0.1.3
+  - @ledgerhq/domain-service@1.2.6
+  - @ledgerhq/live-countervalues@0.2.7
+  - @ledgerhq/live-countervalues-react@0.2.7
+  - @ledgerhq/live-nft-react@0.4.7
+
+## 2.88.0-next.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+- [#7953](https://github.com/LedgerHQ/ledger-live/pull/7953) [`b8ccbe0`](https://github.com/LedgerHQ/ledger-live/commit/b8ccbe0156a507d96fc50993126a3e8081fb33bb) Thanks [@KVNLS](https://github.com/KVNLS)! - LLD - Change loading screen wording for Ledger Sync
+
+### Patch Changes
+
+- [#7910](https://github.com/LedgerHQ/ledger-live/pull/7910) [`8b3fd36`](https://github.com/LedgerHQ/ledger-live/commit/8b3fd36ff06b9777d6428c8b887fec7643d97349) Thanks [@thesan](https://github.com/thesan)! - Always skip the analytics prompt in e2e tests
+
+- [#7929](https://github.com/LedgerHQ/ledger-live/pull/7929) [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Fixed side effect that caused the synchronization to stop working
+
+- [#7896](https://github.com/LedgerHQ/ledger-live/pull/7896) [`521c394`](https://github.com/LedgerHQ/ledger-live/commit/521c394f7d35f61d07b9e907b2085d329bff2cab) Thanks [@themooneer](https://github.com/themooneer)! - bump storyly version
+
+- [#7908](https://github.com/LedgerHQ/ledger-live/pull/7908) [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add detail drawers for inscriptions of ordinals protocol
+
+- [#7881](https://github.com/LedgerHQ/ledger-live/pull/7881) [`c55d0b3`](https://github.com/LedgerHQ/ledger-live/commit/c55d0b356beb03698e3cca04db0e9522ece46440) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add ui for empty rare sats and inscriptions. Add error message from Error when inscriptions / rare sats can't load. Add dumy drawer for inscriptions
+
+- [#7914](https://github.com/LedgerHQ/ledger-live/pull/7914) [`d3fa14f`](https://github.com/LedgerHQ/ledger-live/commit/d3fa14f536533dd961c9eb829ed4465bda5569e4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix unstable integration test
+
+- [#7950](https://github.com/LedgerHQ/ledger-live/pull/7950) [`7c12a08`](https://github.com/LedgerHQ/ledger-live/commit/7c12a08a610edeceb3961155aca98384dafcdbf9) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Shows swap loader
+
+- [#7951](https://github.com/LedgerHQ/ledger-live/pull/7951) [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Refactor nft links to use it for ordinals and simplehash
+
+- [#7884](https://github.com/LedgerHQ/ledger-live/pull/7884) [`f9811e0`](https://github.com/LedgerHQ/ledger-live/commit/f9811e02ffe68c4acb165d0932059d020bbca2f4) Thanks [@valpinkman](https://github.com/valpinkman)! - Update turbo.json to accept envs
+
+- [#7882](https://github.com/LedgerHQ/ledger-live/pull/7882) [`03c3a53`](https://github.com/LedgerHQ/ledger-live/commit/03c3a53559a81d77b046bf6e31d75184af8495d9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - pass from and default accounts to all instances of redirect to /swap
+
+- [#7900](https://github.com/LedgerHQ/ledger-live/pull/7900) [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818) Thanks [@qperrot](https://github.com/qperrot)! - remove rewards feature from near
+
+- [#7907](https://github.com/LedgerHQ/ledger-live/pull/7907) [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): allow wallet-connect live-app to open a deep-link at any time
+
+  Refactor by sharing a single constant for wallet-connect live-app manifest id
+
+- [#7923](https://github.com/LedgerHQ/ledger-live/pull/7923) [`7364333`](https://github.com/LedgerHQ/ledger-live/commit/73643335439f0bad460e17fe76dea52e1578db73) Thanks [@themooneer](https://github.com/themooneer)! - storyly stories localization
+
+- [#7924](https://github.com/LedgerHQ/ledger-live/pull/7924) [`600c7b6`](https://github.com/LedgerHQ/ledger-live/commit/600c7b67afabeb951b10132e5090072c7fd46cf3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add protectBox to protect ordinals in discovery drawer
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`92df3b4`](https://github.com/LedgerHQ/ledger-live/commit/92df3b415e765dc26bc69438ca26b6308e98aa26), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892), [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415), [`37d8fd9`](https://github.com/LedgerHQ/ledger-live/commit/37d8fd917bd2901e1005944d237656e562764818), [`be18f81`](https://github.com/LedgerHQ/ledger-live/commit/be18f816fa098f8217420b8a875b7afb1be748b0), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`307f467`](https://github.com/LedgerHQ/ledger-live/commit/307f4672ef4bf2020dff9d29e7f7227f2fb53901)]:
+  - @ledgerhq/types-cryptoassets@7.16.0-next.0
+  - @ledgerhq/types-live@6.52.0-next.0
+  - @ledgerhq/live-common@34.10.0-next.0
+  - @ledgerhq/live-wallet@0.6.2-next.0
+  - @ledgerhq/react-ui@0.16.1-next.0
+  - @ledgerhq/live-nft@0.4.7-next.0
+  - @ledgerhq/coin-evm@2.3.1-next.0
+  - @ledgerhq/trustchain@0.4.1-next.0
+  - @ledgerhq/coin-framework@0.18.2-next.0
+  - @ledgerhq/coin-bitcoin@0.8.2-next.0
+  - @ledgerhq/coin-cosmos@0.1.3-next.0
+  - @ledgerhq/domain-service@1.2.6-next.0
+  - @ledgerhq/live-countervalues@0.2.7-next.0
+  - @ledgerhq/live-countervalues-react@0.2.7-next.0
+  - @ledgerhq/live-nft-react@0.4.7-next.0
+
+## 2.87.1
+
+### Patch Changes
+
+- [#7978](https://github.com/LedgerHQ/ledger-live/pull/7978) [`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1
+
+## 2.87.1-hotfix.0
+
+### Patch Changes
+
+- [#7978](https://github.com/LedgerHQ/ledger-live/pull/7978) [`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- Updated dependencies [[`77adfc3`](https://github.com/LedgerHQ/ledger-live/commit/77adfc33d4fd7d8f39329f23a36a55029331feb0)]:
+  - @ledgerhq/live-common@34.9.1-hotfix.0
+
 ## 2.87.0
 
 ### Minor Changes

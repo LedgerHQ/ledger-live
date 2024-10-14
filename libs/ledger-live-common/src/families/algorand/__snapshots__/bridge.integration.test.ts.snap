@@ -171,7 +171,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8534040,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "593",
       },
       "fee": "1000",
@@ -229,7 +229,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006893,
       "extra": {
-        "assetId": 378382099,
+        "assetId": "378382099",
         "rewards": "0",
       },
       "fee": "1000",
@@ -268,7 +268,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5148929,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -307,7 +307,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5246217,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -327,7 +327,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459560,
       "extra": {
-        "assetId": 438828,
+        "assetId": "438828",
         "rewards": "0",
       },
       "fee": "1000",
@@ -366,7 +366,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344657,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -386,7 +386,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344993,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -444,7 +444,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5148908,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -521,7 +521,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23410964,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -560,7 +560,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8457597,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -599,7 +599,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411158,
       "extra": {
-        "assetId": 465865291,
+        "assetId": "465865291",
         "rewards": "0",
       },
       "fee": "1000",
@@ -607,6 +607,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-7KOWDZCZPXCCAEKQCDGPXGGTFUY66OMCDSK3OXP34EAKC3WSMZBQ-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "3EPGHSNBBN5M2LD6V7A63EHZQQLATVQHDBYJQIZ6BLCBTIXA5XR7ZOZEB4",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -619,7 +620,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23007066,
       "extra": {
-        "assetId": 287867876,
+        "assetId": "287867876",
         "rewards": "0",
       },
       "fee": "1000",
@@ -734,7 +735,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344997,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -754,7 +755,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5667363,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -774,7 +775,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5487780,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -889,7 +890,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4879700,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "1134",
       },
       "fee": "1000",
@@ -928,7 +929,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14213950,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -948,7 +949,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4879725,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1045,7 +1046,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23008354,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1085,7 +1086,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14214356,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1124,7 +1125,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411298,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1260,7 +1261,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006720,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1299,7 +1300,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5148901,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "27",
       },
       "fee": "1000",
@@ -1319,7 +1320,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344962,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1339,7 +1340,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411446,
       "extra": {
-        "assetId": 287867876,
+        "assetId": "287867876",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1347,6 +1348,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-IAS5ZB4ET2GYYXJ4Q7MJGGEELXDCXPQCNVJXX22KABBH3EPYWK6A-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "V537CZUKQJH2ETEJRXHAQI6OUHL54MZU5OIBCAU4J6OE3557ODF74WVQCA",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -1378,7 +1380,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411602,
       "extra": {
-        "assetId": 239444645,
+        "assetId": "239444645",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1386,6 +1388,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-IUXCAYJOH6L4UNPEGGA5EIJCOX5DPPOO56ZUJSHJDQYTLODVTDQA-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "PAPISJZUYIQC2FIDRPQU2RFNDO2ZRGZN4IEN6QRD7V7PAQBT4CYAHQQTQI",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -1417,7 +1420,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8458219,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1456,7 +1459,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344671,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1476,7 +1479,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14213938,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1516,7 +1519,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14213987,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1524,6 +1527,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-JUN66UW3CELUZ3GUZIOU6CIOH3JHKXDIB46OGG7U5RZD552XPUVA-OPT_IN",
       "recipients": [
         "VMZTCZV2IDQAVZBB4BZNZHCN62U654SYK7AJ5J4U73AWOM5DHITWQ3QU7Q",
+        "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": [
         "VMZTCZV2IDQAVZBB4BZNZHCN62U654SYK7AJ5J4U73AWOM5DHITWQ3QU7Q",
@@ -1536,7 +1540,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5544819,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "memo": "eW9vbw==",
         "rewards": "10563",
       },
@@ -1557,7 +1561,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8264147,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "8",
       },
       "fee": "1000",
@@ -1577,7 +1581,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5148922,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1597,7 +1601,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23007059,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1655,7 +1659,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411152,
       "extra": {
-        "assetId": 465865291,
+        "assetId": "465865291",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1675,7 +1679,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4860520,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "12111",
       },
       "fee": "1000",
@@ -1753,7 +1757,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344651,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1811,7 +1815,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23430121,
       "extra": {
-        "assetId": 2757561,
+        "assetId": "2757561",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1850,7 +1854,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14212278,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1870,7 +1874,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411018,
       "extra": {
-        "assetId": 438839,
+        "assetId": "438839",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1878,6 +1882,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-Q6MOP5LBHSLYCJBKM4Z5IRV7QHMATUY7JFQAEWWGRTJ3TMWQ3PYA-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -1909,7 +1914,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14212318,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1929,7 +1934,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006878,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -1968,7 +1973,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8263994,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "513",
       },
       "fee": "1000",
@@ -2007,7 +2012,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459068,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "5",
       },
       "fee": "1000",
@@ -2027,7 +2032,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23007087,
       "extra": {
-        "assetId": 287867876,
+        "assetId": "287867876",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2035,6 +2040,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-QWL6EZG342HDWCVCFB5GGD3NJLJOGI3AR3JZDO4GVGMEZA7MKTMQ-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "V537CZUKQJH2ETEJRXHAQI6OUHL54MZU5OIBCAU4J6OE3557ODF74WVQCA",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -2104,7 +2110,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411567,
       "extra": {
-        "assetId": 239444645,
+        "assetId": "239444645",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2162,7 +2168,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14214165,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "1",
       },
       "fee": "1000",
@@ -2201,7 +2207,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4935120,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2241,7 +2247,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14214183,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2280,7 +2286,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459549,
       "extra": {
-        "assetId": 438837,
+        "assetId": "438837",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2338,7 +2344,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5344507,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2358,7 +2364,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411439,
       "extra": {
-        "assetId": 287867876,
+        "assetId": "287867876",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2397,7 +2403,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411141,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2474,7 +2480,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23410994,
       "extra": {
-        "assetId": 27165954,
+        "assetId": "27165954",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2494,7 +2500,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006884,
       "extra": {
-        "assetId": 6587142,
+        "assetId": "6587142",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2502,6 +2508,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-WDDQUXBWM4VKSHY4RH43MIKHVCI4GA5Q5AEPC5SWWIJL2P435VRA-OPT_IN",
       "recipients": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+        "26LYTJVUJZZ2DGPETGJY7TGQABH6KLLHDCULLVQKUGCL7BQAWT3N74VZME",
       ],
       "senders": [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
@@ -2514,7 +2521,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14212162,
       "extra": {
-        "assetId": 6587142,
+        "assetId": "6587142",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2534,7 +2541,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5246149,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "459",
       },
       "fee": "1000",
@@ -2592,7 +2599,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8458251,
       "extra": {
-        "assetId": 438839,
+        "assetId": "438839",
         "rewards": "8",
       },
       "fee": "1000",
@@ -2631,7 +2638,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5544904,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2651,7 +2658,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411491,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2671,7 +2678,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4935089,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "21681",
       },
       "fee": "1000",
@@ -2691,7 +2698,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23008253,
       "extra": {
-        "assetId": 137594422,
+        "assetId": "137594422",
         "rewards": "0",
       },
       "fee": "1000",
@@ -2730,7 +2737,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 4863465,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3140,7 +3147,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8534040,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3198,7 +3205,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459505,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3256,7 +3263,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23410964,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3467,7 +3474,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23008354,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3487,7 +3494,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411298,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3545,7 +3552,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459480,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3565,7 +3572,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006720,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3585,7 +3592,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006684,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3605,7 +3612,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23007059,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3644,7 +3651,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459518,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3702,7 +3709,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14212278,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3722,7 +3729,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 14212318,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3742,7 +3749,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23006878,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3781,7 +3788,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459052,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "1",
       },
       "fee": "1000",
@@ -3801,7 +3808,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8459068,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3878,7 +3885,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411141,
       "extra": {
-        "assetId": 312769,
+        "assetId": "312769",
         "rewards": "0",
       },
       "fee": "1000",
@@ -3955,7 +3962,7 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 23411491,
       "extra": {
-        "assetId": 604,
+        "assetId": "604",
         "rewards": "0",
       },
       "fee": "1000",
