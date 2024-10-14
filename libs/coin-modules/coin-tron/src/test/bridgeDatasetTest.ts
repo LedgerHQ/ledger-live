@@ -3,6 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account, CurrenciesData, DatasetTest, TokenAccount } from "@ledgerhq/types-live";
@@ -17,7 +18,6 @@ import {
   TronNoReward,
   TronNoUnfrozenResource,
   TronNotEnoughTronPower,
-  TronSendTrc20ToNewAccountForbidden,
   TronUnexpectedFees,
   TronVoteRequired,
 } from "../types/errors";
@@ -476,7 +476,7 @@ const tron: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
+            estimatedFees: new BigNumber("13740900"),
           },
         },
         {
@@ -493,11 +493,11 @@ const tron: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("1000000"),
             errors: {
-              recipient: new TronSendTrc20ToNewAccountForbidden(),
+              gasLimit: new NotEnoughGas(),
             },
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
+            estimatedFees: new BigNumber("27600900"),
           },
         }, // FIXME account have moved...
 
@@ -541,7 +541,7 @@ const tron: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
+            estimatedFees: new BigNumber("13740900"),
           },
         },
         {
