@@ -162,6 +162,7 @@
     "@jest/globals": "^29.7.0",
     "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/live-cli": "link:../cli",
     "@ledgerhq/native-modules-tools": "workspace:*",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

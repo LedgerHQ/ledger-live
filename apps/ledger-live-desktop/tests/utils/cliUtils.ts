@@ -1,38 +1,22 @@
-import { spawn } from "child_process";
+import { lastValueFrom, Observable } from "rxjs";
+import commands from "@ledgerhq/live-cli/src/commands-index";
 
-const scriptPath = __dirname + "../../../../../apps/cli/bin/index.js";
+export type CommandArgs<T> = T extends Command<infer U> ? U : never;
+export type CommandName = keyof typeof commands; // This type represents the keys of the commands object
 
-/**
- * Executes a command in the CLI with given arguments.
- * @param {string} command - The command and its arguments as a single string.
- * @returns {Promise<string>} - Resolves with the output of the command or rejects on failure.
- */
-export function runCliCommand(command: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const args = command.split(" ");
-    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe" });
+// Existing command type
+type Command<TArgs = any> = {
+  description: string;
+  args: { name: string; alias?: string; type: Function; desc: string }[];
+  job: (arg: TArgs) => Promise<any> | Observable<any>;
+};
 
-    let output = "";
-    let errorOutput = "";
-
-    child.stdout.on("data", data => {
-      output += data.toString();
-    });
-
-    child.stderr.on("data", data => {
-      errorOutput += data.toString();
-    });
-
-    child.on("exit", code => {
-      if (code === 0) {
-        resolve(output);
-      } else {
-        reject(new Error(`CLI command failed with exit code ${code}: ${errorOutput}`));
-      }
-    });
-
-    child.on("error", error => {
-      reject(new Error(`Error executing CLI command: ${error.message}`));
-    });
-  });
+// Define a function to call commands with inferred argument types
+export async function runCliCommand<T extends CommandName>(
+  commandName: T,
+  args: CommandArgs<(typeof commands)[T]>, // Use inferred argument types
+): Promise<any> {
+  const command = commands[commandName];
+  const result = await lastValueFrom(command.job(args));
+  console.log(`CLI command result: ${result}`);
 }

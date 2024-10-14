@@ -12,7 +12,9 @@ import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "tests/enum/AppInfos";
-import { runCliCommand } from "tests/utils/cliUtils";
+import { runCliCommand, CommandArgs, CommandName } from "tests/utils/cliUtils";
+import commands from "@ledgerhq/live-cli/src/commands-index";
+import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
 
 type TestFixtures = {
   lang: string;
@@ -29,7 +31,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
-  cliCommands: string[];
+  cliCommands: { name: CommandName; args: CommandArgs<(typeof commands)[CommandName]> }[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -110,13 +112,15 @@ export const test = base.extend<TestFixtures>({
           specs[speculosApp.name.replace(/ /g, "_")],
         );
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
-        process.env.SPECULOS_API_PORT = device?.ports.apiPort;
-        process.env.MOCK = "";
+        setEnv("MOCK", "");
 
         if (cliCommands) {
+          registerSpeculosTransport(device.ports.apiPort);
           for (const command of cliCommands) {
-            const fullCommand = `${command} --appjson ${userdataDestinationPath}/app.json`;
-            await runCliCommand(fullCommand);
+            await runCliCommand(command.name, {
+              appjson: `${userdataDestinationPath}/app.json`,
+              ...command.args,
+            });
           }
         }
       }

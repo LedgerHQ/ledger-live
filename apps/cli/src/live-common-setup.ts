@@ -9,7 +9,11 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
-import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/index";
+import {
+  registerTransportModule,
+  unregisterTransportModule,
+  disconnect,
+} from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
@@ -77,15 +81,7 @@ if (process.env.DEVICE_PROXY_URL) {
 const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
 if (SPECULOS_API_PORT) {
-  const req: Record<string, number> = {
-    apiPort: parseInt(SPECULOS_API_PORT, 10),
-  };
-
-  registerTransportModule({
-    id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
-    disconnect: () => Promise.resolve(),
-  });
+  registerSpeculosTransport(parseInt(SPECULOS_API_PORT, 10));
 } else if (SPECULOS_APDU_PORT) {
   const req: Record<string, any> = {
     apduPort: parseInt(SPECULOS_APDU_PORT, 10),
@@ -131,6 +127,19 @@ async function init() {
         wired: true,
       })),
     ),
+    disconnect: () => Promise.resolve(),
+  });
+}
+
+export function registerSpeculosTransport(apiPort: number) {
+  unregisterTransportModule("hid");
+  const req: Record<string, number> = {
+    apiPort: apiPort,
+  };
+
+  registerTransportModule({
+    id: "speculos-http",
+    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
     disconnect: () => Promise.resolve(),
   });
 }
