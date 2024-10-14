@@ -1,5 +1,5 @@
 import { step } from "tests/misc/reporters/step";
-import { Drawer } from "tests/page/drawer/drawer";
+import { Drawer } from "tests/component/drawer.component";
 
 export class ChooseAssetDrawer extends Drawer {
   private searchInput = this.page.getByTestId("select-asset-drawer-search-input");

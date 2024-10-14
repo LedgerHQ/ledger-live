@@ -1,5 +1,5 @@
 import { step } from "tests/misc/reporters/step";
-import { Drawer } from "tests/page/drawer/drawer";
+import { Drawer } from "tests/component/drawer.component";
 
 export class ChooseAccountDrawer extends Drawer {
   private accountRow = (accountName: string) =>

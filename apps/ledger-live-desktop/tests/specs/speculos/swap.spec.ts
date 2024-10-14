@@ -9,7 +9,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 
 const swaps = [
-  /*{
+  {
     swap: new Swap(
       Account.ETH_1,
       Account.BTC_NATIVE_SEGWIT_1,
@@ -28,13 +28,13 @@ const swaps = [
       Provider.CHANGELLY,
     ),
     xrayTicket: "B2CQA-2744",
-  },*/
+  },
   //todo: fix
   {
     swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "40", Fee.MEDIUM, Provider.EXODUS),
     xrayTicket: "B2CQA-2752",
   },
-  /*{
+  {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.018", Fee.MEDIUM, Provider.CHANGELLY),
     xrayTicket: "B2CQA-2748",
   },
@@ -75,7 +75,7 @@ const swaps = [
   {
     swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "40", Fee.MEDIUM, Provider.CHANGELLY),
     xrayTicket: "B2CQA-2751",
-  },*/
+  },
 ];
 
 const app: AppInfos = AppInfos.EXCHANGE;

@@ -377,7 +377,7 @@ export function verifyAddress(address: string, text: string[]): boolean {
 }
 
 export function verifyAmount(amount: string, text: string[]): boolean {
-  const amountDevice = text[1];
+  const amountDevice = amount.length > 17 ? text[3] : text[1];
   return amountDevice.includes(amount);
 }
 
