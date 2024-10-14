@@ -24,7 +24,7 @@ import { MIN_DELEGATION_AMOUNT } from "./constants";
 import { SubAccount } from "@ledgerhq/types-live";
 import sample from "lodash/sample";
 
-const currency = getCryptoCurrencyById("multiversx");
+const currency = getCryptoCurrencyById("elrond");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 const maxAccounts = 6;
 
