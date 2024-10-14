@@ -207,6 +207,7 @@ export default class Eth {
         .resolveTransaction(rawTxHex, this.loadConfig, {
           externalPlugins: true,
           erc20: true,
+          uniswapV3: false,
         })
         .catch(e => {
           console.warn(

@@ -8,6 +8,7 @@ type TransformedProviderData = {
     data: Buffer;
   };
   signature: Buffer;
+  version: number;
 };
 
 jest.mock("@ledgerhq/live-network");
@@ -20,12 +21,14 @@ describe("transformData", () => {
         signature: "a1b2c3",
         public_key: "1234567890abcdef",
         public_key_curve: "secp256k1",
+        service_app_version: 2,
       },
       {
         name: "ProviderB",
         signature: "d4e5f6",
         public_key: "abcdef1234567890",
         public_key_curve: "secp256r1",
+        service_app_version: 2,
       },
     ];
 
@@ -37,6 +40,7 @@ describe("transformData", () => {
           data: Buffer.from("1234567890abcdef", "hex"),
         },
         signature: Buffer.from("a1b2c3", "hex"),
+        version: 2,
       },
       providerb: {
         name: "ProviderB",
@@ -45,6 +49,7 @@ describe("transformData", () => {
           data: Buffer.from("abcdef1234567890", "hex"),
         },
         signature: Buffer.from("d4e5f6", "hex"),
+        version: 2,
       },
     };
 
@@ -70,6 +75,7 @@ describe("getProvidersData", () => {
         signature: "a1b2c3",
         public_key: "1234567890abcdef",
         public_key_curve: "secp256k1",
+        service_app_version: 2,
       },
     ];
 
@@ -81,7 +87,7 @@ describe("getProvidersData", () => {
       method: "GET",
       url: "https://crypto-assets-service.api.ledger.com/v1/partners",
       params: {
-        output: "name,signature,public_key,public_key_curve",
+        output: "name,signature,public_key,public_key_curve,service_app_version",
         service_name: "someType",
       },
     });
@@ -94,6 +100,7 @@ describe("getProvidersData", () => {
           data: Buffer.from("1234567890abcdef", "hex"),
         },
         signature: Buffer.from("a1b2c3", "hex"),
+        version: 2,
       },
     });
   });

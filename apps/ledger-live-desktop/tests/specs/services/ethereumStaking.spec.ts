@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Analytics } from "../../models/Analytics";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { PortfolioPage } from "../../page/portfolio.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
@@ -11,6 +11,7 @@ import { MarketCoinPage } from "../../page/market.coin.page";
 import { AssetPage } from "../../page/asset.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { AccountPage } from "../../page/account.page";
+import { delegateModal } from "../../page/modal/delegate.modal";
 
 test.use({
   env: {
@@ -18,6 +19,8 @@ test.use({
   },
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
+    referralProgramDesktopSidebar: { enabled: false },
+    protectServicesDesktop: { enabled: false },
     stakePrograms: {
       enabled: true,
       params: {
@@ -78,6 +81,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
+  const delegate = new delegateModal(page);
 
   const maskItemsInMarket = {
     mask: [
@@ -126,7 +130,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln");
+    await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
@@ -198,7 +202,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln_pooling");
+    await delegate.chooseStakeProvider("kiln_pooling");
     await analyticsPromise;
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");

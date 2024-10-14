@@ -175,7 +175,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         await swap.setPartnerKey(convertToAppExchangePartnerKey(swapProviderConfig));
         if (unsubscribed) return;
 
-        await swap.checkPartner(swapProviderConfig.signature);
+        await swap.checkPartner(swapProviderConfig.signature!);
         if (unsubscribed) return;
 
         await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
@@ -203,7 +203,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
-          await swap.checkPayoutAddress(
+          await swap.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,

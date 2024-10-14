@@ -30,7 +30,13 @@ export type Spec = {
 export type Dependency = { name: string; appVersion?: string };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
-  specs["Exchange"].dependencies = dependencies;
+  const map = new Map<string, Dependency>();
+  for (const dep of dependencies) {
+    if (!map.has(dep.name)) {
+      map.set(dep.name, dep);
+    }
+  }
+  specs["Exchange"].dependencies = Array.from(map.values());
 }
 
 type Specs = {
@@ -52,7 +58,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-
   Exchange: {
     appQuery: {
       model: DeviceModelId.nanoSP,
@@ -60,7 +65,6 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-
   LedgerSync: {
     appQuery: {
       model: DeviceModelId.nanoX,
@@ -68,7 +72,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
@@ -221,6 +224,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Near: {
+    currency: getCryptoCurrencyById("near"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "NEAR",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -370,8 +381,21 @@ export function verifyAmount(amount: string, text: string[]): boolean {
   return amountDevice.includes(amount);
 }
 
-export function verifySwapFeesAmount(amount: string, text: string[]): boolean {
-  const amountDevice = text[3];
+export function verifyProvider(provider: string, text: string[]): boolean {
+  const providerDevice = text.join("");
+  return providerDevice.includes(provider);
+}
+
+export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {
+  let amountDevice = text[1];
+  switch (currency) {
+    case "Ethereum":
+      amountDevice = text[3];
+      break;
+    case "Tether USD":
+      amountDevice = text[3];
+      break;
+  }
   return amountDevice.includes(amount);
 }
 

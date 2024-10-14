@@ -6,6 +6,7 @@ import { render, screen, waitFor } from "tests/testUtils";
 import { BitcoinPage } from "./shared";
 import { openURL } from "~/renderer/linking";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 
 jest.mock(
   "electron",
@@ -22,20 +23,22 @@ describe("displayBitcoinPage", () => {
     const { user } = render(<BitcoinPage />, {
       initialState: {
         settings: {
+          ...INITIAL_STATE_SETTINGS,
           hasSeenOrdinalsDiscoveryDrawer: true,
           devicesModelList: [DeviceModelId.stax, DeviceModelId.europa],
+          hiddenOrdinalsAsset: [],
         },
       },
     });
 
     await waitFor(() => expect(screen.getByText(/the great war #3695/i)).toBeVisible());
-    await waitFor(() => expect(screen.getByText(/see more inscriptions/i)).toBeVisible());
+    expect(screen.getByText(/see more inscriptions/i)).toBeVisible();
     await user.click(screen.getByText(/see more inscriptions/i));
     await user.click(screen.getByText(/see more inscriptions/i));
-    await waitFor(() => expect(screen.getByText(/bitcoin puppet #71/i)).toBeVisible());
-    await waitFor(() => expect(screen.queryAllByTestId(/raresaticon-pizza-0/i)).toHaveLength(2));
-    await user.hover(screen.queryAllByTestId(/raresaticon-pizza-0/i)[0]);
-    await waitFor(() => expect(screen.getByText(/papa john's pizza/i)).toBeVisible());
+    expect(screen.getByText(/bitcoin puppet #71/i)).toBeVisible();
+    expect(screen.getByTestId(/raresaticon-pizza-0/i)).toBeVisible();
+    await user.hover(screen.getByTestId(/raresaticon-pizza-0/i));
+    expect(screen.getByText(/papa john's pizza/i)).toBeVisible();
   });
 
   it("should open discovery drawer when it is the first time feature is activated", async () => {
@@ -50,16 +53,34 @@ describe("displayBitcoinPage", () => {
     const { user } = render(<BitcoinPage />, {
       initialState: {
         settings: {
+          ...INITIAL_STATE_SETTINGS,
           hasSeenOrdinalsDiscoveryDrawer: true,
           devicesModelList: [DeviceModelId.stax, DeviceModelId.europa],
+          hiddenOrdinalsAsset: [],
         },
       },
     });
 
     await waitFor(() => expect(screen.getByText(/the great war #3695/i)).toBeVisible());
     await user.click(screen.getByText(/the great war #3695/i));
-    await expect(screen.getByText(/hide/i)).toBeVisible();
-    // sat name
-    await expect(screen.getByText(/dlngbapxjdv/i)).toBeVisible();
+    expect(screen.getByText(/hide/i)).toBeVisible();
+    expect(screen.getByText(/dlngbapxjdv/i)).toBeVisible();
+  });
+
+  it("should open context menu", async () => {
+    const { user } = render(<BitcoinPage />, {
+      initialState: {
+        settings: {
+          ...INITIAL_STATE_SETTINGS,
+          hasSeenOrdinalsDiscoveryDrawer: true,
+          devicesModelList: [DeviceModelId.stax, DeviceModelId.europa],
+          hiddenOrdinalsAsset: [],
+        },
+      },
+    });
+
+    await waitFor(() => expect(screen.getByText(/the great war #3695/i)).toBeVisible());
+    await user.pointer({ keys: "[MouseRight>]", target: screen.getByText(/the great war #3695/i) });
+    expect(screen.getByText(/hide inscription/i));
   });
 });

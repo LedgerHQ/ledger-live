@@ -145,7 +145,8 @@
     "add" : "添加",
     "or" : "或者",
     "clearAll" : "清除所有",
-    "buyLedger" : "购买 Ledger 设备"
+    "buyLedger" : "购买 Ledger 设备",
+    "quote" : "报价"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -859,6 +860,9 @@
       "continue" : "继续"
     }
   },
+  "card" : {
+    "backToCard" : "所有卡片"
+  },
   "lend" : {
     "title" : "借出加密货币",
     "tabs" : {
@@ -1526,7 +1530,8 @@
     "messageIfSkipped" : "未在您的 Ledger 设备上确认您的 {{name}} 地址。请验证以确保安全性。",
     "showQrCode" : "显示二维码",
     "taprootWarning" : "确保发送方支持 taproot",
-    "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励"
+    "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励",
+    "utxoWarning" : "出于隐私原因，每笔交易都会生成一个新地址。以前的地址仍然有效。"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1868,8 +1873,8 @@
       "targetAccount" : "目标账户"
     },
     "sell" : {
-      "notice" : "发送之前请验证卖出详情。地址会被安全地交换因此您不必对其进行验证。",
-      "confirm" : "确认卖出交易"
+      "notice" : "发送资金之前，请先在您的设备上核实详情。地址会安全地交换，因此您无需进行核实。",
+      "confirm" : "确认交易"
     },
     "fund" : {
       "notice" : "发送资金之前，请先在您的设备上核实资金详情。地址会安全交换，因此您无需进行核实。",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "卖出",
-    "titleCrypto" : "卖出 {{currency}}"
+    "titleCrypto" : "卖出 {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "交易播送成功",
+        "description" : "您的操作已经发送到网络上进行确认。请等待您的交易被确认，并等待提供商进行处理。"
+      }
+    }
   },
   "receive" : {
     "title" : "接收",
@@ -3979,7 +3990,7 @@
       "stock" : "区域性市场指标",
       "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "轻松安全保管您的应用程序数据并同步多个 Ledger Live™ 实例。",
+      "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4005,6 +4016,16 @@
         "placeholder" : "CAL 格式的兑换提供商信息"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash 工具",
+          "description" : "提供一些使用 SimpleHash 的实用工具",
+          "cta" : "打开",
+          "tabs" : {
+            "spam" : "垃圾邮件报告",
+            "refresh" : "刷新元数据",
+            "check" : "垃圾邮件评分"
+          }
+        },
         "debugSpamNft" : {
           "report" : "报告",
           "contractAddress" : "合约地址",
@@ -4064,8 +4085,38 @@
         },
         "back" : "返回"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync 调试器",
+        "description" : "支持您启动特定的 Ledger Sync 流程或检查 Ledger Sync 的当前状态",
+        "cta" : "打开",
+        "modal" : {
+          "check" : {
+            "title" : "检查器",
+            "trustchain" : {
+              "name" : "信任链 ID： ",
+              "emptyId" : "ID 为空",
+              "applicationPath" : "应用程序路径： ",
+              "emptyApplicationPath" : "应用程序路径为空",
+              "cloudSyncVersion" : "云同步版本： ",
+              "lastSyncInfo" : "上次同步信息： ",
+              "uniported" : "非导入账户 "
+            },
+            "copied" : "文本已复制到剪贴板",
+            "export" : "导出"
+          },
+          "generator" : {
+            "title" : "生成器",
+            "flow" : "选择流程",
+            "step" : "选择步骤",
+            "instance" : "生成成员",
+            "cta" : "应用"
+          }
+        }
+      },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
+      "mockAppUpdate" : "Mock 应用程序更新",
+      "mockAppUpdateDesc" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序",
       "catalogUrl" : "设置目录应用程序提供商",
       "catalogUrlDesc" : "输入您的自定义目录提供方网址",
       "enablePlatformDevTools" : "启用平台开发工具",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "启用网络日志",
           "description" : "在控制台启用网络日志（错误日志已始终启用）"
-        },
-        "testWalletSync" : {
-          "title" : "测试 Ledger Sync",
-          "description" : "允许您启动特定的 LedgerSync 流程",
-          "cta" : "测试",
-          "modal" : {
-            "flow" : "选择流程",
-            "step" : "选择步骤",
-            "instance" : "生成成员",
-            "cta" : "应用"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHash 工具",
-          "description" : "提供一些使用 SimpleHash 的实用工具",
-          "cta" : "打开",
-          "tabs" : {
-            "spam" : "垃圾邮件报告",
-            "refresh" : "刷新元数据",
-            "check" : "垃圾邮件评分"
-          }
         }
       }
     },
@@ -5544,6 +5574,13 @@
       "title" : "无法计算金额和费用",
       "description" : "无法计算金额和费用"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "代币转账的接收人无效，代币转账支持的账户类型：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "抱歉，费用估算失败",
+      "description" : "网络费用估算失败。检查输入，交易最有可能失败"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "费率已过期",
-      "description" : "费率已过期，兑换交易无法完成。请刷新费率后再重试互换。"
+      "description" : "汇率已过期。请刷新并重试。"
     },
     "PayinExtraIdError" : {
       "message" : "缺少互换所需的 extraId"
     },
     "SwapGenericAPIError" : {
       "title" : "出错了",
-      "description" : "兑换交易没有通过。请再试一次或联系客服。"
+      "description" : "交易失败。请重试。"
     },
     "TimeoutError" : {
       "title" : "抱歉，服务器响应超时",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "出错了。请重新连接您的设备",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "不再同步"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "您已不再同步",
+      "description" : "请重试或联系 Ledger 客服。"
+    },
+    "TrustchainNotFound" : {
+      "title" : "提取您的数据时出现错误",
+      "description" : "请重试或联系 Ledger 客服。"
     },
     "DeviceShouldStayInApp" : {
       "title" : "请打开 {{appName}} 应用程序",
@@ -5777,7 +5825,7 @@
       "title" : "优先费用高于必要费用。您可能多付了费用"
     },
     "MaxFeeTooLow" : {
-      "title" : "最高费用低于推荐值"
+      "title" : "费用低于推荐值"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "最高优先费用不能高于最高费用"
@@ -6013,6 +6061,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "请确保您有 {{depositAmount}} ADA 可用于该存款"
     },
+    "CardanoFeeHigh" : {
+      "title" : "网络费用异常高。",
+      "description" : "网络费用异常高，请仔细核对您的交易。"
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "网络费用异常高。",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano 无效协议参数",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -6159,6 +6219,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
+    },
+    "TonExcessFee" : {
+      "title" : "这构成了代币转移。您将支付 0.1 TON 的费用，任何超额部分将会退还给您。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "主账户 (TON) 资金不足，无法计算费用。所需最低余额为 0.1 TON。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "资金不足。所需最低余额为 0.02 TON。"
+    },
+    "BackupAppDataError" : {
+      "title" : "应用程序数据备份过程中出错"
+    },
+    "RestoreAppDataError" : {
+      "title" : "恢复应用程序数据过程中出错"
+    },
+    "DeleteAppDataError" : {
+      "title" : "删除应用程序数据过程中出错"
+    },
+    "PinNotSet" : {
+      "title" : "识别码未设置"
     }
   },
   "cryptoOrg" : {
@@ -6354,82 +6435,84 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "close" : "关闭",
     "activate" : {
-      "title" : "在所有平台上同步您的账户",
-      "description" : "Ledger 设备将生成一个加密密钥，确保您的数据私密性且只有您可以找回。",
-      "cta" : "同步您的账户"
+      "title" : "为该电脑开启 Ledger Sync？",
+      "description" : "自动同步您所有手机和电脑上的加密货币账户，即使换用新设备也会自动同步。",
+      "cta" : "开启 Ledger Sync",
+      "alreadySync" : "我已经开启了",
+      "learnMore" : "Ledger Sync 如何运作？"
     },
-    "alreadySync" : "已创建了密钥？",
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
-        "label" : "同步",
-        "description" : "在另一个 Ledger Live 应用程序上同步您的应用程序数据，享受顺畅体验。"
+        "label" : "与另一个 Ledger Live 应用程序同步",
+        "description" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。"
       },
       "backup" : {
-        "label" : "管理密钥",
-        "description" : "使用另一台 Ledger 设备保护或删除您的加密密钥。"
+        "label" : "删除同步",
+        "description" : "您在不同 Ledger Live 应用程序上已同步的加密货币账户将停止同步。"
       },
       "instance" : {
-        "label" : "1 个已同步实例",
-        "label_other" : "{{count}} 个已同步实例",
+        "label" : "1 个 Ledger Live 应用程序已同步",
+        "label_other" : "{{count}} 个 Ledger Live 应用程序已同步",
         "cta" : "管理"
       }
     },
     "loading" : {
       "title" : "请耐心等候...",
-      "activation" : "您的数据正在端到端加密... ",
-      "synch" : "我们正在更新已同步实例..."
+      "activation" : "最多可能需要 30 秒。\n请停留在此界面。"
     },
     "error" : {
       "title" : "出错了",
       "description" : "请稍后重试。",
       "cta" : "请重试",
       "fetching" : "提取您的数据时出现错误。",
-      "ledgerSyncDown" : "Ledger Sync 目前无法使用。<br/>这不会对您的资产产生影响。"
+      "ledgerSyncDown" : "由于我们遇到了技术问题，Ledger Sync 暂时不可用。我们正在进行修复。"
     },
     "unsecuredError" : {
-      "title" : "同步不受此 Ledger 设备保护",
-      "description" : "请连接您用于创建加密密钥的 Ledger 设备。",
-      "info" : "如果您的 Ledger 设备丢失，不必担心！您仍然可以删除您的密钥。此操作将同时删除您的数据并取消同步所有当前已同步实例。",
+      "title" : "连接您用来启用 Ledger Sync 的 Ledger 设备",
+      "description" : "如果您没有那台 Ledger 设备，请选择“删除同步”。",
       "cta" : "连接另一个 Ledger 设备",
-      "ctaDelete" : "删除我的加密密钥"
+      "ctaDelete" : "删除同步"
+    },
+    "alreadySecureError" : {
+      "title" : "此应用程序已受此 Ledger 设备保护",
+      "description" : "如果您想尝试创建新的备份，请连接您用于创建其他加密密钥的 Ledger 设备。",
+      "cta" : "我了解"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "您无法使用此 Ledger 设备同步",
+      "description" : "如果您仍希望同步这两个应用程序，请删除您的密钥，然后重试。",
+      "cta" : "删除同步"
     },
     "autoRemoveError" : {
-      "title" : "您无法删除当前实例",
-      "description" : "出于安全原因，如果不删除加密密钥，则无法删除当前正在使用的实例。",
-      "info" : "删除加密密钥将导致您的设备取消同步，所有已同步数据都将删除。但是，这不会对您的资金产生影响。您可以随时重新同步自己的账户。",
+      "title" : "您无法在使用该电脑时将其移除",
+      "description" : "要移除该电脑，请使用另一部已启用 Ledger Sync 的手机或电脑。如果您没有其他设备，请选择“删除同步”。",
       "cta" : "我了解",
-      "ctaDelete" : "删除我的加密密钥"
+      "ctaDelete" : "删除同步"
     },
     "success" : {
       "backup" : {
-        "title" : "成功",
-        "desc" : "您已成功启用 Ledger Sync。"
+        "title" : "该电脑上的 Ledger Live 已开启 Ledger Sync"
       },
       "synch" : {
         "title" : "同步成功！",
-        "desc" : "您的账户更改将自动显示在所有应用程序和平台上。"
+        "desc" : "您的加密货币账户更改将自动显示在已同步手机和电脑上的 Ledger Live 应用程序中。 "
       },
       "synchAnother" : "与另一个 Ledger Live 应用程序同步",
       "close" : "关闭"
     },
     "manageBackup" : {
-      "title" : "管理您的密钥",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "删除您的数据",
-          "description" : "所有已同步数据都将被删除。"
-        }
-      },
       "deleteBackup" : {
-        "title" : "确定要删除您的加密密钥吗？",
-        "description" : "点击 Delete（删除），您的设备将取消同步，所有已同步数据都将删除。请放心，此操作不会对您的资金产生影响。您可以随时重新同步您的账户。",
-        "delete" : "删除",
-        "cancel" : "取消"
+        "title" : "确定要删除同步吗？",
+        "description" : "您在不同手机和电脑的 Ledger Live 应用程序上的加密货币账户将停止同步。此操作不会对您的资金产生任何影响。 ",
+        "delete" : "是，删除",
+        "cancel" : "保持同步"
       },
       "deleteBackupSuccess" : {
-        "title" : "您的设备已取消同步，您的密钥已被删除"
+        "title" : "您的 Ledger Live 应用程序不再同步",
+        "description" : "您可以随时开启同步"
       },
       "deleteBackupError" : {
         "title" : "出错了"
@@ -6440,7 +6523,7 @@
         "title" : "选择同步方法",
         "description" : "您可以选择直接与 Ledger 设备同步，或通过扫描 Ledger Live 上的二维码进行同步。",
         "scan" : {
-          "title" : "扫描二维码",
+          "title" : "显示二维码",
           "description" : "通过扫描二维码进行同步"
         },
         "connectDevice" : {
@@ -6449,29 +6532,124 @@
         }
       },
       "qrCode" : {
-        "title" : "同步",
-        "hint" : "想要同步两个 Ledger Live™ 桌面版应用程序？点击此处。",
-        "description" : "扫描您的账户并与另一个 Ledger Live™ 应用程序同步",
-        "steps" : {
-          "step1" : "打开您要同步的 Ledger Live 应用程序",
-          "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>同步</0> > <0>显示二维码</0>",
-          "step3" : "扫描二维码直至加载进度达到 100%。"
+        "title" : "同步 Ledger Live 应用程序",
+        "options" : {
+          "mobile" : "通过手机同步",
+          "desktop" : "通过电脑同步"
+        },
+        "mobile" : {
+          "description" : "与另一部手机上的 Ledger Live 应用程序同步",
+          "steps" : {
+            "step1" : "打开您要同步的 Ledger Live 应用程序",
+            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>显示二维码</0>",
+            "step3" : "扫描二维码"
+          }
+        },
+        "desktop" : {
+          "description" : "将您的账户与另一个 Ledger Live 应用程序同步",
+          "steps" : {
+            "step1" : "打开您要同步的 Ledger Live 应用程序",
+            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>使用您的 Ledger</0>",
+            "step3" : "连接 Ledger 设备"
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "未检测到同步",
+        "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync",
+        "cta" : "开启 Ledger Sync"
+      },
       "pinCode" : {
-        "title" : "输入代码",
-        "description" : "输入您要同步的另一个 Ledger Live™ 上显示的代码。"
+        "title" : "您的 Ledger Sync 代码",
+        "description" : "要在两个 Ledger Live 应用程序上同步您的加密货币账户，请在手机上的 Ledger Live 中输入此代码。",
+        "error" : {
+          "title" : "代码不匹配",
+          "description" : "确保您输入的是另一个 Ledger Live 实例上显示的代码。"
+        }
       }
     },
     "manageInstances" : {
-      "title" : "管理已同步实例",
+      "title" : "Ledger Live 已在以下设备上同步",
       "remove" : "删除",
-      "deleteInstanceSuccess" : "您的 {{instanceName}} 已不再同步",
+      "deleteInstanceSuccess" : "您在 {{instanceName}} 上的 Ledger Live 应用程序不再连接至 Ledger Sync",
       "deleteInstanceError" : "取消同步 {{instanceName}} 时出现问题"
     },
     "deviceAction" : {
       "title" : "继续在您的 Ledger {{wording}} 上操作",
       "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "查看更多铭文",
+      "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
+      "receive" : "接收铭文",
+      "discoveryDrawer" : {
+        "title" : "了解序数铭文",
+        "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
+        "learnMore" : "了解更多",
+        "protectTitle" : "保护您的序数铭文资产",
+        "protectDescription" : "从您的交易中排除序数铭文资产。"
+      },
+      "detailsDrawer" : {
+        "description" : "描述",
+        "collectionName" : "藏品名称",
+        "inscriptionId" : "铭文 ID",
+        "inscriptionNumber" : "铭文编号",
+        "mintedTo" : "已铸造至",
+        "genesisTx" : "创世交易",
+        "blockNumber" : "区块编号",
+        "contentType" : "内容类型",
+        "createdDate" : "创建日期",
+        "satribute" : "聪的稀有度",
+        "satNumber" : "聪的编号",
+        "satName" : "聪的名称",
+        "location" : "位置",
+        "outputValue" : "输出值",
+        "storedOnChain" : "已存储在链上",
+        "hide" : "隐藏"
+      }
+    },
+    "rareSats" : {
+      "empty" : "要添加稀有聪，只需将其发送到您的比特币地址。",
+      "receive" : "接收稀有聪",
+      "title" : "稀有聪",
+      "table" : {
+        "type" : "聪的类型/数量",
+        "year" : "年"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "通过第一个聪 Alpha 了解每一个比特币的诞生。Alpha 标记标志着一个比特币单位的开始。",
+          "black_epic" : "每次奖励减半事件（即比特币挖矿奖励减半，大约每四年发生一次）的最后一个聪。",
+          "black_legendary" : "暂无关于 Black Legendary（黑色传奇）的描述",
+          "black_mythic" : "暂无关于 Black Mythic（黑色神话）的描述",
+          "black_rare" : "表示每个挖矿难度调整周期结束时的最后一个聪。",
+          "black_uncommon" : "每次奖励减半事件（即比特币挖矿奖励减半，大约每四年发生一次）的最后一个聪。",
+          "block_9" : "第 9 个区块在比特币历史上具有独特意义。作为最早开采的区块之一，该区块中的聪是最古老的还在流通的聪。这些聪与比特币的起源（就在比特币诞生后）有着实实在在的联系。",
+          "block_9_450x" : "通过 Block 9（第 9 个区块）的 450x 聪穿越历史，其中突出显示了第 9 个区块中第一个比特币中的聪。这个标记揭开了比特币历史上引人入胜的一章。",
+          "block_78" : "第 78 个区块在比特币历史上占有重要地位。这个区块是哈尔·芬尼 (Hal Finney) 开采出来的，这是除神秘的中本聪 (Satoshi Nakamoto) 以外，其他人首次为区块链的发展做出贡献。",
+          "block_286" : "Block 286（第 286 个区块）表示中本聪开采的第二笔比特币交易中的聪，通过这个标记探索第 286 个区块的重要意义。这些聪携带着比特币神秘创始人的气息，诉说着比特币的神秘起源。",
+          "block_666" : "暂无关于 Block 666（第 666 个区块）的描述",
+          "common" : "暂无关于 Common（普通）的描述",
+          "epic" : "每四年，比特币网络都会经历一次“奖励减半”事件，即挖矿奖励减少一半。每次奖励减半事件后的第一个聪都标记了 “Epic”（史诗），表示比特币经济模型中的一个重要时刻。",
+          "first_tx" : "2009 年 1 月 12 日，中本聪向计算机科学家哈尔·芬尼发送了 10 枚比特币，写下历史性的一页。这是史上第一笔比特币交易。源自这笔标志性交易的聪标记了 “First Transaction”（第一笔交易），象征着比特币点对点交易的起源。",
+          "hitman" : "暂无关于 Hitman（杀手）的描述",
+          "jpeg" : "通过 JPEG 回顾历史，因为这些聪可能与 2010 年 2 月 24 日第一次用比特币交易图像有关。这个标记讲述了一个关于创新的故事，展示了比特币早期在非常规交易和兑换方面的尝试。",
+          "legacy" : "暂无关于 Legacy（遗留）的描述",
+          "legendary" : "暂无关于 Legendary（传奇）的描述",
+          "mythic" : "暂无关于 Mythic（神话）的描述",
+          "nakamoto" : "比特币的匿名创始人中本聪给大家的神秘感依然不减。中本聪亲自开采的聪都有此标记，备受收藏家追捧。",
+          "omega" : "通过最后一个聪 Omega 探索每个比特币诗一般的结束。Omega 是一个比特币单位的最后一个聪。",
+          "paliblock" : "暂无关于 PaliBlock Palindrome（回文区块中的回文聪）的描述",
+          "palindrome" : "有趣的是，如果一个聪的序号正着读和反着读相同，那就会标记为 “Palindrome”（回文）。例如，序号为 12321 或 45654 的聪。这些独特的数字属性为所标记的聪增添了一层稀有性和奇特性。",
+          "palinception" : "深入迷人的相同回文世界，其中每个聪的序号都是回文套回文。这种序号结构精致的聪就像一幅迷人的镜像数字挂毯。",
+          "pizza" : "2010 年 5 月 22 日，一名程序员用 10,000 枚比特币购买了两个 Papa John's 披萨，这是比特币社区最具代表性的故事之一。人们经常引用这件事情来表明比特币价值的飞速上涨。这笔传奇交易中的聪标记为 “Pizza”（披萨）。",
+          "rare" : "比特币网络定期调整挖矿难度，以确保大约每十分钟添加一个区块。每个调整周期的第一个聪均标记为 “Rare”（稀有）。这反映了网络安全性和共识机制不断发展的本质。 ",
+          "uncommon" : "此标记指定给每个区块的第一个聪。由于大约每 10 分钟就会有一个新区块添加到比特币区块链，因此这些聪就是这个时间范围内的第一个聪。",
+          "vintage" : "比特币发展初期是指前 1,000 个区块。这一时期开采的聪均标记为 “Vintage”（古董）。"
+        }
+      }
     }
   }
 }

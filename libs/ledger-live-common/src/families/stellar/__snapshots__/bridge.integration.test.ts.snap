@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064610",
+    "balance": "341064612",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 53,
+    "operationsCount": 55,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064510",
+    "spendableBalance": "311064512",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -509,6 +509,29 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 116917835954913300,
       "type": "OUT",
       "value": "10000000",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
+      "blockHeight": 53858883,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "try MMBOT from MMBOT.SHOP",
+        "pagingToken": "231322141084708944",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "5784cf4957af3292f805bca4fb9f67c3083eaa2d4b3d1e1d61e1809449416ded",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5784cf4957af3292f805bca4fb9f67c3083eaa2d4b3d1e1d61e1809449416ded-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070049900,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
@@ -1201,6 +1224,29 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 116917835954913310,
       "type": "OPT_IN",
       "value": "100",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
+      "blockHeight": 53713438,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "try MMBOT from MMBOT.SHOP",
+        "pagingToken": "230697459566329936",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "f7541133d86e27752b682e329fa835192b81d912fa102aec609e1c13dd15384c",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f7541133d86e27752b682e329fa835192b81d912fa102aec609e1c13dd15384c-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070048900,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",

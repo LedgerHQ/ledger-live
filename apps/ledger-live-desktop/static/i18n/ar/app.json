@@ -145,7 +145,8 @@
     "add" : "إضافة",
     "or" : "أو",
     "clearAll" : "إزالة الكل",
-    "buyLedger" : "شراء Ledger"
+    "buyLedger" : "شراء Ledger",
+    "quote" : "عرض أسعار"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -859,6 +860,9 @@
       "continue" : "متابعة"
     }
   },
+  "card" : {
+    "backToCard" : "كل البطاقات"
+  },
   "lend" : {
     "title" : "إقراض الأصول المشفرة",
     "tabs" : {
@@ -1526,7 +1530,8 @@
     "messageIfSkipped" : "لم يتم تأكيد عنوانك {{name}} على جهازك Ledger. يرجى التحقق من ذلك للأمان.",
     "showQrCode" : "إظهار كود QR",
     "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
-    "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
+    "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس",
+    "utxoWarning" : "لأسباب تتعلق بالخصوصية، يتم إنشاء عنوان جديد لكل معاملة. العناوين السابقة تظل صالحةً."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1868,8 +1873,8 @@
       "targetAccount" : "الحساب المستهدف"
     },
     "sell" : {
-      "notice" : "تحقق من تفاصيل البيع على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منها.",
-      "confirm" : "تأكيد معاملة البيع"
+      "notice" : "تحقق من التفاصيل على جهازك قبل إرسالها. يتم تبادل العناوين بأمان حتى لا تضطر إلى التحقق منها.",
+      "confirm" : "تأكيد المعاملة"
     },
     "fund" : {
       "notice" : "تحقق من تفاصيل الأموال على جهازك قبل إرسالها. يتم تبادل العناوين بأمان حتى لا تضطر إلى التحقق منهم.",
@@ -2189,7 +2194,13 @@
   },
   "sell" : {
     "title" : "بيع",
-    "titleCrypto" : "بيع {{currency}}"
+    "titleCrypto" : "بيع {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "تم إرسال العملية الخاصة بك إلى الشبكة لتأكيدها. يُرجى الانتظار حتى يتم تأكيد معاملتك وحتى يقوم المزود بمعالجتها."
+      }
+    }
   },
   "receive" : {
     "title" : "تلقي",
@@ -3979,7 +3990,7 @@
       "stock" : "مؤشر السوق الإقليمي",
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "ببساطة قم بتأمين بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live.",
+      "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -4005,6 +4016,16 @@
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "أدوات SimpleHash",
+          "description" : "تقدم بعض الأدوات المفيدة باستخدام SimpleHash",
+          "cta" : "فتح",
+          "tabs" : {
+            "spam" : "الإبلاغ كعشوائي",
+            "refresh" : "تحديث البيانات الوصفية",
+            "check" : "مؤشر العشوائية"
+          }
+        },
         "debugSpamNft" : {
           "report" : "إبلاغ",
           "contractAddress" : "عنوان العَقد",
@@ -4064,8 +4085,38 @@
         },
         "back" : "رجوع"
       },
+      "debugWalletSync" : {
+        "title" : "مُصحِّح أخطاء مزامنة Ledger",
+        "description" : "يسمح لك بإطلاق تدفق مزامنة Ledger محدد أو التحقق من الحالة الحالية لمزامنة Ledger",
+        "cta" : "فتح",
+        "modal" : {
+          "check" : {
+            "title" : "المُتحقِّق",
+            "trustchain" : {
+              "name" : "معرّف Trustchain : ",
+              "emptyId" : "معرّف فارغ",
+              "applicationPath" : "مسار التطبيق : ",
+              "emptyApplicationPath" : "مسار تطبيق فارغ",
+              "cloudSyncVersion" : "إصدار مزامنة السحابة : ",
+              "lastSyncInfo" : "معلومات آخر مزامنة : ",
+              "uniported" : "الحسابات غير المستوردة : "
+            },
+            "copied" : "تم نسخ النص إلى ذاكرة النصوص!",
+            "export" : "تصدير"
+          },
+          "generator" : {
+            "title" : "المُنشئ",
+            "flow" : "اختر تدفق",
+            "step" : "اختر خطوة",
+            "instance" : "إنشاء أعضاء",
+            "cta" : "تطبيق"
+          }
+        }
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
+      "mockAppUpdate" : "تحديث صوري للتطبيق",
+      "mockAppUpdateDesc" : "يعرض التحديث المتاح للتطبيق في My Ledger (جهازي Ledger)، ويقوم بإعادة تثبيت نفس إصدار التطبيق",
       "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
       "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
@@ -4228,27 +4279,6 @@
         "enableNetworkLogs" : {
           "title" : "تمكين سجلات الشبكة",
           "description" : "تمكين سجلات الشبكة في وحدة التحكم (سجلات الأخطاء دائماً مُمَكَّنة)"
-        },
-        "testWalletSync" : {
-          "title" : "اختبر مزامنة Ledger",
-          "description" : "يسمح لك بإطلاق تدفق LedgerSync محدد",
-          "cta" : "اختبر",
-          "modal" : {
-            "flow" : "اختر تدفق",
-            "step" : "اختر خطوة",
-            "instance" : "إنشاء أعضاء",
-            "cta" : "تطبيق"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "أدوات SimpleHash",
-          "description" : "تقدم بعض الأدوات المفيدة باستخدام SimpleHash",
-          "cta" : "فتح",
-          "tabs" : {
-            "spam" : "الإبلاغ كعشوائي",
-            "refresh" : "تحديث البيانات الوصفية",
-            "check" : "مؤشر العشوائية"
-          }
         }
       }
     },
@@ -5544,6 +5574,13 @@
       "title" : "من المستحيل حساب المبلغ والرسوم",
       "description" : "من المستحيل حساب المبلغ والرسوم"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "المستلم لتحويل رمز التوكن غير صالح، أنواع الحساب المدعومة لتحويل رموز التوكن: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "عذراً، فشل تقدير الرسوم",
+      "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -5612,14 +5649,14 @@
     },
     "SwapRateExpiredError" : {
       "title" : "انتهت صلاحية المعدَّل",
-      "description" : "تعذر إكمال عملية التداول لأن المعدَّل انتهت صلاحيته. يُرجى تحديث المُعدلات ومحاولة إجراء مبادلتك مجدداً."
+      "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
     },
     "PayinExtraIdError" : {
       "message" : "الهوية الإضافية المطلوبة للمبادلة غير موجودة"
     },
     "SwapGenericAPIError" : {
       "title" : "حدث خطأ ما",
-      "description" : "لم تتم عملية التبادل. يرجى المحاولة مرة أخرى أو التواصل مع الدعم."
+      "description" : "فشلت المعاملة. يُرجى إعادة المحاولة."
     },
     "TimeoutError" : {
       "title" : "عفواً، استغرق خادم البيانات وقتاً أطول من اللازم ليستجيب",
@@ -5644,6 +5681,17 @@
     "TransportStatusError" : {
       "title" : "حدث خطأ ما. يُرجى إعادة توصيل جهازك",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "لم تعد متزامناً بعد الآن"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "أنت لم تعد متزامناً بعد الآن",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
+    },
+    "TrustchainNotFound" : {
+      "title" : "حدث خطأ ما أثناء جلب بياناتك",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "يرجى فتح تطبيق {{appName}}",
@@ -5777,7 +5825,7 @@
       "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
     },
     "MaxFeeTooLow" : {
-      "title" : "الحد الأقصى للرسوم أقل من القيمة الموصى بها"
+      "title" : "الرسوم أقل من القيمة الموصى بها"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "الحد الأقصى لرسوم الأولوية لا يمكن أن يكون أعلى من الحد الأقصى للرسوم"
@@ -6013,6 +6061,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "تأكد أن لديك {{depositAmount}} ADA متاح للإيداع"
     },
+    "CardanoFeeHigh" : {
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "رسوم الشبكة مرتفعة على غير العادة يُرجى التحقق مرةً أخرى من معاملتك."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "رسوم الشبكة مرتفعة بشكل غير طبيعي.",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "مُعلّمات بروتوكول كاردانو (Cardano) غير صالحة",
+      "description" : "معاملات ADA غير متاحة مؤقتاً. يُرجى إعادة مزامنة حسابك والمحاولة مجدداً أو تواصل مع الدعم إذا كنت بحاجة للمساعدة."
+    },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
     },
@@ -6159,6 +6219,27 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "نحن نواجه مشكلة في بنيتنا التحتية لبيتكوين. يُرجى إعادة المحاولة لاحقاً."
+    },
+    "TonExcessFee" : {
+      "title" : "إنها تشمل تحويل رمز توكن. ستدفع 0.1 TON كرسوم، وأي فائض سيُعاد إليك."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "لا توجد أموال كافية في الحساب الرئيسي (TON) لحساب الرسوم. الحد الأدنى المطلوب للرصيد هو 0.1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "الأموال المتوفرة غير كافية. الحد الأدنى المطلوب للرصيد هو 0.2 TON."
+    },
+    "BackupAppDataError" : {
+      "title" : "خطأ أثناء النسخ الاحتياطي لبيانات التطبيق"
+    },
+    "RestoreAppDataError" : {
+      "title" : "خطأ في استعادة بيانات التطبيق"
+    },
+    "DeleteAppDataError" : {
+      "title" : "خطأ في حذف بيانات التطبيق"
+    },
+    "PinNotSet" : {
+      "title" : "لم يتم إعداد كود PIN"
     }
   },
   "cryptoOrg" : {
@@ -6354,82 +6435,84 @@
   },
   "walletSync" : {
     "title" : "مزامنة Ledger",
+    "close" : "إغلاق",
     "activate" : {
-      "title" : "قم بمزامنة حساباتك عبر جميع المنصات",
-      "description" : "سيقوم جهازك Ledger بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
-      "cta" : "مزامنة حساباتك"
+      "title" : "تشغيل مزامنة Ledger لهذا الكمبيوتر؟",
+      "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك تلقائياً عبر كل هواتفك وأجهزة الكمبيوتر الخاصة بك، حتى عند الانتقال إلى جهاز جديد.",
+      "cta" : "تشغيل مزامنة Ledger",
+      "alreadySync" : "لقد قمت بتشغيلها بالفعل",
+      "learnMore" : "كيف تعمل مزامنة Ledger؟"
     },
-    "alreadySync" : "أنشأت مفتاحاً بالفعل؟",
     "manage" : {
       "cta" : "إدارة",
       "synchronize" : {
-        "label" : "مزامنة",
-        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة."
+        "label" : "المزامنة مع تطبيق Ledger Live آخر",
+        "description" : "قم بمزامنة حسابات أصولك المشفرة على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة."
       },
       "backup" : {
-        "label" : "إدارة المفتاح",
-        "description" : "قم بتأمين أو حذف مفتاح التشفير الخاص بك عبر جهاز Ledger آخر."
+        "label" : "حذف المزامنة",
+        "description" : "حسابات أصولك المشفرة التي تمت مزامنتها عبر تطبيقات Ledger Live المختلفة ستتوقف عن المزامنة."
       },
       "instance" : {
-        "label" : "1 حالة تمت مزامنتها",
-        "label_other" : "{{count}} حالة تمت مزامنتها",
+        "label" : "تمت مزامنة 1 تطبيق Ledger Live",
+        "label_other" : "تمت مزامنة {{count}} تطبيق Ledger Live",
         "cta" : "إدارة"
       }
     },
     "loading" : {
       "title" : "انتظرنا...",
-      "activation" : "يتم تشفير بياناتك بشكل تام... ",
-      "synch" : "جارٍ تحديث الحالات التي تمت مزامنتها..."
+      "activation" : "قد يستغرق هذا حتى 30 ثانية.\nيُرجى عدم مغادرة هذه الشاشة."
     },
     "error" : {
       "title" : "حدث خطأ ما",
       "description" : "يُرجى إعادة المحاولة لاحقاً.",
       "cta" : "إعادة المحاولة",
       "fetching" : "حدث خطأ ما أثناء جلب بياناتك.",
-      "ledgerSyncDown" : "مزامنة Ledger غير متاحة حالياً.<br/>هذا ليس له أي تأثير على أصولك."
+      "ledgerSyncDown" : "مزامنة Ledger غير متاحة بشكل مؤقت بسبب بعض المشكلات التقنية من جانبنا. نحن نعمل على حلها."
     },
     "unsecuredError" : {
-      "title" : "التزامن ليس مؤمّناً بواسطة جهاز Ledger هذا",
-      "description" : "يرجى توصيل جهاز Ledger الذي استخدمته لإنشاء مفتاح التشفير الخاص بك.",
-      "info" : "إذا فقدت جهازك Ledger، لا تقلق! ما زال بإمكانك حذف مفتاحك. هذا الإجراء سيحذف بياناتك ويلغي مزامنة كل الحالات المتزامنة حالياً في نفس الوقت.",
+      "title" : "قم بتوصيل نفس جهاز Ledger الذي استخدمته لتمكين مزامنة Ledger",
+      "description" : "إذا لم يكن لديك نفس جهاز Ledger، اختر ”Delete sync (حذف المزامنة)“ بدلاً من ذلك.",
       "cta" : "توصيل جهاز Ledger آخر",
-      "ctaDelete" : "حذف مفتاح التشفير الخاص بي"
+      "ctaDelete" : "حذف المزامنة"
+    },
+    "alreadySecureError" : {
+      "title" : "هذا التطبيق مُؤمّن بالفعل بواسطة جهاز Ledger هذا",
+      "description" : "إذا كنت تحاول إنشاء نسخ احتياطي جديد، يُرجى توصيل جهاز Ledger الذي استخدمته لإنشاء مفتاح التشفير الآخر الخاص بك.",
+      "cta" : "أفهم ذلك"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "يمكنك استخدام جهاز Ledger هذا للمزامنة",
+      "description" : "إذا كانت لا تزال ترغب في مزامنة التطبيقين، يُرجى حذف مفتاحك والمحاولة مرةً أخرى.",
+      "cta" : "حذف المزامنة"
     },
     "autoRemoveError" : {
-      "title" : "لا يمكنك إزالة الحالة الحالية",
-      "description" : "لأسباب أمنية، لا يمكنك إزالة الحالة التي تستخدمها حالياً بدون حذف مفتاح التشفير الخاص بك.",
-      "info" : "حذف مفتاح التشفير الخاص بك سيؤدي إلى إلغاء مزامنة أجهزتك، وكل البيانات التي تمت مزامنتها ستُحذف. لكن، هذا لن يؤثر على أموالك. يمكنك إعادة مزامنة حساباتك في أي وقت.",
+      "title" : "لا يمكنك إزالة هذا الكمبيوتر بينما تستخدمه",
+      "description" : "للإزالة، استخدم هاتف أو كمبيوتر آخر تم تمكين مزامنة Ledger عليه. إذا لم يكن لديك جهاز آخر، اختر ”Delete sync (حذف المزامنة)“ بدلاً من ذلك.",
       "cta" : "أفهم ذلك",
-      "ctaDelete" : "حذف مفتاح التشفير الخاص بي"
+      "ctaDelete" : "حذف المزامنة"
     },
     "success" : {
       "backup" : {
-        "title" : "تم بنجاح",
-        "desc" : "لقد مكّنت مزامنة Ledger بنجاح."
+        "title" : "تم تشغيل مزامنة Ledger من أجل Ledger Live على هذا الكمبيوتر"
       },
       "synch" : {
         "title" : "تمت المزامنة بنجاح!",
-        "desc" : "التغييرات في حساباتك ستظهر الآن تلقائياً عبر كل التطبيقات والمنصات."
+        "desc" : "التغييرات في حسابات الأصول المشفرة خاصتك ستظهر الآن تلقائياً عبر تطبيقات Ledger Live على الهواتف وأجهزة الكمبيوتر التي تمت مزامنتها. "
       },
       "synchAnother" : "المزامنة مع تطبيق Ledger Live آخر",
       "close" : "إغلاق"
     },
     "manageBackup" : {
-      "title" : "إدارة مفتاحك",
-      "options" : {
-        "deleteBackup" : {
-          "title" : "حذف بياناتك",
-          "description" : "كل البيانات التي تمت مزامنتها سيتم حذفها."
-        }
-      },
       "deleteBackup" : {
-        "title" : "هل تريد بالفعل حذف مفتاح الشفير الخاص بك؟",
-        "description" : "بالنقر على حذف، فإن أجهزتك سيتم إلغاء مزامنتها وكل البيانات التي تمت مزامنتها ستُحذف. كن مطمئناً إلى أن القيام بهذا الإجراء لا يؤثر على أموالك. يمكنك إعادة مزامنة حساباتك في أي وقت.",
-        "delete" : "حذف",
-        "cancel" : "إلغاء"
+        "title" : "هل أنت متأكد أنك تريد حذف المزامنة؟",
+        "description" : "حسابات أصولك المشفرة عبر تطبيقات Ledger Live على الهواتف وأجهزة الكمبيوتر المختلفة لن تكون متزامنة بعد الآن. هذا لا يؤثر على أموالك بأي طريقة. ",
+        "delete" : "نعم، احذفها",
+        "cancel" : "إبقاء المزامنة"
       },
       "deleteBackupSuccess" : {
-        "title" : "لقد تم إلغاء مزامنة أجهزتك ومفتاحك تم حذفه"
+        "title" : "تطبيقات Ledger Live الخاصة بك لم تعد متزامنةً",
+        "description" : "يمكنك تشغيل المزامنة في أي وقت"
       },
       "deleteBackupError" : {
         "title" : "حدث خطأ ما"
@@ -6440,7 +6523,7 @@
         "title" : "اختر طريقة المزامنة التي تريدها",
         "description" : "يمكنك اختيار المزامنة مباشرةً عن طريق جهازك Ledger، أو عن طريق مسح ضوئي لكود QR على Ledger Live.",
         "scan" : {
-          "title" : "مسح ضوئي لكود QR",
+          "title" : "عرض كود QR",
           "description" : "المزامنة عن طريق مسح ضوئي لكود QR"
         },
         "connectDevice" : {
@@ -6449,29 +6532,124 @@
         }
       },
       "qrCode" : {
-        "title" : "مزامنة",
-        "hint" : "هل تحاول مزامنة تطبيقي Ledger Live لسطح المكتب؟ انقر هنا.",
-        "description" : "مسح ومزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
-        "steps" : {
-          "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-          "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Synchronize (مزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
-          "step3" : "امسح كود QR حتى يصل شريط التحميل إلى %100."
+        "title" : "مزامنة تطبيقات Ledger Live الخاصة بك",
+        "options" : {
+          "mobile" : "المزامنة مع الهاتف",
+          "desktop" : "المزامنة مع الكمبيوتر"
+        },
+        "mobile" : {
+          "description" : "المزامنة مع تطبيق Ledger Live على هاتف آخر",
+          "steps" : {
+            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
+            "step3" : "مسح ضوئي لكود QR"
+          }
+        },
+        "desktop" : {
+          "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
+          "steps" : {
+            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
+            "step3" : "توصيل جهازك Ledger"
+          }
         }
       },
+      "unbackedError" : {
+        "title" : "لم يتم اكتشاف المزامنة",
+        "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على الذي تقوم بالمزامنة معه",
+        "cta" : "تشغيل مزامنة Ledger"
+      },
       "pinCode" : {
-        "title" : "أدخِل الكود",
-        "description" : "اكتب الكود المعروض على Ledger Live الآخر الذي تريد المزامنة معه."
+        "title" : "كود مزامنة Ledger الخاص بك",
+        "description" : "لمزامنة حسابات أصولك المشفرة عبر تطبيقي Ledger Live، أدخِل هذا الكود في Ledger Live على هاتفك.",
+        "error" : {
+          "title" : "الأكواد غير متطابقة",
+          "description" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى."
+        }
       }
     },
     "manageInstances" : {
-      "title" : "إدارة حالات تمت مزامنتها",
+      "title" : "تمت مزامنة Ledger Live عبر",
       "remove" : "حذف",
-      "deleteInstanceSuccess" : "{{instanceName}} الخاصة بك لم تعد متزامنةً",
+      "deleteInstanceSuccess" : "تطبيق Ledger Live الخاص بك على {{instanceName}} لم يعد متصلاً بمزامنة Ledger",
       "deleteInstanceError" : "حدث خطأ ما في إلغاء تزامن {{instanceName}}"
     },
     "deviceAction" : {
       "title" : "تابع على جهازك Ledger {{wording}}",
       "description" : "اتبع التعليمات التي تظهر على الشاشة الموثوقة (Trusted Display) لجهازك Ledger."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "See more inscriptions",
+      "empty" : "لإضافة نقوش، ببساطة أرسلها إلى عنوان بيتكوين الخاص بك.",
+      "receive" : "تلقي نقش",
+      "discoveryDrawer" : {
+        "title" : "اكتشف الترتيبات (Ordinals)",
+        "description" : "هل تعرف أنك ربما تمتلك وحدات ساتوشي ونقوش نادرة قيّمة؟",
+        "learnMore" : "تعرّف على المزيد",
+        "protectTitle" : "حماية أصول الترتيبات الخاصة بك",
+        "protectDescription" : "استبعد أصول الترتيبات الخاصة بك من معاملاتك."
+      },
+      "detailsDrawer" : {
+        "description" : "الوصف",
+        "collectionName" : "اسم المجموعة",
+        "inscriptionId" : "مُعرّف النقش",
+        "inscriptionNumber" : "رقم النقش",
+        "mintedTo" : "تم السكّ إلى",
+        "genesisTx" : "معاملة التكوين",
+        "blockNumber" : "رقم الكتلة",
+        "contentType" : "نوع المحتوى",
+        "createdDate" : "تاريخ الإنشاء",
+        "satribute" : "ندرة وحدة الساتوشي",
+        "satNumber" : "رقم وحدة الساتوشي",
+        "satName" : "اسم وحدة الساتوشي",
+        "location" : "الموقع",
+        "outputValue" : "قيمة المخرجات",
+        "storedOnChain" : "محفوظة على سلسلة الكتل (on-chain)",
+        "hide" : "إخفاء"
+      }
+    },
+    "rareSats" : {
+      "empty" : "لإضافة وحدات ساتوشي نادرة، ببساطة أرسِلها إلى عنوان بيتكوين الخاص بك.",
+      "receive" : "تلقي وحدة ساتوشي نادرة",
+      "title" : "وحدات ساتوشي نادرة",
+      "table" : {
+        "type" : "نوع وحدة ساتوتشي / المبلغ",
+        "year" : "سنة"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "Step into the birth of each bitcoin with Alpha, marking the initial satoshi. This label signifies the genesis of a Bitcoin unit.",
+          "black_epic" : "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
+          "black_legendary" : "No Description for Black Legendary",
+          "black_mythic" : "No Description for Black Mythic",
+          "black_rare" : "Denotes the final satoshi at the conclusion of each mining difficulty adjustment period.",
+          "black_uncommon" : "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
+          "block_9" : "Block 9 holds a unique distinction in Bitcoin's history. As one of the earliest blocks mined, the satoshis contained within it are some of the oldest sats in circulation. These sats offer a tangible connection to the very beginnings of Bitcoin, shortly after its inception.",
+          "block_9_450x" : "Step back in time with Block 9 450x, where sats in first bitcoin of the 9th block are highlighted. This label unfolds a captivating chapter in Bitcoin's history.",
+          "block_78" : "Block 78 holds a profound place in the annals of Bitcoin's history. This block was mined by Hal Finney, marking the first instance where someone other than the elusive Satoshi Nakamoto contributed to the blockchain's growth.",
+          "block_286" : "Unearth the significance of Block 286, representing satoshis from the second-ever Bitcoin transaction mined by Satoshi Nakamoto. These sats carry the weight of Bitcoin's elusive creator and contribute to the narrative of its enigmatic origins.",
+          "block_666" : "No Description for Block 666",
+          "common" : "No Description for Common",
+          "epic" : "Every four years, the Bitcoin network experiences a \"halving\" event where the mining reward is cut in half. The first sat of each of these halving epochs is labeled \"Epic,\" marking a significant moment in Bitcoin's economic model.",
+          "first_tx" : "On January 12, 2009, history was made when Satoshi Nakamoto sent 10 Bitcoins to a computer scientist named Hal Finney. This marked the first-ever Bitcoin transaction. Sats originating from this iconic transaction bear the \"First Transaction\" label, symbolizing the genesis of Bitcoin's peer-to-peer exchange.",
+          "hitman" : "No Description for Hitman",
+          "jpeg" : "Journey into the past with JPEG, as these satoshis might be tied to the first Bitcoin trade for an image on February 24, 2010. This label narrates a tale of innovation, showcasing Bitcoin's early forays into unconventional transactions and exchanges.",
+          "legacy" : "No Description for Legacy",
+          "legendary" : "No Description for Legendary",
+          "mythic" : "No Description for Mythic",
+          "nakamoto" : "The mystique surrounding Bitcoin's pseudonymous creator, Satoshi Nakamoto, remains undiminished. Sats that were mined by Nakamoto himself are branded with this  label, making them highly sought after by collectors.",
+          "omega" : "Experience the poetic conclusion of every bitcoin with Omega, the last satoshi. As the final satoshi in a Bitcoin unit.",
+          "paliblock" : "No Description for PaliBlock Palindrome",
+          "palindrome" : "In a playful twist, any sat whose number can be read the same forwards and backwards is branded a \"Palindrome.\" For example, a sat numbered 12321 or 45654. These unique numerical attributes add a layer of rarity and curiosity to the labeled sats.",
+          "palinception" : "Delve into the mesmerizing world of uniform palinception, where each satoshi forms a palindrome of palindromes. These intricately structured sats create a fascinating tapestry of mirrored digits.",
+          "pizza" : "One of the most iconic stories in the Bitcoin community is that of a programmer who paid 10,000 Bitcoins for two Papa John's pizzas on May 22, 2010. This event is often cited to demonstrate the meteoric rise in Bitcoin's value. Sats from this legendary transaction wear the \"Pizza\" label.",
+          "rare" : "The Bitcoin network periodically adjusts its mining difficulty to ensure that blocks are added roughly every ten minutes. The first sat of each such adjustment period is branded as \"Rare.\" This reflects the ever-evolving nature of the network's security and consensus mechanisms. ",
+          "uncommon" : "This label is designated to the first satoshi of every block. Given that a new block is added to the Bitcoin blockchain approximately every 10 minutes, these sats capture the very beginning of that timeframe.",
+          "vintage" : "The dawn of Bitcoin was marked by its initial 1,000 blocks. Sats mined within this period are branded \"Vintage,\"."
+        }
+      }
     }
   }
 }

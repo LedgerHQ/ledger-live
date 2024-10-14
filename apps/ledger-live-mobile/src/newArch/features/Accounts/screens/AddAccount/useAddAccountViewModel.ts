@@ -25,7 +25,10 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
   const dispatch = useDispatch();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
-  const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
+  const navigateToChooseSyncMethod = () => {
+    dispatch(blockPasswordLock(true)); // Avoid Background on Android
+    setCurrentStep(Steps.ChooseSyncMethod);
+  };
   const navigateToQrCodeMethod = () => {
     dispatch(blockPasswordLock(true)); // Avoid Background on Android
     setCurrentStep(Steps.QrCodeMethod);
