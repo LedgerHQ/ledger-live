@@ -1,15 +1,16 @@
 import expect from "expect";
 import invariant from "invariant";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type {
   AppSpec,
   TransactionTestInput,
   TransactionArg,
   TransactionRes,
-} from "../../bot/types";
+} from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { isAccountEmpty } from "../../account";
 import { acceptTransaction } from "./speculos-deviceActions";
 

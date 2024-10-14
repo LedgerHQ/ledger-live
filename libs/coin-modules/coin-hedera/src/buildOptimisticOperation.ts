@@ -1,5 +1,5 @@
 import { Account, Operation } from "@ledgerhq/types-live";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getEstimatedFees } from "./utils";
 import { Transaction } from "./types";
 

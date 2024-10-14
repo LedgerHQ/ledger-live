@@ -1,0 +1,56 @@
+{
+    "name": "@ledgerhq/hw-app-hedera",
+    "version": "1.0.0",
+    "description": "Ledger Hardware Wallet Hedera Application API",
+    "keywords": [
+      "Ledger",
+      "LedgerWallet",
+      "hbar",
+      "Tezos",
+      "Hedera",
+      "Hardware Wallet"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/LedgerHQ/ledger-live.git"
+    },
+    "bugs": {
+      "url": "https://github.com/LedgerHQ/ledger-live/issues"
+    },
+    "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-hedera",
+    "publishConfig": {
+      "access": "public"
+    },
+    "main": "lib/Hedera.js",
+    "module": "lib-es/Hedera.js",
+    "types": "lib/Hedera.d.ts",
+    "license": "Apache-2.0",
+    "dependencies": {
+      "@ledgerhq/hw-transport": "workspace:^",
+      "@ledgerhq/errors": "workspace:^",
+      "bip32-path": "^0.4.2"
+    },
+    "devDependencies": {
+      "@ledgerhq/hw-transport-mocker": "workspace:^",
+      "@types/jest": "^29.5.10",
+      "@types/node": "^20.8.10",
+      "documentation": "14.0.2",
+      "jest": "^29.7.0",
+      "rimraf": "^4.4.1",
+      "source-map-support": "^0.5.21",
+      "ts-jest": "^29.1.1",
+      "ts-node": "^10.4.0"
+    },
+    "scripts": {
+      "clean": "rimraf lib lib-es",
+      "build": "tsc && tsc -m ES6 --outDir lib-es",
+      "prewatch": "pnpm build",
+      "watch": "tsc --watch",
+      "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+      "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+      "lint:fix": "pnpm lint --fix",
+      "test": "jest",
+      "unimported": "unimported"
+    }
+  }
+  

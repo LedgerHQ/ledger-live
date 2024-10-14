@@ -3,9 +3,9 @@ import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { encodeOperationId } from "../../../ledger-live-common/src/operation";
+import { encodeOperationId } from "../../../operation";
 import { getAccountBalance } from "./network";
-import { base64ToUrlSafeBase64 } from "../../../ledger-live-common/src/families/hedera/utils";
+import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 

@@ -1,9 +1,9 @@
 import { Transaction as HederaSDKTransaction } from "@hashgraph/sdk";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { broadcastTransaction } from "./api/network";
-import { patchOperationWithHash } from "../../operation";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { base64ToUrlSafeBase64 } from "./utils";
 import { Transaction } from "./types";
+import { broadcastTransaction } from "./api/network";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
