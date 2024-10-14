@@ -41,6 +41,7 @@ export type Params = {
   amount?: BigNumber;
   manifestId?: string;
   manifestName?: string;
+  isACRE?: boolean;
 };
 
 type Props = {
@@ -221,6 +222,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const stepperProps = {
     title,
     stepId,
+    isACRE: params.isACRE,
     manifestId: params.manifestId,
     manifestName: params.manifestName,
     useApp: params.useApp,

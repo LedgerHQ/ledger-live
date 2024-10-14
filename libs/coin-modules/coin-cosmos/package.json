@@ -51,7 +51,7 @@
     "@keplr-wallet/proto-types": "^0.12.76",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",

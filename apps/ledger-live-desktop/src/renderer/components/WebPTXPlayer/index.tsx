@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar } from "./TopBar";
 import Box from "../Box";
@@ -24,7 +26,8 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
-  const customHandlers = usePTXCustomHandlers(manifest);
+  const accounts = useSelector(flattenAccountsSelector);
+  const customHandlers = usePTXCustomHandlers(manifest, accounts);
 
   return (
     <Container>

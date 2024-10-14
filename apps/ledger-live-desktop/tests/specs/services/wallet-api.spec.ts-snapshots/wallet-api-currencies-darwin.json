@@ -766,6 +766,15 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "ton",
+    "ticker": "TON",
+    "name": "TON",
+    "family": "ton",
+    "color": "#0098ea",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "etherlink",
     "ticker": "XTZ",
     "name": "Etherlink",
