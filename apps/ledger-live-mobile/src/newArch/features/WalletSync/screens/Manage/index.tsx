@@ -19,7 +19,7 @@ import { Steps } from "../../types/Activation";
 import { TrackScreen } from "~/analytics";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
-import { TrustchainNotFound } from "@ledgerhq/trustchain/errors";
+import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch } from "react-redux";
 import { blockPasswordLock } from "~/actions/appstate";

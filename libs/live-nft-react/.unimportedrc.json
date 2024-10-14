@@ -1,4 +1,4 @@
 {
   "entry": ["src/index.ts", "src/tools/*", "src/hooks/*"],
-  "ignoreUnused": []
+  "ignoreUnused": ["@ledgerhq/coin-framework/nft/nftId"]
 }

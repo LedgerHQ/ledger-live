@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeCipher } from "../cipher";
-import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
+import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
 
 describe("makeCipher on static data set", () => {
   const trustchainSdk = new MockSDK({

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "6.39.0",
+  "version": "6.40.0",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -63,5 +63,10 @@
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
+  },
+  "overrides": {
+    "@ethersproject/providers": {
+      "ws": "7.5.10"
+    }
   }
 }

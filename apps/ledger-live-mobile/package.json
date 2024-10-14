@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.51.0",
+  "version": "3.52.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -87,7 +87,7 @@
     "@ledgerhq/ethereum-provider": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/hw-trustchain": "workspace:^",
+    "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
@@ -102,7 +102,7 @@
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
     "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
-    "@ledgerhq/trustchain": "workspace:^",
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

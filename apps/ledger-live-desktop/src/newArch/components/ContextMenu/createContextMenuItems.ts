@@ -12,6 +12,8 @@ type Props = {
   collectionAddress: string;
   collectionName?: string | null;
   goBackToAccount?: boolean;
+  inscriptionId?: string;
+  inscriptionName?: string;
   typeOfCollectible: CollectibleType;
   dispatch: Dispatch;
   setDrawer: () => void;
@@ -24,6 +26,8 @@ export function createContextMenuItems({
   collectionName,
   collectionAddress,
   account,
+  inscriptionId,
+  inscriptionName,
   dispatch,
   setDrawer,
   history,
@@ -41,6 +45,28 @@ export function createContextMenuItems({
             openModal("MODAL_HIDE_NFT_COLLECTION", {
               collectionName: collectionName ?? collectionAddress,
               collectionId: `${account.id}|${collectionAddress}`,
+              onClose: () => {
+                if (goBackToAccount) {
+                  setDrawer();
+                  history.replace(`account/${account.id}`);
+                }
+              },
+            }),
+          ),
+      },
+    ];
+  }
+  if (typeOfCollectible === CollectibleTypeEnum.Inscriptions) {
+    return [
+      {
+        key: "hide",
+        label: t("ordinals.inscriptions.hide"),
+        Icon: IconsLegacy.NoneMedium,
+        callback: () =>
+          dispatch(
+            openModal("MODAL_HIDE_INSCRIPTION", {
+              inscriptionName: String(inscriptionName),
+              inscriptionId: String(inscriptionId),
               onClose: () => {
                 if (goBackToAccount) {
                   setDrawer();

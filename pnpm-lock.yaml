@@ -147,6 +147,9 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -162,6 +165,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -289,6 +295,9 @@ importers:
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -304,9 +313,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
-      '@ledgerhq/hw-trustchain':
+      '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
-        version: link:../../libs/hw-trustchain
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -340,9 +349,6 @@ importers:
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
-      '@ledgerhq/trustchain':
-        specifier: workspace:^
-        version: link:../../libs/trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -833,18 +839,21 @@ importers:
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-http
-      '@ledgerhq/hw-trustchain':
-        specifier: workspace:^
-        version: link:../../libs/hw-trustchain
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/icons
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -884,9 +893,6 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
-      '@ledgerhq/trustchain':
-        specifier: workspace:^
-        version: link:../../libs/trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -1530,6 +1536,9 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-eth
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -1545,9 +1554,9 @@ importers:
       '@ledgerhq/hw-transport-webusb':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-webusb
-      '@ledgerhq/hw-trustchain':
+      '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
-        version: link:../../libs/hw-trustchain
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -1563,9 +1572,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
-      '@ledgerhq/trustchain':
-        specifier: workspace:^
-        version: link:../../libs/trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -1739,9 +1745,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      lru-cache:
-        specifier: ^7.14.1
-        version: 7.18.3
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -2784,17 +2787,17 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@taquito/ledger-signer':
-        specifier: ^20.0.0
-        version: 20.0.0
+        specifier: ^20.0.1
+        version: 20.0.1
       '@taquito/rpc':
-        specifier: ^20.0.0
-        version: 20.0.0
+        specifier: ^20.0.1
+        version: 20.0.1
       '@taquito/taquito':
-        specifier: ^20.0.0
-        version: 20.0.0
+        specifier: ^20.0.1
+        version: 20.0.1
       '@taquito/utils':
-        specifier: ^20.0.0
-        version: 20.0.0
+        specifier: ^20.0.1
+        version: 20.0.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3351,7 +3354,7 @@ importers:
         specifier: ^20.2.5
         version: 20.12.12
 
-  libs/hw-trustchain:
+  libs/hw-ledger-key-ring-protocol:
     dependencies:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
@@ -3380,7 +3383,7 @@ importers:
         version: 29.5.12
       '@types/lodash':
         specifier: '4'
-        version: 4.17.0
+        version: 4.17.7
       '@types/secp256k1':
         specifier: ^4.0.6
         version: 4.0.6
@@ -3389,7 +3392,71 @@ importers:
         version: 29.7.0
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.2(jest@29.7.0)(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/ledger-key-ring-protocol:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: workspace:*
+        version: link:../hw-ledger-key-ring-protocol
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:*
+        version: link:../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/speculos-transport':
+        specifier: workspace:*
+        version: link:../speculos-transport
+      '@ledgerhq/types-devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-devices
+      base64-js:
+        specifier: '1'
+        version: 1.5.1
+      isomorphic-ws:
+        specifier: '5'
+        version: 5.0.0(ws@8.18.0)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      ws:
+        specifier: '8'
+        version: 8.18.0
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      bip39:
+        specifier: ^3.0.4
+        version: 3.1.0
+      expect:
+        specifier: ^27.5.1
+        version: 27.5.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
+      msw:
+        specifier: ^2.2.13
+        version: 2.3.4(typescript@5.4.3)
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))(typescript@5.4.3)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(typescript@5.4.3)
 
   libs/ledger-live-common:
     dependencies:
@@ -5989,6 +6056,9 @@ importers:
 
   libs/live-nft-react:
     dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
@@ -6002,9 +6072,6 @@ importers:
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
     devDependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:*
-        version: link:../coin-framework
       '@tanstack/react-query':
         specifier: ^5.28.9
         version: 5.28.9(react@18.2.0)
@@ -6047,6 +6114,9 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:*
+        version: link:../ledger-key-ring-protocol
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
@@ -6059,9 +6129,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/trustchain':
-        specifier: workspace:*
-        version: link:../trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-cryptoassets
@@ -6177,70 +6244,6 @@ importers:
       '@types/serve-handler':
         specifier: ^6.1.1
         version: 6.1.4
-
-  libs/trustchain:
-    dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-mocker':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/hw-trustchain':
-        specifier: workspace:*
-        version: link:../hw-trustchain
-      '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../env
-      '@ledgerhq/live-network':
-        specifier: workspace:*
-        version: link:../live-network
-      '@ledgerhq/logs':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/logs
-      '@ledgerhq/speculos-transport':
-        specifier: workspace:*
-        version: link:../speculos-transport
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-devices
-      base64-js:
-        specifier: '1'
-        version: 1.5.1
-      isomorphic-ws:
-        specifier: '5'
-        version: 5.0.0(ws@8.17.1)
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
-      ws:
-        specifier: '8'
-        version: 8.17.1
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.10
-        version: 29.5.12
-      bip39:
-        specifier: ^3.0.4
-        version: 3.1.0
-      expect:
-        specifier: ^27.5.1
-        version: 27.5.1
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
-      msw:
-        specifier: ^2.2.13
-        version: 2.2.13(typescript@5.4.3)
-      ts-jest:
-        specifier: ^29.1.1
-        version: 29.1.2(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))(typescript@5.4.3)
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(typescript@5.4.3)
 
   libs/ui:
     devDependencies:
@@ -14476,36 +14479,44 @@ packages:
     resolution: {integrity: sha512-JSDWLaVeaSqI98Xwd2TQwNy/fznSLEhikUxM7da6WbGJGtH8lG9SI9q6N9LLPfOFNGlP5RVQLO9HK/Pcmn4H8Q==}
     engines: {node: '>=18'}
 
-  '@taquito/http-utils@20.0.0':
-    resolution: {integrity: sha512-R4Qen9oA/wQ7S5jC8K3viJkY/o9uQFEPQfuyPJCm90Tlg5HMd8UFRbJKqMvsW/nNVo39kukzEMS8o5wFST6dBA==}
+  '@taquito/core@20.0.1':
+    resolution: {integrity: sha512-/NvTkS8Enz5zxm481h7Ld5+MTa3/q84PMqtQ+HN3Mniv4EshnX5uIGfbdXdCQoaAeVdJOCeNIZDgeP6ZnkomRA==}
+    engines: {node: '>=18'}
+
+  '@taquito/http-utils@20.0.1':
+    resolution: {integrity: sha512-belYNmWoT49IF8o51gEB5je5Wz54+C7Q5hmvh7modl7fG0qE8VD1ulSH+WjuZsFTPJdNEAfCe0O50Vb5tNzw2w==}
     engines: {node: '>=18'}
 
   '@taquito/ledger-signer@20.0.0':
     resolution: {integrity: sha512-wfl1plx/uAIbmHsYxwsO2pXKDa9aMOmuuw25rjwsniBP36hM0Ly9GSrQ0z1CozteQF9ThP+OwrNMCwlfqXx43Q==}
     engines: {node: '>=18'}
 
-  '@taquito/local-forging@20.0.0':
-    resolution: {integrity: sha512-oxeyoqXjuTyl7gWqJGXoOqfWwH1bTiO76P/eOA5ULXgGwx9Muvt/yW5EPoIn6lK3Ajl41IE2sT+4JbKjQsAkuw==}
+  '@taquito/ledger-signer@20.0.1':
+    resolution: {integrity: sha512-w8PM2tmBGK7FaQnifDJr43Gt+xt5AApiMr8rh7PV5v+uyHfmaqudNBK0SdlbTKpS7GkERs4X8CBojpeGAage8Q==}
     engines: {node: '>=18'}
 
-  '@taquito/michel-codec@20.0.0':
-    resolution: {integrity: sha512-Xe6zHI8d5o/v9xNFJSvtspMK9Zf/iPDgUU7mIbucF/ppAYm1pofm5zL4SY5+tK0/Xz7irXjVx0a5l2sgGCBZmQ==}
+  '@taquito/local-forging@20.0.1':
+    resolution: {integrity: sha512-+XYHnoAYXpOYA4WbUvUO86F6uoUh1anaNQGD544ySaonJW1ZgwhylrGvvTVjQfFSqqP3TRWn69EqINco+hX7gA==}
     engines: {node: '>=18'}
 
-  '@taquito/michelson-encoder@20.0.0':
-    resolution: {integrity: sha512-b28UTIX733vLmE1R/wW3J5cMz4EIf8ioZen2u6Ms8enT7MMQw4svM9Eq/D+Wr6di3VDeGh1Aqvgl+XRbEw8AQA==}
+  '@taquito/michel-codec@20.0.1':
+    resolution: {integrity: sha512-TB6fJS4ArW4p1mqR28cjKbYs4cbLz/wnf8bHI/4ubxpiPcARZkja7r4U89D+Lb6Kn1Er+USPIMdbRTkP011e0w==}
     engines: {node: '>=18'}
 
-  '@taquito/rpc@20.0.0':
-    resolution: {integrity: sha512-4ijTIKGAl3NnB9ibvZzBpruf00w4TDi9CSLeoNOiP0T/laTZsUfmtR7p5AwirGNGBqAXr7mWSqSCrn2IEwSjAw==}
+  '@taquito/michelson-encoder@20.0.1':
+    resolution: {integrity: sha512-YfMLpxDL/Qd9AlIfjlCsXYiE07ReZRAqvj+mI/Q8sPsKpqrkjvhyieNUQDLVqMDRcWLBWUSIqccr7UVRlQ/+BQ==}
     engines: {node: '>=18'}
 
-  '@taquito/taquito@20.0.0':
-    resolution: {integrity: sha512-iA53YlMdElAb919vhS7UswjHFumiDGOB6IE1vAh5dOLdPvK8L6uDlSXU6Aaz/nQyTJGe6I6RusjXEoMVnZUe2g==}
+  '@taquito/rpc@20.0.1':
+    resolution: {integrity: sha512-Ec6fXoehjLpfILpVAHZ1NJz6cAaguEFs9McK2Ct4RRKmVhModgrVPAGXn17rb7fLXwOLP3MCzqSgFPToY7ZIFA==}
     engines: {node: '>=18'}
 
-  '@taquito/utils@20.0.0':
-    resolution: {integrity: sha512-45GT2caKPpi8sC6BdlTNZRgsqjXy6D2hVfisymzU68EWXZ6Rss5aNNj6OZgDMVmwAnSJok41D2DCdUegiJJBbw==}
+  '@taquito/taquito@20.0.1':
+    resolution: {integrity: sha512-BcRNWcUGOWfthFPgPf12U1ZIf1xSyy1ZS4xU5TciuxI395LnKTz6I3WfmMggsZzWxqEgi/Lj8GXjji7DCtaZRg==}
+    engines: {node: '>=18'}
+
+  '@taquito/utils@20.0.1':
+    resolution: {integrity: sha512-aJaKukIW9thzU/WZ7p9ARRIDoXLQZ8TsB0brtbf48GqBFoGXDNAsDo72lkeTpehEcgYItSjdBuWEKH/lyTMr+w==}
     engines: {node: '>=18'}
 
   '@testing-library/dom@9.3.4':
@@ -16775,10 +16786,6 @@ packages:
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
-
-  braces@3.0.2:
-    resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
-    engines: {node: '>=8'}
 
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
@@ -20242,10 +20249,6 @@ packages:
   filesize@8.0.7:
     resolution: {integrity: sha512-pjmC+bkIF8XI7fWaH8KxHcZL3DPybs1roSKP4rKDvy20tAWwIObE4+JIseG2byfGKhud5ZnM4YSGKBz7Sh0ndQ==}
     engines: {node: '>= 0.4.0'}
-
-  fill-range@7.0.1:
-    resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
-    engines: {node: '>=8'}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -32716,13 +32719,13 @@ snapshots:
 
   '@babel/template@7.24.0':
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@babel/parser': 7.24.1
       '@babel/types': 7.24.0
 
   '@babel/traverse@7.24.1':
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@babel/generator': 7.24.1
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
@@ -32737,7 +32740,7 @@ snapshots:
 
   '@babel/traverse@7.24.1(supports-color@5.5.0)':
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@babel/generator': 7.24.1
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
@@ -35084,7 +35087,7 @@ snapshots:
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       js-yaml: 3.14.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       npm-package-arg: 7.0.0
       split: 1.0.1
       sudo-prompt: 9.1.1
@@ -35098,7 +35101,7 @@ snapshots:
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       js-yaml: 3.14.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       npm-package-arg: 7.0.0
       ora: 3.4.0
       split: 1.0.1
@@ -35870,7 +35873,7 @@ snapshots:
       jest-util: 27.5.1
       jest-validate: 27.5.1
       jest-watcher: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       rimraf: 3.0.2
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35908,7 +35911,7 @@ snapshots:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       jest-watcher: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 28.1.3
       rimraf: 3.0.2
       slash: 3.0.0
@@ -36486,7 +36489,7 @@ snapshots:
       jest-haste-map: 27.5.1
       jest-regex-util: 27.5.1
       jest-util: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       source-map: 0.6.1
@@ -36508,7 +36511,7 @@ snapshots:
       jest-haste-map: 28.1.3
       jest-regex-util: 28.0.2
       jest-util: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -36529,7 +36532,7 @@ snapshots:
       jest-haste-map: 29.7.0
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -36550,7 +36553,7 @@ snapshots:
       jest-haste-map: 29.7.0(metro@0.80.8)
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -42826,7 +42829,7 @@ snapshots:
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
@@ -42840,7 +42843,7 @@ snapshots:
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
@@ -43486,9 +43489,13 @@ snapshots:
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/http-utils@20.0.0':
+  '@taquito/core@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
+      json-stringify-safe: 5.0.1
+
+  '@taquito/http-utils@20.0.1':
+    dependencies:
+      '@taquito/core': 20.0.1
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
@@ -43498,60 +43505,71 @@ snapshots:
       '@ledgerhq/hw-transport': 6.30.6
       '@stablelib/blake2b': 1.0.1
       '@taquito/core': 20.0.0
-      '@taquito/taquito': 20.0.0
-      '@taquito/utils': 20.0.0
+      '@taquito/taquito': 20.0.1
+      '@taquito/utils': 20.0.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/local-forging@20.0.0':
+  '@taquito/ledger-signer@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
-      '@taquito/utils': 20.0.0
+      '@ledgerhq/hw-transport': 6.30.6
+      '@stablelib/blake2b': 1.0.1
+      '@taquito/core': 20.0.1
+      '@taquito/taquito': 20.0.1
+      '@taquito/utils': 20.0.1
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+    transitivePeerDependencies:
+      - encoding
+
+  '@taquito/local-forging@20.0.1':
+    dependencies:
+      '@taquito/core': 20.0.1
+      '@taquito/utils': 20.0.1
       bignumber.js: 9.1.2
 
-  '@taquito/michel-codec@20.0.0':
+  '@taquito/michel-codec@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
+      '@taquito/core': 20.0.1
 
-  '@taquito/michelson-encoder@20.0.0':
+  '@taquito/michelson-encoder@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
-      '@taquito/rpc': 20.0.0
-      '@taquito/utils': 20.0.0
+      '@taquito/core': 20.0.1
+      '@taquito/rpc': 20.0.1
+      '@taquito/utils': 20.0.1
       bignumber.js: 9.1.2
       fast-json-stable-stringify: 2.1.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/rpc@20.0.0':
+  '@taquito/rpc@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
-      '@taquito/http-utils': 20.0.0
-      '@taquito/utils': 20.0.0
+      '@taquito/core': 20.0.1
+      '@taquito/http-utils': 20.0.1
+      '@taquito/utils': 20.0.1
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/taquito@20.0.0':
+  '@taquito/taquito@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
-      '@taquito/http-utils': 20.0.0
-      '@taquito/local-forging': 20.0.0
-      '@taquito/michel-codec': 20.0.0
-      '@taquito/michelson-encoder': 20.0.0
-      '@taquito/rpc': 20.0.0
-      '@taquito/utils': 20.0.0
+      '@taquito/core': 20.0.1
+      '@taquito/http-utils': 20.0.1
+      '@taquito/local-forging': 20.0.1
+      '@taquito/michel-codec': 20.0.1
+      '@taquito/michelson-encoder': 20.0.1
+      '@taquito/rpc': 20.0.1
+      '@taquito/utils': 20.0.1
       bignumber.js: 9.1.2
       rxjs: 7.8.1
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/utils@20.0.0':
+  '@taquito/utils@20.0.1':
     dependencies:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
-      '@taquito/core': 20.0.0
+      '@taquito/core': 20.0.1
       '@types/bs58check': 2.1.2
       bignumber.js: 9.1.2
       blakejs: 1.2.1
@@ -46749,10 +46767,6 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
 
-  braces@3.0.2:
-    dependencies:
-      fill-range: 7.0.1
-
   braces@3.0.3:
     dependencies:
       fill-range: 7.1.1
@@ -47286,7 +47300,7 @@ snapshots:
   chokidar@3.6.0:
     dependencies:
       anymatch: 3.1.3
-      braces: 3.0.2
+      braces: 3.0.3
       glob-parent: 5.1.2
       is-binary-path: 2.1.0
       is-glob: 4.0.3
@@ -50107,7 +50121,7 @@ snapshots:
       '@types/eslint': 8.56.6
       eslint: 8.57.0
       jest-worker: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       normalize-path: 3.0.0
       schema-utils: 4.2.0
       webpack: 5.94.0
@@ -50986,7 +51000,7 @@ snapshots:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
 
   fast-json-parse@1.0.3: {}
 
@@ -51119,10 +51133,6 @@ snapshots:
 
   filesize@8.0.7: {}
 
-  fill-range@7.0.1:
-    dependencies:
-      to-regex-range: 5.0.1
-
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -51212,7 +51222,7 @@ snapshots:
 
   find-yarn-workspace-root@2.0.0:
     dependencies:
-      micromatch: 4.0.5
+      micromatch: 4.0.7
 
   firebase@9.23.0:
     dependencies:
@@ -52373,7 +52383,7 @@ snapshots:
       http-proxy: 1.18.1
       is-glob: 4.0.3
       is-plain-obj: 3.0.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
     optionalDependencies:
       '@types/express': 4.17.21
 
@@ -53028,6 +53038,10 @@ snapshots:
     dependencies:
       ws: 8.17.1
 
+  isomorphic-ws@5.0.0(ws@8.18.0):
+    dependencies:
+      ws: 8.18.0
+
   isstream@0.1.2: {}
 
   istanbul-lib-coverage@3.2.2: {}
@@ -53562,7 +53576,7 @@ snapshots:
       jest-runner: 28.1.3
       jest-util: 28.1.3
       jest-validate: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 28.1.3
       slash: 3.0.0
@@ -53592,7 +53606,7 @@ snapshots:
       jest-runner: 28.1.3
       jest-util: 28.1.3
       jest-validate: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 28.1.3
       slash: 3.0.0
@@ -53622,7 +53636,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53651,7 +53665,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53683,7 +53697,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53714,7 +53728,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53746,7 +53760,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53778,7 +53792,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53810,7 +53824,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53842,7 +53856,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53874,7 +53888,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53906,7 +53920,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53938,7 +53952,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53969,7 +53983,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -54163,7 +54177,7 @@ snapshots:
       jest-serializer: 27.5.1
       jest-util: 27.5.1
       jest-worker: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -54181,7 +54195,7 @@ snapshots:
       jest-regex-util: 28.0.2
       jest-util: 28.1.3
       jest-worker: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -54199,7 +54213,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       jest-worker: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -54217,7 +54231,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       jest-worker: 29.7.0(metro@0.80.8)
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -54290,7 +54304,7 @@ snapshots:
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 27.5.1
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -54302,19 +54316,19 @@ snapshots:
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 28.1.3
       slash: 3.0.0
       stack-utils: 2.0.6
 
   jest-message-util@29.7.0:
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@jest/types': 29.6.3
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -55099,7 +55113,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.21.5
@@ -55124,7 +55138,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.21.5
@@ -55149,7 +55163,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.23.6
@@ -56656,7 +56670,7 @@ snapshots:
       graceful-fs: 4.2.11
       invariant: 2.2.4
       jest-worker: 29.7.0(metro@0.80.8)
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       node-abort-controller: 3.1.1
       nullthrows: 1.1.1
       walker: 1.0.8
@@ -57285,7 +57299,7 @@ snapshots:
 
   micromatch@4.0.5:
     dependencies:
-      braces: 3.0.2
+      braces: 3.0.3
       picomatch: 2.3.1
 
   micromatch@4.0.7:
@@ -63038,7 +63052,7 @@ snapshots:
       is-glob: 4.0.3
       jiti: 1.21.0
       lilconfig: 2.1.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
@@ -63776,6 +63790,19 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
+  ts-jest@29.1.5(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.3
+      typescript: 5.4.3
+      yargs-parser: 21.1.1
+
   ts-jest@29.1.5(jest@29.7.0)(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
@@ -63793,7 +63820,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.16.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       semver: 7.6.3
       source-map: 0.7.4
       typescript: 5.1.3

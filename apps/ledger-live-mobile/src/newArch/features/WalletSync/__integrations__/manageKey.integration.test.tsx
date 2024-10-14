@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 
 jest.mock("../hooks/useDestroyTrustchain", () => ({
   useDestroyTrustchain: () => ({
