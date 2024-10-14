@@ -98,7 +98,7 @@ export const urls = {
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
-  elrondStaking: "https://support.ledger.com/article/7228337345693-zd",
+  multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",
   ledgerValidator: "https://www.ledger.com/staking",
   // Banners
@@ -145,8 +145,8 @@ export const urls = {
   cryptoOrg: {
     website: "https://cronos-pos.org",
   },
-  elrond: {
-    website: "https://elrond.com",
+  multiversx: {
+    website: "https://multiversx.com",
   },
   figment: {
     website: "https://www.figment.io",

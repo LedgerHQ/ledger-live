@@ -4,8 +4,8 @@ import fs from "fs";
 
 const esdtTokens = [
   {
-    id: "elrond/esdt/555344432d633736663166",
-    blockchain_name: "elrond",
+    id: "multiversx/esdt/555344432d633736663166",
+    blockchain_name: "multiversx",
     contract_address: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
     decimals: 6,
     delisted: false,
@@ -30,7 +30,7 @@ describe("import ESDT tokens", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const expectedFile = `export type ElrondESDTToken = [
+    const expectedFile = `export type MultiversXESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -42,7 +42,7 @@ import tokens from "./esdt.json";
 
 export { default as hash } from "./esdt-hash.json";
 
-export default tokens as ElrondESDTToken[];
+export default tokens as MultiversXESDTToken[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());
@@ -53,7 +53,7 @@ export default tokens as ElrondESDTToken[];
       "https://crypto-assets-service.api.ledger.com/v1/tokens",
       {
         params: {
-          blockchain_name: "elrond",
+          blockchain_name: "multiversx",
           output: "ticker,id,decimals,live_signature,name",
         },
       },

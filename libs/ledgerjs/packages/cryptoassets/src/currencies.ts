@@ -1031,33 +1031,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  elrond: {
-    type: "CryptoCurrency",
-    id: "elrond",
-    coinType: CoinType.MULTIVERSX,
-    name: "MultiversX",
-    managerAppName: "MultiversX",
-    ticker: "EGLD",
-    scheme: "elrond",
-    color: "#23F7DD",
-    family: "elrond",
-    blockAvgTime: 6,
-    deviceTicker: "EGLD",
-    units: [
-      {
-        name: "EGLD",
-        code: "EGLD",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.elrond.com/transactions/$hash",
-        address: "https://explorer.elrond.com/accounts/$address",
-      },
-    ],
-    keywords: ["elrond"],
-  },
   eos: {
     type: "CryptoCurrency",
     id: "eos",
@@ -1743,6 +1716,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["xmr", "monero"],
+  },
+  elrond: {
+    type: "CryptoCurrency",
+    // id: "multiversx",
+    id: "elrond",
+    coinType: CoinType.MULTIVERSX,
+    name: "MultiversX",
+    managerAppName: "MultiversX",
+    ticker: "EGLD",
+    scheme: "multiversx",
+    color: "#23F7DD",
+    family: "multiversx",
+    blockAvgTime: 6,
+    deviceTicker: "EGLD",
+    units: [
+      {
+        name: "EGLD",
+        code: "EGLD",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.multiversx.com/transactions/$hash",
+        address: "https://explorer.multiversx.com/accounts/$address",
+      },
+    ],
+    keywords: ["multiversx"],
   },
   musicoin: {
     type: "CryptoCurrency",
