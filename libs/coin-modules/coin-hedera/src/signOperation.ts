@@ -3,9 +3,9 @@ import { PublicKey } from "@hashgraph/sdk";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
-import { buildUnsignedTransaction } from "./api/network";
 import Hedera from "./hw-app-hedera";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { buildUnsignedTransaction } from "./api/network";
 
 export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
   account,

@@ -1,0 +1,37 @@
+// Goal of this file is to inject all necessary device/signer dependency to coin-modules
+
+import {
+  TransactionStatus,
+  createBridges,
+  type Transaction,
+} from "@ledgerhq/coin-hedera";
+import Transport from "@ledgerhq/hw-transport";
+import Hedera from "@ledgerhq/hw-app-hedera";
+import type { Bridge } from "@ledgerhq/types-live";
+import { hederaConfig } from "@ledgerhq/coin-hedera";
+import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
+import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
+import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import { Resolver } from "../../hw/getAddress/types";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
+const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
+  return new Hedera(transport);
+};
+
+const hedera = getCryptoCurrencyById("hedera");
+const getCurrencyConfig = (): hederaConfig => {
+  return getCurrencyConfiguration(hedera);
+};
+
+const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
+
+const resolver: Resolver = createResolver(createSigner, polkadotResolver);
+
+const cliTools: CliTools = makeCliTools();
+
+export { bridge, cliTools, resolver };

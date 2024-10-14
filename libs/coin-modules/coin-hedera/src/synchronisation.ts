@@ -6,8 +6,8 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import type { Result } from "../../hw/getAddress/types";
 import { encodeAccountId } from "../../account";
 
-import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
-import { getAccountBalance } from "./api/network";
+import { getAccountsForPublicKey, getOperationsForAccount } from "../../../../coin-modules/coin-hedera/api/mirror";
+import { getAccountBalance } from "../../../../coin-modules/coin-hedera/api/network";
 import type { Account } from "@ledgerhq/types-live";
 
 const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>> => {
@@ -79,4 +79,4 @@ export const scanAccounts = makeScanAccounts({
   buildIterateResult,
 });
 
-export const sync = makeSync({ getAccountShape });
+// export const sync = makeSync({ getAccountShape });
