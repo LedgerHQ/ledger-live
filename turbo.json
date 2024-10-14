@@ -64,7 +64,7 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "env": ["CI_OS"],
+      "env": ["CI_OS", "LC_ALL"],
       "outputs": []
     },
     "start": {
@@ -150,7 +150,7 @@
     },
     "ledger-live-desktop#test": {
       "dependsOn": ["ledger-live-desktop#build:testing"],
-      "env": ["CI_OS"],
+      "env": ["CI_OS", "LC_ALL"],
       "outputs": []
     },
     "ledger-live-desktop#build:testing": {
