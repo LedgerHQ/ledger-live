@@ -3464,20 +3464,20 @@ importers:
         specifier: ^7.1.2
         version: 7.1.2
       '@celo/connect':
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ^6.0.2
+        version: 6.0.2
       '@celo/contractkit':
-        specifier: ^8.1.1
-        version: 8.1.1
+        specifier: ^8.3.0
+        version: 8.3.0
       '@celo/utils':
         specifier: ^7.0.0
         version: 7.0.0
       '@celo/wallet-base':
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ^6.0.2
+        version: 6.0.2
       '@celo/wallet-ledger':
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ^6.0.2
+        version: 6.0.2
       '@crypto-org-chain/chain-jslib':
         specifier: 1.1.2
         version: 1.1.2
@@ -8655,18 +8655,18 @@ packages:
   '@celo/abis@11.0.0':
     resolution: {integrity: sha512-rPjHQxHbWaKQU3MX6hE3A3xRkBFBphjFvfCs4t+19dqPPys6Q+cneHmRWGBX4NLiBh5BLZcNZjQoMf2jxRLMpg==}
 
-  '@celo/abis@12.0.0-canary.16':
-    resolution: {integrity: sha512-nbynuyhXUZKQTEUlkvQaWI7y4lPXa5xuVLJDLqzNfWbF27E6V1xGoMNUK4XxzmTC161VOPp18Guah2C49kXQ0w==}
+  '@celo/abis@12.0.0-canary.35':
+    resolution: {integrity: sha512-6MdEX96TGTaiiqATWDHwdsv3XoUMc0GRr1KVDPH0JKFqxs3/ATnoekAUL+bBn6rzuI+KFnKhRHjcPm4Qjq9EHg==}
 
   '@celo/base@6.1.0':
     resolution: {integrity: sha512-R6ko2QCfEU32akBsaSNsDYduktgwIKHcJ61SbR7EsXA1VE31/44Qh8kMzfgeahyk375DUCe3pJIKwx5zg1tFHg==}
 
-  '@celo/connect@6.0.1':
-    resolution: {integrity: sha512-nMWivxDeXSILRqsnFZNDz4Rv3eX3xj7++16LT03m5fa6GvlfLvxx1jQ1yv6Hf2Z8yvHEeL36zzBIfqyHOyF99Q==}
+  '@celo/connect@6.0.2':
+    resolution: {integrity: sha512-l+7UpQlVBtdSonmMmRqJikdv7ygI/LfQEjaGoco5yNY0Bs7nD52TcBSiRqu8VV8lmI2UOZisWCjA/GzeQbRM1Q==}
     engines: {node: '>=8.14.2'}
 
-  '@celo/contractkit@8.1.1':
-    resolution: {integrity: sha512-EUZaoo8BQIkXKWF4h0UI9yNmVAsDSsDOjTB5C4RrdDkylzn7PGICPmUMq/9WU2QH1zFV9kf1JpGzxlA8Uci6MQ==}
+  '@celo/contractkit@8.3.0':
+    resolution: {integrity: sha512-Y2A6Pr+tkb+SYgt09qeF1Z09JZN/AcXXKjHkbc83LEeb6qtCxnWNhxXUY8Mu1Bnk5+Oyf+jrWJPenmuuFIufuQ==}
     engines: {node: '>=8.14.2'}
 
   '@celo/ledger-token-signer@0.4.0':
@@ -8675,20 +8675,20 @@ packages:
   '@celo/utils@7.0.0':
     resolution: {integrity: sha512-oxAMm19lMs3myhHt2BpuWm01mxZ9ZD73uydQFdgeVj5cNVRKumzMGSEfb0qCQ2hiCHL15R/lCtBqqiRy0wD1LA==}
 
-  '@celo/wallet-base@6.0.1':
-    resolution: {integrity: sha512-6vZxEkm6VcT/LmKDnyxmS6n8YWEUo20E5tccY8XrBxcLAPinaiLfcwEQsgvspIB6m4hG/AH3qtuKby5nC4T/6g==}
+  '@celo/wallet-base@6.0.2':
+    resolution: {integrity: sha512-7rmC4dh2OTE7pnrMQdbmc+qopTgX7MpDoe4rCcu8M0eiBbgGaT7e0Xlj24mERqDNJJITxal8F81HsF6KjVhung==}
     engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-ledger@6.0.1':
-    resolution: {integrity: sha512-gPUJX2zhtNT9xwVKyVjrMZR0cTgQceF+AUbgOYjigMEwctnjBtfxkmUAL12gmTNIF0j4nyPx7Gil8Le0aFNdfg==}
+  '@celo/wallet-ledger@6.0.2':
+    resolution: {integrity: sha512-B4VJPPje4sNdhOd/l1KOGoWITCU/G5HtNQrqScX74Wh5bwCo3lJEEv1A++7A3t2a6s/NTJ+Jd1S5MMe7Rsh9oA==}
     engines: {node: '>=8.14.2'}
 
   '@celo/wallet-local@6.0.1':
     resolution: {integrity: sha512-bSf7qxAs4ONEDrpdJZRqiayWWyKsO7fu2ai8PDQsICnLw8ZsyVP7+oNgr7zberHk6ghdmG1Qp957a0Myw7w6lA==}
     engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-remote@6.0.1':
-    resolution: {integrity: sha512-eQVyg11s8ncL+CC5R4aqisli8sPREyVJk6doh2DhUGoNbG0Opx8ZiEZ+z1QPDs1bX1U9zY61Jctpd8e7B9UrrQ==}
+  '@celo/wallet-remote@6.0.2':
+    resolution: {integrity: sha512-1TPhJMwdJ+thno9ViVKoujUFFxPTVCLglU5/CotK5t8HkstTcbVQ6aswkBJxS/bR+wmLrAnI2Im0jFxMujDTcA==}
     engines: {node: '>=8.14.2'}
 
   '@chainsafe/as-sha256@0.3.1':
@@ -32905,11 +32905,11 @@ snapshots:
 
   '@celo/abis@11.0.0': {}
 
-  '@celo/abis@12.0.0-canary.16': {}
+  '@celo/abis@12.0.0-canary.35': {}
 
   '@celo/base@6.1.0': {}
 
-  '@celo/connect@6.0.1':
+  '@celo/connect@6.0.2':
     dependencies:
       '@celo/base': 6.1.0
       '@celo/utils': 7.0.0
@@ -32929,12 +32929,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/contractkit@8.1.1':
+  '@celo/contractkit@8.3.0':
     dependencies:
       '@celo/abis': 11.0.0
-      '@celo/abis-12': '@celo/abis@12.0.0-canary.16'
+      '@celo/abis-12': '@celo/abis@12.0.0-canary.35'
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1
+      '@celo/connect': 6.0.2
       '@celo/utils': 7.0.0
       '@celo/wallet-local': 6.0.1
       '@types/bn.js': 5.1.5
@@ -32971,10 +32971,10 @@ snapshots:
       web3-eth-abi: 1.10.4
       web3-utils: 1.10.4
 
-  '@celo/wallet-base@6.0.1':
+  '@celo/wallet-base@6.0.2':
     dependencies:
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1
+      '@celo/connect': 6.0.2
       '@celo/utils': 7.0.0
       '@ethereumjs/rlp': 5.0.2
       '@ethereumjs/util': 8.0.5
@@ -32991,18 +32991,18 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-ledger@6.0.1':
+  '@celo/wallet-ledger@6.0.2':
     dependencies:
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1
+      '@celo/connect': 6.0.2
       '@celo/ledger-token-signer': 0.4.0
       '@celo/utils': 7.0.0
-      '@celo/wallet-base': 6.0.1
-      '@celo/wallet-remote': 6.0.1
+      '@celo/wallet-base': 6.0.2
+      '@celo/wallet-remote': 6.0.2
       '@ethereumjs/util': 8.0.5
       '@ledgerhq/errors': 6.19.1
       '@ledgerhq/hw-app-eth': https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44
-      '@ledgerhq/hw-transport': 6.30.6
+      '@ledgerhq/hw-transport': 6.31.4
       debug: 4.3.4
       semver: 7.6.3
     transitivePeerDependencies:
@@ -33014,9 +33014,9 @@ snapshots:
   '@celo/wallet-local@6.0.1':
     dependencies:
       '@celo/base': 6.1.0
-      '@celo/connect': 6.0.1
+      '@celo/connect': 6.0.2
       '@celo/utils': 7.0.0
-      '@celo/wallet-base': 6.0.1
+      '@celo/wallet-base': 6.0.2
       '@ethereumjs/util': 8.0.5
     transitivePeerDependencies:
       - bufferutil
@@ -33024,11 +33024,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-remote@6.0.1':
+  '@celo/wallet-remote@6.0.2':
     dependencies:
-      '@celo/connect': 6.0.1
+      '@celo/connect': 6.0.2
       '@celo/utils': 7.0.0
-      '@celo/wallet-base': 6.0.1
+      '@celo/wallet-base': 6.0.2
       '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
     transitivePeerDependencies:
