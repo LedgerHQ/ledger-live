@@ -1118,7 +1118,8 @@
     "optionsMenu": {
       "title": "Options",
       "exportOperations": "Export operation history",
-      "exportToMobile": "Export to mobile"
+      "exportToMobile": "Export to mobile",
+      "ledgerSync": "Sync accounts"
     },
     "contextMenu": {
       "star": "Star",
