@@ -162,9 +162,21 @@ export class Account {
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
   );
 
-  static readonly TRX_1 = new Account(Currency.TRX, "Tron 1", "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1");
+  static readonly TRX_1 = new Account(
+    Currency.TRX,
+    "Tron 1",
+    "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
+    undefined,
+    0,
+  );
 
-  static readonly TRX_2 = new Account(Currency.TRX, "Tron 2", "TMGGi8n7kDkB8ws9wgunKf2SGNP4PjEyLL");
+  static readonly TRX_2 = new Account(
+    Currency.TRX,
+    "Tron 2",
+    "TMGGi8n7kDkB8ws9wgunKf2SGNP4PjEyLL",
+    undefined,
+    1,
+  );
 
   static readonly XRP_1 = new Account(
     Currency.XRP,
@@ -274,6 +286,8 @@ export class Account {
     Currency.BSC,
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+    undefined,
+    0,
   );
 
   static readonly NEAR_1 = new Account(
