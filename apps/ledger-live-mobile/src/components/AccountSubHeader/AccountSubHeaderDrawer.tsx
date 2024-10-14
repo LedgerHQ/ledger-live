@@ -28,11 +28,11 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
   return (
     <Text textAlign={"center"}>
       <Trans i18nKey="account.subHeader.drawer.description3Link">
-        This integration has been carried out by
+        {"This integration has been carried out by"}
         <Flex style={{ transform: "translateY(5px)" }}>
           <ExternalLink type="color" text={team} onPress={onOpenTeam} />
         </Flex>
-        in collaboration with Ledger
+        {"in collaboration with Ledger"}
       </Trans>
     </Text>
   );
