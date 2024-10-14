@@ -189,10 +189,12 @@ for (const transaction of transactionE2E) {
         await app.drawer.close();
 
         await app.layout.goToAccounts();
+        await app.accounts.clickSyncBtnForAccount(
+          transaction.transaction.accountToCredit.accountName,
+        );
         await app.accounts.navigateToAccountByName(
           transaction.transaction.accountToCredit.accountName,
         );
-        await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
         await app.sendDrawer.expectReceiverInfos(transaction.transaction);
       },

@@ -31,9 +31,9 @@ patchedDependencies:
   buffer@6.0.3:
     hash: 2xnca52oxhztvr7iaoovwclcze
     path: patches/buffer@6.0.3.patch
-  detox@20.23.0:
+  detox@20.26.2:
     hash: yanhspfjw3apvvf4gev5ovygia
-    path: patches/detox@20.23.0.patch
+    path: patches/detox@20.26.2.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
@@ -1404,9 +1404,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.10
-      allure-js-commons:
-        specifier: 1.3.2
-        version: 1.3.2
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.24.3)
@@ -1417,11 +1414,11 @@ importers:
         specifier: ^2.8.5
         version: 2.8.5
       detox:
-        specifier: 20.23.0
-        version: 20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+        specifier: 20.26.2
+        version: 20.26.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.12
-        version: 1.0.0-alpha.12(detox@20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0-beta.22(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))
+        version: 1.0.0-alpha.12(detox@20.26.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0-beta.25(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
         version: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0)
@@ -1453,8 +1450,8 @@ importers:
         specifier: ^29.6.2
         version: 29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       jest-allure2-reporter:
-        specifier: 2.0.0-beta.22
-        version: 2.0.0-beta.22(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+        specifier: 2.0.0-beta.25
+        version: 2.0.0-beta.25(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       jest-circus:
         specifier: ^29.7.0
         version: 29.7.0
@@ -15968,6 +15965,9 @@ packages:
   ajv@8.16.0:
     resolution: {integrity: sha512-F0twR8U1ZU67JIEtekUcLkXkoO5mMMmgGD8sK/xUFzJ805jxHQl92hImFAqqXMyMYjSPOyUPAwHYhB72g5sTXw==}
 
+  ajv@8.17.1:
+    resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+
   algo-msgpack-with-bigint@2.1.1:
     resolution: {integrity: sha512-F1tGh056XczEaEAqu7s+hlZUDWwOBT70Eq0lfMpBP2YguSQVyxRbprLq5rELXKQOyOaixTWYhMeMQMzP0U5FoQ==}
     engines: {node: '>= 10'}
@@ -15978,9 +15978,6 @@ packages:
   allure-commandline@2.28.0:
     resolution: {integrity: sha512-TZ3oxop0zseJp2bRKb8Zzkxa4/aB+RvKEMnhylbY6UiOkqhNAHovRJx03bFA9bbvE/nsR70sX+ktU5xI2WJiqQ==}
     hasBin: true
-
-  allure-js-commons@1.3.2:
-    resolution: {integrity: sha512-FTmoqP36ZjHFT4iLdYamyCFhyj1jqD6BIdiZ5pBlyafDJrFRV76XIXNxwRqbHpSw40o1vHzYi4vGpmREnhnHVw==}
 
   allure-js-commons@2.15.1:
     resolution: {integrity: sha512-5V/VINplbu0APnfSZOkYpKOzucO36Q2EtTD1kqjWjl7n6tj7Hh+IHCZsH3Vpk/LXRDfj9RuXugBBvwYKV5YMJw==}
@@ -16960,8 +16957,8 @@ packages:
       bunyan:
         optional: true
 
-  bunyamin@1.6.2:
-    resolution: {integrity: sha512-qU250X23tV8n1vh/M94nZfAA8S960N93eZKILY2yvYr8Q+dcPHB+jK9/BHmTcaAHsIsdcVf8vCVznb4zUCg0fw==}
+  bunyamin@1.6.3:
+    resolution: {integrity: sha512-m1hAijFhu8pFiidsVc0XEDic46uxPK+mKNLqkb5mluNx0nTolNzx/DjwMqHChQWCgfOLMjKYJJ2uPTQLE6t4Ng==}
     engines: {node: '>=14.18.2'}
     peerDependencies:
       '@types/bunyan': ^1.8.8
@@ -18624,8 +18621,11 @@ packages:
       detox: 20.14.2-smoke.0 || >20.14.5
       jest-allure2-reporter: ^2.0.0-beta.15
 
-  detox@20.23.0:
-    resolution: {integrity: sha512-jIZzO/gWEWDgq+lKcbwSiBJG2C9m6I8eDsuIxeyUbK4Di9UXZRhBCnVnp8hke6mUXkAe5TjzwnTCx7hD55f9pQ==}
+  detox-copilot@0.0.0:
+    resolution: {integrity: sha512-BasCw/JXlplL1UZfe19xJYT0i0JU4tdGPWutsmybGy6166Jvj2ryikbgoE1ls44F+41p9Y0Yei0cdBC7KawXeQ==}
+
+  detox@20.26.2:
+    resolution: {integrity: sha512-pJU8WHD7GuoGlCuDzZxCD784mQfOO/ihRxe2/EebnesniWnV6FOwbC+32J1kGivhAdyvvPawfMQ7PoD4FwkxfA==}
     engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
@@ -20155,6 +20155,9 @@ packages:
   fast-stable-stringify@1.0.0:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
 
+  fast-uri@3.0.2:
+    resolution: {integrity: sha512-GR6f0hD7XXyNJa25Tb9BuIdN0tdr+0BMi6/CJPH3wJO1JjNG3n/VsSw38AwRdKZABm8lGbPfakLRkYzx2V9row==}
+
   fast-url-parser@1.1.3:
     resolution: {integrity: sha512-5jOCVXADYNuRkKFzNJ0dCCewsZiYo0dz8QNYljkOpFC6r2U4OBmKtvm/Tsuh4w1YYdDqDb31a8TVhBJ2OJKdqQ==}
 
@@ -20233,10 +20236,6 @@ packages:
 
   file-system-cache@2.3.0:
     resolution: {integrity: sha512-l4DMNdsIPsVnKrgEXbJwDJsA5mB8rGwHYERMgqQx/xAUtChPJMre1bXBzDEqqVbWv9AIbFezXMxeEkZDSrXUOQ==}
-
-  file-type@7.7.1:
-    resolution: {integrity: sha512-bTrKkzzZI6wH+NXhyD3SOXtb2zXTw2SbwI2RxUlRcXVsnN7jNL5hJzVQLYv7FOQhxFkK4XWdAflEaWFpaLLWpQ==}
-    engines: {node: '>=4'}
 
   file-uri-to-path@1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
@@ -20514,9 +20513,6 @@ packages:
 
   fs-extra@4.0.3:
     resolution: {integrity: sha512-q6rbdDd1o2mAnQreO7YADIxf/Whx4AHBiRf6d+/cVT8h44ss+lHgxf1FemcqDnQt9X3ct4McHr+JMGlYSsK7Cg==}
-
-  fs-extra@6.0.1:
-    resolution: {integrity: sha512-GnyIkKhhzXZUWFCaJzvyDLEEgDkPfb4/TPvJCJVuS8MWZgoSsErf++QpiAlDnKFcqhRlm+tIOcencCjyJE6ZCA==}
 
   fs-extra@7.0.1:
     resolution: {integrity: sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==}
@@ -21925,8 +21921,8 @@ packages:
     engines: {node: '>=8'}
     hasBin: true
 
-  jest-allure2-reporter@2.0.0-beta.22:
-    resolution: {integrity: sha512-JqHPsikbHGIQ+Y7aTJ4B76Mdz9P6aYX9R1WOzSFCTV+y5mxF8eqZap1GeHcuw2kWdo3OyiI8aS75ADpmJYr5pw==}
+  jest-allure2-reporter@2.0.0-beta.25:
+    resolution: {integrity: sha512-SKAWiukVjptF2AIVPPyfpJNH651TFs0xRX5V71S2Z7TGBJZDBdY0Wm875PLNLb7l9WsX6N2veMNYOThOaOkg3Q==}
     engines: {node: '>=16.20.0'}
     peerDependencies:
       jest: '>=27.2.5'
@@ -22511,9 +22507,6 @@ packages:
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
-
-  js2xmlparser@3.0.0:
-    resolution: {integrity: sha512-CSOkdn0/GhRFwxnipmhXfqJ+FG6+wkWBi46kKSsPx6+j65176ZiQcrCYpg6K8x3iLbO4k3zScBnZ7I/L80dAtw==}
 
   js2xmlparser@4.0.2:
     resolution: {integrity: sha512-6n4D8gLlLf1n5mNLQPRfViYzu9RATblzPEtm1SthMX1Pjao0r9YI9nw7ZIfRxQMERS87mcswrg+r/OYrPRX6jA==}
@@ -24174,6 +24167,9 @@ packages:
 
   nan@2.19.0:
     resolution: {integrity: sha512-nO1xXxfh/RWNxfd/XPfbIfFk5vgLsAxUR9y5O0cHMJu/AW9U95JLXqthYHjEp+8gQ5p96K9jUp8nbVOxCdRbtw==}
+
+  nan@2.20.0:
+    resolution: {integrity: sha512-bk3gXBZDGILuuo/6sKtr0DQmSThYHLtNCdSdXk9YkxD/jK6X2vmCyyXBBxyqZ4XcnzTyYEAThfX3DCEnLf6igw==}
 
   nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
@@ -28922,8 +28918,8 @@ packages:
     engines: {node: '>=0.8.0'}
     hasBin: true
 
-  uglify-js@3.18.0:
-    resolution: {integrity: sha512-SyVVbcNBCk0dzr9XL/R/ySrmYf0s372K6/hFklzgcp2lBFyXtw4I7BOdDjlLhE1aVqaI/SHWXWmYdlZxuyF38A==}
+  uglify-js@3.19.3:
+    resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
     engines: {node: '>=0.8.0'}
     hasBin: true
 
@@ -30218,9 +30214,6 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
-
-  xmlcreate@1.0.2:
-    resolution: {integrity: sha512-Mbe56Dvj00onbnSo9J0qj/XlY5bfN9KidsOnpd5tRCsR3ekB3hyyNU9fGrTdqNT5ZNvv4BsA2TcQlignsZyVcw==}
 
   xmlcreate@2.0.4:
     resolution: {integrity: sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==}
@@ -33195,7 +33188,7 @@ snapshots:
   '@commitlint/config-validator@17.8.1':
     dependencies:
       '@commitlint/types': 17.8.1
-      ajv: 8.16.0
+      ajv: 8.17.1
 
   '@commitlint/ensure@17.8.1':
     dependencies:
@@ -37196,7 +37189,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.6.3
+      semver: 7.5.4
 
   '@npmcli/move-file@1.1.2':
     dependencies:
@@ -45573,6 +45566,13 @@ snapshots:
       require-from-string: 2.0.2
       uri-js: 4.4.1
 
+  ajv@8.17.1:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-uri: 3.0.2
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+
   algo-msgpack-with-bigint@2.1.1: {}
 
   algosdk@1.13.1:
@@ -45591,15 +45591,6 @@ snapshots:
       - supports-color
 
   allure-commandline@2.28.0: {}
-
-  allure-js-commons@1.3.2:
-    dependencies:
-      file-type: 7.7.1
-      fs-extra: 6.0.1
-      js2xmlparser: 3.0.0
-      mime: 2.6.0
-      object-assign: 4.1.1
-      uuid: 3.4.0
 
   allure-js-commons@2.15.1:
     dependencies:
@@ -46995,7 +46986,7 @@ snapshots:
     optionalDependencies:
       bunyan: 2.0.5
 
-  bunyamin@1.6.2:
+  bunyamin@1.6.3:
     dependencies:
       '@flatten-js/interval-tree': 1.1.3
       multi-sort-stream: 1.0.4
@@ -48875,22 +48866,25 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  detox-allure2-adapter@1.0.0-alpha.12(detox@20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0-beta.22(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.12(detox@20.26.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0-beta.25(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
-      detox: 20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
-      jest-allure2-reporter: 2.0.0-beta.22(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+      detox: 20.26.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+      jest-allure2-reporter: 2.0.0-beta.25(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       tslib: 2.6.2
 
-  detox@20.23.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
+  detox-copilot@0.0.0: {}
+
+  detox@20.26.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
       '@jest/reporters': 29.7.0
-      ajv: 8.16.0
+      ajv: 8.17.1
       bunyan: 1.8.15
       bunyan-debug-stream: 3.1.0(bunyan@1.8.15)
       caf: 15.0.1
       chalk: 4.1.2
       child-process-promise: 2.2.1
+      detox-copilot: 0.0.0
       execa: 5.1.1
       find-up: 5.0.0
       fs-extra: 11.2.0
@@ -49183,7 +49177,7 @@ snapshots:
 
   dtrace-provider@0.8.8:
     dependencies:
-      nan: 2.19.0
+      nan: 2.20.0
     optional: true
 
   duplexer2@0.1.4:
@@ -51022,6 +51016,8 @@ snapshots:
 
   fast-stable-stringify@1.0.0: {}
 
+  fast-uri@3.0.2: {}
+
   fast-url-parser@1.1.3:
     dependencies:
       punycode: 1.4.1
@@ -51120,8 +51116,6 @@ snapshots:
     dependencies:
       fs-extra: 11.1.1
       ramda: 0.29.0
-
-  file-type@7.7.1: {}
 
   file-uri-to-path@1.0.0: {}
 
@@ -51487,12 +51481,6 @@ snapshots:
       universalify: 2.0.1
 
   fs-extra@4.0.3:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 4.0.0
-      universalify: 0.1.2
-
-  fs-extra@6.0.1:
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 4.0.0
@@ -51902,7 +51890,7 @@ snapshots:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.18.0
+      uglify-js: 3.19.3
 
   har-schema@2.0.0: {}
 
@@ -53161,9 +53149,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  jest-allure2-reporter@2.0.0-beta.22(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
+  jest-allure2-reporter@2.0.0-beta.25(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
-      bunyamin: 1.6.2
+      bunyamin: 1.6.3
       ci-info: 3.9.0
       handlebars: 4.7.8
       import-from: 4.0.0
@@ -55089,10 +55077,6 @@ snapshots:
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
-
-  js2xmlparser@3.0.0:
-    dependencies:
-      xmlcreate: 1.0.2
 
   js2xmlparser@4.0.2:
     dependencies:
@@ -57644,6 +57628,9 @@ snapshots:
       thenify-all: 1.6.0
 
   nan@2.19.0: {}
+
+  nan@2.20.0:
+    optional: true
 
   nano-json-stream-parser@0.1.2: {}
 
@@ -64214,7 +64201,7 @@ snapshots:
 
   uglify-js@3.17.4: {}
 
-  uglify-js@3.18.0:
+  uglify-js@3.19.3:
     optional: true
 
   uint8array-extras@0.3.0: {}
@@ -66322,8 +66309,6 @@ snapshots:
   xmlbuilder@15.1.1: {}
 
   xmlchars@2.2.0: {}
-
-  xmlcreate@1.0.2: {}
 
   xmlcreate@2.0.4: {}
 
