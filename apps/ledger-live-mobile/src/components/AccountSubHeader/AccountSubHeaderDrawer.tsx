@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -21,20 +21,20 @@ type TeamLinkProps = {
 };
 
 const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
-  const { t } = useTranslation();
-
   const onOpenTeam = useCallback(() => {
     Linking.openURL(teamLink);
   }, [teamLink]);
 
   return (
-    <>
-      <Flex flexDirection="row" alignItems="center">
-        <Text>{t("account.subHeader.drawer.descriptionLink.integration")} </Text>
-        <ExternalLink type="color" text={team} onPress={onOpenTeam} />
-      </Flex>
-      <Text>{t("account.subHeader.drawer.descriptionLink.collab")}</Text>
-    </>
+    <Text textAlign={"center"}>
+      <Trans i18nKey="account.subHeader.drawer.description3Link">
+        This integration has been carried out by
+        <Flex style={{ transform: "translateY(5px)" }}>
+          <ExternalLink type="color" text={team} onPress={onOpenTeam} />
+        </Flex>
+        in collaboration with Ledger
+      </Trans>
+    </Text>
   );
 };
 

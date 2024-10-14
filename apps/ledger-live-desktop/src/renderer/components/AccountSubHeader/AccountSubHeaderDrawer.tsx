@@ -42,7 +42,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
   }, [teamLink]);
 
   return (
-    <Trans i18nKey="account.subHeader.drawer.integratedBy">
+    <Trans i18nKey="account.subHeader.drawer.description3Link">
       This integration has been carried out by
       <Link
         verticalAlign={"bottom"}
