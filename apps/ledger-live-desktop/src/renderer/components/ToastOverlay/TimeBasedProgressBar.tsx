@@ -1,26 +1,19 @@
 import React, { useEffect } from "react";
-import { animated, useTransition } from "react-spring";
+import { animated, useSpring } from "react-spring";
+
 type Props = {
   duration: number;
   onComplete?: () => void;
   nonce?: number;
 };
+
 export function TimeBasedProgressBar({ duration, onComplete, nonce = 1 }: Props) {
-  const config = {
-    duration,
-    tension: 125,
-    friction: 20,
-    precision: 0.1,
-  };
-  const transitions = useTransition(1, null, {
-    from: {
-      width: "0%",
-    },
-    enter: {
-      width: "100%",
-    },
-    config,
+  const style = useSpring({
+    from: { width: "0%" },
+    to: { width: "100%" },
+    config: { duration, friction: 0, tension: 125, precision: 0.1 },
   });
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (nonce && onComplete) onComplete();
@@ -29,6 +22,7 @@ export function TimeBasedProgressBar({ duration, onComplete, nonce = 1 }: Props)
       clearTimeout(timeout);
     };
   }, [duration, onComplete, nonce]);
+
   return (
     <div
       style={{
@@ -36,18 +30,14 @@ export function TimeBasedProgressBar({ duration, onComplete, nonce = 1 }: Props)
         height: 5,
       }}
     >
-      {transitions.map(({ key, props }) => (
-        <animated.div
-          key={key}
-          style={{
-            ...props,
-            height: 5,
-            width: "100%",
-            transformOrigin: "left center",
-            background: "#8a80db", // "#00000022",
-          }}
-        />
-      ))}
+      <animated.div
+        style={{
+          ...style,
+          height: 5,
+          transformOrigin: "left center",
+          background: "#8a80db",
+        }}
+      />
     </div>
   );
 }
