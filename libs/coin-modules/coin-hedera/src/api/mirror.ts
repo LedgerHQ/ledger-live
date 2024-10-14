@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { encodeOperationId } from "../../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getAccountBalance } from "./network";
 import { base64ToUrlSafeBase64 } from "../utils";
 
