@@ -32,7 +32,7 @@ jobs:
     name: "Test Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name == github.repository}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@fix/test-e2e-flaky
     secrets: inherit
 
   # LLM
