@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import { Link } from "@ledgerhq/react-ui";
@@ -37,18 +37,16 @@ type TeamLinkProps = {
 };
 
 const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
-  const { t } = useTranslation();
-
   const onOpenTeam = useCallback(() => {
     openURL(teamLink);
   }, [teamLink]);
 
   return (
-    <>
-      <Description>{t("account.subHeader.drawer.descriptionLink.integration")}</Description>&nbsp;
+    <Trans i18nKey="account.subHeader.drawer.integratedBy">
+      This integration has been carried out by
       <Link
         verticalAlign={"bottom"}
-        onClick={() => onOpenTeam}
+        onClick={onOpenTeam}
         justifyContent="center"
         color={"palette.primary.main"}
       >
@@ -56,9 +54,9 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
         <ExternalLinkIconContainer>
           <IconExternalLink size={12} />
         </ExternalLinkIconContainer>
-      </Link>&nbsp;
-      <Description>{t("account.subHeader.drawer.descriptionLink.collab")}</Description>
-    </>
+      </Link>
+      in collaboration with Ledger
+    </Trans>
   );
 };
 
