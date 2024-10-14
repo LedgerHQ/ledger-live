@@ -45,7 +45,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
 
   return (
     <>
-      <Description>{t("account.subHeader.drawer.descriptionLink.integration")}</Description>{" "}
+      <Description>{t("account.subHeader.drawer.descriptionLink.integration")}</Description>&nbsp;
       <Link
         verticalAlign={"bottom"}
         onClick={() => onOpenTeam}
@@ -56,7 +56,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
         <ExternalLinkIconContainer>
           <IconExternalLink size={12} />
         </ExternalLinkIconContainer>
-      </Link>{" "}
+      </Link>&nbsp;
       <Description>{t("account.subHeader.drawer.descriptionLink.collab")}</Description>
     </>
   );
