@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "0.0.8",
+  "version": "0.0.9-hotfix.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
