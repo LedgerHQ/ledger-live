@@ -281,7 +281,18 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           fromAccountId: string;
           SWAP_VERSION: string;
         };
-      }): Promise<any> => {
+      }): Promise<
+        | {
+            hash: string;
+            blockHeight: number | undefined;
+            blockHash: string | undefined;
+            nonce: number;
+            gasUsed: string;
+            gasPrice: string;
+            value: string;
+          }
+        | {}
+      > => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
