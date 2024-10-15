@@ -14,7 +14,7 @@ import { celoKit } from "./api/sdk";
 import SemVer from "semver";
 
 export default class Celo extends Eth {
-  private config?: { version: string };
+  private config?: Promise<{ version: string }>;
 
   // celo-spender-app below version 1.2.3 used a different private key to validate erc20 token info.
   // this legacy version of the app also only supported celo type 0 transactions.
@@ -62,9 +62,9 @@ export default class Celo extends Eth {
 
   private async isAppModern(): Promise<boolean> {
     if (!this.config) {
-      this.config = await this.getAppConfiguration();
+      this.config = this.getAppConfiguration();
     }
 
-    return SemVer.satisfies(this.config.version, ">= 1.2.3");
+    return SemVer.satisfies((await this.config).version, ">= 1.2.3");
   }
 }
