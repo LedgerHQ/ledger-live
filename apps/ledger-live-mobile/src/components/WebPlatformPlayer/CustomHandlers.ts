@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { handlers as acreHandlers } from "@ledgerhq/live-common/wallet-api/ACRE/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/ACRE/tracking";
@@ -73,33 +72,16 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
               params: {
                 currentNavigation: ScreenName.SignTransactionSummary,
                 nextNavigation: ScreenName.SignTransactionSelectDevice,
-                transaction: tx as Transaction,
+                transaction: tx,
                 accountId: account.id,
                 parentId: parentAccount ? parentAccount.id : undefined,
                 appName: options?.hwAppId,
                 dependencies: options?.dependencies,
                 isACRE: true,
-                onSuccess: ({
-                  signedOperation,
-                  transactionSignError,
-                }: {
-                  signedOperation: SignedOperation;
-                  transactionSignError: Error;
-                }) => {
-                  if (transactionSignError) {
-                    onError(transactionSignError);
-                  } else {
-                    onSuccess(signedOperation);
-
-                    const n =
-                      navigation.getParent<
-                        StackNavigatorNavigation<BaseNavigatorStackParamList>
-                      >() || navigation;
-                    n.pop();
-                  }
-                },
+                onSuccess,
                 onError,
               },
+              onError,
             });
           },
         },
