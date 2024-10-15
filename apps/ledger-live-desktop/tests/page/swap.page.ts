@@ -132,11 +132,6 @@ export class SwapPage extends AppPage {
   @step("Select exchange quote with provider $1")
   async selectQuote(electronApp: ElectronApplication, providerName: string, rate: string) {
     const [, webview] = electronApp.windows();
-    /*const elements = webview.locator(`[data-testid="${this.quoteSelector(providerName)}"]`);
-    for (let i = 0; i < await elements.count(); i++) {
-      await expect(elements.nth(i)).toBeEnabled();
-    }
-    await elements.first().click();*/
     await expect(webview.getByTestId(this.quoteSelector(providerName, rate))).toBeEnabled();
     await webview.getByTestId(this.quoteSelector(providerName, rate)).click();
   }
