@@ -11,8 +11,10 @@ import type {
 } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { isAccountEmpty } from "../../account";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { acceptTransaction } from "./speculos-deviceActions";
+import BigNumber from "bignumber.js";
+import { AccountLike } from "@ledgerhq/types-live";
 
 const currency = getCryptoCurrencyById("hedera");
 const memoTestMessage = "This is a test memo.";
@@ -20,7 +22,7 @@ const memoTestMessage = "This is a test memo.";
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
 // balance for such a recipient
-const checkSendableToEmptyAccount = (amount, recipient) => {
+const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) => {
   const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
     invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");

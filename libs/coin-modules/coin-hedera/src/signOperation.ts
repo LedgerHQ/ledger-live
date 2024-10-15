@@ -1,19 +1,18 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { withDevice } from "../../hw/deviceAccess";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
-import Hedera from "./hw-app-hedera";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildUnsignedTransaction } from "./api/network";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { HederaSignatureSdk, HederaSigner } from "./signer";
 
-export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
-  account,
-  transaction,
-  deviceId,
-}) =>
-  withDevice(deviceId)(transport => {
-    return new Observable(o => {
+export const buildSignOperation =
+(
+  signerContext: SignerContext<HederaSigner>,
+): AccountBridge<Transaction, Account>["signOperation"] => 
+  ({account, transaction, deviceId }) =>
+    new Observable(o => {
       void (async function () {
         try {
           o.next({
@@ -27,9 +26,16 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
 
           const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
-          await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
-            return await new Hedera(transport).signTransaction(bodyBytes);
-          });
+          const res  = (await signerContext(
+            deviceId,
+            async signer => {
+              await hederaTransaction.signWith(accountPublicKey, 
+              async bodyBytes => {
+                return await signer.signTransaction(bodyBytes);
+              })
+              return hederaTransaction.toBytes();
+            },
+          )) as HederaSignatureSdk;
 
           o.next({
             type: "device-signature-granted",
@@ -45,7 +51,7 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
             signedOperation: {
               operation,
               // NOTE: this needs to match the inverse operation in js-broadcast
-              signature: Buffer.from(hederaTransaction.toBytes()).toString("base64"),
+              signature: Buffer.from(res).toString("base64"),
             },
           });
 
@@ -55,6 +61,3 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
         }
       })();
     });
-  });
-
-export default signOperation;

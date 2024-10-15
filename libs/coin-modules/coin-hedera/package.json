@@ -54,6 +54,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
     "@hashgraph/sdk": "2.14.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

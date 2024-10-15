@@ -15,12 +15,12 @@ export type NetworkInfoRaw = {
 
 export type Transaction = TransactionCommon & {
   family: "hedera";
-  memo?: string;
+  memo?: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
-  memo?: string;
+  memo?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

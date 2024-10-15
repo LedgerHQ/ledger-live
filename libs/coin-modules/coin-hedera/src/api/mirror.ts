@@ -9,7 +9,7 @@ import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
-const fetch = path => {
+const fetch = (path: string) => {
   return network({
     method: "GET",
     url: `${getMirrorApiUrl()}${path}`,

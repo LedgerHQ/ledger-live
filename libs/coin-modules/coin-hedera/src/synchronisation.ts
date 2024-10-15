@@ -1,16 +1,13 @@
 import invariant from "invariant";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { getDerivationScheme, Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
-import type { GetAccountShape, IterateResultBuilder } from "../../bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import type { Result } from "../../hw/getAddress/types";
-import { encodeAccountId } from "../../account";
-
-import { getAccountsForPublicKey, getOperationsForAccount } from "../../../../coin-modules/coin-hedera/api/mirror";
-import { getAccountBalance } from "../../../../coin-modules/coin-hedera/api/network";
 import type { Account } from "@ledgerhq/types-live";
+import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
+import { GetAccountShape, IterateResultBuilder, makeScanAccounts, mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { getAccountBalance } from "./api/network";
 
-const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>> => {
+export const getAccountShape: GetAccountShape<Account> = async (info: any): Promise<Partial<Account>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
   invariant(address, "an hedera address is expected");
@@ -52,7 +49,7 @@ const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>>
   };
 };
 
-const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
+export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
   const accounts = await getAccountsForPublicKey(rootResult.publicKey);
   const addresses = accounts.map(a => a.accountId.toString());
 
@@ -74,9 +71,9 @@ const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) 
   };
 };
 
-export const scanAccounts = makeScanAccounts({
-  getAccountShape,
-  buildIterateResult,
-});
+// export const scanAccounts = makeScanAccounts({
+//   getAccountShape,
+//   buildIterateResult,
+// });
 
 // export const sync = makeSync({ getAccountShape });
