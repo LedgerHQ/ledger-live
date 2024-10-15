@@ -12,6 +12,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "tests/enum/AppInfos";
+import { runCliCommand } from "tests/utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -28,6 +29,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
+  cliCommands: string[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -46,6 +48,7 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
+  cliCommands: [],
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -62,6 +65,7 @@ export const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     await use(fullFilePath);
   },
+
   electronApp: async (
     {
       lang,
@@ -73,6 +77,7 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosApp,
+      cliCommands,
     },
     use,
     testInfo,
@@ -83,29 +88,39 @@ export const test = base.extend<TestFixtures>({
     const fileUserData = userdataOriginalFile
       ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
+
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     let device: any | undefined;
 
-    if (IS_NOT_MOCK && speculosApp) {
-      // Ensure the portCounter stays within the valid port range
-      if (portCounter > MAX_PORT) {
-        portCounter = BASE_PORT;
-      }
-      const speculosPort = portCounter++;
-      setEnv(
-        "SPECULOS_PID_OFFSET",
-        (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-      );
-      device = await startSpeculos(
-        testInfo.title.replace(/ /g, "_"),
-        specs[speculosApp.name.replace(/ /g, "_")],
-      );
-      setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
-    }
-
     try {
+      if (IS_NOT_MOCK && speculosApp) {
+        // Ensure the portCounter stays within the valid port range
+        if (portCounter > MAX_PORT) {
+          portCounter = BASE_PORT;
+        }
+        const speculosPort = portCounter++;
+        setEnv(
+          "SPECULOS_PID_OFFSET",
+          (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        );
+        device = await startSpeculos(
+          testInfo.title.replace(/ /g, "_"),
+          specs[speculosApp.name.replace(/ /g, "_")],
+        );
+        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+        process.env.SPECULOS_API_PORT = device?.ports.apiPort;
+        process.env.MOCK = "";
+
+        if (cliCommands) {
+          for (const command of cliCommands) {
+            const fullCommand = `${command} --appjson ${userdataDestinationPath}/app.json`;
+            await runCliCommand(fullCommand);
+          }
+        }
+      }
+
       // default environment variables
       env = Object.assign(
         {

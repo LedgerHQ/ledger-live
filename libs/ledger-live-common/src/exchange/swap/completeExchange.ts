@@ -115,7 +115,7 @@ const completeExchange = (
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";
-          await exchange.checkPayoutAddress(
+          await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,

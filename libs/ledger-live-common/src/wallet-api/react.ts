@@ -26,7 +26,7 @@ import {
 } from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
-  bitcoinFamillyAccountGetXPubLogic,
+  bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
   startExchangeLogic,
   completeExchangeLogic,
@@ -35,6 +35,8 @@ import {
   receiveOnAccountLogic,
   signMessageLogic,
   signTransactionLogic,
+  bitcoinFamilyAccountGetAddressLogic,
+  bitcoinFamilyAccountGetPublicKeyLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -701,8 +703,28 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
+    server.setHandler("bitcoin.getAddress", ({ accountId, derivationPath }) => {
+      return bitcoinFamilyAccountGetAddressLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("bitcoin.getPublicKey", ({ accountId, derivationPath }) => {
+      return bitcoinFamilyAccountGetPublicKeyLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {
-      return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
+      return bitcoinFamilyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
 

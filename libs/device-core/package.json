@@ -18,14 +18,14 @@
   "types": "lib/index.d.ts",
   "module": "lib-es/index.js",
   "dependencies": {
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "sha.js": "^2.4.11",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "sha.js": "^2.4.11"
   },
   "devDependencies": {
     "@testing-library/react": "14",

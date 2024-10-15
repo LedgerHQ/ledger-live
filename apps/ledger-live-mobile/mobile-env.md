@@ -23,7 +23,7 @@ In other cases, these env files will be used:
 | target | iOS | Android |
 |--|--|--|
 |release|com.ledger.live|com.ledger.live|
-|prerelease|com.ledger.live|com.ledger.live|
+|prerelease|com.ledger.live.prerelease|com.ledger.live|
 |nightly|com.ledger.live.nightly|com.ledger.live|
 |staging|com.ledger.live.dev|com.ledger.live.dev|
 # Sentry projects

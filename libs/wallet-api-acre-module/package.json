@@ -1,0 +1,42 @@
+{
+  "name": "@ledgerhq/wallet-api-acre-module",
+  "version": "0.0.0",
+  "description": "Wallet-API ACRE Module for Ledger Live",
+  "license": "MIT",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/wallet-api-acre-module",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "/lib",
+    "/lib-es"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es && node scripts/createModulePackage.mjs",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix"
+  },
+  "dependencies": {
+    "@ledgerhq/wallet-api-client": "^1.6.0",
+    "@ledgerhq/wallet-api-core": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5"
+  }
+}

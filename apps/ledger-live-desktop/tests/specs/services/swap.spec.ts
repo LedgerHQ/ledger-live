@@ -6,7 +6,7 @@ import test from "../../fixtures/mockFixtures";
 import { DeviceAction } from "../../models/DeviceAction";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { SwapPage } from "../../page/swap.page";
 import {
   getBitcoinToDogecoinRatesMock,
