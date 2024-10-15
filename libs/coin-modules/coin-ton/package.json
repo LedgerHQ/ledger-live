@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.3.17-hotfix.0",
+  "version": "0.3.17",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",

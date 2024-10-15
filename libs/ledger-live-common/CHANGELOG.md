@@ -1,5 +1,37 @@
 ## 34.5.0-next.4
 
+## 34.11.1
+
+### Patch Changes
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - add ptxSwapCoreExperiment flag
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - hotfix: [swap] add ptxSwapCoreExperiment flag
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/coin-algorand@0.5.9
+  - @ledgerhq/coin-bitcoin@0.8.4
+  - @ledgerhq/coin-cardano@0.2.4
+  - @ledgerhq/coin-cosmos@0.1.5
+  - @ledgerhq/coin-elrond@0.1.4
+  - @ledgerhq/coin-evm@2.4.1
+  - @ledgerhq/coin-icon@0.4.6
+  - @ledgerhq/coin-near@0.5.9
+  - @ledgerhq/coin-polkadot@1.3.2
+  - @ledgerhq/coin-solana@0.8.1
+  - @ledgerhq/coin-stellar@0.3.4
+  - @ledgerhq/coin-tezos@0.6.5
+  - @ledgerhq/coin-ton@0.3.17
+  - @ledgerhq/coin-tron@0.0.9
+  - @ledgerhq/coin-xrp@0.5.5
+  - @ledgerhq/device-core@0.4.3
+  - @ledgerhq/hw-app-eth@6.40.1
+  - @ledgerhq/live-countervalues@0.2.9
+  - @ledgerhq/live-countervalues-react@0.2.9
+  - @ledgerhq/live-nft@0.4.9
+  - @ledgerhq/live-wallet@0.7.1
+
 ## 34.11.1-hotfix.0
 
 ### Patch Changes
