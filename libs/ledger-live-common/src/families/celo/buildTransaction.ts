@@ -125,7 +125,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     ...celoTransaction,
     chainId: await kit.connection.chainId(),
     nonce: await kit.connection.nonce(account.freshAddress),
-    gasPrice: await kit.connection.gasPrice(),
   };
 
   return tx;
