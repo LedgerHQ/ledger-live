@@ -1,5 +1,37 @@
 # @ledgerhq/live-wallet
 
+## 0.5.0
+
+### Minor Changes
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- [#7945](https://github.com/LedgerHQ/ledger-live/pull/7945) [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215) Thanks [@thesan](https://github.com/thesan)! - Fix type errors in `@ledgerhq/ledger-key-ring-protocol` tests
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7)]:
+  - @ledgerhq/live-env@2.4.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0
+  - @ledgerhq/live-network@2.0.2
+  - @ledgerhq/speculos-transport@0.1.7
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- [#7945](https://github.com/LedgerHQ/ledger-live/pull/7945) [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215) Thanks [@thesan](https://github.com/thesan)! - Fix type errors in `@ledgerhq/ledger-key-ring-protocol` tests
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7)]:
+  - @ledgerhq/live-env@2.4.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0-next.0
+  - @ledgerhq/live-network@2.0.2-next.0
+  - @ledgerhq/speculos-transport@0.1.7-next.0
+
 ## 0.4.1
 
 ### Patch Changes

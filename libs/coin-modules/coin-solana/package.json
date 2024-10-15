@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.7.7",
+  "version": "0.8.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -46,15 +46,15 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/spl-token": "0.3.9",
-    "@solana/web3.js": "1.91.6",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "1.77.3",
     "bignumber.js": "^9.1.2",
     "bs58": "^4.0.1",
     "expect": "^27.4.6",
@@ -65,12 +65,12 @@
     "superstruct": "0.14.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/bs58": "^4.0.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/object-hash": "^2.1.0",
-    "@faker-js/faker": "^8.4.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },

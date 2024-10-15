@@ -399,6 +399,19 @@ export function verifyProvider(provider: string, text: string[]): boolean {
   return providerDevice.includes(provider);
 }
 
+export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {
+  let amountDevice = text[1];
+  switch (currency) {
+    case "Ethereum":
+      amountDevice = text[3];
+      break;
+    case "Tether USD":
+      amountDevice = text[3];
+      break;
+  }
+  return amountDevice.includes(amount);
+}
+
 export async function takeScreenshot() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
   try {

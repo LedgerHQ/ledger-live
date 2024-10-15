@@ -13,11 +13,13 @@ import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type {
   Account,
+  AccountBridge,
   AccountLike,
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { bridge as ACREBridge } from "../../families/bitcoin/ACRESetup";
 
 type State = {
   signedOperation: SignedOperation | null | undefined;
@@ -39,6 +41,7 @@ type TransactionRequest = {
   requireLatestFirmware?: boolean;
   manifestId?: string;
   manifestName?: string;
+  isACRE?: boolean;
 };
 type TransactionResult =
   | {
@@ -102,10 +105,10 @@ const reducer = (state: State, e: Event): State => {
 
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
-  }
 
-  // Code may never reach here but we want to prevent runtime errors
-  return state;
+    default:
+      return state;
+  }
 };
 
 export const createAction = (
@@ -115,8 +118,15 @@ export const createAction = (
     reduxDevice: Device | null | undefined,
     txRequest: TransactionRequest,
   ): TransactionState => {
-    const { transaction, appName, dependencies, requireLatestFirmware, manifestId, manifestName } =
-      txRequest;
+    const {
+      transaction,
+      appName,
+      dependencies,
+      requireLatestFirmware,
+      manifestId,
+      manifestName,
+      isACRE,
+    } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,
@@ -132,7 +142,10 @@ export const createAction = (
         return;
       }
 
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = isACRE
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (ACREBridge.accountBridge as unknown as AccountBridge<any>)
+        : getAccountBridge(mainAccount);
       const sub = bridge
         .signOperation({
           account: mainAccount,
@@ -153,7 +166,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error]);
+    }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
     return {
       ...appState,
       ...state,

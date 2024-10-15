@@ -156,4 +156,36 @@ export class SpeculosPage extends AppPage {
         throw new Error(`Unsupported currency: ${currencyName}`);
     }
   }
+
+  verifySwapGetAmountScreen(swap: Swap, getAmountScreen: string[]) {
+    if (swap.accountToCredit.currency.name === "Solana") {
+      expect(
+        verifyAmount(
+          `${extractNumberFromString(swap.amountToReceive)} ${swap.accountToCredit.currency.ticker}`,
+          getAmountScreen,
+        ),
+      ).toBeTruthy();
+    } else {
+      expect(
+        verifyAmount(
+          `${swap.accountToCredit.currency.ticker} ${extractNumberFromString(swap.amountToReceive)}`,
+          getAmountScreen,
+        ),
+      ).toBeTruthy();
+    }
+  }
+
+  verifySwapFeesAmountScreen(swap: Swap, feesAmountScreen: string[]) {
+    let speculosFeesAmount = "";
+    if (swap.feesAmount) {
+      //max number of chars on the screen
+      speculosFeesAmount =
+        extractNumberFromString(swap.feesAmount).length < 18
+          ? extractNumberFromString(swap.feesAmount)
+          : extractNumberFromString(swap.feesAmount).substring(0, 17);
+    }
+    expect(
+      verifySwapFeesAmount(swap.accountToDebit.currency.name, speculosFeesAmount, feesAmountScreen),
+    ).toBeTruthy();
+  }
 }
