@@ -3,12 +3,12 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { rlpEncodedTx, encodeTransaction } from "@celo/wallet-base";
-import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
+
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./buildTransaction";
-import Eth from "@ledgerhq/hw-app-eth";
+import Celo from "./celo";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -29,21 +29,17 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           }
 
           // TODO need to check legacy token info too, based on what we found in celo dev
-          // tooling tepo dont legacy prefix token data when providing to the app
+          // tooling repo dont legacy prefix token data when providing to the app
 
-          const eth = new Eth(transport);
+          const celo = new Celo(transport);
           const unsignedTransaction = await buildTransaction(account, transaction);
           const { chainId, to } = unsignedTransaction;
+          await celo.verifyTokenInfo(to!, chainId!);
           const rlpEncodedTransaction = rlpEncodedTx(unsignedTransaction);
-
-          const tokenInfo = tokenInfoByAddressAndChainId(to!, chainId!);
-          if (tokenInfo) {
-            await eth.provideERC20TokenInformation(`0x${tokenInfo.data.toString("hex")}`);
-          }
 
           o.next({ type: "device-signature-requested" });
 
-          const response = await eth.signTransaction(
+          const response = await celo.signTransaction(
             account.freshAddressPath,
             trimLeading0x(rlpEncodedTransaction.rlpEncode),
           );
