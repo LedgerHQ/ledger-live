@@ -9,7 +9,6 @@ import Transport from "@ledgerhq/hw-transport";
 import Hedera from "@ledgerhq/hw-app-hedera";
 import type { Bridge } from "@ledgerhq/types-live";
 import { hederaConfig } from "@ledgerhq/coin-hedera";
-import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
 import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
@@ -30,7 +29,7 @@ const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
   getCurrencyConfig,
 );
 
-const resolver: Resolver = createResolver(createSigner, polkadotResolver);
+const resolver: Resolver = createResolver(createSigner, hederaResolver);
 
 const cliTools: CliTools = makeCliTools();
 

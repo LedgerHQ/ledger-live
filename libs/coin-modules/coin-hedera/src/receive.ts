@@ -1,17 +1,23 @@
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
-import { withDevice } from "../../hw/deviceAccess";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import getAddress from "../../hw/getAddress";
+import resolver from "./hw-getAddress";
 import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
+import { HederaSigner } from "./signer";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 
-export const receive: AccountBridge<Transaction>["receive"] = (account: Account, { deviceId }) =>
-  withDevice(deviceId)(transport => {
-    return new Observable(o => {
+export const receive =
+(
+  signerContext: SignerContext<HederaSigner>,
+): AccountBridge<Transaction>["receive"] => 
+  ({account, deviceId }) =>
+    new Observable(o => {
       void (async function () {
         try {
-          const r = await getAddress(transport, {
+          const getAddress = resolver(signerContext);
+          
+          const r = await getAddress(deviceId, {
             derivationMode: account.derivationMode as DerivationMode,
             currency: account.currency,
             path: account.freshAddressPath,
@@ -34,6 +40,5 @@ export const receive: AccountBridge<Transaction>["receive"] = (account: Account,
         }
       })();
     });
-  });
-
+    
 export default receive;
