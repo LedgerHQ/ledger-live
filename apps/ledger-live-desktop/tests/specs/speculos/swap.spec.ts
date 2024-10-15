@@ -18,7 +18,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2750",
+    xrayTicket: "B2CQA-2750, B2CQA-600",
   },
   {
     swap: new Swap(
@@ -29,7 +29,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2744",
+    xrayTicket: "B2CQA-2744, B2CQA-2432",
   },
   {
     swap: new Swap(
@@ -40,7 +40,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2752",
+    xrayTicket: "B2CQA-2752, B2CQA-2048",
   },
   {
     swap: new Swap(
@@ -106,7 +106,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2751",
+    xrayTicket: "B2CQA-2751, B2CQA-2212",
   },
 ];
 

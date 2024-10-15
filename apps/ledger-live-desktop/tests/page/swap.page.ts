@@ -5,7 +5,6 @@ import { ElectronApplication, expect } from "@playwright/test";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 import { Account } from "tests/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
-import { ChooseAccountDrawer } from "tests/page/drawer/choose.account.drawer";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -45,7 +44,6 @@ export class SwapPage extends AppPage {
   // Quote Components
   private quoteContainer = (providerName: string, exchangeType: string) =>
     this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
-  //private quoteSelector = (providerName: string) => `quote-container-${providerName}`;
   private quoteSelector = (providerName: string, rate: string) =>
     `quote-container-${providerName}-${rate}`;
 
