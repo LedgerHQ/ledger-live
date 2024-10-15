@@ -28,14 +28,16 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
             throw new FeeNotLoaded();
           }
 
-          // TODO need to check legacy token info too, based on what we found in celo dev
-          // tooling repo dont legacy prefix token data when providing to the app
-
           const celo = new Celo(transport);
           const unsignedTransaction = await buildTransaction(account, transaction);
           const { chainId, to } = unsignedTransaction;
-          await celo.verifyTokenInfo(to!, chainId!);
-          const rlpEncodedTransaction = rlpEncodedTx(unsignedTransaction);
+
+          await Promise.all([
+            celo.verifyTokenInfo(to!, chainId!),
+            celo.determinePrice(unsignedTransaction),
+          ]);
+
+          const rlpEncodedTransaction = await celo.rlpEncodedTxForLedger(unsignedTransaction);
 
           o.next({ type: "device-signature-requested" });
 
