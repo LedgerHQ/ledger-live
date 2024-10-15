@@ -96,9 +96,9 @@
           "overridesRemote": true
         },
         "ptxSwapLiveAppDemoThree": {
-          "enabled":true,
-          "params":{
-            "manifest_id":"swap-live-app-demo-3-ppr"
+          "enabled": true,
+          "params": {
+            "manifest_id": "swap-live-app-demo-3-ppr"
           }
         },
         "llmNewDeviceSelection": {

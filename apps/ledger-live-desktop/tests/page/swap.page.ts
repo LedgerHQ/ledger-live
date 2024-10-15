@@ -45,7 +45,9 @@ export class SwapPage extends AppPage {
   // Quote Components
   private quoteContainer = (providerName: string, exchangeType: string) =>
     this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
-  private quoteSelector = (providerName: string) => `quote-container-${providerName}`;
+  //private quoteSelector = (providerName: string) => `quote-container-${providerName}`;
+  private quoteSelector = (providerName: string, rate: string) =>
+    `quote-container-${providerName}-${rate}`;
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -56,7 +58,6 @@ export class SwapPage extends AppPage {
   readonly detailsSwapId = this.page.getByTestId("details-swap-id").first();
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private chooseAccountDrawer = new ChooseAccountDrawer(this.page);
 
   async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
@@ -129,10 +130,15 @@ export class SwapPage extends AppPage {
   }
 
   @step("Select exchange quote with provider $1")
-  async selectQuote(electronApp: ElectronApplication, providerName: string) {
+  async selectQuote(electronApp: ElectronApplication, providerName: string, rate: string) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId(this.quoteSelector(providerName))).toBeEnabled();
-    await webview.getByTestId(this.quoteSelector(providerName)).click();
+    /*const elements = webview.locator(`[data-testid="${this.quoteSelector(providerName)}"]`);
+    for (let i = 0; i < await elements.count(); i++) {
+      await expect(elements.nth(i)).toBeEnabled();
+    }
+    await elements.first().click();*/
+    await expect(webview.getByTestId(this.quoteSelector(providerName, rate))).toBeEnabled();
+    await webview.getByTestId(this.quoteSelector(providerName, rate)).click();
   }
 
   async waitForExchangeToBeAvailable() {

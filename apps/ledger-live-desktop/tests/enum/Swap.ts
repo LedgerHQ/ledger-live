@@ -9,7 +9,7 @@ export class Provider {
   static readonly THORSWAP = new Provider("thorswap", "THORSwap");
 }
 
-export enum Rates {
+export enum Rate {
   FIXED = "fixed",
   FLOAT = "float",
 }
