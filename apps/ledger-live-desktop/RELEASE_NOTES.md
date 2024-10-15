@@ -1,3 +1,7 @@
+# 2.89.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.87.1
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
