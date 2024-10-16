@@ -31,6 +31,8 @@ const PROCESS_TRANSACTION_RESPONSE = 0x06;
 const CHECK_TRANSACTION_SIGNATURE = 0x07;
 const CHECK_PAYOUT_ADDRESS = 0x08;
 const CHECK_REFUND_ADDRESS = 0x09;
+const CHECK_REFUND_ADDRESS_AND_DISPLAY = 0x09;
+const CHECK_REFUND_ADDRESS_NO_DISPLAY = 0x0c;
 const SIGN_COIN_TRANSACTION = 0x0a;
 const CHECK_ASSET_IN_AND_DISPLAY = 0x0b;
 
@@ -311,7 +313,7 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      CHECK_REFUND_ADDRESS,
+      CHECK_REFUND_ADDRESS, // or CHECK_REFUND_ADDRESS_NO_DISPLAY or CHECK_REFUND_ADDRESS_AND_DISPLAY
       this.transactionRate,
       this.transactionType,
       bufferToSend,

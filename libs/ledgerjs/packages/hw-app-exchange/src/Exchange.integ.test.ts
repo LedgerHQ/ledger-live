@@ -234,7 +234,7 @@ describe("Check SWAP until payload signature", () => {
       ),
     };
     let addressParameters = bip32asBuffer("44'/60'/0'/0/0");
-    exchange.checkPayoutAddress(configEth.config, configEth.signature, addressParameters);
+    await exchange.checkPayoutAddress(configEth.config, configEth.signature, addressParameters);
 
     const delay = (milliseconds: number) => {
       return new Promise(resolve => {
@@ -251,7 +251,7 @@ describe("Check SWAP until payload signature", () => {
       ),
     };
     addressParameters = bip32asBuffer("44'/607'/0'/0'/0'/0'");
-    exchange.checkRefundAddress(configTon.config, configTon.signature, addressParameters);
+    await exchange.checkRefundAddress(configTon.config, configTon.signature, addressParameters);
   });
 
   it("NG Sell", async () => {
