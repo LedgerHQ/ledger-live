@@ -1,0 +1,49 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "rules": {
+    "binaries": "off",
+    "classMembers": "off",
+    "dependencies": "error",
+    "devDependencies": "off",
+    "optionalPeerDependencies": "off",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "exports": "error",
+    "files": "error",
+    "nsExports": "off",
+    "nsTypes": "off",
+    "types": "warn",
+    "unlisted": "off",
+    "unresolved": "off"
+  },
+  "ignoreExportsUsedInFile": true,
+
+  "workspaces": {
+    "./apps/ledger-live-desktop": {
+      "entry": [
+        "src/index.ts",
+        "src/renderer/index.ts",
+        "src/preloader/index.ts",
+        "src/renderer/webworkers/workers/*.ts",
+        "src/webviewPreloader/dappPreloader.ts",
+        "src/webviewPreloader/index.ts"
+      ],
+      "project": ["src/**"],
+      "ignore": [
+        "src/**/__integration__/**",
+        "src/renderer/families/cardano/modals.ts",
+        "src/renderer/styles/theme.ts"
+      ],
+      "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
+      "ignoreDependencies": ["prop-types", "allure-commandline", "msw"]
+    },
+
+    "./apps/ledger-live-mobile": {
+      "entry": ["index.js"],
+      "project": ["src/**"],
+      "ignore": ["src/**/__integration__/**", "src/**/*.android.*", "src/**/*.ios.*"],
+      "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
+      "ignoreDependencies": []
+    }
+  }
+}

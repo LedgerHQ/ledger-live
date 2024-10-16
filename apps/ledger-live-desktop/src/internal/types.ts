@@ -1,18 +1,5 @@
 import { TraceContext } from "@ledgerhq/logs";
 
-export type MessageTypes =
-  | "transport:open"
-  | "transport:exchange"
-  | "transport:exchangeBulk"
-  | "transport:exchangeBulk:unsubscribe"
-  | "transport:listen"
-  | "transport:listen:unsubscribe"
-  | "transport:close"
-  | "sentryLogsChanged"
-  | "set-sentry-tags"
-  | "internalCrashTest"
-  | "setEnv";
-
 /**
  * Types of messages received on the internal thread.
  *

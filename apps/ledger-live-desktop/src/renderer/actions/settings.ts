@@ -10,7 +10,6 @@ import {
   Feature,
   DeviceInfo,
 } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   SettingsState as Settings,
@@ -65,10 +64,6 @@ export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
     sentryLogs,
   });
-export const setFullNodeEnabled = (fullNodeEnabled: boolean) =>
-  saveSettings({
-    fullNodeEnabled,
-  });
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
@@ -104,10 +99,6 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({
     enablePlatformDevTools,
-  });
-export const setCatalogProvider = (catalogProvider: string) =>
-  saveSettings({
-    catalogProvider,
   });
 export const setEnableLearnPageStagingUrl = (enableLearnPageStagingUrl: boolean) =>
   saveSettings({
@@ -240,10 +231,6 @@ export const clearLastSeenCustomImage = () => ({
     imageHash: "",
   },
 });
-export const swapAcceptProvider = (providerId: string) => ({
-  type: "ACCEPT_SWAP_PROVIDER",
-  payload: providerId,
-});
 export const showToken = (tokenId: string) => ({
   type: "SHOW_TOKEN",
   payload: tokenId,
@@ -263,22 +250,6 @@ export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatc
     payload: settings,
   });
 };
-
-type ExchangePairs = Array<{
-  from: Currency;
-  to: Currency;
-  exchange: string | undefined | null;
-}>;
-
-type SetExchangePairs = (a: ExchangePairs) => {
-  type: "SETTINGS_SET_PAIRS";
-  payload: ExchangePairs;
-};
-
-export const setExchangePairsAction: SetExchangePairs = pairs => ({
-  type: "SETTINGS_SET_PAIRS",
-  payload: pairs,
-});
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
   payload: bannerKey,
@@ -314,17 +285,6 @@ export const addNewDeviceModel = ({ deviceModelId }: { deviceModelId: DeviceMode
 export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
-});
-export const setFirstTimeLend = () => ({
-  type: "SET_FIRST_TIME_LEND",
-});
-export const setSwapSelectableCurrencies = (selectableCurrencies: string[]) => ({
-  type: "SET_SWAP_SELECTABLE_CURRENCIES",
-  payload: selectableCurrencies,
-});
-export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
-  type: "SET_SWAP_ACCEPTED_IP_SHARING",
-  payload: hasAcceptedIPSharing,
 });
 export const setOverriddenFeatureFlag = (featureFlag: {
   key: FeatureId;

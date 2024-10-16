@@ -56,8 +56,6 @@ export const osDarkModeSelector = (state: { application: ApplicationState }) =>
   state.application.osDarkMode;
 export const alwaysShowSkeletonsSelector = (state: { application: ApplicationState }) =>
   state.application.debug.alwaysShowSkeletons;
-export const osLangAndRegionSelector = (state: { application: ApplicationState }) =>
-  state.application.osLanguage;
 export const isNavigationLocked = (state: { application: ApplicationState }) =>
   state.application.navigationLocked;
 

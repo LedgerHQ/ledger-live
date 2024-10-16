@@ -1,32 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 16px 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-`;
-export const TableLine = styled(Text).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
-  fontSize: 3,
-}))`
-  flex: 1.25;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-sizing: border-box;
-  justify-content: flex-start;
-  &:last-child {
-    flex: 0.5;
-  }
-`;
+
 type Props = {
   total: number;
   used: number;

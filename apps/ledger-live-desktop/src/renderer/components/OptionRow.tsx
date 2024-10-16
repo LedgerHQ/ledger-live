@@ -30,9 +30,5 @@ export const OptionRowDesc = styled(Box).attrs(() => ({
   grow: true,
   pl: 2,
 }))``;
-export const IconOptionRow = styled(Box).attrs(p => ({
-  ff: "Inter|Regular",
-  fontSize: 14,
-  color: p.color || "wallet",
-}))``;
+
 export default OptionRow;

@@ -21,15 +21,6 @@ export const addInstance = (payload: TrustchainMember) => ({
   payload,
 });
 
-export const removeInstance = (payload: TrustchainMember) => ({
-  type: "WALLET_SYNC_CHANGE_REMOVE_INSTANCE",
-  payload,
-});
-
-export const removeAllInstances = () => ({
-  type: "WALLET_SYNC_CHANGE_CLEAN_INSTANCES",
-});
-
 export const resetWalletSync = () => ({
   type: "WALLET_SYNC_RESET",
 });

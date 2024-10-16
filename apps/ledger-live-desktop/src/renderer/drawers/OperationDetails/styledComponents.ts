@@ -84,10 +84,6 @@ export const OpDetailsData = styled(Box).attrs<{ justifyContent?: string; alignI
     text-decoration: underline;
   }
 `;
-export const NoMarginWrapper = styled.div`
-  margin-left: -20px;
-  margin-right: -20px;
-`;
 /**
  * @deprecated Bar being deprecated, this can be reworked to simpler code.
  */

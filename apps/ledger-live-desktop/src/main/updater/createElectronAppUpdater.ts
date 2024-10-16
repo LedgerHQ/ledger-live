@@ -1,6 +1,4 @@
 import crypto from "crypto";
-import path from "path";
-import fsPromises from "fs/promises";
 import fs from "fs";
 import { UpdateFetchFileFail } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network/network";
@@ -26,15 +24,6 @@ export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownload
       getDistantFileContent(`${keysURL}/${fingerprint}.pem.sig`, true),
   });
 };
-
-// read the electron-updater file. we basically only need the filename here,
-// because the hash file contains hashes for all platforms (better to have
-// only 1 file to sign lel)
-export async function readUpdateInfos(updateFolder: string) {
-  const updateInfoPath = path.resolve(updateFolder, "update-info.json");
-  const updateInfoContent = await fsPromises.readFile(updateInfoPath, "utf-8");
-  return JSON.parse(updateInfoContent);
-}
 
 // compute hash for given path.
 export function sha512sumPath(path: string): Promise<string> {

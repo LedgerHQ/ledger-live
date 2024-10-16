@@ -14,15 +14,3 @@ type EnrichedItem = {
 export type Data = Item[];
 
 export type EnrichedData = EnrichedItem[];
-
-export type CTX = {
-  NODES: object;
-  MARGINS: object;
-  COLORS: object;
-  INVALIDATED: object;
-  HEIGHT: number;
-  WIDTH: number;
-  DATA: EnrichedData;
-  x: Function;
-  y: Function;
-};

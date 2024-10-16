@@ -88,19 +88,6 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
   }
   return state.devices.currentDevice;
 }
-export function getDevices(state: { devices: DevicesState }) {
-  if (getEnv("DEVICE_PROXY_URL") || getEnv("SPECULOS_API_PORT")) {
-    // bypass the listen devices
-    return [
-      {
-        deviceId: "",
-        wired: true,
-        modelId: DeviceModelId.nanoS,
-      },
-    ];
-  }
-  return state.devices.devices;
-}
 export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as DevicesHandlers<false>,
   initialState,
