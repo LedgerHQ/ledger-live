@@ -7,7 +7,7 @@ import { getDescription } from "../../utils/customJsonReporter";
 const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2740",
+    xrayTicket: "B2CQA-2740, B2CQA-2770",
   },
   {
     delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
@@ -127,3 +127,56 @@ for (const validator of validators) {
     );
   });
 }
+
+test.describe("Staking flow from different entry point", () => {
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger");
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: delegateAccount.account.currency.speculosApp,
+    cliCommands: [
+      `liveData --currency ${delegateAccount.account.currency.ticker} --index ${delegateAccount.account.index} --add`,
+    ],
+  });
+
+  test(
+    "Staking flow from portfolio entry point",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2769",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await app.layout.goToPortfolio();
+      await app.portfolio.startStakeFlow();
+
+      await app.assetDrawer.selectAsset(delegateAccount.account.currency);
+      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+
+      await app.delegate.verifyProvider(delegateAccount.provider);
+      await app.delegate.continueDelegate();
+    },
+  );
+
+  test(
+    "Staking flow from market entry point",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2771",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await app.layout.goToMarket();
+      await app.market.search(delegateAccount.account.currency.name);
+      await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+
+      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+
+      await app.delegate.verifyProvider(delegateAccount.provider);
+      await app.delegate.continueDelegate();
+    },
+  );
+});
