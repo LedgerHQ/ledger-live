@@ -5,5 +5,5 @@ import cosmos from "@ledgerhq/coin-cosmos/mock";
 export default {
   vechain,
   algorand,
-  cosmos,
+  cosmos
 };

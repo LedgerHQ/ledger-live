@@ -1,0 +1,33 @@
+{
+  "entry": [
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/bridge/index.ts",
+    "src/broadcast.ts",
+    "src/buildOptimisticOperation.ts",
+    "src/buildTransaction.ts",
+    "src/cli.ts",
+    "src/config.ts",
+    "src/createTransaction.ts",
+    "src/estimateMaxSpendable.ts",
+    "src/getTransactionStatus.ts",
+    "src/prepareTransaction.ts",
+    "src/signOperation.ts",
+    "src/synchronization.ts",
+    "src/tokens.ts"
+  ],
+  "ignoreUnused": ["rxjs"]
+}

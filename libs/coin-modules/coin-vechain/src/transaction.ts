@@ -1,5 +1,7 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
 import type { Transaction, TransactionRaw, TransactionStatus, TransactionStatusRaw } from "./types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
@@ -7,8 +9,6 @@ import {
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (t: Transaction, account: Account): string => {
   const { amount, recipient, useAllAmount } = t;

@@ -5,13 +5,15 @@ import type {
   TransactionArg,
   TransactionRes,
   TransactionTestInput,
-} from "../../bot/types";
+  SpeculosTransport,
+} from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
-import { pickSiblings, botTest, SpeculosButton } from "../../bot/specs";
+import { pickSiblings, botTest, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import deviceAction from "../vechain/speculos-deviceActions";
+
 import BigNumber from "bignumber.js";
+import speculosDeviceActions from "./speculos-deviceActions";
 
 const MIN_VET_TRANSACTION_AMOUNT = 1000000000000000000;
 const MAX_VTHO_FEE_FOR_VTHO_TRANSACTION = 1040000000000000000;
@@ -26,8 +28,8 @@ const vechainTest = {
   },
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
-  genericDeviceAction: deviceAction.acceptTransaction,
-  onSpeculosDeviceCreated: async ({ transport }) => {
+  genericDeviceAction: speculosDeviceActions.acceptTransaction,
+  onSpeculosDeviceCreated: async ({ transport }: { transport: SpeculosTransport }) => {
     // enable contract data
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
