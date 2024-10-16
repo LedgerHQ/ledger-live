@@ -4,7 +4,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildUnsignedTransaction } from "./api/network";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { HederaSignatureSdk, HederaSigner } from "./signer";
 
 export const buildSignOperation =

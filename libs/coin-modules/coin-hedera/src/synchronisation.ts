@@ -11,7 +11,7 @@ import {
   GetAccountShape,
   IterateResultBuilder,
   mergeOps,
-} from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getAccountBalance } from "./api/network";
 

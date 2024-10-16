@@ -2,9 +2,9 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import resolver from "../hw-getAddress";
-import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { HederaSigner } from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
@@ -17,7 +17,7 @@ import { createTransaction } from "../createTransaction";
 import { getAccountShape, buildIterateResult } from "../synchronisation";
 import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
-import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import hederaCoinConfig, { type HederaCoinConfig } from "../config";
 
 // export const preload = async () => {
