@@ -1,5 +1,21 @@
 # @ledgerhq/types-live
 
+## 6.52.2
+
+### Patch Changes
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - add ptxSwapCoreExperiment flag
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - hotfix: [swap] add ptxSwapCoreExperiment flag
+
+## 6.52.2-hotfix.0
+
+### Patch Changes
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - add ptxSwapCoreExperiment flag
+
+- [#8089](https://github.com/LedgerHQ/ledger-live/pull/8089) [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - hotfix: [swap] add ptxSwapCoreExperiment flag
+
 ## 6.52.1
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # @ledgerhq/live-cli
 
+## 24.7.2
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/live-common@34.11.1
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/coin-bitcoin@0.8.4
+  - @ledgerhq/device-core@0.4.3
+  - @ledgerhq/live-countervalues@0.2.9
+  - @ledgerhq/live-wallet@0.7.1
+
+## 24.7.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/live-common@34.11.1-hotfix.0
+  - @ledgerhq/coin-framework@0.18.4-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.8.4-hotfix.0
+  - @ledgerhq/device-core@0.4.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.9-hotfix.0
+  - @ledgerhq/live-wallet@0.7.1-hotfix.0
+
 ## 24.7.1
 
 ### Patch Changes
