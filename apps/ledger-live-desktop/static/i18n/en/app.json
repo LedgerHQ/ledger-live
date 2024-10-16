@@ -5399,8 +5399,11 @@
       "description": "The network fee might be too low. Please increase"
     },
     "NoSuchAppOnProvider": {
-      "title": "The {{appName}} app cannot be found for your specific configuration.",
-      "description": "Try reinstalling the app from My Ledger"
+      "title": "{{appName}} is not compatible with {{productName}}.",
+      "titleOld": "The {{appName}} app cannot be found for your specific configuration.",
+      "description": "<0>Unlock more with our devices.</0> To access this feature, upgrade to one of our compatible devices. Choose the best option for your needs and enjoy enhanced security.",
+      "exploreCTA": "Explore compatible devices",
+      "learnMoreCTA": "Learn more about Ledger Sync"
     },
     "PendingOperation": {
       "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
