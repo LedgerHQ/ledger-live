@@ -315,6 +315,20 @@
       "title": "{{message}}",
       "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "TransactionBroadcastError": {
+      "title": "Transaction Broadcast Unsuccessfull",
+      "description": "Your transaction failed to broadcast on the {{network}} network. Your {{coin}} have not be transferred and remain in your account.",
+      "needHelp": "Need help ?",
+      "helpCenter": {
+        "title": "Help center",
+        "desc": "Visit our Help center or contact us via the widget for assistance.",
+        "cta": "Get help"
+      },
+      "technical": {
+        "title": "Technical error",
+        "cta": "Save logs"
+      }
+    },
     "FeeEstimationFailed": {
       "title": "Sorry, fee estimation failed",
       "description": "Try setting the fee manually (status: {{status}})."

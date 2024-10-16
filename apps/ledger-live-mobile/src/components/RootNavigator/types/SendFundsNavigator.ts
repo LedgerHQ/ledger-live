@@ -4,6 +4,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -114,6 +115,14 @@ export type SendFundsNavigatorStackParamList = {
     transaction: Transaction;
     result: Operation;
   };
+  [ScreenName.SendBroadcastError]:
+    | undefined
+    | {
+        error: TransactionBroadcastError;
+        account?: AccountLike;
+        accountId?: string;
+        parentId?: string;
+      };
   [ScreenName.SendValidationError]:
     | undefined
     | {
