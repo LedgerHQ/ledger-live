@@ -114,7 +114,7 @@ jobs:
 
   report:
     needs: build-desktop-app
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request')}}
     steps:
       - uses: actions/checkout@v4

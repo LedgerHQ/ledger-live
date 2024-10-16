@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   lint-commits:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
           name: commitlint
           path: ${{ github.workspace }}/commitlint.out
   report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [lint-commits]
     if: ${{ !cancelled() }}
     steps:
