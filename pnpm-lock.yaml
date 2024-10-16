@@ -2647,11 +2647,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
-        specifier: 0.3.9
-        version: 0.3.9(@solana/web3.js@1.91.6)
+        specifier: ^0.3.7
+        version: 0.3.8(@solana/web3.js@1.77.3)
       '@solana/web3.js':
-        specifier: 1.91.6
-        version: 1.91.6
+        specifier: 1.77.3
+        version: 1.77.3
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3347,11 +3347,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.10
-        version: 1.5.10
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.11.0
-        version: 1.11.0
+        specifier: ^1.13.0
+        version: 1.13.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -3463,6 +3463,9 @@ importers:
 
   libs/ledger-live-common:
     dependencies:
+      '@blooo/hw-app-acre':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
@@ -3646,18 +3649,21 @@ importers:
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
+      '@ledgerhq/wallet-api-acre-module':
+        specifier: workspace:^
+        version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.10
-        version: 1.5.10
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.11.0
-        version: 1.11.0
+        specifier: ^1.13.0
+        version: 1.13.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.11
-        version: 1.5.11(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.6.0
+        version: 1.6.0(react@18.2.0)(rxjs@7.8.1)
       '@stacks/network':
         specifier: 6.10.0
         version: 6.10.0
@@ -3861,8 +3867,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       '@solana/web3.js':
-        specifier: 1.91.6
-        version: 1.91.6
+        specifier: 1.77.3
+        version: 1.77.3
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -6949,6 +6955,19 @@ importers:
         specifier: ^0.2.9
         version: 0.2.9
 
+  libs/wallet-api-acre-module:
+    dependencies:
+      '@ledgerhq/wallet-api-client':
+        specifier: ^1.6.0
+        version: 1.6.0
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.13.0
+        version: 1.13.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.2.5
+        version: 20.12.12
+
   tests/dummy-live-app:
     dependencies:
       '@ledgerhq/live-app-sdk':
@@ -7001,14 +7020,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.10
-        version: 1.5.10
+        specifier: ^1.6.0
+        version: 1.6.0
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.10
-        version: 1.3.10(react@18.2.0)
+        specifier: ^1.3.12
+        version: 1.3.12(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.16
-        version: 1.1.16(react@18.2.0)
+        specifier: ^1.2.0
+        version: 1.2.0(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -8610,6 +8629,9 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@blooo/hw-app-acre@1.0.1':
+    resolution: {integrity: sha512-lLwG2abLFks6B8rHatIfj8rOSajzjCQlT6Wa4zoZnlxWqv8o3oIZ/kQzO3Mf3CgY2i3kMk3DqNKd7yBtXyfnEg==}
 
   '@braintree/sanitize-url@6.0.4':
     resolution: {integrity: sha512-s3jaWicZd0pkP0jf5ysyHUI/RE7MHos6qlToFcGWXVp+ykHOy77OUMrfbgJ9it2C5bow7OIQwYYaHjk9XlBQ2A==}
@@ -10580,8 +10602,8 @@ packages:
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
-  '@ledgerhq/errors@6.16.4':
-    resolution: {integrity: sha512-M57yFaLYSN+fZCX0E0zUqOmrV6eipK+s5RhijHoUNlHUqrsvUz7iRQgpd5gRgHB5VkIjav7KdaZjKiWGcHovaQ==}
+  '@ledgerhq/errors@6.19.1':
+    resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
   '@ledgerhq/hw-app-eth@5.11.0':
     resolution: {integrity: sha512-qgpPwZzM8UMHYMC5+9xYV2O+8kgkDAl9+38w9JiBksaGmUFqcS4najsB1nj6AWf2rGEuXdKMb2WEYRskVypJrA==}
@@ -10605,6 +10627,12 @@ packages:
   '@ledgerhq/hw-transport@6.30.6':
     resolution: {integrity: sha512-fT0Z4IywiuJuZrZE/+W0blkV5UCotDPFTYKLkKCLzYzuE6javva7D/ajRaIeR+hZ4kTmKF4EqnsmDCXwElez+w==}
 
+  '@ledgerhq/hw-transport@6.31.3':
+    resolution: {integrity: sha512-rFplkHWF5NXtlYwAusqLlMu298NHtRD+2q/jrTYc//uu/xJO9LkDIgKid6IVF2+e1Wj7yX6YQVrU6L0Yu1ntEw==}
+
+  '@ledgerhq/hw-transport@6.31.4':
+    resolution: {integrity: sha512-6c1ir/cXWJm5dCWdq55NPgCJ3UuKuuxRvf//Xs36Bq9BwkV2YaRQhZITAkads83l07NAdR16hkTWqqpwFMaI6A==}
+
   '@ledgerhq/icons-ui@file:libs/ui/packages/icons':
     resolution: {directory: libs/ui/packages/icons, type: directory}
     peerDependencies:
@@ -10626,19 +10654,19 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/wallet-api-client-react@1.3.10':
-    resolution: {integrity: sha512-iIZbaThZ3wfsicf6uYFzsxmy5cwn9weFClm4gg49inCiXcSTvk2BGlg81eHTNfVJqoNiHZNBh19lkqG4XTnL6w==}
+  '@ledgerhq/wallet-api-client-react@1.3.12':
+    resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
 
-  '@ledgerhq/wallet-api-client@1.5.10':
-    resolution: {integrity: sha512-cSTdNKBjlzium1tRS2+Q8Ev6T8MM0v8WtOF34+I/+GfkcerA9wR6l4ISGWP9fPneur3r+uGF1k4Y5LPbMN5pdw==}
+  '@ledgerhq/wallet-api-client@1.6.0':
+    resolution: {integrity: sha512-xf5g9baUB1Fn94GKYGNXtlRCKTWnqMBv1w9bE/H3+IXubwY7Cdy5zhn4rI8+iA4Llmwujp+sZciesWAa9f63gg==}
 
-  '@ledgerhq/wallet-api-core@1.11.0':
-    resolution: {integrity: sha512-QB4Inky3HadsB246CMH4t+KWvJ6qLu/M2nDuUZZ5e27XMAVDe/XI2CzndYmRq8rjW8pCfytGdQrdH9aVcBK6Kg==}
+  '@ledgerhq/wallet-api-core@1.13.0':
+    resolution: {integrity: sha512-HGnkPcbkeoNr+XAH+5NSrgyRYD/sVD3tgCyoYPAKEs7j3W/eJyT/EvBWwV4yPKhghfSjuqMo1L+0wLCXnbt4Dw==}
 
-  '@ledgerhq/wallet-api-server@1.5.11':
-    resolution: {integrity: sha512-BDiUxi+Za19v1aCJtEycLQePiMP7t3KY0yRIbL0QoIUIvKxhoLQuHVc6umIgzU3si4qvqs9foFvIakCm+OqMvA==}
+  '@ledgerhq/wallet-api-server@1.6.0':
+    resolution: {integrity: sha512-x2aI2wqWlt03zUMYucfqNeYkohZzROs2DYgRdwkkZbQG2Q0iUZsixUYjNkFZxPVUhxXaUA+YIgF43OeG/fyOjA==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -10646,8 +10674,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-simulator@1.1.16':
-    resolution: {integrity: sha512-HtgDB5Gs4YCnvgpMKOTdo7AuDy/RV8l6OmInK3qLGwvLYQ9+ooOhHLbUt31PZbFPds6qL70aKXs1rFLsuYW5+g==}
+  '@ledgerhq/wallet-api-simulator@1.2.0':
+    resolution: {integrity: sha512-EB4rqArFWut8A+Pzoi0uK1sqlGsF5fPYDql4IGH5ghdyKgh3Mq9svi5Um8h3+33aETB3hqCR2T2itN+kGxk3Tw==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -13061,14 +13089,14 @@ packages:
     resolution: {integrity: sha512-E1ImOIAD1tBZFRdjeM4/pzTiTApC0AOBGwyAMS4fwIodCWArzJ3DWdoh8cKxeFM2fElkxBh2Aqts1BPC373rHA==}
     engines: {node: '>=5.10'}
 
-  '@solana/spl-token@0.3.9':
-    resolution: {integrity: sha512-1EXHxKICMnab35MvvY/5DBc/K/uQAOJCYnDZXw83McCAYUAfi+rwq6qfd6MmITmSTEhcfBcl/zYxmW/OSN0RmA==}
+  '@solana/spl-token@0.3.8':
+    resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
     engines: {node: '>=16'}
     peerDependencies:
       '@solana/web3.js': ^1.47.4
 
-  '@solana/web3.js@1.91.6':
-    resolution: {integrity: sha512-dm20nN6HQvXToo+kM51nxHdtaa2wMSRdeK37p+WIWESfeiVHqV8XbV4XnWupq6ngt5vIckhGFG7ZnTBxUgLzDA==}
+  '@solana/web3.js@1.77.3':
+    resolution: {integrity: sha512-PHaO0BdoiQRPpieC1p31wJsBaxwIOWLh8j2ocXNKX8boCQVldt26Jqm2tZE4KlrvnCIV78owPLv1pEUgqhxZ3w==}
 
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
@@ -28883,6 +28911,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@5.6.2:
+    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   typical@4.0.0:
     resolution: {integrity: sha512-VAH4IvQ7BDFYglMd7BPRDfLgxZZX4O4TFcRDA6EN5X7erNJJq+McIEp8np9aVtxrCJ6qx4GTYVfOWNjcqwZgRw==}
     engines: {node: '>=8'}
@@ -31539,7 +31572,7 @@ snapshots:
   '@babel/core@7.24.3':
     dependencies:
       '@ampproject/remapping': 2.3.0
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@babel/generator': 7.24.1
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.3)
@@ -31671,7 +31704,7 @@ snapshots:
       '@babel/helper-module-imports': 7.24.3
       '@babel/helper-simple-access': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/helper-validator-identifier': 7.22.20
+      '@babel/helper-validator-identifier': 7.24.7
 
   '@babel/helper-module-transforms@7.23.3(@babel/core@7.24.3)':
     dependencies:
@@ -31680,7 +31713,7 @@ snapshots:
       '@babel/helper-module-imports': 7.24.3
       '@babel/helper-simple-access': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/helper-validator-identifier': 7.22.20
+      '@babel/helper-validator-identifier': 7.24.7
 
   '@babel/helper-optimise-call-expression@7.22.5':
     dependencies:
@@ -32761,6 +32794,22 @@ snapshots:
   '@base2/pretty-print-object@1.0.1': {}
 
   '@bcoe/v8-coverage@0.2.3': {}
+
+  '@blooo/hw-app-acre@1.0.1':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.31.3
+      '@ledgerhq/logs': 6.12.0
+      bip32-path: 0.4.2
+      bitcoinjs-lib: 5.2.0
+      bs58: 4.0.1
+      bs58check: 2.1.2
+      invariant: 2.2.4
+      ripemd160: 2.0.2
+      semver: 7.6.3
+      sha.js: 2.4.11
+      tiny-secp256k1: 1.1.6
+      typescript: 5.6.2
+      varuint-bitcoin: 1.1.2
 
   '@braintree/sanitize-url@6.0.4': {}
 
@@ -36693,12 +36742,12 @@ snapshots:
 
   '@ledgerhq/errors@5.50.0': {}
 
-  '@ledgerhq/errors@6.16.4': {}
+  '@ledgerhq/errors@6.19.1': {}
 
   '@ledgerhq/hw-app-eth@5.11.0':
     dependencies:
       '@ledgerhq/errors': 5.50.0
-      '@ledgerhq/hw-transport': 5.51.1
+      '@ledgerhq/hw-transport': 5.11.0
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
@@ -36722,19 +36771,33 @@ snapshots:
   '@ledgerhq/hw-transport@6.27.1':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.16.4
+      '@ledgerhq/errors': 6.19.1
       events: 3.3.0
 
   '@ledgerhq/hw-transport@6.28.1':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.16.4
+      '@ledgerhq/errors': 6.19.1
       events: 3.3.0
 
   '@ledgerhq/hw-transport@6.30.6':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.16.4
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/hw-transport@6.31.3':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/hw-transport@6.31.4':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.19.1
       '@ledgerhq/logs': 6.12.0
       events: 3.3.0
 
@@ -36755,39 +36818,39 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/wallet-api-client-react@1.3.10(react@18.2.0)':
+  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.2.0)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.10
+      '@ledgerhq/wallet-api-client': 1.6.0
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-client@1.5.10':
+  '@ledgerhq/wallet-api-client@1.6.0':
     dependencies:
-      '@ledgerhq/hw-transport': 6.30.6
-      '@ledgerhq/wallet-api-core': 1.11.0
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/wallet-api-core': 1.13.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/wallet-api-core@1.11.0':
+  '@ledgerhq/wallet-api-core@1.13.0':
     dependencies:
-      '@ledgerhq/errors': 6.16.4
+      '@ledgerhq/errors': 6.19.1
       bignumber.js: 9.1.2
       uuid: 9.0.1
       zod: 3.23.8
 
-  '@ledgerhq/wallet-api-server@1.5.11(react@18.2.0)(rxjs@7.8.1)':
+  '@ledgerhq/wallet-api-server@1.6.0(react@18.2.0)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.11.0
+      '@ledgerhq/wallet-api-core': 1.13.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
     optionalDependencies:
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-simulator@1.1.16(react@18.2.0)':
+  '@ledgerhq/wallet-api-simulator@1.2.0(react@18.2.0)':
     dependencies:
-      '@ledgerhq/hw-transport': 6.30.6
-      '@ledgerhq/wallet-api-client': 1.5.10
-      '@ledgerhq/wallet-api-core': 1.11.0
-      '@ledgerhq/wallet-api-server': 1.5.11(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/wallet-api-client': 1.6.0
+      '@ledgerhq/wallet-api-core': 1.13.0
+      '@ledgerhq/wallet-api-server': 1.6.0(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
@@ -40639,7 +40702,7 @@ snapshots:
   '@solana/buffer-layout-utils@0.2.0':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.91.6
+      '@solana/web3.js': 1.77.3
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -40651,18 +40714,18 @@ snapshots:
     dependencies:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@solana/spl-token@0.3.9(@solana/web3.js@1.91.6)':
+  '@solana/spl-token@0.3.8(@solana/web3.js@1.77.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.91.6
+      '@solana/web3.js': 1.77.3
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - utf-8-validate
 
-  '@solana/web3.js@1.91.6':
+  '@solana/web3.js@1.77.3':
     dependencies:
       '@babel/runtime': 7.24.1
       '@noble/curves': 1.4.0
@@ -64179,6 +64242,8 @@ snapshots:
   typescript@5.4.3: {}
 
   typescript@5.4.5: {}
+
+  typescript@5.6.2: {}
 
   typical@4.0.0: {}
 

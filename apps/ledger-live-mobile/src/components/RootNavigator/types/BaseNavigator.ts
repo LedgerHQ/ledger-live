@@ -200,7 +200,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };
-  [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
+  [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList> & {
+    onError: (err: Error) => void;
+  };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;

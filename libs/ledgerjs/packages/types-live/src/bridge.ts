@@ -146,10 +146,13 @@ export interface AccountBridge<
       deviceId: string;
       subAccountId?: string;
       freshAddressIndex?: number;
+      path?: string;
     },
   ): Observable<{
     address: string;
     path: string;
+    publicKey: string;
+    chainCode?: string;
   }>;
   // a Transaction object is created on UI side as a black box to put all temporary information to build the transaction at the end.
   // There are a bunch of edit and get functions to edit and extract information out ot this black box.

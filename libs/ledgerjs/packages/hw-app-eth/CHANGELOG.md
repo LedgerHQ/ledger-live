@@ -1,5 +1,55 @@
 # @ledgerhq/hw-app-eth
 
+## 6.40.1
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2
+  - @ledgerhq/domain-service@1.2.8
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2-hotfix.0
+  - @ledgerhq/domain-service@1.2.8-hotfix.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.0
+
+### Minor Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin
+
+### Patch Changes
+
+- [#7992](https://github.com/LedgerHQ/ledger-live/pull/7992) [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force ws version even when bundled without pnpm from the monorepo
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3)]:
+  - @ledgerhq/types-live@6.52.1
+  - @ledgerhq/domain-service@1.2.7
+  - @ledgerhq/evm-tools@1.2.4
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.1
+
+## 6.40.0-next.0
+
+### Minor Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin
+
+### Patch Changes
+
+- [#7992](https://github.com/LedgerHQ/ledger-live/pull/7992) [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force ws version even when bundled without pnpm from the monorepo
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3)]:
+  - @ledgerhq/types-live@6.52.1-next.0
+  - @ledgerhq/domain-service@1.2.7-next.0
+  - @ledgerhq/evm-tools@1.2.4-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.1-next.0
+
 ## 6.39.0
 
 ### Minor Changes

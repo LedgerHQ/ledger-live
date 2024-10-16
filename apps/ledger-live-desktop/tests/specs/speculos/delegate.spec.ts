@@ -4,26 +4,56 @@ import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-const accounts = [
+const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2731, B2CQA-2740",
+    xrayTicket: "B2CQA-2740",
   },
   {
     delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2730, B2CQA-2742",
+    xrayTicket: "B2CQA-2742",
   },
   {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
-    xrayTicket: "B2CQA-2732, B2CQA-2741",
+    xrayTicket: "B2CQA-2741",
   },
 ];
 
-for (const account of accounts) {
+const validators = [
+  {
+    delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
+    xrayTicket: "B2CQA-2731, B2CQA-2763",
+  },
+  {
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2730, B2CQA-2764",
+  },
+  {
+    delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
+    xrayTicket: "B2CQA-2732, B2CQA-2765",
+  },
+  /*{
+    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),  // todo: deactivate due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
+    xrayTicket: "B2CQA-2766",
+  },*/
+  {
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2767",
+  },
+  {
+    delegate: new Delegate(Account.OSMO_1, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2768",
+  },
+];
+
+for (const account of e2eDelegationAccounts) {
   test.describe("Delegate", () => {
     test.use({
-      userdata: "speculos-delegate",
+      userdata: "skip-onboarding",
       speculosApp: account.delegate.account.currency.speculosApp,
+      cliCommands: [
+        `liveData --currency ${account.delegate.account.currency.ticker} --index ${account.delegate.account.index} --add`,
+      ],
     });
 
     test(
@@ -58,6 +88,41 @@ for (const account of accounts) {
         await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
         await app.delegateDrawer.expectDelegationInfos(account.delegate);
+      },
+    );
+  });
+}
+
+for (const validator of validators) {
+  test.describe("Select a validator", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: validator.delegate.account.currency.speculosApp,
+      cliCommands: [
+        `liveData --currency ${validator.delegate.account.currency.ticker} --index ${validator.delegate.account.index} --add`,
+      ],
+    });
+
+    test(
+      `[${validator.delegate.account.currency.name}] - Select validator`,
+      {
+        annotation: {
+          type: "TMS",
+          description: validator.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
+
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.modal.continue();
+
+        await app.delegate.verifyProvider(validator.delegate.provider);
+        await app.delegate.openSearchProviderModal();
+        await app.delegate.checkValidatorListIsVisible();
+        await app.delegate.selectProvider(1);
       },
     );
   });
