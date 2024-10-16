@@ -1,7 +1,7 @@
 import { HederaSigner } from "./signer";
-import { GetAddressFn } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/lib/derivation";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 
 const resolver = (signerContext: SignerContext<HederaSigner>): GetAddressFn => {
   return async (deviceId: string, { path }: GetAddressOptions) => {
