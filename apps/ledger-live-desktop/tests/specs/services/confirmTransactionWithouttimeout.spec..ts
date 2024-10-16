@@ -66,7 +66,7 @@ test.afterAll(async () => {
   }
 });
 
-test("Confirm Transaction modals @smoke", async ({ page }) => {
+test("Confirm Transaction modals withouttimeout @smoke", async ({ page }) => {
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
   const layout = new Layout(page);
@@ -105,7 +105,6 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         },
       },
     });
-    await liveAppWebview.waitForLoaded();
 
     // Step Fees
     await expect(page.getByText("Max estimated fee")).toBeVisible();
@@ -163,7 +162,6 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         },
       },
     });
-    await liveAppWebview.waitForLoaded();
 
     // Step Fees
     await expect(page.getByText("Max estimated fee")).toBeVisible();
@@ -224,7 +222,6 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         },
       },
     });
-    await liveAppWebview.waitForLoaded();
 
     // Step Fees
     await expect(page.getByText("Max estimated fee")).toBeVisible();
