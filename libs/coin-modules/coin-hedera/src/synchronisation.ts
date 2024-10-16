@@ -1,13 +1,23 @@
 import invariant from "invariant";
-import { getDerivationScheme, Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import {
+  getDerivationScheme,
+  Result,
+  runDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
-import { GetAccountShape, IterateResultBuilder, mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import {
+  GetAccountShape,
+  IterateResultBuilder,
+  mergeOps,
+} from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getAccountBalance } from "./api/network";
 
-export const getAccountShape: GetAccountShape<Account> = async (info: any): Promise<Partial<Account>> => {
+export const getAccountShape: GetAccountShape<Account> = async (
+  info: any,
+): Promise<Partial<Account>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
   invariant(address, "an hedera address is expected");
