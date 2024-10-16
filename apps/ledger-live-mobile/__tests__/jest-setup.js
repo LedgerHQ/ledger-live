@@ -53,7 +53,7 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("expo-camera", () => {
+jest.mock("expo-camera/legacy", () => {
   return {
     Camera: MockedExpoCamera,
     CameraType: MockedCameraType,
@@ -70,7 +70,7 @@ jest.mock("expo-barcode-scanner", () => ({
   },
 }));
 
-jest.mock("expo-camera/next", () => {
+jest.mock("expo-camera", () => {
   return {
     CameraView: jest.fn(() => null),
   };
