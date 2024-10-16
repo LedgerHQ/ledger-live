@@ -5,7 +5,7 @@ import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview"
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -251,40 +251,33 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
             return new Promise((resolve, reject) => {
+              let done = false;
+
+              const onError = (error: Error) => {
+                if (done) return;
+                done = true;
+                tracking.platformSignTransactionFail(manifest);
+                reject(error);
+              };
+
               navigation.navigate(NavigatorName.SignTransaction, {
                 screen: ScreenName.SignTransactionSummary,
                 params: {
                   currentNavigation: ScreenName.SignTransactionSummary,
                   nextNavigation: ScreenName.SignTransactionSelectDevice,
-                  transaction: tx as Transaction,
+                  transaction: tx,
                   accountId,
                   parentId: parentAccount?.id,
                   appName: params?.useApp,
-                  onSuccess: ({
-                    signedOperation,
-                    transactionSignError,
-                  }: {
-                    signedOperation: SignedOperation;
-                    transactionSignError: Error;
-                  }) => {
-                    if (transactionSignError) {
-                      tracking.platformSignTransactionFail(manifest);
-                      reject(transactionSignError);
-                    } else {
-                      tracking.platformSignTransactionSuccess(manifest);
-                      resolve(serializePlatformSignedTransaction(signedOperation));
-                      const n =
-                        navigation.getParent<
-                          StackNavigatorNavigation<BaseNavigatorStackParamList>
-                        >() || navigation;
-                      n.pop();
-                    }
+                  onSuccess: signedOperation => {
+                    if (done) return;
+                    done = true;
+                    tracking.platformSignTransactionSuccess(manifest);
+                    resolve(serializePlatformSignedTransaction(signedOperation));
                   },
-                  onError: (error: Error) => {
-                    tracking.platformSignTransactionFail(manifest);
-                    reject(error);
-                  },
+                  onError,
                 },
+                onError,
               });
             });
           },
