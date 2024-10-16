@@ -4,10 +4,8 @@ import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/lib/derivation";
 
 const resolver = (signerContext: SignerContext<HederaSigner>): GetAddressFn => {
-  return async (deviceId: string, { path}: GetAddressOptions) => {
-    const publicKey = (await signerContext(deviceId, signer => 
-      signer.getPublicKey(path),
-    ));
+  return async (deviceId: string, { path }: GetAddressOptions) => {
+    const publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path));
 
     return {
       path,
