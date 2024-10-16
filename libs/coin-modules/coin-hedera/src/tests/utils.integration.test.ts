@@ -46,7 +46,7 @@ const transaction: Transaction = {
   family: "hedera",
   amount: new BigNumber(1),
   recipient: "",
-  useAllAmount: undefined,
+  useAllAmount: false,
 };
 
 describe("utils", () => {

@@ -1,4 +1,8 @@
-import { makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import {
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import resolver from "../hw-getAddress";
 import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
 import { HederaSigner } from "../signer";
@@ -15,80 +19,77 @@ import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import hederaCoinConfig, { type HederaCoinConfig } from "../config";
-  
-  
-  function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
-    const getAddress = resolver(signerContext);
 
-    const scanAccounts = makeScanAccounts({
-      getAccountShape,
-      buildIterateResult,
-      getAddressFn: getAddressWrapper(getAddress),
-    });
-  
-    return {
-      preload: () => Promise.resolve({}),
-      hydrate: () => {},
-      scanAccounts,
-    };
-  }
-  
-  const sync = makeSync({ getAccountShape });
+function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
+  const getAddress = resolver(signerContext);
 
-  function buildAccountBridge(
-    signerContext: SignerContext<HederaSigner>,
-  ): AccountBridge<Transaction, Account, TransactionStatus> {
-    const getAddress = resolver(signerContext);
-  
-    const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
-    const signOperation = buildSignOperation(signerContext);
-  
-    return {
-      estimateMaxSpendable,
-      createTransaction,
-      updateTransaction: defaultUpdateTransaction,
-      getTransactionStatus,
-      prepareTransaction,
-      sync,
-      receive,
-      signOperation,
-      broadcast,
-    };
-  }
-  
-  // const currencyBridge: CurrencyBridge = {
-  //   preload: () => Promise.resolve({}),
-  //   hydrate: () => {},
-  //   scanAccounts,
-  // };
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    buildIterateResult,
+    getAddressFn: getAddressWrapper(getAddress),
+  });
 
-  // const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
-  //   estimateMaxSpendable,
-  //   createTransaction,
-  //   updateTransaction: defaultUpdateTransaction,
-  //   getTransactionStatus,
-  //   prepareTransaction,
-  //   sync,
-  //   receive,
-  //   signOperation,
-  //   broadcast,
-  // };
+  return {
+    preload: () => Promise.resolve({}),
+    hydrate: () => {},
+    scanAccounts,
+  };
+}
 
-  export function createBridges(
-    signerContext: SignerContext<HederaSigner>,
-    coinConfig: CoinConfig<HederaCoinConfig>,
-  ) {
-    hederaCoinConfig.setCoinConfig(coinConfig);
-  
-    return {
-      currencyBridge: buildCurrencyBridge(signerContext),
-      accountBridge: buildAccountBridge(signerContext),
-    };
-  }
-  
-  // export default {
-  //   currencyBridge,
-  //   accountBridge,
-  // };
-  
-  
+const sync = makeSync({ getAccountShape });
+
+function buildAccountBridge(
+  signerContext: SignerContext<HederaSigner>,
+): AccountBridge<Transaction, Account, TransactionStatus> {
+  const getAddress = resolver(signerContext);
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
+
+  return {
+    estimateMaxSpendable,
+    createTransaction,
+    updateTransaction: defaultUpdateTransaction,
+    getTransactionStatus,
+    prepareTransaction,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+  };
+}
+
+// const currencyBridge: CurrencyBridge = {
+//   preload: () => Promise.resolve({}),
+//   hydrate: () => {},
+//   scanAccounts,
+// };
+
+// const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
+//   estimateMaxSpendable,
+//   createTransaction,
+//   updateTransaction: defaultUpdateTransaction,
+//   getTransactionStatus,
+//   prepareTransaction,
+//   sync,
+//   receive,
+//   signOperation,
+//   broadcast,
+// };
+
+export function createBridges(
+  signerContext: SignerContext<HederaSigner>,
+  coinConfig: CoinConfig<HederaCoinConfig>,
+) {
+  hederaCoinConfig.setCoinConfig(coinConfig);
+
+  return {
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
+  };
+}
+
+// export default {
+//   currencyBridge,
+//   accountBridge,
+// };

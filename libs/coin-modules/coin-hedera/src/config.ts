@@ -1,7 +1,8 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import buildCoinConfig, { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type HederaConfig = Record<string, ConfigInfo>;
+
 export const hederaConfig: HederaConfig = {
   config_currency_hedera: {
     type: "object",
@@ -13,8 +14,7 @@ export const hederaConfig: HederaConfig = {
   },
 };
 
+
 export type HederaCoinConfig = CurrencyConfig & HederaConfig;
-
 const coinConfig = buildCoinConfig<HederaCoinConfig>();
-
 export default coinConfig;

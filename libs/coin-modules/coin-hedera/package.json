@@ -48,6 +48,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
@@ -70,6 +71,15 @@
     "ts-jest": "^29.1.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+      "clean": "rimraf lib lib-es",
+      "build": "tsc && tsc -m ES6 --outDir lib-es",
+      "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hedera.json",
+      "prewatch": "pnpm build",
+      "watch": "tsc --watch",
+      "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+      "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+      "lint:fix": "pnpm lint --fix",
+      "test": "jest",
+      "unimported": "unimported"
+    }
 }

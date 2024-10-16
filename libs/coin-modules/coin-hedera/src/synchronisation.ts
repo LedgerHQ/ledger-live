@@ -3,7 +3,7 @@ import { getDerivationScheme, Result, runDerivationScheme } from "@ledgerhq/coin
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
-import { GetAccountShape, IterateResultBuilder, makeScanAccounts, mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { GetAccountShape, IterateResultBuilder, mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getAccountBalance } from "./api/network";
 
