@@ -12,8 +12,6 @@ export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
   acceptAnalyticsButtonId = "accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
-  readyToScanButtonID = "onboarding-scan-button";
-  scanAndImportAccountsPageID = "onboarding-import-accounts-title";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
@@ -23,8 +21,6 @@ export default class OnboardingStepsPage {
   buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
-  syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
-  readyToScanButton = () => getElementById(this.readyToScanButtonID);
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
@@ -98,18 +94,6 @@ export default class OnboardingStepsPage {
 
   async chooseToConnectYourLedger() {
     await tapByElement(this.connectLedgerButton());
-  }
-
-  async chooseToSyncWithLedgerLiveDesktop() {
-    await tapByElement(this.syncWithLedgerLiveDesktop());
-  }
-
-  async goesThroughLedgerLiveDesktopScanning() {
-    await tapByElement(this.readyToScanButton());
-  }
-
-  async waitForScanningPage() {
-    await waitForElementById(this.scanAndImportAccountsPageID);
   }
 
   // Setup new Ledger
