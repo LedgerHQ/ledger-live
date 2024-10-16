@@ -37,6 +37,7 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
         initialLoad={initialLoad}
         secure={secure}
         baseUrl={baseUrl}
+        manifest={manifest}
       />
 
       {manifest ? (
