@@ -469,6 +469,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         error,
         withOpenManager: true,
         withExportLogs: true,
+        ...(device && { device }),
       });
     }
 
