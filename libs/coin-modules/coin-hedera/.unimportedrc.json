@@ -1,34 +1,38 @@
 {
-    "entry": [
-      "src/account.ts",
-      "src/bridge/index.ts",
-      "src/cli-transaction.ts",
-      "src/deviceTransactionConfig.ts",
-      "src/errors.ts",
-      "src/hw-getAddress.ts",
-      "src/specs.ts",
-      "src/transaction.ts"
-    ],
-    "ignorePatterns": [
-      "**/node_modules/**",
-      "**/*.fixture.ts",
-      "**/*.mock.ts",
-      "**/*.test.{js,jsx,ts,tsx}"
-    ],
-    "ignoreUnresolved": [],
-    "ignoreUnimported": [
-      "src/broadcast.ts",
-      "src/buildOptimisticOperation.ts",
-      "src/buildTransaction.ts",
-      "src/cli-transaction.ts",
-      "src/config.ts",
-      "src/createTransaction.ts",
-      "src/estimateMaxSpendable.ts",
-      "src/getTransactionStatus.ts",
-      "src/prepareTransaction.ts",
-      "src/signOperation.ts",
-      "src/synchronisation.ts",
-      "src/speculos-deviceActions.ts"
-    ],
-    "ignoreUnused": ["rxjs"]
-  }
+  "entry": [
+    "src/account.ts",
+    "src/bridge/index.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/broadcast.ts",
+    "src/buildOptimisticOperation.ts",
+    "src/cli-transaction.ts",
+    "src/config.ts",
+    "src/createTransaction.ts",
+    "src/estimateMaxSpendable.ts",
+    "src/getTransactionStatus.ts",
+    "src/prepareTransaction.ts",
+    "src/signOperation.ts",
+    "src/speculos-deviceActions.ts",
+    "src/synchronisation.ts",
+    "src/tests/bridgeDatasetTest.ts",
+    "src/tests/index.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/live-promise",
+    "rxjs"
+  ]
+}
