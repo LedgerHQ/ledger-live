@@ -61,6 +61,7 @@
 		3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Regular.otf"; path = "../assets/fonts/MuseoSans-Regular.otf"; sourceTree = "<group>"; };
 		3407D5D7215D2AB800C9D40B /* ledgerlivemobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ledgerlivemobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeededForBLE.swift; sourceTree = "<group>"; };
+		38E9A15308178DF1D9ABB403 /* Pods-ledgerlivemobile.nightly.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.nightly.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.nightly.xcconfig"; sourceTree = "<group>"; };
 		3B6982A2E67F482A8069215B /* Inter-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.otf"; path = "../node_modules/@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Medium.otf"; sourceTree = "<group>"; };
 		3E71666B2C4291351C2BA23C /* Pods-ledgerlivemobileTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobileTests.staging.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobileTests/Pods-ledgerlivemobileTests.staging.xcconfig"; sourceTree = "<group>"; };
 		44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 		5BA10A22A99ED68BAF7C0035 /* Pods-ledgerlivemobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobileTests.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobileTests/Pods-ledgerlivemobileTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F63C9E4AC284203A95B417E /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		612C2DE49D8C4046AE4FF442 /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = System/Library/Frameworks/Lottie.framework; sourceTree = SDKROOT; };
+		61C79D42175A8246DFE3705C /* Pods-ledgerlivemobile.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.prerelease.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.prerelease.xcconfig"; sourceTree = "<group>"; };
 		61C9A3D5E8F7421487C85E86 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
 		68139B1F4BF967461F30D471 /* Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile-ledgerlivemobileTests/Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -164,8 +166,13 @@
 				68139B1F4BF967461F30D471 /* Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig */,
 				A80B735599C416373F147DED /* Pods-ledgerlivemobile-ledgerlivemobileTests.release.xcconfig */,
 				C630F76F0E1C857DA405027E /* Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig */,
+<<<<<<< HEAD
 				B3F983E6F88EBD69A6725FF4 /* Pods-ledgerlivemobile.nightly.xcconfig */,
 				97FD0A4F7C8CED04EEB0A176 /* Pods-ledgerlivemobile.prerelease.xcconfig */,
+=======
+				38E9A15308178DF1D9ABB403 /* Pods-ledgerlivemobile.nightly.xcconfig */,
+				61C79D42175A8246DFE3705C /* Pods-ledgerlivemobile.prerelease.xcconfig */,
+>>>>>>> 4afe7de83d (fix: import and config bug)
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1132,7 +1139,11 @@
 		};
 		BB0B80022CAAB47600AF2B0C /* Nightly */ = {
 			isa = XCBuildConfiguration;
+<<<<<<< HEAD
 			baseConfigurationReference = B3F983E6F88EBD69A6725FF4 /* Pods-ledgerlivemobile.nightly.xcconfig */;
+=======
+			baseConfigurationReference = 38E9A15308178DF1D9ABB403 /* Pods-ledgerlivemobile.nightly.xcconfig */;
+>>>>>>> 4afe7de83d (fix: import and config bug)
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = NightlyAppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1259,7 +1270,11 @@
 		};
 		BB2FFDA22CAD600D00AB17D8 /* Prerelease */ = {
 			isa = XCBuildConfiguration;
+<<<<<<< HEAD
 			baseConfigurationReference = 97FD0A4F7C8CED04EEB0A176 /* Pods-ledgerlivemobile.prerelease.xcconfig */;
+=======
+			baseConfigurationReference = 61C79D42175A8246DFE3705C /* Pods-ledgerlivemobile.prerelease.xcconfig */;
+>>>>>>> 4afe7de83d (fix: import and config bug)
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = PrereleaseAppIcon;
 				CLANG_ENABLE_MODULES = YES;

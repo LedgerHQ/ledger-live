@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { Transaction } from "../../../families/hedera/types";
+import type { Transaction } from "../types";
 import { createTransaction } from "../createTransaction";
 import { prepareTransaction } from "../prepareTransaction";
 
