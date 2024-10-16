@@ -24,7 +24,7 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
   const toggleCollapsed = useCallback(() => {
     const value = Math.round(collapseAnimation.value + 1) % 2;
 
-    const { onStart, onDone } =
+    const { onStart, onDone }: { onStart?: () => void; onDone: () => void } =
       value === 0
         ? { onDone: () => setIsCollapsed(true) }
         : { onStart: () => setIsCollapsed(false), onDone: () => {} };
