@@ -8,10 +8,10 @@ import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { HederaSignatureSdk, HederaSigner } from "./signer";
 
 export const buildSignOperation =
-(
-  signerContext: SignerContext<HederaSigner>,
-): AccountBridge<Transaction, Account>["signOperation"] => 
-  ({account, transaction, deviceId }) =>
+  (
+    signerContext: SignerContext<HederaSigner>,
+  ): AccountBridge<Transaction, Account>["signOperation"] =>
+  ({ account, transaction, deviceId }) =>
     new Observable(o => {
       void (async function () {
         try {
@@ -26,16 +26,12 @@ export const buildSignOperation =
 
           const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
-          const res  = (await signerContext(
-            deviceId,
-            async signer => {
-              await hederaTransaction.signWith(accountPublicKey, 
-              async bodyBytes => {
-                return await signer.signTransaction(bodyBytes);
-              })
-              return hederaTransaction.toBytes();
-            },
-          )) as HederaSignatureSdk;
+          const res = (await signerContext(deviceId, async signer => {
+            await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
+              return await signer.signTransaction(bodyBytes);
+            });
+            return hederaTransaction.toBytes();
+          })) as HederaSignatureSdk;
 
           o.next({
             type: "device-signature-granted",
