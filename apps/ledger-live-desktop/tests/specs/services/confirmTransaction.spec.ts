@@ -222,6 +222,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         },
       },
     });
+    await page.waitForTimeout(2500);
 
     // Step Fees
     await expect(page.getByText("Max estimated fee")).toBeVisible();
