@@ -20,6 +20,16 @@ import { broadcast } from "../broadcast";
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import hederaCoinConfig, { type HederaCoinConfig } from "../config";
 
+
+// export const preload = async () => {
+//   const config = hederaCoinConfig.getCoinConfig();
+
+//   return Promise.resolve({
+//     config,
+//   });
+// };
+
+
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
@@ -31,6 +41,7 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
 
   return {
     preload: () => Promise.resolve({}),
+    // preload: preload,
     hydrate: () => {},
     scanAccounts,
   };
