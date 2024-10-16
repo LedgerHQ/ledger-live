@@ -406,14 +406,7 @@ function convertElrondESDTTokens([
   };
 }
 
-function convertSplTokens([
-  chainId,
-  name,
-  symbol,
-  address,
-  decimals,
-  enableCountervalues,
-]: SPLToken): TokenCurrency {
+function convertSplTokens([chainId, name, symbol, address, decimals]: SPLToken): TokenCurrency {
   const chainIdToCurrencyId = {
     101: "solana",
     102: "solana_testnet",
@@ -428,7 +421,7 @@ function convertSplTokens([
     name,
     tokenType: "spl",
     ticker: symbol,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,
