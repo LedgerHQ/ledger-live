@@ -37,9 +37,9 @@ import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
 
-type ListenersParams = {
-  error?: Error;
-  onError?: (err: Error) => void;
+type SharedParams = {
+  onSuccess: (signedOperation: SignedOperation) => void;
+  onError: (err: Error) => void;
 };
 
 export type SignTransactionNavigatorParamList = {
@@ -62,9 +62,10 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
-    onSuccess: (payload: { signedOperation: SignedOperation; transactionSignError: Error }) => void;
-  } & ListenersParams;
-  [ScreenName.SignTransactionSelectDevice]: ListenersParams;
+  } & SharedParams;
+  [ScreenName.SignTransactionSelectDevice]: {
+    forceSelectDevice?: boolean;
+  } & SharedParams;
   [ScreenName.SignTransactionConnectDevice]: {
     device: Device;
     accountId: string;
@@ -73,17 +74,11 @@ export type SignTransactionNavigatorParamList = {
     appName?: string;
     dependencies?: string[];
     isACRE?: boolean;
-    onSuccess: (payload: unknown) => void;
-    onError: (_: Error) => void;
     analyticsPropertyFlow?: string;
-  };
+  } & SharedParams;
   [ScreenName.SignTransactionValidationError]: {
-    accountId: string;
-    parentId: string;
-    deviceId: string;
-    transaction: Transaction;
-    onReject: (_: Error) => void;
-  } & ListenersParams;
+    error?: Error;
+  } & SharedParams;
 
   [ScreenName.AlgorandEditMemo]: {
     accountId?: string;

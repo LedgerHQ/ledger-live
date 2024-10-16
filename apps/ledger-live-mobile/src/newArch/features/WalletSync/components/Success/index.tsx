@@ -12,7 +12,7 @@ type Props = {
     onPress: () => void;
   };
 
-  secondaryButton: {
+  secondaryButton?: {
     label: string;
     onPress: () => void;
   };
@@ -49,10 +49,11 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
               {mainButton.label}
             </Button>
           )}
-
-          <Button type="main" outline onPress={secondaryButton.onPress}>
-            {secondaryButton.label}
-          </Button>
+          {secondaryButton && (
+            <Button type="main" outline onPress={secondaryButton.onPress}>
+              {secondaryButton.label}
+            </Button>
+          )}
         </Flex>
       </Flex>
     </SafeAreaView>

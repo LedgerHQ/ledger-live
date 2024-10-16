@@ -437,7 +437,7 @@
     "ticker": "GLMR",
     "name": "Moonbeam",
     "family": "ethereum",
-    "color": "#5FC0C1",
+    "color": "#958FDC",
     "decimals": 18
   },
   {
@@ -563,7 +563,7 @@
     "ticker": "MOVR",
     "name": "Moonriver",
     "family": "ethereum",
-    "color": "#F2B705",
+    "color": "#95F921",
     "decimals": 18
   },
   {

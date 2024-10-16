@@ -360,14 +360,19 @@ export function useWalletAPIServer({
           return prev;
         }, []);
 
+        let done = false;
         uiAccountRequest({
           accounts$,
           currencies: currencyList,
           onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+            if (done) return;
+            done = true;
             tracking.requestAccountSuccess(manifest);
             resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
           },
           onCancel: () => {
+            if (done) return;
+            done = true;
             tracking.requestAccountFail(manifest);
             reject(new Error("Canceled by user"));
           },
@@ -385,25 +390,32 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         account.id,
         (account, parentAccount, accountAddress) =>
-          new Promise((resolve, reject) =>
-            uiAccountReceive({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiAccountReceive({
               account,
               parentAccount,
               accountAddress,
               onSuccess: accountAddress => {
+                if (done) return;
+                done = true;
                 tracking.receiveSuccess(manifest);
                 resolve(accountAddress);
               },
               onCancel: () => {
+                if (done) return;
+                done = true;
                 tracking.receiveFail(manifest);
                 reject(new Error("User cancelled"));
               },
               onError: error => {
+                if (done) return;
+                done = true;
                 tracking.receiveFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
         tokenCurrency,
       ),
     );
@@ -419,18 +431,25 @@ export function useWalletAPIServer({
         message.toString("hex"),
         (account: AccountLike, message: AnyMessage) =>
           new Promise((resolve, reject) => {
+            let done = false;
             return uiMessageSign({
               account,
               message,
               onSuccess: signature => {
+                if (done) return;
+                done = true;
                 tracking.signMessageSuccess(manifest);
                 resolve(Buffer.from(signature.replace("0x", ""), "hex"));
               },
               onCancel: () => {
+                if (done) return;
+                done = true;
                 tracking.signMessageFail(manifest);
                 reject(new UserRefusedOnDevice());
               },
               onError: error => {
+                if (done) return;
+                done = true;
                 tracking.signMessageFail(manifest);
                 reject(error);
               },
@@ -463,22 +482,27 @@ export function useWalletAPIServer({
           account.id,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSign({
                 account,
                 parentAccount,
                 signFlowInfos,
                 options,
                 onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionSuccess(manifest);
                   resolve(signedOperation);
                 },
                 onError: error => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionFail(manifest);
                   reject(error);
                 },
-              }),
-            ),
+              });
+            }),
           tokenCurrency,
         );
 
@@ -498,22 +522,27 @@ export function useWalletAPIServer({
           account.id,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSign({
                 account,
                 parentAccount,
                 signFlowInfos,
                 options,
                 onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionSuccess(manifest);
                   resolve(signedOperation);
                 },
                 onError: error => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionFail(manifest);
                   reject(error);
                 },
-              }),
-            ),
+              });
+            }),
           tokenCurrency,
         );
 
@@ -582,9 +611,12 @@ export function useWalletAPIServer({
 
           tracking.deviceTransportRequested(manifest);
 
+          let done = false;
           return uiDeviceTransport({
             appName,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
+              if (done) return;
+              done = true;
               tracking.deviceTransportSuccess(manifest);
 
               if (!deviceParam) {
@@ -608,6 +640,8 @@ export function useWalletAPIServer({
               resolve("1");
             },
             onCancel: () => {
+              if (done) return;
+              done = true;
               tracking.deviceTransportFail(manifest);
               reject(new Error("User cancelled"));
             },
@@ -629,9 +663,12 @@ export function useWalletAPIServer({
 
           tracking.deviceSelectRequested(manifest);
 
+          let done = false;
           return uiDeviceSelect({
             appName,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
+              if (done) return;
+              done = true;
               tracking.deviceSelectSuccess(manifest);
 
               if (!deviceParam) {
@@ -653,6 +690,8 @@ export function useWalletAPIServer({
               resolve(deviceParam.deviceId);
             },
             onCancel: () => {
+              if (done) return;
+              done = true;
               tracking.deviceSelectFail(manifest);
               reject(new Error("User cancelled"));
             },
@@ -738,19 +777,24 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         exchangeType,
         exchangeType =>
-          new Promise((resolve, reject) =>
-            uiExchangeStart({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiExchangeStart({
               exchangeType,
               onSuccess: (nonce: string) => {
+                if (done) return;
+                done = true;
                 tracking.startExchangeSuccess(manifest);
                 resolve(nonce);
               },
               onCancel: error => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
       );
     });
   }, [uiExchangeStart, accounts, manifest, server, tracking]);
@@ -780,19 +824,24 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         request,
         request =>
-          new Promise((resolve, reject) =>
-            uiExchangeComplete({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiExchangeComplete({
               exchangeParams: request,
               onSuccess: (hash: string) => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeSuccess(manifest);
                 resolve(hash);
               },
               onCancel: error => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
       );
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);

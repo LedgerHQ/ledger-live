@@ -62,6 +62,7 @@ const AccountHeaderManageActions = (props: {
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

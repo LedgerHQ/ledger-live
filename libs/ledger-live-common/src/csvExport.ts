@@ -66,10 +66,12 @@ const fields: Field[] = [
   },
   {
     title: "Account Name",
-    cell: (account, parentAccount, _op, _counterValueCurrency, _countervalueState, walletState) =>
-      walletState
-        ? accountNameWithDefaultSelector(walletState, account)
-        : getDefaultAccountName(getMainAccount(account, parentAccount)),
+    cell: (account, parentAccount, _op, _counterValueCurrency, _countervalueState, walletState) => {
+      const main = getMainAccount(account, parentAccount);
+      return walletState
+        ? accountNameWithDefaultSelector(walletState, main)
+        : getDefaultAccountName(main);
+    },
   },
   {
     title: "Account xpub",

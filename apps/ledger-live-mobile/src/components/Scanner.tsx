@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { BarCodeScanningResult, Camera, CameraType } from "expo-camera";
+import { BarCodeScanningResult, Camera, CameraType } from "expo-camera/legacy";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";

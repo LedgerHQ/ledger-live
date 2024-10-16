@@ -51,7 +51,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
-        <Box p={1}>
+        <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
             data={showAll ? validators : [chosenValidator ?? validators[0]]}
             style={{

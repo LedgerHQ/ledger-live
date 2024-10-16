@@ -25,7 +25,7 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 
 ### iOS
 
-- XCode (our CI builds run 15.4, so 15.4 is recommended)
+- XCode (our CI builds run 15.3, so 15.3 is recommended)
 - Ruby 3.3.0 or above. The macOS built-in Ruby [does not work properly for installing dependencies of the iOS app](https://jeffreymorgan.io/articles/ruby-on-macos-with-rvm/), you have to install Ruby with for instance [Homebrew](https://brew.sh/) or [rvm](https://rvm.io/rvm/install) and make sure that `which ruby` points to that newly installed Ruby.
 
 ### Android

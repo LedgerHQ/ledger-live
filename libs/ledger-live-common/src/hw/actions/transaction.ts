@@ -43,7 +43,7 @@ type TransactionRequest = {
   manifestName?: string;
   isACRE?: boolean;
 };
-type TransactionResult =
+export type TransactionResult =
   | {
       signedOperation: SignedOperation;
       device: Device;

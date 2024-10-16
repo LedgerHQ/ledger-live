@@ -51,7 +51,7 @@ import {
   useRedirectToSwapHistory,
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-
+import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -272,6 +272,49 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             },
           );
         });
+      },
+      "custom.getTransactionByHash": async ({
+        params,
+      }: {
+        params: {
+          transactionHash: string;
+          fromAccountId: string;
+          SWAP_VERSION: string;
+        };
+      }): Promise<
+        | {
+            hash: string;
+            blockHeight: number | undefined;
+            blockHash: string | undefined;
+            nonce: number;
+            gasUsed: string;
+            gasPrice: string;
+            value: string;
+          }
+        | {}
+      > => {
+        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+        if (!realFromAccountId) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+        if (!fromAccount) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
+        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+
+        const nodeAPI = getNodeApi(mainAccount.currency);
+
+        try {
+          const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
+          return Promise.resolve(tx);
+        } catch (error) {
+          // not a real error, the node just didn't find the transaction yet
+          return Promise.resolve({});
+        }
       },
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();

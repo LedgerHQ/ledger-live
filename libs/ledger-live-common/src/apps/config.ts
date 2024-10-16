@@ -35,7 +35,7 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_solana: {
     type: "object",
     default: {
-      minVersion: "1.5.3",
+      minVersion: "1.2.0",
     },
   },
   config_nanoapp_celo: {

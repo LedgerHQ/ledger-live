@@ -6,12 +6,11 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 34
         targetSdkVersion = 34
-        kotlinVersion = "1.8.10"
         androidXCore = "1.8.0"
         androidXAnnotation = "1.2.0"
         androidXBrowser = "1.3.0"
-        ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.8.0"
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.22"
     }
     repositories {
         google()
@@ -64,9 +63,6 @@ allprojects {
         resolutionStrategy {
             force 'androidx.core:core:1.7.0'
 
-            // Needed for flipper https://github.com/facebook/flipper/issues/3397
-            // In the case of a detox build
-            force 'androidx.sqlite:sqlite-framework:2.1.0'
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }

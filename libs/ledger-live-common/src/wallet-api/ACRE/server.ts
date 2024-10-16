@@ -140,22 +140,27 @@ export const handlers = ({
       hasFeesProvided,
     };
 
-    return new Promise<SignedOperation>((resolve, reject) =>
-      uiTransactionSign({
+    return new Promise<SignedOperation>((resolve, reject) => {
+      let done = false;
+      return uiTransactionSign({
         account: signerAccount,
         parentAccount,
         signFlowInfos,
         options,
         onSuccess: signedOperation => {
+          if (done) return;
+          done = true;
           tracking.signTransactionSuccess(manifest);
           resolve(signedOperation);
         },
         onError: error => {
+          if (done) return;
+          done = true;
           tracking.signTransactionFail(manifest);
           reject(error);
         },
-      }),
-    );
+      });
+    });
   }
 
   return {
@@ -187,21 +192,28 @@ export const handlers = ({
       const formattedMessage = { ...message, path } as AnyMessage;
 
       return new Promise((resolve, reject) => {
+        let done = false;
         return uiMessageSign({
           account,
           message: formattedMessage,
           options,
           onSuccess: signature => {
+            if (done) return;
+            done = true;
             tracking.signMessageSuccess(manifest);
             resolve({
               hexSignedMessage: signature.replace("0x", ""),
             });
           },
           onCancel: () => {
+            if (done) return;
+            done = true;
             tracking.signMessageFail(manifest);
             reject(new UserRefusedOnDevice());
           },
           onError: error => {
+            if (done) return;
+            done = true;
             tracking.signMessageFail(manifest);
             reject(error);
           },

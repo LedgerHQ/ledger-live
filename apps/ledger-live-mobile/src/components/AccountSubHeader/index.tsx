@@ -7,9 +7,10 @@ import AccountSubHeaderDrawer from "./AccountSubHeaderDrawer";
 type Props = {
   family: string;
   team: string;
+  teamLink?: string;
 };
 
-function AccountSubHeader({ team, family }: Props) {
+function AccountSubHeader({ team, family, teamLink }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const { t } = useTranslation();
 
@@ -41,6 +42,7 @@ function AccountSubHeader({ team, family }: Props) {
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
         team={team}
+        teamLink={teamLink}
         family={family}
       />
     </Flex>

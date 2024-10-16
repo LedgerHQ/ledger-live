@@ -2,11 +2,10 @@ import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import React, { useCallback, useState } from "react";
-import { Camera } from "expo-camera";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import { BarCodeScanningResult, CameraType } from "expo-camera/build/Camera.types";
+import { Camera, BarCodeScanningResult, CameraType } from "expo-camera/legacy";
 import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
