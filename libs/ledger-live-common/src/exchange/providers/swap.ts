@@ -235,6 +235,7 @@ export const getSwapProvider = async (
       termsOfUseUrl: "https://example.com",
       supportUrl: "https://example.com",
       mainUrl: "https://example.com",
+      displayName: providerName,
       ...testProvider,
     };
   }

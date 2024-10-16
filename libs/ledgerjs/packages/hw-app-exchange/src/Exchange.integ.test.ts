@@ -234,7 +234,7 @@ describe("Check SWAP until payload signature", () => {
       ),
     };
     let addressParameters = bip32asBuffer("44'/60'/0'/0/0");
-    await exchange.checkPayoutAddress(configEth.config, configEth.signature, addressParameters);
+    await exchange.validatePayoutOrAsset(configEth.config, configEth.signature, addressParameters);
 
     const delay = (milliseconds: number) => {
       return new Promise(resolve => {
