@@ -128,6 +128,7 @@ export type LiveAppManifest = {
   visibility: Visibility;
   highlight?: boolean;
   providerTestBaseUrl?: string;
+  providerTestId?: string;
   content: {
     cta?: TranslatableString;
     subtitle?: TranslatableString;
