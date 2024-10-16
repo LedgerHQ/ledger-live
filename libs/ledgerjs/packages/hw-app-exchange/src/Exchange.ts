@@ -30,9 +30,9 @@ const CHECK_PARTNER_COMMAND = 0x05;
 const PROCESS_TRANSACTION_RESPONSE = 0x06;
 const CHECK_TRANSACTION_SIGNATURE = 0x07;
 const CHECK_PAYOUT_ADDRESS = 0x08;
-const CHECK_ASSET_IN = 0x08;
 const CHECK_REFUND_ADDRESS = 0x09;
 const SIGN_COIN_TRANSACTION = 0x0a;
+const CHECK_ASSET_IN_AND_DISPLAY = 0x0b;
 
 // Extension for PROCESS_TRANSACTION_RESPONSE APDU
 const P2_NONE = 0x00 << 4;
@@ -260,7 +260,7 @@ export default class Exchange {
     maybeThrowProtocolError(result);
   }
 
-  async checkPayoutAddress(
+  async validatePayoutOrAsset(
     payoutCurrencyConfig: Buffer,
     currencyConfigSignature: Buffer,
     addressParameters: Buffer,
@@ -280,7 +280,9 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      this.transactionType === ExchangeTypes.Swap ? CHECK_PAYOUT_ADDRESS : CHECK_ASSET_IN,
+      this.transactionType === ExchangeTypes.Swap || this.transactionType === ExchangeTypes.SwapNg
+        ? CHECK_PAYOUT_ADDRESS
+        : CHECK_ASSET_IN_AND_DISPLAY,
       this.transactionRate,
       this.transactionType,
       bufferToSend,

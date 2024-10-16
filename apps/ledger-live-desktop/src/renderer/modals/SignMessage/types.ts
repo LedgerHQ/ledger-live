@@ -10,6 +10,8 @@ export type StepProps = {
   account: Account;
   error: Error | undefined;
   message: AnyMessage;
+  useApp?: string;
+  dependencies?: string[];
   onConfirmationHandler: (arg: string) => void;
   onFailHandler: (arg: Error) => void;
 };

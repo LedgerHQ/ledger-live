@@ -12,8 +12,6 @@ import { State } from "~/renderer/reducers";
 import { Dispatch } from "redux";
 export { default as ModalBody } from "./ModalBody";
 
-const domNode = document.getElementById("modals");
-
 const mapStateToProps = <Name extends keyof ModalData>(
   state: State,
   { name, isOpened, onBeforeOpen }: Props<Name>,
@@ -233,6 +231,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   };
 
   render() {
+    const domNode = document.getElementById("modals");
     const { children, render, centered, onClose, data, isOpened, width, backdropColor, bodyStyle } =
       this.props;
     const renderProps = {

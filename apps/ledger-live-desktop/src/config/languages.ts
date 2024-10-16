@@ -92,7 +92,7 @@ export const Languages = {
     label: "Deutsch",
     locales: buildLocales(LanguageLocaleIds.de),
 
-    deviceSupport: undefined,
+    deviceSupport: { label: "german", id: languageIds.german },
   },
   ja: {
     id: "ja",
@@ -113,21 +113,21 @@ export const Languages = {
     label: "Português (Brasil)",
     locales: buildLocales(LanguageLocaleIds.pt),
 
-    deviceSupport: undefined,
+    deviceSupport: { label: "brazilian", id: languageIds.brazilian },
   },
   ru: {
     id: "ru",
     label: "Русский",
     locales: buildLocales(LanguageLocaleIds.ru),
 
-    deviceSupport: undefined,
+    deviceSupport: { label: "russian", id: languageIds.russian },
   },
   tr: {
     id: "tr",
     label: "Türkçe",
     locales: buildLocales(LanguageLocaleIds.tr),
 
-    deviceSupport: undefined,
+    deviceSupport: { label: "turkish", id: languageIds.turkish },
   },
   zh: {
     id: "zh",

@@ -143,7 +143,7 @@ export function getBalanceHistory(
   for (let i = 0; i < count - 1; i++) {
     history.unshift({
       date: new Date(t - conf.increment * i),
-      value: balances[balances.length - 1 - i] ?? 0,
+      value: balances[balances.length - 1 - i] || 0,
     });
   }
 

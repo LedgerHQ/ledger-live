@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 24.7.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be), [`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`9c92854`](https://github.com/LedgerHQ/ledger-live/commit/9c928544f1631917eb2c2f9e150d070537bb93b7), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c), [`d0eec9f`](https://github.com/LedgerHQ/ledger-live/commit/d0eec9f6fc61a915119f0b9bf087ff270687ff30)]:
+  - @ledgerhq/cryptoassets@13.6.2-next.0
+  - @ledgerhq/live-common@34.12.0-next.0
+  - @ledgerhq/live-countervalues@0.2.10-next.0
+  - @ledgerhq/coin-bitcoin@0.8.5-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/device-core@0.4.4-next.0
+  - @ledgerhq/live-wallet@0.7.2-next.0
+
 ## 24.7.2
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Analytics } from "../../models/Analytics";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { PortfolioPage } from "../../page/portfolio.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";

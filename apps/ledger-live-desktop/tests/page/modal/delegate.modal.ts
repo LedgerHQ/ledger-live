@@ -4,13 +4,14 @@ import { step } from "tests/misc/reporters/step";
 
 export class delegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
-  private delegateContinueButton = this.page.locator("id=delegate-continue-button");
+  private delegateContinueButton = this.page.getByText("Continue");
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
   private searchCloseButton = this.page.getByText("Show less");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
+  private detailsButton = this.page.getByRole("button", { name: "View details" });
 
   @step("Get title provider")
   async getTitleProvider() {
@@ -50,5 +51,19 @@ export class delegateModal extends Modal {
   @step("Click on chosen stake provider $0")
   async chooseStakeProvider(stakeProvider: string) {
     await this.stakeProviderContainer(stakeProvider).click();
+  }
+
+  @step("Click on view details button")
+  async clickViewDetailsButton() {
+    await this.detailsButton.click();
+  }
+
+  @step("Fill amount $0")
+  async fillAmount(amount: string) {
+    if (amount == "send max") {
+      await this.toggleMaxAmount();
+    } else {
+      await this.cryptoAmountField.fill(amount);
+    }
   }
 }

@@ -15,6 +15,8 @@ const usage = (exitCode = 1) => {
 };
 
 const build_ios = async () => {
+  await $`pnpm mobile exec detox clean-framework-cache`;
+  await $`pnpm mobile exec detox build-framework-cache`;
   await $`pnpm mobile e2e:build -c ios.sim.release`;
 };
 

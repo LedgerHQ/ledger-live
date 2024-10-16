@@ -6,7 +6,7 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/renderer/logger";
-import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
+import { Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 import Cancel from "./errors/Cancel";
 import DeviceCancel from "./errors/DeviceError";
@@ -199,22 +199,7 @@ const UpdateModal = ({
                 >
                   <step.component {...additionalProps} />
                 </Flex>
-                {step.footer ? (
-                  <Flex flexDirection="column" alignSelf="stretch">
-                    <Divider color={"neutral.c30"} />
-                    <Flex
-                      flex={1}
-                      px={12}
-                      alignSelf="stretch"
-                      flexDirection="row"
-                      justifyContent="space-between"
-                      pt={6}
-                      pb={1}
-                    >
-                      <step.footer {...additionalProps} />
-                    </Flex>
-                  </Flex>
-                ) : null}
+                {step.footer ? <step.footer {...additionalProps} /> : null}
               </Flex>
             </FlowStepper.Indexed.Step>
           ))}

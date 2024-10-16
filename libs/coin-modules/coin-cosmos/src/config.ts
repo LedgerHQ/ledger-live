@@ -35,7 +35,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_dydx: {
     type: "object",
     default: {
-      lcd: "https://dydx-dao-api.polkachu.com",
+      lcd: "https://dydx.coin.ledger.com",
       minGasPrice: 12500000000,
       ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
       status: {

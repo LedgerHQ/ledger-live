@@ -29,7 +29,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -41,6 +41,8 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
+import MemoTagInfo from "~/newArch/features/MemoTag/components/MemoTagInfo";
+import { MEMO_TAG_COINS } from "~/newArch/features/MemoTag/constants";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -68,7 +70,12 @@ const Receive1ShareAddress = ({
   address: string;
   showQRCodeModal: () => void;
 }) => {
-  const isUTXOCompliantCurrency = isUTXOCompliant(account.currency.family);
+  const { currency } = account;
+
+  const isUTXOCompliantCurrency = isUTXOCompliant(currency.family);
+  const shouldRenderMemoTagInfo =
+    currency.explorerId && MEMO_TAG_COINS.includes(currency.explorerId);
+
   return (
     <>
       <Box horizontal alignItems="center" flow={2} mb={4}>
@@ -103,6 +110,13 @@ const Receive1ShareAddress = ({
           <UTXOAddressAlert />
         </Box>
       )}
+      <FeatureToggle featureId="lldMemoTag">
+        {shouldRenderMemoTagInfo && (
+          <Box mt={3}>
+            <MemoTagInfo />
+          </Box>
+        )}
+      </FeatureToggle>
     </>
   );
 };

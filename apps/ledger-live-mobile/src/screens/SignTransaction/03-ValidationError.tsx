@@ -8,7 +8,7 @@ import ValidateError from "~/components/ValidateError";
 import { ScreenName } from "~/const";
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import {
+import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
@@ -20,11 +20,14 @@ type Navigation = CompositeScreenProps<
 
 export default function ValidationError({ navigation, route }: Navigation) {
   const { colors } = useTheme();
-  const { error } = route.params;
+  const { error, onError } = route.params;
 
   const onClose = useCallback(() => {
+    if (error) {
+      onError(error);
+    }
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
-  }, [navigation]);
+  }, [error, navigation, onError]);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);

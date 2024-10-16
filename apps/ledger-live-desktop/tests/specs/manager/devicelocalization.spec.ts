@@ -4,7 +4,7 @@ import { ManagerPage } from "../../page/manager.page";
 import { LanguageInstallation } from "../../page/drawer/language.installation.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "tests/page/drawer/drawer";
+import { Drawer } from "tests/component/drawer.component";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: "12" } });

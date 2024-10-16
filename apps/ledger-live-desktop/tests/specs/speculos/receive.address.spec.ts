@@ -20,8 +20,11 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Receive", () => {
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: account.account.currency.speculosApp,
+      cliCommands: [
+        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+      ],
     });
 
     test(
@@ -66,8 +69,9 @@ for (const account of accounts) {
 test.describe("Receive", () => {
   const account = Account.TRX_2;
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
+    cliCommands: [`liveData --currency ${account.currency.ticker} --index ${account.index} --add`],
   });
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,

@@ -47,7 +47,13 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/**/__integration__/**",
+    "!src/**/__tests__/**",
+  ],
   coverageReporters: ["json", "lcov", "json-summary"],
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),

@@ -5,7 +5,7 @@ on:
 jobs:
   create-hotfix:
     name: Create Hotfix
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

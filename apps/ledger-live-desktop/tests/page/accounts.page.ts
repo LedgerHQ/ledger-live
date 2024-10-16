@@ -21,6 +21,8 @@ export class AccountsPage extends AppPage {
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
   private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
   private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
+  private syncAccountButton = (accountName: string) =>
+    this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
 
   async openAddAccountModal() {
     await this.addAccountButton.click();
@@ -29,6 +31,11 @@ export class AccountsPage extends AppPage {
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
     await this.accountComponent(accountName).click();
+  }
+
+  @step("Click sync account button for: $0")
+  async clickSyncBtnForAccount(accountName: string) {
+    await this.syncAccountButton(accountName).click();
   }
 
   @step("Click show Account $0 tokens button")

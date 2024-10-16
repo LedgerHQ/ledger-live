@@ -3,7 +3,12 @@ import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
-import { createExchange, ExchangeTypes } from "@ledgerhq/hw-app-exchange";
+import {
+  isExchangeTypeNg,
+  ExchangeTypes,
+  createExchange,
+  PayloadSignatureComputedFormat,
+} from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
@@ -86,11 +91,14 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
+        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+          isExchangeTypeNg(exchange.transactionType)
+            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+        await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 
-        const bufferSignature = Buffer.from(signature, "hex");
-        const goodSign = convertSignature(bufferSignature, exchangeType);
+        const goodSign = convertSignature(signature, exchange.transactionType);
 
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
@@ -110,7 +118,7 @@ const completeExchange = (
             estimatedFees: estimatedFees.toString(),
           });
           currentStep = "CHECK_PAYOUT_ADDRESS";
-          await exchange.checkPayoutAddress(
+          await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,
@@ -173,17 +181,10 @@ const completeExchange = (
  * @param {ExchangeTypes} exchangeType
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
-function convertSignature(bufferSignature: Buffer, exchangeType: ExchangeTypes): Buffer {
-  const goodSign =
-    exchangeType === ExchangeTypes.Sell
-      ? bufferSignature
-      : Buffer.from(secp256k1.signatureExport(bufferSignature));
-
-  if (!goodSign) {
-    throw new Error("Could not check provider signature");
-  }
-
-  return goodSign;
+function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
+  return isExchangeTypeNg(exchangeType)
+    ? Buffer.from(signature, "base64url")
+    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;
