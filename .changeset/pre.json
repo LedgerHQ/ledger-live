@@ -122,5 +122,23 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "beige-cats-travel",
+    "beige-planes-shake",
+    "big-apples-smash",
+    "brave-wasps-sleep",
+    "early-seas-love",
+    "flat-comics-know",
+    "good-mugs-pump",
+    "moody-geckos-fix",
+    "new-cougars-develop",
+    "olive-planes-greet",
+    "pink-apricots-yell",
+    "pretty-penguins-hang",
+    "shy-lobsters-report",
+    "six-ligers-jam",
+    "smooth-mangos-worry",
+    "thin-timers-beg",
+    "wet-socks-film"
+  ]
 }

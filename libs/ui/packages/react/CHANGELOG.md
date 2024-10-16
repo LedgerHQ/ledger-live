@@ -1,5 +1,12 @@
 # @ledgerhq/react-ui
 
+## 0.16.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1-next.0
+
 ## 0.16.2
 
 ### Patch Changes

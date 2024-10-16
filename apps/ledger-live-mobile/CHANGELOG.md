@@ -1,5 +1,44 @@
 # live-mobile
 
+## 3.53.0-next.0
+
+### Minor Changes
+
+- [#7944](https://github.com/LedgerHQ/ledger-live/pull/7944) [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb) Thanks [@Justkant](https://github.com/Justkant)! - feat: bootstrap wallet-api custom ACRE module and handlers
+
+### Patch Changes
+
+- [#8102](https://github.com/LedgerHQ/ledger-live/pull/8102) [`63ec8f9`](https://github.com/LedgerHQ/ledger-live/commit/63ec8f986908761c94327696ab2e375db8dd8fd9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue during onboarding with ledger sync. completeOnboarding was never triggered
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+- [#7981](https://github.com/LedgerHQ/ledger-live/pull/7981) [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add support to new language packs: de, pt-br, ru, tr
+
+- [#8078](https://github.com/LedgerHQ/ledger-live/pull/8078) [`9eba0d5`](https://github.com/LedgerHQ/ledger-live/commit/9eba0d51d500778924d9a9ba05129f63e7daa516) Thanks [@themooneer](https://github.com/themooneer)! - avoid sh: $GITHUB_ENV: ambiguous redirect problems on ad-hoc ipa build process
+
+- [#8111](https://github.com/LedgerHQ/ledger-live/pull/8111) [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): avoid sending an error when retrying a transaction.sign on LLM
+
+  Fix some of the navigation types
+  Added a done boolean to avoid sending wrong analytics when leaving the screen
+
+- [#8066](https://github.com/LedgerHQ/ledger-live/pull/8066) [`462dbf1`](https://github.com/LedgerHQ/ledger-live/commit/462dbf120794ca7ebfea9567e9d963ae222194ea) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ledger sync error : Text strings must be rendered within a <Text> component.
+
+- Updated dependencies [[`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26), [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`867b2ba`](https://github.com/LedgerHQ/ledger-live/commit/867b2ba1e467bcd5585b3e670f735520529036aa), [`9c92854`](https://github.com/LedgerHQ/ledger-live/commit/9c928544f1631917eb2c2f9e150d070537bb93b7), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c)]:
+  - @ledgerhq/native-ui@0.25.1-next.0
+  - @ledgerhq/types-live@6.52.3-next.0
+  - @ledgerhq/live-common@34.12.0-next.0
+  - @ledgerhq/coin-cosmos@0.1.6-next.0
+  - @ledgerhq/live-countervalues@0.2.10-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/coin-elrond@0.1.5-next.0
+  - @ledgerhq/coin-evm@2.4.2-next.0
+  - @ledgerhq/domain-service@1.2.9-next.0
+  - @ledgerhq/live-countervalues-react@0.2.10-next.0
+  - @ledgerhq/live-nft@0.4.10-next.0
+  - @ledgerhq/live-nft-react@0.4.10-next.0
+  - @ledgerhq/live-wallet@0.7.2-next.0
+
 ## 3.52.1
 
 ### Patch Changes

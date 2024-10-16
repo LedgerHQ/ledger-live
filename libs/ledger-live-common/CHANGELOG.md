@@ -1,5 +1,52 @@
 ## 34.5.0-next.4
 
+## 34.12.0-next.0
+
+### Minor Changes
+
+- [#7944](https://github.com/LedgerHQ/ledger-live/pull/7944) [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb) Thanks [@Justkant](https://github.com/Justkant)! - feat: bootstrap wallet-api custom ACRE module and handlers
+
+### Patch Changes
+
+- [#8016](https://github.com/LedgerHQ/ledger-live/pull/8016) [`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865) Thanks [@qperrot](https://github.com/qperrot)! - Update Metis explorer through Firebase to support CORs
+
+- [#8070](https://github.com/LedgerHQ/ledger-live/pull/8070) [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533) Thanks [@Wozacosta](https://github.com/Wozacosta)! - test: update stellar and tron bridge expected values
+
+- [#8039](https://github.com/LedgerHQ/ledger-live/pull/8039) [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add ptxSwapCoreExperiment flag
+
+- [#8111](https://github.com/LedgerHQ/ledger-live/pull/8111) [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): avoid sending an error when retrying a transaction.sign on LLM
+
+  Fix some of the navigation types
+  Added a done boolean to avoid sending wrong analytics when leaving the screen
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`867b2ba`](https://github.com/LedgerHQ/ledger-live/commit/867b2ba1e467bcd5585b3e670f735520529036aa), [`9c92854`](https://github.com/LedgerHQ/ledger-live/commit/9c928544f1631917eb2c2f9e150d070537bb93b7), [`d0eec9f`](https://github.com/LedgerHQ/ledger-live/commit/d0eec9f6fc61a915119f0b9bf087ff270687ff30)]:
+  - @ledgerhq/cryptoassets@13.6.2-next.0
+  - @ledgerhq/crypto-icons-ui@1.5.1-next.0
+  - @ledgerhq/wallet-api-acre-module@0.1.0-next.0
+  - @ledgerhq/coin-stellar@0.3.5-next.0
+  - @ledgerhq/coin-tron@0.0.10-next.0
+  - @ledgerhq/coin-cosmos@0.1.6-next.0
+  - @ledgerhq/live-countervalues@0.2.10-next.0
+  - @ledgerhq/coin-bitcoin@0.8.5-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/coin-algorand@0.5.10-next.0
+  - @ledgerhq/coin-cardano@0.2.5-next.0
+  - @ledgerhq/coin-elrond@0.1.5-next.0
+  - @ledgerhq/coin-evm@2.4.2-next.0
+  - @ledgerhq/coin-icon@0.4.7-next.0
+  - @ledgerhq/coin-near@0.5.10-next.0
+  - @ledgerhq/coin-polkadot@1.3.3-next.0
+  - @ledgerhq/coin-solana@0.8.2-next.0
+  - @ledgerhq/coin-tezos@0.6.6-next.0
+  - @ledgerhq/coin-ton@0.3.18-next.0
+  - @ledgerhq/coin-xrp@0.5.6-next.0
+  - @ledgerhq/device-core@0.4.4-next.0
+  - @ledgerhq/hw-app-eth@6.40.2-next.0
+  - @ledgerhq/live-countervalues-react@0.2.10-next.0
+  - @ledgerhq/live-nft@0.4.10-next.0
+  - @ledgerhq/live-wallet@0.7.2-next.0
+  - @ledgerhq/hw-app-vet@0.2.9-next.0
+
 ## 34.11.1
 
 ### Patch Changes
