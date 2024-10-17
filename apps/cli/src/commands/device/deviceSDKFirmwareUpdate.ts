@@ -96,7 +96,7 @@ export default {
   }: Partial<DeviceSDKFirmwareUpdateJobOpts>) => (
     invariant(!osuVersion || toMyOwnRisk, "--to-my-own-risk is required: " + disclaimer),
     listOSUs
-      ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map(d => d.name))))
+      ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map((d: any) => d.name))))
       : withDevice(device || "")(t => from(getDeviceInfo(t))).pipe(
           mergeMap(() => {
             return concat(

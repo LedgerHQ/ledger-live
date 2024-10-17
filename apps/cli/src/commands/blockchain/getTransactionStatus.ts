@@ -10,7 +10,20 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { InferTransactionsOpts } from "../../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../../transaction";
-const getTransactionStatusFormatters = {
+import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+
+// Typing for the function using these entities:
+type TransactionStatusFormatterInput = {
+  transaction: Transaction;
+  status: TransactionStatusCommon;
+  account: Account;
+};
+
+const getTransactionStatusFormatters: Record<
+  string,
+  (input: TransactionStatusFormatterInput) => string
+> = {
   default: ({ status, transaction, account }) =>
     "TRANSACTION " +
     (formatTransaction(transaction, account) || JSON.stringify(toTransactionRaw(transaction))) +
@@ -24,10 +37,12 @@ const getTransactionStatusFormatters = {
     "STATUS " +
     JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
 };
+
 export type GetTransactionStatusJobOpts = ScanCommonOpts &
   InferTransactionsOpts & {
-    format: string;
+    format: "default" | "json";
   };
+
 export default {
   description: "Prepare a transaction and returns 'TransactionStatus' meta information",
   args: [

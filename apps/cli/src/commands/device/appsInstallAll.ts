@@ -3,7 +3,7 @@ import { from } from "rxjs";
 import { mergeMap, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
+import { initState, reducer, runAll, State } from "@ledgerhq/live-common/apps/index";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
@@ -22,7 +22,7 @@ export default {
             filter(e => e.type === "result"),
             map((e: any) =>
               e.result.appsListNames.reduce(
-                (s, name) =>
+                (s: State, name: string) =>
                   reducer(s, {
                     type: "install",
                     name,

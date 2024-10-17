@@ -17,6 +17,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import type { Application, ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
+import Transport from "@ledgerhq/hw-transport";
+import { DeviceModel } from "@ledgerhq/devices";
 type ResultCommon = {
   versionId: number;
   appPath: string;
@@ -64,7 +66,7 @@ class MemoFile {
                   return {
                     versionId,
                     appPath,
-                    status: "KO",
+                    status: "KO" as const,
                     error,
                   };
                 }
@@ -104,7 +106,7 @@ class MemoFile {
 }
 
 let results: any[] = [];
-let memoFile;
+let memoFile: MemoFile;
 type Candidate = {
   app: Application;
   version: ApplicationVersion;
@@ -130,13 +132,18 @@ const getAPIDeviceVersionIds = async (deviceInfo: DeviceInfo): Promise<number[]>
   return all;
 };
 
-const compatibleAppVersion = (v, deviceVersionIds, deviceModel, deviceInfo) =>
+const compatibleAppVersion = (
+  v: ApplicationVersion,
+  deviceVersionIds: number[],
+  deviceModel: DeviceModel,
+  deviceInfo: DeviceInfo,
+) =>
   v.providers.includes(1) &&
   deviceVersionIds.some(id => v.device_versions.includes(id)) && // heuristic to see if app is compatible...
   v.firmware.startsWith(deviceModel.id.toLowerCase() + "/" + deviceInfo.version);
 
 const findCandidates = async (
-  deviceModel,
+  deviceModel: DeviceModel,
   applications: Application[],
   deviceInfo: DeviceInfo,
 ): Promise<Candidate[]> => {
@@ -179,7 +186,7 @@ const findCandidates = async (
   return candidates as Candidate[];
 };
 
-const installCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
+const installCandidate = (t: Transport, deviceInfo: DeviceInfo, candidate: Candidate) =>
   concat(
     ...candidate.installQueue.flatMap(app => [
       defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))),
@@ -187,7 +194,7 @@ const installCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
     ]),
   );
 
-const uninstallCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
+const uninstallCandidate = (t: Transport, deviceInfo: DeviceInfo, candidate: Candidate) =>
   concat(
     ...candidate.installQueue
       .slice(0)
@@ -209,14 +216,14 @@ const getCandidateName = (candidate: Candidate) => {
   );
 };
 
-let lastResult;
+let lastResult: Result;
 
-const checkInstalled = (installed, candidate: Candidate) => {
+const checkInstalled = (installed: any, candidate: Candidate) => {
   const name = getCandidateName(candidate);
   const ins = installed.find(
-    i => i.name === candidate.version.name || i.hash === candidate.version.hash,
+    (i: any) => i.name === candidate.version.name || i.hash === candidate.version.hash,
   );
-  let result;
+  let result: Result;
 
   if (!ins) {
     if (installed.length > 0) {
@@ -274,7 +281,7 @@ const checkInstalled = (installed, candidate: Candidate) => {
   return EMPTY;
 };
 
-const wipeAll = (t, deviceInfo) =>
+const wipeAll = (t: Transport, deviceInfo: DeviceInfo) =>
   listAppsUseCase(t, deviceInfo).pipe(
     filter(e => e.type === "result"),
     map((e: any) => e.result),
@@ -316,7 +323,7 @@ export default {
           async ([deviceInfo, applications]) => {
             const { deviceModel } = t;
             invariant(deviceModel, "device model mandatory");
-            const candidates = await findCandidates(deviceModel, applications, deviceInfo);
+            const candidates = await findCandidates(deviceModel!, applications, deviceInfo);
             let candidatesErrors: Candidate[] = [];
             let candidatesNew = [...candidates];
 
@@ -375,7 +382,7 @@ export default {
       ).pipe(
         mergeMap(([deviceInfo, candidates]) =>
           concat(
-            wipeAll(t, deviceInfo).pipe(ignoreElements()),
+            wipeAll(t, deviceInfo as DeviceInfo).pipe(ignoreElements()),
             of([deviceInfo, candidates] as [DeviceInfo, Candidate[]]),
           ),
         ),
@@ -388,7 +395,7 @@ export default {
                   installCandidate(t, deviceInfo, candidate).pipe(
                     ignoreElements(),
                     catchError(e => {
-                      const result = {
+                      const result: Result = {
                         versionId: candidate.version.id,
                         appPath: candidate.version.firmware,
                         status: "KO",

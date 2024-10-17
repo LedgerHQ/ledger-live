@@ -31,8 +31,8 @@ checkLibs({
 });
 
 let idCounter = 0;
-const mockTransports = {};
-const recordStores = {};
+const mockTransports: Record<string, any> = {};
+const recordStores: Record<string, RecordStore> = {};
 
 export function releaseMockDevice(id: string) {
   const store = recordStores[id];

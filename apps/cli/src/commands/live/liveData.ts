@@ -45,7 +45,7 @@ export default {
           return throwError(() => new Error("encrypted ledger live data is not supported"));
         }
 
-        const existingIds = appjsondata.data.accounts.map(a => a.data.id);
+        const existingIds = appjsondata.data.accounts.map((a: any) => a.data.id);
         const append = accounts
           .filter(a => !existingIds.includes(a.id))
           .map(account => ({

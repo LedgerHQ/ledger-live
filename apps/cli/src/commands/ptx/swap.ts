@@ -49,7 +49,7 @@ const exec = async (opts: SwapJobOpts) => {
       },
     ],
     {
-      argv: opts._unknown.map((a, i) => (i % 2 ? a : a.replace("_2", ""))),
+      argv: opts._unknown.map((a: string, i: number) => (i % 2 ? a : a.replace("_2", ""))),
     },
   ) as ScanCommonOpts & { tokenId: string };
 

@@ -9,10 +9,10 @@ import type { ScanCommonOpts } from "../../scan";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { InferTransactionsOpts } from "../../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../../transaction";
-import type { SignedOperation } from "@ledgerhq/types-live";
+import type { SignedOperation, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
-const toJS = obj => {
+const toJS = (obj: TransactionStatusCommon | SignedOperation | undefined): string => {
   if (typeof obj === "object" && obj) {
     if (Array.isArray(obj)) {
       return "[" + obj.map(o => toJS(o)).join(", ") + "]";
@@ -32,7 +32,7 @@ const toJS = obj => {
       "{\n" +
       keys
         .map(key => {
-          return `  ${key}: ${toJS(obj[key])}`;
+          return `  ${key}: ${toJS((obj as Record<string, any>)[key])}`;
         })
         .join(",\n") +
       "\n}"
@@ -43,7 +43,8 @@ const toJS = obj => {
   return String(obj);
 };
 
-const toTransactionStatusJS = status => toJS(status);
+const toTransactionStatusJS = (status: TransactionStatusCommon | SignedOperation | undefined) =>
+  toJS(status);
 
 export type GenerateTestTransactionJobOpts = InferTransactionsOpts & ScanCommonOpts;
 

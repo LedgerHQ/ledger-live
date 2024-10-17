@@ -4,6 +4,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 
 export type ManagerListAppsJobOpts = DeviceCommonOpts &
   Partial<{
@@ -48,9 +49,9 @@ export default {
             : format === "json"
               ? JSON.stringify(r)
               : r.appsListNames
-                  .map(name => {
+                  .map((name: string) => {
                     const item = r.appByName[name];
-                    const ins = r.installed.find(i => i.name === item.name);
+                    const ins = r.installed.find((i: InstalledItem) => i.name === item.name);
                     return (
                       `- ${item.name} ${item.version}` +
                       (ins ? (ins.updated ? " (installed)" : " (outdated!)") : "")

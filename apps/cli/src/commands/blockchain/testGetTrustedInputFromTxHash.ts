@@ -7,8 +7,9 @@ import Btc from "@ledgerhq/hw-app-btc";
 import network from "@ledgerhq/live-network/network";
 import { findCurrencyExplorer } from "@ledgerhq/live-common/explorer";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import Transport from "@ledgerhq/hw-transport";
 
-const command = async (transport, currencyId, hash) => {
+const command = async (transport: Transport, currencyId: string, hash: string) => {
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, "currency not found");
   if (!currency) throw new Error("currency not found");

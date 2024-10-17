@@ -43,7 +43,9 @@ const customGetLatestFirmwareForDevice = async (
     });
   } else {
     const data = await listFirmwareOSU();
-    osu = data.find(d => d.device_versions.includes(deviceVersion.id) && d.name === osuVersion);
+    osu = data.find(
+      (d: any) => d.device_versions.includes(deviceVersion.id) && d.name === osuVersion,
+    );
   }
 
   if (!osu) {
@@ -99,7 +101,7 @@ export default {
   }: Partial<FirmwareUpdateJobOpts>) => (
     invariant(!osuVersion || toMyOwnRisk, "--to-my-own-risk is required: " + disclaimer),
     listOSUs
-      ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map(d => d.name))))
+      ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map((d: any) => d.name))))
       : withDevice(device || "")(t => from(getDeviceInfo(t))).pipe(
           mergeMap(
             osuVersion

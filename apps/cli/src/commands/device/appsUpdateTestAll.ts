@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { from, of, Observable } from "rxjs";
+import { from, of, Observable, Subscription } from "rxjs";
 import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -39,7 +39,7 @@ export default {
               map((e: any) => e.result),
               mergeMap(listAppsResult => {
                 return listAppsResult.appsListNames.slice(index || 0).reduce(
-                  ($state, name) =>
+                  ($state: any, name: string) =>
                     $state.pipe(
                       mergeMap((s: any) => {
                         if (s.currentError) {
@@ -56,7 +56,7 @@ export default {
                         console.log(
                           "on device: " +
                             s.installed
-                              .map(i => i.name + (!i.updated ? " (outdated)" : ""))
+                              .map((i: any) => i.name + (!i.updated ? " (outdated)" : ""))
                               .join(", "),
                         );
                         s = reducer(s, {
@@ -80,7 +80,7 @@ export default {
                       }),
                       mergeMap(state =>
                         new Observable(o => {
-                          let sub;
+                          let sub: Subscription;
                           const timeout = setTimeout(() => {
                             sub = listAppsUseCase(t, deviceInfo).subscribe(o);
                           }, 4000);
@@ -92,7 +92,7 @@ export default {
                           filter((e: any) => e.type === "result"),
                           map(e => e.result),
                           map(results => {
-                            const app = results.installed.find(a => a.name === name);
+                            const app = results.installed.find((a: any) => a.name === name);
 
                             if (!app) {
                               throw new Error(

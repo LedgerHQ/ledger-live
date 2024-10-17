@@ -48,8 +48,8 @@ export default {
   job: (opts: SendJobOpts) => {
     const l =
       opts.format !== "json" && opts.format !== "silent" // eslint-disable-next-line no-console
-        ? l => console.log(l)
-        : _l => {};
+        ? (l: any) => console.log(l)
+        : (_l: any) => {};
     return scan(opts).pipe(
       tap(account => {
         l(`→ FROM ${formatAccount(account, "basic")}`);

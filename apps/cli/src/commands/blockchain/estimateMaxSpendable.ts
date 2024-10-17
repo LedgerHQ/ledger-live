@@ -7,8 +7,9 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
-const format = (account: AccountLike, value) => {
+const format = (account: AccountLike, value: BigNumber) => {
   const unit = getAccountCurrency(account).units[0];
   const name = getDefaultAccountName(account);
   const amount = formatCurrencyUnit(unit, value, {

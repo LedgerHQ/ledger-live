@@ -1,16 +1,21 @@
 import uniq from "lodash/uniq";
 import { BigNumber } from "bignumber.js";
-import asciichart from "asciichart";
+import { plot } from "asciichart";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
-import type { PortfolioRange } from "@ledgerhq/types-live";
+import type { BalanceHistoryRaw, PortfolioRange } from "@ledgerhq/types-live";
 import {
   getRanges,
   getDates,
   getPortfolioCountByDate,
 } from "@ledgerhq/live-countervalues/portfolio";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  Currency,
+  FiatCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,
@@ -24,20 +29,29 @@ import {
   resolveTrackingPairs,
 } from "@ledgerhq/live-countervalues/logic";
 import CountervaluesAPI from "@ledgerhq/live-countervalues/api/index";
-const histoFormatters = {
+
+type HistoFormatters = (
+  histo: any,
+  currency: FiatCurrency | CryptoCurrency | TokenCurrency,
+  countervalue: Currency,
+) => string | BalanceHistoryRaw | undefined;
+
+const histoFormatters: Record<string, HistoFormatters> = {
   stats: (histo, currency, countervalue) =>
     (currency.ticker + " to " + countervalue.ticker).padEnd(12) +
     " availability=" +
-    ((100 * histo.filter(h => h.value).length) / histo.length).toFixed(0) +
+    ((100 * histo.filter((h: any) => h.value).length) / histo.length).toFixed(0) +
     "%",
   supportedFiats: (histo, _currency, countervalue) => {
-    const availability = ((100 * histo.filter(h => h.value).length) / histo.length).toFixed(0);
+    const availability = ((100 * histo.filter((h: any) => h.value).length) / histo.length).toFixed(
+      0,
+    );
     return availability === "100" ? `"${countervalue.ticker}",` : undefined;
   },
   default: (histo, currency, countervalue) =>
     histo
       .map(
-        ({ date, value }) =>
+        ({ date, value }: { date: any; value: BigNumber.Value }) =>
           (currency.ticker + "➡" + countervalue.ticker).padEnd(10) +
           " " +
           date.toISOString() +
@@ -56,15 +70,15 @@ const histoFormatters = {
     " to " +
     countervalue.name +
     "\n" +
-    asciichart.plot(
-      history.map(h =>
+    plot(
+      history.map((h: any) =>
         new BigNumber(h.value || 0)
           .div(new BigNumber(10).pow(countervalue.units[0].magnitude))
           .toNumber(),
       ),
       {
         height: 10,
-        format: value =>
+        format: (value: BigNumber.Value) =>
           formatCurrencyUnit(
             countervalue.units[0],
             new BigNumber(value).times(new BigNumber(10).pow(countervalue.units[0].magnitude)),
@@ -154,16 +168,17 @@ export default {
     },
   ],
   job: (opts: CountervaluesJobOpts) =>
-    Observable.create(o => {
+    Observable.create((o: any) => {
       async function f() {
         const currencies = await getCurrencies(opts);
+        invariant(currencies, "no currency found");
         const countervalues = getCountervalues(opts);
         const format = histoFormatters[opts.format || "default"];
         const startDate = getStartDate(opts) || new Date();
         const dates = getDatesWithOpts(opts);
         const cvs = await loadCountervalues(initialState, {
           trackingPairs: resolveTrackingPairs(
-            product(currencies, countervalues).map(([currency, countervalue]) => ({
+            product(currencies!, countervalues).map(([currency, countervalue]) => ({
               from: currency,
               to: countervalue,
               startDate,
@@ -179,7 +194,7 @@ export default {
           value: number | null | undefined;
           date: Date;
         }[][] = [];
-        product(currencies, countervalues).forEach(([currency, countervalue]) => {
+        product(currencies!, countervalues).forEach(([currency, countervalue]) => {
           const value = 10 ** currency.units[0].magnitude;
           const histo = calculateMany(
             cvs,
@@ -221,8 +236,8 @@ function asPortfolioRange(period: string): PortfolioRange {
   return period as PortfolioRange;
 }
 
-async function getCurrencies(opts: CountervaluesJobOpts): Promise<Currency[]> {
-  let ids;
+async function getCurrencies(opts: CountervaluesJobOpts): Promise<CryptoCurrency[]> {
+  let ids: string[] | undefined;
 
   if (opts.marketcap) {
     ids = await CountervaluesAPI.fetchIdsSortedByMarketcap();
@@ -233,7 +248,11 @@ async function getCurrencies(opts: CountervaluesJobOpts): Promise<Currency[]> {
     ids = (ids || []).concat(opts.currency);
   }
 
-  return uniq((ids || ["bitcoin"]).map(findCryptoCurrencyById).filter(Boolean));
+  return uniq(
+    (ids || ["bitcoin"])
+      .map(findCryptoCurrencyById)
+      .filter((currency): currency is CryptoCurrency => Boolean(currency)), // Explicitly tell TypeScript we're filtering out undefined
+  );
 }
 
 function getCountervalues(opts: CountervaluesJobOpts): Currency[] {
