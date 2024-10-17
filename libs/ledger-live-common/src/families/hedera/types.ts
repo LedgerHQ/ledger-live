@@ -1,2 +1,2 @@
 // Encapsulate for LLD & LLM
-export * from "@ledgerhq/coin-hedera/types";
+export * from "@ledgerhq/coin-hedera/types/index";
