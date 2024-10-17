@@ -86,8 +86,8 @@
     "styled-system": "^5.1.5"
   },
   "peerDependencies": {
-    "react": ">=17.0.2",
-    "react-dom": ">=17.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
@@ -103,7 +103,7 @@
     "@storybook/react": "^7.5.3",
     "@storybook/react-webpack5": "^7.5.3",
     "@svgr/core": "^5.5.0",
-    "@svgr/plugin-svgo": "*",
+    "@svgr/plugin-svgo": "^8.1.0",
     "@types/color": "^3.0.2",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/react": "~18.2.21",
@@ -131,7 +131,7 @@
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
     "tiny-glob": "^0.2.9",
-    "webpack": "*"
+    "webpack": "^5.95.0"
   },
   "dependenciesMeta": {
     "@ledgerhq/crypto-icons-ui": {

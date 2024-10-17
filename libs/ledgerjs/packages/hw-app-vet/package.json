@@ -52,7 +52,7 @@
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
-    "typescript": "^4"
+    "typescript": "^4.1.6"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }

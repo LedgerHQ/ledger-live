@@ -36,7 +36,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "axios": "1.7.7",
     "bs58check": "^2.1.2",
-    "invariant": "2"
+    "invariant": "^2.2.4"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

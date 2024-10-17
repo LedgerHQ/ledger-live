@@ -48,11 +48,11 @@
     "unimported": "unimported"
   },
   "peerDependencies": {
-    "@types/react": "*",
-    "react": "*",
-    "styled-components": "*",
-    "styled-system": "*",
-    "react-native-svg": ">=12.1.1"
+    "@types/react": "^18.3.11",
+    "react": "^18.3.1",
+    "styled-components": "^6.1.13",
+    "styled-system": "^5.1.5",
+    "react-native-svg": "^15.8.0"
   },
   "peerDependenciesMeta": {
     "@types/react": {
