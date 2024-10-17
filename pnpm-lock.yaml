@@ -288,6 +288,7 @@ importers:
         version: link:../../libs/coin-framework
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@ledgerhq/devices':
 =======
 <<<<<<< HEAD
@@ -298,6 +299,8 @@ importers:
       '@ledgerhq/coin-hedera':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-hedera
+=======
+>>>>>>> 13dbba1a25 (fix: removed unimported hedera and pnpm lock fixed)
       '@ledgerhq/devices':
 <<<<<<< HEAD
 >>>>>>> 4afe7de83d (fix: import and config bug)
@@ -849,6 +852,7 @@ importers:
         version: link:../../libs/coin-framework
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@ledgerhq/devices':
 =======
 <<<<<<< HEAD
@@ -859,6 +863,8 @@ importers:
       '@ledgerhq/coin-hedera':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-hedera
+=======
+>>>>>>> 13dbba1a25 (fix: removed unimported hedera and pnpm lock fixed)
       '@ledgerhq/devices':
 <<<<<<< HEAD
 >>>>>>> 4afe7de83d (fix: import and config bug)
