@@ -2759,15 +2759,6 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT (Non Fungible Token) koleksiyonu",
-        "description" : "Tezos NFT'lerinizi doğrudan Ledger Live içerisindeki Objkt üzerinden görebilirsiniz.",
-        "cta" : "Objkt üzerinden NFT'lerimi göster"
-      }
-    }
-  },
   "bitcoin" : {
     "inputSelected" : "SEÇİLDİ",
     "toSpend" : "Harcanacak coin'ler",

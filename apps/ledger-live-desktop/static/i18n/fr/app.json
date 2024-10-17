@@ -2759,15 +2759,6 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Collection de NFT (tokens non fongibles)",
-        "description" : "Retrouvez vos NFT sur Tezos dans Ledger Live avec Objkt.",
-        "cta" : "Voir mes NFT avec Objkt"
-      }
-    }
-  },
   "bitcoin" : {
     "inputSelected" : "SÉLECTIONNÉ",
     "toSpend" : "Coins à dépenser",

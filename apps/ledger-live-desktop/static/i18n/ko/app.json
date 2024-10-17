@@ -2759,15 +2759,6 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT(대체 불가능 토큰) 컬렉션",
-        "description" : "Ledger Live 내부의 Objkt를 통해 테조스 NFT를 직접 확인할 수 있습니다.",
-        "cta" : "Objkt에서 내 NFT 보기"
-      }
-    }
-  },
   "bitcoin" : {
     "inputSelected" : "선택됨",
     "toSpend" : "소비할 코인",

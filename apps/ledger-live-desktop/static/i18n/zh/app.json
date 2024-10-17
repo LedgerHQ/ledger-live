@@ -2759,15 +2759,6 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT（非同质化代币）收藏",
-        "description" : "您可以在 Ledger Live 中通过 Objkt 直接查看泰索斯 Tezos NFT。",
-        "cta" : "在 Objkt 上查看我的 NFT"
-      }
-    }
-  },
   "bitcoin" : {
     "inputSelected" : "已选择",
     "toSpend" : "要支出的硬币",

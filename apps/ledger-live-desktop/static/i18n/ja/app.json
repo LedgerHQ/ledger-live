@@ -2759,15 +2759,6 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT（非代替性トークン）コレクション",
-        "description" : "Ledger Live内のObjktからTezos NFTを直接見ることが可能です。",
-        "cta" : "ObjktでNFTを見る"
-      }
-    }
-  },
   "bitcoin" : {
     "inputSelected" : "選択済み",
     "toSpend" : "使用するコイン",
