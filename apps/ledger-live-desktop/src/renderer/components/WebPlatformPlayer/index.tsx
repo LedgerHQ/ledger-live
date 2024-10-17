@@ -49,8 +49,9 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...props.customHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers, props.customHandlers]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);

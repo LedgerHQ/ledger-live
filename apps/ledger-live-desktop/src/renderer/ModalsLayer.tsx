@@ -32,21 +32,25 @@ function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalDa
   }
 }
 
-function renderFirst(modalsState: ModalsState) {
+function renderModals(modalsState: ModalsState) {
+	const modals = [];
+
   for (const key in modalsState) {
     const name = key as keyof ModalData;
     const state = modalsState[name];
     if (state?.isOpened) {
-      return renderNameState(name, state.data);
+      modals.push(renderNameState(name, state.data));
     }
   }
+
+  return modals;
 }
 
 const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
-  const first = renderFirst(modalsState);
+  const modals = renderModals(modalsState);
   return (
     <Transition
-      in={!!first}
+      in={modals.length !== 0}
       appear
       mountOnEnter
       unmountOnExit
@@ -56,7 +60,7 @@ const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
         exit: 200,
       }}
     >
-      {state => <BackDrop state={state}>{first || null}</BackDrop>}
+      {state => <BackDrop state={state}>{...modals}</BackDrop>}
     </Transition>
   );
 };
