@@ -180,13 +180,10 @@
     "zx": "^7.2.2"
   },
   "pnpm": {
-    "neverBuiltDependencies": [
-      "blake2"
-    ],
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
-      "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*",
+      "remove-flow-types-loader>flow-remove-types": "^2.248.1",
+      "remove-flow-types-loader>loader-utils": "^3.3.1",
       "@ledgerhq/devices": "workspace:*",
       "tslib": "2.6.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
@@ -210,12 +207,12 @@
     "packageExtensions": {
       "eslint-config-next@*": {
         "dependencies": {
-          "next": "*"
+          "next": "14.2.12"
         }
       },
       "detox-allure2-adapter": {
         "dependencies": {
-          "tslib": "*"
+          "tslib": "2.6.2"
         }
       }
     }
