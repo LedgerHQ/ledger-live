@@ -74,6 +74,7 @@ export default function SendBroadcastError({ navigation, route }: Props) {
             <InformativeBanner
               title={t("errors.TransactionBroadcastError.technical.title")}
               description={error.message}
+              numberOfLines={3}
             >
               <Flex flexDirection="row" columnGap={8}>
                 <InformativeBannerButton Icon={<Icons.Download />} onPress={exportLogs}>
@@ -100,10 +101,16 @@ export default function SendBroadcastError({ navigation, route }: Props) {
 type InformativeBannerProps = {
   title: string;
   description: string;
+  numberOfLines?: number;
   children: React.ReactNode;
 };
 
-function InformativeBanner({ title, description, children }: InformativeBannerProps) {
+function InformativeBanner({
+  title,
+  description,
+  numberOfLines,
+  children,
+}: InformativeBannerProps) {
   return (
     <Card
       p={6}
@@ -113,7 +120,7 @@ function InformativeBanner({ title, description, children }: InformativeBannerPr
       alignItems="flex-start"
       rowGap={16}
     >
-      <Text numberOfLines={3} variant="paragraphLineHeight">
+      <Text variant="paragraphLineHeight" numberOfLines={numberOfLines}>
         <Text>{title} :</Text> <Text color="neutral.c70">{description}</Text>
       </Text>
       {children}
