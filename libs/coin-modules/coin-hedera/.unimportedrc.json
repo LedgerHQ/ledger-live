@@ -17,22 +17,19 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/broadcast.ts",
-    "src/buildOptimisticOperation.ts",
-    "src/cli-transaction.ts",
     "src/config.ts",
-    "src/createTransaction.ts",
-    "src/estimateMaxSpendable.ts",
-    "src/getTransactionStatus.ts",
-    "src/prepareTransaction.ts",
-    "src/signOperation.ts",
-    "src/speculos-deviceActions.ts",
-    "src/synchronisation.ts",
-    "src/tests/bridgeDatasetTest.ts",
-    "src/tests/index.ts"
+    "src/index.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/specs.ts",
+    "src/test/speculos-deviceActions.ts"
   ],
   "ignoreUnused": [
+    "@ledgerhq/devices",
     "@ledgerhq/live-promise",
+    "expect",
+    "lodash",
     "rxjs"
   ]
 }
