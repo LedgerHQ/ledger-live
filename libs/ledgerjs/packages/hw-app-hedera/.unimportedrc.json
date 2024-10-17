@@ -1,0 +1,7 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [],
+  "ignoreUnimported": [
+    "src/Hedera.ts"
+  ]
+}
