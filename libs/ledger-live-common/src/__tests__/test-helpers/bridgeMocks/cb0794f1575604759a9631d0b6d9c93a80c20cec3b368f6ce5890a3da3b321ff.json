@@ -1,0 +1,1 @@
+{"request":{"url":"https://tron.coin.ledger.com/wallet/getaccountresource?address=41f1fe9d73ffb3b6ab532858b266c02f63410fbd70","method":"GET"},"response":{"body":{"freeNetLimit":600,"NetLimit":7,"TotalNetLimit":43200000000,"TotalNetWeight":29352029678,"tronPowerLimit":5,"TotalEnergyLimit":180000000000,"TotalEnergyWeight":14559167812}}}

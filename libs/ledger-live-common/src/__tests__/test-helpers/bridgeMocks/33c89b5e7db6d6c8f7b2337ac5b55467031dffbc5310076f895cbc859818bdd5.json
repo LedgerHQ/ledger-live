@@ -1,0 +1,1 @@
+{"request":{"url":"https://tron.coin.ledger.com/wallet/gettransactioninfobyid?value=908aaab421ea42aeddd02a42dd828a087563cb489a067634a195a62ba9f61aba","method":"GET"},"response":{"body":{"id":"908aaab421ea42aeddd02a42dd828a087563cb489a067634a195a62ba9f61aba","fee":2980,"blockNumber":11490670,"blockTimeStamp":1564704300000,"contractResult":[""],"receipt":{"net_fee":2980}}}}
