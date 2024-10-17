@@ -2759,15 +2759,7 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Коллекции NFT",
-        "description" : "Теперь вы можете любоваться NFT в сети Tezos с помощью Objkt внутри Ledger Live.",
-        "cta" : "Посмотреть мои NFT на Objkt"
-      }
-    }
-  },
+
   "bitcoin" : {
     "inputSelected" : "ВЫБРАНО",
     "toSpend" : "К списанию",

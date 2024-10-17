@@ -2759,15 +2759,7 @@
       }
     }
   },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Coleção de NFT (Tokens Não Fungíveis)",
-        "description" : "Você pode ver seus NFTs Tezos diretamente pelo Objkt dentro do Ledger Live.",
-        "cta" : "Ver meus NFTs no Objkt"
-      }
-    }
-  },
+
   "bitcoin" : {
     "inputSelected" : "SELECIONADO",
     "toSpend" : "Moedas para gastar",
