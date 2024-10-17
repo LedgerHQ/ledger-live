@@ -1,11 +1,12 @@
 import { Observable, from, of, throwError } from "rxjs";
-import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
+import { catchError, concatMap, delay, mergeMap, timeout } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
   ManagerNotEnoughSpaceError,
   StatusCodes,
   TransportError,
   TransportStatusError,
+  DisconnectedDevice,
 } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
@@ -74,9 +75,7 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
   const sub = withDevice(deviceId)(
     transport =>
       new Observable(subscriber => {
-        const timeoutSub = of<LoadImageEvent>({
-          type: "unresponsiveDevice",
-        })
+        const timeoutSub = of<LoadImageEvent>({ type: "unresponsiveDevice" })
           .pipe(delay(1000))
           .subscribe(e => subscriber.next(e));
 
@@ -213,6 +212,14 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
           sub.unsubscribe();
         };
       }),
+  ).pipe(
+    timeout(5000),
+    catchError(err => {
+      if (err.name === "TimeoutError") {
+        return throwError(() => new DisconnectedDevice());
+      }
+      return throwError(() => err);
+    }),
   );
 
   return sub as Observable<LoadImageEvent>;
