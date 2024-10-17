@@ -37,6 +37,7 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/jest": "^29.5.10",
     "@types/node": "^20.8.10",
+    "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
     "jest": "^29.7.0",
     "secp256k1": "5.0.0",
