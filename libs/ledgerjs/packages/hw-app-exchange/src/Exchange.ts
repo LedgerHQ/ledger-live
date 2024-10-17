@@ -313,7 +313,7 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      CHECK_REFUND_ADDRESS, // or CHECK_REFUND_ADDRESS_NO_DISPLAY or CHECK_REFUND_ADDRESS_AND_DISPLAY
+      CHECK_REFUND_ADDRESS,
       this.transactionRate,
       this.transactionType,
       bufferToSend,

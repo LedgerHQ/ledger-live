@@ -51,6 +51,7 @@
     "SUPPLY_UPLOAD_MAX_RETRIES",
     "VERBOSE"
   ],
+  "ui": "tui",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
