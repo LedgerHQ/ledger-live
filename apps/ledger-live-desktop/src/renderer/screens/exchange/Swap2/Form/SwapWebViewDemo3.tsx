@@ -181,7 +181,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
-          gasOptions: lastGasOptions,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -189,17 +188,17 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
-          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
-          finalTx = preparedTransaction;
-          lastGasOptions = preparedTransaction.gasOptions;
+          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
+          finalTx = newTransaction;
           return newTransaction;
         };
 
         if (!params.openDrawer) {
           // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
+          const config = ["evm", "bitcoin"].includes(transaction.family)
+            ? { hasDrawer: true, ...customFeeConfig }
+            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
