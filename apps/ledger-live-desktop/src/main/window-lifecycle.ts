@@ -3,6 +3,9 @@ import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { ledgerUSBVendorId } from "@ledgerhq/devices";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -120,7 +123,6 @@ function restorePosition(
     x = primaryDisplay.x;
     y = primaryDisplay.y;
   }
-
   // If the saved size is still valid, use it.
   if (bounds.width <= area.width || bounds.height <= area.height) {
     width = bounds.width;
@@ -129,6 +131,11 @@ function restorePosition(
 
   return { x, y, width, height };
 }
+
+const isFeatureFlagEnabled = () =>
+  getFeature({ key: "ldmkTransport" }).enabled &&
+  !getEnv("SPECULOS_API_PORT") &&
+  !getEnv("DEVICE_PROXY_URL");
 
 export async function createMainWindow(
   {
@@ -160,6 +167,49 @@ export async function createMainWindow(
     },
   };
   mainWindow = new BrowserWindow(windowOptions);
+
+  mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
+    if (!isFeatureFlagEnabled()) return;
+    console.log("select-hid-device FIRED WITH", event, details);
+    event.preventDefault();
+    const ledgerDevices = details.deviceList.filter(
+      device => device.vendorId === ledgerUSBVendorId,
+    );
+    if (ledgerDevices.length > 0) {
+      callback(ledgerDevices[0].deviceId);
+      console.log(`Selected Ledger device with ID: ${ledgerDevices[0].deviceId}`);
+    } else {
+      console.warn("No Ledger HID devices found.");
+    }
+  });
+
+  mainWindow.webContents.session.on("hid-device-added", (event, device) => {
+    if (!isFeatureFlagEnabled()) return;
+    console.log("hid-device-added FIRED WITH", device);
+  });
+
+  mainWindow.webContents.session.on("hid-device-removed", (event, device) => {
+    if (!isFeatureFlagEnabled()) return;
+    console.log("hid-device-removed FIRED WITH", device);
+  });
+
+  mainWindow.webContents.session.setPermissionCheckHandler(
+    (webContents, permission, requestingOrigin, details) => {
+      if (!isFeatureFlagEnabled()) return;
+      console.log("setPermissionCheckHandler FIRED WITH", permission, requestingOrigin, details);
+      if (permission === "hid") return true;
+      return false;
+    },
+  );
+
+  mainWindow.webContents.session.setDevicePermissionHandler(details => {
+    if (!isFeatureFlagEnabled()) return;
+    console.log("setDevicePermissionHandler FIRED WITH", details);
+    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+      return true;
+    }
+    return false;
+  });
 
   mainWindow.name = "MainWindow";
   loadWindow();
