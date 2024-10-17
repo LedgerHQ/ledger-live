@@ -19,7 +19,7 @@ import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/lib/wallet-btc/index";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
