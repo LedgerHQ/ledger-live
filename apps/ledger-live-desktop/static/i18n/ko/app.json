@@ -737,7 +737,8 @@
         "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
         "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
         "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
-        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
+        "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1126,6 +1127,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
       "edit" : "계정 편집",
@@ -2252,6 +2254,11 @@
           "description" : "Ledger by Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "태그/메모가 필요하세요?",
+      "description" : "거래소에서 이 자산을 수령하려면 <0>태그/메모</0>가 필요할 수 있습니다. 1234와 같은 숫자 조합을 사용할 수 있습니다.",
+      "learnMore" : "태그/메모에 대해 더 알아보기"
     }
   },
   "send" : {
@@ -2408,8 +2415,12 @@
     "installingLanguage" : "언어 설치 중",
     "languages" : {
       "english" : "영어",
-      "french" : "프랑스어",
-      "spanish" : "스페인어"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2759,7 +2770,6 @@
       }
     }
   },
-
   "bitcoin" : {
     "inputSelected" : "선택됨",
     "toSpend" : "소비할 코인",
@@ -3674,7 +3684,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
@@ -3704,6 +3714,72 @@
         "tag" : "32 ETH 필요",
         "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
         "supportLink" : "Figment 검증인에 대해 자세히 알아보기"
+      }
+    },
+    "stake" : {
+      "title" : "스테이킹 업체 선정",
+      "category" : {
+        "all" : {
+          "name" : "전체",
+          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+        },
+        "liquid" : {
+          "name" : "리퀴드(Liquid)",
+          "description" : "ETH를 스테이킹하고 리퀴드 토큰으로 보상을 받을 수 있으며, 여전히 자산 거래 및 디파이 활동 역시 참여 가능합니다."
+        },
+        "protocol" : {
+          "name" : "프로토콜(Protocol)",
+          "description" : "32 ETH 배치를 스테이킹하고 ETH로 전체 노드 보상을 받을 수 있습니다."
+        },
+        "pooling" : {
+          "name" : "풀링(Pooling)",
+          "description" : "풀에 참여하여 원하는 금액의 ETH를 스테이킹해 보상을 받을 수 있습니다."
+        },
+        "restaking" : {
+          "name" : "리스테이킹(Restaking)",
+          "description" : "리퀴드 토큰을 리스테이킹해 추가 보상을 받을 수 있습니다."
+        }
+      },
+      "howItWorks" : "ETH 스테이킹의 원리",
+      "lst" : "리퀴드 토큰 필요",
+      "noMinimum" : "최소 한도 없음",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 리퀴드 스테이킹"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs"
+        }
+      },
+      "readAbout" : "ETH 스테이킹과 다양한 전략 알아보기",
+      "requiredMinimum" : "{{min}} ETH 필요",
+      "rewardsStrategy" : {
+        "auto-compounded" : "자동 복리 보상",
+        "basic" : "보상",
+        "daily" : "일일 보상",
+        "eigenlayer_points" : "Eigenlayer 포인트",
+        "validator" : "검증인 보상"
       }
     }
   },
@@ -4006,6 +4082,35 @@
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
+      "analyticsConsole" : {
+        "title" : "분석 콘솔 허용",
+        "desc" : "분석 콘솔 열기를 표시하고 허용합니다."
+      },
+      "brazeTools" : {
+        "title" : "브레이즈 도구",
+        "description" : "로컬 브레이즈 카드 생성",
+        "open" : "열기",
+        "modal" : {
+          "title" : "로컬 브레이즈 카드 생성",
+          "add" : "추가",
+          "dismiss" : "모든 카드 무시",
+          "fields" : {
+            "notification" : "알림 콘텐츠 카드",
+            "action" : "액션 콘텐츠 카드",
+            "portfolio" : "포트폴리오 콘텐츠 카드",
+            "title" : "제목",
+            "description" : "설명",
+            "order" : "주문",
+            "image" : "이미지 URL",
+            "mainCta" : "메인 CTA",
+            "link" : "링크",
+            "secondaryCta" : "보조 CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "경로"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4326,14 +4431,20 @@
       "tokenBlacklist" : {
         "title" : "숨겨진 토큰",
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
-        "count" : "({{count}}) 토큰",
-        "count_plural" : "{{count}}개의 토큰"
+        "count" : "1개의 토큰",
+        "count_other" : "{{count}}개의 토큰"
       },
       "hiddenNftCollections" : {
         "title" : "숨겨진 NFT 컬렉션",
         "desc" : "컬렉션 이름을 마우스 오른쪽 버튼으로 클릭하고 'NFT 컬렉션 숨기기'를 선택하여 NFT 컬렉션을 숨길 수 있습니다.",
-        "count" : "{{count}}개의 컬렉션",
-        "count_plural" : "{{count}}개의 컬렉션"
+        "count" : "1개의 컬렉션",
+        "count_other" : "{{count}}개의 컬렉션"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "숨겨진 인스크립션",
+        "desc" : "인스크립션을 마우스 오른쪽 버튼으로 클릭하고 '인스크립션 숨기기'를 선택하여 인스크립션을 숨길 수 있습니다.",
+        "count" : "1개의 인스크립션",
+        "count_other" : "{{count}}개의 인스크립션"
       },
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
@@ -6576,6 +6687,11 @@
       "seeMore" : "더 많은 인스크립션 보기",
       "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
       "receive" : "인스크립션 받기",
+      "hide" : "인스크립션 숨기기",
+      "modal" : {
+        "title" : "인스크립션 숨기기",
+        "desc" : "이 조치는 사용자 개정에서 다음 인스크립션 <0>{{inscriptionName}}</0>(을)를 숨깁니다. 언제든지 설정에서 숨김을 해제할 수 있습니다."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinals 살펴보기",
         "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
@@ -6642,6 +6758,17 @@
           "vintage" : "비트코인은 최초 1,000개의 블록으로 그 시작을 표시했습니다. 이 기간 내에 채굴된 SAT에는 \"Vintage\"라는 표식이 붙습니다."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "전송 금액",
+      "of" : "/",
+      "excludeAssets" : "Ordinals 자산 배제",
+      "selectDesc" : "트랜잭션 시 사용할 UTXO를 선택하세요. 확인되지 않은 UTXO가 사용되지 않습니다.",
+      "utxos" : "UTXO",
+      "learnMore" : "이 설정 자세히 알아보기",
+      "confirm" : "확인",
+      "address" : "주소",
+      "transactionId" : "트랜잭션 ID"
     }
   }
 }
