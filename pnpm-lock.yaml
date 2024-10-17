@@ -307,27 +307,7 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@ledgerhq/devices':
-=======
-<<<<<<< HEAD
-      "@ledgerhq/devices":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
-      '@ledgerhq/coin-hedera':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-hedera
-=======
->>>>>>> 13dbba1a25 (fix: removed unimported hedera and pnpm lock fixed)
-      '@ledgerhq/devices':
-<<<<<<< HEAD
->>>>>>> 4afe7de83d (fix: import and config bug)
->>>>>>> fc0853f8f3 (fix: import and config bug)
-=======
->>>>>>> a327821c80 (pnpmlock)
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/domain-service':
@@ -877,27 +857,7 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@ledgerhq/devices':
-=======
-<<<<<<< HEAD
-      "@ledgerhq/devices":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
-      '@ledgerhq/coin-hedera':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-hedera
-=======
->>>>>>> 13dbba1a25 (fix: removed unimported hedera and pnpm lock fixed)
-      '@ledgerhq/devices':
-<<<<<<< HEAD
->>>>>>> 4afe7de83d (fix: import and config bug)
->>>>>>> fc0853f8f3 (fix: import and config bug)
-=======
->>>>>>> a327821c80 (pnpmlock)
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/domain-service':
@@ -3648,24 +3608,10 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@ledgerhq/coin-icon':
-=======
-<<<<<<< HEAD
-      "@ledgerhq/coin-icon":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
       '@ledgerhq/coin-hedera':
         specifier: workspace:^
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-icon':
-<<<<<<< HEAD
->>>>>>> 4a02788db1 (fix: signOperation)
->>>>>>> e0dcd6630e (fix: signOperation)
-=======
->>>>>>> a327821c80 (pnpmlock)
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
       '@ledgerhq/coin-near':
@@ -3725,24 +3671,10 @@ importers:
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-exchange
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@ledgerhq/hw-app-icon':
-=======
-<<<<<<< HEAD
-      "@ledgerhq/hw-app-icon":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
       '@ledgerhq/hw-app-hedera':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-hedera
       '@ledgerhq/hw-app-icon':
-<<<<<<< HEAD
->>>>>>> 4a02788db1 (fix: signOperation)
->>>>>>> e0dcd6630e (fix: signOperation)
-=======
->>>>>>> a327821c80 (pnpmlock)
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-icon
       '@ledgerhq/hw-app-near':
@@ -20494,14 +20426,7 @@ packages:
 
   expo-random@12.3.0:
     resolution: {integrity: sha512-q+AsTfGNT+Q+fb2sRrYtRkI3g5tV4H0kuYXM186aueILGO/vLn/YYFa7xFZj1IZ8LJZg2h96JDPDpsqHfRG2mQ==}
-<<<<<<< HEAD
     deprecated: This package is now deprecated in favor of expo-crypto, which provides the same functionality. To migrate, replace all imports from expo-random with imports from expo-crypto.
-=======
-<<<<<<< HEAD
-=======
-    deprecated: This package is now deprecated in favor of expo-crypto, which provides the same functionality. To migrate, replace all imports from expo-random with imports from expo-crypto.
->>>>>>> a327821c80 (pnpmlock)
->>>>>>> 75e637b2dd (pnpmlock)
     peerDependencies:
       expo: '*'
       expo-constants: '*'
@@ -32323,93 +32248,6 @@ snapshots:
 
   '@babel/helper-function-name@7.23.0':
     dependencies:
-<<<<<<< HEAD
-      '@babel/template': 7.24.0
-      '@babel/types': 7.24.0
-
-  '@babel/helper-hoist-variables@7.22.5':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-member-expression-to-functions@7.23.0':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-module-imports@7.24.3':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-module-transforms@7.23.3(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/helper-simple-access': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/helper-validator-identifier': 7.24.7
-
-  '@babel/helper-optimise-call-expression@7.22.5':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-plugin-utils@7.24.0': {}
-
-  '@babel/helper-remap-async-to-generator@7.22.20(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-wrap-function': 7.22.20
-
-  '@babel/helper-replace-supers@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-member-expression-to-functions': 7.23.0
-      '@babel/helper-optimise-call-expression': 7.22.5
-
-  '@babel/helper-simple-access@7.22.5':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-skip-transparent-expression-wrappers@7.22.5':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-split-export-declaration@7.22.6':
-    dependencies:
-      '@babel/types': 7.24.0
-
-  '@babel/helper-string-parser@7.24.1': {}
-
-  '@babel/helper-validator-identifier@7.24.7': {}
-
-  '@babel/helper-validator-option@7.23.5': {}
-
-  '@babel/helper-wrap-function@7.22.20':
-    dependencies:
-      '@babel/helper-function-name': 7.23.0
-      '@babel/template': 7.24.0
-      '@babel/types': 7.24.0
-
-  '@babel/helpers@7.24.1':
-    dependencies:
-      '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.1
-      '@babel/types': 7.24.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/highlight@7.24.2':
-    dependencies:
-<<<<<<< HEAD
-      '@babel/helper-validator-identifier': 7.24.7
-=======
-<<<<<<< HEAD
-      "@babel/helper-validator-identifier": 7.24.7
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
       '@babel/template': 7.24.0
       '@babel/types': 7.24.0
 
@@ -32489,11 +32327,6 @@ snapshots:
   '@babel/highlight@7.24.2':
     dependencies:
       '@babel/helper-validator-identifier': 7.24.7
-<<<<<<< HEAD
->>>>>>> 4afe7de83d (fix: import and config bug)
->>>>>>> fc0853f8f3 (fix: import and config bug)
-=======
->>>>>>> a327821c80 (pnpmlock)
       chalk: 2.4.2
       js-tokens: 4.0.0
       picocolors: 1.0.0
@@ -32894,7 +32727,6 @@ snapshots:
 
   '@babel/plugin-transform-modules-systemjs@7.24.1(@babel/core@7.24.3)':
     dependencies:
-<<<<<<< HEAD
       '@babel/core': 7.24.3
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.3)
@@ -32940,120 +32772,6 @@ snapshots:
 
   '@babel/plugin-transform-object-super@7.24.1(@babel/core@7.24.3)':
     dependencies:
-<<<<<<< HEAD
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/helper-replace-supers': 7.24.1(@babel/core@7.24.3)
-=======
-<<<<<<< HEAD
-      "@babel/core": 7.24.3
-      "@babel/helper-plugin-utils": 7.24.0
-      "@babel/helper-replace-supers": 7.24.1(@babel/core@7.24.3)
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
-      '@babel/core': 7.24.3
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.3)
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/helper-validator-identifier': 7.24.7
-<<<<<<< HEAD
->>>>>>> 4afe7de83d (fix: import and config bug)
->>>>>>> fc0853f8f3 (fix: import and config bug)
-
-  '@babel/plugin-transform-optional-catch-binding@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-optional-chaining@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/helper-skip-transparent-expression-wrappers': 7.22.5
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-parameters@7.24.1(@babel/core@7.24.3)':
-=======
-
-  '@babel/plugin-transform-modules-umd@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.3)
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-named-capturing-groups-regex@7.22.5(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-create-regexp-features-plugin': 7.22.15(@babel/core@7.24.3)
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-new-target@7.24.1(@babel/core@7.24.3)':
->>>>>>> a327821c80 (pnpmlock)
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-
-<<<<<<< HEAD
-  '@babel/plugin-transform-private-methods@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-create-class-features-plugin': 7.24.1(@babel/core@7.24.3)
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-private-property-in-object@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-create-class-features-plugin': 7.24.1(@babel/core@7.24.3)
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-property-literals@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-react-constant-elements@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-react-display-name@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-react-jsx-development@7.22.5(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/plugin-transform-react-jsx': 7.23.4(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-react-jsx-self@7.24.1(@babel/core@7.24.3)':
-=======
-  '@babel/plugin-transform-nullish-coalescing-operator@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-numeric-separator@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-numeric-separator': 7.10.4(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-object-rest-spread@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-compilation-targets': 7.23.6
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.24.3)
-      '@babel/plugin-transform-parameters': 7.24.1(@babel/core@7.24.3)
-
-  '@babel/plugin-transform-object-super@7.24.1(@babel/core@7.24.3)':
-    dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-replace-supers': 7.24.1(@babel/core@7.24.3)
@@ -33072,37 +32790,10 @@ snapshots:
       '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.24.3)
 
   '@babel/plugin-transform-parameters@7.24.1(@babel/core@7.24.3)':
->>>>>>> a327821c80 (pnpmlock)
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.24.0
 
-<<<<<<< HEAD
-  '@babel/plugin-transform-react-jsx-source@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-react-jsx@7.23.4(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-      '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
-      '@babel/types': 7.24.0
-
-  '@babel/plugin-transform-react-pure-annotations@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-plugin-utils': 7.24.0
-
-  '@babel/plugin-transform-regenerator@7.24.1(@babel/core@7.24.3)':
-    dependencies:
-      '@babel/core': 7.24.3
-      '@babel/helper-plugin-utils': 7.24.0
-=======
   '@babel/plugin-transform-private-methods@7.24.1(@babel/core@7.24.3)':
     dependencies:
       '@babel/core': 7.24.3
@@ -33166,7 +32857,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.24.0
->>>>>>> a327821c80 (pnpmlock)
       regenerator-transform: 0.15.2
 
   '@babel/plugin-transform-reserved-words@7.24.1(@babel/core@7.24.3)':
@@ -33424,23 +33114,8 @@ snapshots:
 
   '@babel/types@7.24.0':
     dependencies:
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@babel/helper-string-parser': 7.24.1
       '@babel/helper-validator-identifier': 7.24.7
-=======
-<<<<<<< HEAD
-      "@babel/helper-string-parser": 7.24.1
-      "@babel/helper-validator-identifier": 7.24.7
-=======
-      '@babel/helper-string-parser': 7.24.1
-      '@babel/helper-validator-identifier': 7.24.7
->>>>>>> 4afe7de83d (fix: import and config bug)
->>>>>>> fc0853f8f3 (fix: import and config bug)
-=======
-      '@babel/helper-string-parser': 7.24.1
-      '@babel/helper-validator-identifier': 7.24.7
->>>>>>> a327821c80 (pnpmlock)
       to-fast-properties: 2.0.0
 
   '@base2/pretty-print-object@1.0.1': {}
@@ -36389,15 +36064,6 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@hashgraph/cryptography@1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
-=======
-<<<<<<< HEAD
-  "@hashgraph/cryptography@1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
   '@hashgraph/cryptography@1.1.2':
     dependencies:
       bignumber.js: 9.1.2
@@ -36414,13 +36080,7 @@ snapshots:
       - react
       - react-native
 
-<<<<<<< HEAD
-  '@hashgraph/cryptography@1.1.2(react-native@0.73.6(react@18.2.0))(react@18.2.0)':
->>>>>>> 71f0a786e0 (fix: first push coin modul hedera)
->>>>>>> 1a87fec521 (fix: first push coin modul hedera)
-=======
   '@hashgraph/cryptography@1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
->>>>>>> a327821c80 (pnpmlock)
     dependencies:
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
@@ -36441,15 +36101,6 @@ snapshots:
       long: 4.0.0
       protobufjs: 6.11.4
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
-=======
-<<<<<<< HEAD
-  "@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)":
-=======
-=======
->>>>>>> a327821c80 (pnpmlock)
   '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)':
     dependencies:
       '@grpc/grpc-js': 1.6.7
@@ -36468,13 +36119,7 @@ snapshots:
       - react
       - react-native
 
-<<<<<<< HEAD
-  '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6(react@18.2.0))(react@18.2.0)':
->>>>>>> 71f0a786e0 (fix: first push coin modul hedera)
->>>>>>> 1a87fec521 (fix: first push coin modul hedera)
-=======
   '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
->>>>>>> a327821c80 (pnpmlock)
     dependencies:
       '@grpc/grpc-js': 1.6.7
       '@hashgraph/cryptography': 1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
@@ -38004,11 +37649,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-<<<<<<< HEAD
-      semver: 7.5.4
-=======
       semver: 7.6.3
->>>>>>> a327821c80 (pnpmlock)
 
   '@npmcli/fs@3.1.1':
     dependencies:
