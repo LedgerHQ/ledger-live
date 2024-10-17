@@ -737,7 +737,8 @@
         "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
         "description" : "Ledger Live 是一个开源平台。",
         "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
+        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
+        "description3Link" : "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1126,6 +1127,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "yield" : "收益率",
       "buy" : "买入",
       "sell" : "卖出",
       "edit" : "编辑账户",
@@ -2252,6 +2254,11 @@
           "description" : "使用 Ledger by Figment 验证器权益质押您的 CELO。它保证全面防止削减，由 Ledger 提供妥善的安全防护。"
         }
       }
+    },
+    "memoTag" : {
+      "title" : "需要标签/备忘标签？",
+      "description" : "您可能需要有<0>标签/备忘标签</0>才能从交易所接收该笔资产。您可以使用任意数字组合，例如 1234。",
+      "learnMore" : "详细了解“标签/备忘标签”"
     }
   },
   "send" : {
@@ -2409,7 +2416,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -3673,7 +3684,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "质押您的以太币，通过直接在 Ledger Live 中接收每日奖励来增长您的持有量",
       "tagMinimum" : "需要 {{min}} ETH",
@@ -3694,7 +3705,7 @@
       },
       "kiln" : {
         "title" : "Kiln 专属质押",
-        "tag" : "需要 32 枚以太币",
+        "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
         "supportLink" : "了解关于 Kiln 验证者的更多信息"
       },
@@ -3703,6 +3714,72 @@
         "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
         "supportLink" : "详细了解 Figment 验证者"
+      }
+    },
+    "stake" : {
+      "title" : "选择权益质押服务提供商",
+      "category" : {
+        "all" : {
+          "name" : "全部",
+          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+        },
+        "liquid" : {
+          "name" : "流动性质押",
+          "description" : "您可以质押以太币，获得流动代币奖励。您仍然可以进行交易，并参与 DeFi 活动。"
+        },
+        "protocol" : {
+          "name" : "协议",
+          "description" : "您可以一次质押 32 ETH，获得完整节点奖励的以太币。"
+        },
+        "pooling" : {
+          "name" : "大池质押",
+          "description" : "您可以加入一个质押池，质押任意数量的以太币并获得奖励。"
+        },
+        "restaking" : {
+          "name" : "再质押",
+          "description" : "您可以再质押您的流动代币，获得额外奖励。"
+        }
+      },
+      "howItWorks" : "以太币质押的运作方式",
+      "lst" : "需要流动代币",
+      "noMinimum" : "无最低限制",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 流动性再质押"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "了解以太币质押及各种不同策略",
+      "requiredMinimum" : "需要 {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自动以复利计算奖励",
+        "basic" : "奖励",
+        "daily" : "每日奖励",
+        "eigenlayer_points" : "Eigenlayer 积分",
+        "validator" : "验证者奖励"
       }
     }
   },
@@ -4005,6 +4082,35 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "analyticsConsole" : {
+        "title" : "允许分析控制台",
+        "desc" : "显示并允许打开分析控制台。"
+      },
+      "brazeTools" : {
+        "title" : "Braze 工具",
+        "description" : "生成本地 Braze 卡",
+        "open" : "打开",
+        "modal" : {
+          "title" : "生成本地 Braze 卡",
+          "add" : "添加",
+          "dismiss" : "关闭所有卡",
+          "fields" : {
+            "notification" : "通知内容卡",
+            "action" : "行动内容卡",
+            "portfolio" : "资产组合内容卡",
+            "title" : "标题",
+            "description" : "描述",
+            "order" : "编号",
+            "image" : "图片网址",
+            "mainCta" : "主要号召性用语",
+            "link" : "链接",
+            "secondaryCta" : "次要号召性用语",
+            "cta" : "号召性用语",
+            "url" : "网址",
+            "path" : "路径"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4325,14 +4431,20 @@
       "tokenBlacklist" : {
         "title" : "隐藏代币列表",
         "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
-        "count" : "{{count}} 枚代币",
-        "count_plural" : "{{count}} 枚代币"
+        "count" : "1 枚代币",
+        "count_other" : "{{count}} 枚代币"
       },
       "hiddenNftCollections" : {
         "title" : "隐藏的 NFT 藏品",
         "desc" : "您可以通过右键单击藏品集名称并选择 \"隐藏 NFT 藏品集\" 来隐藏 NFT 收藏品。",
-        "count" : "{{count}} 个藏品集",
-        "count_plural" : "{{count}} 个藏品集"
+        "count" : "1 个收藏",
+        "count_other" : "{{count}} 个藏品集"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "隐藏的铭文",
+        "desc" : "右键点击该铭文并选择“隐藏铭文”，即可隐藏铭文。",
+        "count" : "1 个铭文",
+        "count_other" : "{{count}} 个铭文"
       },
       "fullNode" : {
         "title" : "连接比特币完整节点",
@@ -6575,6 +6687,11 @@
       "seeMore" : "查看更多铭文",
       "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
       "receive" : "接收铭文",
+      "hide" : "隐藏铭文",
+      "modal" : {
+        "title" : "隐藏铭文",
+        "desc" : "此操作将在您的账户中隐藏以下铭文 <0>{{inscriptionName}}</0>。您可以随时在设置中取消隐藏。"
+      },
       "discoveryDrawer" : {
         "title" : "了解序数铭文",
         "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
@@ -6641,6 +6758,17 @@
           "vintage" : "比特币发展初期是指前 1,000 个区块。这一时期开采的聪均标记为 “Vintage”（古董）。"
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "发送数额：",
+      "of" : "/",
+      "excludeAssets" : "排除序数铭文资产",
+      "selectDesc" : "选择您在进行交易时想要使用的 UTXO。未选中的 UTXO 不会被使用。",
+      "utxos" : "UTXO",
+      "learnMore" : "详细了解此设置",
+      "confirm" : "确认",
+      "address" : "地址",
+      "transactionId" : "交易 ID"
     }
   }
 }
