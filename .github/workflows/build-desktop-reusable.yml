@@ -37,8 +37,8 @@ jobs:
         config:
           [
             { name: "linux", os: "ledger-live-4xlarge", image: "linux-x86_64.AppImage" },
-            { name: "win", os: "windows-latest", dotnet: true, image: "win-x64.exe" },
-            { name: "mac", os: "macos-latest", image: "mac.dmg" },
+            { name: "win", os: "windows-2022", dotnet: true, image: "win-x64.exe" },
+            { name: "mac", os: "macos-14", image: "mac.dmg" },
           ]
     name: "Build LLD | ${{ matrix.config.name }}"
     runs-on: ${{ matrix.config.os }}
@@ -114,7 +114,7 @@ jobs:
 
   report:
     needs: build-desktop-app
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request')}}
     steps:
       - uses: actions/checkout@v4

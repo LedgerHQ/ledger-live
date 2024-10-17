@@ -19,7 +19,7 @@ on:
 jobs:
   release-translation-check:
     name: release branch translation check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.ref_name != 'release' }}
     steps:
       - uses: actions/checkout@v4
