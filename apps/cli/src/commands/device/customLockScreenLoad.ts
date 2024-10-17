@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
-type CustomLockScreenLoadJobOpts = ScanCommonOpts & {
+export type CustomLockScreenLoadJobOpts = ScanCommonOpts & {
   fileInput: string;
   deviceModelId: string;
 };

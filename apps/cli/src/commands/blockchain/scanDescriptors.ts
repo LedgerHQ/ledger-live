@@ -1,4 +1,4 @@
-import { deviceOpt, currencyOpt } from "../../scan";
+import { deviceOpt, currencyOpt, CurrencyCommonOpts, DeviceCommonOpts } from "../../scan";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { scanDescriptors } from "@ledgerhq/coin-bitcoin/descriptor";
 import { SignerContext } from "@ledgerhq/coin-bitcoin/lib/signer";
@@ -18,15 +18,12 @@ const createBitcoinSignerContext =
       withDevice(deviceId)(transport => from(fn(new Btc({ transport, currency: currency.id })))),
     );
 
+export type ScanDescriptorsJobOpts = CurrencyCommonOpts & DeviceCommonOpts;
+
 export default {
   description: "Synchronize accounts with blockchain",
   args: [deviceOpt, currencyOpt],
-  job: (
-    opts: Partial<{
-      device: string;
-      currency: string;
-    }>,
-  ) =>
+  job: (opts: ScanDescriptorsJobOpts) =>
     scanDescriptors(
       opts.device || "",
       requiredCurrency(findCryptoCurrencyByKeyword(opts.currency || "bitcoin")),

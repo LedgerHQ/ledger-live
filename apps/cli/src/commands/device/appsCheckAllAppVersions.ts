@@ -15,7 +15,7 @@ import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWi
 import { delay } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import type { Application, ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
 type ResultCommon = {
   versionId: number;
@@ -293,6 +293,11 @@ const wipeAll = (t, deviceInfo) =>
     }),
   );
 
+export type AppsCheckAllAppVersionsJobOpts = DeviceCommonOpts &
+  Partial<{
+    memo: string;
+  }>;
+
 export default {
   description:
     "install/uninstall all possible apps available on our API to check all is good (even old app versions)",
@@ -304,13 +309,7 @@ export default {
       desc: "a file to memorize the previously saved result so we don't run again from the start",
     },
   ],
-  job: ({
-    device,
-    memo,
-  }: Partial<{
-    device: string;
-    memo: string;
-  }>) =>
+  job: ({ device, memo }: AppsCheckAllAppVersionsJobOpts) =>
     withDevice(device || "")(t => {
       return from(
         Promise.all([getDeviceInfo(t), ManagerAPI.listApps()]).then(

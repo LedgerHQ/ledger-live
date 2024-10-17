@@ -13,7 +13,7 @@ import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 
 const listFirmwareOSU = async () => {
   const { data } = await network({
@@ -64,6 +64,13 @@ const customGetLatestFirmwareForDevice = async (
 
 const disclaimer =
   "this is a developer feature that allow to flash anything, we are not responsible of your actions, by flashing your device you might reset your seed or block your device";
+
+export type FirmwareUpdateJobOpts = DeviceCommonOpts & {
+  "to-my-own-risk"?: boolean;
+  osuVersion: string;
+  listOSUs: boolean;
+};
+
 export default {
   description: "Perform a firmware update",
   args: [
@@ -89,12 +96,7 @@ export default {
     osuVersion,
     "to-my-own-risk": toMyOwnRisk,
     listOSUs,
-  }: Partial<{
-    device: string;
-    osuVersion: string;
-    "to-my-own-risk": boolean;
-    listOSUs: boolean;
-  }>) => (
+  }: Partial<FirmwareUpdateJobOpts>) => (
     invariant(!osuVersion || toMyOwnRisk, "--to-my-own-risk is required: " + disclaimer),
     listOSUs
       ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map(d => d.name))))

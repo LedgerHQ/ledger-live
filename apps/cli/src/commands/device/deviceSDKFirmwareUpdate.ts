@@ -10,7 +10,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { updateFirmwareAction } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 
 const listFirmwareOSU = async () => {
   const { data } = await network({
@@ -62,6 +62,12 @@ const listFirmwareOSU = async () => {
 
 const disclaimer =
   "this is a developer feature that allow to flash anything, we are not responsible of your actions, by flashing your device you might reset your seed or block your device";
+
+export type DeviceSDKFirmwareUpdateJobOpts = DeviceCommonOpts & {
+  osuVersion: string;
+  "to-my-own-risk": boolean;
+  listOSUs: boolean;
+};
 export default {
   description: "Perform a firmware update",
   args: [
@@ -87,12 +93,7 @@ export default {
     osuVersion,
     "to-my-own-risk": toMyOwnRisk,
     listOSUs,
-  }: Partial<{
-    device: string;
-    osuVersion: string;
-    "to-my-own-risk": boolean;
-    listOSUs: boolean;
-  }>) => (
+  }: Partial<DeviceSDKFirmwareUpdateJobOpts>) => (
     invariant(!osuVersion || toMyOwnRisk, "--to-my-own-risk is required: " + disclaimer),
     listOSUs
       ? from(listFirmwareOSU()).pipe(mergeMap(d => from(d.map(d => d.name))))

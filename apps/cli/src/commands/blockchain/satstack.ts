@@ -31,6 +31,17 @@ function requiredNodeConfig(nodeConfig) {
   return nodeConfig;
 }
 
+export type SatstackJobOpts = {
+  "no-device": boolean;
+  "no-save": boolean;
+  device: string;
+  lss: string;
+  rpcHOST: string;
+  rpcUSER: string;
+  rpcPASSWORD: string;
+  rpcTLS: boolean;
+};
+
 export default {
   description: "SatStack: Generate and manage lss.json file",
   args: [
@@ -81,16 +92,7 @@ export default {
     rpcUSER,
     rpcPASSWORD,
     rpcTLS,
-  }: {
-    "no-device": boolean;
-    "no-save": boolean;
-    device: string;
-    lss: string;
-    rpcHOST: string;
-    rpcUSER: string;
-    rpcPASSWORD: string;
-    rpcTLS: boolean;
-  }) => {
+  }: SatstackJobOpts) => {
     setEnv("SATSTACK", true);
     const maybeExistingConfigO = !lss
       ? of(null)

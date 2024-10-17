@@ -5,6 +5,13 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { Account } from "@ledgerhq/types-live";
+
+export type LiveDataJobOpts = ScanCommonOpts &
+  Partial<{
+    appjson: string;
+    add: boolean;
+  }>;
+
 export default {
   description: "utility for Ledger Live app.json file",
   args: [
@@ -22,13 +29,7 @@ export default {
       desc: "add accounts to live data",
     },
   ],
-  job: (
-    opts: ScanCommonOpts &
-      Partial<{
-        appjson: string;
-        add: boolean;
-      }>,
-  ) =>
+  job: (opts: LiveDataJobOpts) =>
     scan(opts).pipe(
       reduce<Account, Account[]>((accounts, account) => accounts.concat(account), []),
       mergeMap(accounts => {

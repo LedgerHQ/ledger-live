@@ -23,7 +23,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import invariant from "invariant";
 import { Account, SignedOperation, SubAccount } from "@ledgerhq/types-live";
 
-type SwapJobOpts = ScanCommonOpts & {
+export type SwapJobOpts = ScanCommonOpts & {
   amount: string;
   useAllAmount: boolean;
   useFloat: boolean;

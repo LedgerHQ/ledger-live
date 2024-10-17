@@ -18,10 +18,12 @@ const format = (account: AccountLike, value) => {
   return `${name}: ${amount}`;
 };
 
+export type EstimateMaxSpendableJobOpts = ScanCommonOpts;
+
 export default {
   description: "estimate the max spendable of an account",
   args: [...scanCommonOpts],
-  job: (opts: ScanCommonOpts) =>
+  job: (opts: EstimateMaxSpendableJobOpts) =>
     scan(opts).pipe(
       concatMap(account => {
         const bridge = getAccountBridge(account);

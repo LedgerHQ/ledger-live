@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { from } from "rxjs";
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
@@ -36,6 +36,11 @@ const command = async (transport, currencyId, hash) => {
   };
 };
 
+export type TestGetTrustedInputFromTxHashJobOpts = DeviceCommonOpts & {
+  currency: string;
+  hash: string;
+};
+
 export default {
   args: [
     deviceOpt,
@@ -50,13 +55,6 @@ export default {
       type: String,
     },
   ],
-  job: ({
-    device,
-    currency,
-    hash,
-  }: Partial<{
-    device: string;
-    currency: string;
-    hash: string;
-  }>) => withDevice(device || "")(transport => from(command(transport, currency, hash))),
+  job: ({ device, currency, hash }: TestGetTrustedInputFromTxHashJobOpts) =>
+    withDevice(device || "")(transport => from(command(transport, currency, hash))),
 };

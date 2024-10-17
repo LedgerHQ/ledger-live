@@ -76,7 +76,7 @@ const histoFormatters = {
       },
     ),
 };
-type Opts = Partial<{
+export type CountervaluesJobOpts = Partial<{
   currency: string[];
   countervalue: string[];
   fiats: boolean;
@@ -153,7 +153,7 @@ export default {
       desk: "starting date for all time historical data. combine with -p all.",
     },
   ],
-  job: (opts: Opts) =>
+  job: (opts: CountervaluesJobOpts) =>
     Observable.create(o => {
       async function f() {
         const currencies = await getCurrencies(opts);
@@ -221,7 +221,7 @@ function asPortfolioRange(period: string): PortfolioRange {
   return period as PortfolioRange;
 }
 
-async function getCurrencies(opts: Opts): Promise<Currency[]> {
+async function getCurrencies(opts: CountervaluesJobOpts): Promise<Currency[]> {
   let ids;
 
   if (opts.marketcap) {
@@ -236,13 +236,13 @@ async function getCurrencies(opts: Opts): Promise<Currency[]> {
   return uniq((ids || ["bitcoin"]).map(findCryptoCurrencyById).filter(Boolean));
 }
 
-function getCountervalues(opts: Opts): Currency[] {
+function getCountervalues(opts: CountervaluesJobOpts): Currency[] {
   return opts.fiats
     ? listFiatCurrencies().map(a => a)
     : ((opts.countervalue || ["USD"]).map(findCurrencyByTicker).filter(Boolean) as Currency[]);
 }
 
-function getStartDate(opts: Opts): Date | null {
+function getStartDate(opts: CountervaluesJobOpts): Date | null {
   if (!opts.startDate || opts.latest) return null;
   const date = new Date(opts.startDate);
   // FIXME: valueOf on date for arithmetics operation in typescript
@@ -250,7 +250,7 @@ function getStartDate(opts: Opts): Date | null {
   return date;
 }
 
-function getDatesWithOpts(opts: Opts): Date[] {
+function getDatesWithOpts(opts: CountervaluesJobOpts): Date[] {
   const startDate = getStartDate(opts);
   if (!startDate || opts.latest) return [new Date()];
   const range = asPortfolioRange(opts.period || "month");

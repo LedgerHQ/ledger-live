@@ -7,7 +7,7 @@ import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import installApp from "@ledgerhq/live-common/hw/installApp";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { Application } from "@ledgerhq/types-live";
 type Scenario = number[];
 // how to add a scenario:
@@ -39,6 +39,11 @@ const installScenario = (apps, transport, deviceInfo, scene) => {
   );
 };
 
+export type DevDeviceAppsScenarioJobOpts = DeviceCommonOpts &
+  Partial<{
+    scenario: keyof typeof scenarios;
+  }>;
+
 export default {
   description: "dev feature to enter into a specific device apps scenario",
   args: [
@@ -50,13 +55,7 @@ export default {
       desc: scenariosValues,
     },
   ],
-  job: ({
-    device,
-    scenario,
-  }: Partial<{
-    device: string;
-    scenario: keyof typeof scenarios;
-  }>) =>
+  job: ({ device, scenario }: DevDeviceAppsScenarioJobOpts) =>
     withDevice(device || "")(t => {
       const scene = scenarios[scenario || ""];
       if (!scene)

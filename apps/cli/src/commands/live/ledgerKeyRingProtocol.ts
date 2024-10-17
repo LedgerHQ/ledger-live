@@ -2,7 +2,27 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type LedgerKeyRingProtocolJobOpts = DeviceCommonOpts &
+  Partial<{
+    initMemberCredentials: boolean;
+    getKeyRingTree: boolean;
+    getMembers: boolean;
+    encryptUserData: boolean;
+    decryptUserData: boolean;
+    restoreKeyRingTree: boolean;
+    destroyKeyRingTree: boolean;
+    pubKey: string;
+    privateKey: string;
+    rootId: string;
+    walletSyncEncryptionKey: string;
+    applicationPath: string;
+    message: string;
+    applicationId: number;
+    name: string;
+    apiBaseUrl: string;
+  }>;
 
 export default {
   description: "Ledger Key Ring Protocol command",
@@ -110,25 +130,7 @@ export default {
     applicationId = 16,
     name = "CLI",
     apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
-  }: Partial<{
-    device: string;
-    initMemberCredentials: boolean;
-    getKeyRingTree: boolean;
-    getMembers: boolean;
-    encryptUserData: boolean;
-    decryptUserData: boolean;
-    restoreKeyRingTree: boolean;
-    destroyKeyRingTree: boolean;
-    pubKey: string;
-    privateKey: string;
-    rootId: string;
-    walletSyncEncryptionKey: string;
-    applicationPath: string;
-    message: string;
-    applicationId: number;
-    name: string;
-    apiBaseUrl: string;
-  }>) => {
+  }: LedgerKeyRingProtocolJobOpts) => {
     if (!applicationId) return "applicationId is required";
     if (!name) return "name is required";
     if (!apiBaseUrl) return "apiBaseUrl is required";

@@ -4,6 +4,7 @@ import { Fee } from "../../enum/Fee";
 import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { commandCLI } from "tests/utils/cliUtils";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -177,8 +178,24 @@ for (const transaction of transactionE2E) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToCredit.currency.currencyId} --index ${transaction.transaction.accountToCredit.index} --add`,
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToCredit.currency.currencyId,
+            index: transaction.transaction.accountToCredit.index,
+            add: true,
+            appjson: "",
+          },
+        },
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -233,7 +250,15 @@ test.describe("Send token (subAccount) - invalid address input", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenTransactionInvalid.transaction.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${tokenTransactionInvalid.transaction.accountToDebit.currency.currencyId} --index ${tokenTransactionInvalid.transaction.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: tokenTransactionInvalid.transaction.accountToDebit.currency.currencyId,
+          index: tokenTransactionInvalid.transaction.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -267,7 +292,15 @@ for (const transaction of tokenTransactionInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
     test(
@@ -306,7 +339,15 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${tokenTransactionValid.accountToDebit.currency.currencyId} --index ${tokenTransactionValid.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: tokenTransactionValid.accountToDebit.currency.currencyId,
+          index: tokenTransactionValid.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -339,7 +380,15 @@ for (const transaction of transactionsAmountInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -380,7 +429,15 @@ test.describe("Verify send max user flow", () => {
     userdata: "skip-onboarding",
     speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${transactionInputValid.accountToDebit.currency.currencyId} --index ${transactionInputValid.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: transactionInputValid.accountToDebit.currency.currencyId,
+          index: transactionInputValid.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -443,7 +500,15 @@ for (const transaction of transactionsAddressInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 

@@ -3,7 +3,14 @@ import { filter, map, mergeMap, repeat } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type ManagerListAppsJobOpts = DeviceCommonOpts &
+  Partial<{
+    format: string;
+    benchmark: boolean;
+  }>;
+
 export default {
   description: "List apps that can be installed on the device",
   args: [
@@ -22,15 +29,7 @@ export default {
       typeDesc: "raw | json | default",
     },
   ],
-  job: ({
-    device,
-    format,
-    benchmark,
-  }: Partial<{
-    device: string;
-    format: string;
-    benchmark: boolean;
-  }>) => {
+  job: ({ device, format, benchmark }: ManagerListAppsJobOpts) => {
     if (benchmark) console.log("Running the whole thing 5 times to have cache and averages.");
 
     return withDevice(device || "")(t =>

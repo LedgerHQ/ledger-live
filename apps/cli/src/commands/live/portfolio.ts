@@ -23,6 +23,13 @@ function asPortfolioRange(period: string): PortfolioRange {
   return period as PortfolioRange;
 }
 
+export type PortfolioJobOpts = ScanCommonOpts &
+  Partial<{
+    countervalue: string;
+    period: string;
+    disableAutofillGaps: boolean;
+  }>;
+
 export default {
   description: "Get a portfolio summary for accounts",
   args: [
@@ -45,15 +52,7 @@ export default {
       desc: "if set, disable the autofill of gaps to evaluate the rates availability",
     },
   ],
-  job: (
-    opts: Partial<
-      ScanCommonOpts & {
-        disableAutofillGaps: boolean;
-        countervalue: string;
-        period: string;
-      }
-    >,
-  ) => {
+  job: (opts: PortfolioJobOpts) => {
     const countervalue = findCurrencyByTicker(opts.countervalue || "USD");
     invariant(countervalue, "currency not found with ticker=" + opts.countervalue);
     return scan(opts).pipe(

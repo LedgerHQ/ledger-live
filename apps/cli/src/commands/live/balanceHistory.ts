@@ -63,6 +63,11 @@ function asPortfolioRange(period: string): PortfolioRange {
   return period as PortfolioRange;
 }
 
+export type BalanceHistoryJobOpts = ScanCommonOpts & {
+  period: string;
+  format: string;
+};
+
 export default {
   description: "Get the balance history for accounts",
   args: [
@@ -81,12 +86,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: (
-    opts: ScanCommonOpts & {
-      format: string;
-      period: string;
-    },
-  ) =>
+  job: (opts: BalanceHistoryJobOpts) =>
     scan(opts).pipe(
       map(account => {
         const range = asPortfolioRange(opts.period || "month");

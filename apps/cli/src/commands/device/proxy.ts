@@ -14,7 +14,7 @@ import WebSocket from "ws";
 import bodyParser from "body-parser";
 import os from "os";
 import { Observable } from "rxjs";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 const args = [
   deviceOpt,
   {
@@ -54,7 +54,24 @@ const args = [
   },
 ];
 
-const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip": noAutoSkip }) =>
+export type ProxyJobOpts = DeviceCommonOpts & {
+  file: string;
+  verbose: boolean;
+  silent: boolean;
+  "disable-auto-skip": boolean;
+  port: string;
+  record: boolean;
+};
+
+const job = ({
+  device,
+  file,
+  record,
+  port,
+  silent,
+  verbose,
+  "disable-auto-skip": noAutoSkip,
+}: Partial<ProxyJobOpts>) =>
   new Observable(o => {
     const unsub = listen(l => {
       if (verbose) {
@@ -64,7 +81,7 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
       }
     });
     let Transport;
-    let saveToFile = null;
+    let saveToFile: string | null = null;
     let recordStore;
 
     const getTransportLike = () => {

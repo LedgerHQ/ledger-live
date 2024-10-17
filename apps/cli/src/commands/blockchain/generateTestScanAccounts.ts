@@ -4,6 +4,11 @@ import { accountFormatters } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { Account } from "@ledgerhq/types-live";
+
+export type GenerateTestScanAccountsJobOpts = ScanCommonOpts & {
+  format: string;
+};
+
 export default {
   description: "Generate a test for scan accounts (live-common dataset)",
   args: [
@@ -16,11 +21,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: (
-    opts: ScanCommonOpts & {
-      format: string;
-    },
-  ) => {
+  job: (opts: GenerateTestScanAccountsJobOpts) => {
     if (!opts.currency) throw new Error("-c currency is missing");
     const apdus: string[] = [];
     listen(log => {

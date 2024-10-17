@@ -27,6 +27,9 @@ import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
 import fs from "fs";
 
+export type DeviceCommonOpts = Partial<{
+  device: string;
+}>;
 export const deviceOpt = {
   name: "device",
   alias: "d",
@@ -34,6 +37,9 @@ export const deviceOpt = {
   descOpt: "usb path",
   desc: "provide a specific HID path of a device",
 };
+export type CurrencyCommonOpts = Partial<{
+  currency: string;
+}>;
 export const currencyOpt = {
   name: "currency",
   alias: "c",

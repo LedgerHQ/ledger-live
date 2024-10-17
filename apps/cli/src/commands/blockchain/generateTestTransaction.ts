@@ -45,10 +45,12 @@ const toJS = obj => {
 
 const toTransactionStatusJS = status => toJS(status);
 
+export type GenerateTestTransactionJobOpts = InferTransactionsOpts & ScanCommonOpts;
+
 export default {
   description: "Generate a test for transaction (live-common dataset)",
   args: [...scanCommonOpts, ...inferTransactionsOpts],
-  job: (opts: ScanCommonOpts & InferTransactionsOpts) =>
+  job: (opts: GenerateTestTransactionJobOpts) =>
     scan(opts).pipe(
       switchMap(account =>
         from(inferTransactions(account, opts)).pipe(

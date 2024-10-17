@@ -24,6 +24,10 @@ const getTransactionStatusFormatters = {
     "STATUS " +
     JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
 };
+export type GetTransactionStatusJobOpts = ScanCommonOpts &
+  InferTransactionsOpts & {
+    format: string;
+  };
 export default {
   description: "Prepare a transaction and returns 'TransactionStatus' meta information",
   args: [

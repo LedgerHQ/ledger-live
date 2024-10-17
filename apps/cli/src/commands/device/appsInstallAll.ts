@@ -6,15 +6,14 @@ import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type AppsInstallAllJobOpts = DeviceCommonOpts;
+
 export default {
   description: "test script to install and uninstall all apps",
   args: [deviceOpt],
-  job: ({
-    device,
-  }: Partial<{
-    device: string;
-  }>) =>
+  job: ({ device }: AppsInstallAllJobOpts) =>
     withDevice(device || "")(t => {
       const exec = execWithTransport(t);
       return from(getDeviceInfo(t)).pipe(

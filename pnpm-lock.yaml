@@ -596,6 +596,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/live-cli':
+        specifier: workspace:^
+        version: link:../cli
       '@ledgerhq/native-modules-tools':
         specifier: workspace:*
         version: link:../../tools/native-modules-tools
