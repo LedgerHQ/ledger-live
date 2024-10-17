@@ -1,0 +1,136 @@
+{
+  "name": "@ledgerhq/coin-module-boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate coin integration",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "boilerplate",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-module-boilerplate",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "api": [
+        "lib/api/index"
+      ],
+      "deviceTransactionConfig": [
+        "lib/bridge/deviceTransactionConfig"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "transaction": [
+        "lib/bridge/transaction"
+      ],
+      "types": [
+        "lib/types/index"
+      ],
+      "*": [
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "bignumber.js": "^9.1.2",
+    "invariant": "^2.2.4",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@types/invariant": "^2.2.37",
+    "@types/jest": "^29.5.12",
+    "dotenv": "^16.4.5",
+    "expect": "^27.4.6",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-xrp.json",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported"
+  }
+}

@@ -893,6 +893,16 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable logs for drawers",
   },
+  NODE_BOILERPLATE: {
+    def: "http://boilerplate.node.com",
+    parser: stringParser,
+    desc: "Used as an example for coin module boilerplate",
+  },
+  INDEXER_BOILERPLATE: {
+    def: "http://boilerplate.indexer.com",
+    parser: stringParser,
+    desc: "Used as an example for coin module boilerplate",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {
