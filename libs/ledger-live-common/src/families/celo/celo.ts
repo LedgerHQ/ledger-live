@@ -11,11 +11,69 @@ import {
 } from "@celo/wallet-base";
 import type { CeloTx, RLPEncodedTx } from "@celo/connect";
 import { celoKit } from "./api/sdk";
+import { decode, encode } from "rlp";
 
 import SemVer from "semver";
 
 export default class Celo extends Eth {
   private config?: Promise<{ version: string }>;
+
+
+  // this works for celo-legacy
+  async signTransaction(
+    path: string,
+    rawTxHex: string,
+  ): Promise<{
+    s: string;
+    v: string;
+    r: string;
+  }> {
+    const paths = splitPath(path);
+    const rawTx = Buffer.from(rawTxHex, "hex");
+    let offset = 0;
+    let response;
+
+    const rlpTx = decode(rawTx);
+    let rlpOffset = 0;
+    // this seem specific to tx type
+    if (rlpTx.length > 6) {
+      const rlpVrs = encode(rlpTx.slice(-3));
+      rlpOffset = rawTx.length - (rlpVrs.length - 1);
+    }
+
+    while (offset !== rawTx.length) {
+      const first = offset === 0;
+      const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
+      let chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
+      if (rlpOffset != 0 && offset + chunkSize == rlpOffset) {
+        // Make sure that the chunk doesn't end right on the EIP 155 marker if set
+        chunkSize--;
+      }
+      const buffer = Buffer.alloc(first ? 1 + paths.length * 4 + chunkSize : chunkSize);
+      if (first) {
+        buffer[0] = paths.length;
+        paths.forEach((element, index) => {
+          buffer.writeUInt32BE(element, 1 + 4 * index);
+        });
+        rawTx.copy(buffer, 1 + 4 * paths.length, offset, offset + chunkSize);
+      } else {
+        rawTx.copy(buffer, 0, offset, offset + chunkSize);
+      }
+      console.info("buffer buffer buffer", buffer.toString());
+      response = await this.transport
+        .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
+        .catch(e => {
+          throw e;
+        });
+
+      offset += chunkSize;
+    }
+
+    const v = response.slice(0, 1).toString("hex");
+    const r = response.slice(1, 1 + 32).toString("hex");
+    const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+    return { v, r, s };
+  }
 
 
   // celo-spender-app below version 1.2.3 used a different private key to validate erc20 token info.
@@ -71,4 +129,21 @@ export default class Celo extends Eth {
 
     return SemVer.satisfies((await this.config).version, ">= 1.2.3");
   }
+}
+
+
+function splitPath(path: string): number[] {
+  const result: number[] = [];
+  const components = path.split("/");
+  components.forEach(element => {
+    let number = parseInt(element, 10);
+    if (isNaN(number)) {
+      return; // FIXME shouldn't it throws instead?
+    }
+    if (element.length > 1 && element[element.length - 1] === "'") {
+      number += 0x80000000;
+    }
+    result.push(number);
+  });
+  return result;
 }
