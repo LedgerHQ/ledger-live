@@ -265,7 +265,11 @@ export function useSignedTxHandler({
         }
 
         const operation = await broadcast(signedOperation).catch((err: Error) => {
-          throw createTransactionBroadcastError(err);
+          const currency = mainAccount.currency;
+          throw createTransactionBroadcastError(err, {
+            network: currency.family,
+            coin: currency.ticker,
+          });
         });
 
         log(
