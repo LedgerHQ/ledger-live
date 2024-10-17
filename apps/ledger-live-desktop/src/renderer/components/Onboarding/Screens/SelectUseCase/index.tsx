@@ -210,7 +210,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                     dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
                   } else {
                     setUseCase(UseCase.recover);
-                    history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
+                    history.push(`/onboarding/${UseCase.recover}/${ScreenId.recoverHowTo}`);
                   }
                 }}
               />
