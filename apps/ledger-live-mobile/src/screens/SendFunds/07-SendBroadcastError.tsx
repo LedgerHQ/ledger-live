@@ -132,6 +132,7 @@ const InformativeBannerButton = styled(Button).attrs({
   isNewIcon: true,
   iconPosition: "left",
   size: "small",
+  activeOpacity: 0.5,
 })`
   background-color: ${({ theme }) => theme.colors.opacityDefault.c05};
   border-radius: 8px;
