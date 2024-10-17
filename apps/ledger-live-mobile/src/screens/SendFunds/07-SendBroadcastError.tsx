@@ -2,7 +2,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, ScrollView } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -28,7 +28,6 @@ type Props = CompositeScreenProps<
 
 export default function SendBroadcastError({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
 
   const { account } = useSelector(accountScreenSelector(route));
   const currency = account ? getAccountCurrency(account) : null;
@@ -51,10 +50,10 @@ export default function SendBroadcastError({ navigation, route }: Props) {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        marginBottom: insets.bottom,
+        gap: 16,
       }}
     >
-      <ScrollView style={{ flex: 1, marginBottom: 16 }}>
+      <ScrollView style={{ flex: 1 }}>
         <TrackScreen category="SendFunds" name="ValidationError" currencyName={currency?.name} />
         <GenericErrorView error={error} hasExportLogButton={false} />
 
