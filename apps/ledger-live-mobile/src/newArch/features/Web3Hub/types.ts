@@ -1,3 +1,4 @@
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BaseComposite, MainComposite } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -37,10 +38,12 @@ export type Web3HubDB = {
   // localLiveApp: LiveAppManifest[];
 };
 
-export type RecentlyUsed = {
-  id: string;
-  usedAt: string;
-};
+export type RecentlyUsed = AppManifest;
+
+// export type RecentlyUsed = {
+//   id: string;
+//   usedAt: string;
+// };
 
 export type DismissedManifests = {
   [id: string]: boolean;
