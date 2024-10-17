@@ -50,6 +50,7 @@ import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
+import { registerTransportModules } from "~/renderer/live-common-setup";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -241,6 +242,8 @@ async function init() {
       }, 500);
     });
   }
+
+  registerTransportModules(store);
 
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {

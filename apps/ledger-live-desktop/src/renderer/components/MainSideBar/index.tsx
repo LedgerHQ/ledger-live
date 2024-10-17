@@ -35,6 +35,7 @@ import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { Feature_LdmkTransport } from "@ledgerhq/types-live";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -175,6 +176,21 @@ const SideBarScrollContainer = styled(Box)`
     height: 0;
   }
 `;
+
+const LDMKTransportFlag = styled.div`
+  z-index: 51;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(100%, 0);
+  padding: 5px;
+  background: tomato;
+  color: papayawhip;
+  font-weight: bold;
+  border-radius: 0 0 4px 0;
+  opacity: 0.8;
+`;
+
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
@@ -237,6 +253,7 @@ const MainSideBar = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
+  const ldmkTransportFlag = useFeature("ldmkTransport") as Feature_LdmkTransport;
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -370,6 +387,9 @@ const MainSideBar = () => {
               <IconChevron size={16} />
             </Collapser>
             <SideBarScrollContainer>
+              {ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible && (
+                <LDMKTransportFlag>With LDMK transport</LDMKTransportFlag>
+              )}
               <TopGradient />
               <Space of={70} />
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
