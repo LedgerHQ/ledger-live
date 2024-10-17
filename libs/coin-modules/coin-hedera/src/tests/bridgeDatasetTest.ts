@@ -1,4 +1,4 @@
-import "../../__tests__/test-helpers/setup";
+// import "../../__tests__/test-helpers/setup";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import {
