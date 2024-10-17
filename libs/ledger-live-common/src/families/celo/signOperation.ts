@@ -9,7 +9,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./buildTransaction";
-import Celo from "./celo";
+import Celo from "./hw-app-celo";
 
 /**
  * Sign Transaction with Ledger hardware
