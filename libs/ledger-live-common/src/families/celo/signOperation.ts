@@ -60,7 +60,7 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           if (cancelled) return;
 
           // TODO this is causing problems (or at least not fixing them)
-          const signature = parseSigningResponse(response, chainId!);
+          const signature = parseSigningResponse(response, chainId!, await celo.isAppModern());
 
           o.next({ type: "device-signature-granted" });
 
@@ -112,15 +112,19 @@ const parseSigningResponse = (
     r: string;
   },
   chainId: number,
+  isModern: boolean
 ): {
   s: Buffer;
   v: number;
   r: Buffer;
 } => {
   // EIP155
-  const sigV = applyEIP155(response.v, 16);
+  const sigV = parseInt(response.v, 16);
   let eip155V = chainId * 2 + 35;
-  if (sigV !== eip155V && (sigV & eip155V) !== sigV) {
+
+  if (isModern) {
+    eip155V = sigV;
+  } else if (sigV !== eip155V && (sigV & eip155V) !== sigV) {
     eip155V += 1;
   }
 

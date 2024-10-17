@@ -121,7 +121,7 @@ export default class Celo extends Eth {
     }
   }
 
-  private async isAppModern(): Promise<boolean> {
+  async isAppModern(): Promise<boolean> {
     if (!this.config) {
       this.config = this.getAppConfiguration();
     }
