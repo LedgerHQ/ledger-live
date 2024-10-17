@@ -5,6 +5,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
+import styled from "styled-components/native";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
 
@@ -48,16 +49,13 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
 
   return (
     <>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        {...titleContainerProps}
-        onTouchStart={toggleCollapsed}
-      >
-        {header}
-        <Animated.View style={animatedChevron}>
-          <Icons.ChevronRight />
-        </Animated.View>
+      <Flex {...titleContainerProps}>
+        <Toggle activeOpacity={1} onPress={toggleCollapsed}>
+          {header}
+          <Animated.View style={animatedChevron}>
+            <Icons.ChevronRight />
+          </Animated.View>
+        </Toggle>
       </Flex>
 
       <Animated.View style={[animateContent, { overflow: "hidden" }]}>
@@ -66,3 +64,8 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
     </>
   );
 }
+
+const Toggle = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
