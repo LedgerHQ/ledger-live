@@ -737,7 +737,8 @@
         "subTitle" : "Die {{family}}-Integration wurde vom {{team}}-Team durchgeführt",
         "description" : "Ledger Live ist eine Open-Source-Plattform.",
         "description2" : "Entwickler aus aller Welt können sich mit unserem Ledger Live integrieren",
-        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt"
+        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
+        "description3Link" : "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1126,6 +1127,7 @@
       "send" : "Senden",
       "swap" : "Swappen",
       "stake" : "Staken",
+      "yield" : "Ertrag",
       "buy" : "Kaufen",
       "sell" : "Verkaufen",
       "edit" : "Konto bearbeiten",
@@ -2252,6 +2254,11 @@
           "description" : "Stake deine CELO mit dem Ledger by Figment-Validator. Garantiert vollständiger Schutz vor Slashing, unterstützt durch die kompromisslose Sicherheit von Ledger."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "Brauchst du ein Tag/Memo?",
+      "description" : "Möglicherweise brauchst du ein <0>Tag/Memo</0>, um diesen Vermögenswert von einer Börse zu erhalten. Du kannst eine beliebige Zahlenkombination verwenden, z. B. 1234.",
+      "learnMore" : "Weitere Informationen zu Tags/Memos"
     }
   },
   "send" : {
@@ -2409,7 +2416,11 @@
     "languages" : {
       "english" : "Englisch",
       "french" : "Französisch",
-      "spanish" : "Spanisch"
+      "spanish" : "Spanisch",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Russisch",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2767,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT (Non Fungible Tokens) Sammlungen",
-        "description" : "Tezos-NFTs kannst du direkt über Objkt in Ledger Live einsehen.",
-        "cta" : "Meine NFTs auf Objkt anzeigen"
       }
     }
   },
@@ -3682,19 +3684,19 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Vermehre dein ETH-Guthaben",
       "subTitle" : "Stake deine ETH und vermehre dein Vermögen – durch tägliche Prämien direkt in Ledger Live.",
       "tagMinimum" : "Benötigt {{min}} ETH",
       "kiln_pooling" : {
-        "title" : "Kiln Staking Pool",
+        "title" : "Kiln-Staking-Pool",
         "description" : "Stake ohne Mindestbetrag. Verdiene automatisch aufgelaufene Belohnungen ohne Sperrfrist.",
-        "supportLink" : "Mehr über Kiln Pooling erfahren."
+        "supportLink" : "Mehr über Kiln-Pooling erfahren."
       },
       "lido" : {
         "title" : "Lido",
         "description" : "Stake einen beliebigen ETH-Betrag für Sofortliquidität und tägliche Belohnungen.",
-        "supportLink" : "Mehr über Lido lernen"
+        "supportLink" : "Mehr über Lido erfahren"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
@@ -3703,15 +3705,81 @@
       },
       "kiln" : {
         "title" : "Staking mit Kiln",
-        "tag" : "Benötigt 32 ETH",
+        "tag" : "Benötigt 32 ETH",
         "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und fordere deine Belohnungen ganz leicht ein.",
         "supportLink" : "Mehr über Kiln-Validator erfahren"
       },
       "figment" : {
         "title" : "Figment",
-        "tag" : "Benötigt 32 ETH",
+        "tag" : "Benötigt 32 ETH",
         "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und lasse Belohnungen automatisch deinem Konto gutschreiben.",
         "supportLink" : "Mehr über Figment als Validator erfahren"
+      }
+    },
+    "stake" : {
+      "title" : "Staking-Anbieter auswählen",
+      "category" : {
+        "all" : {
+          "name" : "Alle",
+          "description" : "Alle Staking-Anbieter für Ethereum sind in Ledger Live verfügbar."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Du kannst ETH staken und Belohnungen in Form von Liquid-Token erhalten. So kannst du weiterhin handeln und dich an DeFi-Aktivitäten beteiligen."
+        },
+        "protocol" : {
+          "name" : "Protokoll",
+          "description" : "Du kannst einen Batch von 32 ETH staken und dafür Full-Node-Belohnungen in ETH erhalten."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "Du kannst einem Pool beitreten, um einen beliebigen ETH-Betrag zu staken und Belohnungen zu erhalten."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Du kannst dein Liquid-Token erneut staken, um zusätzliche Belohnungen zu erhalten."
+        }
+      },
+      "howItWorks" : "So funktioniert das ETH-Staking",
+      "lst" : "Benötigtes Liquid-Token",
+      "noMinimum" : "Kein Minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln-Staking-Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Liquid-Restaking mit Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp-DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Ronin Wallet"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Erfahre mehr über ETH-Staking und verschiedene Strategien",
+      "requiredMinimum" : "Benötigt {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Automatisch zusammengelegte Belohnungen",
+        "basic" : "Prämien",
+        "daily" : "Tägliche Belohnungen",
+        "eigenlayer_points" : "Eigenlayer-Punkte",
+        "validator" : "Validatorbelohnungen"
       }
     }
   },
@@ -4014,6 +4082,35 @@
         "title" : "Entwicklermodus für Börsen",
         "desc" : "Info des Börsenanbieters hinzufügen",
         "placeholder" : "Info des Börsenanbieters im CAL-Format"
+      },
+      "analyticsConsole" : {
+        "title" : "Analysekonsole zulassen",
+        "desc" : "Zeigt die Analysekonsole an und erlaubt es, sie zu öffnen."
+      },
+      "brazeTools" : {
+        "title" : "Braze-Tools",
+        "description" : "Lokale Braze-Karten erstellen",
+        "open" : "Öffnen",
+        "modal" : {
+          "title" : "Lokale Braze-Karte erstellen",
+          "add" : "Hinzufügen",
+          "dismiss" : "Alle Karten verwerfen",
+          "fields" : {
+            "notification" : "Benachrichtigungsinhaltskarte",
+            "action" : "Aktionsinhaltskarte",
+            "portfolio" : "Portfolioinhaltskarte",
+            "title" : "Titel",
+            "description" : "Beschreibung",
+            "order" : "Bestellung",
+            "image" : "Bild-URL",
+            "mainCta" : "Haupt-CTA",
+            "link" : "Link",
+            "secondaryCta" : "Sekundärer CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Pfad"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4431,20 @@
       "tokenBlacklist" : {
         "title" : "Ausgeblendete Token",
         "desc" : "Sie können Token ausblenden, indem Sie zum übergeordneten Konto gehen, dann mit der rechten Maustaste auf das Token klicken und „Token ausblenden“ wählen.",
-        "count" : "{{count}} Token",
-        "count_plural" : "{{count}} Token"
+        "count" : "1 Token",
+        "count_other" : "{{count}} Token"
       },
       "hiddenNftCollections" : {
         "title" : "Ausgeblendete NFT-Sammlungen",
         "desc" : "Sie können NFT-Sammlungen ausblenden, indem Sie mit der rechten Maustaste auf den Namen der Sammlung klicken und \"NFT-Sammlung ausblenden\" auswählen.",
-        "count" : "{{count}} Sammlung",
-        "count_plural" : "{{count}} Sammlungen"
+        "count" : "1 Sammlung",
+        "count_other" : "{{count}} Sammlungen"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Ausgeblendete Inscriptions",
+        "desc" : "Zum Ausblenden einer Inscription kannst du mit der rechten Maustaste darauf klicken und dann „Hide Inscription“ (Inscription ausblenden) auswählen.",
+        "count" : "1 Inscription",
+        "count_other" : "{{count}} Inscriptions"
       },
       "fullNode" : {
         "title" : "Bitcoin Full Node verbinden",
@@ -6584,6 +6687,11 @@
       "seeMore" : "Weitere Inscriptions anzeigen",
       "empty" : "Zum Hinzufügen von Inscriptions sende sie einfach an deine Bitcoin-Adresse.",
       "receive" : "Inscription empfangen",
+      "hide" : "Inscription ausblenden",
+      "modal" : {
+        "title" : "Inscription ausblenden",
+        "desc" : "Durch diesen Vorgang wird die Inscription <0>{{inscriptionName}}</0> in deinem Konto ausgeblendet. Du kannst das Ausblenden jederzeit in den Einstellungen aufheben."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinale entdecken",
         "description" : "Wusstest du, dass du möglicherweise wertvolle seltene Sats und Inscriptions besitzt?",
@@ -6650,6 +6758,17 @@
           "vintage" : "Die Anfänge von Bitcoin waren durch die ersten 1.000 Blöcke gekennzeichnet. Satoshis, die innerhalb dieses Zeitraums geschürft wurden, werden als „Vintage“ ausgezeichnet."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "Zu sendender Betrag:",
+      "of" : "von",
+      "excludeAssets" : "Ordinal-Vermögenswerte ausschließen",
+      "selectDesc" : "Wähle die UTXOs aus, die du für deine Transaktionen verwenden möchtest. Ungeprüfte UTXOs werden nicht verwendet.",
+      "utxos" : "UTXOs",
+      "learnMore" : "Weitere Informationen zu dieser Einstellung",
+      "confirm" : "Bestätigen",
+      "address" : "Adresse",
+      "transactionId" : "Transaktions-ID"
     }
   }
 }
