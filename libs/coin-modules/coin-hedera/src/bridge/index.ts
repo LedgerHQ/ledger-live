@@ -3,30 +3,21 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import resolver from "../hw-getAddress";
+import resolver from "../signer/index";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { HederaSigner } from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { Transaction, TransactionStatus } from "../types";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { getAccountShape, buildIterateResult } from "../synchronisation";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
+import type { Transaction, TransactionStatus, HederaSigner } from "../types";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { getAccountShape, buildIterateResult } from "./synchronisation";
+import { buildSignOperation } from "./signOperation";
+import { broadcast } from "./broadcast";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import hederaCoinConfig, { type HederaCoinConfig } from "../config";
-
-// export const preload = async () => {
-//   const config = hederaCoinConfig.getCoinConfig();
-
-//   return Promise.resolve({
-//     config,
-//   });
-// };
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -39,7 +30,6 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
 
   return {
     preload: () => Promise.resolve({}),
-    // preload: preload,
     hydrate: () => {},
     scanAccounts,
   };
@@ -79,3 +69,4 @@ export function createBridges(
     accountBridge: buildAccountBridge(signerContext),
   };
 }
+export { prepareTransaction, estimateMaxSpendable };

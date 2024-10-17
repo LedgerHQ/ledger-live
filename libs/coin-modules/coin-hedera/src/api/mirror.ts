@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getAccountBalance } from "./network";
-import { base64ToUrlSafeBase64 } from "../utils";
+import { base64ToUrlSafeBase64 } from "../common-logic";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 

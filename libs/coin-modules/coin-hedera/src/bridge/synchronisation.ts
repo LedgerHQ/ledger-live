@@ -6,14 +6,14 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
+import { getAccountsForPublicKey, getOperationsForAccount } from "../api/mirror";
 import {
   GetAccountShape,
   IterateResultBuilder,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getAccountBalance } from "./api/network";
+import { getAccountBalance } from "../api/network";
 
 export const getAccountShape: GetAccountShape<Account> = async (
   info: any,
@@ -80,10 +80,3 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
       : null;
   };
 };
-
-// export const scanAccounts = makeScanAccounts({
-//   getAccountShape,
-//   buildIterateResult,
-// });
-
-// export const sync = makeSync({ getAccountShape });

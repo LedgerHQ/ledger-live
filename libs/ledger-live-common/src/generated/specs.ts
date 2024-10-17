@@ -11,7 +11,6 @@ import cardano from "@ledgerhq/coin-cardano/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
 import elrond from "@ledgerhq/coin-elrond/specs";
 import evm from "@ledgerhq/coin-evm/specs";
-import hedera from "@ledgerhq/coin-hedera/specs";
 import icon from "@ledgerhq/coin-icon/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
@@ -36,7 +35,6 @@ export default {
   cosmos,
   elrond,
   evm,
-  hedera,
   icon,
   near,
   polkadot,

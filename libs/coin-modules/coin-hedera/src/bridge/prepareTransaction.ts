@@ -1,6 +1,6 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
-import { calculateAmount } from "./utils";
+import type { Transaction } from "../types";
+import { calculateAmount } from "../common-logic";
 
 /**
  * Gather any more neccessary information for a transaction,

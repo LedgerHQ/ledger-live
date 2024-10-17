@@ -3,9 +3,9 @@
 import { createBridges } from "@ledgerhq/coin-hedera/bridge/index";
 import Transport from "@ledgerhq/hw-transport";
 import Hedera from "@ledgerhq/hw-app-hedera";
-import hederaResolver from "@ledgerhq/coin-hedera/hw-getAddress";
+import hederaResolver from "@ledgerhq/coin-hedera/signer/index";
 import type { Account, Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-hedera/cli-transaction";
+import makeCliTools from "@ledgerhq/coin-hedera/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";

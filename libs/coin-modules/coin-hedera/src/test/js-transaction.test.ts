@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionRaw } from "../types";
-import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../transaction";
+import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { Transaction } from "../types";
+import { prepareTransaction } from "../bridge";
+import { createTransaction } from "../bridge/createTransaction";
 
 const account: Account = {
   type: "Account",
@@ -27,13 +29,7 @@ const account: Account = {
     explorerViews: [],
     name: "",
     ticker: "",
-    units: [
-      {
-        name: "",
-        code: "",
-        magnitude: 0,
-      },
-    ],
+    units: [],
   },
   operationsCount: 0,
   operations: [],
@@ -49,34 +45,34 @@ const account: Account = {
 
 const transaction: Transaction = {
   family: "hedera",
-  amount: new BigNumber(1),
-  recipient: "0.0.3",
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
 };
 
-const transactionRaw: TransactionRaw = {
-  family: "hedera",
-  amount: "1",
-  recipient: "0.0.3",
-};
-
-describe("transaction", () => {
-  test("formatTransaction", () => {
-    const result = formatTransaction(transaction, account);
-    const string = `SEND 1\nTO 0.0.3`;
-
-    expect(result).toEqual(string);
-  });
-
-  test("fromTransactionRaw", () => {
-    const result = fromTransactionRaw(transactionRaw);
+describe("js-transaction", () => {
+  test("createTransaction", () => {
     const data = transaction;
+    const result = createTransaction(account);
 
     expect(result).toEqual(data);
   });
 
-  test("toTransactionRaw", () => {
-    const result = toTransactionRaw(transaction);
-    const data = transactionRaw;
+  test("updateTransaction", () => {
+    const patch = {
+      amount: new BigNumber(5),
+      recipient: "0.0.3",
+      useAllAmount: true,
+    };
+    const data = { ...transaction, ...patch };
+    const result = updateTransaction(transaction, patch);
+
+    expect(result).toEqual(data);
+  });
+
+  test("prepareTransaction", async () => {
+    const data = transaction;
+    const result = await prepareTransaction(account, transaction);
 
     expect(result).toEqual(data);
   });

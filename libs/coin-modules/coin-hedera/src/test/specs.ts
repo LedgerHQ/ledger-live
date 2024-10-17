@@ -9,7 +9,7 @@ import type {
   TransactionArg,
   TransactionRes,
 } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { acceptTransaction } from "./speculos-deviceActions";

@@ -63,7 +63,7 @@ import type {
   TransactionRaw as hederaTransactionRaw,
   TransactionStatus as hederaTransactionStatus,
   TransactionStatusRaw as hederaTransactionStatusRaw,
-} from "@ledgerhq/coin-hedera/types";
+} from "@ledgerhq/coin-hedera/types/index";
 import type {
   Transaction as iconTransaction,
   TransactionRaw as iconTransactionRaw,
