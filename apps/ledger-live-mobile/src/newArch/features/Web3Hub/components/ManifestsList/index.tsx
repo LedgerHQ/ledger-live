@@ -12,6 +12,7 @@ import ManifestItem from "./ManifestItem";
 import CategoriesList from "./CategoriesList";
 import LoadingIndicator from "./LoadingIndicator";
 import useManifestsListViewModel from "./useManifestsListViewModel";
+import Connect from "../../screens/Web3HubApp/components/Connect";
 
 type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
@@ -66,7 +67,8 @@ export default function ManifestsList({
 
   return (
     <>
-      <Disclaimer disclaimer={disclaimer} />
+      {/* <Disclaimer disclaimer={disclaimer} /> */}
+      <Connect connect={disclaimer} />
       <AnimatedFlashList
         contentContainerStyle={{
           paddingTop: pt,
