@@ -3584,9 +3584,6 @@ importers:
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
-      '@hashgraph/sdk':
-        specifier: 2.14.2
-        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -36080,22 +36077,6 @@ snapshots:
       - react
       - react-native
 
-  '@hashgraph/cryptography@1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      bignumber.js: 9.1.2
-      crypto-js: 4.2.0
-      elliptic: 6.5.5
-      expo-crypto: 10.2.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
-      expo-random: 12.3.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
-      js-base64: 3.7.7
-      tweetnacl: 1.0.3
-      utf8: 3.0.0
-    transitivePeerDependencies:
-      - expo-constants
-      - expo-modules-core
-      - react
-      - react-native
-
   '@hashgraph/proto@2.4.1':
     dependencies:
       long: 4.0.0
@@ -36119,25 +36100,7 @@ snapshots:
       - react
       - react-native
 
-  '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@grpc/grpc-js': 1.6.7
-      '@hashgraph/cryptography': 1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
-      '@hashgraph/proto': 2.4.1
-      bignumber.js: 9.1.2
-      crypto-js: 4.2.0
-      js-base64: 3.7.7
-      js-logger: 1.6.1
-      long: 4.0.0
-      protobufjs: 6.11.4
-      utf8: 3.0.0
-    transitivePeerDependencies:
-      - expo-constants
-      - expo-modules-core
-      - react
-      - react-native
-
-  '@headlessui/react@1.7.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@headlessui/react@1.7.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-virtual': 3.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       client-only: 0.0.1
@@ -51365,11 +51328,6 @@ snapshots:
 
   expo-crypto@10.2.0: {}
 
-  expo-crypto@10.2.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
-    optionalDependencies:
-      react: 18.2.0
-      react-native: 0.74.5(@types/react@18.2.73)(react@18.2.0)
-
   expo-crypto@13.0.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo@51.0.37(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
     dependencies:
       base64-js: 1.5.1
@@ -51541,13 +51499,6 @@ snapshots:
   expo-random@12.3.0:
     dependencies:
       base64-js: 1.5.1
-
-  expo-random@12.3.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
-    dependencies:
-      base64-js: 1.5.1
-    optionalDependencies:
-      react: 18.2.0
-      react-native: 0.74.5(@types/react@18.2.73)(react@18.2.0)
 
   expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0):
     dependencies:
