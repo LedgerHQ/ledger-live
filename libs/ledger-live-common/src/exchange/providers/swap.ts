@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { ExchangeProviderNameAndSignature, testProvider } from ".";
+import { ExchangeProviderNameAndSignature, getTestProviderInfo } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 import { getProvidersData } from "./getProvidersData";
 import network from "@ledgerhq/live-network";
@@ -227,7 +227,8 @@ let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig>
 export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
-  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProvider) {
+  const testProviderInfo = getTestProviderInfo();
+  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProviderInfo) {
     return {
       needsKYC: false,
       needsBearerToken: false,
@@ -236,7 +237,7 @@ export const getSwapProvider = async (
       supportUrl: "https://example.com",
       mainUrl: "https://example.com",
       displayName: providerName,
-      ...testProvider,
+      ...testProviderInfo,
     };
   }
 

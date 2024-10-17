@@ -177,7 +177,7 @@ describe("Check SWAP until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  it.only("NG SWAP with TON", async () => {
+  it("NG SWAP with TON", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
 

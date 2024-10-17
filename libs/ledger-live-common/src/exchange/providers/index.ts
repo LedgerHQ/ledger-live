@@ -48,7 +48,7 @@ export const getProviderConfig = async (
   }
 };
 
-export let testProvider: ExchangeProviderNameAndSignature | undefined;
+let testProvider: ExchangeProviderNameAndSignature | undefined;
 
 type TestProvider = {
   name: string;
@@ -73,4 +73,7 @@ export function setTestProviderInfo(provider: string) {
     signature: Buffer.from(signature, "hex"),
     version: service.appVersion,
   };
+}
+export function getTestProviderInfo(): ExchangeProviderNameAndSignature | undefined {
+  return testProvider;
 }
