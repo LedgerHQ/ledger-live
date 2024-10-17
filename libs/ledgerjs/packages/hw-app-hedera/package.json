@@ -25,6 +25,7 @@
     "types": "lib/Hedera.d.ts",
     "license": "Apache-2.0",
     "dependencies": {
+      "@ledgerhq/hw-transport": "workspace:^",
       "@ledgerhq/errors": "workspace:^",
       "bip32-path": "^0.4.2"
     },

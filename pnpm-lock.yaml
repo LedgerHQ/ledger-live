@@ -4714,6 +4714,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
