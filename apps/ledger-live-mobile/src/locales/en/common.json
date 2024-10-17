@@ -317,7 +317,7 @@
     },
     "TransactionBroadcastError": {
       "title": "Transaction Broadcast Unsuccessfull",
-      "description": "Your transaction failed to broadcast on the {{network}} network. Your {{coin}} have not be transferred and remain in your account.",
+      "description": "Your transaction failed to broadcast on the {{network}} network. Your {{coin}} have not been transferred and remain in your account.",
       "needHelp": "Need help ?",
       "helpCenter": {
         "title": "Help center",
