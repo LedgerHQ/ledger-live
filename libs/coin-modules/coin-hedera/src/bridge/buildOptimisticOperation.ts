@@ -1,7 +1,7 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getEstimatedFees } from "./utils";
-import { Transaction } from "./types";
+import { getEstimatedFees } from "../common-logic";
+import { Transaction } from "../types";
 
 export const buildOptimisticOperation = async ({
   account,

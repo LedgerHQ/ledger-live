@@ -10,8 +10,7 @@ import {
   HbarUnit,
 } from "@hashgraph/sdk";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
-import { HederaAddAccountError } from "../errors";
+import { Transaction, HederaAddAccountError } from "../types";
 
 export function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
   return transaction.execute(getClient());

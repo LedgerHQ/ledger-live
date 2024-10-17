@@ -1,7 +1,7 @@
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 function inferAccounts(account: Account): AccountLikeArray {
   invariant(account.currency.family === "hedera", "hedera family");

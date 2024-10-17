@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { Transaction } from "./types";
-import { getEstimatedFees } from "./utils";
+import type { Transaction } from "../types";
+import { getEstimatedFees } from "../common-logic";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

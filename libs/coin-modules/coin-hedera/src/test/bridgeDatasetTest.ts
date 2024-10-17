@@ -7,7 +7,7 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 
-import { fromTransactionRaw } from "../transaction";
+import { fromTransactionRaw } from "../bridge/transaction";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const hedera: CurrenciesData<Transaction> = {

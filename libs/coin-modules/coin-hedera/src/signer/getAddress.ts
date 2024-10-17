@@ -1,4 +1,4 @@
-import { HederaSigner } from "./signer";
+import { HederaSigner } from "../types";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";

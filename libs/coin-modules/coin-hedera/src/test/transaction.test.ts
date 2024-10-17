@@ -1,9 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { Transaction } from "../types";
-import { createTransaction } from "../createTransaction";
-import { prepareTransaction } from "../prepareTransaction";
+import type { Transaction, TransactionRaw } from "../types";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../bridge/transaction";
 
 const account: Account = {
   type: "Account",
@@ -29,7 +27,13 @@ const account: Account = {
     explorerViews: [],
     name: "",
     ticker: "",
-    units: [],
+    units: [
+      {
+        name: "",
+        code: "",
+        magnitude: 0,
+      },
+    ],
   },
   operationsCount: 0,
   operations: [],
@@ -45,34 +49,34 @@ const account: Account = {
 
 const transaction: Transaction = {
   family: "hedera",
-  amount: new BigNumber(0),
-  recipient: "",
-  useAllAmount: false,
+  amount: new BigNumber(1),
+  recipient: "0.0.3",
 };
 
-describe("js-transaction", () => {
-  test("createTransaction", () => {
+const transactionRaw: TransactionRaw = {
+  family: "hedera",
+  amount: "1",
+  recipient: "0.0.3",
+};
+
+describe("transaction", () => {
+  test("formatTransaction", () => {
+    const result = formatTransaction(transaction, account);
+    const string = `SEND 1\nTO 0.0.3`;
+
+    expect(result).toEqual(string);
+  });
+
+  test("fromTransactionRaw", () => {
+    const result = fromTransactionRaw(transactionRaw);
     const data = transaction;
-    const result = createTransaction(account);
 
     expect(result).toEqual(data);
   });
 
-  test("updateTransaction", () => {
-    const patch = {
-      amount: new BigNumber(5),
-      recipient: "0.0.3",
-      useAllAmount: true,
-    };
-    const data = { ...transaction, ...patch };
-    const result = updateTransaction(transaction, patch);
-
-    expect(result).toEqual(data);
-  });
-
-  test("prepareTransaction", async () => {
-    const data = transaction;
-    const result = await prepareTransaction(account, transaction);
+  test("toTransactionRaw", () => {
+    const result = toTransactionRaw(transaction);
+    const data = transactionRaw;
 
     expect(result).toEqual(data);
   });
