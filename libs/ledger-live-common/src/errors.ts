@@ -126,6 +126,7 @@ export * from "@ledgerhq/coin-bitcoin/errors";
 export * from "@ledgerhq/coin-cardano/errors";
 export * from "@ledgerhq/coin-cosmos/errors";
 export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-hedera/errors";
 export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-solana/errors";
