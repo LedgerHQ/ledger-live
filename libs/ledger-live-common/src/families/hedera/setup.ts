@@ -10,7 +10,7 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { TransactionStatus, Transaction } from "./types";
+import { TransactionStatus, Transaction } from "@ledgerhq/coin-hedera/types";
 import { HederaCoinConfig } from "./config";
 
 const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
