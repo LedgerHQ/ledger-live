@@ -5,9 +5,8 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
-import { ChevronRight } from "@ledgerhq/icons-ui/native";
 
 export default memo(Collapsible);
 
@@ -57,7 +56,7 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
       >
         {header}
         <Animated.View style={animatedChevron}>
-          <ChevronRight />
+          <Icons.ChevronRight />
         </Animated.View>
       </Flex>
 

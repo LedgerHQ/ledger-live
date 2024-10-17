@@ -5,9 +5,8 @@ import { Linking, ScrollView } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Download, Support } from "@ledgerhq/icons-ui/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 
 import { track, TrackScreen } from "~/analytics";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -65,7 +64,7 @@ export default function SendBroadcastError({ navigation, route }: Props) {
               title={t("errors.TransactionBroadcastError.helpCenter.title")}
               description={t("errors.TransactionBroadcastError.helpCenter.desc")}
             >
-              <InformativeBannerButton Icon={<Support />} onPress={gotoSupport}>
+              <InformativeBannerButton Icon={<Icons.Support />} onPress={gotoSupport}>
                 <Text fontWeight="semiBold">
                   {t("errors.TransactionBroadcastError.helpCenter.cta")}
                 </Text>
@@ -77,7 +76,7 @@ export default function SendBroadcastError({ navigation, route }: Props) {
               description={error.message}
             >
               <Flex flexDirection="row" columnGap={8}>
-                <InformativeBannerButton Icon={<Download />} onPress={exportLogs}>
+                <InformativeBannerButton Icon={<Icons.Download />} onPress={exportLogs}>
                   <Text fontWeight="semiBold">
                     {t("errors.TransactionBroadcastError.technical.cta")}
                   </Text>

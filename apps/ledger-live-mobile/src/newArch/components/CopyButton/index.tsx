@@ -2,8 +2,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import React, { memo, useCallback, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
-import { Check, Copy } from "@ledgerhq/icons-ui/native";
-import { Button } from "@ledgerhq/native-ui";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 
 export default memo(CopyButton);
@@ -34,10 +33,10 @@ function CopyButton({ text, ...props }: Props) {
     () => (
       <IconContainer>
         <Animated.View style={copyIconAnimation}>
-          <Copy />
+          <Icons.Copy />
         </Animated.View>
         <Animated.View style={[checkIconAnimation, checkIconStyle]}>
-          <Check />
+          <Icons.Check />
         </Animated.View>
       </IconContainer>
     ),
