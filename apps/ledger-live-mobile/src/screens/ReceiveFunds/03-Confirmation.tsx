@@ -364,7 +364,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               mr={4}
               onPress={onShare}
             >
-              <IconsLegacy.ShareMedium size={20} />
+              <Icons.ShareEssential />
             </StyledTouchableOpacity>
             <StyledTouchableOpacity
               p={4}
@@ -450,7 +450,7 @@ const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
     <BannerCard
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-      LeftElement={<BankMedium />}
+      LeftElement={<BankMedium size={20} />}
       onPressDismiss={hideBanner}
       onPress={onPress}
     />

@@ -224,7 +224,9 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
       iconPathCleaned = icon.slice(0, -8) + icon.substring(icon.length - 4, icon.length);
     }
 
-    let name = camelcase([path.basename(iconPathCleaned, ".svg")], {
+    const relativePath = path.relative(path.join(rootDir, "svg"), iconPathCleaned);
+    const suffix = path.dirname(relativePath).replace(/^\./g, "").replace(/\W/g, "-");
+    let name = camelcase([path.basename(iconPathCleaned, ".svg"), suffix], {
       pascalCase: true,
     });
 

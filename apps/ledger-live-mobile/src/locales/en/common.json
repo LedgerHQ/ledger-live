@@ -3190,7 +3190,7 @@
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
-        "bannerTitle": "Learn how to withdraw from an exchange"
+        "bannerTitle": "Learn how to withdraw from exchanges?"
       },
       "securityVerify": {
         "title": "Address verification is critical for securing this transaction",
