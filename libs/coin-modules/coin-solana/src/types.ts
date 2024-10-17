@@ -3,12 +3,15 @@ import {
   Account,
   AccountRaw,
   Operation,
+  TokenAccount,
+  TokenAccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { ValidatorsAppValidator } from "./validator-app";
+import { TokenAccountState } from "./api/chain/account/token";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -262,6 +265,8 @@ export type SolanaAccount = Account & { solanaResources: SolanaResources };
 export type SolanaAccountRaw = AccountRaw & {
   solanaResources: SolanaResourcesRaw;
 };
+export type SolanaTokenAccount = TokenAccount & { state?: TokenAccountState };
+export type SolanaTokenAccountRaw = TokenAccountRaw & { state?: TokenAccountState };
 
 export type TransactionStatus = TransactionStatusCommon;
 

@@ -6,7 +6,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Account, AccountRaw } from "./account";
+import type { AccountLike, Account, AccountRaw, TokenAccount, TokenAccountRaw } from "./account";
 import type {
   SignOperationEvent,
   SignedOperation,
@@ -197,6 +197,25 @@ export interface AccountBridge<
    * @param {Account} account - The original account object.
    */
   assignFromAccountRaw?: (accountRaw: R, account: A) => void;
+  /**
+   * This function mutates the 'tokenAccountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism
+   *
+   * @param {TokenAccount} tokenAccount - The original token account object.
+   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
+   */
+  assignToTokenAccountRaw?: (tokenAccount: TokenAccount, tokenAccountRaw: TokenAccountRaw) => void;
+  /**
+   * This function mutates the 'tokenAccount' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism
+   *
+   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
+   * @param {TokenAccount} tokenAccount - The original token account object.
+   */
+  assignFromTokenAccountRaw?: (
+    tokenAccountRaw: TokenAccountRaw,
+    tokenAccount: TokenAccount,
+  ) => void;
   /**
    * This function mutates the 'account' object to extend it with any extra fields of the coin.
    * For instance bitcoinResources needs to be created.
