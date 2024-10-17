@@ -8,6 +8,8 @@ import styled from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 
+import Collapsible from "LLM/components/Collapsible";
+import CopyButton from "LLM/components/CopyButton";
 import { track, TrackScreen } from "~/analytics";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -16,8 +18,6 @@ import GenericErrorView from "~/components/GenericErrorView";
 import Card from "~/components/Card";
 import useExportLogs from "~/components/useExportLogs";
 import { ScreenName } from "~/const";
-import Collapsible from "~/newArch/components/Collapsible";
-import CopyButton from "~/newArch/components/CopyButton";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { urls } from "~/utils/urls";
 
