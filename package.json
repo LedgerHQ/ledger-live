@@ -24,7 +24,7 @@
     "build:dummy-live-app": "pnpm turbo build --filter=\"@ledgerhq/dummy-live-app\"",
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-cli",
-    "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-*\"",
+    "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
     "build:domain": "pnpm turbo build --no-daemon --filter=@ledgerhq/domain-service",
     "build:network": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-network",
     "build:config": "pnpm turbo build --no-daemon --filter=@ledgerhq/live-config",
