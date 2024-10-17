@@ -29,8 +29,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { captureException } from "~/sentry/renderer";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-
-import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
@@ -99,8 +97,6 @@ function simplifyFromPath(path: string): string {
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
-
-let lastGasOptions: GasOptions;
 
 const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const {
