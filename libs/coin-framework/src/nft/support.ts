@@ -10,7 +10,7 @@ import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from ".
 import { makeBatcher } from "@ledgerhq/live-network/batcher";
 
 export function isNFTActive(currency: CryptoCurrency | undefined | null): boolean {
-  return !!currency && getEnv("NFT_CURRENCIES").split(",").includes(currency?.id);
+  return !!currency && getEnv("NFT_CURRENCIES").includes(currency?.id);
 }
 
 const nftCapabilities: Record<string, NFTStandard[]> = {

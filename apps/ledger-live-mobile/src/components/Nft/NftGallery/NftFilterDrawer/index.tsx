@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { track } from "~/analytics";
 import { View } from "react-native";
 import QueuedDrawer from "../../../QueuedDrawer";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   isOpen: boolean;
@@ -42,7 +43,7 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
             return (
               <NftFilterCurrencyItem
                 key={key}
-                currency={currencyId}
+                currency={currencyId as CryptoCurrencyId}
                 isSelected={value}
                 onPress={() => {
                   track("button_clicked", {

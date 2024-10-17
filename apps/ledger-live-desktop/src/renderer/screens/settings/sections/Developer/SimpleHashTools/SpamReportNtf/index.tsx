@@ -9,6 +9,7 @@ import { ReportOption } from "./type";
 import { SpamReportNftResult } from "@ledgerhq/live-nft-react/hooks/types";
 import styled from "styled-components";
 import { Result } from "../components/Result";
+import { createOptions } from "../helper";
 
 export type HookResult = {
   handleCollectionIdChange: (value: string) => void;
@@ -167,10 +168,7 @@ export default function SpamReport(props: HookResult) {
           title={t("settings.developer.debugSimpleHash.debugSpamNft.chainId")}
           desc={t("settings.developer.debugSimpleHash.debugSpamNft.chainIdDesc")}
           value={{ label: chainId, value: chainId }}
-          options={[
-            { label: "Ethereum", value: "ethereum" },
-            { label: "Polygon", value: "polygon" },
-          ]}
+          options={createOptions()}
           onChange={handleChainIdChange}
         />
       </DisabledContainer>
