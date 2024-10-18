@@ -29,6 +29,11 @@ const coins = [
       0x82, 0x90, 0x4, 0xfe, 0x6f, 0x1d, 0x0, 0x3a, 0x58,
     ]).toString("hex"),
   ],
+  [
+    "ton",
+    "03544f4e03544f4e00",
+    "3045022100fe1b854d275796f89a7e24ef118767f0660b1883a27834e126ddd22ebb7fccc3022010806932659ea8bf2f46d3d9bac5fb288c2ba7e36ca690f2961a19f7b7f66a43",
+  ],
 ];
 
 export default coins;

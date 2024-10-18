@@ -14,6 +14,8 @@ type Props = {
 
 const ErrorBanner = ({ error, warning, fallback }: Props) => {
   const maybeUrl = error ? urls.errors[String(error?.name)] : null;
+  const secondLink = !!maybeUrl;
+
   return (
     <Alert
       type={warning ? "warning" : "error"}
@@ -21,7 +23,12 @@ const ErrorBanner = ({ error, warning, fallback }: Props) => {
       learnMoreUrl={maybeUrl}
       mb={4}
     >
-      <TranslatedError error={error} field="description" fallback={fallback?.description} />
+      <TranslatedError
+        error={error}
+        field="description"
+        fallback={fallback?.description}
+        noLink={secondLink}
+      />
     </Alert>
   );
 };

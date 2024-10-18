@@ -2256,10 +2256,10 @@
       }
     },
     "memoTag": {
-        "title": "Need a Tag/Memo?",
-        "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
-        "learnMore": "Learn more about Tag/Memo"
-      }
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "learnMore": "Learn more about Tag/Memo"
+    }
   },
   "send": {
     "title": "Send",
@@ -2775,15 +2775,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos": {
-    "objkt": {
-      "card": {
-        "title": "NFT (Non Fungible Tokens) collection",
-        "description": "You can see you Tezos NFTs directly through Objkt inside Ledger Live.",
-        "cta": "See my NFTs on Objkt"
       }
     }
   },
@@ -6161,7 +6152,7 @@
     },
     "ServiceStatusWarning": {
       "title": "{{message}}",
-      "description": ""
+      "description": "{{description}}"
     },
     "TaprootNotActivated": {
       "title": "Sending to a taproot address is unsafe before mainnet activation"
