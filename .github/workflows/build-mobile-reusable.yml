@@ -19,10 +19,6 @@ on:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
-      prNumber:
-        description: PR number
-        type: string
-        required: false
 
 permissions:
   id-token: write
@@ -111,8 +107,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm 
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm 
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: bundle ios and android js
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -144,11 +140,11 @@ jobs:
         with:
           name: mobile.metafile.json
       - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: inputs.prNumber != ''
+        if: github.event.number != ''
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ inputs.prNumber }}
+          prNumber: ${{ github.event.number}}
           mode: mobile
       - uses: actions/github-script@v7
         name: get statuses of runs
