@@ -20,7 +20,11 @@ const Separator = () => {
   return <Box height="1px" width="100%" backgroundColor={colors.opacityDefault.c05} />;
 };
 
-const WalletSyncManage = () => {
+type Props = {
+  currentPage: AnalyticsPage;
+};
+
+const WalletSyncManage = ({ currentPage }: Props) => {
   const { t } = useTranslation();
   useLifeCycle();
 
@@ -38,18 +42,18 @@ const WalletSyncManage = () => {
 
     onClickTrack({
       button: "Synchronize with another app",
-      page: AnalyticsPage.LedgerSyncSettings,
+      page: currentPage,
     });
   };
 
   const goToManageBackup = () => {
     dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.DeleteBackup }));
-    onClickTrack({ button: "Delete sync", page: AnalyticsPage.LedgerSyncSettings });
+    onClickTrack({ button: "Delete sync", page: currentPage });
   };
 
   const goToManageInstances = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
-    onClickTrack({ button: "Manage Instances", page: AnalyticsPage.LedgerSyncSettings });
+    onClickTrack({ button: "Manage Instances", page: currentPage });
   };
 
   const Options: OptionProps[] = [
@@ -83,7 +87,7 @@ const WalletSyncManage = () => {
 
   return (
     <Box height="100%" paddingX="40px">
-      <TrackPage category={AnalyticsPage.LedgerSyncSettings} />
+      <TrackPage category={currentPage} />
       <Box marginBottom={"24px"}>
         <Text fontSize={23} variant="large">
           {t("walletSync.title")}
