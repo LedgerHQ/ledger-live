@@ -1,0 +1,1 @@
+{"request":{"url":"https://tron.coin.ledger.com/wallet/getBrokerage?address=TGK8YYb9bJVnkw2hRFG1FyNVvXuqkWB4VD","method":"GET"},"response":{"body":{"brokerage":20}}}

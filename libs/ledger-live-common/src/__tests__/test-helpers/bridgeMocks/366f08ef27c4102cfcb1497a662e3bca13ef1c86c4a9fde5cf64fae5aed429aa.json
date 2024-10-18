@@ -1,0 +1,1 @@
+{"request":{"url":"https://tron.coin.ledger.com/wallet/gettransactioninfobyid?value=8d61199f23ed765469c8d6772262dc4dbcc23e567240dc736a7d2d8b20dadd6b","method":"GET"},"response":{"body":{"id":"8d61199f23ed765469c8d6772262dc4dbcc23e567240dc736a7d2d8b20dadd6b","blockNumber":40802952,"blockTimeStamp":1652962461000,"contractResult":[""],"receipt":{"net_usage":280}}}}

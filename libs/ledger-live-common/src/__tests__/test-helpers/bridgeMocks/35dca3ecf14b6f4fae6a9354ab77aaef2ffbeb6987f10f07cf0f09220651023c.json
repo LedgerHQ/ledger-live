@@ -1,0 +1,1 @@
+{"request":{"url":"https://tron.coin.ledger.com/wallet/getReward?address=41f1fe9d73ffb3b6ab532858b266c02f63410fbd70","method":"GET"},"response":{"body":{"reward":0}}}
