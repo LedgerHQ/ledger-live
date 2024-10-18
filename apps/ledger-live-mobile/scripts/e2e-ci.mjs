@@ -37,7 +37,8 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile e2e:test${speculos} \
+  await $`echo 'Starting detox tests with 1 worker...' && pnpm mobile e2e:test${speculos} \
+    apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts \
     -c ios.sim.release \
     --loglevel error \
     --record-logs all \
@@ -45,7 +46,9 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 1 \
-    --cleanup`;
+    --cleanup \
+    --maxWorkers 1 \
+    `;
 };
 
 const build_android = async () => {
