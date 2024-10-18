@@ -2,7 +2,7 @@ import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-liv
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import type { Transaction } from "./types";
-import { getAccountCurrency } from "../../account";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { AccountType } from "./utils";
 
 const options = [

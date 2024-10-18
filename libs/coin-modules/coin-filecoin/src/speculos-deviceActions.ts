@@ -1,10 +1,14 @@
-import type { DeviceAction } from "../../bot/types";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { BotScenario, expectedToFieldForTokenTransfer, Methods, methodToString } from "./utils";
-import { isFilEthAddress } from "./bridge/utils/addresses";
+import { isFilEthAddress } from "./addresses";
 import { fromEthAddress, fromString, toEthAddress } from "iso-filecoin/address";
-import { getSubAccount } from "./bridge/utils/utils";
+import { getSubAccount } from "./utils/utils";
 import invariant from "invariant";
 
 export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Transaction, any> => {

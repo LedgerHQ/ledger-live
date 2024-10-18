@@ -1,15 +1,16 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../../currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { BroadcastTransactionRequest, TransactionResponse, TxStatus } from "./types";
-import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
-import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
-import { encodeAccountId } from "../../../../account";
-import { encodeOperationId } from "../../../../operation";
+import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { fetchBalances, fetchBlockHeight, fetchTxs } from "../api";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import flatMap from "lodash/flatMap";
-import { buildTokenAccounts } from "./erc20/tokenAccounts";
-import { Transaction } from "./types";
+import { buildTokenAccounts } from "../erc20/tokenAccounts";
+import { Transaction } from "../types";
 
 type TxsById = {
   [id: string]:

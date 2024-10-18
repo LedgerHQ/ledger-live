@@ -1,7 +1,7 @@
-import type { DeviceTransactionField } from "../../transaction";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AccountType,
   Methods,
@@ -9,7 +9,7 @@ import {
   getAccountUnit,
   methodToString,
 } from "./utils";
-import { validateAddress } from "./bridge/utils/addresses";
+import { validateAddress } from "./addresses";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -37,6 +37,8 @@ export type ExtraDeviceTransactionField =
       label: string;
       value: string;
     };
+
+export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
 function getDeviceTransactionConfig(input: {
   account: AccountLike;

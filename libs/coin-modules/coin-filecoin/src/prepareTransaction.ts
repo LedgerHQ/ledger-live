@@ -5,13 +5,13 @@ import {
   isEthereumConvertableAddr,
   isFilEthAddress,
   validateAddress,
-} from "./bridge/utils/addresses";
-import { BroadcastBlockIncl } from "./bridge/utils/types";
+} from "./addresses";
+import { BroadcastBlockIncl } from "./utils/types";
 import { Methods, calculateEstimatedFees } from "./utils";
-import { fetchEstimatedFees } from "./bridge/utils/api";
-import { getAddress, getSubAccount } from "./bridge/utils/utils";
+import { fetchEstimatedFees } from "./api";
+import { getAddress, getSubAccount } from "./utils/utils";
 import { Transaction } from "./types";
-import { encodeTxnParams, generateTokenTxnParams } from "./bridge/utils/erc20/tokenAccounts";
+import { encodeTxnParams, generateTokenTxnParams } from "./erc20/tokenAccounts";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

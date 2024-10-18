@@ -7,8 +7,8 @@ import {
 } from "@ledgerhq/errors";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "./types";
-import { isRecipientValidForTokenTransfer, validateAddress } from "./bridge/utils/addresses";
-import { getAddress, getSubAccount } from "./bridge/utils/utils";
+import { isRecipientValidForTokenTransfer, validateAddress } from "./addresses";
+import { getAddress, getSubAccount } from "./utils/utils";
 import { calculateEstimatedFees } from "./utils";
 import { InvalidRecipientForTokenTransfer } from "./errors";
 import BigNumber from "bignumber.js";
