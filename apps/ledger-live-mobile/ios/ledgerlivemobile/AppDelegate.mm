@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
@@ -175,6 +176,14 @@ static Braze *_braze;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+  if (@available(iOS 14, *)) {
+    // Request tracking authorization
+    [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+      // Let Braze know whether user data is allowed to be collected for tracking.
+      BOOL enableAdTracking = (status == ATTrackingManagerAuthorizationStatusAuthorized);
+      [AppDelegate.braze setAdTrackingEnabled:enableAdTracking];
+    }];
+  }
   [self hideOverlay];
 }
 

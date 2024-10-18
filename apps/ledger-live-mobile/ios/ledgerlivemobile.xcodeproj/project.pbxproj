@@ -23,6 +23,7 @@
 		B116B48438CB416C980DD0E7 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */; };
 		BA451DE927CE516700AAB209 /* GoogleService-Info-Production.plist in Resources */ = {isa = PBXBuildFile; fileRef = BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */; };
 		BA451DEA27CE516700AAB209 /* GoogleService-Info-Staging.plist in Resources */ = {isa = PBXBuildFile; fileRef = BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */; };
+		BAC058022CC1583B00BE1139 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC058012CC1583B00BE1139 /* AppTrackingTransparency.framework */; };
 		BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */; };
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
@@ -87,6 +88,7 @@
 		B3F983E6F88EBD69A6725FF4 /* Pods-ledgerlivemobile.nightly.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.nightly.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.nightly.xcconfig"; sourceTree = "<group>"; };
 		BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
 		BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
+		BAC058012CC1583B00BE1139 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C44A2A704D1E428CB7694186 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		C630F76F0E1C857DA405027E /* Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile-ledgerlivemobileTests/Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig"; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAC058022CC1583B00BE1139 /* AppTrackingTransparency.framework in Frameworks */,
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
 				2372D3D5180104DBED4E22EE /* libPods-ledgerlivemobile.a in Frameworks */,
@@ -288,6 +291,7 @@
 		90B115AE643A42D1BF8AA6F4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BAC058012CC1583B00BE1139 /* AppTrackingTransparency.framework */,
 				0EC70FE4282B9CAA00E9E355 /* AdServices.framework */,
 				F837348622721A48009D747A /* JavaScriptCore.framework */,
 				5F63C9E4AC284203A95B417E /* libz.tbd */,

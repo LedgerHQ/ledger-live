@@ -64,6 +64,8 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Allow Ledger Live to collect your data for tracking purposes.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Ledger Live needs to connect to your Ledger device to manage your crypto assets</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
