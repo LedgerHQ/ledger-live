@@ -36,10 +36,9 @@ import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
-import { MEMO_TAG_COINS } from "~/utils/constants";
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
+import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
-import { MemoTagInput } from "./MemoTagInput";
 import RecipientRow from "./RecipientRow";
 
 const withoutHiddenError = (error: Error): Error | null =>
@@ -132,12 +131,15 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction],
   );
 
-  const onChangeMemoTag = useCallback(
-    (tag: number | undefined) => {
-      const bridge = getAccountBridge(account, parentAccount);
-      setTransaction(bridge.updateTransaction(transaction, { tag }));
-    },
-    [account, parentAccount, setTransaction, transaction],
+  const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
   );
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
@@ -157,16 +159,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const featureMemoTag =
-    useFeature("llmMemoTag") && "id" in currency && MEMO_TAG_COINS.includes(currency.id);
-
   const [memoTagDrawerState, setMemoTagDrawerState] = useState<"INITIAL" | "SHOWING" | "SHOWN">(
     "INITIAL",
   );
 
   const onPressContinue = useCallback(() => {
-    const tag = "tag" in transaction && transaction.tag;
-    if (memoTagDrawerState === "INITIAL" && featureMemoTag && typeof tag === "undefined") {
+    if (memoTag?.isEmpty && memoTagDrawerState === "INITIAL") {
       return setMemoTagDrawerState("SHOWING");
     }
 
@@ -205,7 +203,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     navigation,
     parentAccount?.id,
     route.params,
-    featureMemoTag,
+    memoTag?.isEmpty,
     memoTagDrawerState,
   ]);
 
@@ -311,7 +309,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               />
             )}
 
-            {featureMemoTag && <MemoTagInput onChange={onChangeMemoTag} />}
+            {memoTag?.Input && (
+              <memoTag.Input style={{ marginTop: 32 }} onChange={memoTag.handleChange} />
+            )}
 
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
