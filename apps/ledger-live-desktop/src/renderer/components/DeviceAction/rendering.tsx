@@ -19,6 +19,7 @@ import {
 import {
   DeviceNotOnboarded,
   LatestFirmwareVersionRequired,
+  NoSuchAppOnProvider,
   TransactionRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
@@ -69,6 +70,7 @@ import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -784,6 +786,22 @@ export const renderError = ({
     if (tmpError.message === "User refused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if(tmpError instanceof NoSuchAppOnProvider) {
+    return (
+      <NoSuchAppOnProviderErrorComponent
+        Icon={
+          Icon
+            ? Icon
+            : () => (
+                <Logo info={info} warning={warning}>
+                  <ErrorIcon size={24} error={error} />
+                </Logo>
+              )
+        }
+        error={tmpError}
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+      />
+    );
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
