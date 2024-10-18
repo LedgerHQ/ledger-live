@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import asciichart from "asciichart";
+import { plot } from "asciichart";
 import invariant from "invariant";
 import { map } from "rxjs/operators";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
@@ -38,13 +38,13 @@ const histoFormatters: Record<string, (histo: BalanceHistory, account: Account) 
       disableRounding: true,
     }) +
     "\n" +
-    asciichart.plot(
+    plot(
       history.map(
         h => h.value / new BigNumber(10).pow(account.currency.units[0].magnitude).toNumber(),
       ),
       {
         height: 10,
-        format: value =>
+        format: (value: BigNumber.Value) =>
           formatCurrencyUnit(
             account.currency.units[0],
             new BigNumber(value).times(new BigNumber(10).pow(account.currency.units[0].magnitude)),
@@ -62,6 +62,11 @@ function asPortfolioRange(period: string): PortfolioRange {
   invariant(ranges.includes(period), "invalid period. valid values are %s", ranges.join(" | "));
   return period as PortfolioRange;
 }
+
+export type BalanceHistoryJobOpts = ScanCommonOpts & {
+  period: string;
+  format: string;
+};
 
 export default {
   description: "Get the balance history for accounts",
@@ -81,12 +86,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: (
-    opts: ScanCommonOpts & {
-      format: string;
-      period: string;
-    },
-  ) =>
+  job: (opts: BalanceHistoryJobOpts) =>
     scan(opts).pipe(
       map(account => {
         const range = asPortfolioRange(opts.period || "month");

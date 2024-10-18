@@ -7,6 +7,12 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { Account } from "@ledgerhq/types-live";
 import { initialState } from "@ledgerhq/live-wallet/store";
+
+export type ExportAccountsJobOpts = ScanCommonOpts &
+  Partial<{
+    out: boolean;
+  }>;
+
 export default {
   description: "Export given accounts to Live QR or console for importing",
   args: [
@@ -18,12 +24,7 @@ export default {
       desc: "output to console",
     },
   ],
-  job: (
-    opts: ScanCommonOpts &
-      Partial<{
-        out: boolean;
-      }>,
-  ) =>
+  job: (opts: ExportAccountsJobOpts) =>
     scan(opts).pipe(
       reduce<Account, Account[]>((accounts, account) => accounts.concat(account), []),
       mergeMap(accounts => {

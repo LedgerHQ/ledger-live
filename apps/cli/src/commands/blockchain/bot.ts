@@ -3,7 +3,14 @@ import { generateMnemonic } from "bip39";
 import { from } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
 import { bot } from "@ledgerhq/live-common/bot/index";
-import { currencyOpt } from "../../scan";
+import { CurrencyCommonOpts, currencyOpt } from "../../scan";
+
+export type BotJobOpts = CurrencyCommonOpts &
+  Partial<{
+    mutation: string;
+    filter?: { currencies: string[] };
+  }>;
+
 export default {
   description:
     "Run a bot test engine with speculos that automatically create accounts and do transactions",
@@ -16,7 +23,7 @@ export default {
       desc: "filter the mutation to run by a regexp pattern",
     },
   ],
-  job: (arg: any) => {
+  job: (arg: BotJobOpts) => {
     const SEED = getEnv("SEED");
 
     if (!SEED) {

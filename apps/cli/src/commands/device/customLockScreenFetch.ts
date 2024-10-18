@@ -9,7 +9,7 @@ import {
   CLSSupportedDeviceModelId,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
-type CustomLockScreenFetchJobOpts = ScanCommonOpts & {
+export type CustomLockScreenFetchJobOpts = ScanCommonOpts & {
   fileOutput: string;
   deviceModelId: string;
 };

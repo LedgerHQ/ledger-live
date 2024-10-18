@@ -1,6 +1,10 @@
 import { Observable } from "rxjs";
 import { toggleOnboardingEarlyCheckAction } from "@ledgerhq/live-common/deviceSDK/actions/toggleOnboardingEarlyCheck";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type DeviceSDKToggleOnboardingEarlyCheckJobOpts = DeviceCommonOpts & {
+  toggleType: "enter" | "exit";
+};
 
 export default {
   description: "Device SDK: toggle the onboarding early checks",
@@ -13,13 +17,7 @@ export default {
       type: String,
     },
   ],
-  job: ({
-    device,
-    toggleType,
-  }: Partial<{
-    device: string;
-    toggleType: "enter" | "exit";
-  }>) => {
+  job: ({ device, toggleType }: DeviceSDKToggleOnboardingEarlyCheckJobOpts) => {
     return new Observable(o => {
       if (toggleType && !["enter", "exit"].includes(toggleType)) {
         o.next(`❌ The toggle type should be either "enter" or "exit", not ${toggleType}`);

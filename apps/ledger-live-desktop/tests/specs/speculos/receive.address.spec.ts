@@ -2,6 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { commandCLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -23,7 +24,15 @@ for (const account of accounts) {
       userdata: "skip-onboarding",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: account.account.currency.ticker,
+            index: account.account.index,
+            appjson: "",
+            add: true,
+          },
+        },
       ],
     });
 
@@ -71,7 +80,17 @@ test.describe("Receive", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [`liveData --currency ${account.currency.ticker} --index ${account.index} --add`],
+    cliCommands: [
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: account.currency.ticker,
+          index: account.index,
+          add: true,
+          appjson: "",
+        },
+      },
+    ],
   });
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,

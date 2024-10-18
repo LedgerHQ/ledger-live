@@ -1,5 +1,8 @@
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type FirmwareRepairJobOpts = DeviceCommonOpts & Partial<{ forceMCU: string }>;
+
 export default {
   description: "Repair a firmware update",
   args: [
@@ -10,11 +13,6 @@ export default {
       desc: "force a mcu version to install",
     },
   ],
-  job: ({
-    device,
-    forceMCU,
-  }: Partial<{
-    device: string;
-    forceMCU: string;
-  }>) => repairFirmwareUpdate(device || "", forceMCU),
+  job: ({ device, forceMCU }: FirmwareRepairJobOpts) =>
+    repairFirmwareUpdate(device || "", forceMCU),
 };

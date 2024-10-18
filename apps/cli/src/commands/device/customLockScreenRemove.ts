@@ -4,9 +4,11 @@ import { command as customLockScreenRemove } from "@ledgerhq/live-common/hw/cust
 import { deviceOpt } from "../../scan";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
+export type CustomLockScreenRemoveJobOpts = ScanCommonOpts;
+
 export default {
   description: "Remove custom lock screen",
   args: [deviceOpt],
-  job: (arg: ScanCommonOpts): any =>
+  job: (arg: CustomLockScreenRemoveJobOpts): any =>
     withDevice(arg?.device || "")(t => from(customLockScreenRemove(t))),
 };

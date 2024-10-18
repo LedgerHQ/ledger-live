@@ -51,6 +51,13 @@ export const registerTransportModule = (module: TransportModule): void => {
   modules.push(module);
 };
 
+export const unregisterTransportModule = (moduleId: string): void => {
+  modules.splice(
+    modules.findIndex(m => m.id === moduleId),
+    1,
+  );
+};
+
 export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true,
 ): Discovery => {
