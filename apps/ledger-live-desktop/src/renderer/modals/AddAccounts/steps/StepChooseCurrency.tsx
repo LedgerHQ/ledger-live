@@ -306,7 +306,13 @@ export const StepChooseCurrencyFooter = ({
       {isToken ? (
         <Box horizontal>
           {parentCurrency ? (
-            <Button ml={2} primary onClick={onTokenCta} data-testid="modal-continue-button">
+            <Button
+              ml={2}
+              primary
+              onClick={onTokenCta}
+              data-testid="modal-continue-button"
+              style={{ wordBreak: "break-word", maxWidth: "170px" }}
+            >
               {parentTokenAccount
                 ? t("addAccounts.cta.receive")
                 : t("addAccounts.cta.addAccountName", {
