@@ -145,7 +145,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ !cancelled() }}
     needs: [detox-tests-ios]
     steps:
       - uses: actions/checkout@v4
@@ -290,7 +290,7 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ !cancelled() }}
     needs: [detox-tests-android]
     steps:
       - name: checkout
