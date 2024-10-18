@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
+import {
+  useBatchAccountsSyncState,
+  useBridgeSync,
+  useGlobalSyncState,
+} from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
@@ -15,18 +19,38 @@ import TranslatedError from "../TranslatedError";
 import Box from "../Box";
 import { ItemContainer } from "./shared";
 import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
+import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { Text } from "@ledgerhq/react-ui";
 
-export default function ActivityIndicatorInner() {
+const ActivityIndicatorInner = () => {
   const wsUserState = useWalletSyncUserState();
   const bridgeSync = useBridgeSync();
   const globalSyncState = useGlobalSyncState();
-  const isUpToDate = useSelector(isUpToDateSelector);
+  const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
   const cvPolling = useCountervaluesPolling();
+
+  const allAccounts = accountsWithUpToDateCheck.map(ojb => ojb.account);
+  const allAccountsWithSyncProblem = useBatchAccountsSyncState({ accounts: allAccounts }).filter(
+    ({ syncState, account }) =>
+      !syncState.pending &&
+      (syncState.error ||
+        !accountsWithUpToDateCheck.find(obj => obj.account.id === account.id)?.isUpToDate),
+  );
+  const allMaybeAccountNames = useBatchMaybeAccountName(
+    allAccountsWithSyncProblem.map(ojb => ojb.account),
+  );
+  const allAccountNamesWithSyncError = allMaybeAccountNames.map(
+    (name, index) => name ?? getDefaultAccountName(allAccountsWithSyncProblem[index].account),
+  );
+
+  const areAllAccountsUpToDate = allAccountNamesWithSyncError.length === 0;
+
   const isPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
   const syncError =
     !isPending && (cvPolling.error || globalSyncState.error || wsUserState.walletSyncError);
-  // we only show error if it's not up to date. this hide a bit error that happen from time to time
-  const isError = (!!syncError && !isUpToDate) || !!wsUserState.walletSyncError;
+
+  const isError = !!syncError || !areAllAccountsUpToDate || !!wsUserState.walletSyncError;
   const error = (syncError ? globalSyncState.error : null) || wsUserState.walletSyncError;
   const [lastClickTime, setLastclickTime] = useState(0);
   const onClick = useCallback(() => {
@@ -43,8 +67,48 @@ export default function ActivityIndicatorInner() {
   const isSpectronRun = getEnv("PLAYWRIGHT_RUN"); // we will keep 'spinning' in spectron case
   const userClickTime = isSpectronRun ? 10000 : 1000;
   const isUserClick = Date.now() - lastClickTime < userClickTime; // time to keep display the spinning on a UI click.
-  const isRotating = isPending && (!isUpToDate || isUserClick);
+  const isRotating = isPending && isUserClick;
   const isDisabled = isError || isRotating;
+
+  const getIcon = () => {
+    if (isError) return <IconExclamationCircle size={16} />;
+    if (isRotating) return <IconLoader size={16} />;
+    if (areAllAccountsUpToDate) return <IconCheckCircle size={16} />;
+    return <IconExclamationCircle size={16} />;
+  };
+
+  const getText = () => {
+    if (isRotating) return <Trans i18nKey="common.sync.syncing" />;
+    if (isError) {
+      return (
+        <>
+          <Box>
+            <Trans i18nKey="common.sync.error" />
+          </Box>
+          <Box
+            ml={2}
+            style={{
+              textDecoration: "underline",
+              pointerEvents: "all",
+              cursor: "pointer",
+            }}
+            onClick={onClick}
+          >
+            <Trans i18nKey="common.sync.refresh" />
+          </Box>
+        </>
+      );
+    }
+    if (areAllAccountsUpToDate) {
+      return (
+        <span data-testid="topbar-synchronized">
+          <Trans i18nKey="common.sync.upToDate" />
+        </span>
+      );
+    }
+    return <Trans i18nKey="common.sync.outdated" />;
+  };
+
   const content = (
     <ItemContainer
       data-testid="topbar-synchronize-button"
@@ -60,20 +124,12 @@ export default function ActivityIndicatorInner() {
             ? "alertRed"
             : isRotating
               ? "palette.text.shade60"
-              : isUpToDate
+              : areAllAccountsUpToDate
                 ? "positiveGreen"
                 : "palette.text.shade60"
         }
       >
-        {isError ? (
-          <IconExclamationCircle size={16} />
-        ) : isRotating ? (
-          <IconLoader size={16} />
-        ) : isUpToDate ? (
-          <IconCheckCircle size={16} />
-        ) : (
-          <IconExclamationCircle size={16} />
-        )}
+        {getIcon()}
       </Rotating>
       <Box
         ml={isRotating ? 2 : 1}
@@ -83,36 +139,12 @@ export default function ActivityIndicatorInner() {
         horizontal
         alignItems="center"
       >
-        {isRotating ? (
-          <Trans i18nKey="common.sync.syncing" />
-        ) : isError ? (
-          <>
-            <Box>
-              <Trans i18nKey="common.sync.error" />
-            </Box>
-            <Box
-              ml={2}
-              style={{
-                textDecoration: "underline",
-                pointerEvents: "all",
-                cursor: "pointer",
-              }}
-              onClick={onClick}
-            >
-              <Trans i18nKey="common.sync.refresh" />
-            </Box>
-          </>
-        ) : isUpToDate ? (
-          <span data-testid="topbar-synchronized">
-            <Trans i18nKey="common.sync.upToDate" />
-          </span>
-        ) : (
-          <Trans i18nKey="common.sync.outdated" />
-        )}
+        {getText()}
       </Box>
     </ItemContainer>
   );
-  if (isError && error) {
+
+  if (!areAllAccountsUpToDate || (isError && error)) {
     return (
       <Tooltip
         tooltipBg="alertRed"
@@ -124,7 +156,24 @@ export default function ActivityIndicatorInner() {
               maxWidth: 250,
             }}
           >
-            <TranslatedError error={error} />
+            {isError && error && areAllAccountsUpToDate ? (
+              <TranslatedError error={error} />
+            ) : (
+              <Box>
+                <Text mb={1} textAlign="left">
+                  <Trans
+                    i18nKey="common.sync.failingSync"
+                    count={allAccountNamesWithSyncError.length}
+                  />
+                </Text>
+
+                {allAccountNamesWithSyncError.map((accountName, index) => (
+                  <Text key={index} textAlign="left">
+                    <li>{accountName}</li>
+                  </Text>
+                ))}
+              </Box>
+            )}
           </Box>
         }
       >
@@ -132,5 +181,8 @@ export default function ActivityIndicatorInner() {
       </Tooltip>
     );
   }
+
   return content;
-}
+};
+
+export default ActivityIndicatorInner;

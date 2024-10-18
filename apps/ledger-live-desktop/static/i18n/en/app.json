@@ -137,7 +137,9 @@
       "outdated": "Paused",
       "error": "Synchronization error",
       "refresh": "Refresh",
-      "devTools": "Dev tools"
+      "devTools": "Dev tools",
+      "failingSync_one": "Account failing to sync:",
+      "failingSync_other": "Accounts failing to sync:"
     },
     "exchange": "Exchange",
     "info": "Info",
