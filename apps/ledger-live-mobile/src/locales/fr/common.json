@@ -2335,7 +2335,8 @@
       "swap" : "Échanger",
       "send" : "Envoyer",
       "deposit" : "Recevoir",
-      "stake" : "Staker"
+      "stake" : "Staker",
+      "yield" : "Rendement"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2551,8 @@
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et déployer leurs services sur Ledger Live.",
-        "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger."
+        "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
+        "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2593,7 @@
     "buy" : "Acheter",
     "walletconnect" : "WalletConnect",
     "stake" : "Staker",
+    "yield" : "Rendement",
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
@@ -3132,6 +3135,13 @@
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée dans le presse-papiers",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+      "memoTag" : {
+        "link" : "Besoin d’un tag/mémo ?",
+        "title" : "Besoin d’un tag/mémo ?",
+        "description" : "Pour recevoir cet actif d’une plateforme d’échange, un tag/mémo peut être requis. Vous pouvez utiliser n’importe quelle combinaison de chiffres, comme 1234.",
+        "cta" : "Compris",
+        "learnMore" : "En savoir plus sur les tags"
+      },
       "selectCrypto" : {
         "title" : "Choisissez la crypto à recevoir"
       },
@@ -4509,7 +4519,7 @@
       "tr" : "Türkçe",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4539,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5418,9 @@
     "AccountHeader" : {
       "title" : "Gagner des récompenses en déléguant votre compte",
       "btn" : "Gagner des récompenses"
+    },
+    "delegation" : {
+      "addCustomValidator" : "Ajouter validateur personnalisé"
     }
   },
   "tron" : {
@@ -6615,14 +6632,14 @@
     "title" : "Connectez votre appareil"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Faites fructifier vos ETH",
       "subTitle" : "Stakez vos ETH et gagnez des récompenses quotidiennes directement via Ledger Live.",
       "tagMinimum" : "{{min}} ETH minimum",
       "close" : "Fermer",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Staker avec un pool sur Kiln",
+          "title" : "Staking en pool sur Kiln",
           "description" : "Stakez sans durée, ni montant minimum. Gagnez des récompenses capitalisées automatiquement.",
           "supportLink" : "En savoir plus sur les pools sur Kiln"
         },
@@ -6648,6 +6665,72 @@
           "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et demandez facilement vos récompenses.",
           "supportLink" : "En savoir plus sur Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Choisir un prestataire de staking",
+      "category" : {
+        "all" : {
+          "name" : "Tout",
+          "description" : "Tous les prestataires de staking d’ETH disponibles sur Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquide",
+          "description" : "Vous pouvez staker des ETH et gagner des récompenses sous forme de tokens liquides. Vous pourrez continuer à trader et profiter de la DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocole",
+          "description" : "Vous pouvez staker un minimum de 32 ETH et obtenir les récompenses de votre nœud complet en ETH."
+        },
+        "pooling" : {
+          "name" : "Pool",
+          "description" : "Vous pouvez rejoindre un pool pour staker le montant d’ETH de votre choix et obtenir des récompenses."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Vous pouvez restaker vos tokens liquides pour obtenir des récompenses supplémentaires."
+        }
+      },
+      "howItWorks" : "Fonctionnement du staking d’ETH",
+      "lst" : "Token liquide nécessaire",
+      "noMinimum" : "Pas de minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking en pool sur Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking liquide avec Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking avec validateur Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Stratégies et tactiques à connaître",
+      "requiredMinimum" : "{{min}} ETH minimum",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Récompenses capitalisées auto.",
+        "basic" : "Récompenses",
+        "daily" : "Récompenses quotidiennes",
+        "eigenlayer_points" : "Points EigenLayer",
+        "validator" : "Récompenses validateur"
       }
     },
     "noFundsModal" : {
@@ -6884,7 +6967,8 @@
           "title" : "Code QR invalide",
           "desc" : "Pour synchroniser vos applications Ledger Live, scannez uniquement le code QR affiché sur Ledger Live.",
           "info" : "Trouvez votre code QR dans « Paramètres » > « Général » > « Ledger Sync » > « Activer Sync » > « Voir le code QR ».",
-          "cta" : "Compris"
+          "cta" : "Compris",
+          "tryAgain" : "Réessayer"
         },
         "scannedOldQrCode" : {
           "title" : "Mise à jour de Ledger Live nécessaire",
