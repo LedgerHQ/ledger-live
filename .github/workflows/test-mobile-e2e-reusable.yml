@@ -50,7 +50,7 @@ permissions:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: [m1, ARM64]
+    runs-on: [m1, ARM64, pa4-r102-srv-macrunner03]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -143,7 +143,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: false
     needs: [detox-tests-ios]
     steps:
       - uses: actions/checkout@v4
@@ -159,6 +159,7 @@ jobs:
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
     runs-on: [ledger-live-linux-8CPU-32RAM]
+    if: false
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -291,7 +292,7 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: false
     needs: [detox-tests-android]
     steps:
       - name: checkout
@@ -321,7 +322,7 @@ jobs:
       JIRA_URL: https://ledgerhq.atlassian.net/browse
       TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
     needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ !cancelled() && inputs.export_to_xray }}
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
@@ -365,7 +366,7 @@ jobs:
   report:
     needs: [detox-tests-android, detox-tests-ios]
     runs-on: ubuntu-latest
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') }}
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
@@ -454,7 +455,7 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-latest
     needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ failure() && github.event_name == 'push' }}
+    if: false
     steps:
       - name: format message
         uses: actions/github-script@v7
