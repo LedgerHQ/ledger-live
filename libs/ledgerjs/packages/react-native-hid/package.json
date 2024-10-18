@@ -47,7 +47,7 @@
     "yarn-add-no-save": "^1.0.3"
   },
   "peerDependencies": {
-    "react-native": "*"
+    "react-native": "^0.75.4"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
