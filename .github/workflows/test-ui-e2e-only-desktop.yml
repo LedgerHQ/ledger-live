@@ -190,7 +190,7 @@ jobs:
           platform: LINUX
 
       - uses: actions/github-script@v7
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+        if: ${{ !cancelled() }}
         name: prepare status
         id: status
         with:
@@ -323,7 +323,7 @@ jobs:
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
 
       - name: Print Slack Payload Content
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+        if: ${{ !cancelled() }}
         run: cat ${{ github.workspace }}/payload-slack-content.json
 
       - name: post to a Slack channel
