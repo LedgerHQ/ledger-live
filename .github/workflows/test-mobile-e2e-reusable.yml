@@ -37,6 +37,11 @@ on:
         required: false
         type: boolean
         default: false
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -124,15 +129,6 @@ jobs:
         if: ${{ always() && steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
-      - name: Generate single file Allure report
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
-      - name: Upload Allure single file report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: ios-allure-report
-          path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -143,18 +139,29 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     needs: [detox-tests-ios]
+    outputs:
+      report-url: ${{ steps.upload.outputs.report-url }}
+      result: ${{ steps.summary.outputs.test_result }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        id: upload
         with:
           platform: ios
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ios-test-artifacts
+          platform: iOS
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -272,15 +279,6 @@ jobs:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ inputs.speculos_tests }}
-      - name: Generate single file Allure report
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
-      - name: Upload Allure single file report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: android-allure-report
-          path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -291,7 +289,10 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
+    outputs:
+      report-url: ${{ steps.upload.outputs.report-url }}
+      result: ${{ steps.summary.outputs.test_result }}
     needs: [detox-tests-android]
     steps:
       - name: checkout
@@ -299,11 +300,19 @@ jobs:
         with:
           ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        id: upload
         with:
           platform: android
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: android-test-artifacts
+          platform: android
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -362,99 +371,10 @@ jobs:
         shell: bash
         run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
-  report:
-    needs: [detox-tests-android, detox-tests-ios]
-    runs-on: ubuntu-22.04
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/github-script@v7
-        name: prepare status
-        id: status
-        with:
-          script: |
-            const fs = require("fs");
-
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
-
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Ledger Live Mobile - ${os} Detox Tests`)?.html_url;
-
-            const keys = {
-              ios: {
-                symbol: "🍏",
-                name: "iOS",
-                jobUrl: findJobUrl("iOS")
-              },
-              android: {
-                symbol: "🤖",
-                name: "Android",
-                jobUrl: findJobUrl("Android")
-              },
-            };
-
-            const report = {
-              ios: {
-                pass: ${{ needs.detox-tests-ios.outputs.status == 'success' }},
-                status: "${{ needs.detox-tests-ios.outputs.status }}",
-              },
-              android: {
-                pass: ${{ needs.detox-tests-android.outputs.status == 'success'}},
-                status: "${{ needs.detox-tests-android.outputs.status }}",
-              },
-            };
-
-            let summary = `### Detox Tests
-
-            `
-
-            summary += `|`
-
-            const reportKeys = Object.keys(report);
-            const detoxSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
-
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
-
-            summary += `
-            |`;
-
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
-            }
-
-            summary += `
-            |`;
-
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
-            });
-
-            const output = {
-              summary
-            };
-
-            fs.writeFileSync("summary-detox.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
-        name: upload summary
-        with:
-          name: summary-detox.json
-          path: ${{ github.workspace }}/summary-detox.json
-
   report-on-slack:
     runs-on: ubuntu-22.04
-    needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ failure() && github.event_name == 'push' }}
+    needs: [allure-report-android, allure-report-ios]
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     steps:
       - name: format message
         uses: actions/github-script@v7
@@ -462,25 +382,28 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = `❌ 🍏 Detox tests failed ❌`;
+            const text = `❌ Detox tests failed ❌`;
             const iOSResult = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": `❌ iOS Detox tests failed ❌`,
+                  "text": `🍏 iOS Detox tests failed ❌`,
                   "emoji": true
                 }
-              },
-              {
-                "type": "divider"
               },
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `😵 Build Failed
-                  `
+                  "text": `${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `<${{ needs.allure-report-ios.outputs.report-url }}|Allure Report iOS>`
                 }
               }
             ];
@@ -489,19 +412,22 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": `❌ Android Detox tests failed ❌`,
+                  "text": `🤖 Android Detox tests failed ❌`,
                   "emoji": true
                 }
-              },
-              {
-                "type": "divider"
               },
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `😵 Build Failed
-                  `
+                  "text": `${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `<${{ needs.allure-report-android.outputs.report-url }}|Allure Report Android>`
                 }
               }
             ];
@@ -512,8 +438,8 @@ jobs:
               {
                 "type": "section",
                 "text": {
-                  "type": "mrkdwn",
-                  "text": `<https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}|Workflow run> for more informations`,
+                    "type": "mrkdwn",
+                    "text": `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`,
                 }
               }
             ];

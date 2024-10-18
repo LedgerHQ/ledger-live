@@ -22,10 +22,6 @@ on:
         description: Ignore test having name pattern (entered in the previous field)
         type: boolean
         default: false
-      report_path:
-        description: Path where you want to store this execution's results
-        required: false
-        default: "allure-results-linux"
       slack_notif:
         description: "Send notification to Slack?"
         required: false
@@ -163,68 +159,49 @@ jobs:
           name: xray-reports-${{ matrix.shardIndex }}
           path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
 
-  report-and-notify:
-    name: "Report and Notify"
+  report-to-allure:
+    name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]
     needs: e2e-tests-linux
-    if: always()
+    outputs:
+      test_result: ${{ steps.summary.outputs.test_result }}
+      status_color: ${{ steps.summary.outputs.status_color }}
+      status_emoji: ${{ steps.summary.outputs.status_emoji }}
+      report-url: ${{ steps.allure-server.outputs.report-url }}
+    if: ${{ !cancelled() }}
+    env:
+      ALLURE_RESULTS: "allure-results"
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-
-      - name: Download Allure Results
-        uses: actions/download-artifact@v4.1.1
-        with:
-          path: "apps/ledger-live-desktop/allure-results"
-          pattern: allure-results-*
-          merge-multiple: true
-
       - name: Publish report on Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/send-to-allure-server-action@2.1.2
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
-          build-name: ${{ github.workflow }}
-          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          username: ${{ vars.ALLURE_USERNAME }}
+          platform: linux
+          login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: ${{ github.ref_name }}/linux
-          allure-results: "apps/ledger-live-desktop/allure-results"
-
-      - name: Write Allure report in summary
-        if: ${{ !cancelled() }}
-        shell: bash
-        run: echo "::notice title=Allure report URL::${{ steps.allure-server.outputs.report-url }}"
+          path: ${{ env.ALLURE_RESULTS }}
 
       - name: Get summary
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         id: summary
-        shell: bash
-        run: |
-          cd apps/ledger-live-desktop
-          allure generate
-          cd allure-report/widgets
-          passedTests=$(jq '.statistic.passed' summary.json)
-          failedTests=$(jq '.statistic.failed' summary.json)
-          brokenTests=$(jq '.statistic.broken' summary.json)
-          skippedTests=$(jq '.statistic.skipped' summary.json)
-          totalTests=$(jq '.statistic.total' summary.json)
-          echo "TEST_RESULT=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> $GITHUB_ENV
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ${{ env.ALLURE_RESULTS }}
+          platform: linux
 
-          if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
-            echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
-            echo "STATUS_EMOJI=❌" >> $GITHUB_ENV;
-          else
-            echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-            echo "STATUS_EMOJI=✅" >> $GITHUB_ENV;
-          fi
-
+  notify-to-slack:
+    name: "Notify to slack"
+    runs-on: [ledger-live-medium]
+    needs: report-to-allure
+    if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+    steps:
       - uses: actions/github-script@v7
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         name: prepare status
         id: status
+        env:
+          STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
         with:
           script: |
             const fs = require("fs");
@@ -307,12 +284,10 @@ jobs:
               }],
             };
 
-            if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
-
             const slackPayload = {
               "attachments": [
                 {
-                  "color": "${{ env.STATUS_COLOR }}",
+                  "color": "${{ needs.report-to-allure.outputs.status_color }}",
                   "blocks": [
                     {
                       "type": "header",
@@ -329,7 +304,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${statusEmoji} ${process.env.TEST_RESULT || 'No test results'}`
+                        "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
                       }
                     },
                     {
@@ -340,7 +315,7 @@ jobs:
                       "fields": [
                         {
                           "type": "mrkdwn",
-                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }}|allure-results-linux>"
+                          "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
                         },
                         {
                           "type": "mrkdwn",
@@ -355,19 +330,17 @@ jobs:
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
 
       - name: Print Slack Payload Content
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         run: cat ${{ github.workspace }}/payload-slack-content.json
 
-      - name: post to a Slack channel
+      - name: Post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          STATUS_COLOR: ${{ env.STATUS_COLOR }}
+          STATUS_COLOR: ${{ needs.report-to-allure.outputs.status_color }}
 
   upload-to-xray:
     name: "Upload to Xray"
