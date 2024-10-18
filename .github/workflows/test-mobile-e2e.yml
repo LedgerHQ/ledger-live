@@ -33,6 +33,11 @@ on:
         required: false
         type: boolean
         default: false
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)

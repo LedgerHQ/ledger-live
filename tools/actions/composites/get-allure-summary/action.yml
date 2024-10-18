@@ -1,0 +1,40 @@
+name: "Get Allure Summary"
+description: "Generates a test summary from allure report"
+inputs:
+  platform:
+    description: "Platform (ANDROID, IOS or LINUX)"
+    required: true
+  allure-results-path:
+    description: "Path to allure files"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Get summary
+      run: |
+        cd ${{ inputs.allure-results-path }}
+        allure generate
+        cd allure-report/widgets
+        passedTests=$(jq '.statistic.passed' summary.json)
+        failedTests=$(jq '.statistic.failed' summary.json)
+        brokenTests=$(jq '.statistic.broken' summary.json)
+        skippedTests=$(jq '.statistic.skipped' summary.json)
+        totalTests=$(jq '.statistic.total' summary.json)
+        echo "TEST_RESULT_${{ inputs.platform }}=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> $GITHUB_ENV
+
+        if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
+          echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
+          echo "STATUS_EMOJI=❌" >> $GITHUB_ENV;
+        else
+          echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
+          echo "STATUS_EMOJI=✅" >> $GITHUB_ENV;
+        fi
+      shell: bash
+    - name: Generate single file Allure report
+      run: allure generate ${{ inputs.allure-results-path }} --single-file --clean
+      shell: bash
+    - name: Upload Allure single file report
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report-${{ inputs.platform }}
+        path: allure-report/index.html

@@ -27,15 +27,20 @@ runs:
     - name: Download Allure Report
       uses: actions/download-artifact@v4
       with:
-        name: ${{ inputs.path }}
         path: ${{ inputs.path }}
+        pattern: ${{ inputs.path }}*
+        merge-multiple: true
     - name: Publish report on Allure Server
+      id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2
       with:
         allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
         build-name: ${{ github.workflow }}-${{ inputs.platform }}
-        build-url: https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}
+        build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         username: ${{ inputs.login }}
         password: ${{ inputs.password }}
         path: "${{ steps.branch-name.outputs.current_branch }}-${{ inputs.platform }}"
         allure-results: ${{ inputs.path }}
+    - name: Write Allure report in summary
+      shell: bash
+      run: echo "::notice title=${{ inputs.platform }} Allure report URL::${{ steps.publish-report.outputs.report-url }}"
