@@ -15,6 +15,9 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 checkLibs({
   NotEnoughBalance,
@@ -71,9 +74,19 @@ if (process.env.DEVICE_PROXY_URL) {
   });
 }
 
-const { SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
+const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
-if (SPECULOS_APDU_PORT) {
+if (SPECULOS_API_PORT) {
+  const req: Record<string, number> = {
+    apiPort: parseInt(SPECULOS_API_PORT, 10),
+  };
+
+  registerTransportModule({
+    id: "speculos-http",
+    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    disconnect: () => Promise.resolve(),
+  });
+} else if (SPECULOS_APDU_PORT) {
   const req: Record<string, any> = {
     apduPort: parseInt(SPECULOS_APDU_PORT, 10),
   };
@@ -124,7 +137,7 @@ async function init() {
 
 LiveConfig.setConfig(liveConfig);
 
-if (!process.env.CI) {
+if (!process.env.CI && !SPECULOS_API_PORT) {
   init();
 }
 

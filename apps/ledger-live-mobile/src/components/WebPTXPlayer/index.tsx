@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -22,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
 
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -262,7 +264,8 @@ export const WebPTXPlayer = ({
     }
   }, [config, disableHeader, isInternalApp, manifest, navigation, onClose, webviewState?.url]);
 
-  const customHandlers = usePTXCustomHandlers(manifest);
+  const accounts = useSelector(flattenAccountsSelector);
+  const customHandlers = usePTXCustomHandlers(manifest, accounts);
 
   return (
     <SafeAreaView style={[styles.root]}>

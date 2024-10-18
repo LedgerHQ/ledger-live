@@ -103,7 +103,7 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.WalletSync}
         component={WalletSyncNavigator}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack.Navigator>
   );

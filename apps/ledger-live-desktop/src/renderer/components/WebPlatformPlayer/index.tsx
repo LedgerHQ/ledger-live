@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -10,6 +11,8 @@ import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types"
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { useACRECustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -37,14 +40,17 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
-  const customPTXHandlers = usePTXCustomHandlers(manifest);
+  const accounts = useSelector(flattenAccountsSelector);
+  const customACREHandlers = useACRECustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
+      ...customACREHandlers,
       ...customPTXHandlers,
     };
-  }, [customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);

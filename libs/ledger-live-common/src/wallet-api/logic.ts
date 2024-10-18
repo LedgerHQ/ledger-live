@@ -19,6 +19,7 @@ import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -201,35 +202,132 @@ export function signMessageLogic(
   return uiNavigation(account, formattedMessage);
 }
 
-export const bitcoinFamillyAccountGetXPubLogic = (
+export const bitcoinFamilyAccountGetAddressLogic = (
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
+  derivationPath?: string,
 ): Promise<string> => {
-  tracking.bitcoinFamillyAccountXpubRequested(manifest);
+  tracking.bitcoinFamilyAccountAddressRequested(manifest);
 
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountAddressFail(manifest);
     return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
   }
 
   const account = accounts.find(account => account.id === accountId);
   if (account === undefined) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountAddressFail(manifest);
     return Promise.reject(new Error("account not found"));
   }
 
   if (!isAccount(account) || account.currency.family !== "bitcoin") {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountAddressFail(manifest);
+    return Promise.reject(new Error("account requested is not a bitcoin family account"));
+  }
+
+  if (derivationPath) {
+    const path = derivationPath.split("/");
+    const accountNumber = Number(path[0]);
+    const index = Number(path[1]);
+
+    if (Number.isNaN(accountNumber) || Number.isNaN(index)) {
+      tracking.bitcoinFamilyAccountAddressFail(manifest);
+      return Promise.reject(new Error("Invalid derivationPath"));
+    }
+
+    const walletAccount = getWalletAccount(account);
+    const address = walletAccount.xpub.crypto.getAddress(
+      walletAccount.xpub.derivationMode,
+      walletAccount.xpub.xpub,
+      accountNumber,
+      index,
+    );
+    tracking.bitcoinFamilyAccountAddressSuccess(manifest);
+    return Promise.resolve(address);
+  }
+
+  tracking.bitcoinFamilyAccountAddressSuccess(manifest);
+  return Promise.resolve(account.freshAddress);
+};
+
+function getRelativePath(path: string) {
+  const splitPath = path.split("'/");
+  return splitPath[splitPath.length - 1];
+}
+
+export const bitcoinFamilyAccountGetPublicKeyLogic = async (
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+  derivationPath?: string,
+): Promise<string> => {
+  tracking.bitcoinFamilyAccountPublicKeyRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+  if (account === undefined) {
+    tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
+    return Promise.reject(new Error("account not found"));
+  }
+
+  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+    tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
+    return Promise.reject(new Error("account requested is not a bitcoin family account"));
+  }
+
+  const path = derivationPath?.split("/") ?? getRelativePath(account.freshAddressPath).split("/");
+  const accountNumber = Number(path[0]);
+  const index = Number(path[1]);
+
+  if (Number.isNaN(accountNumber) || Number.isNaN(index)) {
+    tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
+    return Promise.reject(new Error("Invalid derivationPath"));
+  }
+
+  const walletAccount = getWalletAccount(account);
+  const publicKey = await walletAccount.xpub.crypto.getPubkeyAt(
+    walletAccount.xpub.xpub,
+    accountNumber,
+    index,
+  );
+  tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
+  return publicKey.toString("hex");
+};
+
+export const bitcoinFamilyAccountGetXPubLogic = (
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+): Promise<string> => {
+  tracking.bitcoinFamilyAccountXpubRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+  if (account === undefined) {
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
+    return Promise.reject(new Error("account not found"));
+  }
+
+  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
 
   if (!account.xpub) {
-    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account xpub not available"));
   }
 
-  tracking.bitcoinFamillyAccountXpubSuccess(manifest);
+  tracking.bitcoinFamilyAccountXpubSuccess(manifest);
   return Promise.resolve(account.xpub);
 };
 

@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Toast } from "./Toast";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { v4 as uuidv4 } from "uuid";
 import { openInformationCenter } from "~/renderer/actions/UI";
 const Wrapper = styled.div`
   position: absolute;
@@ -43,7 +42,8 @@ export function ToastOverlay() {
         ))
       ) : (
         <Toast
-          id={uuidv4()}
+          id={toasts.map(({ id }) => id).join(",")}
+          duration={10000}
           icon="info"
           title={t("toastOverlay.groupedToast.text", {
             count: toasts.length,

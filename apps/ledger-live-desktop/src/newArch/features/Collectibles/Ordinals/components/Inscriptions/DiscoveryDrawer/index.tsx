@@ -8,25 +8,40 @@ import { space } from "@ledgerhq/react-ui/styles/theme";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { useCollectiblesAnalytics } from "LLD/features/Collectibles/hooks/useCollectiblesAnalytics";
+import { AnalyticsButton, AnalyticsPage } from "LLD/features/Collectibles/types/enum/Analytics";
 
 type Props = {
   isOpen: boolean;
+  hasInscriptions: boolean;
+  hasRareSat: boolean;
   onClose: () => void;
 };
 
-const DiscoveryDrawer = ({ isOpen, onClose }: Props) => {
+const DiscoveryDrawer = ({ isOpen, hasInscriptions, hasRareSat, onClose }: Props) => {
   const { t } = useTranslation();
+  const { onClickTrack } = useCollectiblesAnalytics({ hasInscriptions, hasRareSat });
   const learnMoreUrl = urls.whatAreOrdinals;
-  const onButtonClick = () => openURL(learnMoreUrl);
+  const onButtonClick = () => {
+    onClickTrack({ button: AnalyticsButton.LearnMore, page: AnalyticsPage.DiscoverOrdinals });
+    openURL(learnMoreUrl);
+  };
+
+  const handleOnClose = () => {
+    onClickTrack({ button: AnalyticsButton.Close, page: AnalyticsPage.DiscoverOrdinals });
+    onClose();
+  };
 
   return (
     <SideDrawer
       isOpen={isOpen}
       withPaddingTop={false}
-      onRequestClose={onClose}
+      onRequestClose={handleOnClose}
       direction={Direction.Left}
       forceDisableFocusTrap
     >
+      <TrackPage category={AnalyticsPage.DiscoverOrdinals} />
       <DiscoveryDrawerHeader />
       <Flex
         px={40}

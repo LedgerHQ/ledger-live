@@ -8,6 +8,8 @@ import { setHasSeenOrdinalsDiscoveryDrawer } from "~/renderer/actions/settings";
 import { hasSeenOrdinalsDiscoveryDrawerSelector } from "~/renderer/reducers/settings";
 import { findCorrespondingSat } from "LLD/features/Collectibles/utils/findCorrespondingSat";
 import { useHideInscriptions } from "LLD/features/Collectibles/hooks/useHideInscriptions";
+import { useCollectiblesAnalytics } from "../../../hooks/useCollectiblesAnalytics";
+import { AnalyticsButton, AnalyticsPage } from "LLD/features/Collectibles/types/enum/Analytics";
 
 interface Props {
   account: BitcoinAccount;
@@ -50,8 +52,14 @@ export const useBitcoinAccountModel = ({ account }: Props) => {
     );
   }, [dispatch, account]);
 
+  const hasInscriptions = inscriptions.length > 0;
+  const hasRareSat = rareSats.length > 0;
+
+  const { onClickTrack } = useCollectiblesAnalytics({ hasInscriptions, hasRareSat });
+
   const onInscriptionClick = (inscription: SimpleHashNft) => {
     const groupedNft = findCorrespondingSat(inscriptionsGroupedWithRareSats, inscription.nft_id);
+    onClickTrack({ button: AnalyticsButton.Inscription, page: AnalyticsPage.Account });
     setCorrespondingRareSat(groupedNft?.rareSat ?? null);
     setSelectedInscription(inscription);
   };

@@ -109,24 +109,32 @@ export function Toast({
       precision: 0.1,
     },
   });
+
+  const toastListIds = id.split(",").reverse();
+
   useEffect(() => {
     async function scheduledDismiss(duration: number) {
       await delay(duration);
-      onDismiss(id);
+      toastListIds.forEach(id => {
+        onDismiss(id);
+      });
     }
     if (duration) {
       scheduledDismiss(duration);
     }
-  }, [duration, id, onDismiss]);
+  }, [duration, id, onDismiss, toastListIds]);
+
   const onClick: React.MouseEventHandler<HTMLInputElement> = useCallback(
     event => {
       if (typeof callback === "function") {
         callback();
+        toastListIds.forEach(id => {
+          onDismiss(id);
+        });
       }
-      onDismiss(id);
       event.stopPropagation();
     },
-    [callback, id, onDismiss],
+    [callback, onDismiss, toastListIds],
   );
   return (
     <>

@@ -1,6 +1,6 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Drawer } from "./drawer";
+import { Drawer } from "../../component/drawer.component";
 import { extractNumberFromText } from "tests/utils/textParserUtils";
 
 export class LedgerSyncDrawer extends Drawer {

@@ -242,6 +242,11 @@ export default function BaseNavigator() {
           name={NavigatorName.SignTransaction}
           component={SignTransactionNavigator}
           options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              route.params.onError(new Error("Signature interrupted by user"));
+            },
+          })}
         />
         <Stack.Screen
           name={NavigatorName.Swap}

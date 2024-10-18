@@ -9,6 +9,7 @@ import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
 import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "~/utils/constants";
+import Config from "react-native-config";
 
 const CheckboxContainer = styled(View)(
   ({ theme }) => `
@@ -43,7 +44,7 @@ export function PTXServicesAppleWarning() {
   );
 
   useEffect(() => {
-    if (!exchangeDrawerEnabled && !ctaScreensEnabled) {
+    if (!exchangeDrawerEnabled && !ctaScreensEnabled && !Config.MOCK) {
       openDrawer();
     } else {
       _onClose();

@@ -4,6 +4,7 @@ exports[`all USDT are countervalue enabled 1`] = `
 [
   "algorand/asa/312769",
   "bsc/bep20/binance-peg_bsc-usd",
+  "bsc/bep20/tether_usd_wormhole_0x524bc91dc82d6b90ef29f76a3ecaabafffd490bc",
   "elrond/esdt/555344542d663863303863",
   "ethereum/erc20/usd_tether__erc20_",
   "polygon/erc20/(pos)_tether_usd",

@@ -13,27 +13,31 @@ import SpeculosHttpTransport, {
 } from "@ledgerhq/hw-transport-node-speculos-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { Buffer } from "buffer";
-import { findFreePort } from "./server";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 
-const proxySubscriptions: [string, Subscription][] = [];
+const proxySubscriptions: [number, Subscription][] = [];
 
 let transport: TransportModule;
 
 interface ProxyOptions {
   device: string;
-  port: string;
+  port: number;
   silent?: boolean;
   verbose?: boolean;
-  speculosApiPort: string;
+  speculosApiPort: number;
+  speculosUrl: string;
 }
 
-export async function startProxy(proxyPort?: string, speculosApiPort?: string): Promise<string> {
-  if (!proxyPort) proxyPort = (await findFreePort()).toString();
-  if (!speculosApiPort) speculosApiPort = getEnv("SPECULOS_API_PORT").toString();
+export async function startProxy(
+  proxyPort: number,
+  speculosAddress?: string,
+  speculosApiPort?: number,
+): Promise<string> {
+  if (!speculosApiPort) speculosApiPort = getEnv("SPECULOS_API_PORT");
+  if (!speculosAddress) speculosAddress = "localhost";
+
   invariant(speculosApiPort, "E2E Proxy : speculosApiPort is not defined");
-  invariant(proxyPort, "E2E Proxy : proxyPort is not defined");
 
   return new Promise((resolve, reject) => {
     const options: ProxyOptions = {
@@ -41,6 +45,7 @@ export async function startProxy(proxyPort?: string, speculosApiPort?: string): 
       port: proxyPort,
       silent: true,
       verbose: false,
+      speculosUrl: `http://${speculosAddress}`,
       speculosApiPort,
     };
 
@@ -68,29 +73,31 @@ export async function startProxy(proxyPort?: string, speculosApiPort?: string): 
   });
 }
 
-export function closeProxy(proxyPort?: string) {
+export function closeProxy(proxyPort?: number) {
   if (!proxyPort) {
     for (const [, subscription] of proxySubscriptions) {
       subscription.unsubscribe();
     }
     return;
   }
-  const proxySubscription = proxySubscriptions.find(([string]) => string === proxyPort)?.[1];
+  const proxySubscription = proxySubscriptions.find(([port]) => port === proxyPort)?.[1];
   if (proxySubscription) {
     proxySubscription.unsubscribe();
     proxySubscriptions.splice(proxySubscriptions.indexOf([proxyPort, proxySubscription]));
   }
 }
 
-const job = ({ device, port, silent, verbose, speculosApiPort }: ProxyOptions) =>
+const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: ProxyOptions) =>
   new Observable(observer => {
     const req: SpeculosHttpTransportOpts = {
-      apiPort: speculosApiPort,
+      apiPort: speculosApiPort.toString(),
+      baseURL: speculosUrl,
     };
 
     transport = {
       id: `speculos-http-${speculosApiPort}`,
-      open: id => (id.includes(port) ? retry(() => SpeculosHttpTransport.open(req)) : null),
+      open: id =>
+        id.includes(port.toString()) ? retry(() => SpeculosHttpTransport.open(req)) : null,
       disconnect: () => Promise.resolve(),
     };
     registerTransportModule(transport);
@@ -251,7 +258,7 @@ const job = ({ device, port, silent, verbose, speculosApiPort }: ProxyOptions) =
     const proxyUrls = ["localhost", ...ips].map(ip => `ws://${ip}:${port || "8435"}`);
     proxyUrls.forEach(url => log("proxy", `DEVICE_PROXY_URL=${url}`));
 
-    server.listen(port || "8435", () => {
+    server.listen(port, () => {
       log("proxy", `\nNano S proxy started on ${ips[0]}\n`);
       observer.next(ips);
     });

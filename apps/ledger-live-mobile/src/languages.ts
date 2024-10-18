@@ -49,6 +49,10 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
   en: "english",
   fr: "french",
   es: "spanish",
+  pt: "brazilian",
+  ru: "russian",
+  de: "german",
+  tr: "turkish",
 };
 
 /**

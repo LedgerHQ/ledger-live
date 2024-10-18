@@ -6,17 +6,18 @@ const config: PlaywrightTestConfig = {
       name: "speculos_tests",
       testDir: "specs/speculos/",
       retries: process.env.CI ? 2 : 0,
+      timeout: process.env.CI ? 400000 : 1200000,
     },
     {
       name: "mocked_tests",
       testDir: "specs/",
       testIgnore: ["**/speculos/**", "specs/recorder.spec.ts"],
+      timeout: process.env.CI ? 190000 : 600000,
     },
   ],
   outputDir: "./artifacts/test-results",
   snapshotPathTemplate:
     "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-platform}{ext}",
-  timeout: process.env.CI ? 190000 : 600000,
   expect: {
     timeout: 41000,
     toHaveScreenshot: {

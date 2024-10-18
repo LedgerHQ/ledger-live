@@ -8,12 +8,14 @@ import { Modal } from "../component/modal.component";
 import { ReceiveModal } from "../page/modal/receive.modal";
 import { SpeculosPage } from "tests/page/speculos.page";
 import { SendModal } from "tests/page/modal/send.modal";
-import { Drawer } from "tests/page/drawer/drawer";
+import { Drawer } from "tests/component/drawer.component";
 import { SettingsPage } from "tests/page/settings.page";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { SwapPage } from "tests/page/swap.page";
 import { SwapConfirmationDrawer } from "tests/page/drawer/swap.confirmation.drawer";
 import { delegateModal } from "tests/page/modal/delegate.modal";
+import { DelegateDrawer } from "./drawer/delegate.drawer";
+import { SendDrawer } from "./drawer/send.drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -31,4 +33,6 @@ export class Application extends PageHolder {
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public swap = new SwapPage(this.page);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
+  public delegateDrawer = new DelegateDrawer(this.page);
+  public sendDrawer = new SendDrawer(this.page);
 }

@@ -39,7 +39,7 @@ class Base implements ICrypto {
     this.network.usesTimestampedTransaction = false;
   }
 
-  protected async getPubkeyAt(xpub: string, account: number, index: number): Promise<Buffer> {
+  async getPubkeyAt(xpub: string, account: number, index: number): Promise<Buffer> {
     // a cache is stored in Base.bip32Cache to optimize the calculation
     // at each step, we make sure the level has been calculated and calc if necessary
 

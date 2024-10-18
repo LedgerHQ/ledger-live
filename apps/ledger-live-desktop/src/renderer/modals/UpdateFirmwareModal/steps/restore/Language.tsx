@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StepProps } from "../../types";
 import { idsToLanguage, Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
-import { Flex } from "@ledgerhq/react-ui";
+import { Button, Flex, Link } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { DEFAULT_LANGUAGE, Languages } from "~/config/languages";
@@ -12,6 +12,7 @@ import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { UpdateStepFooterWrapper } from "../../UpdateStepFooterWrapper";
 
 type Props = Partial<StepProps> & { onDone: () => void; setError: (arg0: Error) => void };
 
@@ -132,5 +133,42 @@ const Language = ({
     </Flex>
   );
 };
+
+const LanguageFooter: React.FC<StepProps> = ({
+  isLanguagePromptOpen,
+  setConfirmedPrompt,
+  setError,
+  setCompletedRestoreSteps,
+  completedRestoreSteps,
+  currentRestoreStep,
+}) => {
+  const onClickConfirm = () => {
+    setConfirmedPrompt(true);
+    setError(null);
+  };
+  const onClickCancel = () => {
+    setCompletedRestoreSteps([...completedRestoreSteps, currentRestoreStep]);
+    setConfirmedPrompt(false);
+  };
+  const { t } = useTranslation();
+
+  if (!isLanguagePromptOpen) {
+    return null;
+  }
+
+  return (
+    <UpdateStepFooterWrapper>
+      <Flex flexDirection="row" alignItems="center" flex={1}>
+        <Link onClick={onClickCancel}>{t("common.cancel")}</Link>
+        <Flex flex={1} />
+        <Button variant="main" onClick={onClickConfirm}>
+          {t("deviceLocalization.changeLanguage")}
+        </Button>
+      </Flex>
+    </UpdateStepFooterWrapper>
+  );
+};
+
+Language.Footer = LanguageFooter;
 
 export default Language;

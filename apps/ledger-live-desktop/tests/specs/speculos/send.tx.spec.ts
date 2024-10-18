@@ -185,16 +185,18 @@ for (const transaction of transactionE2E) {
         await app.speculos.expectValidTxInfo(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
-        await app.drawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
+        await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
         await app.drawer.close();
 
         await app.layout.goToAccounts();
+        await app.accounts.clickSyncBtnForAccount(
+          transaction.transaction.accountToCredit.accountName,
+        );
         await app.accounts.navigateToAccountByName(
           transaction.transaction.accountToCredit.accountName,
         );
-        await app.layout.syncAccounts();
         await app.account.clickOnLastOperation();
-        await app.drawer.expectReceiverInfos(transaction.transaction);
+        await app.sendDrawer.expectReceiverInfos(transaction.transaction);
       },
     );
   });
@@ -366,6 +368,7 @@ test.describe("Verify send max user flow", () => {
       },
     },
     async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transactionInputValid.accountToDebit.accountName);
 
@@ -386,7 +389,7 @@ for (const transaction of transactionAddressValid) {
     });
 
     test(
-      `Check button enabled ${transaction.xrayTicket} - valid address input`,
+      `Check button enabled (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - valid address input ${transaction.xrayTicket}`,
       {
         annotation: {
           type: "TMS",
@@ -394,6 +397,7 @@ for (const transaction of transactionAddressValid) {
         },
       },
       async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(
           transaction.transaction.accountToDebit.accountName,
@@ -415,7 +419,7 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `Check "${transaction.expectedErrorMessage}" (${transaction.xrayTicket}) - invalid address input error`,
+      `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - invalid address input error${transaction.xrayTicket}`,
       {
         annotation: {
           type: "TMS",
@@ -423,6 +427,7 @@ for (const transaction of transactionsAddressInvalid) {
         },
       },
       async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(
           transaction.transaction.accountToDebit.accountName,

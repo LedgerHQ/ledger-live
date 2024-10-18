@@ -437,7 +437,7 @@
     "ticker": "GLMR",
     "name": "Moonbeam",
     "family": "ethereum",
-    "color": "#5FC0C1",
+    "color": "#958FDC",
     "decimals": 18
   },
   {
@@ -563,7 +563,7 @@
     "ticker": "MOVR",
     "name": "Moonriver",
     "family": "ethereum",
-    "color": "#F2B705",
+    "color": "#95F921",
     "decimals": 18
   },
   {
@@ -763,6 +763,15 @@
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "ton",
+    "ticker": "TON",
+    "name": "TON",
+    "family": "ton",
+    "color": "#0098ea",
+    "decimals": 9
   },
   {
     "type": "CryptoCurrency",
