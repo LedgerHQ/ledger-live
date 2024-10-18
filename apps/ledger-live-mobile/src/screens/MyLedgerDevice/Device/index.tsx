@@ -101,6 +101,12 @@ const DeviceCard = ({
     setAppsModalOpen(false);
   }, [setAppsModalOpen]);
 
+  useEffect(() => {
+    if (state?.currentError?.error) {
+      closeAppsModal();
+    }
+  }, [state.currentError, closeAppsModal]);
+
   const isLocalizationSupported = useMemo<boolean>(
     () =>
       deviceInfo.seVersion
@@ -194,7 +200,6 @@ const DeviceCard = ({
         uninstallQueue={state.uninstallQueue}
         deviceInfo={deviceInfo}
       />
-
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>
@@ -202,7 +207,6 @@ const DeviceCard = ({
           </Button>
         </Flex>
       )}
-
       <InstalledAppsModal
         isOpen={appsModalOpen}
         onClose={closeAppsModal}
