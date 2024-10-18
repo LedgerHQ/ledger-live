@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
@@ -28,13 +28,13 @@ export const useSyncWithQrCode = () => {
 
   const navigation = useNavigation();
 
-  const [inputCallback, setInputCallback] = useState<((input: string) => void) | null>(null);
+  const inputCallbackRef = useRef<((input: string) => void) | null>(null);
   const dispatch = useDispatch();
 
   const onRequestQRCodeInput = useCallback(
     (config: { digits: number }, callback: (input: string) => void) => {
       setDigits(config.digits);
-      setInputCallback(() => callback);
+      inputCallbackRef.current = callback;
     },
     [],
   );
@@ -42,7 +42,7 @@ export const useSyncWithQrCode = () => {
   const onSyncFinished = useCallback(() => {
     setDigits(null);
     setInput(null);
-    setInputCallback(null);
+    inputCallbackRef.current = null;
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncLoading,
       params: {
@@ -102,9 +102,9 @@ export const useSyncWithQrCode = () => {
   );
 
   const handleSendDigits = useCallback(
-    (inputCallback: (_: string) => void, input: string) => (inputCallback(input), true),
+    (input: string) => (inputCallbackRef.current?.(input), true),
     [],
   );
 
-  return { nbDigits, input, handleStart, handleSendDigits, setInput, inputCallback };
+  return { nbDigits, input, handleStart, handleSendDigits, setInput };
 };

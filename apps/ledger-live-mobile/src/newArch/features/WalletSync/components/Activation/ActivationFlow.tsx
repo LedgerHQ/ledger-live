@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
@@ -52,16 +52,21 @@ const ActivationFlow = ({
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
 
-  const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
+  const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
     if (memberCredentials) handleStart(data, memberCredentials);
   };
 
-  const handlePinCodeSubmit = (input: string) => {
-    if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
-  };
+  const handlePinCodeSubmit = useCallback(
+    (input: string) => {
+      if (input && nbDigits === input.length) {
+        handleSendDigits(input);
+      }
+    },
+    [handleSendDigits, nbDigits],
+  );
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { navigate } =
