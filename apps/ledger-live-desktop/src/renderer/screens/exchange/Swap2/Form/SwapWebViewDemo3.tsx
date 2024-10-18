@@ -24,6 +24,7 @@ import logger from "~/renderer/logger";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   counterValueCurrencySelector,
+  developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
@@ -111,6 +112,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
+  const devMode = useSelector(developerModeSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -394,6 +396,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
+            devMode,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
