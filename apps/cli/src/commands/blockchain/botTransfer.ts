@@ -32,11 +32,11 @@ const ONLY_CURRENCIES = process.env.ONLY_CURRENCIES
 
 // TODO improve botTransfer by only using "allSpecs" and introduce a "transferMutation" in the specs for all spec to define how to transfer funds out (as well as UNDELEGATING funds)
 
-function getImplicitDeviceAction(currency, forSubAccount) {
+function getImplicitDeviceAction(currency: CryptoCurrency, forSubAccount: boolean) {
   for (const k in allSpecs) {
-    const familySpec = allSpecs[k];
+    const familySpec = allSpecs[k as keyof typeof allSpecs];
     for (const c in familySpec) {
-      const spec: AppSpec<any> = familySpec[c];
+      const spec: AppSpec<any> = familySpec[c as keyof typeof familySpec];
       if (spec.currency === currency) {
         if (forSubAccount && spec.genericDeviceActionForSubAccountTransfers) {
           return spec.genericDeviceActionForSubAccountTransfers;
@@ -53,7 +53,9 @@ export default {
   description: "transfer funds from one seed (SEED) to another (SEED_RECIPIENT)",
   args: [],
   job: () => {
-    const localCache = {};
+    const localCache: {
+      [key in CryptoCurrency["id"]]?: unknown;
+    } = {};
     const cache = makeBridgeCacheSystem({
       saveData(c, d) {
         localCache[c.id] = d;

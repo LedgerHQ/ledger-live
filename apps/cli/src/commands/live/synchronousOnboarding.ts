@@ -4,7 +4,12 @@ import {
 } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { Observable } from "rxjs";
 
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type SynchronousOnboardingJobOpts = DeviceCommonOpts &
+  Partial<{
+    pollingPeriodMs: number;
+  }>;
 
 export default {
   description: "track the onboarding status of your device",
@@ -20,10 +25,7 @@ export default {
   job: ({
     device,
     pollingPeriodMs,
-  }: Partial<{
-    device: string;
-    pollingPeriodMs: number;
-  }>): Observable<OnboardingStatePollingResult | null> =>
+  }: SynchronousOnboardingJobOpts): Observable<OnboardingStatePollingResult | null> =>
     getOnboardingStatePolling({
       deviceId: device ?? "",
       pollingPeriodMs: pollingPeriodMs ?? 1000,

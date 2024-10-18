@@ -12,7 +12,14 @@ import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "tests/enum/AppInfos";
-import { runCliCommand } from "tests/utils/cliUtils";
+import { lastValueFrom, Observable } from "rxjs";
+import { commandCLI } from "tests/utils/cliUtils";
+import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
+
+type Command<T extends (...args: any) => Observable<any> | Promise<any> | string> = {
+  command: T;
+  args: Parameters<T>[0]; // Infer the first argument type
+};
 
 type TestFixtures = {
   lang: string;
@@ -29,7 +36,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
-  cliCommands: string[];
+  cliCommands: Command<(typeof commandCLI)[keyof typeof commandCLI]>[]; //Command<(typeof commandCLI)[keyof typeof commandCLI]>[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -110,15 +117,24 @@ export const test = base.extend<TestFixtures>({
           specs[speculosApp.name.replace(/ /g, "_")],
         );
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
-        process.env.SPECULOS_API_PORT = device?.ports.apiPort;
-        process.env.MOCK = "";
+        setEnv("MOCK", "");
 
         if (cliCommands) {
+          registerSpeculosTransport(device?.ports.apiPort);
           for (const command of cliCommands) {
-            const fullCommand = `${command} --appjson ${userdataDestinationPath}/app.json`;
-            await runCliCommand(fullCommand);
+            if (command.args && "appjson" in command.args) {
+              command.args.appjson = `${userdataDestinationPath}/app.json`;
+            }
+            const result = await handleResult(command.command(command.args as any));
+            console.log("CLI result: ", result);
           }
         }
+      }
+      async function handleResult(result: Promise<any> | Observable<any> | string): Promise<any> {
+        if (result instanceof Observable) {
+          return lastValueFrom(result); // Converts Observable to Promise
+        }
+        return result; // Return Promise directly
       }
 
       // default environment variables

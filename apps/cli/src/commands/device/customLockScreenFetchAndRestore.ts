@@ -23,7 +23,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
  * the flow if the user hasn't changed the image since the last time we backed it.
  */
 
-type CustomLockScreenFetchAndRestoreJobOpts = ScanCommonOpts & {
+export type CustomLockScreenFetchAndRestoreJobOpts = ScanCommonOpts & {
   fileInput: string;
   deviceModelId: string;
 };

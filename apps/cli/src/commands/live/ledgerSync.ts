@@ -7,6 +7,22 @@ import walletsync, {
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 
+export type LedgerSyncJobOpts = Partial<{
+  push: boolean;
+  pull: boolean;
+  pubKey: string;
+  privateKey: string;
+  rootId: string;
+  walletSyncEncryptionKey: string;
+  applicationPath: string;
+  data: string;
+  version: number;
+  applicationId?: number;
+  name?: string;
+  apiBaseUrl?: string;
+  cloudSyncApiBaseUrl?: string;
+}>;
+
 export default {
   description: "Ledger Sync command",
   args: [
@@ -94,21 +110,7 @@ export default {
     name = "CLI",
     apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
     cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_STAGING"),
-  }: Partial<{
-    push: boolean;
-    pull: boolean;
-    pubKey: string;
-    privateKey: string;
-    rootId: string;
-    walletSyncEncryptionKey: string;
-    applicationPath: string;
-    data: string;
-    version: number;
-    applicationId: number;
-    name: string;
-    apiBaseUrl: string;
-    cloudSyncApiBaseUrl: string;
-  }>) => {
+  }: LedgerSyncJobOpts) => {
     if (!applicationId) return "applicationId is required";
     if (!name) return "name is required";
     if (!apiBaseUrl) return "apiBaseUrl is required";

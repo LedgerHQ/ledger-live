@@ -71,10 +71,16 @@
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@types/asciichart": "^1.5.8",
+    "@types/body-parser": "^1.19.5",
     "@types/command-line-args": "^5.2.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.18",
     "@types/lodash": "^4.14.177",
     "@types/node": "^20.8.10",
     "@types/pako": "^2.0.0",
+    "@types/qrcode-terminal": "^0.12.2",
+    "@types/ws": "^8.5.3",
     "ts-node": "^10.4.0"
   }
 }

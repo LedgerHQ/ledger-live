@@ -98,20 +98,22 @@ export async function inferTransactions(
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = getAccountBridge(mainAccount, null);
-  const specific = perFamily[mainAccount.currency.family];
+  const specific = perFamily[mainAccount.currency.family as keyof typeof perFamily];
 
   const inferAccounts: (account: Account, opts: Record<string, any>) => AccountLikeArray =
-    (specific && specific.inferAccounts) || ((account, _opts) => [account]);
+    (specific && "inferAccounts" in specific && specific.inferAccounts) ||
+    ((account, _opts) => [account]);
 
   const inferTransactions: (
     transactions: Array<{
-      account: AccountLike;
-      transaction: Transaction;
+      account: AccountLike<Account>;
+      transaction: any;
+      mainAccount: Account;
     }>,
     opts: Record<string, any>,
     { inferAmount }: any,
   ) => Transaction[] =
-    (specific && specific.inferTransactions) ||
+    (specific && "inferTransactions" in specific && specific.inferTransactions) ||
     ((inferred, _opts, _r) => inferred.map(({ transaction }) => transaction));
 
   let all: Array<{

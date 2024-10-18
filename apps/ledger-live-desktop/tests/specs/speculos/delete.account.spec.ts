@@ -2,6 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { commandCLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -23,7 +24,15 @@ for (const account of accounts) {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
-        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: account.account.currency.ticker,
+            index: account.account.index,
+            appjson: "",
+            add: true,
+          },
+        },
       ],
       speculosApp: account.account.currency.speculosApp,
     });

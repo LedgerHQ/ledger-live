@@ -3,7 +3,15 @@ import { filter, map, mergeMap, repeat } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { InstalledItem } from "@ledgerhq/live-common/apps/types";
+
+export type ManagerListAppsJobOpts = DeviceCommonOpts &
+  Partial<{
+    format: string;
+    benchmark: boolean;
+  }>;
+
 export default {
   description: "List apps that can be installed on the device",
   args: [
@@ -22,15 +30,7 @@ export default {
       typeDesc: "raw | json | default",
     },
   ],
-  job: ({
-    device,
-    format,
-    benchmark,
-  }: Partial<{
-    device: string;
-    format: string;
-    benchmark: boolean;
-  }>) => {
+  job: ({ device, format, benchmark }: ManagerListAppsJobOpts) => {
     if (benchmark) console.log("Running the whole thing 5 times to have cache and averages.");
 
     return withDevice(device || "")(t =>
@@ -49,9 +49,9 @@ export default {
             : format === "json"
               ? JSON.stringify(r)
               : r.appsListNames
-                  .map(name => {
+                  .map((name: string) => {
                     const item = r.appByName[name];
-                    const ins = r.installed.find(i => i.name === item.name);
+                    const ins = r.installed.find((i: InstalledItem) => i.name === item.name);
                     return (
                       `- ${item.name} ${item.version}` +
                       (ins ? (ins.updated ? " (installed)" : " (outdated!)") : "")
