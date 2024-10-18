@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useEffect } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
@@ -20,6 +20,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       allowsBackForwardNavigationGestures = true,
       onScroll,
+      connectDAppBrowser,
     },
     ref,
   ) => {
@@ -35,14 +36,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         onStateChange,
       );
 
-    const reloadWebView = () => {
+    const reloadWebView = useCallback(() => {
       webviewRef.current?.reload();
-    };
+    }, [webviewRef]);
 
     const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
+
+    const injectEthereumProvider = !!manifest.dapp && manifest.id !== WC_ID && connectDAppBrowser;
+
+    // useEffect(() => {
+    //   if (injectEthereumProvider) reloadWebView();
+    // }, [injectEthereumProvider, reloadWebView]);
 
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
@@ -74,7 +81,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         webviewDebuggingEnabled={__DEV__}
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
+        injectedJavaScriptBeforeContentLoaded={true ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
       />
     );

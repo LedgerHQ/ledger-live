@@ -12,6 +12,7 @@ export type WebviewProps = {
   allowsBackForwardNavigationGestures?: boolean;
   customHandlers?: WalletAPICustomHandlers;
   onScroll?: ComponentProps<typeof WebView>["onScroll"];
+  connectDAppBrowser?: boolean;
 };
 
 export type WebviewState = {

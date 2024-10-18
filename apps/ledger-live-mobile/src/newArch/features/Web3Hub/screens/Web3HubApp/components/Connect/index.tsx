@@ -8,20 +8,34 @@ import AccountInfo from "./AccountInfo";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { View } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import LedgerLogo from "~/images/logo.png";
+import { Image } from "react-native";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import ChooseAccountButton from "./ChooseAccount";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 
 type Props = {
   connect: ReturnType<typeof useConnectViewModel>;
+  manifest: LiveAppManifest;
 };
 
 export { useConnectViewModel };
 
-export default function Connect({ connect: { onConfirm } }: Props) {
+export default function Connect({ connect: { onConnect, onClose, isOpened }, manifest }: Props) {
   const accounts = useSelector(accountsSelector);
+  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
+  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+
   const { colors } = useTheme();
+  const { name, icon, dapp } = manifest;
+  const firstLetter = typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
+
+  if (!dapp) return null;
 
   return (
-    // <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
-    <QueuedDrawer isRequestingToBeOpened={true} onClose={() => 0}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened}>
       <Flex alignItems={"center"}>
         <Flex
           flexDirection="row"
@@ -31,29 +45,58 @@ export default function Connect({ connect: { onConfirm } }: Props) {
           px={3}
           py={2}
         >
-          <CurrencyIcon
-            currency={accounts[0].currency}
-            color={colors.snackBarBg}
-            size={50}
-            circle
+          <Image
+            source={LedgerLogo}
+            style={{ width: 70, height: 70, position: "relative", right: -13 }}
           />
 
           <View
             style={{
               backgroundColor: colors.card,
-              borderRadius: 50000,
+              borderRadius: 1000,
               position: "relative",
               padding: 5,
-              left: -20,
+              left: -18,
             }}
           >
-            <CurrencyIcon currency={accounts[2].currency} color={colors.white} size={50} circle />
+            {icon ? (
+              <Image
+                source={{ uri: icon }}
+                style={{
+                  width: 50,
+                  height: 50,
+                  position: "relative",
+                  borderRadius: 1000,
+                }}
+              />
+            ) : (
+              <Flex
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 1000,
+                  backgroundColor: colors.black,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  fontWeight="semiBold"
+                  variant="h2"
+                  style={{
+                    color: colors.white,
+                  }}
+                >
+                  {firstLetter}
+                </Text>
+              </Flex>
+            )}
           </View>
         </Flex>
       </Flex>
 
       <Text fontSize={25} textAlign={"center"}>
-        {"Connect to Uniswap"}
+        {`Connect to ${name}`}
       </Text>
 
       <Text variant="large" mt={2} textAlign={"center"} color="smoke">
@@ -78,12 +121,10 @@ export default function Connect({ connect: { onConfirm } }: Props) {
         <Text variant="body" lineHeight={"22px"} color="smoke">
           {"ACCOUNT"}
         </Text>
-        <Text variant="body" color="primary.c80">
-          {"Choose account"}
-        </Text>
+        <ChooseAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
       </Flex>
 
-      <AccountInfo account={accounts[2]} onPress={() => 0} py={4} px={6} borderRadius={14} />
+      <AccountInfo account={currentAccount} onPress={() => 0} py={4} px={6} borderRadius={14} />
 
       <Text mt={6} color="smoke">
         {"This website will be able to:"}
@@ -108,11 +149,11 @@ export default function Connect({ connect: { onConfirm } }: Props) {
         <Button
           type="default"
           style={{ flex: 1, borderColor: "gray", borderWidth: 1 }}
-          onPress={onConfirm}
+          onPress={onClose}
         >
           {"Close"}
         </Button>
-        <Button type="main" onPress={onConfirm} style={{ flex: 1 }}>
+        <Button type="main" onPress={onConnect} style={{ flex: 1 }}>
           {"Connect"}
         </Button>
       </Flex>
