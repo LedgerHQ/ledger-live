@@ -28,11 +28,6 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
     }
   }, [disclaimerManifest, dismissedManifests]);
 
-  useEffect(() => {
-    setWeb3HubDB(INITIAL_WEB3HUB_STATE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const onPressItem = useCallback(
     (manifest: AppManifest) => {
       if (manifest.branch === "soon") {
@@ -43,11 +38,17 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
         setDisclaimerManifest(manifest);
         setDisclaimerOpened(true);
       } else {
-        // TODO append recently used
+        setWeb3HubDB(state => {
+          const rest = state.recentlyUsed.filter(r => r.id !== manifest.id);
+          return {
+            ...state,
+            recentlyUsed: [manifest, ...rest],
+          };
+        });
         goToApp(manifest.id);
       }
     },
-    [dismissedManifests, goToApp],
+    [dismissedManifests, goToApp, setWeb3HubDB],
   );
 
   const toggleCheck = useCallback(() => {
@@ -57,15 +58,26 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
   const onConfirm = useCallback(() => {
     if (disclaimerManifest) {
       if (isChecked) {
-        setWeb3HubDB(state => ({
-          ...state,
-          dismissedManifests: {
-            ...state.dismissedManifests,
-            [disclaimerManifest.id]: !state.dismissedManifests[disclaimerManifest.id],
-          },
-        }));
+        setWeb3HubDB(state => {
+          const rest = state.recentlyUsed.filter(r => r.id !== disclaimerManifest.id);
+          return {
+            ...state,
+            recentlyUsed: [disclaimerManifest, ...rest],
+            dismissedManifests: {
+              ...state.dismissedManifests,
+              [disclaimerManifest.id]: !state.dismissedManifests[disclaimerManifest.id],
+            },
+          };
+        });
+      } else {
+        setWeb3HubDB(state => {
+          const rest = state.recentlyUsed.filter(r => r.id !== disclaimerManifest.id);
+          return {
+            ...state,
+            recentlyUsed: [disclaimerManifest, ...rest],
+          };
+        });
       }
-
       goToApp(disclaimerManifest.id);
     }
   }, [disclaimerManifest, goToApp, isChecked, setWeb3HubDB]);
