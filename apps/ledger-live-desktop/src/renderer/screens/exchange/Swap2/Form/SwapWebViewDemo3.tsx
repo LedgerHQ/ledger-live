@@ -29,8 +29,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { captureException } from "~/sentry/renderer";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-
-import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
@@ -99,8 +97,6 @@ function simplifyFromPath(path: string): string {
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
-
-let lastGasOptions: GasOptions;
 
 const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const {
@@ -181,7 +177,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
-          gasOptions: lastGasOptions,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -189,17 +184,17 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
-          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
-          finalTx = preparedTransaction;
-          lastGasOptions = preparedTransaction.gasOptions;
+          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
+          finalTx = newTransaction;
           return newTransaction;
         };
 
         if (!params.openDrawer) {
           // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
+          const config = ["evm", "bitcoin"].includes(transaction.family)
+            ? { hasDrawer: true, ...customFeeConfig }
+            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
