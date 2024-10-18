@@ -135,12 +135,6 @@ jobs:
         with:
           name: "ios-test-artifacts"
           path: apps/ledger-live-mobile/artifacts
-      - name: Get summary
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
-        with:
-          allure-results-path: apps/ledger-live-mobile/artifacts/
-          platform: IOS
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
@@ -157,6 +151,12 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
+      - name: Get summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
+        with:
+          allure-results-path: ios-test-artifacts
+          platform: IOS
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -280,12 +280,6 @@ jobs:
         with:
           name: "android-test-artifacts"
           path: apps/ledger-live-mobile/artifacts/
-      - name: Get summary
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
-        with:
-          allure-results-path: apps/ledger-live-mobile/artifacts/
-          platform: ANDROID
 
   allure-report-android:
     name: "Allure Reports Export on Server"
@@ -303,6 +297,12 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
+      - name: Get summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
+        with:
+          allure-results-path: android-test-artifacts
+          platform: ANDROID
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -363,7 +363,7 @@ jobs:
 
   report-on-slack:
     runs-on: ubuntu-latest
-    needs: [detox-tests-android, detox-tests-ios]
+    needs: [allure-report-android, allure-report-ios]
     if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     steps:
       - name: format message
