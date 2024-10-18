@@ -32,6 +32,7 @@ const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   } = await getAccountDetails(address, accountId);
 
   const accountRegistrationStatus = await getAccountRegistrationStatus(address);
+  console.log("Nico", accountRegistrationStatus);
 
   const pendingWithdrawals = accountRegistrationStatus ? await getPendingWithdrawals(address) : [];
 
