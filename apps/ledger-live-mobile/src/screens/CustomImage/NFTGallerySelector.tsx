@@ -15,6 +15,7 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getEnv } from "@ledgerhq/live-env";
 
 const NB_COLUMNS = 2;
 
@@ -27,6 +28,8 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device, deviceModelId } = params;
+
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
   const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
@@ -48,7 +51,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
-    chains: ["ethereum", "polygon"],
+    chains: SUPPORTED_NFT_CURRENCIES,
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
