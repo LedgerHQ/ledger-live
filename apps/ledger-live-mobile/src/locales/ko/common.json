@@ -2335,7 +2335,8 @@
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
-      "stake" : "스테이킹"
+      "stake" : "스테이킹",
+      "yield" : "이자"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2551,8 @@
         "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
         "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
         "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
-        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
+        "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2593,7 @@
     "buy" : "구매",
     "walletconnect" : "WalletConnect",
     "stake" : "스테이킹",
+    "yield" : "이자",
     "sell" : "판매",
     "swap" : "스왑",
     "manage" : "관리",
@@ -3132,6 +3135,13 @@
       "shareAddress" : "주소 공유",
       "addressCopied" : "클립보드에 주소 복사됨",
       "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+      "memoTag" : {
+        "link" : "태그/메모가 필요하세요?",
+        "title" : "태그/메모가 필요하세요?",
+        "description" : "거래소에서 이 자산을 수령하려면 태그/메모가 필요할 수 있습니다. 1234와 같은 숫자 조합을 사용할 수 있습니다.",
+        "cta" : "이해합니다",
+        "learnMore" : "태그에 대해 더 알아보기"
+      },
       "selectCrypto" : {
         "title" : "수령하려는 암호화폐 선택"
       },
@@ -4509,7 +4519,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4528,8 +4538,12 @@
     "installingLanguage" : "언어 설치 중",
     "languages" : {
       "english" : "영어",
-      "french" : "프랑스어",
-      "spanish" : "스페인어"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5418,9 @@
     "AccountHeader" : {
       "title" : "계정을 위임하여 보상을 받을 수 있습니다.",
       "btn" : "보상 받기"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ 커스텀 검증인 추가"
     }
   },
   "tron" : {
@@ -6615,11 +6632,11 @@
     "title" : "장치 연결"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
-      "close" : "종료",
+      "close" : "닫기",
       "providers" : {
         "kiln_pooling" : {
           "title" : "Kiln 스테이킹 풀",
@@ -6648,6 +6665,72 @@
           "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하고 간단히 보상을 받으세요.",
           "supportLink" : "Kiln 자세히 알아보기"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "스테이킹 업체 선정",
+      "category" : {
+        "all" : {
+          "name" : "전체",
+          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+        },
+        "liquid" : {
+          "name" : "리퀴드(Liquid)",
+          "description" : "ETH를 스테이킹하고 리퀴드 토큰으로 보상을 받을 수 있으며, 여전히 자산 거래 및 디파이 활동 역시 참여 가능합니다."
+        },
+        "protocol" : {
+          "name" : "프로토콜(Protocol)",
+          "description" : "32 ETH 배치를 스테이킹하고 ETH로 전체 노드 보상을 받을 수 있습니다."
+        },
+        "pooling" : {
+          "name" : "풀링(Pooling)",
+          "description" : "풀에 참여하여 원하는 금액의 ETH를 스테이킹해 보상을 받을 수 있습니다."
+        },
+        "restaking" : {
+          "name" : "리스테이킹(Restaking)",
+          "description" : "리퀴드 토큰을 리스테이킹해 추가 보상을 받을 수 있습니다."
+        }
+      },
+      "howItWorks" : "ETH 스테이킹의 원리",
+      "lst" : "리퀴드 토큰 필요",
+      "noMinimum" : "최소 한도 없음",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 리퀴드 스테이킹"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs"
+        }
+      },
+      "readAbout" : "꼭 알아야 할 전략",
+      "requiredMinimum" : "{{min}} ETH 필요",
+      "rewardsStrategy" : {
+        "auto-compounded" : "자동 복리 보상",
+        "basic" : "보상",
+        "daily" : "일일 보상",
+        "eigenlayer_points" : "Eigenlayer 포인트",
+        "validator" : "검증인 보상"
       }
     },
     "noFundsModal" : {
@@ -6884,7 +6967,8 @@
           "title" : "유효하지 않은 QR 코드",
           "desc" : "Ledger Live 앱을 동기화하려면 Ledger Live에 표시된 QR 코드만 스캔합니다.",
           "info" : "QR 코드의 경우 \"설정\"을 열고 \"일반\"을 선택한 다음 \"Ledger 동기화\", \"동기화 켜기\" 및 \"QR 표시\"를 선택합니다.",
-          "cta" : "이해합니다"
+          "cta" : "이해합니다",
+          "tryAgain" : "다시 시도하세요"
         },
         "scannedOldQrCode" : {
           "title" : "Ledger Live 업데이트 필요",
