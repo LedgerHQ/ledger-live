@@ -175,7 +175,7 @@
     "prettier": "^3.3.3",
     "rimraf": "^4.4.1",
     "turbo": "2.1.2",
-    "typescript": "^5.6.3",
+    "typescript": "5.4.3",
     "unimported": "1.30.0",
     "zx": "^7.2.3"
   },
