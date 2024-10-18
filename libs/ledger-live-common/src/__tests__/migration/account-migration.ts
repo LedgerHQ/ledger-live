@@ -212,7 +212,7 @@ const testSyncAccount = async (account: Account) => {
 
 (async () => {
   // list of accounts from input file
-  const inputAccounts: AccountRaw[] = [];
+  let inputAccounts: AccountRaw[] = [];
 
   if (inputFile) {
     if (!existsSync(inputFile)) {
@@ -222,7 +222,7 @@ const testSyncAccount = async (account: Account) => {
       );
     } else {
       // if there's a input file we parse it
-      inputAccounts.push(JSON.parse(readFileSync(inputFile, "utf8")));
+      inputAccounts = JSON.parse(readFileSync(inputFile, "utf8"));
     }
   }
 
