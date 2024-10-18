@@ -417,7 +417,7 @@ importers:
         version: 8.2.0
       electron-updater:
         specifier: ^6.1.7
-        version: 6.1.8
+        version: 6.3.0
       firebase:
         specifier: ^9.6.6
         version: 9.23.0
@@ -13879,7 +13879,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -16205,7 +16205,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -17061,12 +17061,12 @@ packages:
     resolution: {integrity: sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==}
     engines: {node: '>=6.14.2'}
 
-  builder-util-runtime@9.2.3:
-    resolution: {integrity: sha512-FGhkqXdFFZ5dNC4C+yuQB9ak311rpGAw+/ASz8ZdxwODCv1GGMWgLDeofRkdi0F3VCHQEWy/aXcJQozx2nOPiw==}
-    engines: {node: '>=12.0.0'}
-
   builder-util-runtime@9.2.4:
     resolution: {integrity: sha512-upp+biKpN/XZMLim7aguUyW8s0FUpDvOtK6sbanMFDAMBzpHDqdhgVYm6zc9HJ6nWo7u2Lxk60i2M6Jd3aiNrA==}
+    engines: {node: '>=12.0.0'}
+
+  builder-util-runtime@9.2.5:
+    resolution: {integrity: sha512-HjIDfhvqx/8B3TDN4GbABQcgpewTU4LMRTQPkVpKYV3lsuxEJoIfvg09GyWTNmfVNSUAYf+fbTN//JX4TH20pg==}
     engines: {node: '>=12.0.0'}
 
   builder-util@24.13.1:
@@ -18538,6 +18538,15 @@ packages:
       supports-color:
         optional: true
 
+  debug@4.3.7:
+    resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
     engines: {node: '>=0.10.0'}
@@ -19042,8 +19051,8 @@ packages:
   electron-to-chromium@1.4.721:
     resolution: {integrity: sha512-k1x2r6foI8iJOp+1qTxbbrrWMsOiHkzGBYwYigaq+apO1FSqtn44KTo3Sy69qt7CRr7149zTcsDvH7MUKsOuIQ==}
 
-  electron-updater@6.1.8:
-    resolution: {integrity: sha512-hhOTfaFAd6wRHAfUaBhnAOYc+ymSGCWJLtFkw4xJqOvtpHmIdNHnXDV9m1MHC+A6q08Abx4Ykgyz/R5DGKNAMQ==}
+  electron-updater@6.3.0:
+    resolution: {integrity: sha512-3Xlezhk+dKaSQrOnkQNqCGiuGSSUPO9BV9TQZ4Iig6AyTJ4FzJONE5gFFc382sY53Sh9dwJfzKsA3DxRHt2btw==}
 
   electron@32.0.2:
     resolution: {integrity: sha512-nmZblq8wW3HZ17MAyaUuiMI9Mb0Cgc7UR3To85h/rVopbfyF5s34NxtK4gvyRfYPxpDGP4k+HoQIPniPPrdE3w==}
@@ -19412,7 +19421,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -19511,6 +19520,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   esniff@2.0.1:
@@ -20170,6 +20180,7 @@ packages:
 
   expo-random@12.3.0:
     resolution: {integrity: sha512-q+AsTfGNT+Q+fb2sRrYtRkI3g5tV4H0kuYXM186aueILGO/vLn/YYFa7xFZj1IZ8LJZg2h96JDPDpsqHfRG2mQ==}
+    deprecated: This package is now deprecated in favor of expo-crypto, which provides the same functionality. To migrate, replace all imports from expo-random with imports from expo-crypto.
     peerDependencies:
       expo: '*'
       expo-constants: '*'
@@ -20191,8 +20202,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.10
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -20207,8 +20218,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.74.5
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -26310,7 +26321,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -26337,8 +26348,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 16.9.0
+      react-native: 0.61.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -26348,8 +26359,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -27414,6 +27425,9 @@ packages:
 
   sax@1.2.4:
     resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
+
+  sax@1.4.1:
+    resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
 
   saxes@5.0.1:
     resolution: {integrity: sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==}
@@ -31902,7 +31916,7 @@ snapshots:
       '@babel/core': 7.24.3
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-plugin-utils': 7.24.0
-      debug: 4.3.4
+      debug: 4.3.7
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -34801,7 +34815,7 @@ snapshots:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.5.4
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.4.23
@@ -34836,12 +34850,12 @@ snapshots:
       '@expo/sdk-runtime-versions': 1.0.0
       '@react-native/normalize-color': 2.1.0
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.3.7
       find-up: 5.0.0
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.5.3
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.6.0
@@ -34862,7 +34876,7 @@ snapshots:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.5.4
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -34882,7 +34896,7 @@ snapshots:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.5.4
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -34897,7 +34911,7 @@ snapshots:
       '@expo/plist': 0.1.0
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.3.7
       find-up: 5.0.0
       getenv: 1.0.0
       glob: 7.1.6
@@ -37306,11 +37320,11 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.5.4
+      semver: 7.6.3
 
   '@npmcli/fs@3.1.1':
     dependencies:
-      semver: 7.6.3
+      semver: 7.5.4
 
   '@npmcli/move-file@1.1.2':
     dependencies:
@@ -37634,7 +37648,7 @@ snapshots:
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.52.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.25.1
-      semver: 7.6.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
 
@@ -37728,7 +37742,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.4.2
       require-in-the-middle: 7.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -37741,7 +37755,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.10.0
       require-in-the-middle: 7.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -38797,7 +38811,7 @@ snapshots:
       hermes-profile-transformer: 0.0.6
       node-stream-zip: 1.15.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.5.4
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
       yaml: 2.4.1
@@ -38819,7 +38833,7 @@ snapshots:
       hermes-profile-transformer: 0.0.6
       node-stream-zip: 1.15.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.5.4
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
       yaml: 2.4.1
@@ -38964,7 +38978,7 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.5.4
       shell-quote: 1.8.1
       sudo-prompt: 9.2.1
     transitivePeerDependencies:
@@ -38980,7 +38994,7 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.5.4
       shell-quote: 1.8.1
       sudo-prompt: 9.2.1
     transitivePeerDependencies:
@@ -39051,7 +39065,7 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.6.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -39076,7 +39090,7 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.6.3
+      semver: 7.5.4
     optionalDependencies:
       metro-resolver: 0.80.12
     transitivePeerDependencies:
@@ -43034,7 +43048,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -43048,7 +43062,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.80.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -44774,7 +44788,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.3.7
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -44878,7 +44892,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.3.7
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -45251,7 +45265,7 @@ snapshots:
       open: 8.4.2
       ora: 5.4.1
       read-pkg: 5.2.0
-      semver: 7.6.3
+      semver: 7.5.4
       strip-ansi: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -47132,17 +47146,17 @@ snapshots:
     dependencies:
       node-gyp-build: 4.8.0
 
-  builder-util-runtime@9.2.3:
+  builder-util-runtime@9.2.4:
     dependencies:
       debug: 4.3.4
       sax: 1.2.4
     transitivePeerDependencies:
       - supports-color
 
-  builder-util-runtime@9.2.4:
+  builder-util-runtime@9.2.5:
     dependencies:
       debug: 4.3.4
-      sax: 1.2.4
+      sax: 1.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -47885,7 +47899,7 @@ snapshots:
       json-schema-typed: 7.0.3
       onetime: 5.1.2
       pkg-up: 3.1.0
-      semver: 7.6.3
+      semver: 7.5.4
 
   conf@12.0.0:
     dependencies:
@@ -47896,7 +47910,7 @@ snapshots:
       dot-prop: 8.0.2
       env-paths: 3.0.0
       json-schema-typed: 8.0.1
-      semver: 7.6.3
+      semver: 7.5.4
       uint8array-extras: 0.3.0
 
   config-file-ts@0.2.6:
@@ -48861,6 +48875,10 @@ snapshots:
     optionalDependencies:
       supports-color: 5.5.0
 
+  debug@4.3.7:
+    dependencies:
+      ms: 2.1.3
+
   decamelize-keys@1.1.1:
     dependencies:
       decamelize: 1.2.0
@@ -49066,7 +49084,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -49491,9 +49509,9 @@ snapshots:
 
   electron-to-chromium@1.4.721: {}
 
-  electron-updater@6.1.8:
+  electron-updater@6.3.0:
     dependencies:
-      builder-util-runtime: 9.2.3
+      builder-util-runtime: 9.2.5
       fs-extra: 10.1.0
       js-yaml: 4.1.0
       lazy-val: 1.0.5
@@ -49792,7 +49810,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -51539,7 +51557,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.6.3
+      semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.1.3
       webpack: 5.94.0
@@ -51560,7 +51578,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.6.3
+      semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.4.3
       webpack: 5.94.0
@@ -51943,7 +51961,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.6.3
+      semver: 7.5.4
       serialize-error: 7.0.1
     optional: true
 
@@ -52570,7 +52588,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -52632,7 +52650,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -53280,7 +53298,7 @@ snapshots:
       '@babel/parser': 7.24.1
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.6.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
 
@@ -54909,7 +54927,7 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.6.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -55776,7 +55794,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -55784,7 +55802,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -55804,7 +55822,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.3.4
+      debug: 4.3.7
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -56450,7 +56468,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.5.4
 
   make-error@1.3.6: {}
 
@@ -57659,7 +57677,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.3.7
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -58280,7 +58298,7 @@ snapshots:
 
   node-abi@3.56.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.5.4
 
   node-abort-controller@3.1.1: {}
 
@@ -60180,7 +60198,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.3.4
+      debug: 4.3.7
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -62081,6 +62099,8 @@ snapshots:
       webpack: 5.94.0
 
   sax@1.2.4: {}
+
+  sax@1.4.1: {}
 
   saxes@5.0.1:
     dependencies:
@@ -64232,7 +64252,7 @@ snapshots:
       chalk: 4.1.2
       enhanced-resolve: 5.16.0
       micromatch: 4.0.7
-      semver: 7.6.3
+      semver: 7.5.4
       source-map: 0.7.4
       typescript: 5.1.3
       webpack: 5.94.0
@@ -66717,17 +66737,17 @@ snapshots:
 
   xml2js@0.4.23:
     dependencies:
-      sax: 1.2.4
+      sax: 1.4.1
       xmlbuilder: 11.0.1
 
   xml2js@0.5.0:
     dependencies:
-      sax: 1.2.4
+      sax: 1.4.1
       xmlbuilder: 11.0.1
 
   xml2js@0.6.0:
     dependencies:
-      sax: 1.2.4
+      sax: 1.4.1
       xmlbuilder: 11.0.1
 
   xmlbuilder@11.0.1: {}
