@@ -49,6 +49,7 @@ function AccountsList({
   supportLink,
   ToggleAllComponent,
 }: AccountListProps) {
+  console.log("hello");
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(!!collapsible);
   const toggleCollapse = () => {
