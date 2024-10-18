@@ -101,10 +101,23 @@ const SwapCompleted = ({
           <IconClock size={16} />
         </WrapperClock>
       </IconWrapper>
-      <Text mt={4} color="palette.text.shade100" ff="Inter|SemiBold" fontSize={5}>
+      <Text
+        mt={4}
+        color="palette.text.shade100"
+        data-testid={"swap-completed-message"}
+        ff="Inter|SemiBold"
+        fontSize={5}
+      >
         <Trans i18nKey={`swap2.exchangeDrawer.completed.title`} />
       </Text>
-      <Text mt={13} textAlign="center" color="palette.text.shade50" ff="Inter|Regular" fontSize={4}>
+      <Text
+        mt={13}
+        textAlign="center"
+        color="palette.text.shade50"
+        data-testid={"swap-completed-description"}
+        ff="Inter|Regular"
+        fontSize={4}
+      >
         <Trans
           i18nKey={`swap2.exchangeDrawer.completed.description`}
           values={{
