@@ -46,7 +46,7 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
 
           o.next({ type: "device-signature-requested" });
           console.info("niconico sign", rlpEncodedTransaction);
-          // celo.signTransaction already does the eip155 v chain stuff 
+          // celo.signTransaction already does the eip155 v chain stuff
           // TODO should we be using clearSignTransaction like evm fam does?
           const response = await celo.signTransaction(
             account.freshAddressPath,
@@ -76,6 +76,9 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           const operation = buildOptimisticOperation(
             account,
             transaction,
+            // TODO: display issue
+            // transaction.fees = gas * gasPrice for legacy
+            //                    gas * maxFeePerGas for modern
             transaction.fees ?? new BigNumber(0),
           );
           console.info("niconico sign op", operation);
@@ -112,7 +115,7 @@ const parseSigningResponse = (
     r: string;
   },
   chainId: number,
-  isModern: boolean
+  isModern: boolean,
 ): {
   s: Buffer;
   v: number;
@@ -123,6 +126,8 @@ const parseSigningResponse = (
   let eip155V = chainId * 2 + 35;
 
   if (isModern) {
+    // eip1559 and other enveloppes txs dont need to modify V
+    // just use what the ledger device returns
     eip155V = sigV;
   } else if (sigV !== eip155V && (sigV & eip155V) !== sigV) {
     eip155V += 1;
