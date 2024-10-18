@@ -16,6 +16,8 @@ export const SolanaTokenAccounNotInitialized = createCustomErrorClass(
   "SolanaTokenAccounNotInitialized",
 );
 
+export const SolanaTokenAccountFrozen = createCustomErrorClass("SolanaTokenAccountFrozen");
+
 export const SolanaAddressOffEd25519 = createCustomErrorClass("SolanaAddressOfEd25519");
 
 export const SolanaTokenRecipientIsSenderATA = createCustomErrorClass(
