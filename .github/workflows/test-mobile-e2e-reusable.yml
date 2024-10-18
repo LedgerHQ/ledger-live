@@ -137,7 +137,7 @@ jobs:
           path: apps/ledger-live-mobile/artifacts
       - name: Get summary
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
         with:
           allure-results-path: apps/ledger-live-mobile/artifacts/
           platform: IOS
@@ -151,7 +151,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_283_detox_improve_slack_notif
         with:
           platform: ios
           login: ${{ vars.ALLURE_USERNAME }}
@@ -282,7 +282,7 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/
       - name: Get summary
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
         with:
           allure-results-path: apps/ledger-live-mobile/artifacts/
           platform: ANDROID
@@ -297,7 +297,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_283_detox_improve_slack_notif
         with:
           platform: android
           login: ${{ vars.ALLURE_USERNAME }}
