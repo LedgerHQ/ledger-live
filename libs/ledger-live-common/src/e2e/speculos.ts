@@ -376,6 +376,8 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
       action: "press-and-release",
     });
     attempts++;
+
+    await waitForTimeOut(200);
   }
 
   if (attempts === maxAttempts) {
