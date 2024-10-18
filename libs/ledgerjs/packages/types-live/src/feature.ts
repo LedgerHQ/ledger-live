@@ -105,6 +105,8 @@ export type CurrencyFeatures = {
   currencyCoreum: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
+  currencyPulseChain: DefaultFeature;
+  currencyPulseChainTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
   currencyBaseSepolia: DefaultFeature;
   currencyKlaytn: DefaultFeature;

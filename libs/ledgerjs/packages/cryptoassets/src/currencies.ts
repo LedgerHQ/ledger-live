@@ -3967,6 +3967,89 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  pulsechain: {
+    type: "CryptoCurrency",
+    id: "pulsechain",
+    coinType: CoinType.ETH,
+    name: "PulseChain",
+    managerAppName: "Ethereum",
+    ticker: "PLS",
+    scheme: "pulsechain",
+    color: "#a928ff",
+    family: "evm",
+    blockAvgTime: 10,
+    ethereumLikeInfo: {
+      chainId: 369,
+    },
+    units: [
+      {
+        name: "Pulse",
+        code: "PLS",
+        magnitude: 18,
+      },
+      {
+        name: "beat",
+        code: "beat",
+        magnitude: 9,
+      },
+      {
+        name: "impulse",
+        code: "impulse",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://scan.pulsechain.com/tx/$hash",
+        address: "https://scan.pulsechain.com/address/$address",
+        token: "https://scan.pulsechain.com/token/$contractAddress",
+      },
+    ],
+    keywords: ["pulse", "pls", "pulsechain", "pulse chain"],
+    explorerId: "pls",
+  },
+  pulsechain_testnet: {
+    type: "CryptoCurrency",
+    id: "pulsechain_testnet",
+    coinType: CoinType.ETH,
+    name: "PulseChain Testnet",
+    managerAppName: "Ethereum",
+    ticker: "tPLS",
+    scheme: "pulsechain_testnet",
+    color: "#2894ff",
+    family: "evm",
+    blockAvgTime: 10,
+    isTestnetFor: "pulsechain",
+    ethereumLikeInfo: {
+      chainId: 943,
+    },
+    units: [
+      {
+        name: "Test Pulse",
+        code: "tPLS",
+        magnitude: 18,
+      },
+      {
+        name: "beat",
+        code: "beat",
+        magnitude: 9,
+      },
+      {
+        name: "impulse",
+        code: "impulse",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://scan.v4.testnet.pulsechain.com/#/tx/$hash",
+        address: "https://scan.v4.testnet.pulsechain.com/#/address/$address",
+        token: "https://scan.v4.testnet.pulsechain.com/#/token/$contractAddress",
+      },
+    ],
+    keywords: ["pulse", "pls", "pulsechain", "pulse chain", "tpls", "test pulse"],
+    explorerId: "pls",
+  },
   base: {
     type: "CryptoCurrency",
     id: "base",

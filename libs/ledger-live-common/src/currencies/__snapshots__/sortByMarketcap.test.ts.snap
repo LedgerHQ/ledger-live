@@ -1621,6 +1621,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "boba",
   "moonriver",
   "polygon_zk_evm",
+  "pulsechain",
   "base",
   "neon_evm",
   "lukso",
