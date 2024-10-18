@@ -148,7 +148,7 @@ jobs:
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/download-artifact@v4
         with:
