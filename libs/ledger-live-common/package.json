@@ -224,7 +224,7 @@
     "invariant": "^2.2.2",
     "iso-filecoin": "^4.1.0",
     "isomorphic-ws": "^4.0.1",
-    "jotai": "^2.7.0",
+    "jotai": "^2.10.1",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "^4.17.21",
     "minimatch": "^5.1.0",

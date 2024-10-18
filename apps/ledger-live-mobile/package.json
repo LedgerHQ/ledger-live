@@ -154,6 +154,7 @@
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.6.1",
     "invariant": "2.2.4",
+    "jotai": "^2.10.1",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "4.17.21",
     "lottie-react-native": "^6.7.0",
