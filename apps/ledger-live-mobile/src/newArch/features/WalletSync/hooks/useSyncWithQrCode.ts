@@ -76,8 +76,10 @@ export const useSyncWithQrCode = () => {
       } catch (e) {
         if (e instanceof ScannedOldImportQrCode) {
           setCurrentStep(Steps.ScannedOldImportQrCode);
+          return;
         } else if (e instanceof ScannedInvalidQrCode) {
           setCurrentStep(Steps.ScannedInvalidQrCode);
+          return;
         } else if (e instanceof InvalidDigitsError) {
           setCurrentStep(Steps.SyncError);
           return;
