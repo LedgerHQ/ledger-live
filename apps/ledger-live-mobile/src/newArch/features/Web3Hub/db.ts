@@ -1,36 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAtom } from "jotai";
-import { createJSONStorage } from "jotai/utils";
-import { useCallback, useMemo } from "react";
 import { Web3HubDB } from "LLM/features/Web3Hub/types";
-import { atomWithStorage } from "jotai/utils";
-import { INITIAL_WEB3HUB_STATE, WEB3HUB_STORE_KEY } from "./constants";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import { DISSMISSED_MANIFETS_KEY, RECENTLY_USED_KEY } from "./constants";
 
-export const storage = createJSONStorage<Web3HubDB>(() => AsyncStorage);
+const emptyRecentlyUsed: Web3HubDB["recentlyUsed"] = [];
+export const recentlyUseAtom = storedAtom(RECENTLY_USED_KEY, emptyRecentlyUsed);
 
-export const web3hubAtom = atomWithStorage<Web3HubDB>(
-  WEB3HUB_STORE_KEY,
-  INITIAL_WEB3HUB_STATE,
-  storage,
-);
+const emptyDismissedManifests: Web3HubDB["dismissedManifests"] = {};
+export const dismissedManifestsAtom = storedAtom(DISSMISSED_MANIFETS_KEY, emptyDismissedManifests);
 
-type NewState = Web3HubDB | ((s: Web3HubDB) => Web3HubDB);
-
-export function useWeb3HubDB<Selected>(
-  selector: (state: Web3HubDB) => Selected,
-): [Selected, (v: NewState) => void] {
-  const [state, setState] = useAtom(web3hubAtom);
-
-  const setter = useCallback(
-    (newState: NewState) => {
-      const val = typeof newState === "function" ? newState(state) : newState;
-
-      setState(val);
-    },
-    // eslint-disable-next-line
-    [state],
-  );
-
-  const result = useMemo(() => selector(state), [state, selector]);
-  return [result, setter];
+export function storedAtom<T = unknown>(key: string, defaultValue: T) {
+  const storage = createJSONStorage<T>(() => AsyncStorage);
+  return atomWithStorage<T>(key, defaultValue, storage);
 }

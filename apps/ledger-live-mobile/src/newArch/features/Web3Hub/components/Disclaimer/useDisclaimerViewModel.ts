@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { Web3HubDB } from "LLM/features/Web3Hub/types";
-import { useWeb3HubDB } from "LLM/features/Web3Hub/db";
-
-const dismissedManifestsSelector = (state: Web3HubDB) => state.dismissedManifests;
+import { dismissedManifestsAtom } from "LLM/features/Web3Hub/db";
+import { useAtom } from "jotai";
 
 export function useDismissedManifests() {
-  return useWeb3HubDB<Web3HubDB["dismissedManifests"]>(dismissedManifestsSelector);
+  return useAtom(dismissedManifestsAtom);
 }
 
 export default function useDisclaimerViewModel(goToApp: (manifestId: string) => void) {
   const [isChecked, setIsChecked] = useState(false);
   const [disclaimerOpened, setDisclaimerOpened] = useState(false);
   const [disclaimerManifest, setDisclaimerManifest] = useState<AppManifest>();
-  const [dismissedManifests, setWeb3HubDB] = useDismissedManifests();
+  const [dismissedManifests, setDismissedManifests] = useDismissedManifests();
 
   useEffect(() => {
     if (disclaimerManifest && !!dismissedManifests[disclaimerManifest.id]) {
@@ -47,18 +45,18 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
   const onConfirm = useCallback(() => {
     if (disclaimerManifest) {
       if (isChecked) {
-        setWeb3HubDB(state => ({
-          ...state,
-          dismissedManifests: {
-            ...state.dismissedManifests,
-            [disclaimerManifest.id]: !state.dismissedManifests[disclaimerManifest.id],
-          },
-        }));
+        setDismissedManifests(async state => {
+          const s = await state;
+          return {
+            ...s,
+            [disclaimerManifest.id]: !s[disclaimerManifest.id],
+          };
+        });
       }
 
       goToApp(disclaimerManifest.id);
     }
-  }, [disclaimerManifest, goToApp, isChecked, setWeb3HubDB]);
+  }, [disclaimerManifest, goToApp, isChecked, setDismissedManifests]);
 
   const onClose = useCallback(() => {
     setDisclaimerOpened(false);
