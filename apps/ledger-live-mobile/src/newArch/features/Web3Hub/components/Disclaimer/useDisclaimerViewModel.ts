@@ -3,15 +3,11 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { dismissedManifestsAtom } from "LLM/features/Web3Hub/db";
 import { useAtom } from "jotai";
 
-export function useDismissedManifests() {
-  return useAtom(dismissedManifestsAtom);
-}
-
 export default function useDisclaimerViewModel(goToApp: (manifestId: string) => void) {
   const [isChecked, setIsChecked] = useState(false);
   const [disclaimerOpened, setDisclaimerOpened] = useState(false);
   const [disclaimerManifest, setDisclaimerManifest] = useState<AppManifest>();
-  const [dismissedManifests, setDismissedManifests] = useDismissedManifests();
+  const [dismissedManifests, setDismissedManifests] = useAtom(dismissedManifestsAtom);
 
   useEffect(() => {
     if (disclaimerManifest && !!dismissedManifests[disclaimerManifest.id]) {
