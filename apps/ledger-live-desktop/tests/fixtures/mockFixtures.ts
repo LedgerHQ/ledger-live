@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test";
 import { test as base } from "./common";
 import { getStatusMock } from "tests/specs/services/services-api-mocks/getStatus.mock";
+import { getBitcoinToEthereumRatesMock } from "tests/specs/services/services-api-mocks/getRates.mock";
 
 type TestFixtures = {
   mockProviderSvgs: Page;
@@ -8,6 +9,9 @@ type TestFixtures = {
   mockSwapCancelledEndpoint: Page;
   mockSwapAcceptedEndpoint: Page;
   mockSwapStatusEndpoint: Page;
+  mockBitcoinToEthereumRates: Page;
+  mockSwapDogecoinToEthereumRates: Page;
+  mockProvidersCDNData: Page;
 };
 
 export const test = base.extend<TestFixtures>({
@@ -61,6 +65,43 @@ export const test = base.extend<TestFixtures>({
       console.log("Mocking swap status HTTP response");
       const mockStatusResponse = getStatusMock();
       await route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
+    });
+    await use(page);
+  },
+
+  mockBitcoinToEthereumRates: async ({ page }, use) => {
+    await page.route("https://swap.ledger.com/v5/rate**", async route => {
+      const mockRatesResponse = getBitcoinToEthereumRatesMock();
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    });
+    await use(page);
+  },
+
+  mockSwapDogecoinToEthereumRates: async ({ page }, use) => {
+    await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
+      await route.fulfill({
+        headers: { teststatus: "mocked" },
+        body: JSON.stringify({
+          currencyGroups: [
+            {
+              network: "dogecoin",
+              supportedCurrencies: ["dogecoin"],
+            },
+            {
+              network: "ethereum",
+              supportedCurrencies: ["ethereum", "ethereum/erc20/usd_tether__erc20_"],
+            },
+          ],
+        }),
+      });
+    });
+    await use(page);
+  },
+
+  mockProvidersCDNData: async ({ page }, use) => {
+    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
+      const mockProvidersResponse = getProvidersCDNDataMock();
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
     });
     await use(page);
   },
