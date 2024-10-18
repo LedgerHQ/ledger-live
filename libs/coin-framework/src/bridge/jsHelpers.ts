@@ -517,6 +517,7 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
+    // NOTE: might pass params here
   }: {
     injectGetAddressParams?: (account: A) => any;
   } = {},
@@ -545,8 +546,21 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
       getAddressFn(deviceId, arg).then(r => {
         const accountAddress = account.freshAddress;
 
-        if (verify && r.address !== accountAddress) {
-          throw new WrongDeviceForAccount();
+        if (verify) {
+          // NOTE: could pass a param to make different checks for different currencies
+          if (account.currency.id === "hedera") {
+            // this is due to libs/coin-modules/coin-hedera/src/hw-getAddress.ts
+            // r.address is actually the public key, to check if we're on another device
+            // we resort to this check instead
+            // we rely on seedIdentifier being the public key for Hedera accounts
+            // TODO: document where the seedIdentifier for hedera is set
+            // looks like it's set to the publickey in makeScanAccount here: libs/coin-framework/src/bridge/jsHelpers.ts
+            if (r.publicKey !== account.seedIdentifier) {
+              throw new WrongDeviceForAccount();
+            }
+          } else if (r.address !== accountAddress) {
+            throw new WrongDeviceForAccount();
+          }
         }
 
         return r;
