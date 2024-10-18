@@ -86,4 +86,10 @@ export class Currency {
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON);
   static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR);
   static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS);
+  static readonly MULTIVERS_X = new Currency(
+    "Multiverse X",
+    "X",
+    "multiverse_x",
+    AppInfos.MULTIVERSE_X,
+  );
 }
