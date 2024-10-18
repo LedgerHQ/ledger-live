@@ -6973,7 +6973,8 @@
           "title": "Invalid QR Code",
           "desc": "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
           "info": "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
-          "cta": "I understand"
+          "cta": "I understand",
+          "tryAgain": "Try again"
         },
         "scannedOldQrCode": {
           "title": "Ledger Live update required",
