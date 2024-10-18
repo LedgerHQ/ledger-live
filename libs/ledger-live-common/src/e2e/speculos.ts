@@ -393,13 +393,8 @@ export function verifyAddress(address: string, text: string[]): boolean {
 }
 
 export function verifyAmount(amount: string, text: string[]): boolean {
-  const amountDevice = text[1];
+  const amountDevice = amount.length > 17 ? text[3] : text[1];
   return amountDevice.includes(amount);
-}
-
-export function verifyProvider(provider: string, text: string[]): boolean {
-  const providerDevice = text.join("");
-  return providerDevice.includes(provider);
 }
 
 export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {
@@ -413,6 +408,11 @@ export function verifySwapFeesAmount(currency: string, amount: string, text: str
       break;
   }
   return amountDevice.includes(amount);
+}
+
+export function verifyProvider(provider: string, text: string[]): boolean {
+  const providerDevice = text.join("");
+  return providerDevice.includes(provider);
 }
 
 export async function takeScreenshot() {
