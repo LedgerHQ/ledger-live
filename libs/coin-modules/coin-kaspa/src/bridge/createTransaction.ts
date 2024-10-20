@@ -1,15 +1,11 @@
-import { BigNumber } from "bignumber.js";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { KaspaTransactionCommon } from "../types/bridge";
+import { KaspaTransaction, KaspaTransactionInput, KaspaTransactionOutput } from "../types/bridge";
 
-export const createTransaction: AccountBridge<KaspaTransactionCommon>["createTransaction"] = () => ({
-  family: "kaspa",
-  mode: "send",
-  amount: new BigNumber(0),
-  fees: null,
-  recipient: "",
-  useAllAmount: false,
-  rbf: false,
+export const createTransaction = (): KaspaTransaction => ({
+  locktime: 0,
+  inputs: Array<KaspaTransactionInput>(),
+  outputs: Array<KaspaTransactionOutput>(),
+  subnetworkId: "0000000000000000000000000000000000000000",
+  version: 0,
 });
 
 export default createTransaction;

@@ -12,6 +12,7 @@ import type {
 } from "@ledgerhq/types-live";
 
 import type { BigNumber } from "bignumber.js";
+import { Transaction } from "../../lib/types";
 
 export type KaspaAccount = Account;
 
@@ -46,6 +47,11 @@ export type KaspaTransactionInput = {
   signatureScript: string;
   sequence: number;
   sigOpCount: number;
+  signature?: string | null;
+  sighash?: string | null;
+  value: number;
+  addressType: number;
+  addressIndex: number;
 };
 
 export type KaspaScriptPublicKey = {
