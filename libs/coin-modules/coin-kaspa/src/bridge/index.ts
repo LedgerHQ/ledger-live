@@ -2,7 +2,7 @@ import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "./jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";

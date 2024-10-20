@@ -136,12 +136,18 @@ export function parseExtendedPublicKey(extendedPublicKey: Buffer): ParsedExtende
    *
    * The xPublicKey consists of a single byte y-coordinate parity followed by the first 32 bytes of the x coordinate.
    */
+  // Validate the length of the extended public key
+  if (extendedPublicKey.length !== 99) {
+    throw new Error("Invalid extended public key length. Expected length is 99 bytes.");
+  }
   // Index 0 is always 0x41 = (65) the length of the following full public key
   // Index 66 is always 0x20 = (32) the length of the following chain code
   const chainCode = Buffer.from(extendedPublicKey.subarray(67, 67 + 32));
   // x-coord is index [2, 34),
   // y-coord is index [34, 66)
   const yCoordParity = extendedPublicKey[65] % 2;
+
+  // console.log("here", extendedPublicKey);
 
   return {
     chainCode,
