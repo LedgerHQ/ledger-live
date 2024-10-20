@@ -1,6 +1,6 @@
 import { API_BASE } from "./config";
 
-interface GetFeeEstimate {
+export interface FeeEstimateResponse {
   priorityBucket: {
     feerate: number;
     estimatedSeconds: number;
@@ -15,7 +15,7 @@ interface GetFeeEstimate {
   }>;
 }
 
-export const getFeeEstimate = async (): Promise<GetFeeEstimate> => {
+export const getFeeEstimate = async (): Promise<FeeEstimateResponse> => {
   try {
     const response = await fetch(`${API_BASE}/info/fee-estimate`, {
       headers: {
@@ -27,7 +27,7 @@ export const getFeeEstimate = async (): Promise<GetFeeEstimate> => {
       throw new Error('Network response was not ok');
     }
 
-    const fees: GetFeeEstimate = await response.json();
+    const fees: FeeEstimateResponse = await response.json();
     return fees;
 
   } catch (error) {
@@ -37,7 +37,7 @@ export const getFeeEstimate = async (): Promise<GetFeeEstimate> => {
 };
 
 // Type guard to ensure the data matches the FeeEstimate interface
-const isFeeEstimate = (data: any): data is GetFeeEstimate => {
+const isFeeEstimate = (data: any): data is FeeEstimateResponse => {
   return (
     typeof data === "object" &&
     "priorityBucket" in data &&
