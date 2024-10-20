@@ -3,6 +3,7 @@ import { StatusCodes } from "@ledgerhq/errors";
 
 // import { Transaction } from "./transaction";
 import { publicKeyToAddress } from "./kaspa-util";
+import { Transaction } from "./transaction";
 
 const BIP32Path = require("bip32-path");
 
@@ -96,56 +97,70 @@ export default class Kaspa {
      * @example
      * kaspa.signTransaction(transaction)
      */
-    // async signTransaction(transaction: Transaction): Promise<{
-    //     "signature": string
-    // }> {
-    //     const header = transaction.serialize();
-    //
-    //     await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);
-    //
-    //     for (const output of transaction.outputs) {
-    //         await this.sendToDevice(INS.SIGN_TX, P1_OUTPUTS, output.serialize(), P2_MORE);
-    //     }
-    //
-    //     let signatureBuffer: Buffer | null = null;
-    //
-    //     for (let i = 0; i < transaction.inputs.length; i++) {
-    //         let p2 = i >= transaction.inputs.length - 1 ? P2_LAST : P2_MORE;
-    //         const input = transaction.inputs[i];
-    //         signatureBuffer = await this.sendToDevice(INS.SIGN_TX, P1_INPUTS, input.serialize(), p2);
-    //     }
-    //
-    //     while (signatureBuffer) {
-    //         const [hasMore, inputIndex, sigLen, ...signatureAndSighash] = signatureBuffer;
-    //         const sigBuf = signatureAndSighash.slice(0, sigLen);
-    //         const sighashLen = signatureAndSighash[64];
-    //         const sighashBuf = signatureAndSighash.slice(65, 65 + sighashLen);
-    //
-    //         if (sigLen != 64) {
-    //             throw new Error(`Expected signature length is 64. Received ${sigLen} for input ${inputIndex}`);
-    //         }
-    //
-    //         if (sighashLen != 32) {
-    //             throw new Error(`Expected sighash length is 32. Received ${sighashLen} for input ${inputIndex}`)
-    //         }
-    //
-    //         transaction.inputs[inputIndex].setSignature(Buffer.from(sigBuf).toString("hex"));
-    //         transaction.inputs[inputIndex].setSighash(Buffer.from(sighashBuf).toString("hex"));
-    //
-    //         // Keep going as long as hasMore is true-ish
-    //         if (!hasMore) {
-    //             break;
-    //         }
-    //
-    //         signatureBuffer = await this.sendToDevice(INS.SIGN_TX, P1_NEXT_SIGNATURE);
-    //     }
-    //     return new Promise(() => {
-    //         console.log("nothing to do")
-    //         return {
-    //             "signature": "test"
-    //         }
-    //     })
-    // }
+    async signTransaction(transaction: Transaction): Promise<void> {
+        const header = transaction.serialize();
+
+        await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);
+
+        for (const output of transaction.outputs) {
+            await this.sendToDevice(
+                INS.SIGN_TX,
+                P1_OUTPUTS,
+                output.serialize(),
+                P2_MORE,
+            );
+        }
+
+        let signatureBuffer: Buffer | null = null;
+
+        for (let i = 0; i < transaction.inputs.length; i++) {
+            const p2 = i >= transaction.inputs.length - 1 ? P2_LAST : P2_MORE;
+            const input = transaction.inputs[i];
+            signatureBuffer = await this.sendToDevice(
+                INS.SIGN_TX,
+                P1_INPUTS,
+                input.serialize(),
+                p2,
+            );
+        }
+
+        while (signatureBuffer) {
+            const [hasMore, inputIndex, sigLen, ...signatureAndSighash] =
+                signatureBuffer;
+            const sigBuf = signatureAndSighash.slice(0, sigLen);
+            const sighashLen = signatureAndSighash[64];
+            const sighashBuf = signatureAndSighash.slice(65, 65 + sighashLen);
+
+            if (sigLen != 64) {
+                throw new Error(
+                    `Expected signature length is 64. Received ${sigLen} for input ${inputIndex}`,
+                );
+            }
+
+            if (sighashLen != 32) {
+                throw new Error(
+                    `Expected sighash length is 32. Received ${sighashLen} for input ${inputIndex}`,
+                );
+            }
+
+            transaction.inputs[inputIndex].setSignature(
+                Buffer.from(sigBuf).toString("hex"),
+            );
+            transaction.inputs[inputIndex].setSighash(
+                Buffer.from(sighashBuf).toString("hex"),
+            );
+
+            // Keep going as long as hasMore is true-ish
+            if (!hasMore) {
+                break;
+            }
+
+            signatureBuffer = await this.sendToDevice(
+                INS.SIGN_TX,
+                P1_NEXT_SIGNATURE,
+            );
+        }
+    }
 
     /**
      * Sign personal message on the device

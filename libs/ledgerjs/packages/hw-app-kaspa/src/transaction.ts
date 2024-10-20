@@ -1,11 +1,11 @@
 type TransactionApiJSON = {
     transaction: {
-        version: number,
-        inputs: TransactionInputApiJSON[],
-        outputs: TransactionOutputApiJSON[],
-        lockTime: number,
-        subnetworkId: string,
-    }
+        version: number;
+        inputs: TransactionInputApiJSON[];
+        outputs: TransactionOutputApiJSON[];
+        lockTime: number;
+        subnetworkId: string;
+    };
 };
 
 export class Transaction {
@@ -16,7 +16,14 @@ export class Transaction {
     changeAddressIndex: number;
     account: number;
 
-    constructor(txData: {inputs: TransactionInput[], outputs: TransactionOutput[], version: number, changeAddressType?: number, changeAddressIndex?: number, account?: number}) {
+    constructor(txData: {
+        inputs: TransactionInput[];
+        outputs: TransactionOutput[];
+        version: number;
+        changeAddressType?: number;
+        changeAddressIndex?: number;
+        account?: number;
+    }) {
         /**
          * @type {TransactionInput[]}
          */
@@ -37,13 +44,20 @@ export class Transaction {
         if (!(this.changeAddressType === 0 || this.changeAddressType === 1)) {
             throw new Error(`changeAddressType must be 0 or 1 if set`);
         }
-        
-        if (this.account < 0x80000000 || this.account > 0xFFFFFFFF) {
-            throw new Error('account must be between 0x80000000 and 0xFFFFFFFF');
+
+        if (this.account < 0x80000000 || this.account > 0xffffffff) {
+            throw new Error(
+                "account must be between 0x80000000 and 0xFFFFFFFF",
+            );
         }
 
-        if (this.changeAddressIndex < 0x00000000 || this.changeAddressIndex > 0xFFFFFFFF) {
-            throw new Error(`changeAddressIndex must be between 0x00000000 and 0xFFFFFFFF`);
+        if (
+            this.changeAddressIndex < 0x00000000 ||
+            this.changeAddressIndex > 0xffffffff
+        ) {
+            throw new Error(
+                `changeAddressIndex must be between 0x00000000 and 0xFFFFFFFF`,
+            );
         }
     }
 
@@ -86,7 +100,7 @@ export class Transaction {
                 inputs: this.inputs.map((i) => i.toApiJSON()),
                 outputs: this.outputs.map((o) => o.toApiJSON()),
                 lockTime: 0,
-                subnetworkId: '0000000000000000000000000000000000000000',
+                subnetworkId: "0000000000000000000000000000000000000000",
             },
         };
     }
@@ -94,11 +108,12 @@ export class Transaction {
 
 type TransactionInputApiJSON = {
     previousOutpoint: {
-        transactionId: string,
-        index: number
-    },
-    signatureScript: string | null,
-    sequence: number, sigOpCount: number,
+        transactionId: string;
+        index: number;
+    };
+    signatureScript: string | null;
+    sequence: number;
+    sigOpCount: number;
 };
 
 export class TransactionInput {
@@ -110,7 +125,13 @@ export class TransactionInput {
     addressType: number;
     addressIndex: number;
 
-    constructor(inputData: {value: number, prevTxId: string, outpointIndex: number, addressType: number, addressIndex: number}) {
+    constructor(inputData: {
+        value: number;
+        prevTxId: string;
+        outpointIndex: number;
+        addressType: number;
+        addressIndex: number;
+    }) {
         this.value = inputData.value;
         this.prevTxId = inputData.prevTxId;
         this.outpointIndex = inputData.outpointIndex;
@@ -121,7 +142,7 @@ export class TransactionInput {
     }
 
     serialize(): Buffer {
-        const valueBuf = Buffer.from(toBigEndianHex(this.value), 'hex');
+        const valueBuf = Buffer.from(toBigEndianHex(this.value), "hex");
 
         const addressTypeBuf = Buffer.alloc(1);
         addressTypeBuf.writeUInt8(this.addressType);
@@ -134,7 +155,7 @@ export class TransactionInput {
 
         return Buffer.concat([
             valueBuf,
-            Buffer.from(this.prevTxId, 'hex'),
+            Buffer.from(this.prevTxId, "hex"),
             addressTypeBuf,
             addressIndexBuf,
             outpointIndexBuf,
@@ -142,8 +163,8 @@ export class TransactionInput {
     }
 
     /**
-     * 
-     * @param {string} signature 
+     *
+     * @param {string} signature
      */
     setSignature(signature: string): void {
         this.signature = signature;
@@ -161,26 +182,32 @@ export class TransactionInput {
             },
             signatureScript: this.signature ? `41${this.signature}01` : null,
             sequence: 0,
-            sigOpCount: 1
+            sigOpCount: 1,
         };
     }
 }
 
 type TransactionOutputApiJSON = {
-    amount: number,
+    amount: number;
     scriptPublicKey: {
-        version: number,
-        scriptPublicKey: string,
-    }
+        version: number;
+        scriptPublicKey: string;
+    };
 };
 
 export class TransactionOutput {
     value: number;
     scriptPublicKey: string;
 
-    constructor(outputData: {value: number, scriptPublicKey: string}) {
-        if (!outputData.value || outputData.value < 0 || outputData.value > 0xFFFFFFFFFFFFFFFF) {
-            throw new Error('value must be set to a value greater than 0 and less than 0xFFFFFFFFFFFFFFFF');
+    constructor(outputData: { value: number; scriptPublicKey: string }) {
+        if (
+            !outputData.value ||
+            outputData.value < 0 ||
+            outputData.value > 0xffffffffffffffff
+        ) {
+            throw new Error(
+                "value must be set to a value greater than 0 and less than 0xFFFFFFFFFFFFFFFF",
+            );
         }
         this.value = outputData.value;
 
@@ -189,10 +216,10 @@ export class TransactionOutput {
     }
 
     serialize(): Buffer {
-        const valueBuf: Buffer = Buffer.from(toBigEndianHex(this.value), 'hex');
+        const valueBuf: Buffer = Buffer.from(toBigEndianHex(this.value), "hex");
         return Buffer.concat([
             valueBuf,
-            Buffer.from(this.scriptPublicKey, 'hex'),
+            Buffer.from(this.scriptPublicKey, "hex"),
         ]);
     }
 

@@ -115,13 +115,15 @@ export function publicKeyToAddress(
         }
     }
 
-    var eight0: number[] = [0, 0, 0, 0, 0, 0, 0, 0];
-    var prefixData: number[] = prefixToArray("kaspa").concat([0]);
-    var versionByte: number = getTypeBits(type);
-    var arr: number[] = Array.prototype.slice.call(hashBuffer, 0);
-    var payloadData: number[] = convertBits([versionByte].concat(arr), 8, 5);
-    var checksumData: number[] = prefixData.concat(payloadData).concat(eight0);
-    var payload = payloadData.concat(checksumToArray(polymod(checksumData)));
+    const eight0: number[] = [0, 0, 0, 0, 0, 0, 0, 0];
+    const prefixData: number[] = prefixToArray("kaspa").concat([0]);
+    const versionByte: number = getTypeBits(type);
+    const arr: number[] = Array.prototype.slice.call(hashBuffer, 0);
+    const payloadData: number[] = convertBits([versionByte].concat(arr), 8, 5);
+    const checksumData: number[] = prefixData
+        .concat(payloadData)
+        .concat(eight0);
+    const payload = payloadData.concat(checksumToArray(polymod(checksumData)));
     if (stripPrefix === true) {
         return base32.encode(payload);
     } else {
