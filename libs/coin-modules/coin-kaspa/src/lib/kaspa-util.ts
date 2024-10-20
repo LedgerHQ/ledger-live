@@ -218,3 +218,16 @@ export function kasToSompi(amount: number) {
 }
 
 export const NETWORK_UTXO_LIMIT = 84;
+
+export function isValidKaspaAddress(address: string): boolean {
+  // Kaspa addresses typically start with 'kaspa:' and are followed by a hexadecimal string
+  const kaspaBech32 = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+  const kaspaAddressRegex = new RegExp(`^kaspa:([${kaspaBech32}]{61}|[${kaspaBech32}]{63})$`);
+
+  // Check if the address matches the Kaspa format
+  if (!kaspaAddressRegex.test(address)) {
+    return false;
+  }
+
+  return true;
+}
