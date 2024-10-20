@@ -159,4 +159,33 @@ describe("parseExtendedPublicKey", () => {
     expect(result.chainCode).toStrictEqual(expectedParsedKey.chainCode);
     expect(result.compressedPublicKey).toStrictEqual(expectedParsedKey.compressedPublicKey);
   });
+  it("another public key", () => {
+    const extendedPublicKey = Buffer.from(
+      "41" +
+        "04bb257a3f0b6bc2104539be649e6f7fe0b42e38c660500598fb1dc833b7ecbb1ae936620f824c868b223e57fe3596aef893a0158acf399811ed5c9aecd3aa7daa" +
+        "20" +
+        "27a38ef4c76455946be71692ee422b1fc40dc30952a8bf1ce961a534476035c8",
+      "hex",
+    );
+    const expectedParsedKey = {
+      uncompressedPublicKey: Buffer.from(
+        "04bb257a3f0b6bc2104539be649e6f7fe0b42e38c660500598fb1dc833b7ecbb1ae936620f824c868b223e57fe3596aef893a0158acf399811ed5c9aecd3aa7daa",
+        "hex",
+      ),
+      chainCode: Buffer.from(
+        "27a38ef4c76455946be71692ee422b1fc40dc30952a8bf1ce961a534476035c8",
+        "hex",
+      ),
+      compressedPublicKey: Buffer.from(
+        "02bb257a3f0b6bc2104539be649e6f7fe0b42e38c660500598fb1dc833b7ecbb1a",
+        "hex",
+      ),
+    };
+
+    const result = parseExtendedPublicKey(extendedPublicKey);
+
+    expect(result.uncompressedPublicKey).toStrictEqual(expectedParsedKey.uncompressedPublicKey);
+    expect(result.chainCode).toStrictEqual(expectedParsedKey.chainCode);
+    expect(result.compressedPublicKey).toStrictEqual(expectedParsedKey.compressedPublicKey);
+  });
 });
