@@ -1,4 +1,9 @@
-import { addressToPublicKey, addressToScriptPublicKey, publicKeyToAddress } from "../kaspa-util";
+import {
+  addressToPublicKey,
+  addressToScriptPublicKey,
+  parseExtendedPublicKey,
+  publicKeyToAddress,
+} from "../kaspa-util";
 
 describe("addressToPublicKey", () => {
   it("should be able to round-trip", () => {
@@ -119,5 +124,39 @@ describe("addressToScriptPublicKey", () => {
 
     const result = addressToScriptPublicKey(address);
     expect(result).toBe(expectedScriptPublicKey);
+  });
+});
+
+//4120
+
+describe("parseExtendedPublicKey", () => {
+  it("should correctly parse an extended public key", () => {
+    const extendedPublicKey = Buffer.from(
+      "41" + // length of public key
+        "0404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08" +
+        "20" + // length of chain code
+        "3a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563",
+      "hex",
+    );
+    const expectedParsedKey = {
+      uncompressedPublicKey: Buffer.from(
+        "0404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08",
+        "hex",
+      ),
+      chainCode: Buffer.from(
+        "3a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563",
+        "hex",
+      ),
+      compressedPublicKey: Buffer.from(
+        "0204cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887",
+        "hex",
+      ),
+    };
+
+    const result = parseExtendedPublicKey(extendedPublicKey);
+
+    expect(result.uncompressedPublicKey).toStrictEqual(expectedParsedKey.uncompressedPublicKey);
+    expect(result.chainCode).toStrictEqual(expectedParsedKey.chainCode);
+    expect(result.compressedPublicKey).toStrictEqual(expectedParsedKey.compressedPublicKey);
   });
 });

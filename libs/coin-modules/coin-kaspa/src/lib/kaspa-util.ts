@@ -121,6 +121,35 @@ export function publicKeyToAddress(
   }
 }
 
+interface ParsedExtendedPublicKey {
+  chainCode: Buffer;
+  compressedPublicKey: Buffer;
+  uncompressedPublicKey: Buffer;
+}
+
+export function parseExtendedPublicKey(extendedPublicKey: Buffer): ParsedExtendedPublicKey {
+  /**
+   * Converts a full public key to an xPublicKey.
+   *
+   * @param {Buffer} fullPublicKey - The complete public key buffer which includes the chain code.
+   * @returns {Buffer} The xPublicKey obtained by processing the full public key.
+   *
+   * The xPublicKey consists of a single byte y-coordinate parity followed by the first 32 bytes of the x coordinate.
+   */
+  // Index 0 is always 0x41 = (65) the length of the following full public key
+  // Index 66 is always 0x20 = (32) the length of the following chain code
+  const chainCode = Buffer.from(extendedPublicKey.subarray(67, 67 + 32));
+  // x-coord is index [2, 34),
+  // y-coord is index [34, 66)
+  const yCoordParity = extendedPublicKey[65] % 2;
+
+  return {
+    chainCode,
+    compressedPublicKey: Buffer.from([yCoordParity + 2, ...extendedPublicKey.subarray(2, 34)]),
+    uncompressedPublicKey: Buffer.from(extendedPublicKey.subarray(1, 1 + 65)),
+  };
+}
+
 export function addressToPublicKey(address: string): { version: number; publicKey: number[] } {
   const addrPart = address.split(":")[1];
 

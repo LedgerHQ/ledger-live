@@ -255,7 +255,3 @@ export default class Kaspa {
         return reply.subarray(0, reply.length - 2);
     }
 }
-// const t = new Transport()
-// const k = new Kaspa(t)
-
-// console.log(k.getAddress("44'/111111'/0'/0/0"))

@@ -1,10 +1,15 @@
-import base32 from './base32';
+import base32 from "./base32";
 
-function convertBits(data: number[], from: number, to: number, strict: boolean = false): number[] {
+function convertBits(
+    data: number[],
+    from: number,
+    to: number,
+    strict: boolean = false,
+): number[] {
     strict = strict || false;
     var accumulator = 0;
     var bits = 0;
-    var result : number[] = [];
+    var result: number[] = [];
     var mask = (1 << to) - 1;
     for (var i = 0; i < data.length; i++) {
         var value = data[i];
@@ -25,16 +30,18 @@ function convertBits(data: number[], from: number, to: number, strict: boolean =
         }
     } else {
         if (!(bits >= from || (accumulator << (to - bits)) & mask)) {
-            throw new Error('Conversion requires padding but strict mode was used');
+            throw new Error(
+                "Conversion requires padding but strict mode was used",
+            );
         }
     }
     return result;
 }
 
-function prefixToArray(prefix) : number[] {
-    var result : number[] = [];
+function prefixToArray(prefix): number[] {
+    var result: number[] = [];
     for (var i = 0; i < prefix.length; i++) {
-        const char = prefix.charCodeAt(i)
+        const char = prefix.charCodeAt(i);
         result.push(char & 31);
     }
     return result;
@@ -82,7 +89,7 @@ function polymod(data) {
 }
 
 function checksumToArray(checksum) {
-    var result : number[] = [];
+    var result: number[] = [];
     for (var i = 0; i < 8; ++i) {
         result.push(checksum & 31);
         checksum /= 32;
@@ -93,23 +100,23 @@ function checksumToArray(checksum) {
 export function publicKeyToAddress(
     hashBuffer: Buffer,
     stripPrefix: boolean,
-    type: string = 'schnorr',
+    type: string = "schnorr",
 ): string {
     function getTypeBits(type) {
         switch (type) {
-            case 'schnorr':
+            case "schnorr":
                 return 0;
-            case 'ecdsa':
+            case "ecdsa":
                 return 1;
-            case 'p2sh':
+            case "p2sh":
                 return 8;
             default:
-                throw new Error('Invalid type:' + type);
+                throw new Error("Invalid type:" + type);
         }
     }
 
     var eight0: number[] = [0, 0, 0, 0, 0, 0, 0, 0];
-    var prefixData: number[] = prefixToArray('kaspa').concat([0]);
+    var prefixData: number[] = prefixToArray("kaspa").concat([0]);
     var versionByte: number = getTypeBits(type);
     var arr: number[] = Array.prototype.slice.call(hashBuffer, 0);
     var payloadData: number[] = convertBits([versionByte].concat(arr), 8, 5);
@@ -118,12 +125,15 @@ export function publicKeyToAddress(
     if (stripPrefix === true) {
         return base32.encode(payload);
     } else {
-        return 'kaspa:' + base32.encode(payload);
+        return "kaspa:" + base32.encode(payload);
     }
 }
 
-export function addressToPublicKey(address: string): { version: number; publicKey: number[] } {
-    const addrPart = address.split(':')[1];
+export function addressToPublicKey(address: string): {
+    version: number;
+    publicKey: number[];
+} {
+    const addrPart = address.split(":")[1];
 
     const payload = convertBits(base32.decode(addrPart), 5, 8);
 
@@ -134,18 +144,18 @@ export function addressToPublicKey(address: string): { version: number; publicKe
         case 1:
             return { version: payload[0], publicKey: payload.slice(1, 34) };
         default:
-            throw new Error('Unable to translate address to ScriptPublicKey');
+            throw new Error("Unable to translate address to ScriptPublicKey");
     }
 }
 
-function numArrayToHexString(numArray : number[] = []): string {
-    const hexArr : string[] = [];
+function numArrayToHexString(numArray: number[] = []): string {
+    const hexArr: string[] = [];
 
     for (const num of numArray) {
-        hexArr.push(('00' + num.toString(16)).slice(-2));
+        hexArr.push(("00" + num.toString(16)).slice(-2));
     }
 
-    return hexArr.join('');
+    return hexArr.join("");
 }
 
 export function addressToScriptPublicKey(address: string): string {
@@ -153,33 +163,35 @@ export function addressToScriptPublicKey(address: string): string {
 
     switch (version) {
         case 0:
-            return '20' + numArrayToHexString(publicKey) + 'ac';
+            return "20" + numArrayToHexString(publicKey) + "ac";
         case 1:
-            return '21' + numArrayToHexString(publicKey) + 'ab';
+            return "21" + numArrayToHexString(publicKey) + "ab";
         case 8:
-            return 'aa20' + numArrayToHexString(publicKey) + '87';
+            return "aa20" + numArrayToHexString(publicKey) + "87";
         default:
-            throw new Error('Address could not be translated to script public key');
+            throw new Error(
+                "Address could not be translated to script public key",
+            );
     }
 }
 
 export function sompiToKas(amount: number) {
-    const amountStr = '00000000' + amount;
-    return Number(amountStr.slice(0, -8) + '.' + amountStr.slice(-8));
+    const amountStr = "00000000" + amount;
+    return Number(amountStr.slice(0, -8) + "." + amountStr.slice(-8));
 }
 
 export function kasToSompi(amount: number) {
     const amountStr = String(amount);
-    const parts = amountStr.split('.');
+    const parts = amountStr.split(".");
 
     if (parts.length === 1) {
-        return Number(amountStr + '00000000');
+        return Number(amountStr + "00000000");
     } else if (parts.length === 2) {
         const [left, right] = parts;
-        const rightStr = right + '00000000';
+        const rightStr = right + "00000000";
         return Number(left + rightStr.slice(0, 8));
     } else {
-        throw new Error('Invalid amount');
+        throw new Error("Invalid amount");
     }
 }
 
