@@ -19,8 +19,8 @@ export const useMemoTagInput = (
 
   const [isEmpty, setIsEmpty] = useState(true);
   const handleChange = useCallback<MemoTagInputProps<Transaction>["onChange"]>(
-    ({ patch, isMemoTagSet }) => {
-      setIsEmpty(!isMemoTagSet);
+    ({ patch, isEmpty }) => {
+      setIsEmpty(isEmpty);
       updateTransaction(patch);
     },
     [updateTransaction],

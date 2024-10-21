@@ -310,7 +310,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             )}
 
             {memoTag?.Input && (
-              <memoTag.Input style={{ marginTop: 32 }} onChange={memoTag.handleChange} />
+              <View style={styles.memoTagInputContainer}>
+                <memoTag.Input
+                  testID="memo-tag-input"
+                  placeholder={t("send.summary.memo.title")}
+                  onChange={memoTag.handleChange}
+                />
+              </View>
             )}
 
             {isSomeIncomingTxPending ? (
@@ -371,6 +377,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: "transparent",
   },
+  memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
   },
