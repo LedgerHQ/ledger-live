@@ -2,6 +2,8 @@ import { ERC20Token } from "../../types";
 
 import ethereum_tokens from "./1/erc20.json";
 import optimism_tokens from "./10/erc20.json";
+import flare_tokens from "./14/erc20.json";
+import songbird_tokens from "./19/erc20.json";
 import cronos_tokens from "./25/erc20.json";
 import rsk_tokens from "./30/erc20.json";
 import telos_evm_tokens from "./40/erc20.json";
@@ -35,6 +37,8 @@ import neon_evm_tokens from "./245022934/erc20.json";
 
 import ethereum_tokens_hash from "./1/erc20-hash.json";
 import optimism_tokens_hash from "./10/erc20-hash.json";
+import flare_tokens_hash from "./14/erc20-hash.json";
+import songbird_tokens_hash from "./19/erc20-hash.json";
 import cronos_tokens_hash from "./25/erc20-hash.json";
 import rsk_tokens_hash from "./30/erc20-hash.json";
 import telos_evm_tokens_hash from "./40/erc20-hash.json";
@@ -68,6 +72,8 @@ import neon_evm_tokens_hash from "./245022934/erc20-hash.json";
 
 import ethereum_signatures from "./1/erc20-signatures.json";
 import optimism_signatures from "./10/erc20-signatures.json";
+import flare_signatures from "./14/erc20-signatures.json";
+import songbird_signatures from "./19/erc20-signatures.json";
 import cronos_signatures from "./25/erc20-signatures.json";
 import rsk_signatures from "./30/erc20-signatures.json";
 import telos_evm_signatures from "./40/erc20-signatures.json";
@@ -102,6 +108,8 @@ import neon_evm_signatures from "./245022934/erc20-signatures.json";
 export const tokens = {
   1: ethereum_tokens as ERC20Token[],
   10: optimism_tokens as ERC20Token[],
+  14: flare_tokens as ERC20Token[],
+  19: songbird_tokens as ERC20Token[],
   25: cronos_tokens as ERC20Token[],
   30: rsk_tokens as ERC20Token[],
   40: telos_evm_tokens as ERC20Token[],
@@ -137,6 +145,8 @@ export const tokens = {
 export const signatures = {
   1: ethereum_signatures,
   10: optimism_signatures,
+  14: flare_signatures,
+  19: songbird_signatures,
   25: cronos_signatures,
   30: rsk_signatures,
   40: telos_evm_signatures,
@@ -172,6 +182,8 @@ export const signatures = {
 export const hashes = {
   1: ethereum_tokens_hash,
   10: optimism_tokens_hash,
+  14: flare_tokens_hash,
+  19: songbird_tokens_hash,
   25: cronos_tokens_hash,
   30: rsk_tokens_hash,
   40: telos_evm_tokens_hash,
