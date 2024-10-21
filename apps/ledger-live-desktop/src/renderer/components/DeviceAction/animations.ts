@@ -129,6 +129,27 @@ import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectio
 import STAX_plug_and_pin from "~/renderer/animations/stax/USBConnectionAndPin.json";
 
 // @ts-ignore
+import STAX_LIGHT_allowConnection from "~/renderer/animations/stax/allowConnection/light.json";
+// @ts-ignore
+import STAX_DARK_allowConnection from "~/renderer/animations/stax/allowConnection/dark.json";
+// @ts-ignore
+import STAX_LIGHT_enterPin from "~/renderer/animations/stax/enterPin/light.json";
+// @ts-ignore
+import STAX_DARK_enterPin from "~/renderer/animations/stax/enterPin/dark.json";
+// @ts-ignore
+import STAX_LIGHT_verifyAddress from "~/renderer/animations/stax/verifyAddress/light.json";
+// @ts-ignore
+import STAX_DARK_verifyAddress from "~/renderer/animations/stax/verifyAddress/dark.json";
+// @ts-ignore
+import STAX_LIGHT_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess/light.json";
+// @ts-ignore
+import STAX_DARK_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess/dark.json";
+// @ts-ignore
+import STAX_LIGHT_USB_signTransaction from "~/renderer/animations/stax/signTransaction/light.json";
+// @ts-ignore
+import STAX_DARK_USB_signTransaction from "~/renderer/animations/stax/signTransaction/dark.json";
+
+// @ts-ignore
 import EUROPA_LIGHT_enterPin from "~/renderer/animations/europa/light/enterPIN.json";
 // @ts-ignore
 import EUROPA_LIGHT_signTransaction from "~/renderer/animations/europa/light/signTransaction.json";
@@ -218,8 +239,8 @@ const nanoS: DeviceAnimations = {
     dark: NANO_X_DARK_recoverWithProtect,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_USB_connection_success,
+    dark: STAX_DARK_USB_connection_success,
   },
 };
 
@@ -269,8 +290,8 @@ const nanoX: DeviceAnimations = {
     dark: NANO_X_DARK_recoverWithProtect,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_USB_connection_success,
+    dark: STAX_DARK_USB_connection_success,
   },
 };
 
@@ -320,50 +341,50 @@ const nanoSP: DeviceAnimations = {
     dark: NANO_X_DARK_recoverWithProtect,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_USB_connection_success,
+    dark: STAX_DARK_USB_connection_success,
   },
 };
 
 const stax: DeviceAnimations = {
   plugAndPinCode: {
-    light: STAX_plug_and_pin,
-    dark: STAX_plug_and_pin,
+    light: STAX_LIGHT_enterPin,
+    dark: STAX_DARK_enterPin,
   },
   enterPinCode: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_enterPin,
+    dark: STAX_DARK_enterPin,
   },
   quitApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_allowConnection,
+    dark: STAX_DARK_allowConnection,
   },
   allowManager: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_allowConnection,
+    dark: STAX_DARK_allowConnection,
   },
   openApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_allowConnection,
+    dark: STAX_DARK_allowConnection,
   },
   verify: {
-    light: STAX_verifyAddress,
-    dark: STAX_verifyAddress,
+    light: STAX_LIGHT_verifyAddress,
+    dark: STAX_DARK_verifyAddress,
   },
   sign: {
-    light: STAX_signTransaction,
-    dark: STAX_signTransaction,
+    light: STAX_LIGHT_USB_signTransaction,
+    dark: STAX_DARK_USB_signTransaction,
   },
   firmwareUpdating: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_enterPin,
+    dark: STAX_DARK_enterPin,
   },
   installLoading: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_allowConnection,
+    dark: STAX_DARK_allowConnection,
   },
   confirmLockscreen: {
-    light: STAX_confirmLockscreen,
+    light: STAX_confirmLockscreen, //missing
     dark: STAX_confirmLockscreen,
   },
   recoverWithProtect: {
@@ -371,8 +392,8 @@ const stax: DeviceAnimations = {
     dark: NANO_X_DARK_recoverWithProtect,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_USB_connection_success,
+    dark: STAX_DARK_USB_connection_success,
   },
 };
 
@@ -478,8 +499,8 @@ const blue: DeviceAnimations = {
     dark: NANO_X_DARK_recoverWithProtect,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_USB_connection_success,
+    dark: STAX_DARK_USB_connection_success,
   },
 };
 
