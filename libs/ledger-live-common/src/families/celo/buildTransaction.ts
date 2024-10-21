@@ -99,7 +99,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     };
   } else if (transaction.mode === "register") {
     const accounts = await kit.contracts.getAccounts();
-    console.log("niconico", account, kit.connection.web3.eth.getBalance(account.freshAddress));
     celoTransaction = {
       from: account.freshAddress,
       to: accounts.address,
