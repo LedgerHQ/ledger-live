@@ -175,7 +175,7 @@ jobs:
       - name: Publish report on Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_283_detox_improve_slack_notif
         with:
           platform: linux
           login: ${{ vars.ALLURE_USERNAME }}
@@ -185,7 +185,7 @@ jobs:
       - name: Get summary
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/qaa_283_detox_improve_slack_notif
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux
