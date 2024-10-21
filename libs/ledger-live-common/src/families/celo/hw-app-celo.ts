@@ -45,10 +45,8 @@ export default class Celo extends Eth {
       const dataString = isModern
         ? `0x${tokenInfo.data.toString("hex")}`
         : tokenInfo.data.toString("hex");
-      console.info("niconico provider erc20", dataString);
       await this.provideERC20TokenInformation(dataString);
     }
-    console.info("niconico verify exit");
   }
 
   async determinePrice(txParams: CeloTx): Promise<void> {
@@ -79,7 +77,6 @@ export default class Celo extends Eth {
     if (!this.config) {
       this.config = this.getAppConfiguration();
     }
-    console.info("niconico config", this.config);
 
     return SemVer.satisfies((await this.config).version, ">= 1.2.3");
   }
