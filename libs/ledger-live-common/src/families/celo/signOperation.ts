@@ -28,24 +28,19 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           if (!transaction.fees) {
             throw new FeeNotLoaded();
           }
-          console.info("niconico fresh address path aka derivaiton", account.freshAddressPath);
 
           const celo = new Celo(transport);
           const unsignedTransaction = await buildTransaction(account, transaction);
-          // eslint-disable-next-line no-console
-          console.info("niconico tx", unsignedTransaction);
           const { chainId, to } = unsignedTransaction;
 
           await Promise.all([
             celo.verifyTokenInfo(to!, chainId!),
             celo.determinePrice(unsignedTransaction),
           ]);
-          console.info("niconico tx with price", unsignedTransaction);
 
           const rlpEncodedTransaction = await celo.rlpEncodedTxForLedger(unsignedTransaction);
 
           o.next({ type: "device-signature-requested" });
-          console.info("niconico sign", rlpEncodedTransaction);
           // celo.signTransaction already does the eip155 v chain stuff
           // TODO should we be using clearSignTransaction like evm fam does?
           const response = await celo.signTransaction(
@@ -54,12 +49,9 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           );
           // freshAddressPath is actually a derivation path
           const { address } = await celo.getAddress(account.freshAddressPath);
-          console.info("niconico address", address);
-          console.info("niconico response", response);
 
           if (cancelled) return;
 
-          // TODO this is causing problems (or at least not fixing them)
           const signature = parseSigningResponse(response, chainId!, await celo.isAppModern());
 
           o.next({ type: "device-signature-granted" });
@@ -67,21 +59,18 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           const encodedTransaction = await encodeTransaction(rlpEncodedTransaction, signature);
 
           const [_, recoveredAddress] = recoverTransaction(encodedTransaction.raw);
-          console.info("recoveredAddress");
           if (recoveredAddress !== address) {
-            console.error("niconio Address does not match", address, recoveredAddress);
+            throw new Error(
+              "celo: there was a signing error, the recovered address doesn't match the your ledger address, the operation was cancelled",
+            );
           }
 
-          console.info("niconico fees", transaction.fees.toFixed());
           const operation = buildOptimisticOperation(
             account,
             transaction,
-            // TODO: display issue
-            // transaction.fees = gas * gasPrice for legacy
-            //                    gas * maxFeePerGas for modern
             transaction.fees ?? new BigNumber(0),
           );
-          console.info("niconico sign op", operation);
+
           o.next({
             type: "signed",
             signedOperation: {
