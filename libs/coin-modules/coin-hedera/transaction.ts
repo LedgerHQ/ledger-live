@@ -1,4 +1,4 @@
-import type { Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "./src/types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,

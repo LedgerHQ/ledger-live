@@ -9,6 +9,6 @@
       "outDir": "lib",
       "exactOptionalPropertyTypes": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
   }
   

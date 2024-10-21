@@ -2,7 +2,7 @@
   "entry": [
     "src/account.ts",
     "src/bridge/index.ts",
-    "src/cli-transaction.ts",
+    "src/test/cli.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
