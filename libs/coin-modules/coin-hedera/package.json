@@ -28,6 +28,9 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
       "*": [
         "lib/*"
       ]
@@ -39,6 +42,10 @@
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./package.json": "./package.json"
   },
