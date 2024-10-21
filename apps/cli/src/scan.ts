@@ -376,8 +376,16 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
           syncConfig,
         }),
       ).pipe(
-        filter((e: any) => e.type === "discovered"),
-        map(e => e.account),
+        filter((e: any) => {
+          if (!!scheme) {
+            return e.type === "discovered" || asDerivationMode(scheme) !== e?.account?.derivationMode;
+          } else {
+            return e.type === "discovered";
+          }
+        }),
+        map(e => {
+          return e.account;
+        }),
       );
     }),
     skip(index || 0),
