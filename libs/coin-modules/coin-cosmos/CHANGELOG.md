@@ -1,5 +1,16 @@
 # @ledgerhq/coin-cosmos
 
+## 0.1.6
+
+### Patch Changes
+
+- [#8072](https://github.com/LedgerHQ/ledger-live/pull/8072) [`867b2ba`](https://github.com/LedgerHQ/ledger-live/commit/867b2ba1e467bcd5585b3e670f735520529036aa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update dydx default node
+
+- Updated dependencies [[`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d)]:
+  - @ledgerhq/types-live@6.52.3
+  - @ledgerhq/cryptoassets@13.6.2
+  - @ledgerhq/coin-framework@0.18.5
+
 ## 0.1.6-next.0
 
 ### Patch Changes
