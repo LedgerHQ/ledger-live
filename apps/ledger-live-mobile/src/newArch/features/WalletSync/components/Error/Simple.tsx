@@ -32,7 +32,7 @@ export function ErrorComponent({ title, desc, info, mainButton, analyticsPage }:
           </Text>
         )}
         {info &&
-          (info instanceof String ? (
+          (typeof info === "string" || info instanceof String ? (
             <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" mt={4}>
               {info}
             </Text>

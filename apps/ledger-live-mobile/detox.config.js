@@ -1,5 +1,4 @@
-// NOTE: It seems that we can't build the ios app in arm64 on M1
-const iosArch = "x86_64";
+const iosArch = "arm64";
 // NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 
@@ -32,17 +31,17 @@ module.exports = {
   apps: {
     "ios.debug": {
       type: "ios.app",
-      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath: "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.staging": {
       type: "ios.app",
-      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath: "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.release": {
       type: "ios.app",
-      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
     "android.debug": {

@@ -8,10 +8,10 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
-import { navigateToSelectDevice } from "../ConnectDevice";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
+import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 
 export default function ConnectDevice({
   route,
@@ -41,19 +41,30 @@ export default function ConnectDevice({
     }
   };
 
+  const request = useMemo(() => {
+    const appRequests = dependenciesToAppRequests(route.params.dependencies);
+    return {
+      account: mainAccount,
+      appName: route.params.appName,
+      message: route.params.message,
+      dependencies: appRequests,
+    };
+  }, [mainAccount, route.params.appName, route.params.dependencies, route.params.message]);
+
   return useMemo(
     () => (
       <SafeAreaView style={styles.root}>
         <TrackScreen category={"SignMessage"} name="ConnectDevice" />
         <DeviceAction
           action={action}
-          request={{
-            account: mainAccount,
-            appName: route.params.appName,
-            message: route.params.message,
-          }}
+          request={request}
           device={route.params.device}
-          onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
+          onSelectDeviceLink={() => {
+            navigation.navigate(ScreenName.SignSelectDevice, {
+              ...route.params,
+              forceSelectDevice: true,
+            });
+          }}
           onResult={onResult}
         />
       </SafeAreaView>

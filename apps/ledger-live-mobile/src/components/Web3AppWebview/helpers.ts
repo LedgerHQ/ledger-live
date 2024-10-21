@@ -10,7 +10,7 @@ import {
   useManifestCurrencies,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -394,31 +394,15 @@ function useUiHook(): UiHook {
           params: {
             currentNavigation: ScreenName.SignTransactionSummary,
             nextNavigation: ScreenName.SignTransactionSelectDevice,
-            transaction: tx as Transaction,
+            transaction: tx,
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,
             dependencies: options?.dependencies,
-            onSuccess: ({
-              signedOperation,
-              transactionSignError,
-            }: {
-              signedOperation: SignedOperation;
-              transactionSignError: Error;
-            }) => {
-              if (transactionSignError) {
-                onError(transactionSignError);
-              } else {
-                onSuccess(signedOperation);
-
-                const n =
-                  navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
-                  navigation;
-                n.pop();
-              }
-            },
+            onSuccess,
             onError,
           },
+          onError,
         });
       },
       "transaction.broadcast": () => {},

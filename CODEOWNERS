@@ -75,6 +75,7 @@ apps/ledger-live-mobile/src/screens/PTX/                             @ledgerhq/p
 apps/ledger-live-mobile/src/screens/Swap/                            @ledgerhq/ptx
 libs/ledger-live-common/src/exchange/                                @ledgerhq/ptx
 libs/exchange-module/                                                @ledgerhq/ptx
+libs/wallet-api-acre-module/                                         @ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              @ledgerhq/ptx
 # Wallet API team
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api

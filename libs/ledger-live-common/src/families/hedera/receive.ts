@@ -25,6 +25,7 @@ export const receive: AccountBridge<Transaction>["receive"] = (account: Account,
           o.next({
             address: account.freshAddress,
             path: account.freshAddressPath,
+            publicKey: r.publicKey,
           });
 
           o.complete();

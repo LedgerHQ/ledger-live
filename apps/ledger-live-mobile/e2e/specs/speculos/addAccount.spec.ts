@@ -14,14 +14,14 @@ describe("Add accounts", () => {
   });
 
   currencies.forEach(({ currency, nanoApp, tmsLink }) => {
-    let deviceName: string;
+    let deviceNumber: number;
 
     $TmsLink(tmsLink);
     it(`${currency}: add accounts`, async () => {
       await app.addAccount.openViaDeeplink();
       await app.addAccount.selectCurrency(currency);
 
-      deviceName = await app.common.addSpeculos(nanoApp);
+      deviceNumber = await app.common.addSpeculos(nanoApp);
 
       await app.addAccount.startAccountsDiscovery();
       await app.addAccount.expectAccountDiscovery(currency, 1);
@@ -32,7 +32,7 @@ describe("Add accounts", () => {
     });
 
     afterEach(async () => {
-      await app.common.removeSpeculos(deviceName);
+      await app.common.removeSpeculos(deviceNumber);
     });
   });
 });
