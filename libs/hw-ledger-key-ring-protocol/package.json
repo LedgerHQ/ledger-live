@@ -22,17 +22,17 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
-    "bip32": "^4.0.0",
-    "secp256k1": "^5.0.0",
-    "create-hmac": "^1.1.7",
-    "tiny-secp256k1": "1"
+    "bip32": "4.0.0",
+    "secp256k1": "5.0.0",
+    "create-hmac": "1.1.7",
+    "tiny-secp256k1": "1.1.6"
   },
   "devDependencies": {
-    "@types/lodash": "4",
-    "@types/jest": "^29.5.10",
-    "jest": "^29.7.0",
-    "@types/secp256k1": "^4.0.6",
-    "ts-jest": "^29.1.1"
+    "@types/lodash": "4.17.7",
+    "@types/jest": "29.5.12",
+    "jest": "29.7.0",
+    "@types/secp256k1": "4.0.6",
+    "ts-jest": "29.1.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

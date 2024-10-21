@@ -27,7 +27,7 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10",
+    "@types/node": "20.12.12",
     "documentation": "14.0.2"
   },
   "scripts": {

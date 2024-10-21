@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@ledgerhq/live-common": "workspace:^",
-    "serve-handler": "^6.1.3"
+    "serve-handler": "6.1.5"
   },
   "devDependencies": {
-    "@types/serve-handler": "^6.1.1"
+    "@types/serve-handler": "6.1.4"
   }
 }
