@@ -198,36 +198,36 @@ const animations: Animations = {
   stax: {
     wired: {
       plugAndPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/stax/enterPIN/light.json"),
+        dark: require("../animations/stax/enterPIN/dark.json"),
       },
       enterPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/stax/enterPIN/light.json"),
+        dark: require("../animations/stax/enterPIN/dark.json"),
       },
       quitApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/stax/allowConnection/light.json"),
+        dark: require("../animations/stax/allowConnection/dark.json"),
       },
       allowManager: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/stax/allowConnection/light.json"),
+        dark: require("../animations/stax/allowConnection/dark.json"),
       },
       openApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/stax/allowConnection/light.json"),
+        dark: require("../animations/stax/allowConnection/dark.json"),
       },
       verify: {
-        light: require("../animations/stax/verifyAddress.json"),
-        dark: require("../animations/stax/verifyAddress.json"),
+        light: require("../animations/stax/verifyAddress/light.json"),
+        dark: require("../animations/stax/verifyAddress/dark.json"),
       },
       sign: {
-        light: require("../animations/stax/signTransaction.json"),
-        dark: require("../animations/stax/signTransaction.json"),
+        light: require("../animations/stax/signTransaction/dark.json"),
+        dark: require("../animations/stax/signTransaction/light.json"),
       },
       allowUpdate: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/stax/allowConnection/light.json"),
+        dark: require("../animations/stax/allowConnection/dark.json"),
       },
       allowCustomLockScreen: {
         light: require("../animations/stax/customimage/allowConnection.json"),
