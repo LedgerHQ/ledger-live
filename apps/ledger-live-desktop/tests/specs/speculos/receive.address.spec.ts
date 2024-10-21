@@ -23,7 +23,7 @@ for (const account of accounts) {
       userdata: "skip-onboarding",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+        `liveData --currency ${account.account.currency.currencyId} --index ${account.account.index} --add`,
       ],
     });
 
@@ -71,7 +71,9 @@ test.describe("Receive", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [`liveData --currency ${account.currency.ticker} --index ${account.index} --add`],
+    cliCommands: [
+      `liveData --currency ${account.currency.currencyId} --index ${account.index} --add`,
+    ],
   });
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
