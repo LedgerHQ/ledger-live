@@ -6370,6 +6370,16 @@
     },
     "PinNotSet": {
       "title": "PIN not set"
+    },
+    "TransactionBroadcastError": {
+      "title": "Transaction Broadcast Unsuccesful",
+      "description": "Your transaction failed to broadcast on the {{networkName}} network. Your {{currencyName}} have not been transferred and remain in your account.",
+      "helpCenterTitle": "Help center : ",
+      "helpCenterDesc": "Visit our Help center or contact us via the widget for assistance.",
+      "needHelp": "Need help?",
+      "getHelp": "Get Help",
+      "technicalErrorTitle": "Technical error : ",
+      "saveLogs": "Save logs"
     }
   },
   "cryptoOrg": {
