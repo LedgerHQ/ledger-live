@@ -139,7 +139,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ inputs.slack_notif || github.event_name == 'push' }}
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -289,7 +289,7 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ inputs.slack_notif || github.event_name == 'push' }}
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -374,7 +374,7 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ inputs.slack_notif || github.event_name == 'push' }}
+    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
     steps:
       - name: format message
         uses: actions/github-script@v7
