@@ -28,99 +28,21 @@
         "lib-es/*": [
           "lib-es/*"
         ],
-        "api": [
-          "lib/api/index"
-        ],
-        "logic": [
-          "lib/logic/index"
-        ],
-        "specs": [
-          "lib/test/bot-specs"
-        ],
         "*": [
-          "lib/*",
-          "lib/api/*",
-          "lib/bridge/*",
-          "lib/logic/*",
-          "lib/signer/*",
-          "lib/test/*",
-          "lib/types/*"
+        "lib/*"
         ]
       }
     },
     "exports": {
       "./lib/*": "./lib/*.js",
       "./lib-es/*": "./lib-es/*.js",
-      "./api": {
-        "require": "./lib/api/index.js",
-        "default": "./lib-es/api/index.js"
-      },
-      "./deviceTransactionConfig": {
-        "require": "./lib/bridge/deviceTransactionConfig.js",
-        "default": "./lib-es/bridge/deviceTransactionConfig.js"
-      },
-      "./errors": {
-        "require": "./lib/types/errors.js",
-        "default": "./lib-es/types/errors.js"
-      },
-      "./formatters": {
-        "require": "./lib/bridge/formatters.js",
-        "default": "./lib-es/bridge/formatters.js"
-      },
-      "./logic": {
-        "require": "./lib/logic/index.js",
-        "default": "./lib-es/logic/index.js"
-      },
-      "./preload": {
-        "require": "./lib/bridge/preload.js",
-        "default": "./lib-es/bridge/preload.js"
-      },
-      "./serialization": {
-        "require": "./lib/bridge/serialization.js",
-        "default": "./lib-es/bridge/serialization.js"
-      },
-      "./specs": {
-        "require": "./lib/test/bot-specs.js",
-        "default": "./lib-es/test/bot-specs.js"
-      },
-      "./transaction": {
-        "require": "./lib/bridge/transaction.js",
-        "default": "./lib-es/bridge/transaction.js"
-      },
-      "./types": {
-        "require": "./lib/types/index.js",
-        "default": "./lib-es/types/index.js"
-      },
-      "./utils": {
-        "require": "./lib/bridge/utils.js",
-        "default": "./lib-es/bridge/utils.js"
-      },
       "./*": {
         "require": "./lib/*.js",
         "default": "./lib-es/*.js"
       },
-      ".": {
-        "require": "./lib/index.js",
-        "default": "./lib-es/index.js"
-      },
       "./package.json": "./package.json"
     },
     "license": "Apache-2.0",
-    "scripts": {
-      "clean": "rimraf lib lib-es",
-      "build": "tsc && tsc -m ES6 --outDir lib-es",
-      "prewatch": "pnpm build",
-      "watch": "tsc --watch",
-      "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-      "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-      "lint:fix": "pnpm lint --fix",
-      "test": "jest",
-      "test-integ": "jest --config=jest.integ.config.js",
-      "typecheck": "tsc --noEmit",
-      "unimported": "unimported",
-      "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
-      "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit"
-    },
     "dependencies": {
       "@ledgerhq/coin-framework": "workspace:^",
       "@ledgerhq/cryptoassets": "workspace:^",
@@ -132,11 +54,13 @@
       "@ledgerhq/logs": "workspace:^",
       "@ledgerhq/types-cryptoassets": "workspace:^",
       "@ledgerhq/types-live": "workspace:^",
+      "@zondax/cbor": "v8.1.0-zondax-no-bigint",
       "@zondax/ledger-filecoin": "^0.11.2",
       "@zondax/ledger-icp": "^0.7.0",
       "@zondax/ledger-stacks": "^1.0.2",
       "axios": "1.7.7",
       "bignumber.js": "^9.1.2",
+      "ethers": "5.7.2",
       "expect": "^27.4.6",
       "invariant": "^2.2.2",
       "iso-filecoin": "^4.1.0",
@@ -149,6 +73,7 @@
       "@types/invariant": "^2.2.2",
       "@types/jest": "^29.5.10",
       "@types/lodash": "^4.14.191",
+      "@types/node": "^20.8.10",
       "chalk": "^4.1.2",
       "docker-compose": "^0.24.2",
       "dotenv": "^16.4.5",
@@ -159,6 +84,18 @@
       "ts-jest": "^29.1.1",
       "ts-node": "^10.9.2",
       "typescript": "^5.3.3"
-    }
+    },
+    "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-filecoin.json",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  }
   }
   

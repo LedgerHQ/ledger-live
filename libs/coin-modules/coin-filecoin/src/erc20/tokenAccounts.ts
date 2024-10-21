@@ -2,8 +2,8 @@ import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
 import invariant from "invariant";
-import { ERC20Transfer, TxStatus } from "../types";
-import { emptyHistoryCache, encodeTokenAccountId } from "../../../../../account";
+import { ERC20Transfer, TxStatus } from "../utils/types";
+import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -13,8 +13,8 @@ import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { valueFromUnit } from "../../../../../currencies/valueFromUnit";
 import { AccountType } from "../utils";
+import { valueFromUnit } from "../utils/utils";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
@@ -89,7 +89,7 @@ export async function buildTokenAccounts(
   try {
     const transfers = await fetchERC20Transactions(filAddr);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
-      (prev, curr) => {
+      (prev: { [addr: string]: ERC20Transfer[] }, curr: ERC20Transfer) => {
         curr.contract_address = curr.contract_address.toLowerCase();
         if (prev[curr.contract_address]) {
           prev[curr.contract_address] = [...prev[curr.contract_address], curr];

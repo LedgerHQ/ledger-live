@@ -1,25 +1,31 @@
-import Fil from "@zondax/ledger-filecoin";
 import { log } from "@ledgerhq/logs";
 
-import type { Resolver } from "../../hw/getAddress/types";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { getPath, isError } from "./utils";
+import { FileCoinSigner } from "./types/signer";
 
-const resolver: Resolver = async (transport, { path, verify }) => {
-  log("debug", "start getAddress process");
+function resolver(signerContext: SignerContext<FileCoinSigner>): GetAddressFn {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    log("debug", "start getAddress process");
 
-  const fil = new Fil(transport);
+    const { r } = await signerContext(deviceId, async signer => {
+      const r = verify
+        ? await signer.showAddressAndPubKey(getPath(path))
+        : await signer.getAddressAndPubKey(getPath(path));
 
-  const r = verify
-    ? await fil.showAddressAndPubKey(getPath(path))
-    : await fil.getAddressAndPubKey(getPath(path));
+      isError(r);
 
-  isError(r);
+      return { r };
+    });
 
-  return {
-    path,
-    address: r.addrString,
-    publicKey: r.compressed_pk.toString("hex"),
+    return {
+      path,
+      address: r.addrString,
+      publicKey: Buffer.from(r.compressed_pk).toString("hex"),
+    };
   };
-};
+}
 
 export default resolver;

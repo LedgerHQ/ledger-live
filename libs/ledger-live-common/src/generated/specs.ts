@@ -1,7 +1,6 @@
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import crypto_org from "../families/crypto_org/specs";
-import filecoin from "../families/filecoin/specs";
 import internet_computer from "../families/internet_computer/specs";
 import stacks from "../families/stacks/specs";
 import vechain from "../families/vechain/specs";

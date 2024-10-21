@@ -1,4 +1,5 @@
 import { Account, Operation } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -34,7 +35,15 @@ export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] =>
 
     switch (txType) {
       case "Send":
+        if ("Send" in txByType) {
+          txByType[txType] = currentTx;
+        }
+        break;
       case "InvokeContract":
+        if ("InvokeContract" in txByType) {
+          txByType[txType] = currentTx;
+        }
+        break;
       case "Fee":
         txByType[txType] = currentTx;
         break;
@@ -83,7 +92,7 @@ export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] =>
 };
 
 export const mapTxToOps =
-  (accountId, { address }: AccountShapeInfo) =>
+  (accountId: string, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
     const { to, from, hash, timestamp, amount, fee, status } = tx;
     const ops: Operation[] = [];
@@ -220,3 +229,11 @@ export const getSubAccount = (account: Account, tx: Transaction) => {
 
   return subAccount;
 };
+
+/**
+ * convert a value in a given unit to a normalized value
+ * For instance, for 1 BTC, valueFromUnit(1, btcUnit) returns 100000000
+ * @memberof countervalue
+ */
+export const valueFromUnit = (valueInUnit: BigNumber, unit: Unit) =>
+  valueInUnit.times(new BigNumber(10).pow(unit.magnitude));

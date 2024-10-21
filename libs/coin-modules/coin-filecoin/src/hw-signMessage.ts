@@ -1,28 +1,29 @@
-import Fil from "@zondax/ledger-filecoin";
 import { log } from "@ledgerhq/logs";
-
-import type { SignMessage, Result } from "../../hw/signMessage/types";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { getBufferFromString, getPath, isError } from "./utils";
+import { FileCoinSigner } from "./types/signer";
 
-const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
-  log("debug", "start signMessage process");
+export const signMessage =
+  (signerContext: SignerContext<FileCoinSigner>) =>
+  async (deviceId: string, account: Account, { message }: AnyMessage) => {
+    log("debug", "start signMessage process");
 
-  const fil = new Fil(transport);
+    if (typeof message !== "string") throw new Error("Invalid message type");
+    if (!message) throw new Error("Message cannot be empty");
 
-  if (typeof message !== "string") throw new Error("Invalid message type");
-  if (!message) throw new Error("Message cannot be empty");
+    const r = await signerContext(deviceId, signer =>
+      signer.sign(getPath(account.freshAddressPath), getBufferFromString(message)),
+    );
 
-  const r = await fil.sign(getPath(account.freshAddressPath), getBufferFromString(message));
-  isError(r);
+    isError(r);
 
-  return {
-    rsv: {
-      r: r.signature_compact.slice(0, 32).toString("hex"),
-      s: r.signature_compact.slice(32, 64).toString("hex"),
-      v: parseInt(r.signature_compact.slice(64, 65).toString("hex"), 16),
-    },
-    signature: `0x${r.signature_compact.toString("hex")}`,
+    return {
+      rsv: {
+        r: Buffer.from(r.signature_compact.slice(0, 32)).toString("hex"),
+        s: Buffer.from(r.signature_compact.slice(32, 64)).toString("hex"),
+        v: parseInt(Buffer.from(r.signature_compact.slice(64, 65)).toString("hex"), 16),
+      },
+      signature: `0x${Buffer.from(r.signature_compact).toString("hex")}`,
+    };
   };
-};
-
-export default { signMessage };

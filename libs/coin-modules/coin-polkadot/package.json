@@ -151,6 +151,7 @@
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
+    "@types/node": "^20.8.10",
     "chalk": "^4.1.2",
     "docker-compose": "^0.24.2",
     "dotenv": "^16.4.5",

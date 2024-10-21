@@ -136,6 +136,7 @@
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-elrond": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-hedera": "workspace:^",
     "@ledgerhq/coin-icon": "workspace:^",

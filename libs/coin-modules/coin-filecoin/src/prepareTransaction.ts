@@ -1,11 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import {
-  isEthereumConvertableAddr,
-  isFilEthAddress,
-  validateAddress,
-} from "./addresses";
+import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "./addresses";
 import { BroadcastBlockIncl } from "./utils/types";
 import { Methods, calculateEstimatedFees } from "./utils";
 import { fetchEstimatedFees } from "./api";

@@ -29,6 +29,7 @@ const familiesWPackage = [
   "elrond",
   "evm",
   "hedera",
+  "filecoin",
   "icon",
   "near",
   "polkadot",
