@@ -28,7 +28,9 @@ export default ({
   const tokenId = toCurrency.type === "TokenCurrency" ? toCurrency.id : undefined;
   const isFromToken = fromCurrency.type === "TokenCurrency";
   const operationId =
-    isFromToken && operation.subOperations ? operation.subOperations[0].id : operation.id;
+    isFromToken && operation.subOperations && operation.subOperations.length > 0
+      ? operation.subOperations[0].id
+      : operation.id;
 
   const toAmount = transaction.amount.times(exchangeRate.magnitudeAwareRate);
 
