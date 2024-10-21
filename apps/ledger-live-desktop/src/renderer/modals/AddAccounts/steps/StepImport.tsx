@@ -3,11 +3,11 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
-import { ignoreElements, filter, map } from "rxjs/operators";
+import { ignoreElements, filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
-import { DeviceShouldStayInApp } from "@ledgerhq/errors";
+import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";
 import { urls } from "~/config/urls";
@@ -36,17 +36,17 @@ type Props = AccountListProps & {
   currency: CryptoOrTokenCurrency;
 };
 
-// TODO: This Error return type is just wrong…
+const statusCodeErrorMap = new Map<number, (appName: string) => Error>([
+  [0x6982, appName => new DeviceShouldStayInApp(undefined, { appName })], //refactored ternary in map, this error seems wrong, found like this
+  [0x6700, appName => new DeviceShouldStayInApp(undefined, { appName })], //refactored ternary in map, this error seems wrong, found like this
+  [0x6d09, appName => new DeviceShouldStayInApp(undefined, { appName })],
+]);
+
 const remapTransportError = (err: unknown, appName: string): Error => {
   if (!err || typeof err !== "object") return err as Error;
-  const { name, statusCode } = err as { name: string; statusCode: number };
-  const errorToThrow =
-    name === "BtcUnmatchedApp" || statusCode === 0x6982 || statusCode === 0x6700
-      ? new DeviceShouldStayInApp(undefined, {
-          appName,
-        })
-      : err;
-  return errorToThrow as Error;
+  const { statusCode } = err as { name: string; statusCode: number };
+  const errorFromStatusCode = statusCodeErrorMap.get(statusCode)?.(appName);
+  return errorFromStatusCode || (err as Error);
 };
 const LoadingRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -116,10 +116,11 @@ class StepImport extends PureComponent<
 
   startScanAccountsDevice() {
     this.unsub();
-    const { currency, device, setScanStatus, setScannedAccounts, blacklistedTokenIds } = this.props;
-    if (!currency || !device) return;
-    const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
     try {
+      const { currency, device, setScanStatus, setScannedAccounts, blacklistedTokenIds } =
+        this.props;
+      if (!currency || !device) throw new UnresponsiveDeviceError();
+      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
       const bridge = getCurrencyBridge(mainCurrency);
 
       // will be set to false if an existing account is found
@@ -141,6 +142,7 @@ class StepImport extends PureComponent<
         .pipe(
           filter(e => e.type === "discovered"),
           map(e => e.account),
+          retry(2), //needs to retry to output proper error message
         )
         .subscribe({
           next: account => {
@@ -170,10 +172,12 @@ class StepImport extends PureComponent<
           error: err => {
             logger.critical(err);
             const error = remapTransportError(err, currency.name);
-            setScanStatus("error", error);
+            setScanStatus("error", error as Error);
           },
         });
     } catch (err) {
+      logger.critical(err);
+      const { setScanStatus } = this.props;
       setScanStatus("error", err as Error);
     }
   }

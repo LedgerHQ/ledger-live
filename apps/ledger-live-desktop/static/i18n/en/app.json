@@ -737,7 +737,8 @@
         "subTitle": "The {{family}} integration has been done by the {{team}} team",
         "description": "Ledger Live is an open-source platform.",
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
+        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
     "willBeDeprecatedBanner": {
@@ -1118,7 +1119,8 @@
     "optionsMenu": {
       "title": "Options",
       "exportOperations": "Export operation history",
-      "exportToMobile": "Export to mobile"
+      "exportToMobile": "Export to mobile",
+      "ledgerSync": "Sync accounts"
     },
     "contextMenu": {
       "star": "Star",
@@ -2255,10 +2257,10 @@
       }
     },
     "memoTag": {
-        "title": "Need a Tag/Memo?",
-        "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
-        "learnMore": "Learn more about Tag/Memo"
-      }
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "learnMore": "Learn more about Tag/Memo"
+    }
   },
   "send": {
     "title": "Send",
@@ -2774,15 +2776,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos": {
-    "objkt": {
-      "card": {
-        "title": "NFT (Non Fungible Tokens) collection",
-        "description": "You can see you Tezos NFTs directly through Objkt inside Ledger Live.",
-        "cta": "See my NFTs on Objkt"
       }
     }
   },
@@ -5407,8 +5400,11 @@
       "description": "The network fee might be too low. Please increase"
     },
     "NoSuchAppOnProvider": {
-      "title": "The {{appName}} app cannot be found for your specific configuration.",
-      "description": "Try reinstalling the app from My Ledger"
+      "title": "{{appName}} is not compatible with {{productName}}.",
+      "titleOld": "The {{appName}} app cannot be found for your specific configuration.",
+      "description": "<0>Unlock more with our devices.</0> To access this feature, upgrade to one of our compatible devices. Choose the best option for your needs and enjoy enhanced security.",
+      "exploreCTA": "Explore compatible devices",
+      "learnMoreCTA": "Learn more about Ledger Sync"
     },
     "PendingOperation": {
       "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
@@ -6160,7 +6156,7 @@
     },
     "ServiceStatusWarning": {
       "title": "{{message}}",
-      "description": ""
+      "description": "{{description}}"
     },
     "TaprootNotActivated": {
       "title": "Sending to a taproot address is unsafe before mainnet activation"

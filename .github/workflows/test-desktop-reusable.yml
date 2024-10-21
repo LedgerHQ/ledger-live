@@ -34,8 +34,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
+      CI_OS: ubuntu-22.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -76,8 +76,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
+      CI_OS: ubuntu-22.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,7 +107,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
-      CI_OS: "ubuntu-latest"
+      CI_OS: "ubuntu-22.04"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
@@ -171,7 +171,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
   report:
     needs: [codechecks, unit-tests, e2e-tests-linux]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@v4

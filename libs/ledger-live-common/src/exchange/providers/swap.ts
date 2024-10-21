@@ -1,4 +1,5 @@
-import { ExchangeProviderNameAndSignature } from ".";
+import { getEnv } from "@ledgerhq/live-env";
+import { ExchangeProviderNameAndSignature, getTestProviderInfo } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 import { getProvidersData } from "./getProvidersData";
 import network from "@ledgerhq/live-network";
@@ -226,6 +227,20 @@ let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig>
 export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
+  const testProviderInfo = getTestProviderInfo();
+  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProviderInfo) {
+    return {
+      needsKYC: false,
+      needsBearerToken: false,
+      type: "CEX",
+      termsOfUseUrl: "https://example.com",
+      supportUrl: "https://example.com",
+      mainUrl: "https://example.com",
+      displayName: providerName,
+      ...testProviderInfo,
+    };
+  }
+
   const res = await fetchAndMergeProviderData();
 
   if (!res[providerName.toLowerCase()]) {

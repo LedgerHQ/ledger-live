@@ -14,6 +14,8 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 
 const LabelWithMeta = ({
   item,
@@ -36,6 +38,8 @@ const LabelWithMeta = ({
 
 const NFTCrumb = () => {
   const history = useHistory();
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
   const { id, collectionAddress } = useParams<{ id?: string; collectionAddress?: string }>();
   const account = useSelector((state: State) =>
     id
@@ -44,7 +48,19 @@ const NFTCrumb = () => {
         })
       : null,
   );
-  const collections = useMemo(() => nftsByCollections(account?.nfts), [account?.nfts]);
+
+  const { nfts } = useNftGalleryFilter({
+    nftsOwned: account?.nfts || [],
+    addresses: String(account?.freshAddress),
+    chains: [String(account?.currency.id)],
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+  });
+
+  const collections = useMemo(
+    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts),
+    [account?.nfts, nfts, nftsFromSimplehashFeature],
+  );
+
   const items: DropDownItemType<ProtoNFT>[] = useMemo(
     () =>
       Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => ({

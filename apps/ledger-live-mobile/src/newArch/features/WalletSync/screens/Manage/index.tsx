@@ -155,7 +155,7 @@ const WalletSyncManage = () => {
               {isLoading ? (
                 <InfiniteLoader size={16} />
               ) : (
-                <Text fontWeight="semiBold" variant="large" color="neutral.c100">
+                <Text fontWeight="semiBold" variant="large" color="neutral.c100" flex={1}>
                   {isError
                     ? t("walletSync.walletSyncActivated.synchronizedInstances.error")
                     : t("walletSync.walletSyncActivated.synchronizedInstances.title", {

@@ -55,6 +55,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

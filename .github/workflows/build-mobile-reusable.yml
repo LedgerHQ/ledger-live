@@ -126,7 +126,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/mobile.metafile.json
 
   report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) }}
     steps:
