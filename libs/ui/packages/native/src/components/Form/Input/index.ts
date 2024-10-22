@@ -4,3 +4,4 @@ export { default as NumberInput } from "./NumberInput";
 export { default as QrCodeInput } from "./QrCodeInput";
 export { default as SearchInput } from "./SearchInput";
 export { default as AnimatedInput } from "./AnimatedInput";
+export { default as AnimatedInputSelect } from "./AnimatedInputSelect";
