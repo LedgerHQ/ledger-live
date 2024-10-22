@@ -67,6 +67,7 @@ export class Layout extends Component {
   @step("Wait for accounts sync to be finished")
   async waitForAccountsSyncToBeDone() {
     await expect(this.topbarSynchronizeButton).toHaveAttribute("cursor", "default");
+    //todo: remove after https://ledgerhq.atlassian.net/browse/LIVE-14410 is solved
     await this.page.waitForTimeout(5000);
   }
 

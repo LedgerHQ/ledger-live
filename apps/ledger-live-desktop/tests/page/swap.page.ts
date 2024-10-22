@@ -14,6 +14,8 @@ export class SwapPage extends AppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmoutInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
+  private errorSpan = (text: RegExp | string) => `span[color*="error"]:has-text("${text}")`;
+  private numberOfQuotes = "number-of-quotes";
   private originCurrencyAmount = this.page.getByTestId("origin-currency-amount-value");
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
@@ -225,5 +227,25 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.toAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Verify minimum swap amount error message is displayed")
+  async verifyMinimumSwapAmountErrorMessageIsDisplayed(
+    electronApp: ElectronApplication,
+    accountToDebit: Account,
+  ) {
+    const [, webview] = electronApp.windows();
+    if (!accountToDebit.accountType) {
+      const errorMessageRegex = new RegExp(
+        `Minimum \\d+(\\.\\d{1,5})? ${accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
+      );
+      const actualText = await webview.locator('span[color*="error"]').innerText();
+      expect(actualText).toMatch(errorMessageRegex);
+      await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
+    } else {
+      await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+      await expect(webview.locator(this.errorSpan("Not enough balance."))).toBeVisible();
+    }
+    await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
   }
 }

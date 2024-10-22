@@ -104,7 +104,7 @@ const SwapCompleted = ({
       <Text
         mt={4}
         color="palette.text.shade100"
-        data-testid={"swap-completed-message"}
+        data-testid="swap-completed-message"
         ff="Inter|SemiBold"
         fontSize={5}
       >
@@ -114,7 +114,7 @@ const SwapCompleted = ({
         mt={13}
         textAlign="center"
         color="palette.text.shade50"
-        data-testid={"swap-completed-description"}
+        data-testid="swap-completed-description"
         ff="Inter|Regular"
         fontSize={4}
       >

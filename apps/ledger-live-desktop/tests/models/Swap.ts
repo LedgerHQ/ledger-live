@@ -29,4 +29,8 @@ export class Swap extends Transaction {
   public setFeesAmount(value: string) {
     this.feesAmount = value;
   }
+
+  public get getAmount(): string {
+    return this.amount;
+  }
 }

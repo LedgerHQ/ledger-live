@@ -63,8 +63,21 @@ export class SpeculosPage extends AppPage {
     await pressRightUntil(text);
   }
 
-  @step("Verify swap amounts")
+  @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap) {
+    await this.verifySwapData(swap);
+    await pressRightUntil(DeviceLabels.REJECT);
+    await pressBoth();
+  }
+
+  @step("Verify amounts and accept swap")
+  async verifyAmountsAndAcceptSwap(swap: Swap) {
+    await this.verifySwapData(swap);
+    await pressRightUntil(DeviceLabels.ACCEPT);
+    await pressBoth();
+  }
+
+  async verifySwapData(swap: Swap) {
     const { sendPattern } = AppInfos.EXCHANGE;
     if (!sendPattern) {
       return;
@@ -76,8 +89,6 @@ export class SpeculosPage extends AppPage {
     const getAmountScreen = await pressRightUntil(sendPattern[1]);
     this.verifySwapGetAmountScreen(swap, getAmountScreen);
     this.verifySwapFeesAmountScreen(swap, await pressRightUntil(sendPattern[2]));
-    await pressRightUntil(DeviceLabels.REJECT);
-    await pressBoth();
   }
 
   verifySwapGetAmountScreen(swap: Swap, getAmountScreen: string[]) {
