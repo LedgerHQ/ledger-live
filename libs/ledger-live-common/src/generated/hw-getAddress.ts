@@ -20,6 +20,7 @@ import { resolver as stellar } from "../families/stellar/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as ton } from "../families/ton/setup";
 import { resolver as tron } from "../families/tron/setup";
+import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
@@ -45,5 +46,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };

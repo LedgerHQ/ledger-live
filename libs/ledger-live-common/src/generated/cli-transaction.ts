@@ -21,6 +21,7 @@ import { cliTools as stellar } from "../families/stellar/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as ton } from "../families/ton/setup";
 import { cliTools as tron } from "../families/tron/setup";
+import { cliTools as vechain } from "../families/vechain/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 
 export default {
@@ -44,5 +45,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };

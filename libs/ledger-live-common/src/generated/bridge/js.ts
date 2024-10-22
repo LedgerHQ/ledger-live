@@ -20,6 +20,7 @@ import { bridge as stellar } from "../../families/stellar/setup";
 import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as ton } from "../../families/ton/setup";
 import { bridge as tron } from "../../families/tron/setup";
+import { bridge as vechain } from "../../families/vechain/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
 
 export default {
@@ -45,5 +46,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };
