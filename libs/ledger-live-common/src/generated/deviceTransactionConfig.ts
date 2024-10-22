@@ -10,6 +10,7 @@ import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
 import elrond from "@ledgerhq/coin-elrond/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
+import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
@@ -33,6 +34,7 @@ export default {
   cosmos,
   elrond,
   evm,
+  hedera,
   icon,
   near,
   polkadot,

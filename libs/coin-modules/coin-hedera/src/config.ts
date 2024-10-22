@@ -20,7 +20,7 @@ export const setCoinConfig = (config: HederaCoinConfig): void => {
 
 export const getCoinConfig = (): ReturnType<HederaCoinConfig> => {
   if (!coinConfig?.()) {
-    throw new Error("Elrond module config not set");
+    throw new Error("Hedera module config not set");
   }
 
   return coinConfig();
