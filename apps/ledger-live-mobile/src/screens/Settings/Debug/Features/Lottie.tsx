@@ -40,15 +40,11 @@ function getAnimation(params: {
   modelId: DeviceModelId;
   theme: "light" | "dark";
 }) {
-  const { key, wired, modelId, theme } = params;
+  const { key, modelId, theme } = params;
   if (keys.includes(key)) {
     // Normal deviceAction animations
     return getDeviceAnimation({
-      device: {
-        deviceId: "",
-        modelId,
-        wired: wired && ["nanoX", "stax"].includes(modelId),
-      },
+      modelId,
       key,
       theme,
     });

@@ -24,7 +24,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
       <Track event="FirmwareUpdateConfirmOnDevice" onMount />
       <Animation
         source={getDeviceAnimation({
-          device,
+          modelId: device.modelId,
           key: "allowUpdate",
           theme: theme as "light" | "dark" | undefined,
         })}
