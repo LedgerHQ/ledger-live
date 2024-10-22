@@ -5,6 +5,8 @@ import {
   SimpleHashSpamReportResponse,
 } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { replacements } from "../supported";
+import { mapChains } from "..";
 
 /**
  *
@@ -76,10 +78,13 @@ const defaultOpts = {
  */
 export async function fetchNftsFromSimpleHash(opts: NftFetchOpts): Promise<SimpleHashResponse> {
   const { chains, addresses, limit, filters, cursor, threshold } = { ...defaultOpts, ...opts };
+
+  const chainsMapped = mapChains(chains, replacements);
+
   const enrichedFilters = buildFilters(filters, { threshold: String(threshold) });
   const { data } = await network<SimpleHashResponse>({
     method: "GET",
-    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chains.join(
+    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chainsMapped.join(
       ",",
     )}&wallet_addresses=${addresses}&limit=${limit}${filters ? enrichedFilters : ""}${
       cursor ? `&cursor=${cursor}` : ""

@@ -7,13 +7,17 @@ import type {
   NftPayload,
 } from "../actions/types";
 import { NftStateActionTypes } from "../actions/types";
+import { SUPPORTED_BLOCKCHAINS_LIVE, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
 
 export const INITIAL_STATE: NftState = {
   filterDrawerVisible: false,
-  galleryChainFilters: {
-    ethereum: true,
-    polygon: true,
-  },
+  galleryChainFilters: SUPPORTED_BLOCKCHAINS_LIVE.reduce(
+    (filters, chain) => {
+      filters[chain] = true;
+      return filters;
+    },
+    {} as Record<SupportedBlockchainsType, boolean>,
+  ),
 };
 
 const handlers: ReducerMap<NftState, NftPayload> = {

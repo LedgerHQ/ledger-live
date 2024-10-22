@@ -537,8 +537,8 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
-    parser: stringParser,
+    def: ["arbitrum", "avalanche_c_chain", "base", "ethereum", "optimism", "polygon", "scroll"],
+    parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
   NFT_ETH_METADATA_SERVICE: {

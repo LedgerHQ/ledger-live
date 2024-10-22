@@ -3,6 +3,9 @@ import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/account/i
 import type { Operation, ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
 import { NFTResource } from "./types";
 
+export const GENESIS_PASS_COLLECTION_CONTRACT = "0x33c6Eec1723B12c46732f7AB41398DE45641Fa42";
+export const INFINITY_PASS_COLLECTION_CONTRACT = "0xfe399E9a4B0bE4087a701fF0B1c89dABe7ce5425";
+
 /**
  * Helper to group NFTs by their collection/contract.
  *
@@ -46,8 +49,8 @@ export const getNFT = (
 
 export const groupByCurrency = (nfts: ProtoNFT[]): ProtoNFT[] => {
   const groupMap = new Map<string, ProtoNFT[]>();
-  const SUPPORTED_CURRENCIES = getEnv("NFT_CURRENCIES").split(",");
-  SUPPORTED_CURRENCIES.forEach(elem => groupMap.set(elem, []));
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
+  SUPPORTED_NFT_CURRENCIES.forEach(elem => groupMap.set(elem, []));
 
   // GROUPING
   nfts.forEach(nft => {
@@ -91,9 +94,6 @@ export function orderByLastReceived(accounts: Account[], nfts: ProtoNFT[]): Prot
   return groupByCurrency([...new Set(orderedNFTs)]);
 }
 
-export const GENESIS_PASS_COLLECTION_CONTRACT = "0x33c6Eec1723B12c46732f7AB41398DE45641Fa42";
-export const INFINITY_PASS_COLLECTION_CONTRACT = "0xfe399E9a4B0bE4087a701fF0B1c89dABe7ce5425";
-
 export const hasNftInAccounts = (nftCollection: string, accounts: Account[]): boolean =>
   accounts &&
   accounts.some(account => account?.nfts?.some((nft: ProtoNFT) => nft?.contract === nftCollection));
@@ -128,4 +128,8 @@ export const isNftTransaction = <T>(transaction: T | undefined | null): boolean 
   }
 
   return false;
+};
+
+export const mapChains = (chains: string[], replacements: { [key: string]: string }) => {
+  return chains.map(chain => replacements[chain] || chain);
 };
