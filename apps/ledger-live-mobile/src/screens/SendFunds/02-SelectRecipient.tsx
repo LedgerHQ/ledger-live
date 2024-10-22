@@ -159,13 +159,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const [memoTagDrawerState, setMemoTagDrawerState] = useState<"INITIAL" | "SHOWING" | "SHOWN">(
-    "INITIAL",
+  const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
+    MemoTagDrawerState.INITIAL,
   );
 
   const onPressContinue = useCallback(() => {
-    if (memoTag?.isEmpty && memoTagDrawerState === "INITIAL") {
-      return setMemoTagDrawerState("SHOWING");
+    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+      return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
     }
 
     track("SendRecipientContinue");
@@ -346,8 +346,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       </SafeAreaView>
 
       <MemoTagDrawer
-        open={memoTagDrawerState === "SHOWING"}
-        onClose={() => setMemoTagDrawerState("SHOWN")}
+        open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
+        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
         onNext={onPressContinue}
       />
 
@@ -403,3 +403,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+enum MemoTagDrawerState {
+  INITIAL,
+  SHOWING,
+  SHOWN,
+}
