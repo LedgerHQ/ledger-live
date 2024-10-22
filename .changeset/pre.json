@@ -122,5 +122,34 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "big-dodos-reflect",
+    "chilly-teachers-own",
+    "flat-rings-deny",
+    "forty-jobs-buy",
+    "fresh-dolls-sin",
+    "gold-bats-perform",
+    "happy-hotels-sin",
+    "hot-guests-hide",
+    "hungry-waves-move",
+    "late-turtles-join",
+    "lazy-ads-drop",
+    "long-meals-laugh",
+    "loud-birds-jam",
+    "loud-donkeys-smash",
+    "lovely-paws-greet",
+    "lucky-otters-think",
+    "mean-gifts-worry",
+    "modern-wolves-pretend",
+    "new-rings-collect",
+    "red-tips-knock",
+    "shaggy-meals-rescue",
+    "short-fans-confess",
+    "small-drinks-explain",
+    "spotty-experts-train",
+    "spotty-windows-deny",
+    "two-elephants-double",
+    "wet-cars-perform",
+    "wild-squids-promise"
+  ]
 }
