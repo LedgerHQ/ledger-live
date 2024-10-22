@@ -1,6 +1,6 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
-random edit
+random edit 2
 
 # Ledger Live (desktop)
 
