@@ -377,14 +377,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         }),
       ).pipe(
         filter((e: any) => {
-          // NOTE: scanAccount emits 'discovered' event for a new account found
-          if (scheme) {
-            return (
-              e.type === "discovered" || asDerivationMode(scheme) === e?.account?.derivationMode
-            );
-          } else {
-            return e.type === "discovered";
-          }
+          return e.type === "discovered";
         }),
         map(e => {
           return e.account;
