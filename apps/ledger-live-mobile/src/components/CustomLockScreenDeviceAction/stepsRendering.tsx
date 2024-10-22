@@ -90,8 +90,8 @@ export const RenderImageLoadRequested = ({
     [framedPictureConfig],
   );
   const lottieSource = useMemo(
-    () => getDeviceAnimation({ theme, key: "allowCustomLockScreen", device }),
-    [theme, device],
+    () => getDeviceAnimation({ theme, key: "allowCustomLockScreen", modelId: deviceModelId }),
+    [theme, deviceModelId],
   );
   const title = useMemo(
     () =>
@@ -179,7 +179,7 @@ export const RenderImageCommitRequested = ({
       }
       lottieSource={
         deviceModelId === DeviceModelId.stax
-          ? getDeviceAnimation({ theme, key: "confirmCustomLockScreen", device })
+          ? getDeviceAnimation({ theme, key: "confirmCustomLockScreen", modelId: deviceModelId })
           : undefined
       }
       progress={maxProgressWithConfirmButton[deviceModelId]}
