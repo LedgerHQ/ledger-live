@@ -1,1 +1,0 @@
-{"request":{"url":"https://countervalues.live.ledger.com/v3/spot/simple?to=USD&froms=hedera","method":"GET"},"response":{"body":{"hedera":0.05205}}}

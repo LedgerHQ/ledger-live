@@ -19,16 +19,15 @@
   "ignoreUnimported": [
     "src/config.ts",
     "src/index.ts",
-    "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
+    "src/test/specs.ts",
     "src/test/speculos-deviceActions.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
     "@ledgerhq/live-promise",
-    "@ledgerhq/types-cryptoassets",
     "expect",
     "lodash",
     "rxjs"
