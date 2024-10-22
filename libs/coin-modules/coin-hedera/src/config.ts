@@ -1,20 +1,27 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import "@ledgerhq/types-cryptoassets";
 
-export type HederaConfig = Record<string, ConfigInfo>;
-
-export const hederaConfig: HederaConfig = {
+export type HederaCoinConfig = () => CurrencyConfig & {
   config_currency_hedera: {
-    type: "object",
+    type: "object";
     default: {
       status: {
-        type: "active",
-      },
-    },
-  },
+        type: "active";
+      };
+    };
+  };
 };
 
-export type HederaCoinConfig = CurrencyConfig & HederaConfig;
-const coinConfig = buildCoinConfig<HederaCoinConfig>();
-export default coinConfig;
+let coinConfig: HederaCoinConfig | undefined;
+
+export const setCoinConfig = (config: HederaCoinConfig): void => {
+  coinConfig = config;
+};
+
+export const getCoinConfig = (): ReturnType<HederaCoinConfig> => {
+  if (!coinConfig?.()) {
+    throw new Error("Elrond module config not set");
+  }
+
+  return coinConfig();
+};

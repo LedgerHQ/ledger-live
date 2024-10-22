@@ -11,15 +11,14 @@ import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-hedera/types/index";
-import { HederaCoinConfig } from "./config";
+import { HederaCoinConfig } from "@ledgerhq/coin-hedera/config";
 
 const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
   return new Hedera(transport);
 };
 
-const hedera = getCryptoCurrencyById("hedera");
 const getCurrencyConfig = (): HederaCoinConfig => {
-  return getCurrencyConfiguration(hedera);
+  return getCurrencyConfiguration(getCryptoCurrencyById("hedera"));
 };
 
 const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(

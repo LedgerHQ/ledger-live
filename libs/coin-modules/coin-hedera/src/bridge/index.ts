@@ -16,8 +16,6 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape, buildIterateResult } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import hederaCoinConfig, { type HederaCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -58,12 +56,7 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<HederaSigner>,
-  coinConfig: CoinConfig<HederaCoinConfig>,
-) {
-  hederaCoinConfig.setCoinConfig(coinConfig);
-
+export function createBridges(signerContext: SignerContext<HederaSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
