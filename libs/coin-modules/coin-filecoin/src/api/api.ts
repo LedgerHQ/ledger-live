@@ -17,8 +17,8 @@ import {
   FetchERC20TransactionsResponse,
   ERC20Transfer,
   ERC20BalanceResponse,
-} from "./utils/types";
-import { FilecoinFeeEstimationFailed } from "./errors";
+} from "../types";
+import { FilecoinFeeEstimationFailed } from "../errors";
 
 const getFilecoinURL = (path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");

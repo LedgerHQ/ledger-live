@@ -6,11 +6,11 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "./types";
-import { isRecipientValidForTokenTransfer, validateAddress } from "./addresses";
-import { getAddress, getSubAccount } from "./utils/utils";
+import { Transaction, TransactionStatus } from "../types";
+import { isRecipientValidForTokenTransfer, validateAddress } from "../network";
+import { getAddress, getSubAccount } from "../common-logic";
 import { calculateEstimatedFees } from "./utils";
-import { InvalidRecipientForTokenTransfer } from "./errors";
+import { InvalidRecipientForTokenTransfer } from "../errors";
 import BigNumber from "bignumber.js";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (

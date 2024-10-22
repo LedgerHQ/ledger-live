@@ -8,8 +8,8 @@ import {
   expectedToFieldForTokenTransfer,
   getAccountUnit,
   methodToString,
-} from "./utils";
-import { validateAddress } from "./addresses";
+} from "./bridge/utils";
+import { validateAddress } from "./network";
 
 export type ExtraDeviceTransactionField =
   | {

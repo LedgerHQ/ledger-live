@@ -28,6 +28,9 @@
         "lib-es/*": [
           "lib-es/*"
         ],
+        "specs": [
+          "lib/test/bot-specs"
+        ],
         "*": [
         "lib/*"
         ]
@@ -36,9 +39,45 @@
     "exports": {
       "./lib/*": "./lib/*.js",
       "./lib-es/*": "./lib-es/*.js",
+      "./api": {
+        "require": "./lib/api/index.js",
+        "default": "./lib-es/api/index.js"
+      },
+      "./deviceTransactionConfig": {
+        "require": "./lib/deviceTransactionConfig.js",
+        "default": "./lib-es/deviceTransactionConfig.js"
+      },
+      "./logic": {
+        "require": "./lib/common-logic/index.js",
+        "default": "./lib-es/common-logic/index.js"
+      },
+      "./network": {
+        "require": "./lib/network/index.js",
+        "default": "./lib-es/network/index.js"
+      },
+      "./signer": {
+        "require": "./lib/signer/index.js",
+        "default": "./lib-es/signer/index.js"
+      },
+      "./specs": {
+        "require": "./lib/test/bot-specs.js",
+        "default": "./lib-es/test/bot-specs.js"
+      },
+      "./transaction": {
+        "require": "./lib/transaction.js",
+        "default": "./lib-es/transaction.js"
+      },
+      "./types": {
+        "require": "./lib/types/index.js",
+        "default": "./lib-es/types/index.js"
+      },
       "./*": {
         "require": "./lib/*.js",
         "default": "./lib-es/*.js"
+      },
+      ".": {
+        "require": "./lib/index.js",
+        "default": "./lib-es/index.js"
       },
       "./package.json": "./package.json"
     },
@@ -48,7 +87,6 @@
       "@ledgerhq/cryptoassets": "workspace:^",
       "@ledgerhq/devices": "workspace:*",
       "@ledgerhq/errors": "workspace:^",
-      "@ledgerhq/live-config": "workspace:^",
       "@ledgerhq/live-env": "workspace:^",
       "@ledgerhq/live-network": "workspace:^",
       "@ledgerhq/logs": "workspace:^",

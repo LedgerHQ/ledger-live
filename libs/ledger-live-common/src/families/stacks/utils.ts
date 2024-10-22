@@ -1,5 +1,5 @@
 import { ResponseAddress } from "@zondax/ledger-stacks";
-import { isValidBase64, isValidHex } from "../filecoin/utils";
+import { isValidBase64, isValidHex } from "@ledgerhq/coin-filecoin/bridge/utils";
 
 export const isNoErrorReturnCode = (code: number) => code === 0x9000;
 

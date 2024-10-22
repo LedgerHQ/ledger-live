@@ -4,14 +4,13 @@ import { log } from "@ledgerhq/logs";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { BroadcastTransactionRequest, TransactionResponse, TxStatus } from "./types";
+import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
 import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalances, fetchBlockHeight, fetchTxs } from "../api";
+import { fetchBalances, fetchBlockHeight, fetchTxs } from "../api/api";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import flatMap from "lodash/flatMap";
 import { buildTokenAccounts } from "../erc20/tokenAccounts";
-import { Transaction } from "../types";
 
 type TxsById = {
   [id: string]:

@@ -1,11 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import { getBufferFromString, getPath, isError } from "./utils";
-import { FileCoinSigner } from "./types/signer";
+import { getBufferFromString, getPath, isError } from "./bridge/utils";
+import { FilecoinSigner } from "./types";
 
 export const signMessage =
-  (signerContext: SignerContext<FileCoinSigner>) =>
+  (signerContext: SignerContext<FilecoinSigner>) =>
   async (deviceId: string, account: Account, { message }: AnyMessage) => {
     log("debug", "start signMessage process");
 

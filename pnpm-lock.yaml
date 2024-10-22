@@ -2410,9 +2410,6 @@ importers:
         specifier: workspace:^
         version: link:../../live-countervalues
 =======
-      '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
 >>>>>>> 42c31c988d (fix: first push)
       '@ledgerhq/live-env':
         specifier: workspace:^

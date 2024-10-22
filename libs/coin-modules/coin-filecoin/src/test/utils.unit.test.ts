@@ -1,4 +1,4 @@
-import { isValidBase64, isValidHex, methodToString } from "./utils";
+import { isValidBase64, isValidHex, methodToString } from "../bridge/utils";
 
 test("methodToString", () => {
   const str1 = methodToString(0);

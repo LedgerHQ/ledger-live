@@ -1,10 +1,10 @@
 import { Account } from "@ledgerhq/types-live";
 
-import { Transaction } from "./types";
-import { getAddress, getSubAccount } from "./utils/utils";
-import { validateAddress } from "./addresses";
+import { Transaction } from "../types";
+import { getAddress, getSubAccount } from "../common-logic/index";
+import { validateAddress } from "../network";
 import { Message } from "iso-filecoin/message";
-import { encodeTxnParams } from "./erc20/tokenAccounts";
+import { encodeTxnParams } from "../erc20/tokenAccounts";
 import BigNumber from "bignumber.js";
 import { AccountType } from "./utils";
 

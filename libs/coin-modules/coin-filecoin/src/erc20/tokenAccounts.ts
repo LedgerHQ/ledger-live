@@ -2,19 +2,19 @@ import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
 import invariant from "invariant";
-import { ERC20Transfer, TxStatus } from "../utils/types";
+import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { convertAddressFilToEth } from "../addresses";
+import { convertAddressFilToEth } from "../network";
 import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { AccountType } from "../utils";
-import { valueFromUnit } from "../utils/utils";
+import { AccountType } from "../bridge/utils";
+import { valueFromUnit } from "../common-logic/utils";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,

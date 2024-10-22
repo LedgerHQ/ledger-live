@@ -1,0 +1,21 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "@zondax/ledger-filecoin",
+    "@zondax/ledger-icp",
+    "@zondax/ledger-stacks",
+    "expect"
+  ],
+  "ignoreUnimported": [
+    "src/config.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/hw-signMessage.ts",
+    "src/test/bot-specs.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/speculos-deviceActions.ts",
+    "src/transaction.ts"
+  ]
+}

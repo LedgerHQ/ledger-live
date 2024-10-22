@@ -1,18 +1,18 @@
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "./types";
+import { Transaction } from "../types";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { getAddress, getSubAccount } from "./utils/utils";
+import { getAddress, getSubAccount } from "../common-logic";
 import { AccountType, Methods, calculateEstimatedFees } from "./utils";
 import {
   InvalidAddress,
   NotEnoughBalanceInParentAccount,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
-import { isFilEthAddress, validateAddress } from "./addresses";
-import { fetchBalances, fetchEstimatedFees } from "./api";
+import { isFilEthAddress, validateAddress } from "../network";
+import { fetchBalances, fetchEstimatedFees } from "../api";
 import BigNumber from "bignumber.js";
-import { BroadcastBlockIncl } from "./utils/types";
-import { encodeTxnParams, generateTokenTxnParams } from "./erc20/tokenAccounts";
+import { BroadcastBlockIncl } from "../types";
+import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

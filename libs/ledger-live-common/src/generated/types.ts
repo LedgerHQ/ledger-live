@@ -57,7 +57,7 @@ import type {
   TransactionRaw as filecoinTransactionRaw,
   TransactionStatus as filecoinTransactionStatus,
   TransactionStatusRaw as filecoinTransactionStatusRaw,
-} from "../families/filecoin/types";
+} from "@ledgerhq/coin-filecoin/types/index";
 import type {
   Transaction as hederaTransaction,
   TransactionRaw as hederaTransactionRaw,

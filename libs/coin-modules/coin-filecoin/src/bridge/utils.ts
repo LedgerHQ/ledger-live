@@ -1,6 +1,6 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getEquivalentAddress } from "./addresses";
+import { getEquivalentAddress } from "../network";
 
 export enum Methods {
   Transfer = 0,

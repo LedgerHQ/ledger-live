@@ -1,13 +1,12 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "./addresses";
-import { BroadcastBlockIncl } from "./utils/types";
+import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "../network";
+import { BroadcastBlockIncl, Transaction } from "../types";
 import { Methods, calculateEstimatedFees } from "./utils";
-import { fetchEstimatedFees } from "./api";
-import { getAddress, getSubAccount } from "./utils/utils";
-import { Transaction } from "./types";
-import { encodeTxnParams, generateTokenTxnParams } from "./erc20/tokenAccounts";
+import { fetchEstimatedFees } from "../api/index";
+import { getAddress, getSubAccount } from "../common-logic/utils";
+import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

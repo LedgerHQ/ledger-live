@@ -5,14 +5,13 @@ import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { toCBOR } from "./serializer";
-import { getAddress, getSubAccount } from "./utils/utils";
+import { getAddress, getSubAccount } from "../common-logic/utils";
 import { AccountType, getPath, isError } from "./utils";
-import { Transaction } from "./types";
-import { FileCoinSigner } from "./types/signer";
+import { Transaction, FilecoinSigner } from "../types";
 
 export const buildSignOperation =
   (
-    signerContext: SignerContext<FileCoinSigner>,
+    signerContext: SignerContext<FilecoinSigner>,
   ): AccountBridge<Transaction, Account>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable(o => {

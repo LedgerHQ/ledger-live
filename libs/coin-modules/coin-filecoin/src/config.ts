@@ -1,10 +1,7 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import "@ledgerhq/types-cryptoassets";
 
-export type FileCoinConfig = Record<string, ConfigInfo>;
-
-export const fileCoinConfig: FileCoinConfig = {
+export type FilecoinConfig  = () => CurrencyConfig & {
   config_currency_filecoin: {
     type: "object",
     default: {
@@ -15,6 +12,16 @@ export const fileCoinConfig: FileCoinConfig = {
   },
 };
 
-export type FileCoinCurrencyConfig = CurrencyConfig & FileCoinConfig;
-const coinConfig = buildCoinConfig<FileCoinCurrencyConfig>();
-export default coinConfig;
+let coinConfig: FilecoinConfig | undefined;
+
+export const setCoinConfig = (config: FilecoinConfig): void => {
+  coinConfig = config;
+};
+
+export const getCoinConfig = (): ReturnType<FilecoinConfig> => {
+  if (!coinConfig?.()) {
+    throw new Error("Filecoin module config not set");
+  }
+
+  return coinConfig();
+};
