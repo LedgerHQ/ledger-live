@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.6.2-next.0
+
+### Patch Changes
+
+- [#7952](https://github.com/LedgerHQ/ledger-live/pull/7952) [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix issue with infinite loader during swap with legacy swap ui
+  Add additionnal test to hw-app-exchange
+
 ## 0.6.1
 
 ### Patch Changes
