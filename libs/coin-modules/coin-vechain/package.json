@@ -57,11 +57,9 @@
     "coin-tester": "DOTENV_CONFIG_PATH=src/__tests__/coin-tester/.env pnpm jest --runTestsByPath src/__tests__/coin-tester/*.test.ts"
   },
   "dependencies": {
-    "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
-    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",

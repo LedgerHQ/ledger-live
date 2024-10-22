@@ -3,7 +3,6 @@
 import { createBridges } from "@ledgerhq/coin-vechain/bridge/js";
 import makeCliTools from "@ledgerhq/coin-vechain/cli-transaction";
 import vechainResolver from "@ledgerhq/coin-vechain/hw-getAddress";
-import { signMessage } from "@ledgerhq/coin-vechain/hw-signMessage";
 import { VechainSigner } from "@ledgerhq/coin-vechain/signer";
 import { Transaction } from "@ledgerhq/coin-vechain/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -22,12 +21,8 @@ const getCoinConfig: VechainCoinConfig = () =>
 
 const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner), getCoinConfig);
 
-const messageSigner = {
-  signMessage,
-};
-
 const resolver: Resolver = createResolver(createSigner, vechainResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, cliTools, resolver };

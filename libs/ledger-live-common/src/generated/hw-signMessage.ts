@@ -5,7 +5,6 @@ import { messageSigner as bitcoin } from "../families/bitcoin/setup";
 import { messageSigner as evm } from "../families/evm/setup";
 import { messageSigner as filecoin } from "../families/filecoin/setup";
 import { messageSigner as ton } from "../families/ton/setup";
-import { messageSigner as vechain } from "../families/vechain/setup";
 
 export default {
   casper,
@@ -15,5 +14,4 @@ export default {
   evm,
   filecoin,
   ton,
-  vechain,
 };

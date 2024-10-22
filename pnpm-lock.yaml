@@ -3226,9 +3226,6 @@ importers:
 
   libs/coin-modules/coin-vechain:
     dependencies:
-      '@ethersproject/shims':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -3238,9 +3235,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
