@@ -50,7 +50,7 @@ for (const currency of currencies) {
         if (currency.currency.name !== Currency.TON.name) {
           await app.layout.expectBalanceVisibility();
         }
-        await app.portfolio.opperationHistory();
+        await app.portfolio.checkOperationHistory();
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);

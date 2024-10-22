@@ -9,7 +9,7 @@ export class PortfolioPage extends AppPage {
   private swapEntryButton = this.page.getByTestId("swap-entry-button");
   private stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private chart = this.page.getByTestId("chart-container");
-  private operationList = this.page.locator("id=operation-list");
+  private operationList = this.page.locator("#operation-list");
   private marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
   private swapButton = this.marketPerformanceWidget.getByRole("button", { name: "Swap" });
   private buyButton = this.marketPerformanceWidget.getByRole("button", { name: "Buy" });
@@ -87,12 +87,11 @@ export class PortfolioPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     await this.page.waitForTimeout(500);
-    const operationList = this.page.locator("id=operation-list");
-    await operationList.scrollIntoViewIfNeeded();
+    await this.operationList.scrollIntoViewIfNeeded();
   }
 
   @step("check operation history")
-  async opperationHistory() {
+  async checkOperationHistory() {
     await this.operationList.scrollIntoViewIfNeeded();
     expect(await this.operationList).toBeVisible();
 
