@@ -51,7 +51,7 @@ const StepFlow = ({
   const { memberCredentials } = useInitMemberCredentials();
   const trustchain = useSelector(trustchainSelector);
 
-  const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
+  const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
@@ -59,7 +59,7 @@ const StepFlow = ({
   };
 
   const handlePinCodeSubmit = (input: string) => {
-    if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
+    if (input && nbDigits === input.length) handleSendDigits(input);
   };
 
   const getScene = () => {

@@ -23,7 +23,13 @@ const DrawerHeader: React.FC<Props> = ({ onClose }) => {
       pr={16}
     >
       <Flex flex={1} />
-      <Text fontSize={16} fontWeight="semiBold" color={colors.neutral.c100}>
+      <Text
+        flex={3}
+        fontSize={16}
+        fontWeight="semiBold"
+        color={colors.neutral.c100}
+        textAlign="center"
+      >
         {t("walletSync.synchronize.qrCode.title")}
       </Text>
       <Flex flex={1} alignItems="flex-end">

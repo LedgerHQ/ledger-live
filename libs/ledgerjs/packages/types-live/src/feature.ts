@@ -156,7 +156,6 @@ export type Features = CurrencyFeatures & {
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
-  objkt: Feature_Objkt;
   editEvmTx: Feature_EditEvmTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
@@ -535,7 +534,6 @@ export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
-export type Feature_Objkt = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;

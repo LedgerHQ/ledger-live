@@ -77,6 +77,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
   }
 
   const liveAppWebview = new LiveAppWebview(page);
+  await liveAppWebview.waitForLoaded();
   const modal = new Modal(page);
   const deviceAction = new DeviceAction(page);
 
@@ -202,7 +203,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
 
     const recipient = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 
-    liveAppWebview.send({
+    const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
       method: "transaction.signAndBroadcast",
@@ -242,5 +243,13 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         "You're authorizing this provider to access the selected token from your wallet",
       ),
     ).toBeVisible();
+
+    await expect(response).resolves.toStrictEqual({
+      id,
+      jsonrpc: "2.0",
+      result: {
+        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
+      },
+    });
   });
 });

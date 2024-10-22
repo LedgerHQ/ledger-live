@@ -11,11 +11,16 @@ import DropDownSelector, {
 } from "~/renderer/components/DropDownSelector";
 import Switch from "~/renderer/components/Switch";
 import Tooltip from "~/renderer/components/Tooltip";
-import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
-import IconSend from "~/renderer/icons/Send";
 import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
-import { IconsLegacy } from "@ledgerhq/react-ui";
+import { Icons } from "@ledgerhq/react-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
+import { useFlows } from "LLD/features/WalletSync/hooks/useFlows";
+import {
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+} from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -45,19 +50,42 @@ const OptionsButton = () => {
     [dispatch],
   );
   const { t } = useTranslation();
+
+  const lldLedgerSyncFF = useFeature("lldWalletSync");
+  const isLedgerSyncEnabled = lldLedgerSyncFF?.enabled;
+  const { goToWelcomeScreenWalletSync } = useFlows();
+
+  const { onClickTrack } = useLedgerSyncAnalytics();
+
+  const openLedgerSyncDrawer = () => {
+    goToWelcomeScreenWalletSync();
+    onClickTrack({ button: "Access Ledger Sync", page: AnalyticsPage.Accounts });
+    dispatch(setLedgerSyncDrawerVisibility(true));
+  };
   const items: ItemType[] = [
     {
       key: "exportOperations",
       label: t("accounts.optionsMenu.exportOperations"),
-      icon: <IconDownloadCloud size={16} />,
+      icon: <Icons.Download size="S" />,
       onClick: () => onOpenModal("MODAL_EXPORT_OPERATIONS"),
     },
-    {
-      key: "exportAccounts",
-      label: t("accounts.optionsMenu.exportToMobile"),
-      icon: <IconSend size={16} />,
-      onClick: () => onOpenModal("MODAL_EXPORT_ACCOUNTS"),
-    },
+    ...(isLedgerSyncEnabled
+      ? [
+          {
+            key: "exportAccounts",
+            label: t("accounts.optionsMenu.ledgerSync"),
+            icon: <Icons.Refresh size="S" />,
+            onClick: openLedgerSyncDrawer,
+          },
+        ]
+      : [
+          {
+            key: "exportAccounts",
+            label: t("accounts.optionsMenu.exportToMobile"),
+            icon: <Icons.QrCode size="S" />,
+            onClick: () => onOpenModal("MODAL_EXPORT_ACCOUNTS"),
+          },
+        ]),
     {
       key: "sep1",
       type: "separator",
@@ -121,7 +149,7 @@ const OptionsButton = () => {
               }}
             >
               <Box alignItems="center">
-                <IconsLegacy.OthersMedium size={14} />
+                <Icons.MoreHorizontal size={"S"} />
               </Box>
             </Button>
           </Tooltip>

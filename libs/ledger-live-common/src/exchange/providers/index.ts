@@ -56,11 +56,14 @@ type TestProvider = {
     curve: "secp256k1" | "secp256r1";
     data: string;
   };
+  service: {
+    appVersion: number;
+    name: "swap" | "sell" | "fund";
+  };
   signature: string;
-  version: number;
 };
 export function setTestProviderInfo(provider: string) {
-  const { name, publicKey, signature, version } = JSON.parse(provider) as TestProvider;
+  const { name, publicKey, signature, service } = JSON.parse(provider) as TestProvider;
   testProvider = {
     name,
     publicKey: {
@@ -68,6 +71,9 @@ export function setTestProviderInfo(provider: string) {
       data: Buffer.from(publicKey.data, "hex"),
     },
     signature: Buffer.from(signature, "hex"),
-    version,
+    version: service.appVersion,
   };
+}
+export function getTestProviderInfo(): ExchangeProviderNameAndSignature | undefined {
+  return testProvider;
 }

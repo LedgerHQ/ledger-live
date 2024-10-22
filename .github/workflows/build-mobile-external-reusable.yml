@@ -82,7 +82,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: macos-latest
+    runs-on: macos-14
     name: "Build Ledger Live Mobile (Mac OS X)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

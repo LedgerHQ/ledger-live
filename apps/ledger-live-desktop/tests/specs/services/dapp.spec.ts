@@ -17,7 +17,7 @@ test.describe("Metamask Test Dapp", () => {
     process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp;
   });
 
-  test("Wallet API methods @smoke", async ({ page, electronApp }) => {
+  test("Dapp Browser methods @smoke", async ({ page, electronApp }) => {
     const discoverPage = new DiscoverPage(page);
     const drawer = new Drawer(page);
     const modal = new Modal(page);
@@ -34,15 +34,19 @@ test.describe("Metamask Test Dapp", () => {
     // Checks that we support EIP 6963
     await webview.click("#provider > button");
 
-    webview.getByText("Name: Ledger Live");
-    webview.getByText("Network: 1");
-    webview.getByText("ChainId: 0x1");
-    webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+    await expect(webview.getByText("Name: Ledger Live")).toBeVisible();
+    await expect(webview.getByText("Network: 1")).toBeVisible();
+    await expect(webview.getByText("ChainId: 0x1")).toBeVisible();
+    await expect(
+      webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"),
+    ).toBeVisible();
 
     // Checks that getAccounts returns the correct account
     await webview.click("#getAccounts");
 
-    webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+    await expect(
+      webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"),
+    ).toBeVisible();
 
     // Checks that personalSign works
     await webview.click("#personalSign");

@@ -117,6 +117,9 @@ export function PtxScreen({ route, config }: Props) {
           ...(localManifest?.providerTestBaseUrl && {
             providerTestBaseUrl: localManifest?.providerTestBaseUrl,
           }),
+          ...(localManifest?.providerTestId && {
+            providerTestId: localManifest?.providerTestId,
+          }),
           ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}

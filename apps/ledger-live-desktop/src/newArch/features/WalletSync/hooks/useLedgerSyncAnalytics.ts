@@ -33,6 +33,9 @@ export enum AnalyticsPage {
 
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",
+
+  Accounts = "Accounts",
+  LedgerSyncAccounts = "Ledger Sync Accounts",
 }
 
 export type AnalyticsFlow = "Ledger Sync";

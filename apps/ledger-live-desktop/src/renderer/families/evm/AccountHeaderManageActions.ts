@@ -47,7 +47,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         label: t("account.stake", {
           currency: account?.currency?.name,
         }),
-        accountActionsTestId: "stake-from-account-action-button",
+        accountActionsTestId: "stake-button",
       },
     ];
   } else {

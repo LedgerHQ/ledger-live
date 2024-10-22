@@ -61,7 +61,7 @@ export const isRegistrationRequired = async (provider: string): Promise<boolean>
 };
 
 export const getProviderName = (provider: string): string => {
-  const { displayName } = provider ? SWAP_DATA_CDN[provider] : { displayName: "" };
+  const { displayName } = SWAP_DATA_CDN[provider] ?? { displayName: "" };
   return displayName;
 };
 

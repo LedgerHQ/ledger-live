@@ -87,7 +87,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
-        <Box p={1}>
+        <Box p={1} data-testid="validator-list">
           {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />

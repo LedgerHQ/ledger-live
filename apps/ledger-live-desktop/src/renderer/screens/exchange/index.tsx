@@ -102,6 +102,9 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             ...(localManifest?.providerTestBaseUrl && {
               providerTestBaseUrl: localManifest?.providerTestBaseUrl,
             }),
+            ...(localManifest?.providerTestId && {
+              providerTestId: localManifest?.providerTestId,
+            }),
 
             ...Object.fromEntries(searchParams.entries()),
           }}

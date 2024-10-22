@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,

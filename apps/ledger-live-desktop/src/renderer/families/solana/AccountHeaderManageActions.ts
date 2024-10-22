@@ -44,6 +44,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ acco
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

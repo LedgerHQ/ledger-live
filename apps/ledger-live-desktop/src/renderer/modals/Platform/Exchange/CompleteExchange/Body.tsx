@@ -210,7 +210,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         if (!isSwapTransaction || (isSwapTransaction && !isDemo3Enabled)) {
-          return onCancel(new DisabledTransactionBroadcastError());
+          const error = new DisabledTransactionBroadcastError();
+          setError(error);
+          onCancel(error);
+          return onClose?.();
         } else {
           return handleTransactionResult(result, operation);
         }

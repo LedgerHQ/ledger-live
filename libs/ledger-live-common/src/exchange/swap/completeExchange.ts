@@ -24,6 +24,7 @@ import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import BigNumber from "bignumber.js";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -65,7 +66,29 @@ const completeExchange = (
         if (mainRefundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
-        transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
+        // Thorswap ERC20 token exception hack:
+        // - We remove subAccountId to prevent EVM calldata swap during prepareTransaction.
+        // - Set amount to 0 to ensure correct handling of the transaction
+        //   (this is adjusted during prepareTransaction before signing the actual EVM transaction for tokens but we skip it).
+        // - Since it's an ERC20 token transaction (not ETH), amount is set to 0 ETH
+        //   because no ETH is being sent, only tokens.
+        // - This workaround can't be applied earlier in the flow as the amount is used for display purposes and checks.
+        //   We must set the amount to 0 at this stage to avoid issues during the transaction.
+        // - This ensures proper handling of Thorswap-ERC20-specific transactions.
+        if (
+          provider.toLocaleLowerCase() === "thorswap" &&
+          transaction.subAccountId &&
+          transaction.family === "evm"
+        ) {
+          const transactionFixed = {
+            ...transaction,
+            subAccountId: undefined,
+            amount: BigNumber(0),
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        } else {
+          transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
+        }
         if (unsubscribed) return;
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(

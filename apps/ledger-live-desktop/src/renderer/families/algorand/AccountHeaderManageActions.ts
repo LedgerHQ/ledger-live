@@ -32,6 +32,7 @@ const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

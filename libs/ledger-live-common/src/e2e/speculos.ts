@@ -232,6 +232,22 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Multiverse_X: {
+    currency: getCryptoCurrencyById("elrond"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "MultiversX",
+    },
+    dependency: "",
+  },
+  Osmosis: {
+    currency: getCryptoCurrencyById("osmo"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Cosmos",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -360,6 +376,8 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
       action: "press-and-release",
     });
     attempts++;
+
+    await waitForTimeOut(200);
   }
 
   if (attempts === maxAttempts) {

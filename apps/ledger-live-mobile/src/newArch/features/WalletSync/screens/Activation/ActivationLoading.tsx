@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -31,9 +31,11 @@ export function ActivationLoading({ route }: Props) {
   useLoadingStep(created);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  if (!hasCompletedOnboarding) {
-    dispatch(completeOnboarding());
-  }
+  useEffect(() => {
+    if (!hasCompletedOnboarding) {
+      dispatch(completeOnboarding());
+    }
+  }, [dispatch, hasCompletedOnboarding]);
 
   return (
     <>

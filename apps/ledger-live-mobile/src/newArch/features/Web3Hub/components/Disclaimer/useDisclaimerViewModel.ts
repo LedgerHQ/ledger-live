@@ -1,24 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { INITIAL_WEB3HUB_STATE, WEB3HUB_STORE_KEY } from "LLM/features/Web3Hub/constants";
-import { Web3HubDB } from "LLM/features/Web3Hub/types";
-import { useDB } from "~/db";
-
-const dismissedManifestsSelector = (state: Web3HubDB) => state.dismissedManifests;
-
-export function useDismissedManifests() {
-  return useDB<Web3HubDB, Web3HubDB["dismissedManifests"]>(
-    WEB3HUB_STORE_KEY,
-    INITIAL_WEB3HUB_STATE,
-    dismissedManifestsSelector,
-  );
-}
+import { dismissedManifestsAtom } from "LLM/features/Web3Hub/db";
+import { useAtom } from "jotai";
 
 export default function useDisclaimerViewModel(goToApp: (manifestId: string) => void) {
   const [isChecked, setIsChecked] = useState(false);
   const [disclaimerOpened, setDisclaimerOpened] = useState(false);
   const [disclaimerManifest, setDisclaimerManifest] = useState<AppManifest>();
-  const [dismissedManifests, setWeb3HubDB] = useDismissedManifests();
+  const [dismissedManifests, setDismissedManifests] = useAtom(dismissedManifestsAtom);
 
   useEffect(() => {
     if (disclaimerManifest && !!dismissedManifests[disclaimerManifest.id]) {
@@ -27,11 +16,6 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
       setIsChecked(false);
     }
   }, [disclaimerManifest, dismissedManifests]);
-
-  useEffect(() => {
-    setWeb3HubDB(INITIAL_WEB3HUB_STATE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onPressItem = useCallback(
     (manifest: AppManifest) => {
@@ -57,18 +41,18 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
   const onConfirm = useCallback(() => {
     if (disclaimerManifest) {
       if (isChecked) {
-        setWeb3HubDB(state => ({
-          ...state,
-          dismissedManifests: {
-            ...state.dismissedManifests,
-            [disclaimerManifest.id]: !state.dismissedManifests[disclaimerManifest.id],
-          },
-        }));
+        setDismissedManifests(async state => {
+          const s = await state;
+          return {
+            ...s,
+            [disclaimerManifest.id]: !s[disclaimerManifest.id],
+          };
+        });
       }
 
       goToApp(disclaimerManifest.id);
     }
-  }, [disclaimerManifest, goToApp, isChecked, setWeb3HubDB]);
+  }, [disclaimerManifest, goToApp, isChecked, setDismissedManifests]);
 
   const onClose = useCallback(() => {
     setDisclaimerOpened(false);

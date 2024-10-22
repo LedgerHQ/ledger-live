@@ -7,23 +7,28 @@ import WalletSyncManageInstances from "./ManageInstances";
 import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
 import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
+import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 
 export interface BackRef {
   goBack: () => void;
 }
 
+export interface Props {
+  currentPage: AnalyticsPage;
+}
+
 export interface BackProps {}
 
-export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => {
+export const WalletSyncRouter = forwardRef<BackRef, Props>(({ currentPage }, ref) => {
   useInitMemberCredentials();
   const walletSyncFlow = useSelector(walletSyncFlowSelector);
 
   switch (walletSyncFlow) {
     default:
     case Flow.Activation:
-      return <WalletSyncActivation ref={ref} />;
+      return <WalletSyncActivation ref={ref} sourcePage={currentPage} />;
     case Flow.LedgerSyncActivated:
-      return <WalletSyncManage />;
+      return <WalletSyncManage currentPage={currentPage} />;
     case Flow.Synchronize:
       return <SynchronizeWallet ref={ref} />;
     case Flow.ManageBackup:
