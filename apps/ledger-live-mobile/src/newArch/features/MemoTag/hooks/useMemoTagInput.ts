@@ -11,16 +11,16 @@ export const useMemoTagInput = (
   updateTransaction: (patch: Partial<Transaction>) => void,
 ) => {
   const featureMemoTag = useFeature("llmMemoTag");
-  const Input: FC<MemoTagInputProps<Transaction>> | null =
+  const Input: FC<MemoTagInputProps> | null =
     (featureMemoTag?.enabled &&
       family in perFamily &&
       perFamily[family as keyof typeof perFamily]) ||
     null;
 
   const [isEmpty, setIsEmpty] = useState(true);
-  const handleChange = useCallback<MemoTagInputProps<Transaction>["onChange"]>(
-    ({ patch, isEmpty }) => {
-      setIsEmpty(isEmpty);
+  const handleChange = useCallback<MemoTagInputProps["onChange"]>(
+    ({ patch, value }) => {
+      setIsEmpty(!value);
       updateTransaction(patch);
     },
     [updateTransaction],

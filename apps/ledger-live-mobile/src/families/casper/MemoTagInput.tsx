@@ -1,22 +1,18 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
-import { AnimatedInput } from "@ledgerhq/native-ui";
-import { MemoTagInputProps } from "LLM/features/MemoTag/types";
+import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
+import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default MemoTagInput;
-
-function MemoTagInput({ onChange, ...inputProps }: MemoTagInputProps<CasperTransaction>) {
-  const [value, setValue] = React.useState("");
-
-  const handleChange = (text: string) => {
-    const value = text.replace(/\D/g, "");
-    setValue(value);
-    onChange({
-      patch: { transferId: value || undefined },
-      isEmpty: !value,
-    });
-  };
-
-  return <AnimatedInput {...inputProps} value={value} onChangeText={handleChange} />;
-}
+export default (props: MemoTagInputProps) => {
+  const { t } = useTranslation();
+  return (
+    <GenericMemoTagInput<CasperTransaction>
+      {...props}
+      textToValue={text => text.replace(/\D/g, "")}
+      valueToTxPatch={value => ({ transferId: value || undefined })}
+      placeholder={t("send.summary.transferId")}
+    />
+  );
+};
