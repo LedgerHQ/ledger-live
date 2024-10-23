@@ -16,7 +16,7 @@ import {
   StacksNetwork,
   TransactionResponse,
 } from "./api.types";
-import { getCryptoCurrencyById } from "../../../../currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "../../../../operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
