@@ -1,5 +1,5 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 
 function formatAccountSpecifics(account: Account): string {

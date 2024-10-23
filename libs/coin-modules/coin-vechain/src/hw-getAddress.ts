@@ -1,8 +1,8 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import eip55 from "eip55";
 import { VechainSigner } from "./signer";
-import { GetAddressFn } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/lib/derivation";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 
 const resolver = (signerContext: SignerContext<VechainSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
@@ -12,8 +12,8 @@ const resolver = (signerContext: SignerContext<VechainSigner>): GetAddressFn => 
 
     if (!sig.address || !sig.publicKey.length)
       throw Error(`[vechain] Response is empty ${sig.address} ${sig.publicKey}`);
-  
-    const address = eip55.encode(sig.address)
+
+    const address = eip55.encode(sig.address);
     return {
       address,
       publicKey: sig.publicKey,

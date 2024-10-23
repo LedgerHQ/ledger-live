@@ -1,7 +1,7 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import type { Transaction, TransactionRaw, TransactionStatus, TransactionStatusRaw } from "./types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,

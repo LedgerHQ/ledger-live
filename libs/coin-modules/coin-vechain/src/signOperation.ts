@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
 import type { Transaction } from "./types";
 import { VechainSigner, VechainSignature } from "./signer";

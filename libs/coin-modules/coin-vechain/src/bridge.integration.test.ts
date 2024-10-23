@@ -14,7 +14,7 @@ import { NotEnoughVTHO } from "./errors";
 import {
   listSupportedCurrencies,
   setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/lib/currencies/index";
+} from "@ledgerhq/coin-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const listSupported = listSupportedCurrencies();
