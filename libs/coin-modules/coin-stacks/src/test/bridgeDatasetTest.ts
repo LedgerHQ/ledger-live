@@ -10,20 +10,17 @@ import {
   NotEnoughBalance,
 } from "@ledgerhq/errors";
 
-
-
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
-
 const stacks: CurrenciesData<Transaction> = {
-    FIXME_ignoreAccountFields: [],
-    IgnorePrepareTransactionFields: ["fee"],
-    scanAccounts: [
-      {
-        name: "stacks seed 1",
-        apdus: `
+  FIXME_ignoreAccountFields: [],
+  IgnorePrepareTransactionFields: ["fee"],
+  scanAccounts: [
+    {
+      name: "stacks seed 1",
+      apdus: `
         => 09010016142c0000807d160080000000800000000000000000
         <= 022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d5350334b5337564d59325a4e45365342383850485234534b524b324545504853384e384d43434252399000
         => 09010016142c0000807d160080000000800000000001000000
@@ -37,102 +34,101 @@ const stacks: CurrenciesData<Transaction> = {
         => 09010016142c0000807d160080040000800000000000000000
         <= 0264b6d44f720fa50055dc294276bf15ce22e4f3dec48510b317ab8c07419c1b7753503248574a58594e4747594354535952545036323636424a483858565a4759504d455248514538529000
         `,
-      },
-    ],
-    accounts: [
-      {
-        raw: {
-          id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
-          seedIdentifier: SEED_IDENTIFIER,
-          name: "Stacks 1",
-          derivationMode: "",
-          index: 0,
-          freshAddress: SEED_IDENTIFIER,
-          freshAddressPath: "",
-          blockHeight: 0,
-          operations: [],
-          xpub: SEED_IDENTIFIER_PUBKEY,
-          pendingOperations: [],
-          currencyId: "stacks",
-          lastSyncDate: "",
-          balance: "1000",
-        },
-        transactions: [
-          {
-            name: "Source and destination are the equal",
-            transaction: fromTransactionRaw({
-              family: "stacks",
-              nonce: "1",
-              network: "mainnet",
-              anchorMode: AnchorMode.Any,
-              recipient: SEED_IDENTIFIER,
-              amount: "1",
-            }),
-            expectedStatus: {
-              errors: {
-                recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
-              },
-              warnings: {},
-            },
-          },
-          {
-            name: "Not enough balance",
-            transaction: fromTransactionRaw({
-              family: "stacks",
-              nonce: "1",
-              network: "mainnet",
-              anchorMode: AnchorMode.Any,
-              recipient: ACCOUNT_1,
-              amount: "10000000000",
-            }),
-            expectedStatus: {
-              errors: {
-                amount: new NotEnoughBalance(),
-              },
-              warnings: {},
-            },
-          },
-          {
-            name: "Amount Required",
-            transaction: fromTransactionRaw({
-              family: "stacks",
-              nonce: "1",
-              network: "mainnet",
-              anchorMode: AnchorMode.Any,
-              recipient: ACCOUNT_1,
-              amount: "0",
-            }),
-            expectedStatus: {
-              errors: {
-                amount: new AmountRequired(),
-              },
-              warnings: {},
-            },
-          },
-          {
-            name: "New account and sufficient amount",
-            transaction: fromTransactionRaw({
-              family: "stacks",
-              nonce: "1",
-              network: "mainnet",
-              anchorMode: AnchorMode.Any,
-              recipient: ACCOUNT_1,
-              amount: "1",
-            }),
-            expectedStatus: {
-              amount: new BigNumber("1"),
-              errors: {},
-              warnings: {},
-            },
-          },
-        ],
-      },
-    ],
-  };
-  export const dataset: DatasetTest<Transaction> = {
-    implementations: ["js"],
-    currencies: {
-      stacks,
     },
-  };
-  
+  ],
+  accounts: [
+    {
+      raw: {
+        id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
+        seedIdentifier: SEED_IDENTIFIER,
+        name: "Stacks 1",
+        derivationMode: "",
+        index: 0,
+        freshAddress: SEED_IDENTIFIER,
+        freshAddressPath: "",
+        blockHeight: 0,
+        operations: [],
+        xpub: SEED_IDENTIFIER_PUBKEY,
+        pendingOperations: [],
+        currencyId: "stacks",
+        lastSyncDate: "",
+        balance: "1000",
+      },
+      transactions: [
+        {
+          name: "Source and destination are the equal",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: SEED_IDENTIFIER,
+            amount: "1",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Not enough balance",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "10000000000",
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughBalance(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Amount Required",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "0",
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new AmountRequired(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "New account and sufficient amount",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "1",
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1"),
+            errors: {},
+            warnings: {},
+          },
+        },
+      ],
+    },
+  ],
+};
+export const dataset: DatasetTest<Transaction> = {
+  implementations: ["js"],
+  currencies: {
+    stacks,
+  },
+};

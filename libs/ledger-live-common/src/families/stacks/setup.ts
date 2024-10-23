@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import BlockstackApp from "@zondax/ledger-stacks"
+import BlockstackApp from "@zondax/ledger-stacks";
 import { Bridge } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
 import { createBridges } from "@ledgerhq/coin-stacks";
@@ -14,12 +14,7 @@ const createSigner: CreateSigner<StacksSigner> = (transport: Transport) => {
   return new BlockstackApp(transport);
 };
 
-// const getCoinConfig = () =>
-//   getCurrencyConfiguration<XrpCoinConfig>(getCryptoCurrencyById("ripple"));
-
-const bridge: Bridge<Transaction> = createBridges(
-  executeWithSigner(createSigner),
-);
+const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
 
 const resolver: Resolver = createResolver(createSigner, stacksResolver);
 

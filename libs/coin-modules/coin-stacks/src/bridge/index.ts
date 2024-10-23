@@ -1,4 +1,8 @@
-import { makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import resolver from "../signer/index";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -15,7 +19,6 @@ import { broadcast } from "../broadcast";
 
 function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
-
 
   const scanAccounts = makeScanAccounts({
     getAccountShape,
@@ -59,65 +62,3 @@ export function createBridges(signerContext: SignerContext<StacksSigner>) {
   };
 }
 export { prepareTransaction, estimateMaxSpendable };
-/// XRP
-// import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-// import {
-//   defaultUpdateTransaction,
-//   makeAccountBridgeReceive,
-//   makeScanAccounts,
-//   makeSync,
-// } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-// import { CoinConfig } from "@ledgerhq/coin-framework/config";
-// import { SignerContext } from "@ledgerhq/coin-framework/signer";
-// import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-// import CoinConfig, { type XrpCoinConfig } from "../config";
-// import resolver from "../signer";
-// import { XrpSigner } from "../types";
-// import type { Transaction } from "../types";
-// import { broadcast } from "./broadcast";
-// import { createTransaction } from "./createTransaction";
-// import { estimateMaxSpendable } from "./estimateMaxSpendable";
-// import { getTransactionStatus } from "./getTransactionStatus";
-// import { prepareTransaction } from "./prepareTransaction";
-// import { buildSignOperation } from "./signOperation";
-// import { getAccountShape } from "./synchronization";
-
-
-
-// export function buildCurrencyBridge(signerContext: SignerContext<XXXSigner, XXXAddress | XXXSignature>): CurrencyBridge {
-//   const getAddress = resolver(signerContext);
-//   const scanAccounts = makeScanAccounts({
-//     getAccountShape,
-//     getAddressFn: getAddress,
-//   });
-//   return {
-//     getPreloadStrategy,
-//     preload,
-//     hydrate,
-//     scanAccounts,
-//   }
-// }
-// export function buildAccountBridge(signerContext: SignerContext<XXXSigner, XXXAddress | XXXSignature>): AccountBridge<Transaction> {
-//   const getAddress = resolver(signerContext);
-//   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
-//   const signOperation = buildSignOperation(signerContext);
-//   return {
-//     estimateMaxSpendable,
-//     createTransaction,
-//     updateTransaction,
-//     getTransactionStatus,
-//     prepareTransaction,
-//     sync,
-//     receive,
-//     signOperation,
-//     broadcast,
-//   }
-// }
-// export function createBridges(
-//   signerContext: SignerContext<XXXSigner, XXXAddress | XXXSignature>,
-// ) {
-//   return {
-//     currencyBridge: buildCurrencyBridge(signerContext),
-//     accountBridge: buildAccountBridge(signerContext),
-//   };
-// }
