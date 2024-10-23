@@ -19,22 +19,27 @@ export const padHexString = (str: string) => {
 };
 
 export function splitPath(path: string): number[] {
-  const result: number[] = [];
-  const components = path.split("/");
-  components.forEach(element => {
-    let number = parseInt(element, 10);
-    if (isNaN(number)) {
+  const splittedPath: number[] = [];
+
+  const paths = path.split("/");
+  paths.forEach(path => {
+    let value = parseInt(path, 10);
+    if (isNaN(value)) {
       return; // FIXME shouldn't it throws instead?
     }
-    if (element.length > 1 && element[element.length - 1] === "'") {
-      number += 0x80000000;
+    // Detect hardened paths
+    if (path.length > 1 && path[path.length - 1] === "'") {
+      value += 0x80000000;
     }
-    result.push(number);
+    splittedPath.push(value);
   });
-  return result;
+
+  return splittedPath;
 }
 
 export function hexBuffer(str: string): Buffer {
+  if (!str) return Buffer.alloc(0);
+
   const strWithoutPrefix = str.startsWith("0x") ? str.slice(2) : str;
   return Buffer.from(padHexString(strWithoutPrefix), "hex");
 }
