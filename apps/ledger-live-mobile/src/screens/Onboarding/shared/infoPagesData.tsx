@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
 import { Trans } from "react-i18next";
+import { AnimationSource, AnimationRecord } from "~/helpers/getDeviceAnimation";
 import pinCodeNanoXLight from "../assets/nanoX/pinCode/light.json";
 import pinCodeNanoXDark from "../assets/nanoX/pinCode/dark.json";
 import pinCodeNanoSLight from "../assets/nanoS/pinCode/light.json";
@@ -43,8 +44,57 @@ import Close from "~/icons/Close";
 import ArrowRight from "~/icons/ArrowRight";
 import LText from "~/components/LText";
 import { urls } from "~/utils/urls";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export const lottieAnimations = {
+type Keys =
+  | "pinCode"
+  | "recover"
+  | "confirmWords"
+  | "numberOfWords"
+  | "powerOn"
+  | "powerOnRecovery";
+
+const animationKeys: Keys[] = [
+  "pinCode",
+  "recover",
+  "confirmWords",
+  "numberOfWords",
+  "powerOn",
+  "powerOnRecovery",
+];
+
+const deviceModelIdToAnimationKeys = {
+  [DeviceModelId.nanoS]: animationKeys,
+  [DeviceModelId.nanoSP]: animationKeys,
+  [DeviceModelId.nanoX]: animationKeys,
+  [DeviceModelId.blue]: [],
+  [DeviceModelId.stax]: [],
+  [DeviceModelId.europa]: [],
+} as const;
+
+// Function implementation
+export function getAnimationKeysForDeviceModelId<M extends DeviceModelId>(
+  modelId: M,
+): readonly DeviceModelIdToKeys[M][] {
+  return deviceModelIdToAnimationKeys[modelId] as readonly DeviceModelIdToKeys[M][];
+}
+
+type DeviceModelIdToKeys = {
+  [DeviceModelId.nanoS]: Keys;
+  [DeviceModelId.nanoSP]: Keys;
+  [DeviceModelId.nanoX]: Keys;
+  [DeviceModelId.blue]: never;
+  [DeviceModelId.stax]: never;
+  [DeviceModelId.europa]: never;
+};
+
+type AnimationsCollection = {
+  [M in DeviceModelId]: Record<DeviceModelIdToKeys[M], AnimationRecord> & {
+    style?: Record<string, unknown>;
+  };
+};
+
+export const lottieAnimations: AnimationsCollection = {
   nanoS: {
     pinCode: {
       light: pinCodeNanoSLight,
@@ -129,61 +179,34 @@ export const lottieAnimations = {
       left: "5%",
     },
   },
-  blue: {
-    pinCode: {
-      light: undefined,
-      dark: undefined,
-    },
-    recover: {
-      light: undefined,
-      dark: undefined,
-    },
-    confirmWords: {
-      light: undefined,
-      dark: undefined,
-    },
-    numberOfWords: {
-      light: undefined,
-      dark: undefined,
-    },
-    powerOn: {
-      light: undefined,
-      dark: undefined,
-    },
-    powerOnRecovery: {
-      light: undefined,
-      dark: undefined,
-    },
-    style: {},
-  },
-  stax: {
-    pinCode: {
-      light: pinCodeStaxLight,
-      dark: pinCodeStaxDark,
-    },
-    recover: {
-      light: recoverStaxLight,
-      dark: recoverStaxDark,
-    },
-    confirmWords: {
-      light: confirmWordsStaxLight,
-      dark: confirmWordsStaxDark,
-    },
-    numberOfWords: {
-      light: numberOfWordsStaxLight,
-      dark: numberOfWordsStaxDark,
-    },
-    powerOn: {
-      light: powerOnStaxLight,
-      dark: powerOnStaxDark,
-    },
-    powerOnRecovery: {
-      light: powerOnRecoveryStaxLight,
-      dark: powerOnRecoveryStaxDark,
-    },
-    style: {},
-  },
+  blue: {},
+  stax: {},
+  europa: {},
 };
+
+export type GetDeviceAnimationArgs<M extends DeviceModelId = DeviceModelId> = {
+  theme?: "light" | "dark";
+  modelId: M;
+  key: DeviceModelIdToKeys[M];
+};
+
+// Return an animation associated to a device
+export function getOnboardingDeviceAnimation<M extends DeviceModelId>({
+  theme = "light",
+  key,
+  modelId,
+}: GetDeviceAnimationArgs<M>): AnimationSource {
+  const animation = lottieAnimations[modelId][key][theme];
+
+  if (!animation) {
+    console.error(`No animation for ${modelId} ${key}`);
+    // @ts-expect-error Halp :()
+    return undefined;
+  }
+
+  return animation;
+}
+
 const recoveryWarningInfoModalProps = [
   {
     Icon: WarningOutline,

@@ -31,8 +31,6 @@ import StaxPairedLight from "../animations/device/stax/light/paired.json";
 import StaxPairedDark from "../animations/device/stax/dark/paired.json";
 import StaxSignDark from "../animations/device/stax/dark/sign.json";
 import StaxSignLight from "../animations/device/stax/light/sign.json";
-import StaxFrontViewDark from "../animations/device/stax/dark/front_view.json";
-import StaxFrontViewLight from "../animations/device/stax/light/front_view.json";
 
 import FlexPinDark from "../animations/device/flex/dark/pin.json";
 import FlexPinLight from "../animations/device/flex/light/pin.json";
@@ -44,8 +42,6 @@ import FlexPairedLight from "../animations/device/flex/light/paired.json";
 import FlexPairedDark from "../animations/device/flex/dark/paired.json";
 import FlexSignDark from "../animations/device/flex/dark/sign.json";
 import FlexSignLight from "../animations/device/flex/light/sign.json";
-import FlexFrontViewDark from "../animations/device/flex/dark/front_view.json";
-import FlexFrontViewLight from "../animations/device/flex/light/front_view.json";
 
 import NanoSPlugAndPinCodeDark from "../animations/device/nanoS/1PlugAndPinCode/dark.json";
 import NanoSPlugAndPinCodeLight from "../animations/device/nanoS/1PlugAndPinCode/light.json";
@@ -58,33 +54,46 @@ import NanoSOpenAppLight from "../animations/device/nanoS/6OpenApp/light.json";
 import NanoSValidateDark from "../animations/device/nanoS/7Validate/dark.json";
 import NanoSValidateLight from "../animations/device/nanoS/7Validate/light.json";
 
-type AnimationSource = LottieViewProps["source"];
-type AnimationRecord = Record<"light" | "dark", AnimationSource>;
-
-// export type Animations = {
-//   [modelId in DeviceModelId]: Record<string, AnimationRecord>;
-// };
-
-type CommonKeys =
-  | "plugAndPinCode"
-  | "enterPinCode"
-  | "quitApp"
-  | "allowManager"
-  | "openApp"
-  | "verify"
-  | "sign"
-  | "allowUpdate";
-
-type BleKeys = "blePairing" | "blePaired";
-
-type LockScreenKeys = "allowCustomLockScreen" | "confirmCustomLockScreen";
+export type AnimationSource = LottieViewProps["source"];
+export type AnimationRecord = Record<"light" | "dark", AnimationSource>;
 
 type NanoSKeys = CommonKeys;
 type NanoSPKeys = CommonKeys;
 type BlueKeys = CommonKeys;
 type NanoXKeys = CommonKeys | BleKeys;
-type StaxKeys = CommonKeys | BleKeys | LockScreenKeys;
-type FlexKeys = CommonKeys | BleKeys | LockScreenKeys;
+type StaxKeys = CommonKeys | BleKeys;
+type FlexKeys = CommonKeys | BleKeys;
+
+const commonKeysArray = [
+  "plugAndPinCode",
+  "enterPinCode",
+  "quitApp",
+  "allowManager",
+  "openApp",
+  "verify",
+  "sign",
+  "allowUpdate",
+] as const;
+const bleKeysArray = ["blePairing", "blePaired"] as const;
+
+type CommonKeys = (typeof commonKeysArray)[number];
+type BleKeys = (typeof bleKeysArray)[number];
+
+const deviceModelIdToKeys = {
+  [DeviceModelId.nanoS]: commonKeysArray,
+  [DeviceModelId.nanoSP]: commonKeysArray,
+  [DeviceModelId.blue]: commonKeysArray,
+  [DeviceModelId.nanoX]: [...commonKeysArray, ...bleKeysArray],
+  [DeviceModelId.stax]: [...commonKeysArray, ...bleKeysArray],
+  [DeviceModelId.europa]: [...commonKeysArray, ...bleKeysArray],
+} as const;
+
+// Function implementation
+export function getAnimationKeysForDeviceModelId<M extends DeviceModelId>(
+  modelId: M,
+): readonly DeviceModelIdToKeys[M][] {
+  return deviceModelIdToKeys[modelId] as readonly DeviceModelIdToKeys[M][];
+}
 
 type DeviceModelIdToKeys = {
   [DeviceModelId.nanoS]: NanoSKeys;
@@ -95,11 +104,11 @@ type DeviceModelIdToKeys = {
   [DeviceModelId.europa]: FlexKeys;
 };
 
-type Animations = {
+type AnimationsCollection = {
   [M in DeviceModelId]: Record<DeviceModelIdToKeys[M], AnimationRecord>;
 };
 
-const animations: Animations = {
+const animations: AnimationsCollection = {
   nanoS: {
     plugAndPinCode: {
       light: NanoSPlugAndPinCodeLight,
@@ -285,14 +294,6 @@ const animations: Animations = {
       light: StaxPairedLight,
       dark: StaxPairedDark,
     },
-    allowCustomLockScreen: {
-      light: StaxFrontViewLight,
-      dark: StaxFrontViewDark,
-    },
-    confirmCustomLockScreen: {
-      light: StaxFrontViewLight,
-      dark: StaxFrontViewDark,
-    },
   },
   europa: {
     plugAndPinCode: {
@@ -334,14 +335,6 @@ const animations: Animations = {
     blePaired: {
       light: FlexPairedLight,
       dark: FlexPairedDark,
-    },
-    allowCustomLockScreen: {
-      light: FlexFrontViewLight,
-      dark: FlexFrontViewDark,
-    },
-    confirmCustomLockScreen: {
-      light: FlexFrontViewLight,
-      dark: FlexFrontViewDark,
     },
   },
 };
