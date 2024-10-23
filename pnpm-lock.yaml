@@ -310,6 +310,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -863,6 +866,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
