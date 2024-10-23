@@ -1,7 +1,7 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
 import { AnchorMode } from "@stacks/transactions";
 import type { DatasetTest } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction } from "../types/types";
 import { fromTransactionRaw } from "../transaction";
 import { BigNumber } from "bignumber.js";
 import {
