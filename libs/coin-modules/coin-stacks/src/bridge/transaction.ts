@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { StacksNetwork } from "./bridge/utils/api.types";
+import { StacksNetwork } from "./utils/api.types";
 import type { Account } from "@ledgerhq/types-live";
 
-import type { Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "../types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,

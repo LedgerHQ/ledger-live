@@ -15,6 +15,7 @@ import { resolver as icon } from "../families/icon/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
+import { resolver as stacks } from "../families/stacks/setup";
 import { resolver as stellar } from "../families/stellar/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as ton } from "../families/ton/setup";
@@ -39,6 +40,7 @@ export default {
   near,
   polkadot,
   solana,
+  stacks,
   stellar,
   tezos,
   ton,
