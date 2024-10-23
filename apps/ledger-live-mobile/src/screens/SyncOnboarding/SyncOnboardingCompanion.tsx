@@ -371,18 +371,21 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
         // device was just seeded
         setCompanionStepKey(
-          recoverUpsellRedirection ? CompanionStepKey.Apps : CompanionStepKey.Backup,
+          recoverUpsellRedirection?.enabled ? CompanionStepKey.Apps : CompanionStepKey.Backup,
         );
         seededDeviceHandled.current = true;
         return;
       } else if (
         deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
       ) {
-        // switch to the apps step
-        __DEV__
-          ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
-          : setCompanionStepKey(CompanionStepKey.Apps);
-
+        if (recoverUpsellRedirection?.enabled) {
+          // switch to the apps step
+          __DEV__
+            ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
+            : setCompanionStepKey(CompanionStepKey.Apps);
+        } else {
+          setCompanionStepKey(CompanionStepKey.Apps);
+        }
         seededDeviceHandled.current = true;
         return;
       }
@@ -646,8 +649,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
-        ...(!recoverUpsellRedirection?.enabled
-          ? [
+        ...(recoverUpsellRedirection?.enabled
+          ? []
+          : [
               {
                 key: CompanionStepKey.Backup,
                 title: t("syncOnboarding.backup.title"),
@@ -659,8 +663,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   />
                 ),
               },
-            ]
-          : []),
+            ]),
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -682,16 +685,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           title: t("syncOnboarding.readyStep.title"),
           doneTitle: t("syncOnboarding.readyStep.doneTitle", { productName }),
         },
-        ...(recoverUpsellRedirection?.enabled
-          ? [
-              {
-                key: CompanionStepKey.Backup,
-                title: t("syncOnboarding.backup.title"),
-                doneTitle: t("syncOnboarding.backup.title"),
-                renderBody: () => <BackupStep device={device} onPressKeepManualBackup={() => {}} />,
-              },
-            ]
-          : []),
       ].map(step => ({
         ...step,
         status:
