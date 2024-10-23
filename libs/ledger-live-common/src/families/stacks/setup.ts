@@ -8,7 +8,7 @@ import stacksResolver from "@ledgerhq/coin-stacks/signer/index";
 import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import { StacksSigner, Transaction, TransactionStatus } from "./types";
+import { StacksSigner, Transaction } from "./types";
 
 const createSigner: CreateSigner<StacksSigner> = (transport: Transport) => {
   return new BlockstackApp(transport);
