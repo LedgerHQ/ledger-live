@@ -1,6 +1,9 @@
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import {
+  makeAccountBridgeReceive,
+  defaultUpdateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+
 import { getTransactionStatus } from "../getTransactionStatus";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { prepareTransaction } from "../prepareTransaction";
