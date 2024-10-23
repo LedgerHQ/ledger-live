@@ -166,7 +166,7 @@
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@octokit/rest": "18.12.0",
-    "@playwright/test": "1.45.0",
+    "@playwright/test": "^1.45.0",
     "@sentry/cli": "2.31.0",
     "@sentry/types": "8.16.0",
     "@swc/core": "1.4.11",
