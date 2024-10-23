@@ -6418,6 +6418,7 @@
     "cta": "Custom lock screen",
     "managerCTA": "Lock screen picture",
     "managerCTARemove": "Remove",
+    "rotate": "Rotate",
     "steps": {
       "choose": {
         "stepLabel": "Choose picture",
