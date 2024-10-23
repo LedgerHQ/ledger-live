@@ -1,6 +1,7 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 import { Application } from "../../page";
+import { capitalize } from "../../models/currencies";
 
 let app: Application;
 let deviceAction: DeviceAction;
@@ -32,7 +33,7 @@ describe("Add account from modal", () => {
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.startAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(testedCurrency, 1);
+    await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 1);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();
   });
