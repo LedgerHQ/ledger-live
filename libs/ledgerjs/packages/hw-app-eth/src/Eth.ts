@@ -22,7 +22,8 @@ import { BigNumber } from "bignumber.js";
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
 import { log } from "@ledgerhq/logs";
 import {
-  decodeTxInfo,
+  safeChunkTransaction,
+  getV,
   hexBuffer,
   intAsHexBytes,
   maybeHexBuffer,
@@ -193,6 +194,14 @@ export default class Eth {
     v: string;
     r: string;
   }> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x04,
+      P1_FIRST_CHUNK = 0x00,
+      P1_FOLLOWING_CHUNK = 0x80,
+      P2 = 0x00,
+    }
+
     if (resolution === undefined) {
       console.warn(
         "hw-app-eth: signTransaction(path, rawTxHex, resolution): " +
@@ -247,68 +256,36 @@ export default class Eth {
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
-    const { vrsOffset, txType, chainId, chainIdTruncated } = decodeTxInfo(rawTx);
+    const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+    const chainId = new BigNumber(parsedTransaction.chainId);
 
     const paths = splitPath(path);
+    const derivationPathBuff = Buffer.alloc(1 + paths.length * 4);
+    derivationPathBuff[0] = paths.length;
+    paths.forEach((element, index) => {
+      derivationPathBuff.writeUInt32BE(element, 1 + 4 * index);
+    });
+
+    const payloadChunks = safeChunkTransaction(rawTx, derivationPathBuff, parsedTransaction.type);
     let response;
-    let offset = 0;
-    while (offset !== rawTx.length) {
-      const first = offset === 0;
-      const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
-      let chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
-
-      if (vrsOffset != 0 && offset + chunkSize >= vrsOffset) {
-        // Make sure that the chunk doesn't end right on the EIP 155 marker if set
-        chunkSize = rawTx.length - offset;
-      }
-
-      const buffer = Buffer.alloc(first ? 1 + paths.length * 4 + chunkSize : chunkSize);
-
-      if (first) {
-        buffer[0] = paths.length;
-        paths.forEach((element, index) => {
-          buffer.writeUInt32BE(element, 1 + 4 * index);
-        });
-        rawTx.copy(buffer, 1 + 4 * paths.length, offset, offset + chunkSize);
-      } else {
-        rawTx.copy(buffer, 0, offset, offset + chunkSize);
-      }
-
+    for (const chunk of payloadChunks) {
+      const isFirstChunk = chunk === payloadChunks[0];
       response = await this.transport
-        .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
+        .send(
+          APDU_FIELDS.CLA,
+          APDU_FIELDS.INS,
+          isFirstChunk ? APDU_FIELDS.P1_FIRST_CHUNK : APDU_FIELDS.P1_FOLLOWING_CHUNK,
+          APDU_FIELDS.P2,
+          chunk,
+        )
         .catch(e => {
           throw remapTransactionRelatedErrors(e);
         });
-
-      offset += chunkSize;
     }
 
-    const response_byte: number = response[0];
-    let v = "";
-
-    if (chainId.times(2).plus(35).plus(1).isGreaterThan(255)) {
-      const oneByteChainId = (chainIdTruncated * 2 + 35) % 256;
-
-      const ecc_parity = Math.abs(response_byte - oneByteChainId);
-
-      if (txType != null) {
-        // For EIP2930 and EIP1559 tx, v is simply the parity.
-        v = ecc_parity % 2 == 1 ? "00" : "01";
-      } else {
-        // Legacy type transaction with a big chain ID
-        v = chainId.times(2).plus(35).plus(ecc_parity).toString(16);
-      }
-    } else {
-      v = response_byte.toString(16);
-    }
-
-    // Make sure v has is prefixed with a 0 if its length is odd ("1" -> "01").
-    if (v.length % 2 == 1) {
-      v = "0" + v;
-    }
-
-    const r = response.slice(1, 1 + 32).toString("hex");
-    const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+    const v = getV(response[0], chainId, parsedTransaction.type);
+    const r = response.subarray(1, 1 + 32).toString("hex");
+    const s = response.subarray(1 + 32, 1 + 32 + 32).toString("hex");
     return { v, r, s };
   }
 
