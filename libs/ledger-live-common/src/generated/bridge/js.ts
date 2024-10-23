@@ -2,7 +2,6 @@ import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
 import crypto_org from "../../families/crypto_org/bridge/js";
 import internet_computer from "../../families/internet_computer/bridge/js";
-import stacks from "../../families/stacks/bridge/js";
 import vechain from "../../families/vechain/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
@@ -27,7 +26,6 @@ export default {
   celo,
   crypto_org,
   internet_computer,
-  stacks,
   vechain,
   algorand,
   bitcoin,

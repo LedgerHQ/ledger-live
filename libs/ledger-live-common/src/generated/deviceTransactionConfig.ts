@@ -2,7 +2,6 @@ import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
 import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
-import stacks from "../families/stacks/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
@@ -26,7 +25,6 @@ export default {
   celo,
   crypto_org,
   internet_computer,
-  stacks,
   algorand,
   bitcoin,
   cardano,
