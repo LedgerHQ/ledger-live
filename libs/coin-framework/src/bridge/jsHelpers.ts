@@ -517,7 +517,6 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
-    // NOTE: might pass params here
   }: {
     injectGetAddressParams?: (account: A) => any;
   } = {},
