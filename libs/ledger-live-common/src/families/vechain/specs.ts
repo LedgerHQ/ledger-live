@@ -1,13 +1,14 @@
 import invariant from "invariant";
 import expect from "expect";
-import type {
-  AppSpec,
-  TransactionArg,
-  TransactionRes,
-  TransactionTestInput,
+import {
+  type AppSpec,
+  SpeculosButton,
+  type TransactionArg,
+  type TransactionRes,
+  type TransactionTestInput,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { pickSiblings, botTest, SpeculosButton } from "../../bot/specs";
+import { pickSiblings, botTest } from "../../bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import deviceAction from "../vechain/speculos-deviceActions";

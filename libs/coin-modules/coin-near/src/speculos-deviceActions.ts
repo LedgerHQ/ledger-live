@@ -3,7 +3,7 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot";
 const confirmWording: Record<string, string> = {
   send: "transfer",
   stake: "deposit_and_stake",
