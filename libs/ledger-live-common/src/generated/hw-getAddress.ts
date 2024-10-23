@@ -5,7 +5,6 @@ import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
-import vechain from "../families/vechain/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
@@ -20,6 +19,7 @@ import { resolver as stellar } from "../families/stellar/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as ton } from "../families/ton/setup";
 import { resolver as tron } from "../families/tron/setup";
+import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
@@ -30,7 +30,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  vechain,
   algorand,
   bitcoin,
   cardano,
@@ -45,5 +44,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };

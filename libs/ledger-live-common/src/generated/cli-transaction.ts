@@ -3,7 +3,6 @@ import crypto_org from "../families/crypto_org/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import stacks from "../families/stacks/cli-transaction";
-import vechain from "../families/vechain/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
@@ -18,6 +17,7 @@ import { cliTools as stellar } from "../families/stellar/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as ton } from "../families/ton/setup";
 import { cliTools as tron } from "../families/tron/setup";
+import { cliTools as vechain } from "../families/vechain/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 
 export default {
@@ -26,7 +26,6 @@ export default {
   filecoin,
   hedera,
   stacks,
-  vechain,
   algorand,
   bitcoin,
   cardano,
@@ -41,5 +40,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };

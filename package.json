@@ -77,6 +77,7 @@
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
+    "coin:vechain": "pnpm --filter coin-vechain",
     "coin:xrp": "pnpm --filter coin-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",

@@ -1,10 +1,25 @@
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
-import { Transaction as VechainTransaction } from "./types";
+import { Transaction, Transaction as VechainTransaction } from "./types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { MustBeVechain } from "./errors";
+
+type CliTools = {
+  options: Array<{
+    name: string;
+    type: any;
+    desc: string;
+  }>;
+  inferTransactions: (
+    transactions: Array<{
+      account: AccountLike;
+      transaction: Transaction;
+      mainAccount: Account;
+    }>,
+    opts: Record<string, any>,
+  ) => Transaction[];
+};
 
 type Clauses = {
   to: string;
@@ -63,7 +78,9 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-};
+export default function makeCliTools(): CliTools {
+  return {
+    options,
+    inferTransactions,
+  };
+}
