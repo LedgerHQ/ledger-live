@@ -725,6 +725,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://explorer.etherlink.com/api" },
     },
   },
+  config_currency_zksync: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://mainnet.era.zksync.io" },
+      explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
+    },
+  },
+  config_currency_zksync_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://sepolia.era.zksync.dev" },
+      explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
+    },
+  },
 };
 
 export { evmConfig };
