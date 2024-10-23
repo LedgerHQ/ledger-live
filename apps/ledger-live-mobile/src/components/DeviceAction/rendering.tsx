@@ -883,7 +883,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={Config.MOCK} />
+        <InfiniteLoader mock={Config.DETOX} />
       </SpinnerContainer>
       <CenteredText testID="device-action-loading">
         {description ?? t("DeviceAction.loading")}
