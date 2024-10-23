@@ -194,6 +194,7 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
+  recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
 };
 
 /**
@@ -554,6 +555,7 @@ export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
+export type Feature_RecoverUpsellRedirection = DefaultFeature;
 
 /**
  * Utils types.

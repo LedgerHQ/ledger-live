@@ -512,6 +512,7 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
+  recoverUpsellRedirection: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
