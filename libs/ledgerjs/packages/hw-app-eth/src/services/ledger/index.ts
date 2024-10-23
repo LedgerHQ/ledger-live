@@ -1,4 +1,5 @@
-import { utils } from "ethers";
+import { parse as parseTransaction } from "@ethersproject/transactions";
+import { Interface } from "@ethersproject/abi";
 import { log } from "@ledgerhq/logs";
 import {
   signDomainResolution,
@@ -133,8 +134,8 @@ const loadNanoAppPlugins = async (
       }
 
       if (erc20OfInterest && erc20OfInterest.length && abi) {
-        const contract = new utils.Interface(abi);
-        const args = contract.parseTransaction(decodedTx).args;
+        const contract = new Interface(abi);
+        const args = contract.parseTransaction(parsedTransaction).args;
 
         for (const path of erc20OfInterest) {
           const erc20ContractAddress = path.split(".").reduce((value, seg) => {
@@ -189,7 +190,8 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
   resolutionConfig,
 ) => {
   const rawTx = Buffer.from(rawTxHex, "hex");
-  const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
+  const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+  const chainIdUint4 = decodeTxInfo(rawTx);
   const { domains } = resolutionConfig;
 
   const contractAddress = decodedTx.to;

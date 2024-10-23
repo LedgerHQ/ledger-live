@@ -1,8 +1,11 @@
 import nock from "nock";
 import axios from "axios";
 import { fail } from "assert";
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { Interface } from "@ethersproject/abi";
+import { parseUnits } from "@ethersproject/units";
+import { BigNumber as EthersBigNumber } from "@ethersproject/bignumber";
+import { serialize as serializeTransaction } from "@ethersproject/transactions";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Eth, { ledgerService } from "../src/Eth";
 import CAL_ETH from "./fixtures/SignatureCALEth";
@@ -36,18 +39,16 @@ describe("Eth app biding", () => {
       const eth = new Eth(transport);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
-            value: ethers.BigNumber.from("1"),
-            gasLimit: ethers.BigNumber.from("21000"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("400000000"),
-            maxFeePerGas: ethers.BigNumber.from("52925678988"),
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
+          value: EthersBigNumber.from("1"),
+          gasLimit: EthersBigNumber.from("21000"),
+          maxPriorityFeePerGas: EthersBigNumber.from("400000000"),
+          maxFeePerGas: EthersBigNumber.from("52925678988"),
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true },
         true,
       );
@@ -77,25 +78,23 @@ describe("Eth app biding", () => {
       );
 
       const eth = new Eth(transport);
-      const contract = new ethers.utils.Interface(ERC20_ABI);
+      const contract = new Interface(ERC20_ABI);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
-            value: ethers.BigNumber.from("0"),
-            gasLimit: ethers.BigNumber.from("64805"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("550000000"),
-            maxFeePerGas: ethers.BigNumber.from("60105744798"),
-            data: contract.encodeFunctionData("transfer", [
-              "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
-              ethers.utils.parseUnits("1", 18),
-            ]),
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+          value: EthersBigNumber.from("0"),
+          gasLimit: EthersBigNumber.from("64805"),
+          maxPriorityFeePerGas: EthersBigNumber.from("550000000"),
+          maxFeePerGas: EthersBigNumber.from("60105744798"),
+          data: contract.encodeFunctionData("transfer", [
+            "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
+            parseUnits("1", 18),
+          ]),
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true },
         true,
       );
@@ -146,29 +145,27 @@ describe("Eth app biding", () => {
       );
 
       const eth = new Eth(transport);
-      const contract = new ethers.utils.Interface(ERC721_ABI);
+      const contract = new Interface(ERC721_ABI);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: contractAddr,
-            value: ethers.BigNumber.from("0"),
-            gasLimit: ethers.BigNumber.from("145513"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
-            maxFeePerGas: ethers.BigNumber.from("79336166290"),
-            data: contract.encodeFunctionData(
-              contract.getFunction("safeTransferFrom(address,address,uint256)"),
-              [
-                "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-                "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
-                "1124761",
-              ],
-            ),
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: contractAddr,
+          value: EthersBigNumber.from("0"),
+          gasLimit: EthersBigNumber.from("145513"),
+          maxPriorityFeePerGas: EthersBigNumber.from("1150000000"),
+          maxFeePerGas: EthersBigNumber.from("79336166290"),
+          data: contract.encodeFunctionData(
+            contract.getFunction("safeTransferFrom(address,address,uint256)"),
+            [
+              "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
+              "1124761",
+            ],
+          ),
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true },
         true,
       );
@@ -219,28 +216,26 @@ describe("Eth app biding", () => {
       );
 
       const eth = new Eth(transport);
-      const contract = new ethers.utils.Interface(ERC1155_ABI);
+      const contract = new Interface(ERC1155_ABI);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: contractAddr,
-            value: ethers.BigNumber.from("0"),
-            gasLimit: ethers.BigNumber.from("68276"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("350000000"),
-            maxFeePerGas: ethers.BigNumber.from("57259265704"),
-            data: contract.encodeFunctionData("safeTransferFrom", [
-              "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-              "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
-              "263196",
-              "1",
-              "0x",
-            ]),
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: contractAddr,
+          value: EthersBigNumber.from("0"),
+          gasLimit: EthersBigNumber.from("68276"),
+          maxPriorityFeePerGas: EthersBigNumber.from("350000000"),
+          maxFeePerGas: EthersBigNumber.from("57259265704"),
+          data: contract.encodeFunctionData("safeTransferFrom", [
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
+            "263196",
+            "1",
+            "0x",
+          ]),
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true },
         true,
       );
@@ -290,40 +285,38 @@ describe("Eth app biding", () => {
       );
 
       const eth = new Eth(transport);
-      const contract = new ethers.utils.Interface(PARASWAP_ABI);
+      const contract = new Interface(PARASWAP_ABI);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: transactionContracts.paraswap,
-            value: ethers.BigNumber.from("0"),
-            gasLimit: ethers.BigNumber.from("298891"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
-            maxFeePerGas: ethers.BigNumber.from("86969174616"),
-            data: contract.encodeFunctionData("simpleSwap", [
-              [
-                "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", // MATIC
-                "0x6B175474E89094C44Da98b954EedeAC495271d0F", // DAI
-                "0x0de0b6b3a7640000", // 1 MATIC
-                "0x14655db2d8c71619", // ~1.469 DAI
-                "0x147f9aa1bc47718c", // EXPECT 1.477 DAI
-                ["0xE592427A0AEce92De3Edee1F18E0157C05861564"],
-                "0xc04b8d59000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000def171fe48cf0115b1d80b88dc8eab59176fee5700000000000000000000000000000000000000000000000000000000640b9d320000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002b7d1afa7b718fb893db30a3abc0cfc608aacfebb00027106b175474e89094c44da98b954eedeac495271d0f000000000000000000000000000000000000000000",
-                ["0x00", "0x0124"],
-                ["0x00"],
-                "0x0000000000000000000000000000000000000000",
-                "0x558247e365be655f9144e1a0140D793984372Ef3",
-                "0x010000000000000000000000000000000000000000000000000000000000405f",
-                "0x",
-                "0x640be382",
-                "0x3d2fae4b5ec240cd871aa6b675e99899",
-              ],
-            ]),
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: transactionContracts.paraswap,
+          value: EthersBigNumber.from("0"),
+          gasLimit: EthersBigNumber.from("298891"),
+          maxPriorityFeePerGas: EthersBigNumber.from("1150000000"),
+          maxFeePerGas: EthersBigNumber.from("86969174616"),
+          data: contract.encodeFunctionData("simpleSwap", [
+            [
+              "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", // MATIC
+              "0x6B175474E89094C44Da98b954EedeAC495271d0F", // DAI
+              "0x0de0b6b3a7640000", // 1 MATIC
+              "0x14655db2d8c71619", // ~1.469 DAI
+              "0x147f9aa1bc47718c", // EXPECT 1.477 DAI
+              ["0xE592427A0AEce92De3Edee1F18E0157C05861564"],
+              "0xc04b8d59000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000def171fe48cf0115b1d80b88dc8eab59176fee5700000000000000000000000000000000000000000000000000000000640b9d320000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002b7d1afa7b718fb893db30a3abc0cfc608aacfebb00027106b175474e89094c44da98b954eedeac495271d0f000000000000000000000000000000000000000000",
+              ["0x00", "0x0124"],
+              ["0x00"],
+              "0x0000000000000000000000000000000000000000",
+              "0x558247e365be655f9144e1a0140D793984372Ef3",
+              "0x010000000000000000000000000000000000000000000000000000000000405f",
+              "0x",
+              "0x640be382",
+              "0x3d2fae4b5ec240cd871aa6b675e99899",
+            ],
+          ]),
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
         true,
       );
@@ -372,19 +365,17 @@ describe("Eth app biding", () => {
       const eth = new Eth(transport);
       const result = await eth.clearSignTransaction(
         "44'/60'/0'/0/0",
-        ethers.utils
-          .serializeTransaction({
-            to: transactionContracts.uniswapUniversaRouter,
-            value: ethers.BigNumber.from("0"),
-            gasLimit: ethers.BigNumber.from("298891"),
-            maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
-            maxFeePerGas: ethers.BigNumber.from("86969174616"),
-            data: transactionData.uniswap["permit2>swap-out-v3>unwrap"],
-            chainId: 1,
-            nonce: 0,
-            type: 2,
-          })
-          .substring(2),
+        serializeTransaction({
+          to: transactionContracts.uniswapUniversaRouter,
+          value: EthersBigNumber.from("0"),
+          gasLimit: EthersBigNumber.from("298891"),
+          maxPriorityFeePerGas: EthersBigNumber.from("1150000000"),
+          maxFeePerGas: EthersBigNumber.from("86969174616"),
+          data: transactionData.uniswap["permit2>swap-out-v3>unwrap"],
+          chainId: 1,
+          nonce: 0,
+          type: 2,
+        }).slice(2),
         { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
         true,
       );
@@ -403,18 +394,16 @@ describe("Eth app biding", () => {
       try {
         await eth.clearSignTransaction(
           "44'/60'/0'/0/0",
-          ethers.utils
-            .serializeTransaction({
-              to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
-              value: ethers.BigNumber.from("1"),
-              gasLimit: ethers.BigNumber.from("21000"),
-              maxPriorityFeePerGas: ethers.BigNumber.from("400000000"),
-              maxFeePerGas: ethers.BigNumber.from("52925678988"),
-              chainId: 1,
-              nonce: 0,
-              type: 2,
-            })
-            .substring(2),
+          serializeTransaction({
+            to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
+            value: EthersBigNumber.from("1"),
+            gasLimit: EthersBigNumber.from("21000"),
+            maxPriorityFeePerGas: EthersBigNumber.from("400000000"),
+            maxFeePerGas: EthersBigNumber.from("52925678988"),
+            chainId: 1,
+            nonce: 0,
+            type: 2,
+          }).slice(2),
           { erc20: true, externalPlugins: true, nft: true },
           true,
         );
@@ -441,18 +430,16 @@ describe("Eth app biding", () => {
       try {
         await eth.clearSignTransaction(
           "44'/60'/0'/0/0",
-          ethers.utils
-            .serializeTransaction({
-              to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
-              value: ethers.BigNumber.from("1"),
-              gasLimit: ethers.BigNumber.from("21000"),
-              maxPriorityFeePerGas: ethers.BigNumber.from("400000000"),
-              maxFeePerGas: ethers.BigNumber.from("52925678988"),
-              chainId: 1,
-              nonce: 0,
-              type: 2,
-            })
-            .substring(2),
+          serializeTransaction({
+            to: "0xB0b5B0106D69fE64545A60A68C014f7570D3F861",
+            value: EthersBigNumber.from("1"),
+            gasLimit: EthersBigNumber.from("21000"),
+            maxPriorityFeePerGas: EthersBigNumber.from("400000000"),
+            maxFeePerGas: EthersBigNumber.from("52925678988"),
+            chainId: 1,
+            nonce: 0,
+            type: 2,
+          }).slice(2),
           { erc20: true, externalPlugins: true, nft: true },
           false,
         );
