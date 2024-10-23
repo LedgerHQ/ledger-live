@@ -19,6 +19,11 @@
     "jest-matcher-utils",
     "jest-message-util"
   ],
-  "ignoreUnimported": [],
-  "ignoreUnused": []
+  "ignoreUnimported": [
+    "src/signer/signMessage.ts"
+  ],
+  "ignoreUnused": [
+    "ripple-address-codec",
+    "ripple-binary-codec"
+  ]
 }
