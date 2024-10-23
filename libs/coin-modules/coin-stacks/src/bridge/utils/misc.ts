@@ -8,7 +8,7 @@ import {
   cvToJSON,
 } from "@stacks/transactions";
 
-import { decodeAccountId } from "../../../../account";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { fetchFullMempoolTxs, fetchNonce } from "../../bridge/utils/api";
 import {
   DecodedSendManyFunctionArgsCV,
@@ -17,7 +17,7 @@ import {
   TransactionResponse,
 } from "./api.types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { encodeOperationId, encodeSubOperationId } from "../../../../operation";
+import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
 
