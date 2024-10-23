@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
-import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
+import { isMemoValid } from "@ledgerhq/live-common/families/stellar/bridge/logic";
+import {
+  StellarWrongMemoFormat,
+  type Transaction as StellarTransaction,
+} from "@ledgerhq/live-common/families/stellar/types";
 import { AnimatedInputSelect } from "@ledgerhq/native-ui";
+import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { MemoTypeDrawer, MEMO_TYPES } from "./MemoTypeDrawer";
 
 export default ({ onChange }: MemoTagInputProps<StellarTransaction>) => {
@@ -13,23 +17,27 @@ export default ({ onChange }: MemoTagInputProps<StellarTransaction>) => {
   const [memoValue, setMemoValue] = React.useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleChange = (type: MemoType, value: string) => {
+    const error = isMemoValid(type, value) ? undefined : new StellarWrongMemoFormat();
+    const patch = { memoType: type, memoValue: value };
+    onChange({ value, patch, error });
+  };
+
   const handleChangeType = (type: MemoType) => {
     const value = type === "NO_MEMO" ? "" : memoValue;
+    handleChange(type, value);
 
-    setIsOpen(false);
     setMemoType(type);
     if (value !== memoValue) setMemoValue(value);
-
-    onChange({ value, patch: { memoType: type, memoValue: value } });
+    setIsOpen(false);
   };
 
   const handleChangeValue = (value: string) => {
     const type = memoType === "NO_MEMO" && value ? "MEMO_TEXT" : memoType;
+    handleChange(type, value);
 
     setMemoValue(value);
     if (type !== memoType) setMemoType(type);
-
-    onChange({ value, patch: { memoType: type, memoValue: value } });
   };
 
   return (
