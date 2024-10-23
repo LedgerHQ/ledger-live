@@ -3949,6 +3949,9 @@ importers:
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
+      '@zondax/ledger-stacks':
+        specifier: ^1.0.2
+        version: 1.0.4
       async:
         specifier: ^3.2.3
         version: 3.2.5

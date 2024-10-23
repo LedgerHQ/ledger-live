@@ -29,14 +29,8 @@
       "lib-es/*": [
         "lib-es/*"
       ],
-      "api": [
-        "lib/api/index"
-      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
-      ],
-      "logic": [
-        "lib/logic/index"
       ],
       "specs": [
         "lib/test/bot-specs"
@@ -44,16 +38,8 @@
       "transaction": [
         "lib/bridge/transaction"
       ],
-      "types": [
-        "lib/types/index"
-      ],
       "*": [
-        "lib/*",
-        "lib/bridge/*",
-        "lib/logic/*",
-        "lib/signer/*",
-        "lib/test/*",
-        "lib/types/*"
+        "lib/*"
       ]
     }
   },

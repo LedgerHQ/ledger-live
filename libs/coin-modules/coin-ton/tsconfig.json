@@ -8,5 +8,5 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "include": ["src/**/*", "../coin-stacks/src/index.ts"]
+  "include": ["src/**/*"]
 }

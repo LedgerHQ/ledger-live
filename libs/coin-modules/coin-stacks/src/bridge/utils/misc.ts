@@ -40,7 +40,7 @@ export const getTxToBroadcast = async (
     recipient: recipients[0],
     anchorMode,
     memo,
-    network: StacksNetwork[network],
+    network: network === "mainnet" ? StacksNetwork.mainnet : StacksNetwork.testnet, // NOTE: I had to add this check because of a TS error
     publicKey: xpub,
     fee: BigNumber(fee).toFixed(),
     nonce: operation.transactionSequenceNumber ?? 0,
@@ -66,9 +66,8 @@ export const getAddress = (
 
 const getMemo = (memoHex?: string): string => {
   if (memoHex?.substring(0, 2) === "0x") {
-    return Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
-    // replaceAll, could replace with regex to replace all
-    // as such: .replace(/\0/g, "") 
+    return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
+    // NOTE: couldn't use replaceAll because it's not supported in node 14
   }
 
   return "";

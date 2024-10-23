@@ -15,6 +15,7 @@ import icon from "@ledgerhq/coin-icon/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
+import stacks from "@ledgerhq/coin-stacks/specs";
 import stellar from "@ledgerhq/coin-stellar/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import ton from "@ledgerhq/coin-ton/specs";
@@ -39,6 +40,7 @@ export default {
   near,
   polkadot,
   solana,
+  stacks,
   stellar,
   tezos,
   ton,

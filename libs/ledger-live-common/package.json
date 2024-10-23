@@ -203,6 +203,7 @@
     "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^0.11.2",
     "@zondax/ledger-icp": "^0.7.0",
+    "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",
     "axios": "1.7.7",
     "bech32": "^1.1.3",

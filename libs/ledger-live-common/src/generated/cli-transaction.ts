@@ -16,6 +16,7 @@ import { cliTools as icon } from "../families/icon/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
 import { cliTools as solana } from "../families/solana/setup";
+import { cliTools as stacks } from "../families/stacks/setup";
 import { cliTools as stellar } from "../families/stellar/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as ton } from "../families/ton/setup";
@@ -41,6 +42,7 @@ export default {
   near,
   polkadot,
   solana,
+  stacks,
   stellar,
   tezos,
   ton,
