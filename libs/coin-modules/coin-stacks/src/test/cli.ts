@@ -5,8 +5,6 @@ import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-liv
 
 import type { Transaction } from "../types";
 
-const options = [];
-
 function inferAccounts(account: Account): AccountLikeArray {
   invariant(account.currency.family === "stacks", "stacks family");
 
@@ -33,7 +31,7 @@ function inferTransactions(
 
 export default function makeCliTools() {
   return {
-    options,
+    options: [],
     inferAccounts,
     inferTransactions,
   };

@@ -123,7 +123,6 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.14.191",
