@@ -82,6 +82,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const icon = useFeature("currencyIcon");
   const ton = useFeature("currencyTon");
   const etherlink = useFeature("currencyEtherlink");
+  const zksync = useFeature("currencyZkSync");
+  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -132,6 +134,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       scroll_sepolia: scrollSepolia,
       icon,
       etherlink,
+      zksync,
+      zksync_sepolia: zksyncSepolia,
     }),
     [
       axelar,
@@ -181,6 +185,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       scrollSepolia,
       icon,
       etherlink,
+      zksync,
+      zksyncSepolia,
     ],
   );
 
