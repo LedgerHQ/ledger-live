@@ -7,7 +7,7 @@ import mockData from "./mock.json";
 
 const api = {
   fetchLiveAppManifests: async (url: string, params?: FilterParams): Promise<LiveAppManifest[]> => {
-    if (getEnv("MOCK")) {
+    if (getEnv("MOCK") || getEnv("DETOX")) {
       if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
         return [
           ...mockData,

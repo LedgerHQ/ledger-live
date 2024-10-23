@@ -5,7 +5,7 @@ import { findFreePort, close as closeBridge, init as initBridge } from "./bridge
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import invariant from "invariant";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "./bridge/proxy";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
@@ -152,6 +152,7 @@ export async function launchApp() {
       wsPort: port,
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+      mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
     },
     languageAndLocale: {
       language: "en-US",

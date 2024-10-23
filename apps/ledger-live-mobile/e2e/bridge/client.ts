@@ -24,7 +24,10 @@ const retryDelay = 500; // Initial retry delay in milliseconds
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
+  const mock = LaunchArguments.value()["mock"];
+  log(`[E2E Bridge Client]: wsPort=${wsPort}, mock=${mock}`);
 
+  if (mock == "0") setEnv("MOCK", "");
   if (ws) {
     ws.close();
   }

@@ -82,7 +82,8 @@ const excludedErrorDescription = [
   "Bad status on response: 503", // cryptoorg node
 ];
 
-const sentryEnabled = Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK;
+const sentryEnabled =
+  Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
 
 export function withSentry(App: React.ComponentType) {
   if (sentryEnabled) {

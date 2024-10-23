@@ -21,7 +21,7 @@ const KeyboardView = React.memo<Props>(
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;
     let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
-    const keyboardVerticalOffset = isExperimental || Config.MOCK ? ExperimentalHeaderHeight : 0;
+    const keyboardVerticalOffset = isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0;
 
     if (Platform.OS === "ios") {
       behaviorParam = behavior || "height";

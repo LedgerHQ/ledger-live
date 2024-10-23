@@ -350,7 +350,7 @@ function AddAccountsAccounts({
               <SectionAccounts
                 defaultSelected={defaultSelected}
                 key={id}
-                showHint={selectable && i === 0 && !Config.MOCK}
+                showHint={selectable && i === 0 && !Config.DETOX}
                 header={
                   <Trans
                     values={{

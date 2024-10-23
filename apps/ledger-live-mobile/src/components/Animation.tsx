@@ -45,7 +45,7 @@ export default function Animation({
         {...lottieProps}
         style={[styles.default, { aspectRatio }, style]}
         loop={lottieProps.loop ?? true}
-        autoPlay={Config.MOCK ? false : lottieProps.autoPlay ?? true}
+        autoPlay={Config.DETOX ? false : lottieProps.autoPlay ?? true}
       />
     </View>
   );
