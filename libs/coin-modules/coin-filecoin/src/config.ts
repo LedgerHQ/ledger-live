@@ -1,4 +1,4 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import "@ledgerhq/types-cryptoassets";
 
 export type FilecoinConfig  = () => CurrencyConfig & {

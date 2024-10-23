@@ -31,9 +31,15 @@
         "specs": [
           "lib/test/bot-specs"
         ],
-        "*": [
-        "lib/*"
-        ]
+       "*": [
+        "lib/*",
+        "lib/api/*",
+        "lib/bridge/*",
+        "lib/common-logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
+      ]
       }
     },
     "exports": {
@@ -46,6 +52,10 @@
       "./deviceTransactionConfig": {
         "require": "./lib/deviceTransactionConfig.js",
         "default": "./lib-es/deviceTransactionConfig.js"
+      },
+      "./erc20": {
+        "require": "./lib/erc20/tokenAccounts.js",
+        "default": "./lib-es/erc20/tokenAccounts.js"
       },
       "./logic": {
         "require": "./lib/common-logic/index.js",
