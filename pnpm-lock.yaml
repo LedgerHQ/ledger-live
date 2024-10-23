@@ -3321,6 +3321,12 @@ importers:
 
   libs/evm-tools:
     dependencies:
+      '@ethersproject/constants':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ethersproject/hash':
+        specifier: ^5.7.0
+        version: 5.7.0
       '@ledgerhq/cryptoassets-evm-signatures':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets-evm-signatures
@@ -3333,9 +3339,6 @@ importers:
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
     devDependencies:
       '@ledgerhq/types-live':
         specifier: workspace:^
