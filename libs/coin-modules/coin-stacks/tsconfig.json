@@ -5,7 +5,7 @@
     "declarationMap": true,
     "module": "commonjs",
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": ["ES2021", "dom"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },

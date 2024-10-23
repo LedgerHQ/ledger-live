@@ -67,6 +67,8 @@ export const getAddress = (
 const getMemo = (memoHex?: string): string => {
   if (memoHex?.substring(0, 2) === "0x") {
     return Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
+    // replaceAll, could replace with regex to replace all
+    // as such: .replace(/\0/g, "") 
   }
 
   return "";
