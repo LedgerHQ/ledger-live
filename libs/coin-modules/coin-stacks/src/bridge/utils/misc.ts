@@ -18,7 +18,7 @@ import {
 } from "./api.types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import { StacksOperation } from "../../types/types";
+import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
 
 export const getTxToBroadcast = async (
