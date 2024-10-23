@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { DeviceTransactionField } from "../../transaction";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
@@ -14,6 +14,8 @@ export type ExtraDeviceTransactionField =
       label: string;
       value: BigNumber;
     };
+
+export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
 function getDeviceTransactionConfig(input: {
   account: AccountLike;
