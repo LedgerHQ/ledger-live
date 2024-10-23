@@ -3638,6 +3638,9 @@ importers:
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../coin-modules/coin-solana
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: workspace:^
         version: link:../coin-modules/coin-stellar
