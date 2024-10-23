@@ -1,5 +1,5 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
-import { encodeAccountId } from "../../../../account";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TransactionResponse } from "./api.types";
 import { fetchFullTxs } from "./api";
 import { Operation } from "@ledgerhq/types-live";

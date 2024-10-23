@@ -2849,6 +2849,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -2870,6 +2873,9 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       ripple-address-codec:
         specifier: ^5.0.0
         version: 5.0.0
@@ -2892,6 +2898,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5

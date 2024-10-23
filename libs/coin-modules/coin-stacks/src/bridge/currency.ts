@@ -1,5 +1,6 @@
 import { CurrencyBridge } from "@ledgerhq/types-live";
-import { makeScanAccounts } from "../../../bridge/jsHelpers";
+import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+
 import { getAccountShape } from "../synchronization";
 
 const scanAccounts = makeScanAccounts({ getAccountShape });
