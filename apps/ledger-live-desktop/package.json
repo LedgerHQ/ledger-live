@@ -94,6 +94,7 @@
     "@xstate/react": "1.6.3",
     "allure-commandline": "2.28.0",
     "bignumber.js": "9.1.2",
+    "buffer": "6.0.3",
     "chart.js": "2.9.4",
     "color": "4.2.3",
     "dotenv": "16.4.5",
