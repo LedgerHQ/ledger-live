@@ -4,13 +4,13 @@ import { Account } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { mapTxToOps, mapPendingTxToOps, reconciliatePublicKey } from "./bridge/utils/misc";
-import { GetAccountShape, makeSync } from "../../bridge/jsHelpers";
 import {
   fetchBalances,
   fetchBlockHeight,
   fetchFullMempoolTxs,
   fetchFullTxs,
 } from "./bridge/utils/api";
+import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, rest = {}, derivationMode } = info;
