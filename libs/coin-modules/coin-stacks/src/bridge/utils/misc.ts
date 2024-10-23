@@ -66,6 +66,7 @@ export const getAddress = (
 
 const getMemo = (memoHex?: string): string => {
   if (memoHex?.substring(0, 2) === "0x") {
+    // eslint-disable-next-line no-control-regex
     return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
     // NOTE: couldn't use replaceAll because it's not supported in node 14
   }
