@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "./types/types";
+import { Transaction, TransactionStatus } from "./types";
 import { validateAddress } from "./bridge/utils/addresses";
 import { getAddress } from "./bridge/utils/misc";
 import { StacksMemoTooLong } from "./errors";
