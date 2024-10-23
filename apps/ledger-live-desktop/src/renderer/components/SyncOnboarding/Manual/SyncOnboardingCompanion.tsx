@@ -117,6 +117,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
+  const recoverUpsellRedirection = useFeature("recoverUpsellRedirection");
+
   const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
   const productName = device
@@ -189,15 +191,22 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
           </>
         ),
       },
-      {
-        key: StepKey.Backup,
-        status: "inactive",
-        title: t("syncOnboarding.manual.backup.title"),
-        titleCompleted: t("syncOnboarding.manual.backup.title"),
-        renderBody: () => (
-          <BackupStep device={device} onPressKeepManualBackup={() => setStepKey(StepKey.Apps)} />
-        ),
-      },
+      ...(recoverUpsellRedirection?.enabled
+        ? []
+        : [
+            {
+              key: StepKey.Backup,
+              status: "inactive" as StepStatus,
+              title: t("syncOnboarding.manual.backup.title"),
+              titleCompleted: t("syncOnboarding.manual.backup.title"),
+              renderBody: () => (
+                <BackupStep
+                  device={device}
+                  onPressKeepManualBackup={() => setStepKey(StepKey.Apps)}
+                />
+              ),
+            },
+          ]),
       {
         key: StepKey.Apps,
         status: "inactive",
@@ -227,12 +236,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     [
       t,
       deviceName,
+      recoverUpsellRedirection?.enabled,
+      hasAppLoader,
       productName,
-      seedPathStatus,
       device,
+      seedPathStatus,
       shouldRestoreApps,
       deviceToRestore,
-      hasAppLoader,
       handleInstallRecommendedApplicationComplete,
     ],
   );
@@ -351,14 +361,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
       if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
         // device was just seeded
-        setStepKey(StepKey.Backup);
+        setStepKey(recoverUpsellRedirection?.enabled ? StepKey.Apps : StepKey.Backup);
         seededDeviceHandled.current = true;
         return;
       } else if (
         deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
       ) {
         // switch to the apps step
-        __DEV__ ? setStepKey(StepKey.Backup) : setStepKey(StepKey.Apps); // for ease of testing in dev mode without having to reset the device
+        if (recoverUpsellRedirection?.enabled) {
+          setStepKey(StepKey.Apps);
+        } else {
+          __DEV__ ? setStepKey(StepKey.Backup) : setStepKey(StepKey.Apps); // for ease of testing in dev mode without having to reset the device
+        }
         seededDeviceHandled.current = true;
         return;
       }
@@ -412,7 +426,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       default:
         break;
     }
-  }, [deviceOnboardingState, notifySyncOnboardingShouldReset]);
+  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, recoverUpsellRedirection?.enabled]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
