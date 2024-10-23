@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
-import { Account } from "tests/enum/Account";
-import { AppInfos } from "tests/enum/AppInfos";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Fee } from "tests/enum/Fee";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Swap } from "tests/models/Swap";
-import { Provider, Rate } from "tests/enum/Swap";
+import { Provider, Rate } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";

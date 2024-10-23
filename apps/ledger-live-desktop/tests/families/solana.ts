@@ -5,7 +5,7 @@ import {
   waitFor,
   containsSubstringInEvent,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
+import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
 import { Transaction } from "tests/models/Transaction";
 
 export async function delegateSolana() {

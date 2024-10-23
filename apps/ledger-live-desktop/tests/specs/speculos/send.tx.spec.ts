@@ -1,6 +1,6 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
-import { Fee } from "../../enum/Fee";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";

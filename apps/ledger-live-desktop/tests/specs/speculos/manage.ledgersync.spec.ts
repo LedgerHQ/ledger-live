@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { AppInfos } from "tests/enum/AppInfos";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
