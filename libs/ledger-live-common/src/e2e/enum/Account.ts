@@ -1,5 +1,5 @@
 import { Currency } from "./Currency";
-import { AccountType } from "tests/enum/AccountType";
+import { AccountType } from "./AccountType";
 
 export class Account {
   constructor(

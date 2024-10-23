@@ -1,6 +1,6 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { Currency } from "tests/enum/Currency";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "tests/models/Delegate";
 import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";

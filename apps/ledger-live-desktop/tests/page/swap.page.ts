@@ -3,7 +3,7 @@ import { waitFor } from "../utils/waitFor";
 import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
-import { Account } from "tests/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 
 export class SwapPage extends AppPage {
