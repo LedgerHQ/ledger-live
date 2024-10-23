@@ -3112,6 +3112,14 @@
       "input": "Enter address",
       "inputEns": "Enter address or ENS"
     },
+    "memoTag": {
+      "input": "Enter Tag / Memo",
+      "title": "Don’t use Tag/Memo?",
+      "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+      "cta": "Add tag",
+      "ignore": "Don't add tag",
+      "learnMore": "Learn more about Tag/Memo"
+    },
     "send": {
       "title": "Send",
       "description": "Send crypto to another wallet."
