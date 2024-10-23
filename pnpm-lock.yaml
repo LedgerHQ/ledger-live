@@ -397,6 +397,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       chart.js:
         specifier: 2.9.4
         version: 2.9.4
