@@ -1,12 +1,3 @@
-// import { currencyBridge } from "./currency";
-// import { accountBridge } from "./account";
-
-// export default {
-//   currencyBridge,
-//   accountBridge,
-// };
-
-// --- OLD ^^
 import { makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import resolver from "../signer/index";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
@@ -130,6 +121,3 @@ export { prepareTransaction, estimateMaxSpendable };
 //     accountBridge: buildAccountBridge(signerContext),
 //   };
 // }
-
-
-/

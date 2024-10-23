@@ -33,7 +33,7 @@ export const signMessage =
   if (!message) throw new Error(`Message cannot be empty`);
   if (typeof message !== "string") throw new Error(`Message must be string`);
 
-  const r = await signerContext(deviceId, signer => signer.sign(getPath(account.freshAddressPath), getBufferFromString(message)););
+  const r = await signerContext(deviceId, signer => signer.sign(getPath(account.freshAddressPath), getBufferFromString(message)));
   throwIfError(r);
 
 
