@@ -1,4 +1,4 @@
-// import BlockstackApp from "@zondax/ledger-stacks";
+
 // import { AddressVersion } from "@stacks/transactions/dist";
 
 // import type { Resolver } from "../../hw/getAddress/types";

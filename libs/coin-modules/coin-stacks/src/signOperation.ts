@@ -11,7 +11,7 @@ import { getAddress } from "./bridge/utils/misc";
 import { getPath, throwIfError } from "./utils";
 import { Transaction } from "./types";
 
-export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
+export const buildSignOperation: AccountBridge<Transaction>["signOperation"] = ({
   account,
   deviceId,
   transaction,
