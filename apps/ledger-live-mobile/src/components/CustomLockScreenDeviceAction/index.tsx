@@ -22,6 +22,7 @@ import {
   RenderImageLoadRequested,
   RenderLoadingImage,
 } from "./stepsRendering";
+import { BluetoothRequired } from "@ledgerhq/errors";
 
 type Props = {
   device: Device;
@@ -89,10 +90,17 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   );
 
   const { error, imageCommitRequested, imageLoadRequested, loadingImage, progress } = status;
+
   const isError = !!error;
   const isRefusedOnStaxError =
     (error as unknown) instanceof ImageLoadRefusedOnDevice ||
     (error as unknown) instanceof ImageCommitRefusedOnDevice;
+
+  const parseErrror = (error: Error) =>
+    ({
+      BleError: new BluetoothRequired(),
+      BluetoothRequired: new BluetoothRequired(),
+    })[error?.name] || error;
 
   useEffect(() => {
     // Once transferred the old image is wiped, we need to clear it from the data.
@@ -120,7 +128,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
           <Flex flex={1}>
             {renderError({
               t,
-              error,
+              error: parseErrror(error),
               device,
               ...(isRefusedOnStaxError
                 ? { Icon: Icons.Warning, iconColor: "warning.c60", hasExportLogButton: false }
