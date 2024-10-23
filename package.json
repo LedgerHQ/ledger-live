@@ -73,6 +73,7 @@
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:ton": "pnpm --filter coin-ton",
     "coin:solana": "pnpm --filter coin-solana",
+    "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
