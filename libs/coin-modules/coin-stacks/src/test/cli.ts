@@ -3,7 +3,7 @@ import flatMap from "lodash/flatMap";
 
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 
-import type { Transaction } from "../../generated/types";
+import type { Transaction } from "../types";
 
 const options = [];
 
@@ -31,8 +31,10 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+  };
+}
