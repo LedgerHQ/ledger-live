@@ -44,7 +44,7 @@ export function PTXServicesAppleWarning() {
   );
 
   useEffect(() => {
-    if (!exchangeDrawerEnabled && !ctaScreensEnabled && !Config.MOCK) {
+    if (!exchangeDrawerEnabled && !ctaScreensEnabled && !Config.DETOX) {
       openDrawer();
     } else {
       _onClose();

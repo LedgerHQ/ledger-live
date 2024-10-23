@@ -179,7 +179,7 @@ function DiscoverLiveInfo() {
   return (
     <StyledSafeAreaView>
       <Carousel
-        autoDelay={Config.MOCK ? 0 : 6000}
+        autoDelay={Config.DETOX ? 0 : 6000}
         scrollOnSidePress={true}
         restartAfterEnd={false}
         IndicatorComponent={StoriesIndicator}

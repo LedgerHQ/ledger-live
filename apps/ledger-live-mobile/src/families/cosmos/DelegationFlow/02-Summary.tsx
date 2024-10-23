@@ -106,7 +106,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
-    if (!Config.MOCK) {
+    if (!Config.DETOX) {
       Animated.loop(
         Animated.sequence([
           Animated.timing(rotateAnim, {

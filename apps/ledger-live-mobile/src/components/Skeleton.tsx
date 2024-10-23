@@ -27,7 +27,7 @@ const Skeleton: React.FC<Props> = ({
 
   useEffect(() => {
     // Disable animation when mock env because it was blocking Detox tests
-    if (animated && !Config.MOCK) {
+    if (animated && !Config.DETOX) {
       const duration = 1000;
       const values = { min: 0.5, max: 1 };
 
