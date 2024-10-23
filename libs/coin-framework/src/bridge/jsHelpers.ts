@@ -544,6 +544,7 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
     return from(
       getAddressFn(deviceId, arg).then(r => {
         const accountAddress = account.freshAddress;
+
         if (verify && r.address !== accountAddress) {
           throw new WrongDeviceForAccount();
         }
