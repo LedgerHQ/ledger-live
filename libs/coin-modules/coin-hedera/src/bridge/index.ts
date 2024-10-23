@@ -1,8 +1,4 @@
-import {
-  makeAccountBridgeReceive,
-  makeScanAccounts,
-  makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import resolver from "../signer/index";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -16,6 +12,7 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape, buildIterateResult } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
+import { receive } from "./receive";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -40,7 +37,6 @@ function buildAccountBridge(
 ): AccountBridge<Transaction, Account, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
 
   return {
@@ -50,7 +46,7 @@ function buildAccountBridge(
     getTransactionStatus,
     prepareTransaction,
     sync,
-    receive,
+    receive: receive(getAddressWrapper(getAddress)),
     signOperation,
     broadcast,
   };
