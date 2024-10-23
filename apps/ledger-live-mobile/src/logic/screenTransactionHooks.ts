@@ -28,6 +28,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 import { ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
 import type {
   StackNavigatorNavigation,
   StackNavigatorRoute,
@@ -266,7 +267,7 @@ export function useSignedTxHandler({
 
         const operation = await broadcast(signedOperation).catch((err: Error) => {
           const currency = mainAccount.currency;
-          throw createTransactionBroadcastError(err, {
+          throw createTransactionBroadcastError(err, urls, {
             network: currency.name,
             coin: currency.ticker,
           });
