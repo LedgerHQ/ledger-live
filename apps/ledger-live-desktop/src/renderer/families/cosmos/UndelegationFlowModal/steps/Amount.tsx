@@ -17,6 +17,8 @@ import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 export default function StepAmount({
   account,
@@ -24,6 +26,7 @@ export default function StepAmount({
   onUpdateTransaction,
   status,
   error,
+  onClose,
 }: StepProps) {
   invariant(account && transaction && transaction.validators, "account and transaction required");
   const bridge = getAccountBridge(account);
@@ -71,6 +74,8 @@ export default function StepAmount({
   );
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
   const crypto = cryptoFactory(account.currency.id);
+  const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
+
   return (
     <Box flow={1}>
       <TrackPage
@@ -102,6 +107,8 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey={"cosmos.undelegation.flow.steps.amount.fields.amount"} />}
       />
+      <Box mb={1} />
+      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
       <Alert type="primary" mt={2}>
         <Trans
           i18nKey={"cosmos.undelegation.flow.steps.amount.warning"}
