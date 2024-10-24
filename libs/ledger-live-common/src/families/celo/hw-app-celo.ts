@@ -52,7 +52,7 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
     }
   }
 
-  async determinePrice(txParams: CeloTx): Promise<void> {
+  async determineFees(txParams: CeloTx): Promise<void> {
     const isModern = await this.isAppModern();
     const {
       connection: { setFeeMarketGas, gasPrice },
@@ -76,6 +76,10 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
     }
   }
 
+  /*
+    @dev refers to if the app signing supports modern transactions like eip1559. if not it only can sign
+        old celo-legacy transactions that no longer work on celo post L2 transition
+   */
   async isAppModern(): Promise<boolean> {
     if (!this.config) {
       this.config = this.getAppConfiguration();
@@ -86,7 +90,8 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
 
   // this works for celo-legacy
   // this is code written a long time ago in a galaxy far far away
-  // do not touch (pretty please)
+  // do not touch (pretty please) 
+  // CAN BE REMOVED AFTER FEB 2025 (CELO L2 transition)
   private async __dangerous__signTransactionLegacy(
     path: string,
     rawTxHex: string,
