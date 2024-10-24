@@ -428,7 +428,7 @@ export class Account {
     Currency.TRX_USDT,
     "Tron 1",
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
-    AccountType.TRC20,
+    undefined,
     0,
   );
 

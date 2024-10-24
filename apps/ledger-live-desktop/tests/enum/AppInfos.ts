@@ -186,7 +186,7 @@ export class AppInfos {
     DeviceLabels.SEND,
     DeviceLabels.GET,
     DeviceLabels.FEES,
-    DeviceLabels.ACCEPT_AND_SEND,
+    DeviceLabels.ACCEPT,
     DeviceLabels.REJECT,
   ]);
 }

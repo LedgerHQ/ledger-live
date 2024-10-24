@@ -25,7 +25,6 @@ export enum DeviceLabels {
   RECEIVER = "Receiver",
   GET = "Get",
   FEES = "Fees",
-  ACCEPT_AND_SEND = "Accept and send",
   WALLET_ID = "Wallet ID",
   VIEW_HEADER = "View Header",
   CONTINUE_TO_ACTION = "Continue to action",

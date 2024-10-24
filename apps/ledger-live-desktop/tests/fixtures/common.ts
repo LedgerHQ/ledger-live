@@ -168,7 +168,7 @@ export const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
-    page.setDefaultTimeout(99000);
+    page.setDefaultTimeout(120000);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);

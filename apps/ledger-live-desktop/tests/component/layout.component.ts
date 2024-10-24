@@ -64,6 +64,13 @@ export class Layout extends Component {
     await this.topbarSynchronizeButton.click();
   }
 
+  @step("Wait for accounts sync to be finished")
+  async waitForAccountsSyncToBeDone() {
+    await expect(this.topbarSynchronizeButton).toHaveAttribute("cursor", "default");
+    //todo: remove after https://ledgerhq.atlassian.net/browse/LIVE-14410 is solved
+    await this.page.waitForTimeout(5000);
+  }
+
   @step("Open Accounts")
   async goToAccounts() {
     await this.drawerAccountsButton.click();
