@@ -30,4 +30,3 @@ export function Kiln({ size = BASE_SIZE, outline }: Props): JSX.Element {
     </Svg>
   );
 }
-export default Kiln;
