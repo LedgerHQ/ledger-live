@@ -129,5 +129,6 @@ export * from "@ledgerhq/coin-evm/errors";
 export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-solana/errors";
+export * from "@ledgerhq/coin-stacks/errors";
 export * from "@ledgerhq/coin-stellar/errors";
 export * from "@ledgerhq/coin-tezos/errors";

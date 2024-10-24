@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { StacksNetwork } from "./bridge/utils/api.types";
+import { StacksNetwork } from "./utils/api.types";
 import type { Account } from "@ledgerhq/types-live";
 
-import type { Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "../types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -10,8 +10,8 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,

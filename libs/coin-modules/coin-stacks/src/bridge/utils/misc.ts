@@ -8,7 +8,7 @@ import {
   cvToJSON,
 } from "@stacks/transactions";
 
-import { decodeAccountId } from "../../../../account";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { fetchFullMempoolTxs, fetchNonce } from "../../bridge/utils/api";
 import {
   DecodedSendManyFunctionArgsCV,
@@ -16,8 +16,8 @@ import {
   StacksNetwork,
   TransactionResponse,
 } from "./api.types";
-import { getCryptoCurrencyById } from "../../../../currencies";
-import { encodeOperationId, encodeSubOperationId } from "../../../../operation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
 
@@ -66,7 +66,9 @@ export const getAddress = (
 
 const getMemo = (memoHex?: string): string => {
   if (memoHex?.substring(0, 2) === "0x") {
-    return Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
+    // eslint-disable-next-line no-control-regex
+    return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
+    // NOTE: couldn't use replaceAll because it's not supported in node 14
   }
 
   return "";

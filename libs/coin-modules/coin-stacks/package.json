@@ -1,12 +1,13 @@
 {
-  "name": "@ledgerhq/coin-xrp",
-  "version": "0.5.6",
-  "description": "Ledger XRP Coin integration",
+  "name": "@ledgerhq/coin-stacks",
+  "version": "0.1.0",
+  "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "xrp",
-    "Ripple",
+    "stacks",
+    "stx",
+    "Bitcoin layer2",
     "Hardware Wallet"
   ],
   "repository": {
@@ -16,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-xrp",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-stacks",
   "publishConfig": {
     "access": "public"
   },
@@ -28,14 +29,8 @@
       "lib-es/*": [
         "lib-es/*"
       ],
-      "api": [
-        "lib/api/index"
-      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
-      ],
-      "logic": [
-        "lib/logic/index"
       ],
       "specs": [
         "lib/test/bot-specs"
@@ -43,16 +38,8 @@
       "transaction": [
         "lib/bridge/transaction"
       ],
-      "types": [
-        "lib/types/index"
-      ],
       "*": [
-        "lib/*",
-        "lib/bridge/*",
-        "lib/logic/*",
-        "lib/signer/*",
-        "lib/test/*",
-        "lib/types/*"
+        "lib/*"
       ]
     }
   },
@@ -103,19 +90,28 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "axios": "1.7.7",
     "bignumber.js": "^9.1.2",
+    "c32check": "1.1.3",
     "invariant": "^2.2.4",
+    "lodash": "^4.17.21",
     "ripple-address-codec": "^5.0.0",
     "ripple-binary-codec": "^1.3.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@stacks/network": "6.10.0",
+    "@stacks/transactions": "6.11.0",
+    "@zondax/ledger-stacks": "^1.0.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.14.191",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
     "jest": "^29.7.0",
@@ -126,7 +122,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-xrp.json",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-stacks.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
