@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { useOnScreen } from "LLD/hooks/useOnScreen";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ChainsEnum } from "LLD/features/Collectibles/types/enum/Chains";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 const defaultNumberOfVisibleNfts = 10;
 
@@ -32,7 +32,7 @@ const useNftGalleryModel = () => {
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account?.nfts || [],
     addresses: account?.freshAddress || "",
-    chains: [account?.currency.id ?? ChainsEnum.ETHEREUM],
+    chains: [account?.currency.id ?? BlockchainEVM.Ethereum],
     threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
   });
 

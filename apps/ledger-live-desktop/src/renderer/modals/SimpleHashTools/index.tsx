@@ -11,7 +11,7 @@ import RefreshMetadata, {
   HookResult as RefreshHookResult,
   useHook as useHookRefresh,
 } from "~/renderer/screens/settings/sections/Developer/SimpleHashTools/RefreshMetadata";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
 import SpamScore, {
   HookResult as SpamScoreHookResult,
@@ -35,6 +35,7 @@ const getItems = (
       cta: t("settings.developer.debugSimpleHash.debugSpamNft.report"),
       closeInfo: hooks.spam.closeInfo,
       displayInfo: hooks.spam.displayInfo,
+      isLoading: hooks.spam.spamReportMutation.isPending,
     },
     {
       key: "refresh",
@@ -44,6 +45,7 @@ const getItems = (
       cta: t("settings.developer.debugSimpleHash.debugRefreshMetadata.refresh"),
       closeInfo: hooks.refresh.closeInfo,
       displayInfo: hooks.refresh.displayInfo,
+      isLoading: hooks.refresh.refreshMutation.isPending,
     },
     {
       key: "check",
@@ -53,6 +55,7 @@ const getItems = (
       cta: t("settings.developer.debugSimpleHash.debugCheckSpamScore.check"),
       closeInfo: hooks.check.closeInfo,
       displayInfo: hooks.check.displayInfo,
+      isLoading: hooks.check.checkSpamScore.isLoading,
     },
   ];
 
@@ -80,6 +83,7 @@ const SimpleHashToolsDebugger = () => {
     <Modal
       name="MODAL_SIMPLEHASH_TOOLS"
       centered
+      width={800}
       render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
@@ -101,7 +105,7 @@ const SimpleHashToolsDebugger = () => {
                 height={15}
               />
               <ScrollArea>
-                <Flex minHeight={550} flex={1} mt={2}>
+                <Flex minHeight={550} flex={1} mt={2} alignItems="center" justifyContent="center">
                   {activeItem.value}
                 </Flex>
               </ScrollArea>
@@ -109,7 +113,9 @@ const SimpleHashToolsDebugger = () => {
           )}
           renderFooter={() => (
             <>
-              {displayInfo ? (
+              {activeItem.isLoading ? (
+                <InfiniteLoader />
+              ) : displayInfo ? (
                 <Button variant="main" onClick={closeInfo}>
                   {t("settings.developer.debugSimpleHash.back")}
                 </Button>

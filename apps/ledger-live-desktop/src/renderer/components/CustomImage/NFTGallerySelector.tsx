@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
