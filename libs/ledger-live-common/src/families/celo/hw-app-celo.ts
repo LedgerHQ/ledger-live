@@ -126,7 +126,6 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
       } else {
         rawTx.copy(buffer, 0, offset, offset + chunkSize);
       }
-      console.info("buffer buffer buffer", buffer.toString());
       response = await this.transport
         .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
         .catch(e => {
