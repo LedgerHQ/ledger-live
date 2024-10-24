@@ -3,7 +3,7 @@ import TransactionConfirmField from "~/renderer/components/TransactionConfirm/Tr
 import Text from "~/renderer/components/Text";
 import { Transaction } from "@ledgerhq/live-common/families/filecoin/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/filecoin/deviceTransactionConfig";
+import { ExtraDeviceTransactionField } from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 
 const FilecoinField = ({ field }: { transaction: Transaction; field: DeviceTransactionField }) => {
   return (
