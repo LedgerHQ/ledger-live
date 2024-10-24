@@ -12,6 +12,7 @@ import QrCodeLLMImages from "./images/QRcode_LLM.png";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 type Props = {
   onClose?: () => void | undefined;
@@ -28,7 +29,9 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
   const protectServicesDesktopFeature = useFeature("protectServicesDesktop");
 
-  const discoverTheBenefitsLink = protectServicesDesktopFeature?.params?.discoverTheBenefitsLink;
+  const discoverTheBenefitsLink = useLocalizedUrl(
+    protectServicesDesktopFeature?.params?.discoverTheBenefitsLink || "",
+  );
   const onDiscoverClick = useCallback(() => {
     if (!discoverTheBenefitsLink) return;
     track("button_clicked2", {
