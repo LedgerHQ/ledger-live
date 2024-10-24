@@ -140,6 +140,7 @@ export enum ScreenName {
   SendSelectDevice = "SendSelectDevice",
   SendSelectRecipient = "SendSelectRecipient",
   SendSummary = "SendSummary",
+  SendBroadcastError = "SendBroadcastError",
   SendValidationError = "SendValidationError",
   TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",

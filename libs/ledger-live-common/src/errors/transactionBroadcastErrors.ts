@@ -10,26 +10,31 @@ export interface TransactionBroadcastError extends Error, TxData {
 
 export const createTransactionBroadcastError = (
   error: Error,
+  urls: { faq: string; txBroadcastErrors: Record<SpecificErrors, string> },
   data: TxData,
 ): TransactionBroadcastError => {
-  return new TransactionBroadcastError(error.message, { url: url(error.message), ...data });
+  return new TransactionBroadcastError(error.message, {
+    url: url(error.message, urls.txBroadcastErrors) ?? urls.faq,
+    ...data,
+  });
 };
 
-function url(message: string) {
+function url(message: string, urls: Record<SpecificErrors, string>) {
   if (
     message.includes("-25: bad-tnxs-inputs-missingorspent") ||
     message.includes("-25: Missing inputs")
   ) {
-    return "https://support.ledger.com/article/5129526865821-zd";
+    return urls.badTxns;
   }
 
   if (message.includes("blobs limit in txpool is full")) {
-    return "https://support.ledger.com/article/17830974229661-zd";
+    return urls.blobsLimit;
   }
 
   if (message.includes("txn-mempool-conflict")) {
-    return "https://support.ledger.com/article/14593285242525-zd";
+    return urls.txnMempoolConflict;
   }
 }
 
 type TxData = { coin?: string; network?: string };
+type SpecificErrors = "badTxns" | "blobsLimit" | "txnMempoolConflict";
