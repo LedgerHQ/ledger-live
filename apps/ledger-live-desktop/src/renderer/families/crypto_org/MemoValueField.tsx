@@ -7,6 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/crypto_org/types";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
 const MemoValueField = ({
   onChange,
@@ -36,12 +37,11 @@ const MemoValueField = ({
   // It will be usefull to block a memo wrong format
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.memo as string | undefined} // FIXME: Should we change it ?
       onChange={onMemoValueChange}
-      placeholder={t("cryptoOrg.memoPlaceholder")}
     />
   );
 };

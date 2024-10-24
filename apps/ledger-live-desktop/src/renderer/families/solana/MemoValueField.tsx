@@ -8,6 +8,7 @@ import {
   Transaction,
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
 type Props = {
   onChange: (t: Transaction) => void;
@@ -37,12 +38,11 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
     [onChange, transaction, bridge],
   );
   return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
-    <Input
+    <MemoTagField
       warning={status.warnings.memo}
       error={status.errors.memo}
       value={transaction.model.uiState.memo || ""}
       onChange={onMemoValueChange}
-      placeholder={t("families.solana.memoPlaceholder")}
     />
   ) : null;
 };

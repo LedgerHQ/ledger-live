@@ -5210,29 +5210,6 @@
     "cta" : "متابعة"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "اختياري",
-      "transferId" : "مُعرّف التحويل (ملاحظة)",
-      "transferIdWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "اختياري",
-      "memo" : "ملاحظة (تسمية الوجهة)"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "اختياري، القيمة الافتراضية: 0",
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoWarningText" : "قيمة الملاحظة يمكن أن تكون رقماً بين 0 و 9223372036854775807"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "اختياري",
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم"
-    },
-    "ton" : {
-      "commentPlaceholder" : "اختياري",
-      "comment" : "التعليق"
-    },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "كود الأصل",
       "assetIssuer" : "مُصدر الأصل"
-    },
-    "cosmos" : {
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoPlaceholder" : "اختياري",
-      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
-    },
-    "solana" : {
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoPlaceholder" : "اختياري"
     }
   },
   "errors" : {

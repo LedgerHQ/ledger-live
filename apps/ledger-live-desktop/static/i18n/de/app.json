@@ -5210,29 +5210,6 @@
     "cta" : "Weiter"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "Optional",
-      "transferId" : "Transfer-ID (Memo)",
-      "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "Optional, Standard: 0",
-      "memo" : "Memo",
-      "memoWarningText" : "Der Memowert kann eine Zahl zwischen 0 und 9223372036854775807 sein"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo",
-      "memoWarningText" : "Wenn du ein Memo verwendest, überprüfe den beim Empfänger verwendeten Typ sorgfältig"
-    },
-    "ton" : {
-      "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
-    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "Vermögenswerte-Code",
       "assetIssuer" : "Emittent der Vermögenswerte"
-    },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Optional",
-      "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Optional"
     }
   },
   "errors" : {

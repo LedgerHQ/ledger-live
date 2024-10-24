@@ -3,10 +3,9 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/t
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import Input from "~/renderer/components/Input";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
-const CommentField = ({
+const MemoValueField = ({
   onChange,
   account,
   transaction,
@@ -18,8 +17,6 @@ const CommentField = ({
   status: TransactionStatus;
 }) => {
   invariant(transaction.family === "ton", "Comment: TON family expected");
-
-  const { t } = useTranslation();
 
   const bridge = getAccountBridge(account);
 
@@ -37,15 +34,13 @@ const CommentField = ({
   // We use transaction as an error here.
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.comment.text}
-      placeholder={t("families.ton.commentPlaceholder")}
       onChange={onCommentFieldChange}
-      spellCheck="false"
     />
   );
 };
 
-export default CommentField;
+export default MemoValueField;

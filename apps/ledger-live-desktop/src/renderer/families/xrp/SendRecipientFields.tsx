@@ -7,6 +7,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 type Props = {
   onChange: (a: Transaction) => void;
   transaction: Transaction;
@@ -36,21 +37,12 @@ const TagField = ({ onChange, account, transaction }: Props) => {
     [onChange, account, transaction],
   );
   return (
-    <Box flow={5}>
-      <Box grow>
-        <Label mb={5}>
-          <span>
-            <Trans i18nKey="send.steps.details.rippleTag" />
-          </span>
-        </Label>
-        <Input
-          placeholder={t("send.steps.details.rippleTagPlaceholder")}
-          ff="Inter"
-          value={String(transaction.tag || "")}
-          onChange={onChangeTag}
-        />
-      </Box>
-    </Box>
+    <MemoTagField
+      placeholder={t("send.steps.details.rippleTagPlaceholder")}
+      ff="Inter"
+      value={String(transaction.tag || "")}
+      onChange={onChangeTag}
+    />
   );
 };
 export default {

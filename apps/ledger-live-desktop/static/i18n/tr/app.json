@@ -5210,29 +5210,6 @@
     "cta" : "Devam"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "Tercihe bağlı",
-      "transferId" : "Transfer Kimliği (Memo)",
-      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Tercihe bağlı",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "İsteğe Bağlı. Varsayılan: 0",
-      "memo" : "Memo",
-      "memoWarningText" : "Memo değeri 0 ile 9223372036854775807 arasında bir sayı olabilir"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Tercihe bağlı",
-      "memo" : "Memo",
-      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
-    },
-    "ton" : {
-      "commentPlaceholder" : "Tercihe bağlı",
-      "comment" : "Yorum"
-    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "Varlık kodu",
       "assetIssuer" : "Varlık yaratıcısı"
-    },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Opsiyonel",
-      "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Opsiyonel"
     }
   },
   "errors" : {

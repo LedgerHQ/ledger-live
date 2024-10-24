@@ -5210,29 +5210,6 @@
     "cta" : "继续"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "可选",
-      "transferId" : "转账 ID（备忘标签）",
-      "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "可选",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "可选，默认：0",
-      "memo" : "Memo",
-      "memoWarningText" : "Memo（目的地标签）的值可以是 0 到 9223372036854775807 之间的数字"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "可选",
-      "memo" : "Memo",
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
-    },
-    "ton" : {
-      "commentPlaceholder" : "可选",
-      "comment" : "备注"
-    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "资产代码",
       "assetIssuer" : "资产发行者"
-    },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "可选",
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "可选"
     }
   },
   "errors" : {
