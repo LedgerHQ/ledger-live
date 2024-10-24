@@ -19,6 +19,7 @@ import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-se
 type Command<T extends (...args: any) => Observable<any> | Promise<any> | string> = {
   command: T;
   args: Parameters<T>[0]; // Infer the first argument type
+  output?: (output: any) => void;
 };
 
 type TestFixtures = {
@@ -126,6 +127,7 @@ export const test = base.extend<TestFixtures>({
               command.args.appjson = `${userdataDestinationPath}/app.json`;
             }
             const result = await handleResult(command.command(command.args as any));
+            command?.output?.(result);
             console.log("CLI result: ", result);
           }
         }
