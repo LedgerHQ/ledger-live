@@ -5210,29 +5210,6 @@
     "cta" : "Продолжить"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "Опционально",
-      "transferId" : "ID перевода (Memo)",
-      "transferIdWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Необязательно",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "По желанию (по умолчанию – 0)",
-      "memo" : "Memo",
-      "memoWarningText" : "Содержание примечания может быть в промежутке от 0 до 9223372036854775807"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Опционально",
-      "memo" : "Memo",
-      "memoWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
-    },
-    "ton" : {
-      "commentPlaceholder" : "Опционально",
-      "comment" : "Комментарий"
-    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "Код актива",
       "assetIssuer" : "Создатель актива"
-    },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Опционально",
-      "memoWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Опционально"
     }
   },
   "errors" : {

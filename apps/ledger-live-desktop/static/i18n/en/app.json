@@ -5338,32 +5338,14 @@
     "link": "Terms of Use",
     "cta": "Continue"
   },
+  "MemoTagField": {
+    "label": "Tag / Memo",
+    "placeholder": "Enter Tag / Memo",
+    "information": "To ensure your transaction is deposited correctly to your account, centralized exchanges and sometimes custodial wallets require a Tag/Memo."
+  },
   "families": {
-    "casper": {
-      "transferIdPlaceholder": "Optional",
-      "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
-    },
-    "cardano": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo"
-    },
-    "internet_computer": {
-      "memoPlaceholder": "Optional, Default: 0",
-      "memo": "Memo",
-      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
-    },
-    "stacks": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo",
-      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
-    },
-    "ton": {
-      "commentPlaceholder": "Optional",
-      "comment": "Comment"
-    },
     "stellar": {
-      "memo": "Memo",
+      "memo": "Tag / Memo",
       "memoType": {
         "MEMO_TEXT": "Memo Text",
         "NO_MEMO": "No Memo",
@@ -5385,15 +5367,6 @@
       },
       "assetCode": "Asset code",
       "assetIssuer": "Asset issuer"
-    },
-    "cosmos": {
-      "memo": "Memo",
-      "memoPlaceholder": "Optional",
-      "memoWarningText": "When using a memo, carefully check the information with the recipient"
-    },
-    "solana": {
-      "memo": "Memo",
-      "memoPlaceholder": "Optional"
     }
   },
   "errors": {
@@ -6386,7 +6359,7 @@
   },
   "cryptoOrg": {
     "memo": "Memo",
-    "memoPlaceholder": "Optional",
+    "memoPlaceholder": "Enter Tag / Memo",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
   "hedera": {

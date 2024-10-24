@@ -5,6 +5,7 @@ import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
 import { useTranslation } from "react-i18next";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
 type Props = {
   onChange: (t: Transaction) => void;
@@ -31,11 +32,10 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
   // It will be usefull to block a memo wrong format
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.memo}
-      placeholder={t("families.stacks.memoPlaceholder")}
       onChange={onMemoValueChange}
     />
   );

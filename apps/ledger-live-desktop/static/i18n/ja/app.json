@@ -5210,29 +5210,6 @@
     "cta" : "続行"
   },
   "families" : {
-    "casper" : {
-      "transferIdPlaceholder" : "任意",
-      "transferId" : "送金ID（メモ）",
-      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "任意",
-      "memo" : "メモ"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "任意、デフォルト：0",
-      "memo" : "メモ",
-      "memoWarningText" : "メモの値には、0～9223372036854775807の数値を指定できます。"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "任意",
-      "memo" : "メモ",
-      "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
-    },
-    "ton" : {
-      "commentPlaceholder" : "任意",
-      "comment" : "コメント"
-    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -5256,15 +5233,6 @@
       },
       "assetCode" : "資産コード",
       "assetIssuer" : "資産発行者"
-    },
-    "cosmos" : {
-      "memo" : "メモ",
-      "memoPlaceholder" : "任意",
-      "memoWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "任意"
     }
   },
   "errors" : {
