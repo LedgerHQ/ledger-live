@@ -61,7 +61,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
           <View style={styles.picture}>
             <Animation
               source={getDeviceAnimation({
-                device,
+                modelId: device.modelId,
                 key: "sign",
               })}
             />

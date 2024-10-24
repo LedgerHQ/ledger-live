@@ -168,7 +168,7 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <AnimationContainer>
             <Animation
-              source={getDeviceAnimation({ device, key: "sign", theme })}
+              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
               style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>
