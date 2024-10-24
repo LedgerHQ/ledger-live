@@ -82,6 +82,7 @@ export type SettingsState = {
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  whitelistedNftCollections: string[];
   hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -182,6 +183,7 @@ export const INITIAL_STATE: SettingsState = {
   latestFirmware: null,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
+  whitelistedNftCollections: [],
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -228,6 +230,8 @@ type HandlersPayloads = {
   BLACKLIST_TOKEN: string;
   UNHIDE_NFT_COLLECTION: string;
   HIDE_NFT_COLLECTION: string;
+  WHITELIST_NFT_COLLECTION: string;
+  UNWHITELIST_NFT_COLLECTION: string;
   UNHIDE_ORDINALS_ASSET: string;
   HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
@@ -334,9 +338,25 @@ const handlers: SettingsHandlers = {
     const collections = state.hiddenNftCollections;
     return {
       ...state,
-      hiddenNftCollections: [...collections, collectionId],
+      hiddenNftCollections: [...new Set(collections.concat(collectionId))],
     };
   },
+
+  UNWHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
+    const ids = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: ids.filter(id => id !== collectionId),
+    };
+  },
+  WHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
+    const collections = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: [...new Set(collections.concat(collectionId))],
+    };
+  },
+
   UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
     const ids = state.hiddenOrdinalsAsset;
     return {
@@ -761,6 +781,8 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
+export const whitelistedNftCollectionsSelector = (state: State) =>
+  state.settings.whitelistedNftCollections;
 export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");

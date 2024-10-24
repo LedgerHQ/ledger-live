@@ -13,7 +13,7 @@ import SectionAccounts from "./sections/Accounts";
 import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { developerModeSelector } from "../../reducers/settings";
+import { developerModeSelector } from "~/renderer/reducers/settings";
 
 const getItems = (t: (a: string) => string, devMode?: boolean) => {
   const items = [

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useHideSpamCollection } from "./useHideSpamCollection";
-import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
+import { getThreshold, useCheckNftAccount } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
-import { accountsSelector, orderedVisibleNftsSelector } from "../reducers/accounts";
+import { accountsSelector, orderedVisibleNftsSelector } from "~/renderer/reducers/accounts";
 import isEqual from "lodash/isEqual";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -38,9 +38,7 @@ const TIMER = 5 * 60 * 60 * 1000; // 5 hours = 18000000 ms
 export function useSyncNFTsWithAccounts() {
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const threshold = isThresholdValid(Number(nftsFromSimplehashFeature?.params?.threshold))
-    ? Number(nftsFromSimplehashFeature?.params?.threshold)
-    : 75;
+  const threshold = getThreshold(nftsFromSimplehashFeature?.params?.threshold);
 
   const { enabled, hideSpamCollection } = useHideSpamCollection();
 
@@ -62,24 +60,12 @@ export function useSyncNFTsWithAccounts() {
     }, []);
   }, [accounts]);
 
-  const [groupToFetch, setGroupToFetch] = useState(addressGroups[0]);
+  const [groupToFetch, setGroupToFetch] = useState(
+    addressGroups.length > 0 ? addressGroups[0] : [],
+  );
   const [, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    if (!enabled) return;
-    const interval = setInterval(() => {
-      setCurrentIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % addressGroups.length;
-        setGroupToFetch(addressGroups[nextIndex]);
-
-        return nextIndex;
-      });
-    }, TIMER);
-
-    return () => clearInterval(interval);
-  }, [addressGroups, enabled]);
-
-  useCheckNftAccount({
+  const { refetch } = useCheckNftAccount({
     addresses: groupToFetch.join(","),
     nftsOwned,
     chains: SUPPORTED_NFT_CURRENCIES,
@@ -87,4 +73,29 @@ export function useSyncNFTsWithAccounts() {
     action: hideSpamCollection,
     enabled,
   });
+
+  // Refetch with new last group when addressGroups length changes
+  useEffect(() => {
+    if (enabled) {
+      const newIndex = addressGroups.length - 1;
+      setCurrentIndex(newIndex);
+      setGroupToFetch(addressGroups[newIndex] || []);
+      refetch();
+    }
+  }, [addressGroups.length, addressGroups, refetch, enabled]);
+
+  // Regular interval-based rotation through groups
+  useEffect(() => {
+    if (!enabled) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % addressGroups.length;
+        setGroupToFetch(addressGroups[nextIndex]);
+        return nextIndex;
+      });
+    }, TIMER);
+
+    return () => clearInterval(interval);
+  }, [addressGroups, enabled]);
 }

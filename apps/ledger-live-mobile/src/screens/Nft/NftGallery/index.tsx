@@ -21,7 +21,7 @@ import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/Acc
 import InfoModal from "~/modals/Info";
 import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 import invariant from "invariant";
-import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { useNftGalleryFilter, getThreshold } from "@ledgerhq/live-nft-react";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -32,7 +32,7 @@ type NavigationProps = BaseComposite<
 
 const NftGallery = () => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ const NftGallery = () => {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
   });
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);

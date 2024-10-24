@@ -15,7 +15,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
-import { useAccountName } from "../../reducers/wallet";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
