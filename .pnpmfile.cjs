@@ -66,6 +66,7 @@ function readPackage(pkg, context) {
       addDependencies("@celo/connect", {
         "web3": pkg.peerDependencies?.web3 ?? "1.10",
       }),
+      /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
         "@cosmjs/crypto": pkg.version,
         "@cosmjs/encoding": pkg.version,
