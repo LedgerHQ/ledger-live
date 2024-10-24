@@ -92,10 +92,6 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
 
 const trimLeading0x = (input: string) => (input.startsWith("0x") ? input.slice(2) : input);
 
-// this is where it all goes wrong
-// we need to to the conversion from string to number / Buffer. the v seems clearly wrong.
-// Buffers im less sure of. might need to do 0x prefix before converting
-// v keeps on parsing as 8.123437e1341 or some bs. which seems wrong. it should be an INT. not a decimal.
 const parseSigningResponse = (
   response: {
     s: string;
