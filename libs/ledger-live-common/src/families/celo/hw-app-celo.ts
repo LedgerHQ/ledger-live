@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Eth from "@ledgerhq/hw-app-eth";
 import {
   tokenInfoByAddressAndChainId,
@@ -16,7 +15,11 @@ import { decode, encode } from "rlp";
 import SemVer from "semver";
 import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
 
-export default class Celo extends Eth {
+/**
+ * Heavily inspiried by celo-web-wallet
+ * https://github.com/celo-tools/celo-web-wallet/blob/master/src/features/ledger/CeloLedgerApp.ts
+ */
+ export default class Celo extends Eth {
   private config?: Promise<{ version: string }>;
 
   async signTransaction(
