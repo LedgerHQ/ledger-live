@@ -50,6 +50,7 @@ export class Layout extends Component {
     await this.drawerPortfolioButton.click();
   }
 
+  @step("Navigate to Market")
   async goToMarket() {
     await this.drawerMarketButton.click();
   }
