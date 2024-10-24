@@ -8,9 +8,8 @@ import {
   verifyAmount,
   verifyAmount2,
   verifySwapFeesAmount,
-  verifyProvider,
   waitFor,
-  verifyAddress2,
+  verifyString,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
 import { expect } from "@playwright/test";
@@ -36,7 +35,7 @@ export class SpeculosPage extends AppPage {
     await pressBoth();
   }
 
-  @step("Verify transaction info on device")
+  /*@step("Verify transaction info on device")
   async expectValidTxInfo(tx: Transaction) {
     const { sendPattern } = tx.accountToDebit.currency.speculosApp || {};
     if (!sendPattern) {
@@ -56,7 +55,7 @@ export class SpeculosPage extends AppPage {
       await pressRightUntil(DeviceLabels.ACCEPT);
       await pressBoth();
     }
-  }
+  }*/
 
   @step("Sign tx on device")
   async signTransaction(tx: Transaction) {
@@ -73,7 +72,7 @@ export class SpeculosPage extends AppPage {
 
     console.log("------------Address----------------");
     console.log("tx.accountToCredit.address: ", tx.accountToCredit.address);
-    const isAddressCorrect = verifyAddress2(tx.accountToCredit.address, events);
+    const isAddressCorrect = verifyString(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
 
     await pressBoth();
@@ -108,42 +107,30 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Delegate Method - Solana")
-  async delegateSolana(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    await pressRightUntil(delegatePattern[2]);
+  async delegateSolana() {
+    await waitFor(DeviceLabels.DELEGATE_FROM);
+    await pressRightUntil2(DeviceLabels.APPROVE);
     await pressBoth();
   }
 
   @step("Delegate Method - Near")
   async delegateNear(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    const provider = await pressRightUntil(delegatePattern[1]);
-    expect(verifyProvider(delegatingAccount.provider, provider)).toBe(true);
-    await pressRightUntil(delegatePattern[2]);
+    await waitFor(DeviceLabels.VIEW_HEADER);
+    const events = await pressRightUntil2(DeviceLabels.CONTINUE_TO_ACTION);
+    const isProviderCorrect = verifyString(delegatingAccount.provider, events);
+    expect(isProviderCorrect).toBeTruthy();
     await pressBoth();
-    await waitFor(delegatePattern[3]);
-    await pressRightUntil(delegatePattern[7]);
+    await waitFor(DeviceLabels.VIEW_ACTION);
+    await pressRightUntil2(DeviceLabels.SIGN);
     await pressBoth();
   }
 
   @step("Delegate Method - Cosmos")
   async delegateCosmos(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    const amount = await pressRightUntil(delegatePattern[1]);
-    expect(verifyAmount(delegatingAccount.amount, amount)).toBe(true);
-    await pressRightUntil(delegatePattern[2]);
+    await waitFor(DeviceLabels.PLEASE_REVIEW);
+    const events = await pressRightUntil2(DeviceLabels.CAPS_APPROVE);
+    const isAmountCorrect = verifyAmount2(delegatingAccount.amount, events);
+    expect(isAmountCorrect).toBeTruthy();
     await pressBoth();
   }
 
@@ -152,7 +139,7 @@ export class SpeculosPage extends AppPage {
     const currencyName = delegatingAccount.account.currency.name;
     switch (currencyName) {
       case Account.SOL_1.currency.name:
-        await this.delegateSolana(delegatingAccount);
+        await this.delegateSolana();
         break;
       case Account.NEAR_1.currency.name:
         await this.delegateNear(delegatingAccount);

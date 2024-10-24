@@ -5,7 +5,6 @@ export class AppInfos {
     public readonly name: string,
     public readonly sendPattern?: DeviceLabels[],
     public readonly receivePattern?: DeviceLabels[],
-    public readonly delegatePattern?: DeviceLabels[],
   ) {}
 
   static readonly BITCOIN = new AppInfos(
@@ -66,7 +65,6 @@ export class AppInfos {
     "Solana",
     [DeviceLabels.TRANSFER, DeviceLabels.RECIPIENT, DeviceLabels.APPROVE, DeviceLabels.REJECT],
     [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT],
-    [DeviceLabels.DELEGATE_FROM, DeviceLabels.DEPOSIT, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
 
   static readonly POLKADOT = new AppInfos(
@@ -120,12 +118,6 @@ export class AppInfos {
     "Cosmos",
     [DeviceLabels.AMOUNT, DeviceLabels.TO, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
-    [
-      DeviceLabels.PLEASE_REVIEW,
-      DeviceLabels.AMOUNT,
-      DeviceLabels.CAPS_APPROVE,
-      DeviceLabels.CAPS_REJECT,
-    ],
   );
 
   static readonly TEZOS = new AppInfos(
@@ -156,16 +148,6 @@ export class AppInfos {
     "Near",
     [DeviceLabels.AMOUNT, DeviceLabels.DESTINATION, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.WALLET_ID, DeviceLabels.APPROVE, DeviceLabels.REJECT],
-    [
-      DeviceLabels.VIEW_HEADER,
-      DeviceLabels.RECEIVER,
-      DeviceLabels.CONTINUE_TO_ACTION,
-      DeviceLabels.VIEW_ACTION,
-      DeviceLabels.METHOD_NAME,
-      DeviceLabels.DEPOSIT,
-      DeviceLabels.REJECT,
-      DeviceLabels.SIGN,
-    ],
   );
 
   static readonly MULTIVERSE_X = new AppInfos(

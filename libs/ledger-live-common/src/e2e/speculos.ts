@@ -389,18 +389,22 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
   return [];
 }
 
+//todo: Rename function avec un nom plus explicite
 export async function pressRightUntil2(text: string, maxAttempts: number = 10): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
   let attempts = 0;
   let textFound: boolean = false;
+  //todo:  Ajouter methode qui => Si on trouve reject arreter de clicker
   while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
       `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
+    // eslint-disable-next-line
+    //console.log("texts:", texts);
 
-    if (texts[0].includes(text)) {
+    if (texts.includes(text)) {
       textFound = true;
       const totalEvents = await axios.get<ResponseData>(
         `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
@@ -429,7 +433,6 @@ export async function pressRightUntil2(text: string, maxAttempts: number = 10): 
 
 export function verifyAddress(address: string, text: string[]): boolean {
   const textConcat = text.slice(1).join("");
-  //todo: rajouter un console log ici juste pour voir le textconcat
   return textConcat.includes(address);
 }
 
@@ -438,42 +441,22 @@ export function verifyAmount(amount: string, text: string[]): boolean {
   return amountDevice.includes(amount);
 }
 
-export function verifyAddress2(address: string, text: string[]): boolean {
-  // eslint-disable-next-line
-  console.log("Events:", text);
-  // eslint-disable-next-line
-  console.log("address que je cherche:", address);
-
-  const addressDevice = text.find(entry => entry.includes(address.slice(0, 6)));
-
-  if (!addressDevice) {
+//todo: changer le nom de la fonction
+export function verifyString(string: string, text: string[]): boolean {
+  const stringDevice = text.find(entry => entry.includes(string.slice(0, 6)));
+  if (!stringDevice) {
     return false;
   }
   const textConcat = text.join("");
-
-  // eslint-disable-next-line
-  console.log("EventsConcat:", textConcat);
-
-  return textConcat.includes(address);
+  return textConcat.includes(string);
 }
 
 export function verifyAmount2(amount: string, text: string[]): boolean {
-  // eslint-disable-next-line
-  console.log("Events:", text);
-  // eslint-disable-next-line
-  console.log("amount que je cherche:", amount);
   const amountDevice = text.find(entry => entry.includes(amount));
   if (!amountDevice) {
     return false;
   }
-  // eslint-disable-next-line
-  console.log("amountDevice:", amountDevice);
   return amountDevice.includes(amount);
-}
-
-export function verifyProvider(provider: string, text: string[]): boolean {
-  const providerDevice = text.join("");
-  return providerDevice.includes(provider);
 }
 
 export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {

@@ -142,15 +142,15 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  /*{
+  {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
-  },*/
-  {
+  },
+  /*{
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
   },
-  /*{
+  {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "TODO",
   },
