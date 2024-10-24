@@ -1,2 +1,0 @@
-./apps/cli/package.json
-./dummy
