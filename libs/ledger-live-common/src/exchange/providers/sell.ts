@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeProviderNameAndSignature } from ".";
-import { getProvidersData } from "./getProvidersData";
+import { getProvidersData } from "../../cal";
 
 const testSellProvider: ExchangeProviderNameAndSignature = {
   name: "SELL_TEST",

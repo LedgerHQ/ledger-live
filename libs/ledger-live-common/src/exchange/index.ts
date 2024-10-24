@@ -1,9 +1,8 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
-import { findExchangeCurrencyData } from "./providers/swap";
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
+import { findCurrencyData } from "../cal";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -42,9 +41,8 @@ export const getCurrencyExchangeConfig = async (
 ): Promise<ExchangeCurrencyNameAndSignature> => {
   let res;
   try {
-    res = getEnv("MOCK_EXCHANGE_TEST_CONFIG")
-      ? await findTestExchangeCurrencyConfig(currency.id)
-      : await findExchangeCurrencyData(currency.id);
+    const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+    res = await findCurrencyData(currency.id, env);
 
     if (!res) {
       throw new Error("Missing primary config");
