@@ -34,7 +34,7 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
 
           await Promise.all([
             celo.verifyTokenInfo(to!, chainId!),
-            celo.determinePrice(unsignedTransaction),
+            celo.determineFees(unsignedTransaction),
           ]);
 
           const rlpEncodedTransaction = await celo.rlpEncodedTxForLedger(unsignedTransaction);
@@ -123,22 +123,3 @@ const parseSigningResponse = (
 };
 
 export default signOperation;
-
-// copied from hw-eth
-export const applyEIP155 = (vAsHex: string, chainId: number): number => {
-  const v = parseInt(vAsHex, 16);
-
-  if (v === 0 || v === 1) {
-    // if v is 0 or 1, it's already representing parity
-    return chainId * 2 + 35 + v;
-  } else if (v === 27 || v === 28) {
-    const parity = v - 27; // transforming v into 0 or 1 to become the parity
-    return chainId * 2 + 35 + parity;
-  }
-  // When chainId is lower than 109, hw-app-eth *can* return a v with EIP155 already applied
-  // e.g. bsc's chainId is 56 -> v then equals to 147/148
-  //      optimism's chainId is 10 -> v equals to 55/56
-  //      ethereum's chainId is 1 -> v equals to 0/1
-  //      goerli's chainId is 5 -> v equals to 0/1
-  return v;
-};
