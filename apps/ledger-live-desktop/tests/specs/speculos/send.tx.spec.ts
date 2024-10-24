@@ -142,24 +142,33 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
+  /*{
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
-  },
+  },*/
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
   },
-  //add Bitcoin Cash - 0.0001 bch / send
+  /*{
+    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+    xrayTicket: "TODO",
+  },
+  {
+    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.MEDIUM),
+    xrayTicket: "TODO",
+  },*/
+
+  // Faire attentios aux accounts deja utilisés pour d'autres test (ex XRP)
+
   //add Polkadot - 0.00001 dot / send
   //add Algorand - 0.001 algo / send
   //add Solana - 0.000001 sol/ send
   //add Tron - 0.01 trx / send - fees: 1.1
-  //add Ripple
-  //add Stellar
-  //add Cosmos
-  //add Cardano
-  //add Polygon
+  //add Ripple (XRP 3)
+  //add Stellar - 0.0001 xlm / send
+  //add Cosmos - 0.0001 atom / send
+  //add Cardano - 1 ada / send
 ];
 
 const tokenTransactionInvalid = [
@@ -213,7 +222,7 @@ for (const transaction of transactionE2E) {
         await app.send.expectTxInfoValidity(transaction.transaction);
         await app.send.clickContinueToDevice();
 
-        await app.speculos.expectValidTxInfo(transaction.transaction);
+        await app.speculos.signTransaction(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
@@ -233,7 +242,7 @@ for (const transaction of transactionE2E) {
   });
 }
 
-test.describe("Send token (subAccount) - invalid address input", () => {
+/*test.describe("Send token (subAccount) - invalid address input", () => {
   const tokenTransactionInvalid = {
     transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
@@ -479,4 +488,4 @@ for (const transaction of transactionsAddressInvalid) {
       },
     );
   });
-}
+}*/

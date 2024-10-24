@@ -3,11 +3,14 @@ import { step } from "tests/misc/reporters/step";
 import {
   pressBoth,
   pressRightUntil,
+  pressRightUntil2,
   verifyAddress as assertAddressesEquality,
   verifyAmount,
+  verifyAmount2,
   verifySwapFeesAmount,
   verifyProvider,
   waitFor,
+  verifyAddress2,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
 import { expect } from "@playwright/test";
@@ -44,12 +47,36 @@ export class SpeculosPage extends AppPage {
     const addressScreen = await pressRightUntil(sendPattern[1]);
     expect(assertAddressesEquality(tx.accountToCredit.address, addressScreen)).toBe(true);
     await pressRightUntil(sendPattern[2]);
-    await pressBoth();
-    if (tx.accountToDebit.currency.name === Currency.DOGE.name) {
+    await pressBoth(); //Marche pour ETH et POL
+    if (
+      tx.accountToDebit.currency.name === Currency.DOGE.name ||
+      tx.accountToDebit.currency.name === Currency.BCH.name
+    ) {
       await waitFor("Confirm");
       await pressRightUntil(DeviceLabels.ACCEPT);
       await pressBoth();
     }
+  }
+
+  @step("Sign tx on device")
+  async signTransaction(tx: Transaction) {
+    const { sendPattern } = tx.accountToDebit.currency.speculosApp || {};
+    if (!sendPattern) {
+      return;
+    }
+    const events = await pressRightUntil2(DeviceLabels.ACCEPT); //Update par la suite en fonction du bonne approve
+
+    console.log("------------Amount----------------");
+    console.log("tx.amount: ", tx.amount);
+    const isAmountCorrect = verifyAmount2(tx.amount, events);
+    expect(isAmountCorrect).toBeTruthy();
+
+    console.log("------------Address----------------");
+    console.log("tx.accountToCredit.address: ", tx.accountToCredit.address);
+    const isAddressCorrect = verifyAddress2(tx.accountToCredit.address, events);
+    expect(isAddressCorrect).toBeTruthy();
+
+    await pressBoth();
   }
 
   @step("Press right on the device until specified text appears, then confirm the operation")

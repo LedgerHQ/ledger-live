@@ -71,7 +71,7 @@ export class AppInfos {
 
   static readonly POLKADOT = new AppInfos(
     "Polkadot",
-    [DeviceLabels.DEST, DeviceLabels.AMOUNT, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+    [DeviceLabels.DEST, DeviceLabels.VALUE, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
   );
 
@@ -108,7 +108,7 @@ export class AppInfos {
   static readonly ALGORAND = new AppInfos(
     "Algorand",
     [
-      DeviceLabels.AMOUNT,
+      DeviceLabels.AMOUNT, //Todo refaire ici
       DeviceLabels.RECEIVER,
       DeviceLabels.CAPS_APPROVE,
       DeviceLabels.CAPS_REJECT,
@@ -136,7 +136,7 @@ export class AppInfos {
 
   static readonly POLYGON = new AppInfos(
     "Polygon",
-    [DeviceLabels.AMOUNT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.AMOUNT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
 

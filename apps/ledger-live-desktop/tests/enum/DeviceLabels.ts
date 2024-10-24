@@ -34,4 +34,5 @@ export enum DeviceLabels {
   DEPOSIT = "Deposit",
   DELEGATE_FROM = "Delegate from",
   PLEASE_REVIEW = "Please review",
+  VALUE = "Value",
 }
