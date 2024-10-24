@@ -304,6 +304,9 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
+      '@ledgerhq/coin-filecoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -854,6 +857,9 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
+      '@ledgerhq/coin-filecoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
