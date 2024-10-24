@@ -40,7 +40,7 @@ export const getTxToBroadcast = async (
     recipient: recipients[0],
     anchorMode,
     memo,
-    network: network === "mainnet" ? StacksNetwork.mainnet : StacksNetwork.testnet, // NOTE: I had to add this check because of a TS error
+    network: StacksNetwork[network],
     publicKey: xpub,
     fee: BigNumber(fee).toFixed(),
     nonce: operation.transactionSequenceNumber ?? 0,
