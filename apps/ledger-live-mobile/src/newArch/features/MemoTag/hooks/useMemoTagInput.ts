@@ -18,13 +18,15 @@ export const useMemoTagInput = (
     null;
 
   const [isEmpty, setIsEmpty] = useState(true);
+  const [error, setError] = useState<Error | undefined>();
   const handleChange = useCallback<MemoTagInputProps["onChange"]>(
-    ({ patch, value }) => {
+    ({ patch, value, error }) => {
       setIsEmpty(!value);
+      setError(error);
       updateTransaction(patch);
     },
     [updateTransaction],
   );
 
-  return Input && { Input, isEmpty, handleChange };
+  return Input && { Input, isEmpty, error, handleChange };
 };

@@ -309,6 +309,7 @@
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
+    "src/families/stellar/bridge/logic.ts",
     "src/families/stellar/logic.ts",
     "src/families/tezos/logic.ts",
     "src/families/tezos/react.ts",
