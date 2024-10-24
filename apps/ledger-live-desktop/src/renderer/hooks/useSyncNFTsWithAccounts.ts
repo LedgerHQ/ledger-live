@@ -62,7 +62,9 @@ export function useSyncNFTsWithAccounts() {
     }, []);
   }, [accounts]);
 
-  const [groupToFetch, setGroupToFetch] = useState(addressGroups[0]);
+  const [groupToFetch, setGroupToFetch] = useState(
+    addressGroups.length > 0 ? addressGroups[0] : [],
+  );
   const [, setCurrentIndex] = useState(0);
 
   useEffect(() => {
