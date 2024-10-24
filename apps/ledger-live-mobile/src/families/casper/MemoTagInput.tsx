@@ -5,13 +5,13 @@ import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/fam
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => {
+export default (props: MemoTagInputProps<CasperTransaction>) => {
   const { t } = useTranslation();
   return (
-    <GenericMemoTagInput<CasperTransaction>
+    <GenericMemoTagInput
       {...props}
       textToValue={text => text.replace(/\D/g, "")}
-      valueToTxPatch={value => ({ transferId: value || undefined })}
+      valueToTxPatch={value => tx => ({ ...tx, transferId: value || undefined })}
       placeholder={t("send.summary.transferId")}
     />
   );

@@ -137,7 +137,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     useCallback(
       patch => {
         const bridge = getAccountBridge(account, parentAccount);
-        setTransaction(bridge.updateTransaction(transaction, patch));
+        setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
       },
       [account, parentAccount, setTransaction, transaction],
     ),

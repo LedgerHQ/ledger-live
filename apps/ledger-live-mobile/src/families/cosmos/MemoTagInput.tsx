@@ -4,9 +4,9 @@ import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/fam
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => (
-  <GenericMemoTagInput<CosmosTransaction>
+export default (props: MemoTagInputProps<CosmosTransaction>) => (
+  <GenericMemoTagInput
     {...props}
-    valueToTxPatch={value => ({ memo: value || undefined })}
+    valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
   />
 );
