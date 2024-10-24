@@ -1,8 +1,9 @@
-import { ethers } from "ethers";
 import axios from "axios";
 import SHA224 from "crypto-js/sha224";
 import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
+import { AddressZero } from "@ethersproject/constants";
+import { _TypedDataEncoder as TypedDataEncoder } from "@ethersproject/hash";
 import EIP712CAL from "@ledgerhq/cryptoassets-evm-signatures/data/eip712";
 import EIP712CALV2 from "@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2";
 import { CALServiceEIP712Response, MessageFilters } from "./types";
@@ -57,8 +58,7 @@ export const getFiltersForMessage = async (
   calServiceURL?: string | null,
 ): Promise<MessageFilters | undefined> => {
   const schemaHash = getSchemaHashForMessage(message);
-  const verifyingContract =
-    message.domain?.verifyingContract?.toLowerCase() || ethers.constants.AddressZero;
+  const verifyingContract = message.domain?.verifyingContract?.toLowerCase() || AddressZero;
   try {
     if (calServiceURL) {
       const { data } = await axios.get<CALServiceEIP712Response>(`${calServiceURL}/v1/dapps`, {
@@ -197,11 +197,7 @@ export const getEIP712FieldsDisplayedOnNano = async (
 
     displayedInfos.push({
       label: "Message hash",
-      value: ethers.utils._TypedDataEncoder.hashStruct(
-        messageData.primaryType,
-        otherTypes,
-        messageData.message,
-      ),
+      value: TypedDataEncoder.hashStruct(messageData.primaryType, otherTypes, messageData.message),
     });
 
     return displayedInfos;

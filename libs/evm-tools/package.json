@@ -45,11 +45,12 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@ethersproject/constants": "^5.7.0",
+    "@ethersproject/hash": "^5.7.0",
     "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "axios": "1.7.7",
-    "crypto-js": "4.2.0",
-    "ethers": "5.7.2"
+    "crypto-js": "4.2.0"
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",

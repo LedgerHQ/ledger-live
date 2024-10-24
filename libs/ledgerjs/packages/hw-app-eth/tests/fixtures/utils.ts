@@ -1,13 +1,14 @@
-import { ethers } from "ethers";
+import { Interface } from "@ethersproject/abi";
+import { serialize as serializeTransaction } from "@ethersproject/transactions";
 import ERC20Abi from "./ABI/ERC20.json";
 import ERC721Abi from "./ABI/ERC721.json";
 import ERC1155Abi from "./ABI/ERC1155.json";
 import PARASWAPAbi from "./ABI/PARASWAP.json";
 
-const ERC20Interface = new ethers.utils.Interface(ERC20Abi);
-const ERC721Interface = new ethers.utils.Interface(ERC721Abi);
-const ERC1155Interface = new ethers.utils.Interface(ERC1155Abi);
-const PARASWAPInterface = new ethers.utils.Interface(PARASWAPAbi);
+const ERC20Interface = new Interface(ERC20Abi);
+const ERC721Interface = new Interface(ERC721Abi);
+const ERC1155Interface = new Interface(ERC1155Abi);
+const PARASWAPInterface = new Interface(PARASWAPAbi);
 
 export const transactionContracts = {
   erc20: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
@@ -102,16 +103,14 @@ export const transactionData = {
 };
 
 export const getSerializedTransaction = (to: string, data: string): string =>
-  ethers.utils
-    .serializeTransaction({
-      to,
-      nonce: 0,
-      gasLimit: 21000,
-      data,
-      value: 1,
-      chainId: 1,
-      maxPriorityFeePerGas: 10000,
-      maxFeePerGas: 1000000,
-      type: 2,
-    })
-    .substring(2);
+  serializeTransaction({
+    to,
+    nonce: 0,
+    gasLimit: 21000,
+    data,
+    value: 1,
+    chainId: 1,
+    maxPriorityFeePerGas: 10000,
+    maxFeePerGas: 1000000,
+    type: 2,
+  }).substring(2);

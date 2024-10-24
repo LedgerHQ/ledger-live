@@ -1,9 +1,9 @@
-import { utils } from "ethers";
+import { defaultAbiCoder } from "@ethersproject/abi";
 import { WETH_PER_CHAIN_ID } from "./constants";
 import { UniswapSupportedCommand } from "./types";
 
 const swapV2Decoder = (input: `0x${string}`): `0x${string}`[] => {
-  const [, , , addresses] = utils.defaultAbiCoder.decode(
+  const [, , , addresses] = defaultAbiCoder.decode(
     ["address", "uint256", "uint256", "address[]", "bool"],
     input,
   );
@@ -12,7 +12,7 @@ const swapV2Decoder = (input: `0x${string}`): `0x${string}`[] => {
 };
 
 const swapV3Decoder = (input: `0x${string}`): `0x${string}`[] => {
-  const [, , , path] = utils.defaultAbiCoder.decode(
+  const [, , , path] = defaultAbiCoder.decode(
     ["address", "uint256", "uint256", "bytes", "bool"],
     input,
   );

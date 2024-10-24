@@ -828,6 +828,11 @@ const envDefinitions = {
     parser: floatParser,
     desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
+  EVM_FORCE_LEGACY_TRANSACTIONS: {
+    def: false,
+    parser: boolParser,
+    desc: "Force transaction type 0 on EVM networks",
+  },
   ENABLE_NETWORK_LOGS: {
     def: false,
     parser: boolParser,

@@ -1,24 +1,25 @@
+import path from "path";
 import axios from "axios";
 import fs from "fs/promises";
-import path from "path";
+import { BigNumber } from "@ethersproject/bignumber";
 import evms from "@ledgerhq/cryptoassets-evm-signatures/lib/data/evm/index";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
+import { serialize as serializeTransaction, type Transaction } from "@ethersproject/transactions";
 import { EthAppPleaseEnableContractData } from "../../src/errors";
 import SignatureCALEth from "../fixtures/SignatureCALEth";
 import ledgerService from "../../src/services/ledger";
 import Eth from "../../src/Eth";
-import { ethers } from "ethers";
 
-const transaction: ethers.Transaction = {
+const transaction: Transaction = {
   to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
   nonce: 14,
-  gasPrice: ethers.BigNumber.from("0x06a2bb7d00"),
-  gasLimit: ethers.BigNumber.from("0x01512c"),
-  value: ethers.BigNumber.from("0x00"),
+  gasPrice: BigNumber.from("0x06a2bb7d00"),
+  gasLimit: BigNumber.from("0x01512c"),
+  value: BigNumber.from("0x00"),
   data: "0xa9059cbb00000000000000000000000082ec3523f8a722694ca217ebfd95efbcadad77ee000000000000000000000000000000000000000000000002b5e3af16b1880000",
   chainId: 1,
 };
-const txHex = ethers.utils.serializeTransaction(transaction).slice(2);
+const txHex = serializeTransaction(transaction).slice(2);
 
 jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
   get signatures() {

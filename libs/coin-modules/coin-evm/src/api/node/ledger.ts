@@ -244,7 +244,7 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
      * cf. libs/coin-evm/src/createTransaction.ts:23
      */
     options: {
-      useEIP1559: transaction.type === 2,
+      useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
       overrideGasTracker: { type: "ledger", explorerId: node.explorerId },
     },
   });
