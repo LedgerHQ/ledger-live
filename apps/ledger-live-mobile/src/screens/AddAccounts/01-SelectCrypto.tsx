@@ -104,6 +104,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const icon = useFeature("currencyIcon");
   const ton = useFeature("currencyTon");
   const etherlink = useFeature("currencyEtherlink");
+  const zksync = useFeature("currencyZkSync");
+  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -154,6 +156,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       scroll_sepolia: scrollSepolia,
       icon,
       etherlink,
+      zksync,
+      zksync_sepolia: zksyncSepolia,
     }),
     [
       axelar,
@@ -203,6 +207,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       scrollSepolia,
       icon,
       etherlink,
+      zksync,
+      zksyncSepolia,
     ],
   );
 
