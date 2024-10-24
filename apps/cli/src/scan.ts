@@ -366,12 +366,8 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
           syncConfig,
         }),
       ).pipe(
-        filter((e: any) => {
-          return e.type === "discovered";
-        }),
-        map(e => {
-          return e.account;
-        }),
+        filter((e: any) => e.type === "discovered"),
+        map(e => e.account),
       );
     }),
     skip(index || 0),
