@@ -82,8 +82,8 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
     ],
   };
 
-  const Fade_In_Down = Config.MOCK ? undefined : FadeInDown;
-  const Fade_Out_Down = Config.MOCK ? undefined : FadeOutDown;
+  const Fade_In_Down = Config.DETOX ? undefined : FadeInDown;
+  const Fade_Out_Down = Config.DETOX ? undefined : FadeOutDown;
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (

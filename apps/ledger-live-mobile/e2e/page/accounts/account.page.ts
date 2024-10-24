@@ -16,7 +16,7 @@ export default class AccountPage {
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
   async waitForAccountPageToLoad(assetName: string) {
-    await waitForElementById(this.accountTitleId(assetName));
+    await waitForElementById(this.accountTitleId(assetName.toLowerCase()));
   }
 
   async expectAccountBalanceVisible() {

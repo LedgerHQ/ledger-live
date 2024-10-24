@@ -91,7 +91,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={Config.MOCK ? undefined : animatedStyle}>
+      <Animated.ScrollView style={Config.DETOX ? undefined : animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

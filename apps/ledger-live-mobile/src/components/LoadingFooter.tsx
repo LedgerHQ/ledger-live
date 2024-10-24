@@ -11,7 +11,7 @@ export default () => {
         margin: 40,
       }}
       color={colors.live}
-      animating={!Config.MOCK}
+      animating={!Config.DETOX}
     />
   );
 };

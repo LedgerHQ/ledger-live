@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "tests/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class ReceiveModal extends Modal {
   private skipDeviceButton = this.page.getByTestId("receive-connect-device-skip-device-button");

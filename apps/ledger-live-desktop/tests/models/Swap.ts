@@ -1,7 +1,7 @@
 import { Transaction } from "tests/models/Transaction";
-import { Fee } from "tests/enum/Fee";
-import { Account } from "../enum/Account";
-import { Provider, Rate } from "../enum/Swap";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Provider, Rate } from "@ledgerhq/live-common/e2e/enum/Swap";
 
 export class Swap extends Transaction {
   provider: Provider;

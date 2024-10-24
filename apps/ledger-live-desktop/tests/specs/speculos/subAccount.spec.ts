@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 

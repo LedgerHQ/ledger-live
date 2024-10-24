@@ -327,6 +327,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
+  DETOX: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,

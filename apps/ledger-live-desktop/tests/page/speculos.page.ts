@@ -9,14 +9,14 @@ import {
   verifyProvider,
   waitFor,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "../enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";
 import { Delegate } from "tests/models/Delegate";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
-import { Currency } from "tests/enum/Currency";
+import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Swap } from "tests/models/Swap";
-import { AppInfos } from "tests/enum/AppInfos";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { extractNumberFromString } from "tests/utils/textParserUtils";
 
 export class SpeculosPage extends AppPage {

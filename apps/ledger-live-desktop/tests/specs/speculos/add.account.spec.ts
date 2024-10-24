@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { Currency } from "../../enum/Currency";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
