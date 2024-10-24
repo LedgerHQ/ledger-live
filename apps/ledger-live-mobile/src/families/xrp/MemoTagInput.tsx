@@ -5,13 +5,13 @@ import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/fam
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => {
+export default (props: MemoTagInputProps<RippleTransaction>) => {
   const { t } = useTranslation();
   return (
-    <GenericMemoTagInput<RippleTransaction>
+    <GenericMemoTagInput
       {...props}
       textToValue={text => text.replace(/\D/g, "")}
-      valueToTxPatch={value => ({ tag: value ? Number(value) : undefined })}
+      valueToTxPatch={value => tx => ({ ...tx, tag: value ? Number(value) : undefined })}
       placeholder={t("send.summary.tag")}
     />
   );
