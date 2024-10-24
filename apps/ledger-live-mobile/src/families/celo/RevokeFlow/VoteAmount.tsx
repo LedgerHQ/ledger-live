@@ -29,6 +29,8 @@ import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRevokeFlowFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
@@ -97,6 +99,8 @@ export default function VoteAmount({ navigation, route }: Props) {
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 
+  const isRevokingWithFeesError = error instanceof NotEnoughBalance;
+
   return (
     <>
       <TrackScreen
@@ -144,6 +148,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                 </LText>
               </View>
               <View style={styles.bottomWrapper}>
+                {isRevokingWithFeesError && <NotEnoughFundFeesAlert account={account} />}
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>

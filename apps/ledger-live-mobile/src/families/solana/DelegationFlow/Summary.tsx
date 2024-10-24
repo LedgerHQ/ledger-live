@@ -37,6 +37,8 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -163,6 +165,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const hasErrors = Object.keys(status.errors).length > 0;
   const error = Object.values(status.errors)[0];
+  const feeError = status.errors.fee;
+  const isUndelagating = transaction.model.kind === "stake.undelegate";
+  const hasErrorWhileDesactivating = isUndelagating && feeError instanceof NotEnoughBalance;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -227,6 +232,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        {hasErrorWhileDesactivating && <NotEnoughFundFeesAlert account={account} />}
         <TranslatedError error={error} />
         <Button
           event="SummaryContinue"
