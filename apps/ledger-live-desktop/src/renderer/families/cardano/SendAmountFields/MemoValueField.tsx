@@ -9,6 +9,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { track } from "~/renderer/analytics/segment";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
 const MemoValueField = ({
   onChange,
@@ -41,12 +42,6 @@ const MemoValueField = ({
     },
     [trackProperties, onChange, bridge, transaction],
   );
-  return (
-    <Input
-      error={status.errors.memo}
-      onChange={onMemoValueChange}
-      placeholder={t("families.cardano.memoPlaceholder")}
-    />
-  );
+  return <MemoTagField error={status.errors.memo} onChange={onMemoValueChange} />;
 };
 export default MemoValueField;

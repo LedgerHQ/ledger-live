@@ -4,9 +4,9 @@ import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import Input from "~/renderer/components/Input";
+import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
 
-const CommentField = ({
+const MemoValueField = ({
   onChange,
   account,
   transaction,
@@ -37,7 +37,7 @@ const CommentField = ({
   // We use transaction as an error here.
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.comment.text}
@@ -48,4 +48,4 @@ const CommentField = ({
   );
 };
 
-export default CommentField;
+export default MemoValueField;

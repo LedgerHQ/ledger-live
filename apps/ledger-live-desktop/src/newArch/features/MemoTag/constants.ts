@@ -11,4 +11,5 @@ export const MEMO_TAG_COINS: string[] = [
   "ton",
   "eos",
   "bsc",
+  "caspar",
 ];
