@@ -320,7 +320,7 @@ async function performSwapUntilQuoteSelectionStep(
   swap: Swap,
 ) {
   await app.layout.goToSwap();
-  await app.swap.waitForPageNetworkidleState();
+  await app.swap.waitForPageNetworkIdleState();
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);

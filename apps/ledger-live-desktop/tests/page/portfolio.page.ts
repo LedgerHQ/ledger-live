@@ -70,6 +70,7 @@ export class PortfolioPage extends AppPage {
     await this.buySellEntryButton.click();
   }
 
+  @step("Click stake button")
   async startStakeFlow() {
     await this.stakeEntryButton.click();
     await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
