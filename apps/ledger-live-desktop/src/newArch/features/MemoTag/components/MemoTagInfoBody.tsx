@@ -1,33 +1,19 @@
 import React from "react";
-import { Link, Text } from "@ledgerhq/react-ui";
+import { Text } from "@ledgerhq/react-ui";
 import { Trans } from "react-i18next";
-import { openURL } from "~/renderer/linking";
-import { MEMO_TAG_LEARN_MORE_LINK } from "../constants";
+import LearnMoreCta from "./LearnMoreCta";
+import { urls } from "~/config/urls";
 
-const MemoTagInfoBody = () => {
-  const handleOpenLMLink = () => openURL(MEMO_TAG_LEARN_MORE_LINK);
-
-  return (
-    <div data-testid="memo-tag-info-body">
-      <Text variant="paragraphLineHeight" color="neutral.c80" fontSize={13}>
-        <Trans i18nKey="receive.memoTag.description">
-          <Text variant="paragraphLineHeight" fontWeight="700" color="neutral.c90"></Text>
-        </Trans>
-      </Text>
-      <br />
-      <Link
-        size="small"
-        color={"neutral.c80"}
-        onClick={handleOpenLMLink}
-        textProps={{
-          fontSize: "13px",
-        }}
-        style={{ textDecoration: "underline" }}
-      >
-        <Trans i18nKey="receive.memoTag.learnMore" />
-      </Link>
-    </div>
-  );
-};
+const MemoTagInfoBody = () => (
+  <div data-testid="memo-tag-info-body">
+    <Text variant="paragraphLineHeight" color="neutral.c80" fontSize={13}>
+      <Trans i18nKey="receive.memoTag.description">
+        <Text variant="paragraphLineHeight" fontWeight="700" color="neutral.c90"></Text>
+      </Trans>
+    </Text>
+    <br />
+    <LearnMoreCta style={{ textDecoration: "underline" }} url={urls.memoTag.learnMore} />
+  </div>
+);
 
 export default MemoTagInfoBody;

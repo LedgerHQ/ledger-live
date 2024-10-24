@@ -194,6 +194,9 @@ export const urls = {
     blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
     txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
   },
+  memoTag: {
+    learnMore: "https://support.ledger.com/article/4409603715217-zd",
+  },
 };
 
 export const vaultSigner = {

@@ -1,7 +1,5 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import {
   CardanoAccount,
@@ -9,6 +7,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { track } from "~/renderer/analytics/segment";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 const MemoValueField = ({
   onChange,
@@ -16,14 +15,15 @@ const MemoValueField = ({
   transaction,
   status,
   trackProperties,
+  autoFocus,
 }: {
   onChange: (a: Transaction) => void;
   account: CardanoAccount;
   transaction: Transaction;
   status: TransactionStatus;
   trackProperties?: Record<string, unknown>;
+  autoFocus?: boolean;
 }) => {
-  const { t } = useTranslation();
   invariant(transaction.family === "cardano", "Memo: cardano family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
@@ -42,10 +42,11 @@ const MemoValueField = ({
     [trackProperties, onChange, bridge, transaction],
   );
   return (
-    <Input
+    <MemoTagField
       error={status.errors.memo}
       onChange={onMemoValueChange}
-      placeholder={t("families.cardano.memoPlaceholder")}
+      autoFocus={autoFocus}
+      value={transaction.memo ?? ""}
     />
   );
 };

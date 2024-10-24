@@ -73,8 +73,7 @@ const Receive1ShareAddress = ({
   const { currency } = account;
 
   const isUTXOCompliantCurrency = isUTXOCompliant(currency.family);
-  const shouldRenderMemoTagInfo =
-    currency.explorerId && MEMO_TAG_COINS.includes(currency.explorerId);
+  const shouldRenderMemoTagInfo = currency.family && MEMO_TAG_COINS.includes(currency.family);
 
   return (
     <>

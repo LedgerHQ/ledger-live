@@ -1,12 +1,9 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
-import { Trans, useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Box from "~/renderer/components/Box";
-import Input from "~/renderer/components/Input";
-import Label from "~/renderer/components/Label";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 type Props = {
   onChange: (a: Transaction) => void;
   transaction: Transaction;
@@ -14,7 +11,6 @@ type Props = {
 };
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const TagField = ({ onChange, account, transaction }: Props) => {
-  const { t } = useTranslation();
   const onChangeTag = useCallback(
     (str: string) => {
       const bridge = getAccountBridge(account);
@@ -35,23 +31,7 @@ const TagField = ({ onChange, account, transaction }: Props) => {
     },
     [onChange, account, transaction],
   );
-  return (
-    <Box flow={5}>
-      <Box grow>
-        <Label mb={5}>
-          <span>
-            <Trans i18nKey="send.steps.details.rippleTag" />
-          </span>
-        </Label>
-        <Input
-          placeholder={t("send.steps.details.rippleTagPlaceholder")}
-          ff="Inter"
-          value={String(transaction.tag || "")}
-          onChange={onChangeTag}
-        />
-      </Box>
-    </Box>
-  );
+  return <MemoTagField value={String(transaction.tag || "")} onChange={onChangeTag} />;
 };
 export default {
   component: TagField,

@@ -1,13 +1,13 @@
 import AccountSubHeader from "./AccountSubHeader";
 import NoAssociatedAccounts from "./NoAssociatedAccounts";
-import sendAmountFields from "./SendAmountFields";
+import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFunds from "./StepReceiveFunds";
 import getTransactionExplorer from "./getTransactionExplorer";
 import { HederaFamily } from "./types";
 
 const family: HederaFamily = {
   AccountSubHeader,
-  sendAmountFields,
+  sendRecipientFields,
   StepReceiveFunds,
   NoAssociatedAccounts,
   getTransactionExplorer,
