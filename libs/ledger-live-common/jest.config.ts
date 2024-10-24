@@ -32,13 +32,23 @@ if (process.env.CI) {
   reporters.push("github-actions");
 }
 
+// interface Uint8ArrayAlloc extends Uint8Array {
+//   alloc(size: number): Uint8Array;
+// }
+class U8a extends Uint8Array {
+  alloc(size: number) {
+    return new Uint8Array(size);
+  }
+}
+
+
 const defaultConfig = {
   preset: "ts-jest",
   globals: {
     "ts-jest": {
       isolatedModules: true,
     },
-    // Buffer: Uint8Array,
+    Buffer: U8a,
   },
   testEnvironment: "node",
   reporters,
