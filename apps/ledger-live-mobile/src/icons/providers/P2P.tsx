@@ -50,5 +50,3 @@ export function P2P({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element
     </Svg>
   );
 }
-
-export default P2P;

@@ -42,5 +42,3 @@ export function ChorusOne({ size = 32, outline = "black", ...props }: Props) {
     </Svg>
   );
 }
-
-export default ChorusOne;

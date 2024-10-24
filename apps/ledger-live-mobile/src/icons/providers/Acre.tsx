@@ -25,5 +25,3 @@ export function Acre({ size = 32, outline = "white", ...props }: Props) {
     </Svg>
   );
 }
-
-export default Acre;

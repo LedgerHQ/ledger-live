@@ -18,5 +18,3 @@ export function Coinbase({ size = BASE_SIZE, outline = "white", ...props }: Prop
     </Svg>
   );
 }
-
-export default Coinbase;

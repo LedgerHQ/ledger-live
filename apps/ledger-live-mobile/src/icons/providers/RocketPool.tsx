@@ -255,5 +255,3 @@ export function RocketPool({ size = 32, outline, ...props }: Props): JSX.Element
     </Svg>
   );
 }
-
-export default RocketPool;

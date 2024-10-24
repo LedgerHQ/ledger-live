@@ -20,5 +20,3 @@ export function Babylon({ size = 32, outline = "black", ...props }: Props) {
     </Svg>
   );
 }
-
-export default Babylon;

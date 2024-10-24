@@ -22,5 +22,3 @@ export function KelpDAO({ size = BASE_SIZE, outline, ...props }: Props): JSX.Ele
     </Svg>
   );
 }
-
-export default KelpDAO;

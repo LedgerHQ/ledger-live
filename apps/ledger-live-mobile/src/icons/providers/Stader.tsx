@@ -35,5 +35,3 @@ export function Stader({ size = BASE_SIZE, outline, ...props }: Props): JSX.Elem
     </Svg>
   );
 }
-
-export default Stader;

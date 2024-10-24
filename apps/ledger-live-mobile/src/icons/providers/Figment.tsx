@@ -23,4 +23,3 @@ export function Figment({ size = BASE_SIZE, outline, ...props }: Props): JSX.Ele
     </Svg>
   );
 }
-export default Figment;

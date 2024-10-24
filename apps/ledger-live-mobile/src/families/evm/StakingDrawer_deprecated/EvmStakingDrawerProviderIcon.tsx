@@ -1,9 +1,9 @@
 import React from "react";
-import Kiln from "~/icons/Kiln";
-import { Lido } from "~/icons/Lido";
-import Figment from "~/icons/Figment";
-import Stader from "~/icons/Stader";
 import MissingIcon from "~/icons/MissingIcon";
+import { Figment } from "~/icons/providers/Figment";
+import { Kiln } from "~/icons/providers/Kiln";
+import { Lido } from "~/icons/providers/Lido";
+import { Stader } from "~/icons/providers/Stader";
 
 type Props = {
   icon?: string;

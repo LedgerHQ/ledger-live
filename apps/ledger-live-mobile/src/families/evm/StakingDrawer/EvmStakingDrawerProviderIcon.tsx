@@ -1,19 +1,19 @@
 import React from "react";
 import type { ColorValue } from "react-native";
-import { Acre } from "~/icons/Acre";
-import { Babylon } from "~/icons/Babylon";
-import { ChorusOne } from "~/icons/ChorusOne";
-import { Coinbase } from "~/icons/Coinbase";
-import { EigenLayer } from "~/icons/EigenLayer";
-import { Figment } from "~/icons/Figment";
-import { KelpDAO } from "~/icons/KelpDAO";
-import { Kiln } from "~/icons/Kiln";
-import { Lido } from "~/icons/Lido";
-import { Midas } from "~/icons/Midas";
 import { MissingIcon } from "~/icons/MissingIcon";
-import { P2P } from "~/icons/P2P";
-import { RocketPool } from "~/icons/RocketPool";
-import { Stader } from "~/icons/Stader";
+import { Acre } from "~/icons/providers/Acre";
+import { Babylon } from "~/icons/providers/Babylon";
+import { ChorusOne } from "~/icons/providers/ChorusOne";
+import { Coinbase } from "~/icons/providers/Coinbase";
+import { EigenLayer } from "~/icons/providers/EigenLayer";
+import { Figment } from "~/icons/providers/Figment";
+import { KelpDAO } from "~/icons/providers/KelpDAO";
+import { Kiln } from "~/icons/providers/Kiln";
+import { Lido } from "~/icons/providers/Lido";
+import { Midas } from "~/icons/providers/Midas";
+import { P2P } from "~/icons/providers/P2P";
+import { RocketPool } from "~/icons/providers/RocketPool";
+import { Stader } from "~/icons/providers/Stader";
 
 type Props = {
   icon?: string;

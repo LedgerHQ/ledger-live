@@ -31,5 +31,3 @@ export function Midas({ size = 32, outline = "white", ...props }: Props) {
     </Svg>
   );
 }
-
-export default Midas;
