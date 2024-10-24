@@ -18951,6 +18951,7 @@ var package_default = {
     "coin:elrond": "pnpm --filter coin-elrond",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:hedera": "pnpm --filter coin-hedera",
     "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
