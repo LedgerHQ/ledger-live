@@ -4,7 +4,7 @@ import Svg, { Rect, Path, G, Defs, ClipPath, SvgProps } from "react-native-svg";
 
 type Props = SvgProps & { size?: number; outline?: ColorValue };
 
-export default function MidasIcon({ size = 32, outline = "white", ...props }: Props) {
+export function Midas({ size = 32, outline = "white", ...props }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#323232" />
@@ -31,3 +31,5 @@ export default function MidasIcon({ size = 32, outline = "white", ...props }: Pr
     </Svg>
   );
 }
+
+export default Midas;

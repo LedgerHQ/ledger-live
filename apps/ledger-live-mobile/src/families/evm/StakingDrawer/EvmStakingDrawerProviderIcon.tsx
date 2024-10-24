@@ -1,19 +1,19 @@
 import React from "react";
+import type { ColorValue } from "react-native";
+import { Acre } from "~/icons/Acre";
+import { Babylon } from "~/icons/Babylon";
+import { ChorusOne } from "~/icons/ChorusOne";
+import { Coinbase } from "~/icons/Coinbase";
+import { EigenLayer } from "~/icons/EigenLayer";
+import { Figment } from "~/icons/Figment";
+import { KelpDAO } from "~/icons/KelpDAO";
 import { Kiln } from "~/icons/Kiln";
 import { Lido } from "~/icons/Lido";
-import { Figment } from "~/icons/Figment";
-import { Stader } from "~/icons/Stader";
+import { Midas } from "~/icons/Midas";
 import { MissingIcon } from "~/icons/MissingIcon";
-import { KelpDAO } from "~/icons/KelpDAO";
 import { P2P } from "~/icons/P2P";
 import { RocketPool } from "~/icons/RocketPool";
-import type { ColorValue } from "react-native";
-import Coinbase from "~/icons/Coinbase";
-import EigenLayer from "~/icons/EigenLayer";
-import Babylon from "~/icons/Babylon";
-import ChorusOne from "~/icons/ChorusOne";
-import Midas from "~/icons/Midas";
-import Acre from "~/icons/Acre";
+import { Stader } from "~/icons/Stader";
 
 type Props = {
   icon?: string;
