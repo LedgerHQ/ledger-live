@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
