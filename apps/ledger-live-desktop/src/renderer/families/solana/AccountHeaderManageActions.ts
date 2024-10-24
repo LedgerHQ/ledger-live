@@ -6,10 +6,14 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SolanaFamily } from "./types";
 
-const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ account, source }) => {
+const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+  source,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account);
+  const mainAccount = getMainAccount(account, parentAccount);
   const { solanaResources } = mainAccount;
 
   const onClick = useCallback(() => {
@@ -33,6 +37,10 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ acco
       );
     }
   }, [account, dispatch, source, solanaResources, mainAccount]);
+
+  if (account.type === "TokenAccount") {
+    return null;
+  }
 
   return [
     {

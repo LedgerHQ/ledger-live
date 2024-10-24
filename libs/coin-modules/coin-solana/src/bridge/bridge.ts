@@ -27,6 +27,8 @@ import {
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
+  assignFromTokenAccountRaw,
+  assignToTokenAccountRaw,
 } from "../serialization";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
@@ -176,6 +178,8 @@ export function makeBridges({
     assignToAccountRaw,
     toOperationExtraRaw,
     fromOperationExtraRaw,
+    assignFromTokenAccountRaw,
+    assignToTokenAccountRaw,
   };
 
   const currencyBridge: CurrencyBridge = {
