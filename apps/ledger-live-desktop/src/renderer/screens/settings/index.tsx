@@ -114,7 +114,7 @@ const Settings = () => {
           onIndexChange={handleChangeTab}
           defaultIndex={activeTabIndex}
           index={activeTabIndex}
-          tabs={items.map(i => t(i.label))}
+          tabs={items.map(i => i.label)}
           ids={items.map(i => `settings-${i.key}`)}
           separator
           withId

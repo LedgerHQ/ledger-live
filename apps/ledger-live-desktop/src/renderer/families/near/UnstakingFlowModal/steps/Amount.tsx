@@ -13,12 +13,15 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 export default function StepAmount({
   account,
   transaction,
   onUpdateTransaction,
   status,
   error,
+  onClose,
 }: StepProps) {
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
@@ -63,6 +66,8 @@ export default function StepAmount({
     };
   }, [transaction]);
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
+  const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
+
   return (
     <Box flow={1}>
       <TrackPage
@@ -89,6 +94,8 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey="near.unstake.flow.steps.amount.fields.amount" />}
       />
+      <Box mb={1} />
+      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
       <Alert mt={2}>
         <Trans i18nKey="near.unstake.flow.steps.amount.warning">
           <b></b>
