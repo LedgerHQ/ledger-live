@@ -1,16 +1,14 @@
 import { Observable } from "rxjs";
 import { getBatteryStatusesAction } from "@ledgerhq/live-common/deviceSDK/actions/getBatteryStatuses";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
+
+export type DeviceSDKGetBatteryStatusesJobOpts = DeviceCommonOpts;
 
 export default {
   description: "Device SDK: get battery statuses",
   args: [deviceOpt],
-  job: ({
-    device,
-  }: Partial<{
-    device: string;
-  }>) => {
+  job: ({ device }: DeviceSDKGetBatteryStatusesJobOpts) => {
     return new Observable(o => {
       return getBatteryStatusesAction({
         deviceId: device ?? "",

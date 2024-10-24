@@ -3,6 +3,8 @@ import { formatOperation, toOperationRaw } from "@ledgerhq/live-common/account/i
 import { decodeOperationId, findOperationInAccount } from "@ledgerhq/live-common/operation";
 import { scan } from "../../scan";
 
+export type ConfirmOpJobOpts = { id?: string; format?: "json" | "text" };
+
 export default {
   description:
     "Quickly verify if an operation id exists with our explorers (by synchronising the parent account)",
@@ -20,7 +22,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: ({ id, format }: { id?: string; format?: "json" | "text" }) => {
+  job: ({ id, format }: ConfirmOpJobOpts) => {
     if (!id) throw new Error("--id is required");
     const { accountId } = decodeOperationId(id);
     return scan({
