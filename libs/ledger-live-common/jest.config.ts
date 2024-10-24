@@ -38,7 +38,7 @@ const defaultConfig = {
     "ts-jest": {
       isolatedModules: true,
     },
-    Buffer: Uint8Array,
+    // Buffer: Uint8Array,
   },
   testEnvironment: "node",
   reporters,
