@@ -40,42 +40,45 @@ const deviceModelIds: Array<EnabledDeviceModelIds> = [
   DeviceModelId.europa,
 ];
 
+function getAllAnimations(selectedModelId: DeviceModelId) {
+  const keysForDeviceModelId = getAnimationKeysForDeviceModelId(selectedModelId);
+  const onboardingKeysForDeviceModelId =
+    getOnboardingAnimationKeysForDeviceModelId(selectedModelId);
+  return [
+    ...keysForDeviceModelId.map(key => ({
+      key,
+      light: getDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
+      dark: getDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
+    })),
+    ...onboardingKeysForDeviceModelId.map(key => ({
+      key,
+      light: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
+      dark: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
+    })),
+  ];
+}
+
 const DebugLottie = () => {
   const { colors } = useTheme();
 
   const [selectedModelId, setModelId] = useState<EnabledDeviceModelIds>(DeviceModelId.nanoS);
+  const [animations, setAnimations] = useState(getAllAnimations(selectedModelId));
   const [selectedAnimationIndex, setSelectedAnimationIndex] = useState(0);
   const [keyModalVisible, setKeyModalVisible] = useState(false);
 
-  const previousSelectedModelId = usePrevious(selectedModelId);
-  if (previousSelectedModelId !== selectedModelId) {
-    setSelectedAnimationIndex(0);
-  }
-
-  const keysForDeviceModelId = getAnimationKeysForDeviceModelId(selectedModelId);
-  const onboardingKeysForDeviceModelId =
-    getOnboardingAnimationKeysForDeviceModelId(selectedModelId);
-
-  const animations = useMemo(
-    () => [
-      ...keysForDeviceModelId.map(key => ({
-        key,
-        light: getDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
-        dark: getDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
-      })),
-      ...onboardingKeysForDeviceModelId.map(key => ({
-        key,
-        light: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
-        dark: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
-      })),
-    ],
-    [keysForDeviceModelId, onboardingKeysForDeviceModelId, selectedModelId],
-  );
-
   const allKeys = animations.map(({ key }) => key);
   const selectedKey = allKeys[selectedAnimationIndex];
-  const animationLight = animations[selectedAnimationIndex].light;
-  const animationDark = animations[selectedAnimationIndex].dark;
+
+  const previousSelectedModelId = usePrevious(selectedModelId);
+  if (previousSelectedModelId !== selectedModelId) {
+    const newAnimations = getAllAnimations(selectedModelId);
+    setAnimations(newAnimations);
+    const newAnimationIndex = newAnimations.findIndex(({ key }) => key === selectedKey, 0);
+    setSelectedAnimationIndex(newAnimationIndex === -1 ? 0 : newAnimationIndex);
+  }
+
+  const animationLight = animations[selectedAnimationIndex]?.light;
+  const animationDark = animations[selectedAnimationIndex]?.dark;
 
   const animationNodeKey = `${selectedAnimationIndex}_${selectedModelId}`;
 
@@ -93,22 +96,29 @@ const DebugLottie = () => {
         {!selectedKey ? "Select Animation" : `Showing '${selectedKey}'`}
       </LText>
       <Flex flex={1}>
-        <ScrollView>
-          <View
-            style={{
-              borderWidth: 1,
-              backgroundColor: "white",
-            }}
-          >
-            {animationLight && <Animation key={animationNodeKey} source={animationLight} />}
-          </View>
-          <View
-            style={{
-              backgroundColor: "#121212",
-            }}
-          >
-            {animationDark && <Animation key={animationNodeKey} source={animationDark} />}
-          </View>
+        <ScrollView style={{ backgroundColor: "grey" }}>
+          <Flex p={2}>
+            {animationLight && (
+              <Animation
+                key={animationNodeKey}
+                source={animationLight}
+                style={{
+                  backgroundColor: "white",
+                }}
+              />
+            )}
+          </Flex>
+          <Flex p={2}>
+            {animationDark && (
+              <Animation
+                key={animationNodeKey}
+                source={animationDark}
+                style={{
+                  backgroundColor: "#121212",
+                }}
+              />
+            )}
+          </Flex>
         </ScrollView>
       </Flex>
       <View style={styles.select}>
