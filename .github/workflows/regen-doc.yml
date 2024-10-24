@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   regen-doc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: generate token
         id: generate-token
@@ -118,7 +118,7 @@ jobs:
 
   report-start:
     name: Report start
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: inputs.commentId != ''
     steps:
       - name: generate token
@@ -153,7 +153,7 @@ jobs:
     name: Report end
     needs: [regen-doc, report-start]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: generate token
         id: generate-token
