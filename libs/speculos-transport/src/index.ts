@@ -24,13 +24,13 @@ export type SpeculosDeviceInternal =
       buttonPort: number;
       automationPort: number;
       transport: SpeculosTransportWebsocket;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     }
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
       transport: SpeculosTransportHttp;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     };
 
 // FIXME we need to figure out a better system, using a filesystem file?
@@ -235,10 +235,10 @@ export async function createSpeculosDevice(
   });
   let destroyed = false;
 
-  const destroy = () => {
+  const destroy = async () => {
     if (destroyed) return;
     destroyed = true;
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!data[speculosID]) return;
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
@@ -259,7 +259,7 @@ export async function createSpeculosDevice(
     }
   });
   let latestStderr: string | undefined;
-  p.stderr.on("data", data => {
+  p.stderr.on("data", async data => {
     if (!data) return;
     latestStderr = data;
 
@@ -276,16 +276,16 @@ export async function createSpeculosDevice(
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
-        destroy();
+        await destroy();
         resolveReady(false);
       }
     }
   });
-  p.on("close", () => {
+  p.on("close", async () => {
     log("speculos", `${speculosID} closed`);
 
     if (!destroyed) {
-      destroy();
+      await destroy();
       rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
     }
   });
