@@ -40,8 +40,6 @@ export const signOperation: AccountBridge<Transaction, CeloAccount>["signOperati
           const rlpEncodedTransaction = await celo.rlpEncodedTxForLedger(unsignedTransaction);
 
           o.next({ type: "device-signature-requested" });
-          // celo.signTransaction already does the eip155 v chain stuff
-          // TODO should we be using clearSignTransaction like evm fam does?
           const response = await celo.signTransaction(
             account.freshAddressPath,
             trimLeading0x(rlpEncodedTransaction.rlpEncode),
