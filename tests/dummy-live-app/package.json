@@ -3,9 +3,9 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/live-app-sdk": "^0.8.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@ledgerhq/live-app-sdk": "0.8.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
@@ -25,11 +25,11 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@types/node": "^20.8.10",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.13",
-    "cross-env": "^7.0.3",
+    "@types/jest": "27.5.2",
+    "@types/node": "20.12.12",
+    "@types/react": "18.2.73",
+    "@types/react-dom": "18.2.23",
+    "cross-env": "7.0.3",
     "webpack": "5.94.0"
   }
 }
