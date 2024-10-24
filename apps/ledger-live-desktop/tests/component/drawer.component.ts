@@ -21,6 +21,7 @@ export class Drawer extends Component {
     await this.continueButton.click();
   }
 
+  @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
     await this.content.waitFor({ state: "visible" });
     await this.closeButton.waitFor({ state: "visible" });

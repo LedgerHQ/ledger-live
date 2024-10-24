@@ -471,7 +471,7 @@ for (const transaction of transactionAddressValid) {
     });
 
     test(
-      `Check button enabled (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - valid address input ${transaction.xrayTicket}`,
+      `Check button enabled (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
       {
         annotation: {
           type: "TMS",
@@ -513,7 +513,7 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - invalid address input error${transaction.xrayTicket}`,
+      `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
       {
         annotation: {
           type: "TMS",
