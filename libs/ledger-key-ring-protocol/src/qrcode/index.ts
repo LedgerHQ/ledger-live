@@ -45,9 +45,9 @@ const commonSwitch = async ({
       if (!cipher) {
         throw new Error("sessionEncryptionKey not set");
       }
-      const { id, name } = await cipher.decryptMessage(data);
+      const { id, name } = cipher.decryptMessage(data);
       const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
-      const payload = await cipher.encryptMessagePayload({ trustchain });
+      const payload = cipher.encryptMessagePayload({ trustchain });
       send({ version, publisher, message: "TrustchainAddedMember", payload });
       resolve();
       break;
@@ -62,7 +62,7 @@ const commonSwitch = async ({
         send({ version, publisher, message: "Failure", payload });
         throw new TrustchainAlreadyInitialized(initialTrustchainId);
       }
-      const payload = await cipher.encryptMessagePayload({
+      const payload = cipher.encryptMessagePayload({
         id: memberCredentials.pubkey,
         name: memberName,
       });
@@ -71,7 +71,7 @@ const commonSwitch = async ({
     }
     case "TrustchainAddedMember": {
       setFinished(true);
-      const { trustchain } = await cipher.decryptMessage(data);
+      const { trustchain } = cipher.decryptMessage(data);
       resolve(trustchain);
       ws.close();
       break;
@@ -136,7 +136,7 @@ export async function createQRCodeHostInstance({
    */
   initialTrustchainId?: string;
 }): Promise<Trustchain | void> {
-  const ephemeralKey = await crypto.randomKeypair();
+  const ephemeralKey = crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
   const url = `${trustchainApiBaseUrl.replace("http", "ws")}/v1/qr?host=${publisher}`;
   const ws = new WebSocket(url);
@@ -167,14 +167,14 @@ export async function createQRCodeHostInstance({
         switch (data.message) {
           case "InitiateHandshake": {
             const candidatePublicKey = crypto.from_hex(data.payload.ephemeral_public_key);
-            sessionEncryptionKey = await crypto.ecdh(ephemeralKey, candidatePublicKey);
+            sessionEncryptionKey = crypto.ecdh(ephemeralKey, candidatePublicKey);
             cipher = makeMessageCipher(makeCipher(sessionEncryptionKey));
             // --- end of handshake first phase ---
             const digitsCount = 3;
-            const digits = await randomDigits(digitsCount);
+            const digits = randomDigits(digitsCount);
             expectedDigits = digits;
             onDisplayDigits(digits);
-            const payload = await cipher.encryptMessagePayload({
+            const payload = cipher.encryptMessagePayload({
               digits: digitsCount,
               connected: false,
             });
@@ -185,7 +185,7 @@ export async function createQRCodeHostInstance({
             if (!cipher) {
               throw new Error("sessionEncryptionKey not set");
             }
-            const { digits } = await cipher.decryptMessage(data);
+            const { digits } = cipher.decryptMessage(data);
             if (digits !== expectedDigits) {
               console.warn("User invalid digits", { digits, expectedDigits });
               const payload = {
@@ -195,7 +195,7 @@ export async function createQRCodeHostInstance({
               send({ version, publisher, message: "Failure", payload });
               throw new InvalidDigitsError("invalid digits");
             }
-            const payload = await cipher.encryptMessagePayload({});
+            const payload = cipher.encryptMessagePayload({});
             send({ version, publisher, message: "HandshakeCompletionSucceeded", payload });
             break;
           }
@@ -273,9 +273,9 @@ export async function createQRCodeCandidateInstance({
     throw new ScannedInvalidQrCode();
   }
   const hostPublicKey = crypto.from_hex(m[1]);
-  const ephemeralKey = await crypto.randomKeypair();
+  const ephemeralKey = crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
-  const sessionEncryptionKey = await crypto.ecdh(ephemeralKey, hostPublicKey);
+  const sessionEncryptionKey = crypto.ecdh(ephemeralKey, hostPublicKey);
   const cipher = makeMessageCipher(makeCipher(sessionEncryptionKey));
   const ws = new WebSocket(scannedUrl);
   function send(message: Message) {
@@ -296,20 +296,19 @@ export async function createQRCodeCandidateInstance({
         const data = parseMessage(e.data);
         switch (data.message) {
           case "HandshakeChallenge": {
-            const config = await cipher.decryptMessage(data);
+            const config = cipher.decryptMessage(data);
             onRequestQRCodeInput(config, digits => {
-              cipher.encryptMessagePayload({ digits }).then(payload => {
-                send({ version, publisher, message: "CompleteHandshakeChallenge", payload });
-              });
+              const payload = cipher.encryptMessagePayload({ digits });
+              send({ version, publisher, message: "CompleteHandshakeChallenge", payload });
             });
             break;
           }
           case "HandshakeCompletionSucceeded": {
             if (initialTrustchainId) {
-              const payload = await cipher.encryptMessagePayload({});
+              const payload = cipher.encryptMessagePayload({});
               send({ version, publisher, message: "TrustchainRequestCredential", payload });
             } else {
-              const payload = await cipher.encryptMessagePayload({
+              const payload = cipher.encryptMessagePayload({
                 id: memberCredentials.pubkey,
                 name: memberName,
               });
@@ -346,8 +345,8 @@ export async function createQRCodeCandidateInstance({
   });
 }
 
-async function randomDigits(count: number): Promise<string> {
-  const bytes = await crypto.randomBytes(count);
+function randomDigits(count: number) {
+  const bytes = crypto.randomBytes(count);
   let digits = "";
   for (let i = 0; i < count; i++) {
     digits += (bytes[i] % 10).toString();
