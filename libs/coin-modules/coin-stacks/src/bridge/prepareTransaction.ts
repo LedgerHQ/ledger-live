@@ -10,11 +10,11 @@ import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
 import { StacksMainnet } from "@stacks/network";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "./bridge/utils/addresses";
+import { validateAddress } from "./utils/addresses";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { StacksNetwork } from "./bridge/utils/api.types";
-import { findNextNonce } from "./bridge/utils/misc";
-import { Transaction } from "./types";
+import { StacksNetwork } from "../network/api.types";
+import { findNextNonce } from "./utils/misc";
+import { Transaction } from "../types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

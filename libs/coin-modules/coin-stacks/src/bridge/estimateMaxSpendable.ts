@@ -10,8 +10,8 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { createTransaction } from "./createTransaction";
-import { StacksNetwork } from "./bridge/utils/api.types";
-import { Transaction } from "./types";
+import { StacksNetwork } from "../network/api.types";
+import { Transaction } from "../types";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

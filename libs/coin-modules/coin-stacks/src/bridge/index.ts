@@ -9,13 +9,13 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction, TransactionStatus, StacksSigner } from "../types";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { getAccountShape } from "../synchronization";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { getAccountShape } from "./synchronization";
+import { buildSignOperation } from "./signOperation";
+import { broadcast } from "./broadcast";
 
 function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

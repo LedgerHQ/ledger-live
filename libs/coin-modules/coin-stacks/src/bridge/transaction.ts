@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { StacksNetwork } from "./utils/api.types";
+import { StacksNetwork } from "../network/api.types";
 import type { Account } from "@ledgerhq/types-live";
 
 import type { Transaction, TransactionRaw } from "../types";

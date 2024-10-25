@@ -1,7 +1,7 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { TransactionResponse } from "./api.types";
-import { fetchFullTxs } from "./api";
+import { TransactionResponse } from "../../network/api.types";
+import { fetchFullTxs } from "../../network/api";
 import { Operation } from "@ledgerhq/types-live";
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";

@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { StacksOperation, Transaction } from "./types";
-import { getAddress } from "./bridge/utils/misc";
+import { StacksOperation, Transaction } from "../types";
+import { getAddress } from "./utils/misc";
 
 export const buildOptimisticOperation = (
   account: Account,

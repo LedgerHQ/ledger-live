@@ -4,10 +4,10 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
 import { UnsignedTokenTransferOptions, makeUnsignedSTXTokenTransfer } from "@stacks/transactions";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { StacksNetwork } from "./bridge/utils/api.types";
-import { getAddress } from "./bridge/utils/misc";
-import { getPath, throwIfError } from "./utils";
-import { StacksSigner, Transaction } from "./types";
+import { StacksNetwork } from "../network/api.types";
+import { getAddress } from "./utils/misc";
+import { getPath, throwIfError } from "../utils";
+import { StacksSigner, Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 
 export const buildSignOperation =

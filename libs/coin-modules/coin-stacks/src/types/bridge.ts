@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { Operation, TransactionCommon, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { TransactionStatusCommon, TransactionStatusCommonRaw } from "@ledgerhq/types-live";
 
-import { StacksNetwork } from "../bridge/utils/api.types";
+import { StacksNetwork } from "../network/api.types";
 
 type FamilyType = "stacks";
 

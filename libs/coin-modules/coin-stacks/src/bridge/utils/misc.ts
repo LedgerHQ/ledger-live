@@ -9,13 +9,13 @@ import {
 } from "@stacks/transactions";
 
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { fetchFullMempoolTxs, fetchNonce } from "../../bridge/utils/api";
+import { fetchFullMempoolTxs, fetchNonce } from "../../network/api";
 import {
   DecodedSendManyFunctionArgsCV,
   MempoolTransaction,
   StacksNetwork,
   TransactionResponse,
-} from "./api.types";
+} from "../../network/api.types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
