@@ -14,6 +14,8 @@ import BigNumber from "bignumber.js";
 import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -28,15 +30,17 @@ function StepSummary(props: StepProps) {
   const { estimatedFees, errors, warnings } = status;
   const { feeTooHigh } = warnings;
   const displayError = errors.amount?.message ? errors.amount : "";
+  const notEnoughFundsError = error && error instanceof CardanoNotEnoughFunds;
 
   const accountUnit = useMaybeAccountUnit(account);
   if (!account || !transaction) return null;
 
   const feesCurrency = getAccountCurrency(account);
   const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+
   return (
     <Box flow={4} mx={40}>
-      {error && <ErrorBanner error={error} />}
+      {error && !notEnoughFundsError && <ErrorBanner error={error} />}
 
       <FromToWrapper>
         <Box>
@@ -116,6 +120,9 @@ function StepSummary(props: StepProps) {
             <TranslatedError error={displayError} field="title" />
           </Alert>
         </Box>
+      ) : null}
+      {notEnoughFundsError ? (
+        <NotEnoughFundsToUnstake account={account} onClose={props.onClose} />
       ) : null}
     </Box>
   );
