@@ -358,6 +358,9 @@ importers:
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
+      '@ledgerhq/live-dmk':
+        specifier: workspace:*
+        version: link:../../libs/live-dmk
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
