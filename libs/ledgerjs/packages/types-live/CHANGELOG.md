@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.52.4
+
+### Patch Changes
+
+- [#8125](https://github.com/LedgerHQ/ledger-live/pull/8125) [`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove LLD objkt feature flag because we don't support the webview anymore
+
 ## 6.52.4-next.0
 
 ### Patch Changes
