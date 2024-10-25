@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- [#8013](https://github.com/LedgerHQ/ledger-live/pull/8013) [`bc5048e`](https://github.com/LedgerHQ/ledger-live/commit/bc5048e0fda29b49a16b9e529fe0ace042267e8d) Thanks [@thesan](https://github.com/thesan)! - Align the receive screen with Figma designs
+
 ## 0.8.1-next.0
 
 ### Patch Changes

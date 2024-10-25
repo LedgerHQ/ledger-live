@@ -1,5 +1,52 @@
 ## 34.5.0-next.4
 
+## 34.13.0
+
+### Minor Changes
+
+- [#8146](https://github.com/LedgerHQ/ledger-live/pull/8146) [`e66d371`](https://github.com/LedgerHQ/ledger-live/commit/e66d3714e5e4fd6a8e3f5980a463b3bb61f40c4b) Thanks [@CremaFR](https://github.com/CremaFR)! - swap Thorswap ERC20 token exception
+
+### Patch Changes
+
+- [#8152](https://github.com/LedgerHQ/ledger-live/pull/8152) [`17732b4`](https://github.com/LedgerHQ/ledger-live/commit/17732b4f3c8fbde9c2fcb51079779dad23af72f2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add save to history live app
+
+- [#7867](https://github.com/LedgerHQ/ledger-live/pull/7867) [`d5bbf11`](https://github.com/LedgerHQ/ledger-live/commit/d5bbf11403c740b1e529001a008233b2f19e3418) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - added timeout during Allow Manager on Genuine check flow to avoid stale states
+
+- [#8140](https://github.com/LedgerHQ/ledger-live/pull/8140) [`b3746c3`](https://github.com/LedgerHQ/ledger-live/commit/b3746c35af33db0e4a84887d2917511a137218b3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update the ui of the tooltip when there is some sync errors. We now display the name of the accounts that failed to sync
+
+- [#8125](https://github.com/LedgerHQ/ledger-live/pull/8125) [`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove LLD objkt feature flag because we don't support the webview anymore
+
+- [#8114](https://github.com/LedgerHQ/ledger-live/pull/8114) [`3d8cd98`](https://github.com/LedgerHQ/ledger-live/commit/3d8cd98486402b69de7e1dcacdfe864f3d135ec9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - when exporting account we were not displaying parent account inside account name but the coin name
+
+- [#8160](https://github.com/LedgerHQ/ledger-live/pull/8160) [`fc6a4f9`](https://github.com/LedgerHQ/ledger-live/commit/fc6a4f93ef3c9101c20e54d8ec6a53e7a86c25f1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - test: update tron bridge snap
+
+- [#7952](https://github.com/LedgerHQ/ledger-live/pull/7952) [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix issue with infinite loader during swap with legacy swap ui
+  Add additionnal test to hw-app-exchange
+- Updated dependencies [[`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9)]:
+  - @ledgerhq/hw-app-exchange@0.6.2
+  - @ledgerhq/coin-framework@0.18.6
+  - @ledgerhq/coin-algorand@0.5.11
+  - @ledgerhq/coin-bitcoin@0.8.6
+  - @ledgerhq/coin-cardano@0.2.6
+  - @ledgerhq/coin-cosmos@0.1.7
+  - @ledgerhq/coin-elrond@0.1.6
+  - @ledgerhq/coin-evm@2.4.3
+  - @ledgerhq/coin-icon@0.4.8
+  - @ledgerhq/coin-near@0.5.11
+  - @ledgerhq/coin-polkadot@1.3.4
+  - @ledgerhq/coin-solana@0.8.3
+  - @ledgerhq/coin-stellar@0.3.6
+  - @ledgerhq/coin-tezos@0.6.7
+  - @ledgerhq/coin-ton@0.3.19
+  - @ledgerhq/coin-tron@0.0.11
+  - @ledgerhq/coin-xrp@0.5.7
+  - @ledgerhq/device-core@0.4.5
+  - @ledgerhq/hw-app-eth@6.40.3
+  - @ledgerhq/live-countervalues@0.2.11
+  - @ledgerhq/live-countervalues-react@0.2.11
+  - @ledgerhq/live-nft@0.4.11
+  - @ledgerhq/live-wallet@0.7.3
+
 ## 34.13.0-next.0
 
 ### Minor Changes
