@@ -49924,7 +49924,7 @@ snapshots:
   eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
     dependencies:
       debug: 4.3.4
-      enhanced-resolve: 5.16.0
+      enhanced-resolve: 5.17.1
       eslint: 8.57.0
       eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
@@ -50878,25 +50878,24 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0)
 
-  expo-font@11.4.0(zetkxmi6vkr5536rw42p64xrum):
+  expo-font@11.4.0(wrn4p6hlsdta5c4ir3h6ct54i4):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(fwfwxrny4no4cg4koyqmr3oiha)
+      expo-asset: 8.10.1(rxkmd2ynqonhzhnkgmzjv3uahy)
       expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0)
 
-  expo-font@11.4.0(hxmq25pkdf6fvmayb5kzqynb3q):
+  expo-font@12.0.10(expo-asset@10.0.10(tns433hakj4ir7nudcudkynxq4))(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo@51.0.37(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
     dependencies:
       expo: 51.0.37(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(expo-constants@14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
+      expo-asset: 10.0.10(tns433hakj4ir7nudcudkynxq4)
+      expo-modules-core: 1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0)
 
@@ -51014,13 +51013,13 @@ snapshots:
       '@expo/config-plugins': 7.2.5
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.24.3)
-      expo-application: 5.3.1(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-asset: 8.10.1(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
-      expo-file-system: 15.4.5(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-font: 11.4.0(hxmq25pkdf6fvmayb5kzqynb3q)
-      expo-keep-awake: 12.3.0(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-modules-autolinking: 1.5.1(55fu4l7dolnnxrys6pt2pnhfne)
+      expo-application: 5.3.1(rxkmd2ynqonhzhnkgmzjv3uahy)
+      expo-asset: 8.10.1(rxkmd2ynqonhzhnkgmzjv3uahy)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0)
+      expo-file-system: 15.4.5(rxkmd2ynqonhzhnkgmzjv3uahy)
+      expo-font: 11.4.0(wrn4p6hlsdta5c4ir3h6ct54i4)
+      expo-keep-awake: 12.3.0(rxkmd2ynqonhzhnkgmzjv3uahy)
+      expo-modules-autolinking: 1.5.1(epzs5mtkmt3672rwgv2fv7s7qa)
       fbemitter: 3.0.0
       invariant: 2.2.4
       md5-file: 3.2.3
