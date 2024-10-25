@@ -34,17 +34,13 @@ export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] =>
 
     switch (txType) {
       case "Send":
-        if ("Send" in txByType) {
-          txByType[txType] = currentTx;
-        }
+        (txByType as { Send: TransactionResponse }).Send = currentTx;
         break;
       case "InvokeContract":
-        if ("InvokeContract" in txByType) {
-          txByType[txType] = currentTx;
-        }
+        (txByType as { InvokeContract: TransactionResponse }).InvokeContract = currentTx;
         break;
       case "Fee":
-        txByType[txType] = currentTx;
+        (txByType as { Fee?: TransactionResponse }).Fee = currentTx;
         break;
       default:
         log("warn", `tx type [${txType}] on tx cid [${txCid}] was not recognized.`);
@@ -205,7 +201,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const balance = await fetchBalances(address);
   const rawTxs = await fetchTxs(address);
   const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
-
+  // console.log("rawTxs", rawTxs);
+  // console.log("TT: ", flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)).sort(
+  //     (a, b) => b.date.getTime() - a.date.getTime(),
+  //   ),
+  // );
   const result: Partial<Account> = {
     id: accountId,
     subAccounts: tokenAccounts,
@@ -216,7 +216,7 @@ export const getAccountShape: GetAccountShape = async info => {
     ),
     blockHeight: blockHeight.current_block_identifier.index,
   };
-
+  console.log("RESULT", result);
   return result;
 };
 
