@@ -7,7 +7,7 @@ import { scenarioPolygon } from "./scenarios/polygon";
 global.console = require("console");
 jest.setTimeout(100_000);
 
-export const defaultNanoApp = { firmware: "2.3.0" as const, version: "1.10.4" as const };
+export const defaultNanoApp = { firmware: "2.3.0" as const, version: "1.12.1" as const };
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {
