@@ -2,9 +2,6 @@
   "ignoreUnresolved": [],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "@zondax/ledger-filecoin",
-    "@zondax/ledger-icp",
-    "@zondax/ledger-stacks",
     "expect"
   ],
   "ignoreUnimported": [
