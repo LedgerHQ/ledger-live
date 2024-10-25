@@ -274,7 +274,7 @@
     "@types/uuid": "8.3.4",
     "@types/ws": "8.5.10",
     "babel-jest": "29.7.0",
-    "body-parser": "1.20.2",
+    "body-parser": "1.20.3",
     "cors": "2.8.5",
     "detox": "20.26.2",
     "detox-allure2-adapter": "1.0.0-alpha.12",
