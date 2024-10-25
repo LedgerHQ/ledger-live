@@ -39,6 +39,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  mb: 10,
 })``;
 
 function AmountField({ account, status, field }: FieldComponentProps) {

@@ -97,7 +97,7 @@ const DebugLottie = () => {
       </LText>
       <Flex flex={1}>
         <ScrollView style={{ backgroundColor: "grey" }}>
-          <Flex p={2}>
+          <Flex>
             {animationLight && (
               <Animation
                 key={animationNodeKey}

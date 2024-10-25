@@ -76,6 +76,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  m: 6,
 })``;
 
 const ActionContainer = styled(Flex).attrs({
