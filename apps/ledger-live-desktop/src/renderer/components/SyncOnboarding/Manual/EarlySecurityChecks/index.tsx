@@ -260,6 +260,19 @@ const EarlySecurityChecks = ({
         },
         commonDrawerProps,
       );
+    } else if (genuineCheckError) {
+      setGenuineCheckStatus(SoftwareCheckStatus.failed);
+      setDrawer(
+        ErrorDrawer,
+        {
+          onClickRetry: () => {
+            resetGenuineCheckState();
+            setGenuineCheckStatus(SoftwareCheckStatus.active);
+          },
+          error: genuineCheckError,
+        },
+        commonDrawerProps,
+      );
     } else if (allowSecureChannelIsOpen) {
       // FIXME: drawer is non closeable so we have to handle device disconnection
       setDrawer(
@@ -274,19 +287,6 @@ const EarlySecurityChecks = ({
         DeviceNotGenuineDrawer,
         {
           productName,
-        },
-        commonDrawerProps,
-      );
-    } else if (genuineCheckError) {
-      setGenuineCheckStatus(SoftwareCheckStatus.failed);
-      setDrawer(
-        ErrorDrawer,
-        {
-          onClickRetry: () => {
-            resetGenuineCheckState();
-            setGenuineCheckStatus(SoftwareCheckStatus.active);
-          },
-          error: genuineCheckError,
         },
         commonDrawerProps,
       );

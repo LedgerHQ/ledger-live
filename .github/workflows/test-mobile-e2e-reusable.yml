@@ -364,7 +364,7 @@ jobs:
 
   report:
     needs: [detox-tests-android, detox-tests-ios]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') }}
     steps:
       - uses: actions/checkout@v4
@@ -452,7 +452,7 @@ jobs:
           path: ${{ github.workspace }}/summary-detox.json
 
   report-on-slack:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [detox-tests-android, detox-tests-ios]
     if: ${{ failure() && github.event_name == 'push' }}
     steps:

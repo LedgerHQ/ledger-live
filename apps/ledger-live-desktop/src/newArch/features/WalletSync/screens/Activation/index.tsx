@@ -17,9 +17,13 @@ import {
   useLedgerSyncAnalytics,
   AnalyticsFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
-import { BackRef, BackProps } from "../router";
+import { BackRef } from "../router";
 
-const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
+type Props = {
+  sourcePage: AnalyticsPage;
+};
+
+const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) => {
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | null>(null);
 
@@ -66,7 +70,13 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
     switch (currentStep) {
       default:
       case Step.CreateOrSynchronize:
-        return <CreateOrSynchronizeStep goToCreateBackup={goToCreateBackup} goToSync={goToSync} />;
+        return (
+          <CreateOrSynchronizeStep
+            sourcePage={sourcePage}
+            goToCreateBackup={goToCreateBackup}
+            goToSync={goToSync}
+          />
+        );
       case Step.DeviceAction:
         return <DeviceActionStep goNext={goToActivationOrSynchroWithTrustchain} />;
       case Step.CreateOrSynchronizeTrustChain:

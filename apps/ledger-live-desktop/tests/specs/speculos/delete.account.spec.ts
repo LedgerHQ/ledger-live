@@ -23,7 +23,7 @@ for (const account of accounts) {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
-        `liveData --currency ${account.account.currency.ticker} --index ${account.account.index} --add`,
+        `liveData --currency ${account.account.currency.currencyId} --index ${account.account.index} --add`,
       ],
       speculosApp: account.account.currency.speculosApp,
     });

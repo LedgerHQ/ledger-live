@@ -3,10 +3,9 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
-import { CameraView } from "expo-camera/next";
+import { CameraView, BarcodeScanningResult } from "expo-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
-import { BarCodeScanningResult } from "expo-camera";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -21,7 +20,7 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const onBarCodeScanned = ({ data }: BarCodeScanningResult) => {
+  const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     onQrCodeScanned(data);
   };
 

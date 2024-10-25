@@ -212,7 +212,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
             setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
             onComplete={handleInstallRecommendedApplicationComplete}
-            onError={handleInstallRecommendedApplicationComplete}
           />
         ),
       },

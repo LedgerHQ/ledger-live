@@ -20,7 +20,6 @@ type Props = {
   setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
   onCancel: () => void;
-  onLocked: () => void;
   onError: (error: Error) => void;
 };
 
@@ -30,7 +29,6 @@ const InstallSetOfApps = ({
   setHeaderLoader,
   onComplete,
   onCancel,
-  onLocked,
   onError,
 }: Props) => {
   const { t } = useTranslation();
@@ -57,16 +55,9 @@ const InstallSetOfApps = ({
     itemProgress,
     progress,
     opened,
-    isLocked,
     allowManagerGranted,
     isLoading,
   } = status;
-
-  useEffect(() => {
-    if (isLocked) {
-      onLocked();
-    }
-  }, [isLocked, onLocked]);
 
   useEffect(() => {
     if (error instanceof UserRefusedAllowManager) {

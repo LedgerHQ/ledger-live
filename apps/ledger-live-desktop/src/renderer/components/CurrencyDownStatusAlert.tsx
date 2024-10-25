@@ -10,6 +10,7 @@ type Props = {
 const ServiceStatusWarning = createCustomErrorClass("ServiceStatusWarning");
 const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => {
   const errors: Error[] = [];
+
   const { incidents } = useFilteredServiceStatus({
     tickers: currencies.map(c => c.ticker),
   });
@@ -17,7 +18,9 @@ const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => 
     incidents
       .filter(c => c.components && c.components.length > 0)
       .forEach(inc => {
-        errors.push(new ServiceStatusWarning(inc.name));
+        errors.push(
+          new ServiceStatusWarning(inc.name, { description: inc.incident_updates?.[0].body }),
+        );
       });
   return errors.length > 0 ? (
     <div>

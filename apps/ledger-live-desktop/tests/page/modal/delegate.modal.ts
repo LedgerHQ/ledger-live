@@ -8,6 +8,7 @@ export class delegateModal extends Modal {
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
   private searchCloseButton = this.page.getByText("Show less");
+  private validatorList = this.page.getByTestId("validator-list");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
@@ -42,10 +43,14 @@ export class delegateModal extends Modal {
     await this.inputSearchField.fill(provider);
   }
 
-  @step("Select provider is $0")
+  @step("check selected provider is different from the previous one")
   async selectProvider(providerIndex: number) {
+    const selectedfProvider = await this.titleProvider.nth(providerIndex).textContent();
     await this.rowProvider.nth(providerIndex).click();
     await this.searchCloseButton.click();
+    if (selectedfProvider) {
+      expect(await this.getTitleProvider()).toContain(selectedfProvider);
+    }
   }
 
   @step("Click on chosen stake provider $0")
@@ -58,7 +63,12 @@ export class delegateModal extends Modal {
     await this.detailsButton.click();
   }
 
-  @step("Fill amount $0")
+  @step("check validator list is visible")
+  async checkValidatorListIsVisible() {
+    await expect(this.validatorList).toBeVisible();
+  }
+
+  @step("Fill amount")
   async fillAmount(amount: string) {
     if (amount == "send max") {
       await this.toggleMaxAmount();

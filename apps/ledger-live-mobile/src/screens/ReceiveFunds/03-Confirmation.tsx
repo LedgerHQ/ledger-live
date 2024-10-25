@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Dimensions, Linking, Share, View } from "react-native";
+import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
@@ -364,7 +364,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               mr={4}
               onPress={onShare}
             >
-              <IconsLegacy.ShareMedium size={20} />
+              {Platform.OS === "android" ? <Icons.ShareAlt /> : <Icons.Share />}
             </StyledTouchableOpacity>
             <StyledTouchableOpacity
               p={4}
@@ -450,7 +450,7 @@ const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
     <BannerCard
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-      LeftElement={<BankMedium />}
+      LeftElement={<BankMedium size={20} />}
       onPressDismiss={hideBanner}
       onPress={onPress}
     />
