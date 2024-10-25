@@ -278,7 +278,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                   },
                 ]}
               />
-              <Text color="grey">{<Trans i18nKey="common.or" />}</Text>
+              <Text color="neutral.c70">{t("common.or")}</Text>
               <View
                 style={[
                   styles.separatorLine,
