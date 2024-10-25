@@ -3,33 +3,33 @@
 exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 [
   {
-    "balance": "2198549477",
+    "balance": "2198551746",
     "currencyId": "hedera",
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.1040977",
     "freshAddressPath": "44/3030",
     "id": "js:2:hedera:0.0.1040977:hederaBip44",
     "index": 0,
-    "operationsCount": 25,
+    "operationsCount": 27,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
-    "spendableBalance": "2198549477",
+    "spendableBalance": "2198551746",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
   },
   {
-    "balance": "594945",
+    "balance": "194540",
     "currencyId": "hedera",
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.7305122",
     "freshAddressPath": "44/3030",
     "id": "js:2:hedera:0.0.7305122:hederaBip44",
     "index": 1,
-    "operationsCount": 14,
+    "operationsCount": 16,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
-    "spendableBalance": "594945",
+    "spendableBalance": "194540",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -135,6 +135,25 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "IN",
       "value": "100000000",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
+        "consensusTimestamp": "1729858464.980892000",
+      },
+      "fee": "199068",
+      "hash": "E5dQ7JL0SINzr2JUaZS2ciX3EciNc6bHlHPwk8dOrZzucTPQGZAjohql00StEkgZ",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-E5dQ7JL0SINzr2JUaZS2ciX3EciNc6bHlHPwk8dOrZzucTPQGZAjohql00StEkgZ-OUT",
+      "recipients": [
+        "0.0.7305122",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "type": "OUT",
+      "value": "209068",
     },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
@@ -485,6 +504,25 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5,
       "extra": {
+        "consensusTimestamp": "1729858548.245891000",
+      },
+      "fee": "199068",
+      "hash": "YSw6vQYOoNyr258eb1GGetRlYActrg6PAFKtCjJzfIfiDykrPuhn5WV3OIWbhLK4",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-YSw6vQYOoNyr258eb1GGetRlYActrg6PAFKtCjJzfIfiDykrPuhn5WV3OIWbhLK4-IN",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.7305122",
+      ],
+      "type": "IN",
+      "value": "211337",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
         "consensusTimestamp": "1729150309.511412000",
       },
       "fee": "193637",
@@ -577,6 +615,25 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "OUT",
       "value": "294053",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
+        "consensusTimestamp": "1729858464.980892000",
+      },
+      "fee": "199068",
+      "hash": "E5dQ7JL0SINzr2JUaZS2ciX3EciNc6bHlHPwk8dOrZzucTPQGZAjohql00StEkgZ",
+      "id": "js:2:hedera:0.0.7305122:hederaBip44-E5dQ7JL0SINzr2JUaZS2ciX3EciNc6bHlHPwk8dOrZzucTPQGZAjohql00StEkgZ-IN",
+      "recipients": [
+        "0.0.7305122",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "type": "IN",
+      "value": "10000",
     },
     {
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
@@ -748,6 +805,25 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "OUT",
       "value": "8485224",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
+        "consensusTimestamp": "1729858548.245891000",
+      },
+      "fee": "199068",
+      "hash": "YSw6vQYOoNyr258eb1GGetRlYActrg6PAFKtCjJzfIfiDykrPuhn5WV3OIWbhLK4",
+      "id": "js:2:hedera:0.0.7305122:hederaBip44-YSw6vQYOoNyr258eb1GGetRlYActrg6PAFKtCjJzfIfiDykrPuhn5WV3OIWbhLK4-OUT",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.7305122",
+      ],
+      "type": "OUT",
+      "value": "410405",
     },
     {
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
