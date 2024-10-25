@@ -2,6 +2,8 @@
 
 # Ledger Live (desktop)
 
+dummy change
+
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
