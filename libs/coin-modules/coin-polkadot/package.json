@@ -119,7 +119,7 @@
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
     "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit"
+    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
