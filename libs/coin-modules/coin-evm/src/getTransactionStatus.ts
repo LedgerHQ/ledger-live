@@ -211,7 +211,9 @@ const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssu
 
   const quantityIsPositive = tx.nft.quantity.gt(0);
   const nftFromAccount = account.nfts?.find(
-    nft => nft.tokenId === tx.nft.tokenId && nft.contract === tx.nft.contract,
+    nft =>
+      nft.tokenId === tx.nft.tokenId &&
+      nft.contract.toLowerCase() === tx.nft.contract.toLowerCase(),
   );
 
   if (!nftFromAccount) {
