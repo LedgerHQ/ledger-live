@@ -60,7 +60,7 @@ export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
 
   await compose.upOne("speculos", {
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: process.env,
   });
 
@@ -114,7 +114,7 @@ export async function killSpeculos() {
   console.log("Stopping speculos...");
   await compose.down({
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: process.env,
   });
 }
