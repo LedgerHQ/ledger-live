@@ -6810,5 +6810,8 @@
       "address": "Address",
       "transactionId": "Transaction ID"
     }
+  },
+  "ldmkFeatureFlagWarning": {
+    "title": "With LDMK transport"
   }
 }
