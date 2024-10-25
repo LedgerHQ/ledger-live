@@ -28,7 +28,7 @@ export default function StepSign({
     return {
       account,
       message,
-      useApp,
+      appName: useApp,
       dependencies: appRequests,
     };
   }, [account, dependencies, message, useApp]);

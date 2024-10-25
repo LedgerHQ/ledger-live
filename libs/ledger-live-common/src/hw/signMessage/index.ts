@@ -101,6 +101,8 @@ export const createAction = (
 ) => {
   const useHook = (reduxDevice: Device | null | undefined, request: Request): State => {
     const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
+      appName: request.appName,
+      dependencies: request.dependencies,
       account: request.account,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
