@@ -16,9 +16,10 @@ import { openURL } from "~/renderer/linking";
 type Props = {
   goToCreateBackup: () => void;
   goToSync: () => void;
+  sourcePage: AnalyticsPage;
 };
 
-export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: Props) {
+export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, sourcePage }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const ledgerSyncFF = useFeature("lldWalletSync");
@@ -40,7 +41,7 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
 
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={AnalyticsPage.Activation} source={AnalyticsPage.SettingsGeneral} />
+      <TrackPage category={AnalyticsPage.Activation} source={sourcePage} />
       <Flex justifyContent="center" alignItems="center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />

@@ -546,7 +546,7 @@ describe("EVM Family", () => {
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 
-      let oldEnv: string;
+      let oldEnv: string[];
       beforeAll(() => {
         oldEnv = getEnv("NFT_CURRENCIES");
       });
@@ -569,9 +569,9 @@ describe("EVM Family", () => {
       });
 
       it("should provide a new hash if nft support is activated or not", () => {
-        setEnv("NFT_CURRENCIES", "");
+        setEnv("NFT_CURRENCIES", []);
         const hash1 = getSyncHash(currency);
-        setEnv("NFT_CURRENCIES", currency.id);
+        setEnv("NFT_CURRENCIES", [currency.id]);
         const hash2 = getSyncHash(currency);
 
         expect(hash1).not.toEqual(hash2);

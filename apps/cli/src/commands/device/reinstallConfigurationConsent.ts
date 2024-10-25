@@ -9,22 +9,16 @@ import {
   ReinstallConfigArgs,
 } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { from, map, switchMap } from "rxjs";
+
+export type ReinstallConfigurationConsentJobOpts = DeviceCommonOpts;
 
 export default {
   description:
     "Consent to allow restoring state of device after a firmware update (apps, language pack, custom lock screen and app data)",
-  args: [
-    deviceOpt,
-    {
-      name: "format",
-      alias: "f",
-      type: String,
-      typeDesc: "raw | json | default",
-    },
-  ],
-  job: ({ device }: { device: string }) => {
+  args: [deviceOpt],
+  job: ({ device }: ReinstallConfigurationConsentJobOpts) => {
     return withDevice(device || "")(t =>
       from(listApps(t)).pipe(
         map(apps => apps.filter(app => !!app.name)),

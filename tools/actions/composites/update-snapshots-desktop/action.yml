@@ -9,22 +9,21 @@ runs:
   using: "composite"
   steps:
     - name: Update playwright snapshots [Linux => xvfb-run]
-      if: inputs.os == 'ubuntu-latest'
-      run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
-      shell: bash
-    - name: Update playwright snapshots
-      if: inputs.os != 'ubuntu-latest'
+      if: startsWith(inputs.os, 'ubuntu')
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+        shell: bash   - name: Update playwright snapshots
+      if: ${{ !startsWith(inputs.os, 'ubuntu') }}
       run: pnpm desktop test:playwright:update-snapshots
       shell: bash
     - name: status (Linux | macOS)
-      if: ${{ inputs.os != 'windows-latest' }}
+      if: ${{ !startsWith(inputs.os, 'windows') }}
       id: status
       run: |
         echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       shell: bash
     - name: status (Windows)
       id: status-windows
-      if: ${{ inputs.os == 'windows-latest' }}
+      if: startsWith(inputs.os, 'windows')
       run: |
         $out = $(git status --porcelain | measure -l | Format-Wide | Out-String -Stream)
         $out = $out.Trim()

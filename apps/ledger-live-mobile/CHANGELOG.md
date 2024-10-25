@@ -1,5 +1,246 @@
 # live-mobile
 
+## 3.53.0
+
+### Minor Changes
+
+- [#7944](https://github.com/LedgerHQ/ledger-live/pull/7944) [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb) Thanks [@Justkant](https://github.com/Justkant)! - feat: bootstrap wallet-api custom ACRE module and handlers
+
+### Patch Changes
+
+- [#8102](https://github.com/LedgerHQ/ledger-live/pull/8102) [`63ec8f9`](https://github.com/LedgerHQ/ledger-live/commit/63ec8f986908761c94327696ab2e375db8dd8fd9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue during onboarding with ledger sync. completeOnboarding was never triggered
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+- [#7981](https://github.com/LedgerHQ/ledger-live/pull/7981) [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add support to new language packs: de, pt-br, ru, tr
+
+- [#8078](https://github.com/LedgerHQ/ledger-live/pull/8078) [`9eba0d5`](https://github.com/LedgerHQ/ledger-live/commit/9eba0d51d500778924d9a9ba05129f63e7daa516) Thanks [@themooneer](https://github.com/themooneer)! - avoid sh: $GITHUB_ENV: ambiguous redirect problems on ad-hoc ipa build process
+
+- [#8111](https://github.com/LedgerHQ/ledger-live/pull/8111) [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): avoid sending an error when retrying a transaction.sign on LLM
+
+  Fix some of the navigation types
+  Added a done boolean to avoid sending wrong analytics when leaving the screen
+
+- [#8066](https://github.com/LedgerHQ/ledger-live/pull/8066) [`462dbf1`](https://github.com/LedgerHQ/ledger-live/commit/462dbf120794ca7ebfea9567e9d963ae222194ea) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ledger sync error : Text strings must be rendered within a <Text> component.
+
+- Updated dependencies [[`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26), [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`867b2ba`](https://github.com/LedgerHQ/ledger-live/commit/867b2ba1e467bcd5585b3e670f735520529036aa), [`9c92854`](https://github.com/LedgerHQ/ledger-live/commit/9c928544f1631917eb2c2f9e150d070537bb93b7), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c)]:
+  - @ledgerhq/native-ui@0.25.1
+  - @ledgerhq/types-live@6.52.3
+  - @ledgerhq/live-common@34.12.0
+  - @ledgerhq/coin-cosmos@0.1.6
+  - @ledgerhq/live-countervalues@0.2.10
+  - @ledgerhq/coin-framework@0.18.5
+  - @ledgerhq/coin-elrond@0.1.5
+  - @ledgerhq/coin-evm@2.4.2
+  - @ledgerhq/domain-service@1.2.9
+  - @ledgerhq/live-countervalues-react@0.2.10
+  - @ledgerhq/live-nft@0.4.10
+  - @ledgerhq/live-nft-react@0.4.10
+  - @ledgerhq/live-wallet@0.7.2
+
+## 3.53.0-next.0
+
+### Minor Changes
+
+- [#7944](https://github.com/LedgerHQ/ledger-live/pull/7944) [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb) Thanks [@Justkant](https://github.com/Justkant)! - feat: bootstrap wallet-api custom ACRE module and handlers
+
+### Patch Changes
+
+- [#8102](https://github.com/LedgerHQ/ledger-live/pull/8102) [`63ec8f9`](https://github.com/LedgerHQ/ledger-live/commit/63ec8f986908761c94327696ab2e375db8dd8fd9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue during onboarding with ledger sync. completeOnboarding was never triggered
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+- [#7981](https://github.com/LedgerHQ/ledger-live/pull/7981) [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add support to new language packs: de, pt-br, ru, tr
+
+- [#8078](https://github.com/LedgerHQ/ledger-live/pull/8078) [`9eba0d5`](https://github.com/LedgerHQ/ledger-live/commit/9eba0d51d500778924d9a9ba05129f63e7daa516) Thanks [@themooneer](https://github.com/themooneer)! - avoid sh: $GITHUB_ENV: ambiguous redirect problems on ad-hoc ipa build process
+
+- [#8111](https://github.com/LedgerHQ/ledger-live/pull/8111) [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): avoid sending an error when retrying a transaction.sign on LLM
+
+  Fix some of the navigation types
+  Added a done boolean to avoid sending wrong analytics when leaving the screen
+
+- [#8066](https://github.com/LedgerHQ/ledger-live/pull/8066) [`462dbf1`](https://github.com/LedgerHQ/ledger-live/commit/462dbf120794ca7ebfea9567e9d963ae222194ea) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ledger sync error : Text strings must be rendered within a <Text> component.
+
+- Updated dependencies [[`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26), [`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`867b2ba`](https://github.com/LedgerHQ/ledger-live/commit/867b2ba1e467bcd5585b3e670f735520529036aa), [`9c92854`](https://github.com/LedgerHQ/ledger-live/commit/9c928544f1631917eb2c2f9e150d070537bb93b7), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c)]:
+  - @ledgerhq/native-ui@0.25.1-next.0
+  - @ledgerhq/types-live@6.52.3-next.0
+  - @ledgerhq/live-common@34.12.0-next.0
+  - @ledgerhq/coin-cosmos@0.1.6-next.0
+  - @ledgerhq/live-countervalues@0.2.10-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/coin-elrond@0.1.5-next.0
+  - @ledgerhq/coin-evm@2.4.2-next.0
+  - @ledgerhq/domain-service@1.2.9-next.0
+  - @ledgerhq/live-countervalues-react@0.2.10-next.0
+  - @ledgerhq/live-nft@0.4.10-next.0
+  - @ledgerhq/live-nft-react@0.4.10-next.0
+  - @ledgerhq/live-wallet@0.7.2-next.0
+
+## 3.52.1
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2
+  - @ledgerhq/live-common@34.11.1
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/coin-cosmos@0.1.5
+  - @ledgerhq/coin-elrond@0.1.4
+  - @ledgerhq/coin-evm@2.4.1
+  - @ledgerhq/domain-service@1.2.8
+  - @ledgerhq/live-countervalues@0.2.9
+  - @ledgerhq/live-countervalues-react@0.2.9
+  - @ledgerhq/live-nft@0.4.9
+  - @ledgerhq/live-nft-react@0.4.9
+  - @ledgerhq/live-wallet@0.7.1
+
+## 3.52.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2-hotfix.0
+  - @ledgerhq/live-common@34.11.1-hotfix.0
+  - @ledgerhq/coin-framework@0.18.4-hotfix.0
+  - @ledgerhq/coin-cosmos@0.1.5-hotfix.0
+  - @ledgerhq/coin-elrond@0.1.4-hotfix.0
+  - @ledgerhq/coin-evm@2.4.1-hotfix.0
+  - @ledgerhq/domain-service@1.2.8-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.9-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.2.9-hotfix.0
+  - @ledgerhq/live-nft@0.4.9-hotfix.0
+  - @ledgerhq/live-nft-react@0.4.9-hotfix.0
+  - @ledgerhq/live-wallet@0.7.1-hotfix.0
+
+## 3.52.0
+
+### Minor Changes
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+
+- [#7989](https://github.com/LedgerHQ/ledger-live/pull/7989) [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99) Thanks [@thesan](https://github.com/thesan)! - Add the receive flow `NeedMemoTagModal`
+
+- [#7973](https://github.com/LedgerHQ/ledger-live/pull/7973) [`64d8546`](https://github.com/LedgerHQ/ledger-live/commit/64d854687369a63a77f3b31793b87af570e2f3c5) Thanks [@KVNLS](https://github.com/KVNLS)! - Fetch FF every 5 minutes for LLM & LLD
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- [#8077](https://github.com/LedgerHQ/ledger-live/pull/8077) [`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+- [#7963](https://github.com/LedgerHQ/ledger-live/pull/7963) [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303) Thanks [@thesan](https://github.com/thesan)! - Create `llmMemoTag`
+
+- [#8014](https://github.com/LedgerHQ/ledger-live/pull/8014) [`b7311c4`](https://github.com/LedgerHQ/ledger-live/commit/b7311c4c773b188465560150932f0cdbceec42e0) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add the platform OS to the params passed to earn to enable the correct braze environment
+
+- [#8032](https://github.com/LedgerHQ/ledger-live/pull/8032) [`998a3ba`](https://github.com/LedgerHQ/ledger-live/commit/998a3baaae17e53af5e3d8802ab9ffd057b4196d) Thanks [@qperrot](https://github.com/qperrot)! - LLM Custom validator button translation
+
+- [#8009](https://github.com/LedgerHQ/ledger-live/pull/8009) [`961f567`](https://github.com/LedgerHQ/ledger-live/commit/961f56747a156bb8c167f9aac76f204fd59a326f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - When user has a lock password the app get locked when he wants to sync with another instance
+
+- [#8034](https://github.com/LedgerHQ/ledger-live/pull/8034) [`c8903e6`](https://github.com/LedgerHQ/ledger-live/commit/c8903e66468f6c6f28a23d61b2cf9cbb863e08d6) Thanks [@qperrot](https://github.com/qperrot)! - User can enter text for Gas Limit value for ETH
+
+- [#7965](https://github.com/LedgerHQ/ledger-live/pull/7965) [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- [#7994](https://github.com/LedgerHQ/ledger-live/pull/7994) [`67ed92a`](https://github.com/LedgerHQ/ledger-live/commit/67ed92a8d63f6baa636e7522ae0d93b0a9ddacb4) Thanks [@themooneer](https://github.com/themooneer)! - In order to easily monitor and debug futur ios build failures on the CI , we need to add --verbose in the pod install process.
+
+- [#7957](https://github.com/LedgerHQ/ledger-live/pull/7957) [`a4cd30a`](https://github.com/LedgerHQ/ledger-live/commit/a4cd30a6cf405a3fb647282a958210ded9ed0b21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed a spacing issue when there was a category with all its content cards dismissed by the user
+
+- Updated dependencies [[`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9), [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`b0d535b`](https://github.com/LedgerHQ/ledger-live/commit/b0d535b72d9c6ac7e474de2b598bc4964a515d93), [`ea4edf3`](https://github.com/LedgerHQ/ledger-live/commit/ea4edf306a52fad556273afae7fd907f610c9aba), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`6f0d39f`](https://github.com/LedgerHQ/ledger-live/commit/6f0d39f46ef5d3e24439421aa68dfe7aadcd1dbc), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3), [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99), [`b0d535b`](https://github.com/LedgerHQ/ledger-live/commit/b0d535b72d9c6ac7e474de2b598bc4964a515d93), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7), [`3652e83`](https://github.com/LedgerHQ/ledger-live/commit/3652e83e02876856f1370cccab47f4272b71a7d3), [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7), [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102), [`d962cf1`](https://github.com/LedgerHQ/ledger-live/commit/d962cf13667a383b77a1d30bf26bec27702d9af4)]:
+  - @ledgerhq/native-ui@0.25.0
+  - @ledgerhq/types-live@6.52.1
+  - @ledgerhq/live-common@34.11.0
+  - @ledgerhq/live-env@2.4.0
+  - @ledgerhq/coin-evm@2.4.0
+  - @ledgerhq/icons-ui@0.8.0
+  - @ledgerhq/live-nft-react@0.4.8
+  - @ledgerhq/ledger-key-ring-protocol@0.5.0
+  - @ledgerhq/live-nft@0.4.8
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0
+  - @ledgerhq/live-wallet@0.7.0
+  - @ledgerhq/coin-framework@0.18.3
+  - @ledgerhq/coin-cosmos@0.1.4
+  - @ledgerhq/coin-elrond@0.1.3
+  - @ledgerhq/domain-service@1.2.7
+  - @ledgerhq/live-countervalues@0.2.8
+  - @ledgerhq/live-countervalues-react@0.2.8
+  - @ledgerhq/live-network@2.0.2
+
+## 3.52.0-next.2
+
+### Patch Changes
+
+- [#8077](https://github.com/LedgerHQ/ledger-live/pull/8077) [`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+- Updated dependencies [[`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9)]:
+  - @ledgerhq/native-ui@0.25.0-next.1
+
+## 3.52.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ea4edf3`](https://github.com/LedgerHQ/ledger-live/commit/ea4edf306a52fad556273afae7fd907f610c9aba)]:
+  - @ledgerhq/live-common@34.11.0-next.1
+
+## 3.52.0-next.0
+
+### Minor Changes
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+
+- [#7989](https://github.com/LedgerHQ/ledger-live/pull/7989) [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99) Thanks [@thesan](https://github.com/thesan)! - Add the receive flow `NeedMemoTagModal`
+
+- [#7973](https://github.com/LedgerHQ/ledger-live/pull/7973) [`64d8546`](https://github.com/LedgerHQ/ledger-live/commit/64d854687369a63a77f3b31793b87af570e2f3c5) Thanks [@KVNLS](https://github.com/KVNLS)! - Fetch FF every 5 minutes for LLM & LLD
+
+- [#7964](https://github.com/LedgerHQ/ledger-live/pull/7964) [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7) Thanks [@KVNLS](https://github.com/KVNLS)! - Use Ledger Key Ring Protocol naming
+
+### Patch Changes
+
+- [#7963](https://github.com/LedgerHQ/ledger-live/pull/7963) [`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303) Thanks [@thesan](https://github.com/thesan)! - Create `llmMemoTag`
+
+- [#8014](https://github.com/LedgerHQ/ledger-live/pull/8014) [`b7311c4`](https://github.com/LedgerHQ/ledger-live/commit/b7311c4c773b188465560150932f0cdbceec42e0) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add the platform OS to the params passed to earn to enable the correct braze environment
+
+- [#8032](https://github.com/LedgerHQ/ledger-live/pull/8032) [`998a3ba`](https://github.com/LedgerHQ/ledger-live/commit/998a3baaae17e53af5e3d8802ab9ffd057b4196d) Thanks [@qperrot](https://github.com/qperrot)! - LLM Custom validator button translation
+
+- [#8009](https://github.com/LedgerHQ/ledger-live/pull/8009) [`961f567`](https://github.com/LedgerHQ/ledger-live/commit/961f56747a156bb8c167f9aac76f204fd59a326f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - When user has a lock password the app get locked when he wants to sync with another instance
+
+- [#8034](https://github.com/LedgerHQ/ledger-live/pull/8034) [`c8903e6`](https://github.com/LedgerHQ/ledger-live/commit/c8903e66468f6c6f28a23d61b2cf9cbb863e08d6) Thanks [@qperrot](https://github.com/qperrot)! - User can enter text for Gas Limit value for ETH
+
+- [#7965](https://github.com/LedgerHQ/ledger-live/pull/7965) [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cardano fees warning + fix high fees issue
+
+- [#7994](https://github.com/LedgerHQ/ledger-live/pull/7994) [`67ed92a`](https://github.com/LedgerHQ/ledger-live/commit/67ed92a8d63f6baa636e7522ae0d93b0a9ddacb4) Thanks [@themooneer](https://github.com/themooneer)! - In order to easily monitor and debug futur ios build failures on the CI , we need to add --verbose in the pod install process.
+
+- [#7957](https://github.com/LedgerHQ/ledger-live/pull/7957) [`a4cd30a`](https://github.com/LedgerHQ/ledger-live/commit/a4cd30a6cf405a3fb647282a958210ded9ed0b21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed a spacing issue when there was a category with all its content cards dismissed by the user
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`b0d535b`](https://github.com/LedgerHQ/ledger-live/commit/b0d535b72d9c6ac7e474de2b598bc4964a515d93), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`6f0d39f`](https://github.com/LedgerHQ/ledger-live/commit/6f0d39f46ef5d3e24439421aa68dfe7aadcd1dbc), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3), [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99), [`b0d535b`](https://github.com/LedgerHQ/ledger-live/commit/b0d535b72d9c6ac7e474de2b598bc4964a515d93), [`87b706c`](https://github.com/LedgerHQ/ledger-live/commit/87b706c8a807f14c72c7d47206e9ee767f50a04c), [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63), [`a47e68b`](https://github.com/LedgerHQ/ledger-live/commit/a47e68b568a3b888a241c30345b4935557404215), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2), [`9032845`](https://github.com/LedgerHQ/ledger-live/commit/9032845a3cbadf40d545d6832e0280880e0be3d7), [`3652e83`](https://github.com/LedgerHQ/ledger-live/commit/3652e83e02876856f1370cccab47f4272b71a7d3), [`07a242d`](https://github.com/LedgerHQ/ledger-live/commit/07a242d9c54a4b70d9fec7ef390b8e8ab7de4df7), [`3824e06`](https://github.com/LedgerHQ/ledger-live/commit/3824e06ba2c94bc0697d2a40d865efe766d1f102), [`d962cf1`](https://github.com/LedgerHQ/ledger-live/commit/d962cf13667a383b77a1d30bf26bec27702d9af4)]:
+  - @ledgerhq/types-live@6.52.1-next.0
+  - @ledgerhq/live-common@34.11.0-next.0
+  - @ledgerhq/live-env@2.4.0-next.0
+  - @ledgerhq/coin-evm@2.4.0-next.0
+  - @ledgerhq/icons-ui@0.8.0-next.0
+  - @ledgerhq/native-ui@0.25.0-next.0
+  - @ledgerhq/live-nft-react@0.4.8-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.0-next.0
+  - @ledgerhq/live-nft@0.4.8-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.2.0-next.0
+  - @ledgerhq/live-wallet@0.7.0-next.0
+  - @ledgerhq/coin-framework@0.18.3-next.0
+  - @ledgerhq/coin-cosmos@0.1.4-next.0
+  - @ledgerhq/coin-elrond@0.1.3-next.0
+  - @ledgerhq/domain-service@1.2.7-next.0
+  - @ledgerhq/live-countervalues@0.2.8-next.0
+  - @ledgerhq/live-countervalues-react@0.2.8-next.0
+  - @ledgerhq/live-network@2.0.2-next.0
+
 ## 3.51.0
 
 ### Minor Changes

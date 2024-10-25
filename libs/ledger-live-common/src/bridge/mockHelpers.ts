@@ -9,6 +9,7 @@ import perFamilyMock from "../generated/mock";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
+import { Result } from "@ledgerhq/coin-framework/lib/derivation";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
@@ -174,11 +175,9 @@ export const makeAccountBridgeReceive: () => (
     deviceId: string;
     subAccountId?: string;
   },
-) => Observable<{
-  address: string;
-  path: string;
-}> = () => account =>
+) => Observable<Result> = () => account =>
   of({
     address: account.freshAddress,
     path: account.freshAddressPath,
+    publicKey: "mockPublickKey", // We could probably keep the publicKey in `account.freshPublicKey`
   });

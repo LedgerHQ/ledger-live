@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Dimensions, Linking, Share, View } from "react-native";
+import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
+import { hasMemoTag } from "LLM/features/MemoTag/utils/hasMemoTag";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -38,7 +39,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
-import { MEMO_TAG_COINS } from "~/utils/constants";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, {
@@ -364,7 +364,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               mr={4}
               onPress={onShare}
             >
-              <IconsLegacy.ShareMedium size={20} />
+              {Platform.OS === "android" ? <Icons.ShareAlt /> : <Icons.Share />}
             </StyledTouchableOpacity>
             <StyledTouchableOpacity
               p={4}
@@ -394,7 +394,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             </StyledTouchableOpacity>
           </Flex>
           <FeatureToggle featureId="llmMemoTag">
-            {"id" in currency && MEMO_TAG_COINS.includes(currency.id) && <NeedMemoTagModal />}
+            {hasMemoTag(currency) && <NeedMemoTagModal />}
           </FeatureToggle>
           <Flex px={6} flexDirection="column" rowGap={8} mt={6}>
             {isUTXOCompliantCurrency && (
@@ -450,7 +450,7 @@ const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
     <BannerCard
       typeOfRightIcon="close"
       title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-      LeftElement={<BankMedium />}
+      LeftElement={<BankMedium size={20} />}
       onPressDismiss={hideBanner}
       onPress={onPress}
     />

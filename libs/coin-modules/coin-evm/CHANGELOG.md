@@ -1,5 +1,79 @@
 # @ledgerhq/coin-evm
 
+## 2.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/cryptoassets@13.6.2
+  - @ledgerhq/coin-framework@0.18.5
+  - @ledgerhq/domain-service@1.2.9
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/cryptoassets@13.6.2-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/domain-service@1.2.9-next.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/domain-service@1.2.8
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.4-hotfix.0
+  - @ledgerhq/domain-service@1.2.8-hotfix.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+### Patch Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin resolution in `signOperation`
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0
+  - @ledgerhq/coin-framework@0.18.3
+  - @ledgerhq/domain-service@1.2.7
+  - @ledgerhq/evm-tools@1.2.4
+  - @ledgerhq/cryptoassets@13.6.1
+  - @ledgerhq/live-network@2.0.2
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+### Patch Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin resolution in `signOperation`
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0-next.0
+  - @ledgerhq/coin-framework@0.18.3-next.0
+  - @ledgerhq/domain-service@1.2.7-next.0
+  - @ledgerhq/evm-tools@1.2.4-next.0
+  - @ledgerhq/cryptoassets@13.6.1-next.0
+  - @ledgerhq/live-network@2.0.2-next.0
+
 ## 2.3.1
 
 ### Patch Changes

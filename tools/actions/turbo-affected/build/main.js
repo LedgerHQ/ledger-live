@@ -18925,7 +18925,7 @@ var package_default = {
     "doc:ljs": 'pnpm turbo doc --no-daemon --filter="./libs/ledgerjs/**"',
     "watch:ljs": 'pnpm turbo watch --no-daemon --filter="./libs/ledgerjs/**"',
     "watch:common": "pnpm turbo watch --no-daemon --filter=./libs/ledger-live-common",
-    "dev:cli": "pnpm turbo watch --no-daemon --filter=@ledgerhq/live-cli",
+    "dev:cli": "pnpm turbo watch --filter=@ledgerhq/live-cli",
     "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
@@ -19073,14 +19073,15 @@ var package_default = {
       "@ledgerhq/devices": "workspace:*",
       tslib: "2.6.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2"
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
+      "@ethersproject/providers>ws": "7.5.10"
     },
     patchedDependencies: {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.23.0": "patches/detox@20.23.0.patch",
+      "detox@20.26.2": "patches/detox@20.26.2.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
@@ -19111,6 +19112,7 @@ async function main() {
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
   const turboVersion = package_default.devDependencies.turbo;
+  const packageManager = package_default.packageManager;
   try {
     const turboOutput = (0, import_child_process.execSync)(
       `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`,
@@ -19119,7 +19121,7 @@ async function main() {
         maxBuffer: 2048 * 1024
       }
     );
-    const pnpmOutput = (0, import_child_process.execSync)(`npx pnpm list -r --depth=0 --json`, {
+    const pnpmOutput = (0, import_child_process.execSync)(`npx ${packageManager} list -r --depth=0 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024
     });

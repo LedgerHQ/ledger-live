@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getEnv } from "@ledgerhq/live-env";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -30,6 +31,7 @@ type Props = {
 };
 
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const accounts = useSelector(accountsSelector);
@@ -52,7 +54,7 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
-    chains: ["ethereum", "polygon"],
+    chains: SUPPORTED_NFT_CURRENCIES,
     threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
   });
 

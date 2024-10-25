@@ -7,8 +7,9 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
-const format = (account: AccountLike, value) => {
+const format = (account: AccountLike, value: BigNumber) => {
   const unit = getAccountCurrency(account).units[0];
   const name = getDefaultAccountName(account);
   const amount = formatCurrencyUnit(unit, value, {
@@ -18,10 +19,12 @@ const format = (account: AccountLike, value) => {
   return `${name}: ${amount}`;
 };
 
+export type EstimateMaxSpendableJobOpts = ScanCommonOpts;
+
 export default {
   description: "estimate the max spendable of an account",
   args: [...scanCommonOpts],
-  job: (opts: ScanCommonOpts) =>
+  job: (opts: EstimateMaxSpendableJobOpts) =>
     scan(opts).pipe(
       concatMap(account => {
         const bridge = getAccountBridge(account);

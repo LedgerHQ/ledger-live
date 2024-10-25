@@ -5,7 +5,7 @@ import Switch from "~/components/Switch";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
 import Status from "./Status";

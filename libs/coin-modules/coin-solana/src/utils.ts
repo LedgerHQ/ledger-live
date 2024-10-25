@@ -2,7 +2,6 @@ import { Cluster, clusterApiUrl } from "@solana/web3.js";
 import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
-import BigNumber from "bignumber.js";
 
 // Hardcoding the Ledger validator info as backup,
 // because backend is flaky and sometimes doesn't return it anymore
@@ -174,18 +173,4 @@ export const tupleOfUnion =
 
 export function sweetch<T extends keyof any, R>(caze: T, cases: Record<T, R>): R {
   return cases[caze];
-}
-
-export function median(values: number[]): number {
-  const length = values.length;
-  if (!length) return 0;
-
-  const sorted = values.sort((a, b) => a - b);
-  const middle = Math.floor(length / 2);
-  return length % 2
-    ? BigNumber(sorted[middle])
-        .plus(sorted[middle - 1])
-        .div(2)
-        .toNumber()
-    : sorted[middle];
 }

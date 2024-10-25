@@ -4,10 +4,10 @@ export class Provider {
     public readonly uiName: string,
   ) {}
   static readonly CHANGELLY = new Provider("changelly", "Changelly");
-  static readonly ONEINCH = new Provider("oneinch", "1inch");
+  static readonly EXODUS = new Provider("exodus", "Exodus");
 }
 
-export enum Rates {
+export enum Rate {
   FIXED = "fixed",
   FLOAT = "float",
 }

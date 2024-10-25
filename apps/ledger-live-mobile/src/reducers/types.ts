@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrencyId, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -30,6 +30,7 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 // === ACCOUNT STATE ===
 
@@ -332,8 +333,8 @@ export type NftState = {
 };
 
 export type NftGalleryChainFiltersState = Pick<
-  Record<CryptoCurrencyId, boolean>,
-  "polygon" | "ethereum"
+  Record<BlockchainsType, boolean>,
+  SupportedBlockchainsType
 >;
 
 // === MARKET STATE ===

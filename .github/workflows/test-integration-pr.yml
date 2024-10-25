@@ -14,7 +14,7 @@ jobs:
     outputs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,9 +48,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-22.04
+          - macos-14
+          - windows-2022
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -60,7 +60,7 @@ jobs:
         id: toolchain
         with:
           skip-turbo-cache: "false"
-          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
+          upgrade_npm: ${{ matrix.os == 'windows-2022' }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -68,7 +68,7 @@ jobs:
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
-          pnpm add -g node-gyp
+          pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build

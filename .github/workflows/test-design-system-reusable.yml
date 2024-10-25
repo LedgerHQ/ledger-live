@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: react-ui-test-results-ubuntu-latest
+          name: react-ui-test-results-ubuntu
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
@@ -72,9 +72,9 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            fs.writeFileSync("summary-ui-ubuntu-latest.txt", "${{ steps.test-ui.outcome }}", "utf-8");
+            fs.writeFileSync("summary-ui-ubuntu.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: outputs-test-ui
-          path: ${{ github.workspace }}/summary-ui-ubuntu-latest.txt
+          path: ${{ github.workspace }}/summary-ui-ubuntu.txt

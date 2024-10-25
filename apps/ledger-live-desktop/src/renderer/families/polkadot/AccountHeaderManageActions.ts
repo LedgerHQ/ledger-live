@@ -79,6 +79,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

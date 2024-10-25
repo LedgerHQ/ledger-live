@@ -179,6 +179,9 @@ test("Market", async ({ page }) => {
         page.getByTestId("chart-container"),
         page.getByTestId("market-price-delta"),
         page.getByTestId("market-price"),
+        page.getByTestId("market-price-stats-price"),
+        page.getByTestId("market-price-stats-variation"),
+        page.getByTestId("market-cap"),
       ],
     });
   });

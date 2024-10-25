@@ -7,6 +7,7 @@ async function main() {
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
   const turboVersion = packageJson.devDependencies.turbo;
+  const packageManager = packageJson.packageManager; // pnpm@<version_specified_in_package.json>
 
   try {
     const turboOutput = execSync(
@@ -16,7 +17,7 @@ async function main() {
         maxBuffer: 2048 * 1024,
       },
     );
-    const pnpmOutput = execSync(`npx pnpm list -r --depth=0 --json`, {
+    const pnpmOutput = execSync(`npx ${packageManager} list -r --depth=0 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
     });

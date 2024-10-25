@@ -36,6 +36,8 @@ import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
+import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
+import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 
@@ -129,6 +131,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction],
   );
 
+  const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
+  );
+
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
 
@@ -146,7 +159,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const onPressContinue = useCallback(async () => {
+  const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
+    MemoTagDrawerState.INITIAL,
+  );
+
+  const onPressContinue = useCallback(() => {
+    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+      return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
+    }
+
+    track("SendRecipientContinue");
+
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
@@ -180,6 +203,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     navigation,
     parentAccount?.id,
     route.params,
+    memoTag?.isEmpty,
+    memoTagDrawerState,
   ]);
 
   if (!account || !transaction) return null;
@@ -283,6 +308,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+
+            {memoTag?.Input && (
+              <View style={styles.memoTagInputContainer}>
+                <memoTag.Input
+                  testID="memo-tag-input"
+                  placeholder={t("send.summary.memo.title")}
+                  onChange={memoTag.handleChange}
+                />
+              </View>
+            )}
+
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
@@ -299,7 +335,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
-              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               disabled={debouncedBridgePending || !!status.errors.recipient}
@@ -309,6 +344,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           </View>
         </KeyboardView>
       </SafeAreaView>
+
+      <MemoTagDrawer
+        open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
+        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
+        onNext={onPressContinue}
+      />
 
       <GenericErrorBottomModal
         error={bridgeErr}
@@ -336,6 +377,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: "transparent",
   },
+  memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
   },
@@ -361,3 +403,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+enum MemoTagDrawerState {
+  INITIAL,
+  SHOWING,
+  SHOWN,
+}
