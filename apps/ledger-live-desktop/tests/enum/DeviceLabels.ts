@@ -27,7 +27,7 @@ export enum DeviceLabels {
   FEES = "Fees",
   WALLET_ID = "Wallet ID",
   VIEW_HEADER = "View Header",
-  CONTINUE_TO_ACTION = "Continue to action",
+  CONTINUE_TO_ACTION = "Continue to actions",
   VIEW_ACTION = "View action",
   METHOD_NAME = "Method name",
   DEPOSIT = "Deposit",

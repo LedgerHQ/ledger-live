@@ -67,6 +67,7 @@ export class AccountPage extends AppPage {
     await this.sellButton.click();
   }
 
+  @step("Click Stake button")
   async startStakingFlowFromMainStakeButton() {
     await this.stakeButton.click();
   }
@@ -81,6 +82,7 @@ export class AccountPage extends AppPage {
     await this.operationRows.first().click();
   }
 
+  @step("Click Stake button on banner")
   async clickBannerCTA() {
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
