@@ -8,7 +8,7 @@ const delay = (timing: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, timing));
 
 const ensureEnv = () => {
-  const mandatory_env_variables = ["SEED"];
+  const mandatory_env_variables = ["SEED", "GH_TOKEN"];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
     throw new Error(
