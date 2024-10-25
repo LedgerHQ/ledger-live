@@ -27,8 +27,6 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "@ledgerhq/live-promise",
-    "@ledgerhq/types-cryptoassets",
     "expect",
     "lodash",
     "rxjs"

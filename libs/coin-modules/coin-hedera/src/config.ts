@@ -1,5 +1,4 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import "@ledgerhq/types-cryptoassets";
 
 export type HederaCoinConfig = () => CurrencyConfig & {
   config_currency_hedera: {
