@@ -165,7 +165,8 @@ export type CryptoCurrencyId =
   | "scroll_sepolia"
   | "etherlink"
   | "zksync"
-  | "zksync_sepolia";
+  | "zksync_sepolia"
+  | "mantra";
 
 export type LedgerExplorerId =
   | "btc"
