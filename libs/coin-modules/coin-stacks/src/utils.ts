@@ -1,13 +1,12 @@
 import { ResponseAddress } from "@zondax/ledger-stacks";
 
-// TODO: sync with @qperrot to extract those in a common utils (used also in filecoin)
+// NOTE: inlined now, this shared utils code will be moved to coin-framework in a future PR
 const validHexRegExp = new RegExp(/^(0x)?[a-fA-F0-9]+$/);
 const validBase64RegExp = new RegExp(
   /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
 );
 export const isValidHex = (msg: string) => validHexRegExp.test(msg) && msg.length % 2 === 0;
 export const isValidBase64 = (msg: string) => validBase64RegExp.test(msg);
-// ENDOFTODO
 
 export const isNoErrorReturnCode = (code: number) => code === 0x9000;
 
