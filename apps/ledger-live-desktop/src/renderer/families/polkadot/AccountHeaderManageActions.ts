@@ -11,6 +11,7 @@ import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/in
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { useHistory } from "react-router";
 
 type Props = {
   account: PolkadotAccount | SubAccount;
@@ -18,13 +19,14 @@ type Props = {
   source?: string;
 };
 
-const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const { polkadotResources } = mainAccount;
   const hasBondedBalance = polkadotResources.lockedBalance && polkadotResources.lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(mainAccount, "BOND");
+  const history = useHistory();
 
   const onClick = useCallback(() => {
     if (isAccountEmpty(mainAccount)) {
@@ -33,21 +35,22 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
           account: mainAccount,
         }),
       );
-    } else if (hasBondedBalance || hasPendingBondOperation) {
-      dispatch(
-        openModal("MODAL_POLKADOT_MANAGE", {
-          account: mainAccount,
-          source,
-        }),
-      );
     } else {
-      dispatch(
-        openModal("MODAL_POLKADOT_REWARDS_INFO", {
-          account: mainAccount,
-        }),
-      );
+      const yieldId = "polkadot-dot-validator-staking";
+
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId,
+          accountId: account.id,
+          returnTo:
+            account.type === "TokenAccount"
+              ? `/account/${account.parentId}/${account.id}`
+              : `/account/${account.id}`,
+        },
+      });
     }
-  }, [mainAccount, hasBondedBalance, hasPendingBondOperation, dispatch, source]);
+  }, [account, dispatch, history, mainAccount]);
 
   const _hasExternalController = hasExternalController(mainAccount);
   const _hasExternalStash = hasExternalStash(mainAccount);

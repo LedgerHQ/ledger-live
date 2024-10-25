@@ -10,7 +10,6 @@ import {
   hasExternalStash,
   hasPendingOperationType,
   isElectionOpen,
-  isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -26,9 +25,8 @@ import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions
 const getMainActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
-  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account, parentAccount, parentRoute } = args;
+  const { account, parentAccount } = args;
   invariant(account.polkadotResources, "polkadot resources required");
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
@@ -56,24 +54,15 @@ const getMainActions = (args: {
         },
       ];
     }
-    if (isStash(account)) {
-      return [
-        NavigatorName.PolkadotNominateFlow,
-        {
-          screen: ScreenName.PolkadotNominateSelectValidators,
-          params: {
-            accountId,
-            source: parentRoute,
-          },
-        },
-      ];
-    }
+
     return [
-      NavigatorName.PolkadotBondFlow,
+      ScreenName.PlatformApp,
       {
-        screen: ScreenName.PolkadotBondStarted,
         params: {
+          platform: "stakekit",
+          name: "StakeKit",
           accountId,
+          yieldId: "polkadot-dot-validator-staking",
         },
       },
     ];
