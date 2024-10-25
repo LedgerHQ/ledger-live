@@ -4,12 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { mapTxToOps, mapPendingTxToOps, reconciliatePublicKey } from "./utils/misc";
-import {
-  fetchBalances,
-  fetchBlockHeight,
-  fetchFullMempoolTxs,
-  fetchFullTxs,
-} from "../network/api";
+import { fetchBalances, fetchBlockHeight, fetchFullMempoolTxs, fetchFullTxs } from "../network/api";
 import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 export const getAccountShape: GetAccountShape = async info => {
