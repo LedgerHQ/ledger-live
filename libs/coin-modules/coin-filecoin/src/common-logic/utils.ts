@@ -31,7 +31,6 @@ export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] =>
   const txsByTxCid = txs.reduce((txsByTxCidResult: TxsById, currentTx) => {
     const { hash: txCid, type: txType } = currentTx;
     const txByType = txsByTxCidResult[txCid] || {};
-    console.log("currentTx: ", currentTx);
     switch (txType) {
       case "Send":
         (txByType as { Send: TransactionResponse }).Send = currentTx;
@@ -201,7 +200,6 @@ export const getAccountShape: GetAccountShape = async info => {
   const balance = await fetchBalances(address);
   const rawTxs = await fetchTxs(address);
   const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
-  console.log("rawTxs", rawTxs);
 
   const result: Partial<Account> = {
     id: accountId,
@@ -213,7 +211,6 @@ export const getAccountShape: GetAccountShape = async info => {
     ),
     blockHeight: blockHeight.current_block_identifier.index,
   };
-  console.log("RESULT", result);
   return result;
 };
 
