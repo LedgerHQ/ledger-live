@@ -3,6 +3,8 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarios/ethereum";
 import { scenarioPolygon } from "./scenarios/polygon";
+import { scenarioScroll } from "./scenarios/scroll";
+import { scenarioBlast } from "./scenarios/blast";
 
 global.console = require("console");
 jest.setTimeout(100_000);
@@ -24,6 +26,28 @@ describe("EVM Deterministic Tester", () => {
   it("scenario polygon", async () => {
     try {
       await executeScenario(scenarioPolygon);
+    } catch (e) {
+      if (e != "done") {
+        await Promise.all([killSpeculos(), killAnvil()]);
+        throw e;
+      }
+    }
+  });
+
+  it.skip("scenario scroll", async () => {
+    try {
+      await executeScenario(scenarioScroll);
+    } catch (e) {
+      if (e != "done") {
+        await Promise.all([killSpeculos(), killAnvil()]);
+        throw e;
+      }
+    }
+  });
+
+  it.skip("scenario blast", async () => {
+    try {
+      await executeScenario(scenarioBlast);
     } catch (e) {
       if (e != "done") {
         await Promise.all([killSpeculos(), killAnvil()]);

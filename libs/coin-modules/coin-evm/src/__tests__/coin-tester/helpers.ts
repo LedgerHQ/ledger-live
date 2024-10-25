@@ -8,6 +8,8 @@ import ERC20ABI from "../../abis/erc20.abi.json";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
 export const polygon = getCryptoCurrencyById("polygon");
+export const scroll = getCryptoCurrencyById("scroll");
+export const blast = getCryptoCurrencyById("blast");
 export const ERC20Interface = new ethers.utils.Interface(ERC20ABI);
 export const ERC721Interface = new ethers.utils.Interface(ERC721ABI);
 export const ERC1155Interface = new ethers.utils.Interface(ERC1155ABI);
