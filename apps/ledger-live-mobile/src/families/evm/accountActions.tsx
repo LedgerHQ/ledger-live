@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -14,7 +14,7 @@ const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 type Props = {
-  account: Account;
+  account: AccountLike;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
@@ -78,6 +78,38 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
           currency: "ETH",
+        },
+      },
+    ];
+  }
+
+  const isApeTokenAccount =
+    account.type === "TokenAccount" && account.token.id === "ethereum/erc20/apecoin";
+  const isCApeTokenAccount =
+    account.type === "TokenAccount" &&
+    account.token.contractAddress === "0xC5c9fB6223A989208Df27dCEE33fC59ff5c26fFF";
+
+  if (isApeTokenAccount || isCApeTokenAccount) {
+    return [
+      {
+        id: "stake",
+        navigationParams: [
+          ScreenName.PlatformApp,
+          {
+            params: {
+              platform: "stakekit",
+              name: "StakeKit",
+              accountId: account.id,
+              yieldId: isCApeTokenAccount
+                ? "ethereum-ape-parax-staking"
+                : "ethereum-ape-native-staking",
+            },
+          },
+        ],
+        label: <Trans i18nKey="account.stake" />,
+        Icon: IconsLegacy.CoinsMedium,
+        eventProperties: {
+          currency: "APE",
         },
       },
     ];
