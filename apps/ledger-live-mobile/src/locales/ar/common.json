@@ -765,6 +765,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -2335,7 +2341,8 @@
       "swap" : "مبادلة",
       "send" : "إرسال",
       "deposit" : "تلقي",
-      "stake" : "تكديس"
+      "stake" : "تكديس",
+      "yield" : "العائد"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2557,8 @@
         "subTitle" : "دمج {{family}} تم بواسطة فريق {{team}}",
         "description" : "Ledger Live هي منصة مفتوحة المصدر.",
         "description2" : "المطورون من أي مكان في العالم بإمكانهم الدمج مع Ledger Live",
-        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger"
+        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger",
+        "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2599,7 @@
     "buy" : "شراء",
     "walletconnect" : "WalletConnect",
     "stake" : "تكديس",
+    "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
     "manage" : "إدارة",
@@ -3132,6 +3141,13 @@
       "shareAddress" : "عنوان المشاركة",
       "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+      "memoTag" : {
+        "link" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "description" : "ربما تحتاج إلى علامة/ملاحظة (تسمية الوجهة) لتلقي هذا الأصل من منصة تداول. يمكنك استخدام أي مزيج من الأرقام مثل 1234.",
+        "cta" : "أفهم ذلك",
+        "learnMore" : "تعرّف على المزيد عن العلامات"
+      },
       "selectCrypto" : {
         "title" : "اختر الأصل المشفر الذي تريد تلقيه"
       },
@@ -4509,7 +4525,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4545,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5424,9 @@
     "AccountHeader" : {
       "title" : "يمكنك أن تكسب مكافآت عن طريق تفويض حسابك",
       "btn" : "اكسب المكافآت"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ إضافة مدقق مخصص"
     }
   },
   "tron" : {
@@ -5854,6 +5877,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع. معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
@@ -6615,7 +6642,7 @@
     "title" : "توصيل الجهاز"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
       "tagMinimum" : "يتطلب {{min}} ETH",
@@ -6624,7 +6651,7 @@
         "kiln_pooling" : {
           "title" : "مُجمِع تكديس Kiln",
           "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
-          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+          "supportLink" : "تعرّف على المزيد عن مُجمِعات Kiln"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
@@ -6634,13 +6661,13 @@
         "lido" : {
           "title" : "Lido",
           "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
-          "supportLink" : "تعرف على المزيد عن Lido"
+          "supportLink" : "تعرّف على المزيد عن Lido"
         },
         "figment" : {
           "title" : "Figment",
           "tag" : "يتطلب 32 ETH",
-          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
-          "supportLink" : "تعرف على المزيد عن Figment"
+          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واحصل على مكافآت تُرسل تلقائياً إلى حسابك.",
+          "supportLink" : "تعرّف على المزيد عن Figment"
         },
         "kiln" : {
           "title" : "تكديس Kiln الفردي",
@@ -6648,6 +6675,72 @@
           "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
           "supportLink" : "تعرّف على المزيد عن Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "اختر مزود تكديس",
+      "category" : {
+        "all" : {
+          "name" : "الكل",
+          "description" : "كل مزودي تكديس إيثريوم المتاحين على Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "يمكنك تكديس ETH والحصول على مكافآت برموز توكن سائلة. ستظل قادراً على التداول والمشاركة في أنشطة التمويل اللامركزي (DeFi)."
+        },
+        "protocol" : {
+          "name" : "البروتوكول",
+          "description" : "يمكنك تكديس دفعة من 32 ETH والحصول على مكافآت العقدة الكاملة بوحدات ETH."
+        },
+        "pooling" : {
+          "name" : "التجميع",
+          "description" : "يمكنك الانضمام إلى مُجمِع لتكديس أي مبلغ من ETH والحصول على مكافآت."
+        },
+        "restaking" : {
+          "name" : "إعادة التكديس",
+          "description" : "يمكنك إعادة تكديس رمز التوكن السائل خاصتك للحصول على مكافآت إضافية."
+        }
+      },
+      "howItWorks" : "كيف يعمل تكديس ETH",
+      "lst" : "مطلوب رمز توكن سائل",
+      "noMinimum" : "ليس هناك حد أدنى",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "إعادة التكديس السائل من Kiln"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص"
+        },
+        "kelpdao" : {
+          "title" : "منظمة Kelp اللامركزية المستقلة"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "نظير لنظير"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "استراتيجيات وتكتيكات يجب معرفتها",
+      "requiredMinimum" : "يتطلب {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "مكافآت مُجمّعة تلقائياً",
+        "basic" : "المكافآت",
+        "daily" : "مكافآت يومية",
+        "eigenlayer_points" : "نقاط Eigenlayer",
+        "validator" : "مكافآت مدقق"
       }
     },
     "noFundsModal" : {
