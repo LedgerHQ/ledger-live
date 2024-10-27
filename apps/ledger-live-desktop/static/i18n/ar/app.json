@@ -195,7 +195,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "SENDING" : "إرسال"
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -737,7 +738,8 @@
         "subTitle" : "دمج {{family}} تم بواسطة فريق {{team}}",
         "description" : "Ledger Live هي منصة مفتوحة المصدر.",
         "description2" : "المطورون من أي مكان في العالم بإمكانهم الدمج مع Ledger Live",
-        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger"
+        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger",
+        "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1126,6 +1128,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
+      "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
       "edit" : "تعديل الحساب",
@@ -2252,6 +2255,11 @@
           "description" : "قم بتكديس CELO خاصتك مع مُدقِّق Ledger by Figment. إنه يضمن تغطية كاملة ضد التغريم، ومدعوم من أمان Ledger الذي لا هوادة فيه."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+      "description" : "ربما تحتاج إلى <0>علامة/ملاحظة (تسمية الوجهة)</0> لتلقي هذا الأصل من منصة تداول. يمكنك استخدام أي مزيج من الأرقام مثل 1234.",
+      "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
     }
   },
   "send" : {
@@ -2409,7 +2417,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -3679,39 +3691,109 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
       "tagMinimum" : "يتطلب {{min}} ETH",
       "kiln_pooling" : {
         "title" : "مُجمِع تكديس Kiln",
         "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+        "supportLink" : "تعرّف على المزيد عن مُجمِعات Kiln"
       },
       "lido" : {
         "title" : "Lido",
         "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
-        "supportLink" : "تعرف على المزيد عن Lido"
+        "supportLink" : "تعرّف على المزيد عن Lido"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
         "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً مع وصول إلى سيولة فورية.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Stader"
+        "supportLink" : "تعرّف على المزيد عن مُجمِعات Stader"
       },
       "kiln" : {
         "title" : "تكديس Kiln المُخصص",
         "tag" : "يتطلب 32 ETH",
         "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
-        "supportLink" : "تعرف على المزيد عن مدقق Kiln"
+        "supportLink" : "تعرّف على المزيد عن مدقق Kiln"
       },
       "figment" : {
         "title" : "Figment",
         "tag" : "يتطلب 32 ETH",
-        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
-        "supportLink" : "تعرف على المزيد عن مدقق Figment"
+        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واحصل على مكافآت تُرسل تلقائياً إلى حسابك.",
+        "supportLink" : "تعرّف على المزيد عن مدقق Figment"
+      }
+    },
+    "stake" : {
+      "title" : "اختر مزود تكديس",
+      "category" : {
+        "all" : {
+          "name" : "الكل",
+          "description" : "كل مزودي تكديس إيثريوم المتاحين على Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "يمكنك تكديس ETH والحصول على مكافآت برموز توكن سائلة. ستظل قادراً على التداول والمشاركة في أنشطة التمويل اللامركزي (DeFi)."
+        },
+        "protocol" : {
+          "name" : "البروتوكول",
+          "description" : "يمكنك تكديس دفعة من 32 ETH والحصول على مكافآت العقدة الكاملة بوحدات ETH."
+        },
+        "pooling" : {
+          "name" : "التجميع",
+          "description" : "يمكنك الانضمام إلى مُجمِع لتكديس أي مبلغ من ETH والحصول على مكافآت."
+        },
+        "restaking" : {
+          "name" : "إعادة التكديس",
+          "description" : "يمكنك إعادة تكديس رمز التوكن السائل خاصتك للحصول على مكافآت إضافية."
+        }
+      },
+      "howItWorks" : "كيف يعمل تكديس ETH",
+      "lst" : "مطلوب رمز توكن سائل",
+      "noMinimum" : "ليس هناك حد أدنى",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "إعادة التكديس السائل من Kiln"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص"
+        },
+        "kelpdao" : {
+          "title" : "منظمة Kelp اللامركزية المستقلة"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "نظير لنظير"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "اقرأ عن تكديس ETH والاستراتيجيات المختلفة",
+      "requiredMinimum" : "يتطلب {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "مكافآت مُجمّعة تلقائياً",
+        "basic" : "المكافآت",
+        "daily" : "مكافآت يومية",
+        "eigenlayer_points" : "نقاط Eigenlayer",
+        "validator" : "مكافآت مدقق"
       }
     }
   },
@@ -4014,6 +4096,35 @@
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
+      "analyticsConsole" : {
+        "title" : "السماح بوحدة تحكم التحليلات",
+        "desc" : "عرض والسماح بفتح وحدة تحكم التحليلات."
+      },
+      "brazeTools" : {
+        "title" : "أدوات Braze",
+        "description" : "إنشاء بطاقات braze محلية",
+        "open" : "فتح",
+        "modal" : {
+          "title" : "إنشاء بطاقة braze محلية",
+          "add" : "إضافة",
+          "dismiss" : "تجاهل كل البطاقات",
+          "fields" : {
+            "notification" : "بطاقة محتوى الإشعار",
+            "action" : "بطاقة محتوى الإجراء",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "العنوان",
+            "description" : "الوصف",
+            "order" : "الطلب",
+            "image" : "عنوان URL للصورة",
+            "mainCta" : "CTA الرئيسي",
+            "link" : "الرابط",
+            "secondaryCta" : "CTA الثانوي",
+            "cta" : "CTA",
+            "url" : "عنوان URL",
+            "path" : "المسار"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4445,20 @@
       "tokenBlacklist" : {
         "title" : "إخفاء رموز التوكن",
         "desc" : "يمكنك إخفاء رموز التوكن بالانتقال إلى الحساب الرئيسي ثم النقر بالزر الأيمن على رمز التوكن واختيار \"Hide token\" (إخفاء رمز التوكن).",
-        "count" : "{{count}} رمز توكن",
-        "count_plural" : "{{count}} رمز توكن"
+        "count" : "1 رمز توكن",
+        "count_other" : "{{count}} رمز توكن"
       },
       "hiddenNftCollections" : {
         "title" : "Hidden NFT Collections",
         "desc" : "يمكنك إخفاء مجموعات NFT عن طريق النقر بالزر الأيمن على اسم المجموعة واختيار \"إخفاء مجموعات NFT\".",
-        "count" : "{{count}} مجموعة",
-        "count_plural" : "{{count}} مجموعة"
+        "count" : "مجموعة واحدة",
+        "count_other" : "{{count}} مجموعة"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "النقوش المخفية",
+        "desc" : "يمكنك إخفاء النقش عن طريق النقر بالزر الأيمن على النقش واختيار ”Hide Inscription (إخفاء النقش)“.",
+        "count" : "نقش واحد",
+        "count_other" : "{{count}} نقوش"
       },
       "fullNode" : {
         "title" : "توصيل عقدة بيتكوين الكاملة",
@@ -6034,6 +6151,15 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
     },
@@ -6584,6 +6710,11 @@
       "seeMore" : "See more inscriptions",
       "empty" : "لإضافة نقوش، ببساطة أرسلها إلى عنوان بيتكوين الخاص بك.",
       "receive" : "تلقي نقش",
+      "hide" : "إخفاء النقش",
+      "modal" : {
+        "title" : "إخفاء النقش",
+        "desc" : "هذا الإجراء سيقوم بإخفاء النقش التالي <0>{{inscriptionName}}</0> من حسابك. يمكنك إلغاء إخفائه في أي وقت من الإعدادات."
+      },
       "discoveryDrawer" : {
         "title" : "اكتشف الترتيبات (Ordinals)",
         "description" : "هل تعرف أنك ربما تمتلك وحدات ساتوشي ونقوش نادرة قيّمة؟",
@@ -6650,6 +6781,17 @@
           "vintage" : "The dawn of Bitcoin was marked by its initial 1,000 blocks. Sats mined within this period are branded \"Vintage,\"."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "المبلغ المراد إرساله:",
+      "of" : "من",
+      "excludeAssets" : "استثناء أصول الترتيبات",
+      "selectDesc" : "اختر UTXO ( إخراج المعاملات غير المنفقة) الذي ترغب في استخدامه عند إجراء المعاملات. UTXO ( إخراج المعاملات غير المنفقة) غير المُعلّم لن يتم استخدامه.",
+      "utxos" : "UTXOs ( إخراج المعاملات غير المنفقة)",
+      "learnMore" : "تعرّف على المزيد عن هذا الإعداد",
+      "confirm" : "تأكيد",
+      "address" : "العنوان",
+      "transactionId" : "مُعرف المعاملة"
     }
   }
 }
