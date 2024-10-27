@@ -195,7 +195,8 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "SENDING" : "送信中"
+      "SENDING" : "送信中",
+      "BURN" : "バーン済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -737,7 +738,8 @@
         "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
         "description" : "Ledger Liveはオープンソースのプラットフォームです。",
         "description2" : "世界中の開発者がLedger Liveと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました"
+        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
+        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1126,6 +1128,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
       "edit" : "アカウントを編集",
@@ -2252,6 +2255,11 @@
           "description" : "Ledger by FigmentバリデーターでCELOをステーキングします。Ledgerの妥協のないセキュリティで保護することで、スラッシング（自己資産が削られる）に対する完全な保証をご提供します。"
         }
       }
+    },
+    "memoTag" : {
+      "title" : "タグ/メモがご必要ですか？",
+      "description" : "この資産を取引所から受け取る際に、<0>タグ/メモ</0>が必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。",
+      "learnMore" : "タグ/メモについて詳しく知る"
     }
   },
   "send" : {
@@ -2409,7 +2417,11 @@
     "languages" : {
       "english" : "英語",
       "french" : "フランス語",
-      "spanish" : "スペイン語"
+      "spanish" : "スペイン語",
+      "german" : "ドイツ語",
+      "brazilian" : "ポルトガル語（ブラジル）",
+      "russian" : "ロシア語",
+      "turkish" : "トルコ語"
     }
   },
   "distribution" : {
@@ -3679,10 +3691,14 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Solana SPLトークンのトランザクションには独特の特徴があります。詳細については、次のサイトをご覧ください：<0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "所有するETHを運用",
       "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
       "tagMinimum" : "{{min}}ETHが必要",
@@ -3704,7 +3720,7 @@
       "kiln" : {
         "title" : "Kiln専用ステーキング",
         "tag" : "32ETHが必要",
-        "description" : "専用バリデーターに32ETH超をステーキングして、簡単に報酬を獲得。",
+        "description" : "専用バリデーターに32ETH以上をステーキングして、簡単に報酬を獲得。",
         "supportLink" : "Kilnバリデーターの詳細を確認"
       },
       "figment" : {
@@ -3712,6 +3728,72 @@
         "tag" : "32ETHが必要",
         "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
         "supportLink" : "Figmentバリデーターの詳細を見る"
+      }
+    },
+    "stake" : {
+      "title" : "ステーキングプロバイダーの選択",
+      "category" : {
+        "all" : {
+          "name" : "全て",
+          "description" : "Ledger Liveで利用可能な全てのイーサリアムステーキングプロバイダー。"
+        },
+        "liquid" : {
+          "name" : "リキッド",
+          "description" : "ETHをステーキングして、リキッドトークンで報酬を獲得できます。今後も取引やDeFiアクティビティへの参加は可能です。"
+        },
+        "protocol" : {
+          "name" : "プロトコル",
+          "description" : "32ETHのセットをステーキングして、ETHでフルノード報酬を獲得できます。"
+        },
+        "pooling" : {
+          "name" : "プール",
+          "description" : "プールに参加して、任意の量のETHをステーキングして報酬を獲得できます。"
+        },
+        "restaking" : {
+          "name" : "再ステーキング",
+          "description" : "リキッドトークンを再ステーキングして、追加の報酬を獲得できます。"
+        }
+      },
+      "howItWorks" : "ETHステーキングの仕組み",
+      "lst" : "リキッドトークンが必要です",
+      "noMinimum" : "最小数量なし",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール"
+        },
+        "kiln_restaking" : {
+          "title" : "Kilnリキット再ステーキング"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "ETHステーキングとさまざまな戦略について読む",
+      "requiredMinimum" : "{{min}}ETHが必要",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自動複利報酬",
+        "basic" : "報酬",
+        "daily" : "毎日の報酬",
+        "eigenlayer_points" : "Eigenlayerポイント",
+        "validator" : "バリデーター報酬"
       }
     }
   },
@@ -4014,6 +4096,35 @@
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
+      "analyticsConsole" : {
+        "title" : "アナリティクスコンソールを許可",
+        "desc" : "アナリティクスコンソールを表示し、開くのを許可します。"
+      },
+      "brazeTools" : {
+        "title" : "Brazeツール",
+        "description" : "ローカルBrazeカードを生成",
+        "open" : "開く",
+        "modal" : {
+          "title" : "ローカルBrazeカードを生成",
+          "add" : "追加",
+          "dismiss" : "すべてのカードを破棄",
+          "fields" : {
+            "notification" : "通知コンテンツカード",
+            "action" : "アクションコンテンツカード",
+            "portfolio" : "ポートフォリオコンテンツカード",
+            "title" : "タイトル",
+            "description" : "説明",
+            "order" : "注文",
+            "image" : "画像URL",
+            "mainCta" : "メインCTA",
+            "link" : "リンク",
+            "secondaryCta" : "セカンダリCTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "パス"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4445,20 @@
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
         "desc" : "トークンを非表示にするには、親アカウントに移動し、トークンを右クリックして「トークンを非表示」を選択してください。",
-        "count" : "{{count}} トークン",
-        "count_plural" : "{{count}}トークン"
+        "count" : "1トークン",
+        "count_other" : "{{count}}トークン"
       },
       "hiddenNftCollections" : {
         "title" : "NFTコレクションを非表示",
         "desc" : "コレクション名を右クリックして「NFTコレクションを非表示」を選択すると、NFTコレクションが非表示になります。",
-        "count" : "{{count}}コレクション",
-        "count_plural" : "{{count}}コレクション"
+        "count" : "1コレクション",
+        "count_other" : "{{count}}コレクション"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "非表示のインスクリプション",
+        "desc" : "インスクリプションを右クリックして「インスクリプションを隠す」を選択すると、インスクリプションを非表示にできます。",
+        "count" : "1インスクリプション",
+        "count_other" : "{{count}}インスクリプション"
       },
       "fullNode" : {
         "title" : "Bitcoinフルノードを接続",
@@ -6034,6 +6151,15 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
     },
@@ -6584,6 +6710,11 @@
       "seeMore" : "もっとインスクリプションを見る",
       "empty" : "インスクリプションを追加するには、インスクリプションをビットコインアドレスに送信するだけです。",
       "receive" : "インスクリプションを受け取る",
+      "hide" : "インスクリプションを隠す",
+      "modal" : {
+        "title" : "インスクリプションを隠す",
+        "desc" : "この操作により、次のインスクリプション<0> {{inscriptionName}}</0>がアカウントから非表示になります。設定からいつでも再表示できます。"
+      },
       "discoveryDrawer" : {
         "title" : "Ordinalsを知る",
         "description" : "お客様は貴重なレアサトシやインスクリプションを所有している可能性があることをご存知ですか？",
@@ -6650,6 +6781,17 @@
           "vintage" : "ビットコインの夜明けは、最初の1000ブロックによって特徴づけられました。この期間内に採掘されたサトシには「ヴィンテージ（Vintage）」というブランドが付けられています。"
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "送付額：",
+      "of" : "of",
+      "excludeAssets" : "Ordinals資産を除外",
+      "selectDesc" : "トランザクションを実行するときに使用するUTXO（未使用トランザクション出力）を選択します。チェックを外したUTXOは使用されません。",
+      "utxos" : "UTXO",
+      "learnMore" : "この設定の詳細はこちらです",
+      "confirm" : "確認",
+      "address" : "アドレス",
+      "transactionId" : "トランザクションID"
     }
   }
 }
