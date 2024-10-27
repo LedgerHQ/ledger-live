@@ -765,6 +765,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
     },
@@ -2335,7 +2341,8 @@
       "swap" : "Trocar",
       "send" : "Enviar",
       "deposit" : "Receber",
-      "stake" : "Aplicar"
+      "stake" : "Aplicar",
+      "yield" : "Rendimento"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2557,8 @@
         "subTitle" : "A integração {{family}} foi feita pelo time {{team}}",
         "description" : "Ledger Live é uma plataforma de código aberto",
         "description2" : "Desenvolvedores de qualquer lugar do mundo podem se integrar com a nossa Ledger Live",
-        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger"
+        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger",
+        "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2599,7 @@
     "buy" : "Comprar",
     "walletconnect" : "WalletConnect",
     "stake" : "Aplicar",
+    "yield" : "Rendimento",
     "sell" : "Vender",
     "swap" : "Trocar",
     "manage" : "Gerenciar",
@@ -3132,6 +3141,13 @@
       "shareAddress" : "Compartilhar Endereço",
       "addressCopied" : "Endereço copiado para a área de transferência",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
+      "memoTag" : {
+        "link" : "Precisa de uma tag ou memo?",
+        "title" : "Precisa de uma tag ou memo?",
+        "description" : "Talvez você precise de uma tag ou memo para receber este ativo de uma corretora. Você pode usar qualquer combinação de números, como 1234.",
+        "cta" : "Eu entendo",
+        "learnMore" : "Saiba mais sobre as Tags"
+      },
       "selectCrypto" : {
         "title" : "Selecione a criptomoeda que deseja receber"
       },
@@ -4509,7 +4525,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4528,8 +4544,12 @@
     "installingLanguage" : "Instalando Idioma",
     "languages" : {
       "english" : "Inglês",
-      "french" : "Francês",
-      "spanish" : "Espanhol"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5424,9 @@
     "AccountHeader" : {
       "title" : "Você pode ganhar recompensas ao delegar sua conta",
       "btn" : "Ganhe recompensas"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ Adicionar validador personalizado"
     }
   },
   "tron" : {
@@ -5854,6 +5877,10 @@
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
       },
       "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar. As transações de tokens SPL Solana têm características exclusivas. Para saber mais, visite: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
@@ -6615,20 +6642,20 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
       "tagMinimum" : "Requer {{min}} ETH",
       "close" : "Fechar",
       "providers" : {
         "kiln_pooling" : {
-          "title" : "Reserva de staking Kiln",
-          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
-          "supportLink" : "Saiba mais sobre a reserva da Kiln"
+          "title" : "Staking em reserva Kiln",
+          "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+          "supportLink" : "Saiba mais sobre as reservas na Kiln"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
+          "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, com acesso instantâneo a liquidez.",
           "supportLink" : "Saiba mais sobre a Stader"
         },
         "lido" : {
@@ -6643,11 +6670,77 @@
           "supportLink" : "Saiba mais sobre a Figment"
         },
         "kiln" : {
-          "title" : "Kiln Staking Solo",
+          "title" : "Staking solo Kiln",
           "tag" : "Requer 32 ETH",
           "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
           "supportLink" : "Saiba mais sobre a Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Selecione o provedor de staking",
+      "category" : {
+        "all" : {
+          "name" : "Todos",
+          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Você pode fazer staking de ETH e receber recompensas em tokens líquidos. Você ainda poderá negociar e participar de atividades DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Você pode fazer um staking de um lote de 32 ETH e receber recompensas de node completo em ETH."
+        },
+        "pooling" : {
+          "name" : "Reservas",
+          "description" : "Você pode participar de uma reserva para fazer staking de qualquer quantia de ETH e receber recompensas."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Você pode reaplicar seu token líquido para obter recompensas adicionais."
+        }
+      },
+      "howItWorks" : "Como funciona o staking de ETH",
+      "lst" : "Requer token líquido",
+      "noMinimum" : "Sem mínimo",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking em reservas Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking líquido de Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking dedicado Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Estratégias e táticas que você deve conhecer",
+      "requiredMinimum" : "Requer {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas compostas automaticamente",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diárias",
+        "eigenlayer_points" : "Pontos Eigenlayer",
+        "validator" : "Recompensas de validador"
       }
     },
     "noFundsModal" : {
