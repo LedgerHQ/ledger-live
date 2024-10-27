@@ -765,6 +765,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -2335,7 +2341,8 @@
       "swap" : "スワップ",
       "send" : "送付",
       "deposit" : "受け取る",
-      "stake" : "ステーキング"
+      "stake" : "ステーキング",
+      "yield" : "イールド"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2557,8 @@
         "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
         "description" : "Ledger Liveはオープンソースのプラットフォームです。",
         "description2" : "世界中の開発者がLedger Liveと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました"
+        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
+        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2599,7 @@
     "buy" : "購入",
     "walletconnect" : "WalletConnect",
     "stake" : "ステーキング",
+    "yield" : "イールド",
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
@@ -3132,6 +3141,13 @@
       "shareAddress" : "アドレスを共有",
       "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "memoTag" : {
+        "link" : "タグ/メモがご必要ですか？",
+        "title" : "タグ/メモが必要ですか？",
+        "description" : "この資産を取引所から受け取る際に、タグ/メモが必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。",
+        "cta" : "わかりました",
+        "learnMore" : "タグについて詳しく知る"
+      },
       "selectCrypto" : {
         "title" : "受け取りたい暗号資産を選択"
       },
@@ -4509,7 +4525,7 @@
       "tr" : "トルコ語",
       "ja" : "日本",
       "ko" : "韓国",
-      "pt" : "ポルトガル語"
+      "pt" : "ポルトガル語（ブラジル）"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4545,11 @@
     "languages" : {
       "english" : "英語",
       "french" : "フランス語",
-      "spanish" : "スペイン語"
+      "spanish" : "スペイン語",
+      "german" : "ドイツ語",
+      "brazilian" : "ポルトガル語（ブラジル）",
+      "russian" : "ロシア語",
+      "turkish" : "トルコ語"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5424,9 @@
     "AccountHeader" : {
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
       "btn" : "報酬を獲得する"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ カスタムバリデーターを追加"
     }
   },
   "tron" : {
@@ -5854,6 +5877,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。Solana SPLトークンのトランザクションには独特の特徴があります。詳細については、次のサイトをご覧ください：<0>ledger.com/spl</0>"
     }
   },
   "near" : {
@@ -6615,7 +6642,7 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "所有するETHを運用",
       "subTitle" : "ETHをステーキングし、日々の報酬をLedger Liveで直接獲得して資産を増やしましょう。",
       "tagMinimum" : "{{min}}ETHが必要",
@@ -6623,23 +6650,23 @@
       "providers" : {
         "kiln_pooling" : {
           "title" : "Kilnステーキングプール",
-          "description" : "最低数量なしでステーキング。ロック（凍結）期間なしで自動複利報酬を獲得。",
-          "supportLink" : "Kilnプールの詳細を確認"
+          "description" : "ステーキングの最低数量設定なし。ロック（凍結）期間なしで自動複利報酬を獲得。",
+          "supportLink" : "Kilnプールについての詳細を確認"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "最低数量なしでステーキング。流動性を利用して、自動複利報酬を獲得。",
+          "description" : "ステーキングの最低数量設定なし。即時の流動性を利用して、自動複利報酬を獲得。",
           "supportLink" : "Staderについての詳細"
         },
         "lido" : {
           "title" : "Lido",
-          "description" : "即時の流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
-          "supportLink" : "Lidoの詳細を確認"
+          "description" : "流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
+          "supportLink" : "Lidoの詳細について"
         },
         "figment" : {
           "title" : "Figment",
-          "tag" : "必要最低額32ETH",
-          "description" : "専用バリデーターに32ETH超をステーキングして、アカウントに自動的に送信される報酬を獲得。",
+          "tag" : "32ETHが必要",
+          "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
           "supportLink" : "Figmentの詳細"
         },
         "kiln" : {
@@ -6648,6 +6675,72 @@
           "description" : "専用バリデーターに32ETH以上をステーキングして、簡単に報酬を獲得。",
           "supportLink" : "Kilnの詳細"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "ステーキングプロバイダーの選択",
+      "category" : {
+        "all" : {
+          "name" : "全て",
+          "description" : "Ledger Liveで利用できるすべてのイーサリアムステーキングプロバイダー。"
+        },
+        "liquid" : {
+          "name" : "リキッド",
+          "description" : "ETHをステーキングして、リキッドトークンで報酬を獲得できます。今後も取引やDeFiアクティビティへの参加は可能です。"
+        },
+        "protocol" : {
+          "name" : "プロトコル",
+          "description" : "32ETHのセットをステーキングして、ETHでフルノード報酬を獲得できます。"
+        },
+        "pooling" : {
+          "name" : "プール",
+          "description" : "プールに参加して、任意の量のETHをステーキングして報酬を獲得できます。"
+        },
+        "restaking" : {
+          "name" : "再ステーキング",
+          "description" : "リキッドトークンを再ステーキングして、追加の報酬を獲得できます。"
+        }
+      },
+      "howItWorks" : "ETHステーキングの仕組み",
+      "lst" : "リキッドトークンが必要です",
+      "noMinimum" : "最小数量なし",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール"
+        },
+        "kiln_restaking" : {
+          "title" : "Kilnリキット再ステーキング"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "知っておくべき戦略と戦術",
+      "requiredMinimum" : "{{min}}ETHが必要",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自動複利報酬",
+        "basic" : "報酬",
+        "daily" : "毎日の報酬",
+        "eigenlayer_points" : "Eigenlayerポイント",
+        "validator" : "バリデーター報酬"
       }
     },
     "noFundsModal" : {
