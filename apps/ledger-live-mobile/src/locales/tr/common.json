@@ -765,6 +765,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -2335,7 +2341,8 @@
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
-      "stake" : "Stake et"
+      "stake" : "Stake et",
+      "yield" : "Getiri"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2557,8 @@
         "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
         "description" : "Ledger Live, açık kaynaklı bir platformdur.",
         "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
+        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
+        "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2599,7 @@
     "buy" : "Satın Al",
     "walletconnect" : "WalletConnect",
     "stake" : "Stake et",
+    "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
@@ -3132,6 +3141,13 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "memoTag" : {
+        "link" : "Etikete/Memo'ya mı ihtiyacınız var?",
+        "title" : "Etikete/Memo'ya mı ihtiyacınız var?",
+        "description" : "Bu varlığı bir kripto para borsasından almak için bir Etikete/Memo'ya ihtiyacınız olabilir. 1234 gibi herhangi bir sayı kombinasyonunu kullanabilirsiniz.",
+        "cta" : "Anladım",
+        "learnMore" : "Etiketler hakkında daha fazla bilgi edinin"
+      },
       "selectCrypto" : {
         "title" : "Almak istediğiniz kriptoyu seçin"
       },
@@ -4509,7 +4525,7 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce"
+      "pt" : "Portekizce (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4545,11 @@
     "languages" : {
       "english" : "İngilizce",
       "french" : "Fransızca",
-      "spanish" : "İspanyolca"
+      "spanish" : "İspanyolca",
+      "german" : "Almanca",
+      "brazilian" : "Portekizce (Br)",
+      "russian" : "Rusça",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5424,9 @@
     "AccountHeader" : {
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
       "btn" : "Ödüller kazanın"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ Özel doğrulayıcı ekle"
     }
   },
   "tron" : {
@@ -5854,6 +5877,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "İmzalamadan önce Ledger cihazınızdaki işlem bilgilerini iki kez kontrol edin. Solana SPL token'ı işlemlerinin benzersiz özellikleri vardır. Daha fazla bilgi edinmek için şu adresi ziyaret edin: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
@@ -6615,7 +6642,7 @@
     "title" : "Cihazı bağlayın"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller kazanarak bakiyenizi artırın.",
       "tagMinimum" : "{{min}} ETH gerektirir",
@@ -6634,7 +6661,7 @@
         "lido" : {
           "title" : "Lido",
           "description" : "Anında likidite ve günlük ödüller için herhangi bir miktarda ETH stake edin.",
-          "supportLink" : "Lido hakkında daha fazla bilgi alın"
+          "supportLink" : "Lideo hakkında daha fazla bilgi alın"
         },
         "figment" : {
           "title" : "Figment",
@@ -6648,6 +6675,72 @@
           "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödülleri kolayca alın.",
           "supportLink" : "Kiln hakkında daha fazla bilgi edinin"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Staking sağlayıcısı seçin",
+      "category" : {
+        "all" : {
+          "name" : "Tümü",
+          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Live'da mevcuttur."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "ETH stake edip ödül olarak liquid token'lar alabilirsiniz. Yatırım yapmaya ve DeFi faaliyetlerine katılmaya devam edebilirsiniz."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "32 ETH stake ederek ETH cinsinden tam node ödülleri alabilirsiniz."
+        },
+        "pooling" : {
+          "name" : "Havuza Katılma",
+          "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
+        },
+        "restaking" : {
+          "name" : "Yeniden Stake Etme",
+          "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
+        }
+      },
+      "howItWorks" : "ETH staking'de süreç nasıl işler?",
+      "lst" : "Liquid token gerektirir",
+      "noMinimum" : "Alt limit yok",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking havuzu"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid yeniden stake etme"
+        },
+        "kiln" : {
+          "title" : "Kiln ile özel staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO'su"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Bilmeniz gereken stratejiler ve taktikler",
+      "requiredMinimum" : "{{min}} ETH gerektirir",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Otomatik olarak bileştirilen ödüller",
+        "basic" : "Ödüller",
+        "daily" : "Günlük ödüller",
+        "eigenlayer_points" : "Eigenlayer puanları",
+        "validator" : "Doğrulayıcı ödülleri"
       }
     },
     "noFundsModal" : {
