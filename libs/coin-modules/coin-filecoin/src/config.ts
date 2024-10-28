@@ -1,14 +1,14 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type FilecoinConfig  = () => CurrencyConfig & {
+export type FilecoinConfig = () => CurrencyConfig & {
   config_currency_filecoin: {
-    type: "object",
+    type: "object";
     default: {
       status: {
-        type: "active",
-      },
-    },
-  },
+        type: "active";
+      };
+    };
+  };
 };
 
 let coinConfig: FilecoinConfig | undefined;

@@ -1,7 +1,7 @@
 import { InvalidAddress, NotEnoughBalance, AmountRequired } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../transaction";
+import { fromTransactionRaw } from "../bridge/transaction";
 import { InvalidRecipientForTokenTransfer } from "../errors";
 import { getSubAccount } from "../common-logic";
 import BigNumber from "bignumber.js";

@@ -50,8 +50,8 @@
         "default": "./lib-es/api/index.js"
       },
       "./deviceTransactionConfig": {
-        "require": "./lib/deviceTransactionConfig.js",
-        "default": "./lib-es/deviceTransactionConfig.js"
+        "require": "./lib/bridge/deviceTransactionConfig.js",
+        "default": "./lib-es/bridge/deviceTransactionConfig.js"
       },
       "./erc20": {
         "require": "./lib/erc20/tokenAccounts.js",
@@ -74,8 +74,8 @@
         "default": "./lib-es/test/bot-specs.js"
       },
       "./transaction": {
-        "require": "./lib/transaction.js",
-        "default": "./lib-es/transaction.js"
+        "require": "./lib/bridge/transaction.js",
+        "default": "./lib-es/bridge/transaction.js"
       },
       "./types": {
         "require": "./lib/types/index.js",

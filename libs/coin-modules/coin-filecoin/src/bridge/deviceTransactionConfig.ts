@@ -1,6 +1,6 @@
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
+import type { Transaction, TransactionStatus } from "../types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AccountType,
@@ -8,8 +8,8 @@ import {
   expectedToFieldForTokenTransfer,
   getAccountUnit,
   methodToString,
-} from "./bridge/utils";
-import { validateAddress } from "./network";
+} from "./utils";
+import { validateAddress } from "../network";
 
 export type ExtraDeviceTransactionField =
   | {
