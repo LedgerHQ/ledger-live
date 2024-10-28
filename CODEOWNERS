@@ -23,14 +23,9 @@ libs/live-nft-react/                                     @ledgerhq/live-hub
 libs/live-nft/                                           @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
-libs/live-hooks/										 @ledgerhq/live-hub
-libs/live-countervalues/								 @ledgerhq/live-hub
-libs/live-countervalues-react/ 						     @ledgerhq/live-hub
-libs/live-nft/                                           @ledgerhq/live-hub
-libs/live-nft-react/                                     @ledgerhq/live-hub
 libs/live-wallet/                                        @ledgerhq/live-hub
-libs/trustchain/                                         @ledgerhq/live-hub
-libs/hw-trustchain/                                      @ledgerhq/live-hub
+libs/ledger-key-ring-protocol/                           @ledgerhq/live-hub
+libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
 # Blockchain team
 .github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
@@ -77,6 +72,7 @@ libs/ledger-live-common/src/exchange/                                @ledgerhq/p
 libs/exchange-module/                                                @ledgerhq/ptx
 libs/wallet-api-acre-module/                                         @ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              @ledgerhq/ptx
+
 # Wallet API team
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api
 **/Web3AppWebview/                                       @ledgerhq/wallet-api

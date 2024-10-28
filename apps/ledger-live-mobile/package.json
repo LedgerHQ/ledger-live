@@ -68,7 +68,7 @@
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported",
+    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-mobile",
     "assets:replace": "zx ./scripts/replace-assets.mjs"
   },
   "dependencies": {
