@@ -68,7 +68,7 @@ for (const account of accounts) {
         await app.modal.continue();
         await app.receive.expectValidReceiveAddress(account.account.address);
 
-        await app.speculos.expectValidReceiveAddress(account.account);
+        await app.speculos.expectValidAddressDevice(account.account);
         await app.receive.expectApproveLabel();
       },
     );
