@@ -11,7 +11,7 @@ const AES_BLOCK_SIZE = 16;
 const PRIVATE_KEY_SIZE = 32;
 
 export class NobleCryptoSecp256k1 implements Crypto {
-  async randomKeypair(): Promise<KeyPair> {
+  randomKeypair(): KeyPair {
     let pk: Uint8Array;
     do {
       pk = crypto.randomBytes(PRIVATE_KEY_SIZE);
@@ -19,7 +19,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     return this.keypairFromSecretKey(pk);
   }
 
-  async derivePrivate(xpriv: Uint8Array, path: number[]): Promise<KeyPairWithChainCode> {
+  derivePrivate(xpriv: Uint8Array, path: number[]): KeyPairWithChainCode {
     const pk = xpriv.slice(0, 32);
     const chainCode = xpriv.slice(32);
     let node = bip32.fromPrivateKey(Buffer.from(pk), Buffer.from(chainCode));
@@ -33,7 +33,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     };
   }
 
-  async keypairFromSecretKey(secretKey: Uint8Array): Promise<KeyPair> {
+  keypairFromSecretKey(secretKey: Uint8Array): KeyPair {
     return {
       publicKey: secp256k1.publicKeyCreate(secretKey),
       privateKey: secretKey,
@@ -65,17 +65,13 @@ export class NobleCryptoSecp256k1 implements Crypto {
     };
   }
 
-  async sign(message: Uint8Array, keyPair: KeyPair): Promise<Uint8Array> {
+  sign(message: Uint8Array, keyPair: KeyPair): Uint8Array {
     const signature = secp256k1.ecdsaSign(message, keyPair.privateKey).signature;
     // DER encoding
     return this.derEncode(signature.slice(0, 32), signature.slice(32, 64));
   }
 
-  async verify(
-    message: Uint8Array,
-    signature: Uint8Array,
-    publicKey: Uint8Array,
-  ): Promise<boolean> {
+  verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean {
     // DER decoding
     const { R, S } = this.derDecode(signature);
     return secp256k1.ecdsaVerify(this.concat(R, S), message, publicKey);
@@ -121,32 +117,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     return buffer;
   }
 
-  private pad(message: Uint8Array): Uint8Array {
-    // ISO9797M2 implementation
-    const padLength = AES_BLOCK_SIZE - (message.length % AES_BLOCK_SIZE);
-    if (padLength === AES_BLOCK_SIZE) {
-      return message;
-    }
-    const padding = new Uint8Array(padLength);
-    padding[0] = 0x80;
-    padding.fill(0, 1);
-    return this.concat(message, padding);
-  }
-
-  private unpad(message: Uint8Array): Uint8Array {
-    // ISO9797M2 implementation
-    for (let i = message.length - 1; i >= 0; i--) {
-      if (message[i] === 0x80) {
-        return message.slice(0, i);
-      }
-      if (message[i] !== 0x00) {
-        return message;
-      }
-    }
-    throw new Error("Invalid padding");
-  }
-
-  async encrypt(secret: Uint8Array, nonce: Uint8Array, message: Uint8Array): Promise<Uint8Array> {
+  encrypt(secret: Uint8Array, nonce: Uint8Array, message: Uint8Array): Uint8Array {
     const normalizedSecret = this.normalizeKey(secret);
     const normalizeNonce = this.normalizeNonce(nonce);
     const cipher = crypto.createCipheriv("aes-256-gcm", normalizedSecret, normalizeNonce);
@@ -157,11 +128,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     return this.concat(bytes, cipher.getAuthTag());
   }
 
-  async decrypt(
-    secret: Uint8Array,
-    nonce: Uint8Array,
-    ciphertext: Uint8Array,
-  ): Promise<Uint8Array> {
+  decrypt(secret: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array): Uint8Array {
     const normalizedSecret = this.normalizeKey(secret);
     const normalizeNonce = this.normalizeNonce(nonce);
     const encryptedData = ciphertext.slice(0, ciphertext.length - AES_BLOCK_SIZE);
@@ -185,21 +152,18 @@ export class NobleCryptoSecp256k1 implements Crypto {
 16 bytes : Tag/MAC (from AES-256-GCM)
 variable : Encrypted data
    */
-  async encryptUserData(
-    commandStreamPrivateKey: Uint8Array,
-    data: Uint8Array,
-  ): Promise<Uint8Array> {
+  encryptUserData(commandStreamPrivateKey: Uint8Array, data: Uint8Array): Uint8Array {
     // Generate ephemeral key pair
-    const ephemeralKeypair = await this.randomKeypair();
+    const ephemeralKeypair = this.randomKeypair();
 
     // Derive the shared secret using ECDH
-    const sharedSecret = await this.ecdh(
-      await this.keypairFromSecretKey(commandStreamPrivateKey),
+    const sharedSecret = this.ecdh(
+      this.keypairFromSecretKey(commandStreamPrivateKey),
       ephemeralKeypair.publicKey,
     );
 
     // Normalize the shared secret to be used as AES key
-    const aesKey = await this.computeSymmetricKey(sharedSecret, new Uint8Array());
+    const aesKey = this.computeSymmetricKey(sharedSecret, new Uint8Array());
 
     // Generate a random IV (nonce)
     const iv = crypto.randomBytes(16);
@@ -223,10 +187,7 @@ variable : Encrypted data
     return result;
   }
 
-  async decryptUserData(
-    commandStreamPrivateKey: Uint8Array,
-    data: Uint8Array,
-  ): Promise<Uint8Array> {
+  decryptUserData(commandStreamPrivateKey: Uint8Array, data: Uint8Array): Uint8Array {
     const version = data[0];
     if (version !== 0x00) {
       throw new Error("Unsupported format version");
@@ -237,13 +198,13 @@ variable : Encrypted data
     const encryptedData = data.slice(66);
 
     // Derive the shared secret using ECDH
-    const sharedSecret = await this.ecdh(
-      await this.keypairFromSecretKey(commandStreamPrivateKey),
+    const sharedSecret = this.ecdh(
+      this.keypairFromSecretKey(commandStreamPrivateKey),
       ephemeralPublicKey,
     );
 
     // Normalize the shared secret to be used as AES key
-    const aesKey = await this.computeSymmetricKey(sharedSecret, new Uint8Array());
+    const aesKey = this.computeSymmetricKey(sharedSecret, new Uint8Array());
 
     // Decrypt the data using AES-256-GCM
     const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
@@ -253,23 +214,23 @@ variable : Encrypted data
     return new Uint8Array(decryptedData.buffer, decryptedData.byteOffset, decryptedData.byteLength);
   }
 
-  async randomBytes(size: number): Promise<Uint8Array> {
+  randomBytes(size: number): Uint8Array {
     return crypto.randomBytes(size);
   }
 
-  async ecdh(keyPair: KeyPair, publicKey: Uint8Array): Promise<Uint8Array> {
+  ecdh(keyPair: KeyPair, publicKey: Uint8Array): Uint8Array {
     const pubkey = Buffer.from(publicKey);
     const privkey = Buffer.from(keyPair.privateKey);
     const point = ecc.pointMultiply(pubkey, privkey, ecc.isPointCompressed(pubkey))!;
     return point.slice(1);
   }
 
-  async computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Promise<Uint8Array> {
+  computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array) {
     const digest = hmac("sha256", Buffer.from(extra)).update(Buffer.from(privateKey)).digest();
     return digest;
   }
 
-  async hash(message: Uint8Array): Promise<Uint8Array> {
+  hash(message: Uint8Array): Uint8Array {
     return crypto.createHash("sha256").update(Buffer.from(message)).digest();
   }
 

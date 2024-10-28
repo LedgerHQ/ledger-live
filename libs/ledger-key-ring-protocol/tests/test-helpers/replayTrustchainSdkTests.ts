@@ -69,7 +69,7 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
     if (bytes.length !== size) {
       throw new Error("unexpected randomBytes size. Expected " + size + " but got " + bytes.length);
     }
-    return Promise.resolve(bytes);
+    return bytes;
   });
 
   const recordStore = RecordStore.fromString(json.apdus);

@@ -52,26 +52,26 @@ export class StreamTreeCipher {
     nonce: Uint8Array | null = null,
   ): Promise<Uint8Array> {
     if (nonce === null) {
-      nonce = await crypto.randomBytes(16);
+      nonce = crypto.randomBytes(16);
     }
 
     // Generate ephemeral key pair
-    const ephemeralKeyPair = await crypto.randomKeypair();
+    const ephemeralKeyPair = crypto.randomKeypair();
 
     // Get the group public key
     const groupKeypair = await this.getGroupKeypair(tree, path);
 
     // Compute the secret via ECDH
-    const secret = await crypto.ecdh(ephemeralKeyPair, groupKeypair.publicKey);
+    const secret = crypto.ecdh(ephemeralKeyPair, groupKeypair.publicKey);
 
     let encrypted: Uint8Array = new Uint8Array(0);
     switch (this._mode) {
       case StreamTreeCipherMode.AES_256_CBC: {
-        encrypted = await crypto.encrypt(secret, nonce, message);
+        encrypted = crypto.encrypt(secret, nonce, message);
         break;
       }
       case StreamTreeCipherMode.AES_256_GCM: {
-        encrypted = await crypto.encrypt(secret, nonce, message);
+        encrypted = crypto.encrypt(secret, nonce, message);
         break;
       }
       default:
@@ -97,16 +97,16 @@ export class StreamTreeCipher {
 
     // Compute the relative path from the event to the path parameter
     const privateKey = (await this._device.readKey(tree, path)).slice(0, 32);
-    const publicKey = (await crypto.keypairFromSecretKey(privateKey)).publicKey;
+    const publicKey = crypto.keypairFromSecretKey(privateKey).publicKey;
     return { privateKey, publicKey };
   }
 
-  private async encodeData(
+  private encodeData(
     ephemeralPublicKey: Uint8Array,
     nonce: Uint8Array,
     data: Uint8Array,
     message: Uint8Array,
-  ): Promise<Uint8Array> {
+  ) {
     const result = new Uint8Array(1 + 33 + nonce.length + TAG_LENGTH + data.length);
     let offset = 0;
     // Version
@@ -120,7 +120,7 @@ export class StreamTreeCipher {
     offset += nonce.length;
     // Checksum
     if (this._mode == StreamTreeCipherMode.AES_256_CBC) {
-      const checksum = await this.computeChecksum(message);
+      const checksum = this.computeChecksum(message);
       result.set(checksum, offset);
       offset += checksum.length;
     }
@@ -170,20 +170,20 @@ export class StreamTreeCipher {
     const checksum = decodedPayload.checksum;
 
     const sharedKeyPair = await this.getGroupKeypair(tree, path);
-    const secret = await crypto.ecdh(sharedKeyPair, ephemeralKey);
+    const secret = crypto.ecdh(sharedKeyPair, ephemeralKey);
 
     let decrypted = new Uint8Array(0);
     switch (this._mode) {
       case StreamTreeCipherMode.AES_256_CBC: {
-        decrypted = await crypto.decrypt(secret, nonce, encryptedMessage);
-        const computedChecksum = await this.computeChecksum(decrypted);
+        decrypted = crypto.decrypt(secret, nonce, encryptedMessage);
+        const computedChecksum = this.computeChecksum(decrypted);
         if (crypto.to_hex(computedChecksum) !== crypto.to_hex(checksum)) {
           throw new Error("Invalid checksum");
         }
         break;
       }
       case StreamTreeCipherMode.AES_256_GCM: {
-        decrypted = await crypto.decrypt(secret, nonce, encryptedMessage);
+        decrypted = crypto.decrypt(secret, nonce, encryptedMessage);
         break;
       }
       default:
@@ -193,8 +193,8 @@ export class StreamTreeCipher {
     return decrypted;
   }
 
-  private async computeChecksum(message: Uint8Array): Promise<Uint8Array> {
-    const hash = await crypto.hash(message);
+  private computeChecksum(message: Uint8Array): Uint8Array {
+    const hash = crypto.hash(message);
     return hash.slice(0, 16);
   }
 
