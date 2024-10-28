@@ -781,5 +781,23 @@
     "family": "ethereum",
     "color": "#38FF9C",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "zksync",
+    "ticker": "ETH",
+    "name": "ZKsync",
+    "family": "ethereum",
+    "color": "#000000",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "zksync_sepolia",
+    "ticker": "ETH",
+    "name": "ZKsync Sepolia",
+    "family": "ethereum",
+    "color": "#ff0000",
+    "decimals": 18
   }
 ]
