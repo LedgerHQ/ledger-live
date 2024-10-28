@@ -82,6 +82,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyEtherlink: DEFAULT_FEATURE,
   currencyZkSync: DEFAULT_FEATURE,
   currencyZkSyncSepolia: DEFAULT_FEATURE,
+  currencyMantra: DEFAULT_FEATURE,
 };
 
 /**
