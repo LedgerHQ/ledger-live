@@ -33,4 +33,9 @@ export enum DeviceLabels {
   DEPOSIT = "Deposit",
   DELEGATE_FROM = "Delegate from",
   PLEASE_REVIEW = "Please review",
+  VALUE = "Value",
+  CONNECT_WITH = "Connect with",
+  MAKE_SURE_TO_USE = "Make sure to use",
+  YOUR_CRYPTO_ACCOUNTS = "Your crypto accounts",
+  TURN_ON_SYNC = "Turn on sync?",
 }
