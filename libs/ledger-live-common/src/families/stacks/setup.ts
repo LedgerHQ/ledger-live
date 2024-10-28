@@ -4,7 +4,7 @@ import BlockstackApp from "@zondax/ledger-stacks";
 import { Bridge } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
 import { createBridges } from "@ledgerhq/coin-stacks";
-import stacksResolver from "@ledgerhq/coin-stacks/signer/index";
+import stacksResolver, { signMessage } from "@ledgerhq/coin-stacks/signer/index";
 import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
@@ -16,8 +16,12 @@ const createSigner: CreateSigner<StacksSigner> = (transport: Transport) => {
 
 const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
 
+const messageSigner = {
+  signMessage,
+};
+
 const resolver: Resolver = createResolver(createSigner, stacksResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver };
+export { bridge, cliTools, messageSigner, resolver };
