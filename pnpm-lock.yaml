@@ -3836,9 +3836,6 @@ importers:
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@18.2.73)(react@18.2.0)(xstate@4.38.3)
-      '@zondax/cbor':
-        specifier: v8.1.0-zondax-no-bigint
-        version: 8.1.0-zondax-no-bigint
       '@zondax/ledger-casper':
         specifier: ^2.6.1
         version: 2.6.1
@@ -3896,9 +3893,6 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -3908,9 +3902,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      iso-filecoin:
-        specifier: ^4.1.0
-        version: 4.1.0
       isomorphic-ws:
         specifier: ^4.0.1
         version: 4.0.1(ws@7.5.10)
