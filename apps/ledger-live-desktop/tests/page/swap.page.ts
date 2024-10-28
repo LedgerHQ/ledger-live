@@ -35,14 +35,6 @@ export class SwapPage extends AppPage {
   private advancedFeesSelector = this.page.getByTestId("advanced-fee-mode-selector");
   private customFeeTextbox = this.page.getByTestId("currency-textbox");
 
-  // Quote Filter Components
-  private centralisedQuoteFilterButton = this.page.getByTestId("centralised-quote-filter-button");
-  private decentralisedQuoteFilterButton = this.page.getByTestId(
-    "decentralised-quote-filter-button",
-  );
-  private floatQuoteFilterButton = this.page.getByTestId("float-quote-filter-button");
-  private fixedQuoteFilterButton = this.page.getByTestId("fixed-quote-filter-button");
-
   // Quote Components
   private quoteContainer = (providerName: string, exchangeType: string) =>
     this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
@@ -220,6 +212,8 @@ export class SwapPage extends AppPage {
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.fromAccountAmoutInput).fill(amount);
+    //wait for potential origin amount error to be loaded
+    await this.page.waitForTimeout(500);
   }
 
   @step("Select currency to swap to: $1")
@@ -229,22 +223,23 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
-  @step("Verify minimum swap amount error message is displayed")
-  async verifyMinimumSwapAmountErrorMessageIsDisplayed(
+  @step("Verify swap amount error message is displayed: $2")
+  async verifySwapAmountErrorMessageIsDisplayed(
     electronApp: ElectronApplication,
     accountToDebit: Account,
+    message: string | RegExp,
   ) {
     const [, webview] = electronApp.windows();
     if (!accountToDebit.accountType) {
-      const errorMessageRegex = new RegExp(
-        `Minimum \\d+(\\.\\d{1,5})? ${accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
-      );
-      const actualText = await webview.locator('span[color*="error"]').innerText();
-      expect(actualText).toMatch(errorMessageRegex);
-      await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
+      const errorSpan = await webview.locator('span[color*="error"]').textContent();
+      expect(errorSpan).toMatch(message);
+      //that specific amount error doesn't trigger quotes
+      if (message instanceof RegExp) {
+        await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
+      }
     } else {
       await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
-      await expect(webview.locator(this.errorSpan("Not enough balance."))).toBeVisible();
+      await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
   }

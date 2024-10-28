@@ -10,6 +10,8 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 
+const app: AppInfos = AppInfos.EXCHANGE;
+
 const swaps = [
   {
     swap: new Swap(
@@ -111,8 +113,6 @@ const swaps = [
     xrayTicket: "B2CQA-2751",
   },
 ];
-
-const app: AppInfos = AppInfos.EXCHANGE;
 
 for (const { swap, xrayTicket } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
@@ -308,7 +308,40 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
-        await performSwapUntilBalanceErrorMessageStep(app, electronApp, swap);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        const errorMessage = swap.accountToDebit.accountType
+          ? "Not enough balance."
+          : new RegExp(
+              `Minimum \\d+(\\.\\d{1,5})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
+            );
+        await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+          electronApp,
+          swap.accountToDebit,
+          errorMessage,
+        );
+        //following error doesn't appear if accountToDebit has accountType erc20
+        if (!swap.accountToDebit.accountType) {
+          await app.swap.fillInOriginCurrencyAmount(electronApp, "");
+          await app.swap.fillInOriginCurrencyAmount(
+            electronApp,
+            (parseFloat(swap.amount) * 1000).toString(),
+          );
+          await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+            electronApp,
+            swap.accountToDebit,
+            "Not enough balance, including network fee.",
+          );
+          await app.swap.fillInOriginCurrencyAmount(electronApp, "");
+          await app.swap.fillInOriginCurrencyAmount(
+            electronApp,
+            (parseFloat(swap.amount) * 100_000_000).toString(),
+          );
+          await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+            electronApp,
+            swap.accountToDebit,
+            "No quotes available.",
+          );
+        }
       },
     );
   });
@@ -319,6 +352,7 @@ async function performSwapUntilQuoteSelectionStep(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
+  //todo: remove 2 following lines after LIVE-14410
   await app.layout.goToAccounts();
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
   await app.layout.goToSwap();
@@ -328,15 +362,6 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
-}
-
-async function performSwapUntilBalanceErrorMessageStep(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-  await app.swap.verifyMinimumSwapAmountErrorMessageIsDisplayed(electronApp, swap.accountToDebit);
 }
 
 async function performSwapUntilDeviceVerificationStep(
