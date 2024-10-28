@@ -81,7 +81,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2715, B2CQA-2716",
   },
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
     expectedWarningMessage: "Auto-verification not available: carefully verify the address",
     xrayTicket: "B2CQA-2717",
   },
@@ -91,7 +91,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2718",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2", Fee.MEDIUM),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2719",
   },
@@ -101,7 +101,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2720",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", Fee.MEDIUM),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2721",
   },
@@ -471,7 +471,7 @@ for (const transaction of transactionAddressValid) {
     });
 
     test(
-      `Check button enabled (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
+      `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
       {
         annotation: {
           type: "TMS",
