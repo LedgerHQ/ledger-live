@@ -123,6 +123,7 @@ export type CurrencyFeatures = {
   currencyEtherlink: DefaultFeature;
   currencyZkSync: DefaultFeature;
   currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
 };
 
 /**
