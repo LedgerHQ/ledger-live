@@ -139,11 +139,12 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ inputs.slack_notif || github.event_name == 'push' }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
+      status: ${{ needs.detox-tests-ios.outputs.status }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -289,10 +290,11 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ inputs.slack_notif || github.event_name == 'push' }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
+      status: ${{ needs.detox-tests-android.outputs.status }}
     needs: [detox-tests-android]
     steps:
       - name: checkout
@@ -374,7 +376,12 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ failure() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ (failure() && github.event_name == 'push') || inputs.slack_notif  }}
+    env:
+      IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
+      IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
+      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.status }}
+      ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
     steps:
       - name: format message
         uses: actions/github-script@v7
@@ -382,13 +389,14 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = `❌ Detox tests failed ❌`;
+            const workflowLink = `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`;
+            const text = `Detox tests finished: ${workflowLink}`;
             const iOSResult = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": `🍏 iOS Detox tests failed ❌`,
+                  "text": `${process.env.IOS_STATUS !== 'success' ? '🍏 iOS Detox tests failed ❌' : '🍏 iOS Detox tests succeeded ✅'}`,
                   "emoji": true
                 }
               },
@@ -403,16 +411,17 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `<${{ needs.allure-report-ios.outputs.report-url }}|Allure Report iOS>`
+                  "text": process.env.IOS_REPORT_URL ? `<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : 'No Allure Report'
                 }
               }
             ];
+
             const androidResult = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": `🤖 Android Detox tests failed ❌`,
+                  "text": `${process.env.ANDROID_STATUS !== 'success' ? '🤖 Android Detox tests failed ❌' : '🤖 Android Detox tests succeeded ✅'}`,
                   "emoji": true
                 }
               },
@@ -427,10 +436,11 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `<${{ needs.allure-report-android.outputs.report-url }}|Allure Report Android>`
+                  "text": process.env.ANDROID_REPORT_URL ? `<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : 'No Allure Report'
                 }
               }
             ];
+
             const infoBlock = [
               {
                 "type": "divider"
@@ -438,20 +448,17 @@ jobs:
               {
                 "type": "section",
                 "text": {
-                    "type": "mrkdwn",
-                    "text": `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`,
+                  "type": "mrkdwn",
+                  "text": workflowLink
                 }
               }
             ];
-            const blocks = []
-              .concat(${{ needs.detox-tests-ios.outputs.status == 'success' }} ? [] : iOSResult)
-              .concat(${{ needs.detox-tests-android.outputs.status == 'success' }} ? [] : androidResult)
-              .concat(infoBlock);
 
             const result = {
               text,
-              blocks
+              blocks: [...iOSResult, ...androidResult, ...infoBlock]
             };
+
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
       - name: post to a Slack channel
         id: slack
@@ -462,7 +469,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
-        if: contains(fromJson('["develop", "main"]'), github.ref_name)
+        if: ${{ failure() && contains(fromJson('["develop", "main"]'), github.ref_name) }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C05FKJ7DFAP"
