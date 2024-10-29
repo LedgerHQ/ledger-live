@@ -63,14 +63,9 @@ export const GlobalStyle = createGlobalStyle`
     left: 15px;
   }
 
-  .select__placeholder {
-    color ${p => p.theme.colors.palette.text.shade40} !important;
-  }
-
   ::selection {
     background: ${p => rgba(p.theme.colors.wallet, 0.1)};
   }
-
 
   --track-color: rgba(0,0,0,0);
 
