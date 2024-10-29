@@ -56,7 +56,7 @@ export const urls = {
   contactSupport: "https://support.ledger.com/",
   contactSupportWebview: "https://support.ledger.com/article/4423020306705-zd",
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
-  feesMoreInfo: "https://support.ledger.com/?redirect=false",
+  feesMoreInfo: "https://support.ledger.com/article/360021039173-zd",
   feesEIP1559MoreInfo: "https://support.ledger.com/article/6018110754845-zd",
   feesTron: "https://support.ledger.com/article/6331588714141-zd",
   recipientAddressInfo: "https://support.ledger.com/article/4404389453841-zd",
