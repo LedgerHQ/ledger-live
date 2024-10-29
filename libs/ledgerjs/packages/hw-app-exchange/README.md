@@ -58,11 +58,12 @@ docker exec -it ledger-app-dev-tools bash -c 'export BOLOS_SDK="$<NANO_SDK>" && 
 ```
 
 With `<NANO_SDK>` possible value:
-* NanoS: `NANOS_SDK`
-* NanoS+: `NANOSP_SDK`
-* NanoX: `NANOX_SDK`
-* Stax: `STAX_SDK`
-* Flex: `FLEX_SDK`
+
+*   NanoS: `NANOS_SDK`
+*   NanoS+: `NANOSP_SDK`
+*   NanoX: `NANOX_SDK`
+*   Stax: `STAX_SDK`
+*   Flex: `FLEX_SDK`
 
 It is important to set the value of `DEBUG` to 1, as we need the fake Ledger private key in our test.
 
