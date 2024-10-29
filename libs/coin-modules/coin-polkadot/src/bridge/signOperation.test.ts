@@ -1,3 +1,4 @@
+import nock from "nock";
 import BigNumber from "bignumber.js";
 import { u8aConcat } from "@polkadot/util";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
@@ -14,6 +15,16 @@ import {
 import coinConfig from "../config";
 
 jest.mock("../config");
+// Configuration de nock
+nock.disableNetConnect(); // Désactiver les connexions réseau réelles
+nock.enableNetConnect("127.0.0.1"); // Autoriser uniquement les connexions vers localhost
+
+// Log et lever une erreur si une requête non mockée est faite
+nock.emitter.on("no match", req => {
+  console.error(`Requête réseau non mockée détectée : ${req.path}`);
+  throw new Error(`Requête réseau non mockée : ${req.path}`);
+});
+
 const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 const mockRegistry = jest
   .fn()
@@ -24,6 +35,7 @@ const mockPaymentInfo = jest.fn().mockResolvedValue({
   class: "WHATEVER",
   partialFee: "155099814",
 });
+const mockGetMetadata = jest.fn().mockResolvedValue(fixtureTxMaterialWithMetadata);
 describe("signOperation", () => {
   // Global setup
   jest.setTimeout(20000);
@@ -67,6 +79,16 @@ describe("signOperation", () => {
       };
     });
   });
+
+  afterEach(() => {
+    // Vérifie les mocks restants après chaque test
+    const pendingMocks = nock.pendingMocks();
+    if (pendingMocks.length > 0) {
+      console.warn(`Requêtes non utilisées : ${pendingMocks}`);
+    }
+    nock.cleanAll(); // Réinitialise tous les mocks pour éviter les interférences entre tests
+  });
+
   it("returns events in the right order", done => {
     // GIVEN
     const account = createFixtureAccount();
