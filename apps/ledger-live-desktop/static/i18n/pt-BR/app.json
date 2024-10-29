@@ -137,7 +137,9 @@
       "outdated" : "Pausado",
       "error" : "Erro de sincronização",
       "refresh" : "Atualizar",
-      "devTools" : "Ferramentas de desenvolvedor"
+      "devTools" : "Ferramentas de desenvolvedor",
+      "failingSync_one" : "Falha ao sincronizar as contas:",
+      "failingSync_other" : "Falha ao sincronizar as contas:"
     },
     "exchange" : "Negociar",
     "info" : "Informações",
@@ -195,7 +197,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -737,7 +740,8 @@
         "subTitle" : "A integração {{family}} foi feita pelo time {{team}}",
         "description" : "Ledger Live é uma plataforma de código aberto",
         "description2" : "Desenvolvedores de qualquer lugar do mundo podem se integrar com a nossa Ledger Live",
-        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger"
+        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger",
+        "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1122,8 @@
     "optionsMenu" : {
       "title" : "Opções",
       "exportOperations" : "Exportar histórico de operações",
-      "exportToMobile" : "Exportar para dispositivo móvel"
+      "exportToMobile" : "Exportar para dispositivo móvel",
+      "ledgerSync" : "Sincronize suas contas"
     },
     "contextMenu" : {
       "star" : "Favoritar",
@@ -1126,6 +1131,7 @@
       "send" : "Enviar",
       "swap" : "Trocar",
       "stake" : "Aplicar",
+      "yield" : "Rendimento",
       "buy" : "Comprar",
       "sell" : "Vender",
       "edit" : "Editar Conta",
@@ -2252,6 +2258,11 @@
           "description" : "Faça staking dos seus CELO com o validador Ledger by Figment. Ele garante cobertura completa contra cortes, com proteção da pela segurança impenetrável da Ledger."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "Precisa de uma tag ou memo?",
+      "description" : "Talvez você precise de uma <0>Tag/Memo</0> para receber este ativo de uma corretora. Você pode usar qualquer combinação de números, como 1234.",
+      "learnMore" : "Saiba mais sobre a Tag/Memo"
     }
   },
   "send" : {
@@ -2408,8 +2419,12 @@
     "installingLanguage" : "Instalando Idioma",
     "languages" : {
       "english" : "Inglês",
-      "french" : "Francês",
-      "spanish" : "Espanhol"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2771,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Coleção de NFT (Tokens Não Fungíveis)",
-        "description" : "Você pode ver seus NFTs Tezos diretamente pelo Objkt dentro do Ledger Live.",
-        "cta" : "Ver meus NFTs no Objkt"
       }
     }
   },
@@ -3679,17 +3685,21 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "As transações de tokens SPL Solana têm características exclusivas. Para saber mais, visite: <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições recebendo recompensas diárias diretamente no Ledger Live.",
       "tagMinimum" : "Requer {{min}} ETH",
       "kiln_pooling" : {
-        "title" : "Reserva de staking Kiln",
-        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
-        "supportLink" : "Saiba mais sobre a reserva da Kiln"
+        "title" : "Staking em reserva Kiln",
+        "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+        "supportLink" : "Saiba mais sobre as reservas na Kiln"
       },
       "lido" : {
         "title" : "Lido",
@@ -3698,8 +3708,8 @@
       },
       "stader-eth" : {
         "title" : "Stader Labs",
-        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
-        "supportLink" : "Saiba mais sobre a reserva da Stader"
+        "description" : "Sem mínimo de staking. Ganhe rendimentos compostos automaticamente, com acesso instantâneo a liquidez.",
+        "supportLink" : "Saiba mais sobre as reservas na Stader"
       },
       "kiln" : {
         "title" : "Staking dedicado Kiln",
@@ -3712,6 +3722,72 @@
         "tag" : "Requer 32 ETH",
         "description" : "Faça staking de mais de 32 ETH em validadores dedicados e receba recompensas enviadas automaticamente para sua conta.",
         "supportLink" : "Saiba mais sobre o validador Figment"
+      }
+    },
+    "stake" : {
+      "title" : "Selecione o provedor de staking",
+      "category" : {
+        "all" : {
+          "name" : "Todos",
+          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Você pode fazer staking de ETH e receber recompensas em tokens líquidos. Você ainda poderá negociar e participar de atividades DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Você pode fazer um staking de um lote de 32 ETH e receber recompensas de node completo em ETH."
+        },
+        "pooling" : {
+          "name" : "Reservas",
+          "description" : "Você pode participar de uma reserva para fazer staking de qualquer quantia de ETH e receber recompensas."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Você pode reaplicar seu token líquido para obter recompensas adicionais."
+        }
+      },
+      "howItWorks" : "Como funciona o staking de ETH",
+      "lst" : "Requer token líquido",
+      "noMinimum" : "Sem mínimo",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking em reservas Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking líquido de Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking dedicado Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Leia sobre o staking de ETH e as diferentes estratégias",
+      "requiredMinimum" : "Requer {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas compostas automaticamente",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diárias",
+        "eigenlayer_points" : "Pontos Eigenlayer",
+        "validator" : "Recompensas de validador"
       }
     }
   },
@@ -4014,6 +4090,35 @@
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
         "placeholder" : "Info. do provedor de Exchange em formato CAL"
+      },
+      "analyticsConsole" : {
+        "title" : "Permitir o Analytics Console",
+        "desc" : "Exibe e permite a abertura do Analytics Console."
+      },
+      "brazeTools" : {
+        "title" : "Ferramentas Braze",
+        "description" : "Gerar cards Braze locais",
+        "open" : "Abrir",
+        "modal" : {
+          "title" : "Gerar card Braze local",
+          "add" : "Adicionar",
+          "dismiss" : "Ignorar todos os cards",
+          "fields" : {
+            "notification" : "Card de conteúdo de notificação",
+            "action" : "Card de conteúdo de ação",
+            "portfolio" : "Card de conteúdo do portfólio",
+            "title" : "Título",
+            "description" : "Descrição",
+            "order" : "Ordem",
+            "image" : "URL imagem",
+            "mainCta" : "CTA principal",
+            "link" : "Link",
+            "secondaryCta" : "CTA secundário",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Path"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4439,20 @@
       "tokenBlacklist" : {
         "title" : "Tokens ocultos",
         "desc" : "Você pode ocultar tokens acessando a conta principal, clicando com o botão direito do mouse no token e selecionando 'Ocultar token'.",
-        "count" : "{{count}} token",
-        "count_plural" : "{{count}} tokens"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "Coleções NFT ocultas",
         "desc" : "Você pode ocultar coleções NFT clicando no nome da coleção com o botão direito do mouse e selecionando 'Ocultar coleção NFT'.",
-        "count" : "{{count}} coleção",
-        "count_plural" : "{{count}} coleções"
+        "count" : "1 coleção",
+        "count_other" : "{{count}} coleções"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Inscriptions ocultas",
+        "desc" : "Você pode ocultar a Inscription clicando com o botão direito do mouse na inscrição e selecionando “Ocultar Inscription\".",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Conectar node completo de Bitcoin",
@@ -5273,8 +5384,11 @@
       "description" : "A taxa de rede pode estar muito baixa. Aumente-a"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
-      "description" : "Tente reinstalar o aplicativo através do My Ledger"
+      "title" : "{{appName}} não é compatível com a {{productName}}.",
+      "titleOld" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
+      "description" : "<0>Faça mais com nossos dispositivos.</0> Para acessar esse recurso, adquira um de nossos dispositivos compatíveis. Escolha a melhor opção para suas necessidades e desfrute de uma segurança aprimorada.",
+      "exploreCTA" : "Conheça os dispositivos compatíveis",
+      "learnMoreCTA" : "Saiba mais sobre o Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas."
@@ -6026,13 +6140,22 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "Não é seguro enviar para um endereço taproot antes da ativação da mainnet"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
@@ -6240,6 +6363,27 @@
     },
     "PinNotSet" : {
       "title" : "PIN não definido"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "Falha na transmissão da transação",
+      "description" : "Não foi possível transmitir sua transação à rede {{networkName}}. Seu/sua {{currencyName}} não foi transferido(a) e ainda está em sua conta.",
+      "helpCenterTitle" : "Centro de ajuda: ",
+      "helpCenterDesc" : "Visite nossa Centro de Ajuda ou fale conosco através do widget para receber assistência.",
+      "needHelp" : "Precisa de ajuda?",
+      "getHelp" : "Obter ajuda",
+      "technicalErrorTitle" : "Erro técnico: ",
+      "saveLogs" : "Salvar registros"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}.",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} em sua conta.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> ou <cta2>{{cta2Label}}</cta2> {{assetName}} em sua conta.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> {{assetName}} em sua conta.",
+      "ctas" : {
+        "buy" : "Comprar",
+        "swap" : "Trocar",
+        "deposit" : "Depositar"
+      }
     }
   },
   "cryptoOrg" : {
@@ -6276,6 +6420,7 @@
     "cta" : "Tela de bloqueio personalizada",
     "managerCTA" : "Imagem da tela de bloqueio",
     "managerCTARemove" : "Remover",
+    "rotate" : "Girar",
     "steps" : {
       "choose" : {
         "stepLabel" : "Escolher foto",
@@ -6584,6 +6729,11 @@
       "seeMore" : "Ver mais inscrições",
       "empty" : "Para adicionar Inscriptions, basta enviá-las para seu endereço Bitcoin.",
       "receive" : "Receber Inscription",
+      "hide" : "Ocultar inscription",
+      "modal" : {
+        "title" : "Ocultar inscription",
+        "desc" : "Essa ação ocultará a seguinte inscription <0>{{inscriptionName}}</0> da sua conta. Você pode desoculta-las a qualquer momento nas configurações."
+      },
       "discoveryDrawer" : {
         "title" : "Explorar Ordinals",
         "description" : "Você sabe que é possível ter valiosos Sats Raros e Inscriptions?",
@@ -6650,6 +6800,20 @@
           "vintage" : "A aurora do Bitcoin foi marcada por seus 1.000 blocos iniciais. Os sats minerados nesse período são denominados “Vintage”."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "Quantia a enviar:",
+      "of" : "de",
+      "excludeAssets" : "Excluir ativos Ordinals",
+      "selectDesc" : "Selecione o UTXO que deseja usar ao fazer transações. UTXO não verificados não serão usados.",
+      "utxos" : "UTXOs",
+      "learnMore" : "Saiba mais sobre essa configuração",
+      "confirm" : "Confirmar",
+      "address" : "Endereço",
+      "transactionId" : "ID da transação"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "Com transporte LDMK"
   }
 }
