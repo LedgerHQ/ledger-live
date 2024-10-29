@@ -4,7 +4,7 @@ export class Currency {
   constructor(
     public readonly name: string,
     public readonly ticker: string,
-    public readonly currencyId: String,
+    public readonly currencyId: string,
     public readonly speculosApp: AppInfos,
   ) {}
   static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN);

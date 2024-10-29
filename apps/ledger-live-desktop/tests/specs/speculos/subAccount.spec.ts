@@ -86,7 +86,7 @@ for (const token of subAccountReceive) {
         await app.modal.continue();
         await app.receive.expectValidReceiveAddress(token.account.address);
 
-        await app.speculos.expectValidReceiveAddress(token.account);
+        await app.speculos.expectValidAddressDevice(token.account);
         await app.receive.expectApproveLabel();
       },
     );

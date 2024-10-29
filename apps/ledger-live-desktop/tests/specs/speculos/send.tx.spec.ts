@@ -4,6 +4,7 @@ import { Fee } from "../../enum/Fee";
 import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { commandCLI } from "tests/utils/cliUtils";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -80,7 +81,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2715, B2CQA-2716",
   },
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
     expectedWarningMessage: "Auto-verification not available: carefully verify the address",
     xrayTicket: "B2CQA-2717",
   },
@@ -90,7 +91,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2718",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2", Fee.MEDIUM),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2719",
   },
@@ -100,7 +101,7 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2720",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", Fee.MEDIUM),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2721",
   },
@@ -177,8 +178,24 @@ for (const transaction of transactionE2E) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToCredit.currency.currencyId} --index ${transaction.transaction.accountToCredit.index} --add`,
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToCredit.currency.currencyId,
+            index: transaction.transaction.accountToCredit.index,
+            add: true,
+            appjson: "",
+          },
+        },
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -203,7 +220,7 @@ for (const transaction of transactionE2E) {
         await app.send.expectTxInfoValidity(transaction.transaction);
         await app.send.clickContinueToDevice();
 
-        await app.speculos.expectValidTxInfo(transaction.transaction);
+        await app.speculos.signSendTransaction(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
@@ -233,7 +250,15 @@ test.describe("Send token (subAccount) - invalid address input", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenTransactionInvalid.transaction.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${tokenTransactionInvalid.transaction.accountToDebit.currency.currencyId} --index ${tokenTransactionInvalid.transaction.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: tokenTransactionInvalid.transaction.accountToDebit.currency.currencyId,
+          index: tokenTransactionInvalid.transaction.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -267,7 +292,15 @@ for (const transaction of tokenTransactionInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
     test(
@@ -306,7 +339,15 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${tokenTransactionValid.accountToDebit.currency.currencyId} --index ${tokenTransactionValid.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: tokenTransactionValid.accountToDebit.currency.currencyId,
+          index: tokenTransactionValid.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -339,7 +380,15 @@ for (const transaction of transactionsAmountInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -380,7 +429,15 @@ test.describe("Verify send max user flow", () => {
     userdata: "skip-onboarding",
     speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${transactionInputValid.accountToDebit.currency.currencyId} --index ${transactionInputValid.accountToDebit.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: transactionInputValid.accountToDebit.currency.currencyId,
+          index: transactionInputValid.accountToDebit.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 
@@ -414,7 +471,7 @@ for (const transaction of transactionAddressValid) {
     });
 
     test(
-      `Check button enabled (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - valid address input ${transaction.xrayTicket}`,
+      `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
       {
         annotation: {
           type: "TMS",
@@ -443,12 +500,20 @@ for (const transaction of transactionsAddressInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${transaction.transaction.accountToDebit.currency.currencyId} --index ${transaction.transaction.accountToDebit.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
     test(
-      `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit} to ${transaction.transaction.accountToCredit}) - invalid address input error${transaction.xrayTicket}`,
+      `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
       {
         annotation: {
           type: "TMS",

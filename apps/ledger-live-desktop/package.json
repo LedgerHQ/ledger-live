@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.90.0",
+  "version": "2.91.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -163,6 +163,7 @@
     "@jest/globals": "29.7.0",
     "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/native-modules-tools": "workspace:*",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
@@ -229,7 +230,7 @@
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "typescript": "5.4.3",
-    "vite": "4.5.3",
+    "vite": "4.5.5",
     "vite-plugin-electron": "0.4.9",
     "yargs": "17.7.2"
   }

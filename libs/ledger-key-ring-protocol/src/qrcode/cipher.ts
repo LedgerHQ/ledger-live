@@ -4,35 +4,33 @@ import { DecryptedPayload, Encrypted, ExtractEncryptedPayloads, Message } from "
 import { InvalidEncryptionKeyError } from "../errors";
 
 export type Cipher = {
-  encrypt: (obj: object) => Promise<string>;
-  decrypt: (data: string) => Promise<object>;
+  encrypt: (obj: object) => string;
+  decrypt: (data: string) => object;
 };
 
 export type MessageCipher = {
-  encryptMessagePayload: <P extends ExtractEncryptedPayloads<Message>>(
-    payload: P,
-  ) => Promise<Encrypted<P>>;
-  decryptMessage: <M extends Message>(message: M) => Promise<DecryptedPayload<M>>;
+  encryptMessagePayload: <P extends ExtractEncryptedPayloads<Message>>(payload: P) => Encrypted<P>;
+  decryptMessage: <M extends Message>(message: M) => DecryptedPayload<M>;
 };
 
 export function makeCipher(sessionEncryptionKey: Uint8Array): Cipher {
-  async function encrypt(obj: object): Promise<string> {
+  function encrypt(obj: object) {
     const plaintext = JSON.stringify(obj);
     const data = new TextEncoder().encode(plaintext);
-    const nonce = await crypto.randomBytes(16);
-    const ciphertext = await crypto.encrypt(sessionEncryptionKey, nonce, data);
+    const nonce = crypto.randomBytes(16);
+    const ciphertext = crypto.encrypt(sessionEncryptionKey, nonce, data);
     const blob = new Uint8Array(nonce.length + ciphertext.length);
     blob.set(nonce);
     blob.set(ciphertext, nonce.length);
     return Base64.fromByteArray(blob);
   }
 
-  async function decrypt(data: string): Promise<object> {
+  function decrypt(data: string): Promise<object> {
     const blob = Base64.toByteArray(data);
     const nonce = blob.slice(0, 16);
     const ciphertext = blob.slice(16);
     try {
-      const plaintext = await crypto.decrypt(sessionEncryptionKey, nonce, ciphertext);
+      const plaintext = crypto.decrypt(sessionEncryptionKey, nonce, ciphertext);
       const text = new TextDecoder().decode(plaintext);
       return JSON.parse(text);
     } catch (e) {
@@ -44,18 +42,18 @@ export function makeCipher(sessionEncryptionKey: Uint8Array): Cipher {
 }
 
 export function makeMessageCipher(cipher: Cipher): MessageCipher {
-  async function encryptMessagePayload<P extends ExtractEncryptedPayloads<Message>>(
+  function encryptMessagePayload<P extends ExtractEncryptedPayloads<Message>>(
     payload: P,
-  ): Promise<Encrypted<P>> {
-    const encrypted = await cipher.encrypt(payload);
+  ): Encrypted<P> {
+    const encrypted = cipher.encrypt(payload);
     return { encrypted };
   }
 
-  async function decryptMessage<M extends Message>(message: M): Promise<DecryptedPayload<M>> {
+  function decryptMessage<M extends Message>(message: M): DecryptedPayload<M> {
     if (message.message === "InitiateHandshake" || message.message === "Failure") {
       throw new Error(message.message + " is not encrypted");
     }
-    const decrypted = (await cipher.decrypt(message.payload.encrypted)) as DecryptedPayload<M>;
+    const decrypted = cipher.decrypt(message.payload.encrypted) as DecryptedPayload<M>;
     return decrypted;
   }
 

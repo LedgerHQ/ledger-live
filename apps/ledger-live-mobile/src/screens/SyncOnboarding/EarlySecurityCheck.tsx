@@ -155,6 +155,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     });
     resetGenuineCheckState();
     setGenuineCheckStatus("unchecked");
+    setCurrentStep("idle");
+    setTimeout(() => {
+      setCurrentStep("genuine-check");
+    }, 500);
   }, [resetGenuineCheckState]);
 
   const onCancelGenuineCheck = useCallback(() => {

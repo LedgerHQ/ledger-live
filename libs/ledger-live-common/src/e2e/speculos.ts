@@ -356,65 +356,51 @@ export async function pressBoth() {
   });
 }
 
-export async function pressRightUntil(text: string, maxAttempts: number = 10): Promise<string[]> {
+export async function pressUntilTextFound(
+  targetText: string,
+  maxAttempts: number = 10,
+): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  let attempts = 0;
-  let textFound: boolean = false;
-  while (attempts < maxAttempts && !textFound) {
-    const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
-    );
-    const responseData = response.data;
-    const texts = responseData.events.map(event => event.text);
 
-    if (texts[0].includes(text)) {
-      textFound = true;
-      return texts;
+  for (let attempts = 0; attempts < maxAttempts; attempts++) {
+    const texts = await fetchCurrentScreenTexts(speculosApiPort);
+
+    if (texts.includes(targetText)) {
+      return await fetchAllEvents(speculosApiPort);
     }
 
-    await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
-      action: "press-and-release",
-    });
-    attempts++;
-
+    await pressRightButton(speculosApiPort);
     await waitForTimeOut(200);
   }
 
-  if (attempts === maxAttempts) {
-    throw new Error(
-      `ElementNotFoundException: Element with text "${text}" not found on speculos device`,
-    );
-  }
-  await waitForTimeOut(100);
-  return [];
+  throw new Error(
+    `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+  );
 }
 
-export function verifyAddress(address: string, text: string[]): boolean {
-  const textConcat = text.slice(1).join("");
-  return textConcat.includes(address);
+async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
+  const response = await axios.get<ResponseData>(
+    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+  );
+  return response.data.events.map(event => event.text).join("");
 }
 
-export function verifyAmount(amount: string, text: string[]): boolean {
-  const amountDevice = amount.length > 17 ? text[3] : text[1];
-  return amountDevice.includes(amount);
+async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const response = await axios.get<ResponseData>(
+    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+  );
+  return response.data.events.map(event => event.text);
 }
 
-export function verifySwapFeesAmount(currency: string, amount: string, text: string[]): boolean {
-  let amountDevice = text[1];
-  switch (currency) {
-    case "Ethereum":
-      amountDevice = text[3];
-      break;
-    case "Tether USD":
-      amountDevice = text[3];
-      break;
-  }
-  return amountDevice.includes(amount);
+async function pressRightButton(speculosApiPort: number): Promise<void> {
+  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+    action: "press-and-release",
+  });
 }
 
-export function verifyProvider(provider: string, text: string[]): boolean {
-  const providerDevice = text.join("");
-  return providerDevice.includes(provider);
+export function containsSubstringInEvent(targetString: string, events: string[]): boolean {
+  const relevantEvent = events.find(entry => entry.includes(targetString.slice(0, 6)));
+  return !!relevantEvent && events.join("").includes(targetString);
 }
 
 export async function takeScreenshot() {

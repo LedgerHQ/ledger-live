@@ -3,7 +3,22 @@ import { mergeMap } from "rxjs/operators";
 import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
-import { currencyOpt, deviceOpt, inferCurrency } from "../../scan";
+import {
+  CurrencyCommonOpts,
+  currencyOpt,
+  DeviceCommonOpts,
+  deviceOpt,
+  inferCurrency,
+} from "../../scan";
+
+export type GetAddressJobOpts = CurrencyCommonOpts &
+  DeviceCommonOpts &
+  Partial<{
+    path?: string;
+    derivationMode?: string;
+    verify?: boolean;
+  }>;
+
 export default {
   description: "Get an address with the device on specific derivations (advanced)",
   args: [
@@ -26,15 +41,7 @@ export default {
       desc: "also ask verification on device",
     },
   ],
-  job: (
-    arg: Partial<{
-      currency: string;
-      device: string;
-      path: string;
-      derivationMode: string;
-      verify: boolean;
-    }>,
-  ) =>
+  job: (arg: GetAddressJobOpts) =>
     inferCurrency(arg).pipe(
       mergeMap(currency => {
         if (!currency) {

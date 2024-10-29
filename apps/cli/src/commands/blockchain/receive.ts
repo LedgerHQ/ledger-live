@@ -4,6 +4,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { asQR } from "../../qr";
+export type ReceiveJobOpts = ScanCommonOpts & {
+  qr: boolean;
+};
+
 export default {
   description: "Receive crypto-assets (verify on device)",
   args: [
@@ -14,11 +18,7 @@ export default {
       desc: "also display a QR Code",
     },
   ],
-  job: (
-    opts: ScanCommonOpts & {
-      qr: boolean;
-    },
-  ) =>
+  job: (opts: ReceiveJobOpts) =>
     scan(opts).pipe(
       concatMap(account =>
         concat(
