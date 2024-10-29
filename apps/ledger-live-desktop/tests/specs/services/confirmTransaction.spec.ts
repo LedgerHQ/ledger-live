@@ -108,7 +108,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -165,7 +165,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await expect(page.getByText("Approve token")).toBeVisible();
     await modal.continueToSignTransaction();
 
@@ -225,7 +225,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await expect(page.getByText("Approve token")).toBeVisible();
     await modal.continueToSignTransaction();
 
