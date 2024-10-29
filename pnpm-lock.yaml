@@ -3495,7 +3495,7 @@ importers:
         version: 6.0.2
       '@celo/contractkit':
         specifier: ^8.3.0
-        version: 8.3.0
+        version: 8.3.1
       '@celo/utils':
         specifier: ^7.0.0
         version: 7.0.0
@@ -8691,8 +8691,8 @@ packages:
   '@celo/abis@11.0.0':
     resolution: {integrity: sha512-rPjHQxHbWaKQU3MX6hE3A3xRkBFBphjFvfCs4t+19dqPPys6Q+cneHmRWGBX4NLiBh5BLZcNZjQoMf2jxRLMpg==}
 
-  '@celo/abis@12.0.0-canary.35':
-    resolution: {integrity: sha512-6MdEX96TGTaiiqATWDHwdsv3XoUMc0GRr1KVDPH0JKFqxs3/ATnoekAUL+bBn6rzuI+KFnKhRHjcPm4Qjq9EHg==}
+  '@celo/abis@12.0.0-canary.60':
+    resolution: {integrity: sha512-LLyFbVNOzer4nk19q1g9Svxdnptcz7KVZB2yed3kELrhzRA8HqWVGIAFQV8/PR2ObyxdIHhGWpZTjWsWWo0nJw==}
 
   '@celo/base@6.1.0':
     resolution: {integrity: sha512-R6ko2QCfEU32akBsaSNsDYduktgwIKHcJ61SbR7EsXA1VE31/44Qh8kMzfgeahyk375DUCe3pJIKwx5zg1tFHg==}
@@ -8701,8 +8701,8 @@ packages:
     resolution: {integrity: sha512-l+7UpQlVBtdSonmMmRqJikdv7ygI/LfQEjaGoco5yNY0Bs7nD52TcBSiRqu8VV8lmI2UOZisWCjA/GzeQbRM1Q==}
     engines: {node: '>=8.14.2'}
 
-  '@celo/contractkit@8.3.0':
-    resolution: {integrity: sha512-Y2A6Pr+tkb+SYgt09qeF1Z09JZN/AcXXKjHkbc83LEeb6qtCxnWNhxXUY8Mu1Bnk5+Oyf+jrWJPenmuuFIufuQ==}
+  '@celo/contractkit@8.3.1':
+    resolution: {integrity: sha512-23rJHn2QVbX0LXYDDNR7jI1WgmP9EqroAhI+rFVTuPKQyjzV2wJT8cMAmcE84Xc6sAezkiBT6rt2viX2POUiVA==}
     engines: {node: '>=8.14.2'}
 
   '@celo/ledger-token-signer@0.4.0':
@@ -8719,8 +8719,8 @@ packages:
     resolution: {integrity: sha512-B4VJPPje4sNdhOd/l1KOGoWITCU/G5HtNQrqScX74Wh5bwCo3lJEEv1A++7A3t2a6s/NTJ+Jd1S5MMe7Rsh9oA==}
     engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-local@6.0.1':
-    resolution: {integrity: sha512-bSf7qxAs4ONEDrpdJZRqiayWWyKsO7fu2ai8PDQsICnLw8ZsyVP7+oNgr7zberHk6ghdmG1Qp957a0Myw7w6lA==}
+  '@celo/wallet-local@6.0.2':
+    resolution: {integrity: sha512-bB/IMAeBa5qmhaudzy5e0+M9pxxn4e0PqZWQj/TfStKK8VCWbmhC4wPE7JAVgTE46oYDr6jPZIF6cU5ScqxahA==}
     engines: {node: '>=8.14.2'}
 
   '@celo/wallet-remote@6.0.2':
@@ -10669,11 +10669,14 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/cryptoassets@13.3.0':
-    resolution: {integrity: sha512-OeJ1fTd/vuSiwSBkgQTnTrp+VB1S3MsJRwQ2fxRD1eeqyRvmC0rzpklSlx0I3XVsGUU5MHxQ5anfceA6Mxkrrw==}
+  '@ledgerhq/cryptoassets-evm-signatures@13.5.1':
+    resolution: {integrity: sha512-ktyMb4nx6WGzHZPezfiITwZ5NJDa4twRoeGY81Xb/8JQqOtJprfpL89niJZk1teUT5rcwehGRoJJBl4B94Ea8Q==}
 
-  '@ledgerhq/domain-service@1.2.3':
-    resolution: {integrity: sha512-q46q4fxnZgS7Fn+4P+UKJD4ccSZftljq4Jj36J8dNhuj+fdi0JG1B2B1pk4HbfkaWPMcpbNLXx4NyriN7+ncEQ==}
+  '@ledgerhq/cryptoassets@13.6.2':
+    resolution: {integrity: sha512-W++N2aD8eFBb4l7yyl3GGKZ0Nc5okNksQ/jG1lOEJg4ULb8Tp6oy/BW3TAmHHegaz5tdek1j0uQ5C/fD3rop4g==}
+
+  '@ledgerhq/domain-service@1.2.10':
+    resolution: {integrity: sha512-2VFcikYqzWGq6TJyJocC0UqwReD3qLx4ttk/LOr0z+eM1qHS9v32tGEkEzCNycV7wRs39fUi3xRrhs8RT780GA==}
 
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
@@ -10681,15 +10684,15 @@ packages:
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
-  '@ledgerhq/evm-tools@1.2.0':
-    resolution: {integrity: sha512-cuBcACAMyUqYcJGipFJJwTGtKn6mVHInLHgoXPhI+rtbCa89AgehDP+LTb4PiVn0kZQnK7JD1xn6Jyyr/r7gaw==}
+  '@ledgerhq/evm-tools@1.2.4':
+    resolution: {integrity: sha512-3panbP6OWBvU/K5nyYqMsjNiccEniHC8CcS/cpKY3n2I1wbH0gmJD1tw6+fo75kyrSAwaBEwwr5sZ1M0cU6fsA==}
 
   '@ledgerhq/hw-app-eth@https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44':
     resolution: {tarball: https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44}
     version: 6.37.1
 
-  '@ledgerhq/hw-transport-mocker@6.29.2':
-    resolution: {integrity: sha512-s+YcMy0Bna6r1Sm6qiawrd8FBE6AJhUTIUqBxP9n7OuzaIGKdf/Y++16PWfNE1rBuzplbzBDRBLAa4XnQ8uCEA==}
+  '@ledgerhq/hw-transport-mocker@6.29.4':
+    resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     resolution: {integrity: sha512-T/+mGHIiUK/ZQATad6DMDmobCMZ1mVST952009jKzhaE1Et2Uy2secU+QhRkx3BfEAkvwa0zSRSYCL9d20Iqjg==}
@@ -10728,8 +10731,8 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
-  '@ledgerhq/live-env@2.2.0':
-    resolution: {integrity: sha512-8cNEk8nvHcgovyIFujPI7Ynr+eJvNwiOE0regn685i4ISK7T5MTQGoIhONYbBxorWRhQaxXWyT8svB8ZwPgKmQ==}
+  '@ledgerhq/live-env@2.4.0':
+    resolution: {integrity: sha512-hXkaGPdMZUHbbjfezMKfqUa8LA5gnXfYsnGdQcXorRhdRBqc7w5xtYSlc53Vos88mbDij7iL7NrhDXF//IFd5Q==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -10737,14 +10740,14 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/types-cryptoassets@7.15.0':
-    resolution: {integrity: sha512-W+CUX9QFIDdwCQt7HNLdSjufAMipTVLGQtPgrw54oeLqWoE75My9/+JjnuZkZB8fBa052EF4pSBcg3YSUelg0g==}
+  '@ledgerhq/types-cryptoassets@7.16.0':
+    resolution: {integrity: sha512-/ojtZh3uMjkoo2WLumLLmU4TTjwx/lvF8/pD6hcLjKULrM0jj1SvC91wKxSl6aAAUJYf5YH1YlDToByTX7mOSw==}
 
   '@ledgerhq/types-devices@6.25.3':
     resolution: {integrity: sha512-AUThbVlRugs9sVJGbwQuZGXr0ZKDClQySFERhqCyeHKQAdO9TJ9pKFth/9wKKAo5i7fYRC9sx0P5CvPqOwLqIw==}
 
-  '@ledgerhq/types-live@6.50.0':
-    resolution: {integrity: sha512-6+PQ8/vG1inO0z1wauYdtyWZYKClm+rTigdFBrAuUBYkdkvf9j4TRR0Ekn98qXuWYwjq38rTY9M5C/q2L64oZw==}
+  '@ledgerhq/types-live@6.52.4':
+    resolution: {integrity: sha512-cKo+PcGeTxILPeCLdFAu5XiRCPZYDQ6Iz68Y7+fLq13VW8jblpWPHJQybQ2I2gJnzGQle6EPSckfH58qSg6AYA==}
 
   '@ledgerhq/wallet-api-client-react@1.3.12':
     resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
@@ -14043,7 +14046,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -15122,15 +15125,9 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
-<<<<<<< HEAD
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/ethereumjs-util@5.2.0':
-    resolution: {integrity: sha512-qwQgQqXXTRv2h2AlJef+tMEszLFkCB9dWnrJYIdAwqjubERXEc/geB+S3apRw0yQyTVnsBf8r6BhlrE8vx+3WQ==}
-
-=======
->>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
   '@types/events@3.0.3':
     resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
 
@@ -15360,9 +15357,6 @@ packages:
 
   '@types/node@20.8.10':
     resolution: {integrity: sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==}
-
-  '@types/node@22.8.1':
-    resolution: {integrity: sha512-k6Gi8Yyo8EtrNtkHXutUu2corfDf9su95VYVP10aGYMMROM6SAItZi0w1XszA6RtWTHSVp5OeFof37w0IEqCQg==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -16391,7 +16385,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -19631,7 +19625,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -20397,8 +20391,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -20413,8 +20407,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.74.5
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -26304,6 +26298,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -26547,7 +26542,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -26574,8 +26569,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -26585,8 +26580,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -29469,9 +29464,6 @@ packages:
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   undici@5.28.3:
     resolution: {integrity: sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==}
@@ -33095,7 +33087,7 @@ snapshots:
 
   '@celo/abis@11.0.0': {}
 
-  '@celo/abis@12.0.0-canary.35': {}
+  '@celo/abis@12.0.0-canary.60': {}
 
   '@celo/base@6.1.0': {}
 
@@ -33119,14 +33111,14 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/contractkit@8.3.0':
+  '@celo/contractkit@8.3.1':
     dependencies:
       '@celo/abis': 11.0.0
-      '@celo/abis-12': '@celo/abis@12.0.0-canary.35'
+      '@celo/abis-12': '@celo/abis@12.0.0-canary.60'
       '@celo/base': 6.1.0
       '@celo/connect': 6.0.2
       '@celo/utils': 7.0.0
-      '@celo/wallet-local': 6.0.1
+      '@celo/wallet-local': 6.0.2
       '@types/bn.js': 5.1.5
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
@@ -33134,7 +33126,7 @@ snapshots:
       debug: 4.3.4
       fp-ts: 2.1.1
       io-ts: 2.0.1(fp-ts@2.1.1)
-      semver: 7.6.3
+      semver: 7.5.4
       web3: 1.10.4
       web3-core-helpers: 1.10.4
     transitivePeerDependencies:
@@ -33201,7 +33193,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-local@6.0.1':
+  '@celo/wallet-local@6.0.2':
     dependencies:
       '@celo/base': 6.1.0
       '@celo/connect': 6.0.2
@@ -37040,17 +37032,23 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/cryptoassets@13.3.0':
+  '@ledgerhq/cryptoassets-evm-signatures@13.5.1':
     dependencies:
+      '@ledgerhq/live-env': 2.4.0
+      axios: 1.7.7
+
+  '@ledgerhq/cryptoassets@13.6.2':
+    dependencies:
+      '@ledgerhq/live-env': 2.4.0
       axios: 1.7.7
       bs58check: 2.1.2
       invariant: 2.2.4
 
-  '@ledgerhq/domain-service@1.2.3':
+  '@ledgerhq/domain-service@1.2.10':
     dependencies:
       '@ledgerhq/errors': 6.19.1
       '@ledgerhq/logs': 6.12.0
-      '@ledgerhq/types-live': 6.50.0
+      '@ledgerhq/types-live': 6.52.4
       axios: 1.7.7
       eip55: 2.1.1
       react: 18.3.1
@@ -37060,10 +37058,10 @@ snapshots:
 
   '@ledgerhq/errors@6.19.1': {}
 
-  '@ledgerhq/evm-tools@1.2.0':
+  '@ledgerhq/evm-tools@1.2.4':
     dependencies:
-      '@ledgerhq/cryptoassets': 13.3.0
-      '@ledgerhq/live-env': 2.2.0
+      '@ledgerhq/cryptoassets-evm-signatures': 13.5.1
+      '@ledgerhq/live-env': 2.4.0
       axios: 1.7.7
       crypto-js: 4.2.0
       ethers: 5.7.2
@@ -37075,23 +37073,23 @@ snapshots:
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/rlp': 5.7.0
-      '@ledgerhq/cryptoassets': 13.3.0
-      '@ledgerhq/domain-service': 1.2.3
+      '@ledgerhq/cryptoassets': 13.6.2
+      '@ledgerhq/domain-service': 1.2.10
       '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/evm-tools': 1.2.0
+      '@ledgerhq/evm-tools': 1.2.4
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/hw-transport-mocker': 6.29.2
+      '@ledgerhq/hw-transport-mocker': 6.29.4
       '@ledgerhq/logs': 6.12.0
-      '@ledgerhq/types-cryptoassets': 7.15.0
+      '@ledgerhq/types-cryptoassets': 7.16.0
       '@ledgerhq/types-devices': 6.25.3
-      '@ledgerhq/types-live': 6.50.0
+      '@ledgerhq/types-live': 6.52.4
       axios: 1.7.7
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/hw-transport-mocker@6.29.2':
+  '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
       '@ledgerhq/logs': 6.12.0
@@ -37156,7 +37154,7 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
-  '@ledgerhq/live-env@2.2.0':
+  '@ledgerhq/live-env@2.4.0':
     dependencies:
       rxjs: 7.8.1
       utility-types: 3.11.0
@@ -37165,20 +37163,16 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-<<<<<<< HEAD
-  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.3.1)':
-=======
-  '@ledgerhq/types-cryptoassets@7.15.0': {}
+  '@ledgerhq/types-cryptoassets@7.16.0': {}
 
   '@ledgerhq/types-devices@6.25.3': {}
 
-  '@ledgerhq/types-live@6.50.0':
+  '@ledgerhq/types-live@6.52.4':
     dependencies:
       bignumber.js: 9.1.2
       rxjs: 7.8.1
 
-  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.2.0)':
->>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
+  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.3.1)':
     dependencies:
       '@ledgerhq/wallet-api-client': 1.6.0
       react: 18.3.1
@@ -44518,16 +44512,8 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-<<<<<<< HEAD
   '@types/estree@1.0.6': {}
 
-  '@types/ethereumjs-util@5.2.0':
-    dependencies:
-      '@types/bn.js': 5.1.5
-      '@types/node': 20.12.12
-
-=======
->>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
   '@types/events@3.0.3': {}
 
   '@types/express-serve-static-core@4.17.43':
@@ -44776,10 +44762,6 @@ snapshots:
   '@types/node@20.8.10':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.8.1':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -55516,13 +55498,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.8.1
+      '@types/node': 20.12.12
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@27.5.1(metro@0.80.12):
     dependencies:
-      '@types/node': 22.8.1
+      '@types/node': 20.12.12
       merge-stream: 2.0.0
       supports-color: 8.1.1
     optionalDependencies:
@@ -55987,7 +55969,7 @@ snapshots:
       parse5: 6.0.1
       saxes: 5.0.1
       symbol-tree: 3.2.4
-      tough-cookie: 4.1.4
+      tough-cookie: 4.1.3
       w3c-hr-time: 1.0.2
       w3c-xmlserializer: 3.0.0
       webidl-conversions: 7.0.0
@@ -65155,8 +65137,6 @@ snapshots:
   underscore@1.13.6: {}
 
   undici-types@5.26.5: {}
-
-  undici-types@6.19.8: {}
 
   undici@5.28.3:
     dependencies:
