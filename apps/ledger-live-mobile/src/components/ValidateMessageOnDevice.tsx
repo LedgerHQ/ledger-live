@@ -45,11 +45,20 @@ export default function ValidateOnDevice({ device, message: messageData, account
 
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
+  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
+
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       getMessageProperties(messageData).then(setMessageFields);
+    } else if (isACREWithdraw) {
+      setMessageFields(
+        Object.entries(messageData.message).map(([label, value]) => ({
+          label,
+          value,
+        })),
+      );
     }
-  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
+  }, [isACREWithdraw, mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <View style={styles.root}>
@@ -72,7 +81,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
           <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
           <LText semiBold>{mainAccountName}</LText>
         </View>
-        {messageData.standard === "EIP712" ? (
+        {messageData.standard === "EIP712" || isACREWithdraw ? (
           <>
             {messageFields
               ? messageFields.map(({ label, value }) => (
