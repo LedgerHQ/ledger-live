@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Account, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { StacksOperation, Transaction } from "../types";
 import { getAddress } from "./utils/misc";
 

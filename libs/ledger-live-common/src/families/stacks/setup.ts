@@ -1,11 +1,11 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import BlockstackApp from "@zondax/ledger-stacks";
-import { Bridge } from "@ledgerhq/types-live";
-import Transport from "@ledgerhq/hw-transport";
 import { createBridges } from "@ledgerhq/coin-stacks";
 import stacksResolver, { signMessage } from "@ledgerhq/coin-stacks/signer/index";
 import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
+import Transport from "@ledgerhq/hw-transport";
+import { Bridge } from "@ledgerhq/types-live";
+import BlockstackApp from "@zondax/ledger-stacks";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { StacksSigner, Transaction } from "./types";

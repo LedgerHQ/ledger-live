@@ -1,14 +1,14 @@
-import { Observable } from "rxjs";
-import invariant from "invariant";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
-import { UnsignedTokenTransferOptions, makeUnsignedSTXTokenTransfer } from "@stacks/transactions";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { StacksNetwork } from "../network/api.types";
-import { getAddress } from "./utils/misc";
-import { getPath, throwIfError } from "../utils";
-import { StacksSigner, Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { UnsignedTokenTransferOptions, makeUnsignedSTXTokenTransfer } from "@stacks/transactions";
+import invariant from "invariant";
+import { Observable } from "rxjs";
+import { StacksNetwork } from "../network/api.types";
+import { StacksSigner, Transaction } from "../types";
+import { getPath, throwIfError } from "../utils";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { getAddress } from "./utils/misc";
 
 export const buildSignOperation =
   (signerContext: SignerContext<StacksSigner>): AccountBridge<Transaction>["signOperation"] =>

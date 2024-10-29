@@ -1,17 +1,17 @@
 import {
-  AmountRequired,
-  FeeNotLoaded,
-  InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
-  RecipientRequired,
+    AmountRequired,
+    FeeNotLoaded,
+    InvalidAddress,
+    InvalidAddressBecauseDestinationIsAlsoSource,
+    NotEnoughBalance,
+    RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { StacksMemoTooLong } from "../errors";
 import { Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "./utils/addresses";
 import { getAddress } from "./utils/misc";
-import { StacksMemoTooLong } from "../errors";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,

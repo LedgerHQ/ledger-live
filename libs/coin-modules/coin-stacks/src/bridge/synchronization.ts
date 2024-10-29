@@ -1,11 +1,11 @@
-import invariant from "invariant";
-import BigNumber from "bignumber.js";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { mapTxToOps, mapPendingTxToOps, reconciliatePublicKey } from "./utils/misc";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { fetchBalances, fetchBlockHeight, fetchFullMempoolTxs, fetchFullTxs } from "../network/api";
-import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mapPendingTxToOps, mapTxToOps, reconciliatePublicKey } from "./utils/misc";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, rest = {}, derivationMode } = info;

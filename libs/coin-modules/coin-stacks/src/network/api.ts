@@ -1,5 +1,7 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
+import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network/network";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -13,8 +15,6 @@ import {
   TransactionResponse,
   TransactionsResponse,
 } from "./api.types";
-import network from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
 
 const getStacksURL = (path?: string): string => {
   const baseUrl = getEnv("API_STACKS_ENDPOINT");

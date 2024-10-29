@@ -1,8 +1,8 @@
-import { StacksSigner } from "../types";
-import { AddressVersion } from "@stacks/transactions/dist";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { AddressVersion } from "@stacks/transactions/dist";
+import { StacksSigner } from "../types";
 import { getPath, throwIfError } from "../utils";
 
 const resolver = (signerContext: SignerContext<StacksSigner>): GetAddressFn => {

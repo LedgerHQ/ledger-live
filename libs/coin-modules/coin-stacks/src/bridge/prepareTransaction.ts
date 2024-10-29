@@ -1,3 +1,6 @@
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { StacksMainnet } from "@stacks/network";
 import {
   AddressVersion,
   TransactionVersion,
@@ -5,16 +8,13 @@ import {
   estimateTransaction,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
-import invariant from "invariant";
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
-import { StacksMainnet } from "@stacks/network";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "./utils/addresses";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import invariant from "invariant";
 import { StacksNetwork } from "../network/api.types";
-import { findNextNonce } from "./utils/misc";
 import { Transaction } from "../types";
+import { validateAddress } from "./utils/addresses";
+import { findNextNonce } from "./utils/misc";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
