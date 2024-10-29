@@ -239,6 +239,8 @@ export enum SettingsActionTypes {
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
   UNHIDE_NFT_COLLECTION = "UNHIDE_NFT_COLLECTION",
+  UNWHITELIST_NFT_COLLECTION = "UNWHITELIST_NFT_COLLECTION",
+  WHITELIST_NFT_COLLECTION = "WHITELIST_NFT_COLLECTION",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -317,6 +319,8 @@ export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsHideNftCollectionPayload = string;
 export type SettingsUnhideNftCollectionPayload = string;
+export type SettingsWhitelistNftCollectionPayload = string;
+export type SettingsUnwhitelistNftCollectionPayload = string;
 export type SettingsDismissBannerPayload = string;
 export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
@@ -415,6 +419,8 @@ export type SettingsPayload =
   | SettingsBlacklistTokenPayload
   | SettingsHideNftCollectionPayload
   | SettingsUnhideNftCollectionPayload
+  | SettingsWhitelistNftCollectionPayload
+  | SettingsUnwhitelistNftCollectionPayload
   | SettingsDismissBannerPayload
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload

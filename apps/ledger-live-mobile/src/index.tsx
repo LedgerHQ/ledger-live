@@ -91,6 +91,7 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -143,6 +144,8 @@ function App() {
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
+
+  useSyncNFTsWithAccounts();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(

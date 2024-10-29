@@ -81,6 +81,8 @@ import type {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
+  SettingsUnwhitelistNftCollectionPayload,
+  SettingsWhitelistNftCollectionPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -119,6 +121,7 @@ export const INITIAL_STATE: SettingsState = {
   filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
+  whitelistedNftCollections: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
   theme: "system",
@@ -359,7 +362,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const ids = state.hiddenNftCollections;
     return {
       ...state,
-      hiddenNftCollections: [...ids, (action as Action<SettingsHideNftCollectionPayload>).payload],
+      hiddenNftCollections: [
+        ...new Set(ids.concat((action as Action<SettingsHideNftCollectionPayload>).payload)),
+      ],
     };
   },
 
@@ -370,6 +375,27 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       hiddenNftCollections: ids.filter(
         id => id !== (action as Action<SettingsUnhideNftCollectionPayload>).payload,
       ),
+    };
+  },
+
+  [SettingsActionTypes.UNWHITELIST_NFT_COLLECTION]: (state, action) => {
+    const ids = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: ids.filter(
+        id => id !== (action as Action<SettingsUnwhitelistNftCollectionPayload>).payload,
+      ),
+    };
+  },
+  [SettingsActionTypes.WHITELIST_NFT_COLLECTION]: (state, action) => {
+    const collections = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: [
+        ...new Set(
+          collections.concat((action as Action<SettingsWhitelistNftCollectionPayload>).payload),
+        ),
+      ],
     };
   },
 
@@ -804,6 +830,8 @@ export const countervalueFirstSelector = (state: State) => state.settings.graphC
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
+export const whitelistedNftCollectionsSelector = (state: State) =>
+  state.settings.whitelistedNftCollections;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
   () => getEnv("MANAGER_DEV_MODE"),
