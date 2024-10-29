@@ -863,6 +863,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -2829,6 +2832,100 @@ importers:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-stacks:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@stacks/network':
+        specifier: 6.10.0
+        version: 6.10.0
+      '@stacks/transactions':
+        specifier: 6.11.0
+        version: 6.11.0
+      '@zondax/ledger-stacks':
+        specifier: ^1.0.2
+        version: 1.0.4
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      c32check:
+        specifier: 1.1.3
+        version: 1.1.3
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      ripple-address-codec:
+        specifier: ^5.0.0
+        version: 5.0.0
+      ripple-binary-codec:
+        specifier: ^1.3.0
+        version: 1.11.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ripple-keypairs:
+        specifier: ^2.0.0
+        version: 2.0.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.6.2)
+      typescript:
+        specifier: ^5.4.5
+        version: 5.6.2
+
   libs/coin-modules/coin-stellar:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -3665,6 +3762,9 @@ importers:
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../coin-modules/coin-solana
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: workspace:^
         version: link:../coin-modules/coin-stellar
@@ -3800,6 +3900,7 @@ importers:
       '@ledgerhq/wallet-api-server':
         specifier: ^1.6.0
 <<<<<<< HEAD
+<<<<<<< HEAD
         version: 1.6.0(react@18.3.1)(rxjs@7.8.1)
       '@stacks/network':
         specifier: 6.10.0
@@ -3819,6 +3920,9 @@ importers:
         specifier: 6.11.0
         version: 6.11.0
 >>>>>>> d8b9684775 (rebase + regenerate pnpm-lock)
+=======
+        version: 1.6.0(react@18.2.0)(rxjs@7.8.1)
+>>>>>>> 000f34035c (test updated pnpm-lock #2)
       '@stricahq/typhonjs':
         specifier: ^2.0.0
         version: 2.0.0
@@ -3894,9 +3998,6 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
-      c32check:
-        specifier: 1.1.3
-        version: 1.1.3
       casper-js-sdk:
         specifier: ^2.15.2
         version: 2.15.4
@@ -44571,8 +44672,12 @@ snapshots:
       '@ledgerhq/hw-transport': 6.31.4
 =======
       '@babel/runtime': 7.24.1
+<<<<<<< HEAD
       '@ledgerhq/hw-transport': 6.30.6
 >>>>>>> d8b9684775 (rebase + regenerate pnpm-lock)
+=======
+      '@ledgerhq/hw-transport': 6.31.4
+>>>>>>> 000f34035c (test updated pnpm-lock #2)
       '@stacks/transactions': 4.3.8
       varuint-bitcoin: 1.1.2
     transitivePeerDependencies:
@@ -61894,9 +61999,25 @@ snapshots:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   ts-jest@29.1.5(jest@29.7.0)(typescript@5.6.3):
 =======
 <<<<<<< HEAD
+=======
+  ts-jest@29.1.5(jest@29.7.0)(typescript@5.6.2):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.5.4
+      typescript: 5.6.2
+      yargs-parser: 21.1.1
+
+>>>>>>> 000f34035c (test updated pnpm-lock #2)
   ts-loader@9.5.1(typescript@5.1.3)(webpack@5.95.0):
 =======
   ts-jest@29.1.5(jest@29.7.0)(typescript@5.6.2):
