@@ -2289,7 +2289,7 @@
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Max estimated fee",
+        "fees": "Learn more about fees",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
