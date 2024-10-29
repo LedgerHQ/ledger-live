@@ -40,7 +40,7 @@ export const getNFTInfo = async (
     ?.reduce((acc, curr) => (acc += String.fromCharCode(parseInt(curr, 16))), ""); // convert hex to string
 
   return {
-    contractAddress: contractAddress,
+    contractAddress,
     collectionName: collectionName || "",
     data: payload,
   };

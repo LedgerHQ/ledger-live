@@ -2,6 +2,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
@@ -151,7 +152,9 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 export const getFeeData: NodeApi["getFeeData"] = currency =>
   withApi(currency, async api => {
     const block = await api.getBlock("latest");
-    const currencySupports1559 = Boolean(block.baseFeePerGas);
+    const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+      ? false
+      : Boolean(block.baseFeePerGas);
 
     const feeData = await (async (): Promise<
       | {

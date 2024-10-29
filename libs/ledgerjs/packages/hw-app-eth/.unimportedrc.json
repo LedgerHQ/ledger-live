@@ -5,32 +5,6 @@
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker"
   ],
-  "ignoreUnresolved": [
-    "@ethersproject/abstract-signer",
-    "@ethersproject/address",
-    "@ethersproject/base64",
-    "@ethersproject/basex",
-    "@ethersproject/bignumber",
-    "@ethersproject/bytes",
-    "@ethersproject/constants",
-    "@ethersproject/contracts",
-    "@ethersproject/hash",
-    "@ethersproject/hdnode",
-    "@ethersproject/json-wallets",
-    "@ethersproject/keccak256",
-    "@ethersproject/logger",
-    "@ethersproject/properties",
-    "@ethersproject/providers",
-    "@ethersproject/random",
-    "@ethersproject/sha2",
-    "@ethersproject/signing-key",
-    "@ethersproject/solidity",
-    "@ethersproject/strings",
-    "@ethersproject/transactions",
-    "@ethersproject/units",
-    "@ethersproject/wallet",
-    "@ethersproject/web",
-    "@ethersproject/wordlists"
-  ],
+  "ignoreUnresolved": [],
   "ignoreUnimported": []
 }
