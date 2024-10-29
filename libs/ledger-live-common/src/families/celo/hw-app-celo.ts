@@ -19,7 +19,7 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
  * Heavily inspiried by celo-web-wallet
  * https://github.com/celo-tools/celo-web-wallet/blob/master/src/features/ledger/CeloLedgerApp.ts
  */
- export default class Celo extends Eth {
+export default class Celo extends Eth {
   private config?: Promise<{ version: string }>;
 
   async signTransaction(
@@ -90,7 +90,7 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
 
   // this works for celo-legacy
   // this is code written a long time ago in a galaxy far far away
-  // do not touch (pretty please) 
+  // do not touch (pretty please)
   // CAN BE REMOVED AFTER FEB 2025 (CELO L2 transition)
   private async __dangerous__signTransactionLegacy(
     path: string,
