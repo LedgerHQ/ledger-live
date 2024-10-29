@@ -2663,10 +2663,10 @@ importers:
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
         specifier: ^0.3.7
-        version: 0.3.8(@solana/web3.js@1.77.3)
+        version: 0.3.8(@solana/web3.js@1.77.4)
       '@solana/web3.js':
-        specifier: 1.77.3
-        version: 1.77.3
+        specifier: 1.77.4
+        version: 1.77.4
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3885,8 +3885,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       '@solana/web3.js':
-        specifier: 1.77.3
-        version: 1.77.3
+        specifier: 1.77.4
+        version: 1.77.4
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -13294,8 +13294,8 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.47.4
 
-  '@solana/web3.js@1.77.3':
-    resolution: {integrity: sha512-PHaO0BdoiQRPpieC1p31wJsBaxwIOWLh8j2ocXNKX8boCQVldt26Jqm2tZE4KlrvnCIV78owPLv1pEUgqhxZ3w==}
+  '@solana/web3.js@1.77.4':
+    resolution: {integrity: sha512-XdN0Lh4jdY7J8FYMyucxCwzn6Ga2Sr1DHDWRbqVzk7ZPmmpSPOVWHzO67X1cVT+jNi1D6gZi2tgjHgDPuj6e9Q==}
 
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
@@ -15285,9 +15285,6 @@ packages:
 
   '@types/node@20.8.10':
     resolution: {integrity: sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==}
-
-  '@types/node@22.8.1':
-    resolution: {integrity: sha512-k6Gi8Yyo8EtrNtkHXutUu2corfDf9su95VYVP10aGYMMROM6SAItZi0w1XszA6RtWTHSVp5OeFof37w0IEqCQg==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -29375,9 +29372,6 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
   undici@5.28.3:
     resolution: {integrity: sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==}
     engines: {node: '>=14.0'}
@@ -41021,7 +41015,7 @@ snapshots:
   '@solana/buffer-layout-utils@0.2.0':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.77.3
+      '@solana/web3.js': 1.77.4
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -41033,18 +41027,18 @@ snapshots:
     dependencies:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@solana/spl-token@0.3.8(@solana/web3.js@1.77.3)':
+  '@solana/spl-token@0.3.8(@solana/web3.js@1.77.4)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.77.3
+      '@solana/web3.js': 1.77.4
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - utf-8-validate
 
-  '@solana/web3.js@1.77.3':
+  '@solana/web3.js@1.77.4':
     dependencies:
       '@babel/runtime': 7.24.1
       '@noble/curves': 1.4.0
@@ -44578,10 +44572,6 @@ snapshots:
   '@types/node@20.8.10':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.8.1':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -55308,13 +55298,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.8.1
+      '@types/node': 20.12.12
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@27.5.1(metro@0.80.12):
     dependencies:
-      '@types/node': 22.8.1
+      '@types/node': 20.12.12
       merge-stream: 2.0.0
       supports-color: 8.1.1
     optionalDependencies:
@@ -64941,8 +64931,6 @@ snapshots:
   underscore@1.13.6: {}
 
   undici-types@5.26.5: {}
-
-  undici-types@6.19.8: {}
 
   undici@5.28.3:
     dependencies:
