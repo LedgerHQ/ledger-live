@@ -371,6 +371,11 @@ export const trackWithRoute = (
   };
   track(event, newProperties, mandatory);
 };
+
+export const flush = () => {
+  segmentClient?.flush();
+};
+
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
