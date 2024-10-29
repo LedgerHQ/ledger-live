@@ -2,4 +2,7 @@
 "live-mobile": patch
 ---
 
-Hide Backup section during onboarding on Flex and Stax
+Stax/Flex onboarding:
+  - Hide "Backup with Recover" section
+  - Auto redirect to Recover upsell between the onboarding and the post onboarding
+

@@ -255,6 +255,7 @@ export type SettingsState = {
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
+  hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
     hasClosedNetworkBanner: boolean;

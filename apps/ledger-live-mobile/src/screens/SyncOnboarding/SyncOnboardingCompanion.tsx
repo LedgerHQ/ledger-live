@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -149,6 +149,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const dispatchRedux = useDispatch();
   const deviceInitialApps = useFeature("deviceInitialApps");
   const recoverUpsellRedirection = useFeature("recoverUpsellRedirection");
+  const hasBackupStep = !recoverUpsellRedirection?.enabled;
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const deviceName = device.deviceName || productName;
@@ -370,20 +371,19 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
       if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
         // device was just seeded
-        setCompanionStepKey(
-          recoverUpsellRedirection?.enabled ? CompanionStepKey.Apps : CompanionStepKey.Backup,
-        );
+        setCompanionStepKey(hasBackupStep ? CompanionStepKey.Backup : CompanionStepKey.Apps);
         seededDeviceHandled.current = true;
         return;
       } else if (
         deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
       ) {
-        if (recoverUpsellRedirection?.enabled) {
-          // switch to the apps step
+        // device was already seeded
+        if (hasBackupStep) {
           __DEV__
             ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
             : setCompanionStepKey(CompanionStepKey.Apps);
         } else {
+          // switch to the apps step
           setCompanionStepKey(CompanionStepKey.Apps);
         }
         seededDeviceHandled.current = true;
@@ -442,7 +442,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   }, [
     deviceOnboardingState,
     notifyEarlySecurityCheckShouldReset,
-    recoverUpsellRedirection,
+    hasBackupStep,
     shouldRestoreApps,
   ]);
 
@@ -649,9 +649,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
-        ...(recoverUpsellRedirection?.enabled
-          ? []
-          : [
+        ...(hasBackupStep
+          ? [
               {
                 key: CompanionStepKey.Backup,
                 title: t("syncOnboarding.backup.title"),
@@ -663,7 +662,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   />
                 ),
               },
-            ]),
+            ]
+          : []),
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -697,7 +697,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [
       t,
       productName,
-      recoverUpsellRedirection?.enabled,
+      hasBackupStep,
       deviceInitialApps?.enabled,
       device,
       seedPathStatus,
