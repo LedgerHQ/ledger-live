@@ -336,12 +336,21 @@ export class Account {
     undefined,
     1,
   );
+
   static readonly POL_1 = new Account(
     Currency.POL,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
     undefined,
     0,
+  );
+
+  static readonly POL_2 = new Account(
+    Currency.POL,
+    "Polygon 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+    undefined,
+    1,
   );
 
   static readonly BSC_1 = new Account(

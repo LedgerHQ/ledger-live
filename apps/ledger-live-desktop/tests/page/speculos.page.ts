@@ -2,12 +2,9 @@ import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import {
   pressBoth,
-  pressRightUntil,
-  verifyAddress as assertAddressesEquality,
-  verifyAmount,
-  verifySwapFeesAmount,
-  verifyProvider,
+  pressUntilTextFound,
   waitFor,
+  containsSubstringInEvent,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
 import { expect } from "@playwright/test";
@@ -16,136 +13,120 @@ import { Delegate } from "tests/models/Delegate";
 import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Currency } from "tests/enum/Currency";
 import { Swap } from "tests/models/Swap";
-import { AppInfos } from "tests/enum/AppInfos";
 import { extractNumberFromString } from "tests/utils/textParserUtils";
-
 export class SpeculosPage extends AppPage {
-  @step("Verify receive address correctness")
-  async expectValidReceiveAddress(account: Account) {
-    const { receivePattern } = account.currency.speculosApp || {};
-    if (!receivePattern) {
-      return;
+  @step("Verify receive address correctness on device")
+  async expectValidAddressDevice(account: Account) {
+    let deviceLabels: string[];
+
+    switch (account.currency) {
+      case Currency.SOL:
+        deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+        break;
+      case Currency.DOT:
+      case Currency.ATOM:
+        deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
+        break;
+      default:
+        deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+        break;
     }
-    await waitFor(receivePattern[0]);
-    const actualAddress = await pressRightUntil(receivePattern[0]);
-    expect(assertAddressesEquality(account.address, actualAddress)).toBe(true);
-    await pressRightUntil(receivePattern[1]);
+
+    await waitFor(deviceLabels[0]);
+    const events = await pressUntilTextFound(deviceLabels[1]);
+    const isAddressCorrect = containsSubstringInEvent(account.address, events);
+    expect(isAddressCorrect).toBeTruthy();
     await pressBoth();
   }
 
-  @step("Verify transaction info on device")
-  async expectValidTxInfo(tx: Transaction) {
-    const { sendPattern } = tx.accountToDebit.currency.speculosApp || {};
-    if (!sendPattern) {
-      return;
+  @step("Activate Ledger Sync")
+  async activateLedgerSync() {
+    await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+    await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+    await pressBoth();
+    await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await pressBoth();
+  }
+
+  @step("Send method - EVM")
+  async sendEVM(tx: Transaction) {
+    const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+    const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+    expect(isAmountCorrect).toBeTruthy();
+    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+    expect(isAddressCorrect).toBeTruthy();
+
+    await pressBoth();
+  }
+
+  @step("Send method - BTC-based coin")
+  async sendBTCBasedCoin(tx: Transaction) {
+    let deviceLabel: string;
+
+    switch (tx.accountToDebit.currency) {
+      case Currency.BTC:
+        deviceLabel = DeviceLabels.CONTINUE;
+        break;
+      case Currency.DOGE:
+        deviceLabel = DeviceLabels.ACCEPT;
+        break;
+      default:
+        throw new Error(`Not a BTC-based coin: ${tx.accountToDebit.currency}`);
     }
-    const amountScreen = await pressRightUntil(sendPattern[0]);
-    expect(verifyAmount(tx.amount, amountScreen)).toBe(true);
-    const addressScreen = await pressRightUntil(sendPattern[1]);
-    expect(assertAddressesEquality(tx.accountToCredit.address, addressScreen)).toBe(true);
-    await pressRightUntil(sendPattern[2]);
+
+    const events = await pressUntilTextFound(deviceLabel);
+    const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+    expect(isAmountCorrect).toBeTruthy();
+    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+    expect(isAddressCorrect).toBeTruthy();
     await pressBoth();
-    if (tx.accountToDebit.currency.name === Currency.DOGE.name) {
-      await waitFor("Confirm");
-      await pressRightUntil(DeviceLabels.ACCEPT);
-      await pressBoth();
+    await waitFor(DeviceLabels.CONFIRM);
+    await pressUntilTextFound(DeviceLabels.ACCEPT);
+    await pressBoth();
+  }
+
+  @step("Sign Send Transaction")
+  async signSendTransaction(tx: Transaction) {
+    const currencyName = tx.accountToDebit.currency;
+    switch (currencyName) {
+      case Currency.sepETH:
+        await this.sendEVM(tx);
+        break;
+      case Currency.BTC:
+      case Currency.DOGE:
+        await this.sendBTCBasedCoin(tx);
+        break;
+      default:
+        throw new Error(`Unsupported currency: ${currencyName}`);
     }
-  }
-
-  @step("Press right on the device until specified text appears, then confirm the operation")
-  async confirmOperationOnDevice(text: string) {
-    await pressRightUntil(text);
-    await pressBoth();
-  }
-
-  @step("Press right on the device until specified text appears")
-  async clickNextUntilText(text: string) {
-    await pressRightUntil(text);
-  }
-
-  @step("Verify amounts and reject swap")
-  async verifyAmountsAndRejectSwap(swap: Swap) {
-    await this.verifySwapData(swap);
-    await pressRightUntil(DeviceLabels.REJECT);
-    await pressBoth();
-  }
-
-  @step("Verify amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: Swap) {
-    await this.verifySwapData(swap);
-    await pressRightUntil(DeviceLabels.ACCEPT);
-    await pressBoth();
-  }
-
-  async verifySwapData(swap: Swap) {
-    const { sendPattern } = AppInfos.EXCHANGE;
-    if (!sendPattern) {
-      return;
-    }
-    const sendAmountScreen = await pressRightUntil(sendPattern[0]);
-    expect(
-      verifyAmount(`${swap.accountToDebit.currency.ticker} ${swap.amount}`, sendAmountScreen),
-    ).toBeTruthy();
-    const getAmountScreen = await pressRightUntil(sendPattern[1]);
-    this.verifySwapGetAmountScreen(swap, getAmountScreen);
-    this.verifySwapFeesAmountScreen(swap, await pressRightUntil(sendPattern[2]));
-  }
-
-  verifySwapGetAmountScreen(swap: Swap, getAmountScreen: string[]) {
-    swap.amountToReceive =
-      extractNumberFromString(swap.amountToReceive).length < 19
-        ? extractNumberFromString(swap.amountToReceive)
-        : extractNumberFromString(swap.amountToReceive).substring(0, 18);
-    expect(verifyAmount(`${swap.amountToReceive}`, getAmountScreen)).toBeTruthy();
-  }
-
-  verifySwapFeesAmountScreen(swap: Swap, feesAmountScreen: string[]) {
-    const feesAmount =
-      extractNumberFromString(swap.feesAmount).length < 19
-        ? extractNumberFromString(swap.feesAmount)
-        : extractNumberFromString(swap.feesAmount).substring(0, 18);
-    expect(
-      verifySwapFeesAmount(swap.accountToDebit.currency.name, feesAmount, feesAmountScreen),
-    ).toBeTruthy();
   }
 
   @step("Delegate Method - Solana")
-  async delegateSolana(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    await pressRightUntil(delegatePattern[2]);
+  async delegateSolana() {
+    await waitFor(DeviceLabels.DELEGATE_FROM);
+    await pressUntilTextFound(DeviceLabels.APPROVE);
     await pressBoth();
   }
 
   @step("Delegate Method - Near")
   async delegateNear(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    const provider = await pressRightUntil(delegatePattern[1]);
-    expect(verifyProvider(delegatingAccount.provider, provider)).toBe(true);
-    await pressRightUntil(delegatePattern[2]);
+    await waitFor(DeviceLabels.VIEW_HEADER);
+    const events = await pressUntilTextFound(DeviceLabels.CONTINUE_TO_ACTION);
+    const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
+    expect(isProviderCorrect).toBeTruthy();
     await pressBoth();
-    await waitFor(delegatePattern[3]);
-    await pressRightUntil(delegatePattern[7]);
+    await waitFor(DeviceLabels.VIEW_ACTION);
+    await pressUntilTextFound(DeviceLabels.SIGN);
     await pressBoth();
   }
 
   @step("Delegate Method - Cosmos")
   async delegateCosmos(delegatingAccount: Delegate) {
-    const { delegatePattern } = delegatingAccount.account.currency.speculosApp || {};
-    if (!delegatePattern) {
-      return;
-    }
-    await waitFor(delegatePattern[0]);
-    const amount = await pressRightUntil(delegatePattern[1]);
-    expect(verifyAmount(delegatingAccount.amount, amount)).toBe(true);
-    await pressRightUntil(delegatePattern[2]);
+    await waitFor(DeviceLabels.PLEASE_REVIEW);
+    const events = await pressUntilTextFound(DeviceLabels.CAPS_APPROVE);
+    const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
+    expect(isAmountCorrect).toBeTruthy();
     await pressBoth();
   }
 
@@ -154,7 +135,7 @@ export class SpeculosPage extends AppPage {
     const currencyName = delegatingAccount.account.currency.name;
     switch (currencyName) {
       case Account.SOL_1.currency.name:
-        await this.delegateSolana(delegatingAccount);
+        await this.delegateSolana();
         break;
       case Account.NEAR_1.currency.name:
         await this.delegateNear(delegatingAccount);
@@ -165,5 +146,46 @@ export class SpeculosPage extends AppPage {
       default:
         throw new Error(`Unsupported currency: ${currencyName}`);
     }
+  }
+
+  @step("Verify amounts and accept swap")
+  async verifyAmountsAndAcceptSwap(swap: Swap) {
+    const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+    await this.verifySwapData(swap, events);
+    await pressBoth();
+  }
+
+  @step("Verify amounts and reject swap")
+  async verifyAmountsAndRejectSwap(swap: Swap) {
+    const events = await pressUntilTextFound(DeviceLabels.REJECT);
+    await this.verifySwapData(swap, events);
+    await pressBoth();
+  }
+
+  async verifySwapData(swap: Swap, events: string[]) {
+    const sendAmountScreen = containsSubstringInEvent(swap.amount, events);
+    expect(sendAmountScreen).toBeTruthy();
+    this.verifySwapGetAmountScreen(swap, events);
+    this.verifySwapFeesAmountScreen(swap, events);
+  }
+
+  verifySwapGetAmountScreen(swap: Swap, events: string[]) {
+    const parsedAmountToReceive = extractNumberFromString(swap.amountToReceive);
+    swap.amountToReceive =
+      parsedAmountToReceive.length < 19
+        ? parsedAmountToReceive
+        : parsedAmountToReceive.substring(0, 18);
+
+    const receivedGetAmount = containsSubstringInEvent(`${swap.amountToReceive}`, events);
+    expect(receivedGetAmount).toBeTruthy();
+  }
+
+  verifySwapFeesAmountScreen(swap: Swap, events: string[]) {
+    const parsedFeesAmount = extractNumberFromString(swap.feesAmount);
+    swap.feesAmount =
+      parsedFeesAmount.length < 19 ? parsedFeesAmount : parsedFeesAmount.substring(0, 18);
+
+    const receivedFeesAmount = containsSubstringInEvent(swap.feesAmount, events);
+    expect(receivedFeesAmount).toBeTruthy();
   }
 }

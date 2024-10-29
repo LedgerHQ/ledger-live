@@ -220,7 +220,7 @@ for (const transaction of transactionE2E) {
         await app.send.expectTxInfoValidity(transaction.transaction);
         await app.send.clickContinueToDevice();
 
-        await app.speculos.expectValidTxInfo(transaction.transaction);
+        await app.speculos.signSendTransaction(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);

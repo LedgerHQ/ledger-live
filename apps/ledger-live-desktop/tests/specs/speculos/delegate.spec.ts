@@ -14,11 +14,10 @@ const e2eDelegationAccounts = [
     delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2742",
   },
-  //ToDo: enable when speculos interactions are refactored https://ledgerhq.atlassian.net/browse/QAA-306
-  // {
-  //   delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
-  //   xrayTicket: "B2CQA-2741",
-  // },
+  {
+    delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
+    xrayTicket: "B2CQA-2741",
+  },
 ];
 
 const validators = [
