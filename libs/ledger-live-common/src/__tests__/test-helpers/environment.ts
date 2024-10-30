@@ -89,6 +89,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "mantra",
   "vechain",
   "casper",
   "neon_evm",
@@ -101,7 +102,6 @@ setSupportedCurrencies([
   "scroll_sepolia",
   "ton",
   "etherlink",
-  "mantra",
 ]);
 LiveConfig.setConfig(liveConfig);
 
