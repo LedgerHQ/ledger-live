@@ -258,6 +258,7 @@ const GraphCardHeader = ({
         event="SwitchAccountCurrency"
         eventProperties={{ useCounterValue: shouldUseCounterValue }}
         onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
+        testID={`account-graph-${account.id}`}
       >
         <Flex flexDirection="row" alignItems="center" width="100%">
           <Box maxWidth={"50%"}>
@@ -273,7 +274,13 @@ const GraphCardHeader = ({
         </Flex>
 
         <Flex flexDirection="row" mb={4}>
-          <Text variant={"large"} fontWeight={"medium"} color={"neutral.c70"} numberOfLines={1}>
+          <Text
+            variant={"large"}
+            fontWeight={"medium"}
+            color={"neutral.c70"}
+            numberOfLines={1}
+            testID={`account-balance-${account.id}`}
+          >
             {typeof items[1]?.value === "number" ? (
               <CurrencyUnitValue {...items[1]} />
             ) : (

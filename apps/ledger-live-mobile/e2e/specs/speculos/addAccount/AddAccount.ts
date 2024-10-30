@@ -19,12 +19,13 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
 
       deviceNumber = await app.common.addSpeculos(currency.speculosApp.name);
 
-      await app.addAccount.startAccountsDiscovery();
-      await app.addAccount.expectAccountDiscovery(currency.name, currency.currencyId);
-      await app.addAccount.finishAccountsDiscovery();
-      await app.addAccount.tapSuccessCta();
-      await app.account.waitForAccountPageToLoad(currency.name);
-      await app.account.expectAccountBalanceVisible();
+      const accountId = await app.addAccount.addFirstAccount(currency);
+      await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);
+      await app.assetAccountsPage.expectAccountsBalanceVisible();
+      await app.assetAccountsPage.goToAccount(accountId);
+      await app.account.expectAccountBalanceVisible(accountId);
+      await app.account.expectOperationHistoryVisible(accountId);
+      await app.account.expectAddressIndex(0);
     });
 
     afterAll(async () => {

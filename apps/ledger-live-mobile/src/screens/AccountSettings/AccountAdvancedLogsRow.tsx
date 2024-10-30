@@ -22,6 +22,7 @@ const AccountAdvancedLogsRow = ({ navigation, account }: Props) => {
   return (
     <SettingsRow
       event="AccountAdvancedLogsRow"
+      testID="account-advanced-log-row"
       title={<Trans i18nKey="account.settings.advanced.title" />}
       arrowRight
       onPress={() =>

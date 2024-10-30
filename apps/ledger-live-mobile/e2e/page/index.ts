@@ -1,3 +1,4 @@
+import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
@@ -38,6 +39,7 @@ type ApplicationOptions = {
 };
 
 export class Application {
+  public assetAccountsPage = new AssetAccountsPage();
   public account = new AccountPage();
   public accounts = new AccountsPage();
   public addAccount = new AddAccountDrawer();

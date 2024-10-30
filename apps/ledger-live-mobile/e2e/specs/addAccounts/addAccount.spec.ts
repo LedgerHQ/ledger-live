@@ -33,14 +33,14 @@ describe("Add account from modal", () => {
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.startAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 1);
+    await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 0);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();
   });
 
   $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
-    await app.account.waitForAccountPageToLoad(testedCurrency);
-    await app.account.expectAccountBalance(expectedBalance);
+    await app.assetAccountsPage.waitForAccountPageToLoad(testedCurrency);
+    await app.assetAccountsPage.expectAccountsBalance(expectedBalance);
   });
 });

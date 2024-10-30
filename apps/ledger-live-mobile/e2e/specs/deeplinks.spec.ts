@@ -24,7 +24,7 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open Account page", async () => {
-    await app.account.openViaDeeplink();
+    await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
   });
 
@@ -34,13 +34,13 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
-    await app.account.openViaDeeplink(ethereumLong);
-    await app.account.waitForAccountAssetsToLoad(ethereumLong);
+    await app.assetAccountsPage.openViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
-    await app.account.openViaDeeplink(bitcoinLong);
-    await app.account.waitForAccountAssetsToLoad(bitcoinLong);
+    await app.assetAccountsPage.openViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.waitForAccountAssetsToLoad(bitcoinLong);
   });
 
   it("should open Custom Lock Screen page", async () => {
