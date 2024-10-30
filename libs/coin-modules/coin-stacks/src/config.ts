@@ -19,7 +19,7 @@ export const setCoinConfig = (config: StacksCoinConfig): void => {
 
 export const getCoinConfig = (): ReturnType<StacksCoinConfig> => {
   if (!coinConfig?.()) {
-    throw new Error("Hedera module config not set");
+    throw new Error("Stacks module config not set");
   }
 
   return coinConfig();

@@ -20,9 +20,11 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
+    "src/network/index.ts",
     "src/signer/signMessage.ts"
   ],
   "ignoreUnused": [
+    "@ledgerhq/types-cryptoassets",
     "ripple-address-codec",
     "ripple-binary-codec"
   ]
