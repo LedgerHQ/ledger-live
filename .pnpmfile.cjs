@@ -60,7 +60,7 @@ function readPackage(pkg, context) {
         "@emotion/native": "*",
       }),
       addPeerDependencies("@storybook/addon-react-native-web", {
-        webpack: "*",
+        webpack: "5",
       }),
       /* @celo/* packages */
       addDependencies(/@celo\/(?!base)+/, { "@celo/base": `^${pkg.version}` }),
@@ -143,9 +143,15 @@ function readPackage(pkg, context) {
       addPeerDependencies("expo-modules-core", {
         "react-native": "*",
       }),
-      addPeerDependencies("expo", {
-        "react-native": "*",
-        react: "*",
+      addPeerDependencies("expo@49.0.23", {
+        "react-native": "0.72.10",
+        react: "18.2.0",
+        "expo-modules-autolinking": "*",
+        "expo-modules-core": "*",
+      }),
+      addPeerDependencies("expo@51.0.37", {
+        "react-native": "0.74.5",
+        react: "18.2.0",
         "expo-modules-autolinking": "*",
         "expo-modules-core": "*",
       }),
@@ -189,19 +195,19 @@ function readPackage(pkg, context) {
         "postcss-normalize": "*",
       }),
       addPeerDependencies("any-observable", {
-        rxjs: "*",
+        rxjs: "^5.5.10",
       }),
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
       }),
       addPeerDependencies("eslint-plugin-jest", {
-        jest: "*",
+        jest: "^27.0.0",
       }),
       addPeerDependencies("jest-worker", {
         metro: "*",
       }),
       addPeerDependencies("react-lottie", {
-        "prop-types": "*",
+        "prop-types": "^15.6.1",
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
@@ -213,11 +219,14 @@ function readPackage(pkg, context) {
         "react-native": "*",
         "prop-types": "*",
       }),
-      addPeerDependencies("react-native-animatable", {
-        react: "*",
-        "react-native": "*",
+      addPeerDependencies("react-native-animatable@1.3.3", {
+        react: "16.9.0",
+        "react-native": "0.61.2",
       }),
-
+      addPeerDependencies("react-native-animatable@1.4.0", {
+        react: "18.2.0",
+        "react-native": "0.72.6",
+      }),
       addDependencies("@react-native/dev-middleware", { ws: "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
