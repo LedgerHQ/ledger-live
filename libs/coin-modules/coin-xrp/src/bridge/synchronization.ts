@@ -42,10 +42,10 @@ export const getAccountShape: GetAccountShape = async info => {
   const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  const trustlines = accountInfo.account_data.OwnerCount;
+  const trustlines = accountInfo.ownerCount;
 
-  const balance = new BigNumber(accountInfo.account_data.Balance);
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance)
+  const balance = new BigNumber(accountInfo.balance);
+  const spendableBalance = new BigNumber(accountInfo.balance)
     .minus(reserveMinXRP)
     .minus(reservePerTrustline.times(trustlines));
 
