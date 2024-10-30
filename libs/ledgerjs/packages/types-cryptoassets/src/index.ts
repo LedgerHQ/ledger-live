@@ -148,6 +148,7 @@ export type CryptoCurrencyId =
   | "syscoin"
   | "internet_computer"
   | "injective"
+  | "mantra"
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"
