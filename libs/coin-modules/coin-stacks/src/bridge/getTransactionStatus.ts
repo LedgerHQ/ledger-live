@@ -1,10 +1,10 @@
 import {
-    AmountRequired,
-    FeeNotLoaded,
-    InvalidAddress,
-    InvalidAddressBecauseDestinationIsAlsoSource,
-    NotEnoughBalance,
-    RecipientRequired,
+  AmountRequired,
+  FeeNotLoaded,
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
