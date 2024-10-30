@@ -6531,12 +6531,12 @@
   "analyticsOptInPrompt": {
     "variantA": {
       "description": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
-      "whatWeTrack": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+      "whatWeTrack": "With your consent, Ledger will be able to collect data about how you use Ledger Live (including page visits and clicks):",
       "whatWeTrackList": {
         "1": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
         "2": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
       },
-      "whatWeDoNotTrack": "Ledger will never track information regarding:",
+      "whatWeDoNotTrack": "Ledger will never collect information regarding:",
       "whatWeDoNotTrackList": {
         "1": "Your assets.",
         "2": "Your portfolio.",
@@ -6578,13 +6578,13 @@
     "common": {
       "title": "Help us improve and personalize your experience",
       "revokeInfo": "You can revoke your consent any time in the app settings.",
-      "learnMore": "Learn more about our Tracking Policy"
+      "learnMore": "Learn more about how we handle your data"
     },
     "profileSettings": {
       "personalizedExp": "Personalized experience",
       "analytics": "Analytics",
-      "personalizedExpDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
-      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience."
+      "personalizedExpDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience."
     }
   },
   "walletSync": {
