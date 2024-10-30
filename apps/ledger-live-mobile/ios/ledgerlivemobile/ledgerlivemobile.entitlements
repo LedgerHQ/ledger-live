@@ -4,15 +4,6 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:r354.adj.st</string>
-		<string>applinks:ledger.go.link</string>
-		<string>applinks:a4wc.adj.st</string>
-		<string>applinks:ledger-debug.go.link</string>
-		<string>applinks:fvsc.adj.st</string>
-		<string>applinks:ledger-staging.go.link</string>
-	</array>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)com.ledger.live</string>

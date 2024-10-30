@@ -459,7 +459,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/Adjust/Adjust.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeKit/BrazeKit.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeLocation/BrazeLocation.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeUI/BrazeUI.bundle",
@@ -498,7 +497,6 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Adjust.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeKit.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeLocation.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeUI.bundle",

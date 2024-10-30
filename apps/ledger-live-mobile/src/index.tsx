@@ -65,7 +65,6 @@ import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import AdjustSetup from "~/components/AdjustSetup";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -331,7 +330,6 @@ export default class Root extends Component {
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
-                <AdjustSetup />
                 <SegmentSetup />
                 <HookNotifications />
                 <HookDynamicContentCards />

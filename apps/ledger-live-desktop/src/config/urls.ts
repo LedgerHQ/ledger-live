@@ -177,7 +177,6 @@ export const urls = {
     "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   ens: "https://support.ledger.com/article/9710787581469-zd",
   ledgerLiveMobile: {
-    storeLink: "https://r354.adj.st/?adj_t=t2esmlk&adj_campaign=Ledger_Live",
     appStore: "https://apps.apple.com/app/id1361671700",
     playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   },

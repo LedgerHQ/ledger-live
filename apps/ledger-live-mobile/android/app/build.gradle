@@ -221,10 +221,6 @@ dependencies {
     // implementation 'com.brentvatne.react:react-native-video'
     implementation project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
-
-    // Adjust
-    implementation 'com.google.android.gms:play-services-analytics:10.0.1'
-    implementation 'com.android.installreferrer:installreferrer:1.0'
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
