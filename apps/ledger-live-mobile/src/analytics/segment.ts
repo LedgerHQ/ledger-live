@@ -74,6 +74,9 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+    const ethStakingModalWithFiltersEnabled = analyticsFeatureFlagMethod(
+      "ethStakingModalWithFilters",
+    )?.enabled;
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -89,6 +92,7 @@ const getFeatureFlagProperties = () => {
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
+      ethStakingModalWithFiltersEnabled,
     });
   })();
 };

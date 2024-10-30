@@ -81,6 +81,9 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ethStakingModalWithFiltersEnabled = analyticsFeatureFlagMethod(
+    "ethStakingModalWithFilters",
+  )?.enabled;
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
@@ -117,6 +120,7 @@ const getPtxAttributes = () => {
     ptxSwapLiveAppDemoThree,
     ptxSwapCoreExperiment,
     ptxSwapExodusProvider,
+    ethStakingModalWithFiltersEnabled,
   };
 };
 
