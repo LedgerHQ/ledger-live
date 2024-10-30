@@ -35,16 +35,21 @@ const mockPaymentInfo = jest.fn().mockResolvedValue({
   class: "WHATEVER",
   partialFee: "155099814",
 });
-const mockGetMetadata = jest.fn().mockResolvedValue(fixtureTxMaterialWithMetadata);
+
+jest.mock("../network", () => ({
+  ...jest.requireActual("../network").default,
+  metadataHash: () => jest.fn().mockResolvedValue(""),
+  shortenMetadata: () => jest.fn().mockResolvedValue(""),
+}));
+jest.mock("../network/sidecar", () => ({
+  getRegistry: () => mockRegistry(),
+  paymentInfo: (args: any) => mockPaymentInfo(args),
+  getTransactionParams: () => mockTransactionParams(),
+  fetchTransactionMaterial: () => fixtureTxMaterialWithMetadata,
+}));
+
 describe("signOperation", () => {
   // Global setup
-  jest.setTimeout(20000);
-  jest.mock("../network/sidecar", () => ({
-    getRegistry: () => mockRegistry(),
-    paymentInfo: (args: any) => mockPaymentInfo(args),
-    getTransactionParams: () => mockTransactionParams(),
-    fetchTransactionMaterial: () => fixtureTxMaterialWithMetadata,
-  }));
   const fakeSignature = u8aConcat(new Uint8Array([1]), new Uint8Array(64).fill(0x42));
   const fakeSigner = {
     getAddress: jest.fn(),
@@ -57,6 +62,7 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
+
   beforeAll(() => {
     mockGetConfig.mockImplementation((): any => {
       return {
