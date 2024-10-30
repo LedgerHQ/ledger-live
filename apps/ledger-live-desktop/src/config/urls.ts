@@ -188,6 +188,13 @@ export const urls = {
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
+
+  // Node errors
+  txBroadcastErrors: {
+    badTxns: "https://support.ledger.com/article/5129526865821-zd",
+    blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
+    txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
+  },
 };
 
 export const vaultSigner = {
