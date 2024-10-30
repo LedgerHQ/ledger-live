@@ -1632,6 +1632,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "zksync",
   "zksync_sepolia",
   "binance_beacon_chain",
+  "mantra",
   "ethereum/erc20/$aapl",
   "ethereum/erc20/$based",
   "ethereum/erc20/$die",
