@@ -1,43 +1,40 @@
+import { getElementById, getTextOfElement, scrollToId, tapByElement } from "../../helpers";
 import { expect } from "detox";
-import {
-  currencyParam,
-  openDeeplink,
-  waitForElementById,
-  getElementById,
-  tapByElement,
-} from "../../helpers";
-
-const baseLink = "account";
+import jestExpect from "expect";
 
 export default class AccountPage {
-  accountSettingsButton = () => getElementById("accounts-settings");
-  assetBalance = () => getElementById("asset-graph-balance");
-  accountTitleId = (assetName: string) => `accounts-title-${assetName}`;
-  accountAssetId = (assetName: string) => `account-assets-${assetName}`;
-
-  async waitForAccountPageToLoad(assetName: string) {
-    await waitForElementById(this.accountTitleId(assetName.toLowerCase()));
-  }
-
-  async expectAccountBalanceVisible() {
-    await expect(this.assetBalance()).toBeVisible();
-  }
-
-  async expectAccountBalance(expectedBalance: string) {
-    await expect(this.assetBalance()).toHaveText(expectedBalance);
-  }
-
-  async waitForAccountAssetsToLoad(assetName: string) {
-    await waitForElementById(this.accountTitleId(assetName));
-    await waitForElementById(this.accountAssetId(assetName));
-  }
-
-  async openViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
-    await openDeeplink(link);
-  }
+  accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
+  accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
+  accountSettingsButton = () => getElementById("account-settings-button");
+  accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
+  operationHistorySectionId = (accountId: string) => `operations-history-${accountId}`;
+  accountScreenScrollView = "account-screen-scrollView";
+  accountAdvancedLogsId = "account-advanced-logs";
 
   async openAccountSettings() {
     await tapByElement(this.accountSettingsButton());
+  }
+
+  async openAccountAdvancedLogs() {
+    await tapByElement(this.accountAdvancedLogRow());
+  }
+
+  async expectOperationHistoryVisible(accountId: string) {
+    const id = this.operationHistorySectionId(accountId);
+    await scrollToId(id, this.accountScreenScrollView);
+    await expect(getElementById(id)).toBeVisible();
+  }
+
+  async expectAccountBalanceVisible(accountId: string) {
+    await expect(this.accountGraph(accountId)).toBeVisible();
+    await expect(this.accountBalance(accountId)).toBeVisible();
+  }
+
+  async expectAddressIndex(indexNumber: number) {
+    await this.openAccountSettings();
+    await this.openAccountAdvancedLogs();
+    const advancedLogsText = await getTextOfElement(this.accountAdvancedLogsId);
+    const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
+    jestExpect(advancedLogsJson).toHaveProperty("index", indexNumber);
   }
 }

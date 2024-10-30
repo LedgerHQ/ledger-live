@@ -121,6 +121,14 @@ export async function getTextOfElement(id: string | RegExp, index = 0) {
   return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
 }
 
+export async function getIdOfElement(id: RegExp, index = 0) {
+  const attributes = await getElementById(id, index).getAttributes();
+  return (
+    (!("elements" in attributes) ? attributes.identifier : attributes.elements[index].identifier) ||
+    ""
+  );
+}
+
 /**
  * Waits for a specified amount of time
  * /!\ Do not use it to wait for a specific element, use waitFor instead.

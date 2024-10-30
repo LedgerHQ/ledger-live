@@ -1,21 +1,26 @@
 import { expect } from "detox";
 import {
   getElementById,
+  getIdOfElement,
   openDeeplink,
   scrollToId,
   tapById,
   waitForElementById,
 } from "../../helpers";
 import { getEnv } from "@ledgerhq/live-env";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const baseLink = "add-account";
 const isMock = getEnv("MOCK");
 
 export default class AddAccountDrawer {
-  accountCardId = (id: string | RegExp) => getElementById(new RegExp(`account-card-${id}`));
+  deselectAllButtonId = "add-accounts-deselect-all";
+  accountCardRegExp = (id = ".*") => new RegExp(`account-card-${id}`);
+  accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
   accountId = (currency: string, index: number) =>
     isMock ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
-  accountTitleId = (accountName: string) => getElementById(`test-id-account-${accountName}`);
+  accountTitleId = (accountName: string, index: number) =>
+    getElementById(`test-id-account-${accountName}`, index);
   modalButtonId = "add-accounts-modal-add-button";
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   continueButtonId = "add-accounts-continue-button";
@@ -42,8 +47,8 @@ export default class AddAccountDrawer {
 
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
-    await expect(this.accountCardId(this.accountId(currencyId, index))).toBeVisible();
-    await expect(this.accountTitleId(accountName)).toHaveText(accountName);
+    await expect(this.accountCard(this.accountId(currencyId, index))).toBeVisible();
+    await expect(this.accountTitleId(accountName, index)).toHaveText(accountName);
   }
 
   async finishAccountsDiscovery() {
@@ -54,5 +59,27 @@ export default class AddAccountDrawer {
   async tapSuccessCta() {
     await waitForElementById(this.succesCtaId);
     await tapById(this.succesCtaId);
+  }
+
+  async addFirstAccount(currency: Currency) {
+    await this.startAccountsDiscovery();
+    await this.expectAccountDiscovery(currency.name, currency.currencyId);
+    await tapById(this.deselectAllButtonId);
+    await tapById(this.accountCardRegExp(), 0);
+    const accountId = (await getIdOfElement(this.accountCardRegExp(), 0)).replace(
+      /^account-card-/,
+      "",
+    );
+    await this.finishAccountsDiscovery();
+    await this.tapSuccessCta();
+    return accountId;
+  }
+
+  async addAccount(currency: Currency) {
+    await this.startAccountsDiscovery();
+    const accountName = await this.expectAccountDiscovery(currency.name, currency.currencyId);
+    await this.finishAccountsDiscovery();
+    await this.tapSuccessCta();
+    return accountName;
   }
 }

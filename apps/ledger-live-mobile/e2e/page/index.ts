@@ -49,6 +49,7 @@ export const getUserdataPath = (userdata: string) => {
 export class Application {
   public userdataSpeculos: string | undefined = undefined;
   public userdataPath: string | undefined = undefined;
+  public assetAccountsPage = new AssetAccountsPage();
   public account = new AccountPage();
   public accounts = new AccountsPage();
   public addAccount = new AddAccountDrawer();
