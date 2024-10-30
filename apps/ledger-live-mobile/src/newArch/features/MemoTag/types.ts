@@ -4,4 +4,4 @@ import type { AnimatedInputProps } from "@ledgerhq/native-ui/components/Form/Inp
 export type MemoTagInputProps<T extends Transaction = Transaction> = Omit<
   AnimatedInputProps,
   "value" | "onChangeText" | "onChange"
-> & { onChange: (update: { patch: Partial<T>; value: string }) => void };
+> & { onChange: (update: { patch: Partial<T>; value: string; error?: Error }) => void };

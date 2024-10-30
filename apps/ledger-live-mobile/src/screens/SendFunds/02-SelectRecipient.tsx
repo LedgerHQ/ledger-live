@@ -1,5 +1,6 @@
 import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
+import { Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -27,11 +28,11 @@ import CancelButton from "~/components/CancelButton";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import KeyboardView from "~/components/KeyboardView";
-import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import RetryButton from "~/components/RetryButton";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
@@ -277,7 +278,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                   },
                 ]}
               />
-              <LText color="grey">{<Trans i18nKey="common.or" />}</LText>
+              <Text color="neutral.c70">{t("common.or")}</Text>
               <View
                 style={[
                   styles.separatorLine,
@@ -316,6 +317,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                   placeholder={t("send.summary.memo.title")}
                   onChange={memoTag.handleChange}
                 />
+                <Text mt={4} pl={2} color="alert">
+                  <TranslatedError error={memoTag.error} />
+                </Text>
               </View>
             )}
 
@@ -337,7 +341,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               testID="recipient-continue-button"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={debouncedBridgePending || !!status.errors.recipient}
+              disabled={debouncedBridgePending || !!status.errors.recipient || memoTag?.error}
               pending={debouncedBridgePending}
               onPress={onPressContinue}
             />
