@@ -234,6 +234,14 @@ export class Account {
     1,
   );
 
+  static readonly XRP_3 = new Account(
+    Currency.XRP,
+    "XRP 3",
+    "rn2Z2yShWcvdTSQVo1EqjUpD1sjwBkZALb",
+    undefined,
+    2,
+  );
+
   static readonly ADA_1 = new Account(
     Currency.ADA,
     "Cardano 1",
