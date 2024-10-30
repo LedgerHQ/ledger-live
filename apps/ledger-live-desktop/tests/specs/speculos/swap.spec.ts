@@ -118,7 +118,7 @@ for (const { swap, xrayTicket } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger.com/v5";
+      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
       process.env.DISABLE_TRANSACTION_BROADCAST = "true";
     });
 
@@ -183,7 +183,7 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
   test.describe("Swap - Rejected on device", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger.com/v5";
+      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
     });
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
@@ -273,7 +273,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   test.describe("Swap - with too low amount (throwing UI errors)", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger.com/v5";
+      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
     });
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
