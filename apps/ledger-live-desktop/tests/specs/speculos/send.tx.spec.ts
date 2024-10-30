@@ -20,7 +20,7 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", Fee.MEDIUM),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
   },
