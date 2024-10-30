@@ -164,7 +164,12 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer key={"section-container-accounts"} px={6} isLast>
+          <SectionContainer
+            key={"section-container-accounts"}
+            px={6}
+            isLast
+            testID={`operations-history-${account.id}`}
+          >
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
           </SectionContainer>,
@@ -195,6 +200,7 @@ const AccountScreenInner = ({
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
+          testID={"account-screen-scrollView"}
         />
         <AccountHeader
           currentPositionY={currentPositionY}
