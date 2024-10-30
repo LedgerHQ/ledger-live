@@ -2,5 +2,5 @@ import { getAccountInfo } from "../network";
 
 export async function getBalance(address: string): Promise<bigint> {
   const accountInfo = await getAccountInfo(address);
-  return BigInt(accountInfo.account_data.Balance);
+  return BigInt(accountInfo.balance);
 }

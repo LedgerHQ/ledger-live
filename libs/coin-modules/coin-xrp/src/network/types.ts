@@ -193,3 +193,22 @@ export type LedgerResponse = {
   ledger_index: number;
   validated: boolean;
 } & ResponseStatus;
+
+export type ErrorResponse = {
+  account: string;
+  error: string;
+  error_code: number;
+  error_message: string;
+  ledger_hash: string;
+  ledger_index: number;
+  request: {
+    account: string;
+    command: string;
+    ledger_index: string;
+  };
+  status: string;
+  validated: boolean;
+};
+export function isErrorResponse(obj: object): obj is ErrorResponse {
+  return "status" in obj && obj.status === "error" && "error" in obj;
+}

@@ -3,7 +3,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccountInfo, getServerInfos, getTransactions } from "../network";
-import { NEW_ACCOUNT_ERROR_MESSAGE, parseAPIValue } from "../logic";
+import { parseAPIValue } from "../logic";
 import { filterOperations } from "./logic";
 
 export const getAccountShape: GetAccountShape = async info => {
@@ -17,7 +17,7 @@ export const getAccountShape: GetAccountShape = async info => {
   });
   const accountInfo = await getAccountInfo(address);
 
-  if (!accountInfo || accountInfo.error === NEW_ACCOUNT_ERROR_MESSAGE) {
+  if (accountInfo.isNewAccount) {
     return {
       id: accountId,
       xpub: address,
@@ -42,10 +42,10 @@ export const getAccountShape: GetAccountShape = async info => {
   const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  const trustlines = accountInfo.account_data.OwnerCount;
+  const trustlines = accountInfo.ownerCount;
 
-  const balance = new BigNumber(accountInfo.account_data.Balance);
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance)
+  const balance = new BigNumber(accountInfo.balance);
+  const spendableBalance = new BigNumber(accountInfo.balance)
     .minus(reserveMinXRP)
     .minus(reservePerTrustline.times(trustlines));
 

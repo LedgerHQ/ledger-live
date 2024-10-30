@@ -3,7 +3,7 @@ import { getBalance } from "./getBalance";
 
 const mockGetAccountInfo = jest.fn();
 jest.mock("../network", () => ({
-  getAccountInfo: (arg: unknown) => mockGetAccountInfo(arg),
+  getAccountInfo: (address: string) => mockGetAccountInfo(address),
 }));
 
 describe("getBalance", () => {
@@ -16,9 +16,7 @@ describe("getBalance", () => {
     const balance = faker.number.bigInt(100_000_000);
     const address = "ACCOUNT_ADDRESS";
     mockGetAccountInfo.mockResolvedValue({
-      account_data: {
-        Balance: balance.toString(),
-      },
+      balance,
     });
 
     // When
