@@ -34,6 +34,7 @@ export type TabsProps = Web3HubScreenProps<ScreenName.Web3HubTabs>;
 export type Web3HubDB = {
   recentlyUsed: RecentlyUsed[];
   dismissedManifests: DismissedManifests;
+  tabHistory: TabData[];
   // localLiveApp: LiveAppManifest[];
 };
 

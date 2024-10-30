@@ -1246,7 +1246,7 @@ importers:
         version: 5.2.1(patch_hash=vl2q6vd2d45opudk6juqeyavs4)
       react-native-view-shot:
         specifier: ^3.8.0
-        version: 3.8.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+        version: 3.8.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
       react-native-webview:
         specifier: 13.10.3
         version: 13.10.3(patch_hash=42avlvajmp3nsjxv67iugfa7uq)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -47310,7 +47310,7 @@ snapshots:
     dependencies:
       utrie: 1.0.2
 
-  css-loader@6.10.0(webpack@5.91.0(metro@0.80.8)):
+  css-loader@6.10.0(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.38)
       postcss: 8.4.38
@@ -51117,6 +51117,19 @@ snapshots:
       webpack: 5.94.0
 
   html-webpack-plugin@5.6.0(webpack@5.95.0):
+<<<<<<< HEAD
+=======
+    dependencies:
+      '@types/html-minifier-terser': 6.1.0
+      html-minifier-terser: 6.1.0
+      lodash: 4.17.21
+      pretty-error: 4.0.0
+      tapable: 2.2.1
+    optionalDependencies:
+      webpack: 5.95.0
+
+  html2canvas@1.4.1:
+>>>>>>> 33a0cedfe9 (use history with jotai)
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -58796,6 +58809,15 @@ snapshots:
       prop-types: 15.8.1
       shaka-player: 2.5.23
 
+<<<<<<< HEAD
+=======
+  react-native-view-shot@3.8.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      html2canvas: 1.4.1
+      react: 18.2.0
+      react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0)
+
+>>>>>>> 33a0cedfe9 (use history with jotai)
   react-native-web@0.19.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@babel/runtime': 7.24.1

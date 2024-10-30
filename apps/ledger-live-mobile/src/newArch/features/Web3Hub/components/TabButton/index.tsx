@@ -3,9 +3,10 @@ import { useTheme, useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { BorderlessButton } from "react-native-gesture-handler";
-import type { AppProps, MainProps, SearchProps, TabData } from "LLM/features/Web3Hub/types";
+import { useAtomValue } from "jotai";
+import type { AppProps, MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
-import deviceStorage from "~/logic/storeWrapper";
+import { tabHistoryAtom } from "../../db";
 
 type Props = {
   onClick?: () => void;
@@ -15,16 +16,12 @@ type Props = {
 export default function TabButton({ navigation, onClick }: Props) {
   const { colors } = useTheme();
   const [count, setCount] = useState(0);
+  const tabs = useAtomValue(tabHistoryAtom);
 
   useFocusEffect(
     useCallback(() => {
-      const getTabCount = async () => {
-        const tabs = (await deviceStorage.get("web3hub__TabHistory")) as TabData[];
-        setCount(tabs?.length || 0);
-      };
-
-      getTabCount();
-    }, []),
+      setCount(tabs?.length || 0);
+    }, [tabs]),
   );
 
   const goToTabs = useCallback(() => {

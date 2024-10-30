@@ -5,6 +5,7 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { Web3HubTest } from "./shared";
 import { Text } from "@ledgerhq/native-ui";
 import deviceStorage from "~/logic/storeWrapper";
+import { WEB3HUB_KEYS } from "../constants";
 
 // Need to fix some stuff if we want to test the player too
 jest.mock(
@@ -31,7 +32,7 @@ async function waitForLoader() {
 
 describe("Web3Hub integration test", () => {
   beforeEach(() => {
-    deviceStorage.delete("web3hub__TabHistory");
+    WEB3HUB_KEYS.forEach(key => deviceStorage.delete(key));
   });
 
   it("Should list manifests and navigate to app page", async () => {

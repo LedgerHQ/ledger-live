@@ -2,13 +2,14 @@ import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import type { TabData, TabsProps } from "LLM/features/Web3Hub/types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAtom } from "jotai";
 import { NavigatorName, ScreenName } from "~/const";
 import Header from "./components/Header";
-import deviceStorage from "~/logic/storeWrapper";
 import TabItem from "./components/TabItem";
+import { tabHistoryAtom } from "../../db";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
@@ -36,13 +37,12 @@ const renderItem = ({ item, extraData }: PropRenderItem) => {
 };
 
 export default function Web3HubTabs({ navigation }: TabsProps) {
-  const [tabs, setTabs] = useState<TabData[]>([]);
   const listRef = useRef(null);
   const { colors } = useTheme();
+  const [tabs, setTabs] = useAtom(tabHistoryAtom);
 
   const handleItemClosePress = (itemId: string) => {
     const filteredTabs = tabs.filter(item => item.id !== itemId);
-    deviceStorage.save("web3hub__TabHistory", filteredTabs);
     setTabs(filteredTabs);
   };
 
@@ -51,23 +51,6 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
       screen: ScreenName.Web3HubSearch,
     });
   }, [navigation]);
-
-  useEffect(() => {
-    const getTabs = async () => {
-      try {
-        const tabHistory = ((await deviceStorage.get("web3hub__TabHistory")) as TabData[]) || [];
-        setTabs(tabHistory);
-      } catch (error) {
-        console.error("Error fetching tabs from storage:", error);
-      }
-    };
-    getTabs();
-    const timer = setTimeout(() => {
-      getTabs();
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
