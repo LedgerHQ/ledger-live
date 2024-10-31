@@ -148,7 +148,10 @@
     "or": "OR",
     "clearAll": "Clear all",
     "buyLedger": "Buy a Ledger",
-    "quote": "Quote"
+    "quote": "Quote",
+    "memoTag": {
+      "learnMore": "Learn more about Tag/Memo"
+    }
   },
   "devices": {
     "nanoS": "Nano S",
@@ -2260,8 +2263,7 @@
     },
     "memoTag": {
       "title": "Need a Tag/Memo?",
-      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
-      "learnMore": "Learn more about Tag/Memo"
+      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
   "send": {
@@ -2284,6 +2286,11 @@
           "noResolution": {
             "title": "No address found for this domain"
           }
+        },
+        "memoTag": {
+          "question": "Dont use Memo Tag?",
+          "learnMore": "Learn more about Tag/Memo",
+          "warning": " Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet."
         }
       },
       "amount": {
@@ -2361,6 +2368,15 @@
     },
     "footer": {
       "estimatedFees": "Network fees"
+    },
+    "info":{
+      "needMemoTag": {
+        "title": "Don’t use Tag/Memo?",
+        "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+        "cta.addTag": "Add Tag",
+        "cta.not.addTag": "Don’t add Tag",
+        "checkbox.label": "Do not show this again."
+      }
     }
   },
   "releaseNotes": {
@@ -5338,25 +5354,17 @@
     "link": "Terms of Use",
     "cta": "Continue"
   },
+  "MemoTagField": {
+    "label": "Tag / Memo",
+    "placeholder": "Enter Tag / Memo",
+    "information": "To ensure your transaction is deposited correctly to your account, centralized exchanges and sometimes custodial wallets require a Tag/Memo.",
+    "instruction": "Copy and paste the Tag/Memo provided by the exchange or custodial wallet."
+  },
   "families": {
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
       "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
-    },
-    "cardano": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo"
-    },
-    "internet_computer": {
-      "memoPlaceholder": "Optional, Default: 0",
-      "memo": "Memo",
-      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
-    },
-    "stacks": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo",
-      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
     "ton": {
       "commentPlaceholder": "Optional",
@@ -5386,13 +5394,8 @@
       "assetCode": "Asset code",
       "assetIssuer": "Asset issuer"
     },
-    "cosmos": {
-      "memo": "Memo",
-      "memoPlaceholder": "Optional",
-      "memoWarningText": "When using a memo, carefully check the information with the recipient"
-    },
     "solana": {
-      "memo": "Memo",
+      "memo": "Tag / Memo",
       "memoPlaceholder": "Optional"
     }
   },
@@ -6397,7 +6400,7 @@
   },
   "cryptoOrg": {
     "memo": "Memo",
-    "memoPlaceholder": "Optional",
+    "memoPlaceholder": "Enter Tag / Memo",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
   "hedera": {

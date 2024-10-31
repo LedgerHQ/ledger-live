@@ -1,28 +1,27 @@
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/internet_computer/types";
-import { useTranslation } from "react-i18next";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 const MemoField = ({
   onChange,
   account,
   transaction,
   status,
+  autoFocus,
 }: {
   onChange: (a: Transaction) => void;
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
+  autoFocus?: boolean;
 }) => {
   invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
-
-  const { t } = useTranslation();
 
   const bridge = getAccountBridge(account);
 
@@ -37,13 +36,13 @@ const MemoField = ({
   // We use transaction as an error here.
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.memo ?? ""}
-      placeholder={t("families.internet_computer.memoPlaceholder")}
       onChange={onMemoFieldChange}
       spellCheck="false"
+      autoFocus={autoFocus}
     />
   );
 };
