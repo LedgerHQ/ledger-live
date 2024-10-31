@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`5cd0ca8`](https://github.com/LedgerHQ/ledger-live/commit/5cd0ca8d0eeb55004090e74464ca7064fa3298de)]:
+  - @ledgerhq/live-common@34.13.1
+
+## 2.91.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`5cd0ca8`](https://github.com/LedgerHQ/ledger-live/commit/5cd0ca8d0eeb55004090e74464ca7064fa3298de)]:
+  - @ledgerhq/live-common@34.13.1-hotfix.0
+
 ## 2.91.0
 
 ### Minor Changes
