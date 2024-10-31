@@ -11,7 +11,10 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    app = await Application.init({
+      userdata: "onboardingcompleted",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

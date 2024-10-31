@@ -10,7 +10,10 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    app = await Application.init("EthAccountXrpAccountReadOnlyFalse", [knownDevice]);
+    app = await Application.init({
+      userdata: "EthAccountXrpAccountReadOnlyFalse",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

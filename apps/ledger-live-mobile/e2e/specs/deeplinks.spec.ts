@@ -11,7 +11,10 @@ const bobaLong = "boba";
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse", [knownDevices.nanoX]);
+    app = await Application.init({
+      userdata: "1AccountBTC1AccountETHReadOnlyFalse",
+      knownDevices: [knownDevices.nanoX],
+    });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

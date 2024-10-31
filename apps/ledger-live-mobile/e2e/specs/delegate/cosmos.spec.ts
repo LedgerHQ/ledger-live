@@ -20,7 +20,11 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice], [testAccount]);
+    app = await Application.init({
+      userdata: "onboardingcompleted",
+      knownDevices: [knownDevice],
+      testAccounts: [testAccount],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

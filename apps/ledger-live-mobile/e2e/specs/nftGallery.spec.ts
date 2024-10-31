@@ -7,7 +7,7 @@ const accountCurrency = "ethereum";
 // To-Do Fix NFT not available in account
 describe.skip("NFT Gallery screen", () => {
   beforeAll(async () => {
-    app = await Application.init("1Account1NFTNotSpam");
+    app = await Application.init({ userdata: "1Account1NFTNotSpam" });
 
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.nftGallery.openViaDeeplink();

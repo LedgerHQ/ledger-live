@@ -5,7 +5,7 @@ const asset = "Ethereum (ETH)";
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
-    app = await Application.init("1accountEth");
+    app = await Application.init({ userdata: "1accountEth" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

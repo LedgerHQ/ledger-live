@@ -1,10 +1,9 @@
 const detoxGlobalTeardown = require("detox/runners/jest/globalTeardown");
 import { promises as fs } from "fs";
-import { getEnvs, getFlags } from "./bridge/server";
+import { getEnvs, getFlags, loadConfig } from "./bridge/server";
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
-import { launchApp } from "./helpers";
+import { launchApp, waitForElementById } from "./helpers";
 import detox from "detox/internals";
-import { Application } from "./page";
 import { close as closeBridge } from "./bridge/server";
 
 const environmentFilePath = "artifacts/environment.properties";
@@ -15,8 +14,8 @@ export default async () => {
     try {
       await initDetox();
       await launchApp();
-      const app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+      await waitForElementById("settings-icon", 120000);
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(environmentFilePath, flagsData + envsData);

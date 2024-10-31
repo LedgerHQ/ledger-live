@@ -4,7 +4,7 @@ let app: Application;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    app = await Application.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

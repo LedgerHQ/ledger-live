@@ -35,7 +35,11 @@ const knownDevice = knownDevices.nanoX;
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice], testAccounts);
+    app = await Application.init({
+      userdata: "onboardingcompleted",
+      knownDevices: [knownDevice],
+      testAccounts: testAccounts,
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
