@@ -4,17 +4,16 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import perFamily from "~/generated/MemoTagInput";
-import { MemoTagInputProps } from "../types";
+import { MemoTagInputProps, TxPatch } from "../types";
 
 export const useMemoTagInput = (
   family: CryptoCurrency["family"],
-  updateTransaction: (patch: Partial<Transaction>) => void,
+  updateTransaction: (patch: TxPatch<Transaction>) => void,
 ) => {
   const featureMemoTag = useFeature("llmMemoTag");
-  const Input: FC<MemoTagInputProps> | null =
+  const Input =
     (featureMemoTag?.enabled &&
-      family in perFamily &&
-      perFamily[family as keyof typeof perFamily]) ||
+      (perFamily[family as keyof typeof perFamily] as FC<MemoTagInputProps>)) ||
     null;
 
   const [isEmpty, setIsEmpty] = useState(true);

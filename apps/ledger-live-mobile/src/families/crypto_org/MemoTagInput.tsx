@@ -4,9 +4,9 @@ import type { Transaction as CryptoOrgTransaction } from "@ledgerhq/live-common/
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => (
-  <GenericMemoTagInput<CryptoOrgTransaction>
+export default (props: MemoTagInputProps<CryptoOrgTransaction>) => (
+  <GenericMemoTagInput
     {...props}
-    valueToTxPatch={value => ({ memo: value || undefined })}
+    valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
   />
 );

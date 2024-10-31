@@ -4,9 +4,9 @@ import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/f
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => (
-  <GenericMemoTagInput<AlgorandTransaction>
+export default (props: MemoTagInputProps<AlgorandTransaction>) => (
+  <GenericMemoTagInput
     {...props}
-    valueToTxPatch={value => ({ memo: value || undefined })}
+    valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
   />
 );
