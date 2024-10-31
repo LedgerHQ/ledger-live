@@ -13,6 +13,7 @@ import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { track } from "~/renderer/analytics/segment";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
@@ -79,6 +80,7 @@ export function useAddMember({ device }: { device: Device | null }) {
           trustchainRef.current ?? undefined,
         );
 
+        track("ledgersync_activated");
         transitionToNextScreen(trustchainResult);
       } catch (error) {
         if (error instanceof TrustchainAlreadyInitialized) {
