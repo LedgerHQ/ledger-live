@@ -27,6 +27,7 @@ import {
   developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
+  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { captureException } from "~/sentry/renderer";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
@@ -117,6 +118,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const locale = useSelector(languageSelector);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -463,6 +465,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
             devMode,
+            shareAnalytics,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
