@@ -799,5 +799,14 @@
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "mantra",
+    "ticker": "OM",
+    "name": "Mantra",
+    "family": "cosmos",
+    "color": "#ffb386",
+    "decimals": 6
   }
 ]
