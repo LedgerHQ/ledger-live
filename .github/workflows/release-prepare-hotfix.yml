@@ -7,6 +7,17 @@ on:
         description: the branch to release from
         default: hotfix
         required: true
+      tag_version:
+        description: version to hotfix (e.g. 2.91.0)
+        default: latest
+        required: false
+      application:
+        description: application (LLM | LLD)
+        required: true
+        type: choice
+        options:
+          - LLM
+          - LLD
 
 jobs:
   prepare-release:
@@ -21,11 +32,25 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Checkout Repo
+
+      - name: Checkout composite actions
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: tools/actions/composites
+
+      - name: Generate ref/tag version to use when running changeset status
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        id: format-app-tag
+        with:
+          tag_version: ${{ github.event.inputs.tag_version }}
+          application: ${{ github.event.inputs.application }}
+
+      - name: Checkout Repo (hotfix branch)
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
+          fetch-depth: 0
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
@@ -38,6 +63,23 @@ jobs:
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
+
+      - name: Generate changeset status
+        run: |
+          git fetch --tags
+          pnpm changeset status --since=${{ steps.format-app-tag.outputs.main_ref }} --output=changeset-status.json
+
+      - name: Enforce use of patch level changesets only for hotfixes
+        run: |
+          MINOR_MAJOR_CHANGESET_IDS=$(jq -r '.changesets[] | select(.releases[].type == "minor" or .releases[].type == "major") | .id' changeset-status.json)
+          if [ -n "$MINOR_MAJOR_CHANGESET_IDS" ]; then
+            echo "Major/minor changesets found:"
+            echo "$MINOR_MAJOR_CHANGESET_IDS"
+            echo "❌ Hotfixes must use patch level changesets only"
+            exit 1
+          else
+            echo "✅ No major/minor level changesets found."
+          fi
 
       - name: exit prerelease mode
         run: pnpm changeset pre exit
@@ -55,19 +97,21 @@ jobs:
       - name: push changes
         run: |
           git push origin ${{ inputs.ref }}
-          git fetch origin
 
       - name: fetch develop and main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         run: |
           git fetch origin develop main
 
       - name: merge into main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         run: |
           git checkout main
           git merge ${{ inputs.ref }} --no-ff
           git push origin main
 
       - name: create PR to develop
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -77,6 +121,7 @@ jobs:
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
       - name: merge into release if present
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
