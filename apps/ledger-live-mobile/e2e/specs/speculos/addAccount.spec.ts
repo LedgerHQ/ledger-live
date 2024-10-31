@@ -9,7 +9,7 @@ const currencies = [
 
 describe("Add accounts", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted");
+    app = await Application.init({ userdata: "onboardingcompleted" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
