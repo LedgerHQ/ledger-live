@@ -218,6 +218,14 @@ export class Account {
     1,
   );
 
+  static readonly TRX_3 = new Account(
+    Currency.TRX,
+    "Tron 3",
+    "TWBAMUMc69Z82zJtXh1TqdPyWv7PNyud6p",
+    undefined,
+    2,
+  );
+
   static readonly XRP_1 = new Account(
     Currency.XRP,
     "XRP 1",
