@@ -19105,7 +19105,7 @@ var package_default = {
       }
     }
   },
-  packageManager: "pnpm@9.11.0"
+  packageManager: "pnpm@9.12.3"
 };
 
 // src/main.ts
