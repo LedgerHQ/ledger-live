@@ -1,3 +1,7 @@
+# 2.91.1
+
+This release includes minor bug fixes.
+
 # 2.91.0
 
 Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings  > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
