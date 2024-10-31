@@ -227,7 +227,7 @@ export function CurrencyOption({
     </>
   );
   return (
-    <OptionBox>
+    <OptionBox role="option">
       <CryptoCurrencyIcon circle currency={currency} size={26} />
       {textContents}
     </OptionBox>
