@@ -102,6 +102,7 @@ export type CurrencyFeatures = {
   currencyInternetComputer: DefaultFeature;
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
+  currencyCryptoOrg: DefaultFeature;
   currencyCoreum: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
