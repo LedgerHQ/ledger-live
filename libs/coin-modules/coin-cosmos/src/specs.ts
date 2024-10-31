@@ -590,6 +590,15 @@ const injective = {
   }),
 };
 
+const cryptoOrgMinimalTransactionAmount = new BigNumber(1000000);
+const cryptoOrg = {
+  ...generateGenericCosmosTest("crypto_org", true, {
+    minViableAmount: cryptoOrgMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -605,4 +614,5 @@ export default {
   stargaze,
   coreum,
   injective,
+  cryptoOrg,
 };

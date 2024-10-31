@@ -16,6 +16,7 @@ import BinanceBeaconChain from "./BinanceBeaconChain";
 import Coreum from "./Coreum";
 import Injective from "./Injective";
 import Dydx from "./Dydx";
+import CryptoOrg from "./CryptoOrg";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -73,6 +74,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "injective":
         cosmosChainParams[currencyId] = new Injective();
+        break;
+      case "crypto_org":
+        cosmosChainParams[currencyId] = new CryptoOrg();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

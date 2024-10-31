@@ -3139,11 +3139,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
-    managerAppName: "Cronos POS Chain",
+    managerAppName: "Cosmos",
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
-    family: "crypto_org",
+    family: "cosmos",
     units: [
       {
         name: "CRO",
@@ -3282,11 +3282,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org_croeseid",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain Croeseid",
-    managerAppName: "Crypto.org Chain",
+    managerAppName: "Cosmos",
     ticker: "CRO",
     scheme: "crypto_org_croeseid",
     color: "#0e1c37",
-    family: "crypto_org",
+    family: "cosmos",
     units: [
       {
         name: "TCRO",

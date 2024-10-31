@@ -43,6 +43,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBittorrent: DEFAULT_FEATURE,
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
+  currencyCryptoOrg: DEFAULT_FEATURE,
   currencyDesmos: DEFAULT_FEATURE,
   currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
