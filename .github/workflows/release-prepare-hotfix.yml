@@ -5,7 +5,7 @@ on:
     inputs:
       ref:
         description: the branch to release from
-        default: hotfix
+        default: hotfix-TEST-ANGUSBAYLEY
         required: true
       tag_version:
         description: version to hotfix (e.g. 2.91.0)
@@ -38,8 +38,8 @@ jobs:
         with:
           sparse-checkout: tools/actions/composites
 
-      - name: Generate ref/tag version to use when running changeset status
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+      - name: Generate ref/tag version to use during main checkout
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@support/post-ghost-release-hotfix-workflow-TEST
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -52,7 +52,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: ./tools/actions/composites/setup-git-user
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop

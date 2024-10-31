@@ -31,11 +31,11 @@ jobs:
       - name: Checkout composite actions
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: support/post-ghost-release-hotfix-workflow-TEST  # CHANGE THIS, TESTING ONLY
           sparse-checkout: tools/actions/composites
 
       - name: Generate ref/tag version to use during main checkout
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@support/post-ghost-release-hotfix-workflow-TEST
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -47,10 +47,10 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: ./tools/actions/composites/setup-git-user
       - name: create hotfix branch
         run: |
-          git checkout -b hotfix
+          git checkout -b hotfix-TEST-ANGUSBAYLEY
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -87,11 +87,11 @@ jobs:
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: push
         run: |
-          git push origin hotfix
+          git push origin hotfix-TEST-ANGUSBAYLEY
           gh pr create \
-            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+            --title ":fire: [TEST - NOT A REAL HOTFIX] Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
             -F ./.github/templates/hotfix.md \
             --base main \
-            --head hotfix
+            --head hotfix-TEST-ANGUSBAYLEY
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
