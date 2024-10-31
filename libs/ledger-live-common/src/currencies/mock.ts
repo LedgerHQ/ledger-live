@@ -515,7 +515,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
-    family: "crypto_org",
+    family: "cosmos",
     units: [
       {
         name: "CRO",

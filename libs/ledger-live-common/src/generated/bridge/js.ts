@@ -1,6 +1,5 @@
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
-import crypto_org from "../../families/crypto_org/bridge/js";
 import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
 import internet_computer from "../../families/internet_computer/bridge/js";
@@ -25,7 +24,6 @@ import { bridge as xrp } from "../../families/xrp/setup";
 export default {
   casper,
   celo,
-  crypto_org,
   filecoin,
   hedera,
   internet_computer,

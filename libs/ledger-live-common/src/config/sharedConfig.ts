@@ -6,7 +6,6 @@ import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
 import { celoConfig } from "../families/celo/config";
 import { cosmosConfig } from "../families/cosmos/config";
-import { cryptoOrgConfig } from "../families/crypto_org/config";
 import { elrondConfig } from "../families/elrond/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
@@ -48,7 +47,6 @@ export const liveConfig: ConfigSchema = {
   ...casperConfig,
   ...celoConfig,
   ...cosmosConfig,
-  ...cryptoOrgConfig,
   ...elrondConfig,
   ...evmConfig,
   ...fileCoinConfig,

@@ -1,6 +1,5 @@
 import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
-import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
@@ -24,7 +23,6 @@ import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 export default {
   casper,
   celo,
-  crypto_org,
   filecoin,
   hedera,
   internet_computer,
