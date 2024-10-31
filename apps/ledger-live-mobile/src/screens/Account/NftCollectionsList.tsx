@@ -17,7 +17,7 @@ import Button from "~/components/wrappedUi/Button";
 import Touchable from "~/components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { useNftGalleryFilter, getThreshold } from "@ledgerhq/live-nft-react";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
 
@@ -28,7 +28,7 @@ type Props = {
 export default function NftCollectionsList({ account }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -38,7 +38,7 @@ export default function NftCollectionsList({ account }: Props) {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
   });
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);

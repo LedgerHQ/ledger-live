@@ -1,20 +1,21 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { whitelistedNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { hideNftCollection } from "~/renderer/actions/settings";
-import { hiddenNftCollectionsSelector } from "../reducers/settings";
 
 export function useHideSpamCollection() {
   const spamFilteringTxFeature = useFeature("spamFilteringTx");
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const whitelistedNftCollections = useSelector(whitelistedNftCollectionsSelector);
+
   const dispatch = useDispatch();
   const hideSpamCollection = useCallback(
     (collection: string) => {
-      if (!hiddenNftCollections.includes(collection)) {
+      if (!whitelistedNftCollections.includes(collection)) {
         dispatch(hideNftCollection(collection));
       }
     },
-    [dispatch, hiddenNftCollections],
+    [dispatch, whitelistedNftCollections],
   );
 
   return {

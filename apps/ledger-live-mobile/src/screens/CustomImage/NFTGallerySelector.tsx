@@ -14,7 +14,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 
 const NB_COLUMNS = 2;
@@ -34,7 +34,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
@@ -52,7 +52,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
     chains: SUPPORTED_NFT_CURRENCIES,
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
   });
 
   const nfts = nftsFromSimplehashEnabled ? filteredNfts : nftsOrdered;

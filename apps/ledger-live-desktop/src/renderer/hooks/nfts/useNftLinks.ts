@@ -10,11 +10,11 @@ import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
 import { openURL } from "~/renderer/linking";
 import { getMetadataMediaTypes } from "~/helpers/nft";
-import { setDrawer } from "../drawers/Provider";
+import { setDrawer } from "../../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
-import { ContextMenuItemType } from "../components/ContextMenu/ContextMenuWrapper";
-import { devicesModelListSelector } from "../reducers/settings";
+import { ContextMenuItemType } from "../../components/ContextMenu/ContextMenuWrapper";
+import { devicesModelListSelector } from "~/renderer/reducers/settings";
 
 function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
   return items.filter(Boolean) as ContextMenuItemType[];

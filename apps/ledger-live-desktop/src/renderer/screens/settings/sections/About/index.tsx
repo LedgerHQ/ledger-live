@@ -5,11 +5,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import RowItem from "../../RowItem";
 import ReleaseNotesButton from "./ReleaseNotesButton";
-import { setDeveloperMode } from "../../../../actions/settings";
+import { setDeveloperMode } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
-import { developerModeSelector } from "../../../../reducers/settings";
+import { developerModeSelector } from "~/renderer/reducers/settings";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 

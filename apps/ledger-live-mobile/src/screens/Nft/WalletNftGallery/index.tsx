@@ -9,7 +9,7 @@ import { accountsSelector, filteredNftsSelector, hasNftsSelector } from "~/reduc
 
 import isEqual from "lodash/isEqual";
 import { galleryChainFiltersSelector } from "~/reducers/nft";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const WalletNftGallery = () => {
@@ -17,7 +17,7 @@ const WalletNftGallery = () => {
   const hasNFTs = useSelector(hasNftsSelector);
   const accounts = useSelector(accountsSelector);
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
 
   const chainFilters = useSelector(galleryChainFiltersSelector);
   const nftsOwned = useSelector(filteredNftsSelector, isEqual);
@@ -44,7 +44,7 @@ const WalletNftGallery = () => {
     addresses,
     chains,
     nftsOwned,
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
   });
 
   const useSimpleHash = Boolean(nftsFromSimplehashFeature?.enabled);

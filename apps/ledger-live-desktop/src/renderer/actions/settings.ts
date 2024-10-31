@@ -218,6 +218,12 @@ export const hideNftCollection = (collectionId: string) => ({
   type: "HIDE_NFT_COLLECTION",
   payload: collectionId,
 });
+
+export const whitelistNftCollection = (collectionId: string) => ({
+  type: "WHITELIST_NFT_COLLECTION",
+  payload: collectionId,
+});
+
 export const hideOrdinalsAsset = (inscriptionId: string) => ({
   type: "HIDE_ORDINALS_ASSET",
   payload: inscriptionId,
@@ -250,6 +256,10 @@ export const showToken = (tokenId: string) => ({
 });
 export const unhideNftCollection = (collectionId: string) => ({
   type: "UNHIDE_NFT_COLLECTION",
+  payload: collectionId,
+});
+export const unwhitelistNftCollection = (collectionId: string) => ({
+  type: "UNWHITELIST_NFT_COLLECTION",
   payload: collectionId,
 });
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({

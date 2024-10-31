@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import {
-  isThresholdValid,
+  getThreshold,
   useNftCollectionMetadata,
   useNftGalleryFilter,
   useNftMetadata,
@@ -91,7 +91,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   const { account } = params;
   const { colors } = useTheme();
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
@@ -99,7 +99,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
   });
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
