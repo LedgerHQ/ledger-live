@@ -7,7 +7,7 @@ on:
         default: latest
         required: false
       application:
-        description: the application to release (LLM | LLD)
+        description: application (LLM | LLD)
         required: true
         type: choice
         options:
