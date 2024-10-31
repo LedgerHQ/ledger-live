@@ -76,7 +76,7 @@ for (const account of accounts) {
 }
 
 test.describe("Receive", () => {
-  const account = Account.TRX_2;
+  const account = Account.TRX_3;
   test.use({
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
