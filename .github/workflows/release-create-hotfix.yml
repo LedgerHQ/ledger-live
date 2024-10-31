@@ -46,37 +46,35 @@ jobs:
           fi
 
           echo "ref=$ref" >> $GITHUB_ENV
-          
-      - name: Output formatted application and tag version
-        run: |
-            echo "Formatted application and tag version: $ref"
+          echo "Formatted application and tag version: $ref"
         
-      # - uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ inputs.tag_version == 'latest' && 'main' || inputs.tag_version }} #### FINISH
-      #     token: ${{ steps.generate-token.outputs.token }}
-      # - name: Setup git user
-      #   uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      # - name: create hotfix branch
-      #   run: |
-      #     git checkout -b hotfix
-      # - name: Setup the toolchain
-      #   uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-      # - name: install dependencies
-      #   run: pnpm i -F "ledger-live"
-      # - name: enter prerelease mode
-      #   run: pnpm changeset pre enter hotfix
-      # - name: commit
-      #   run: |
-      #     git add .
-      #     git commit -m "chore(hotfix) :rocket: entering hotfix mode"
-      # - name: Get date
-      #   id: date
-      #   run: |
-      #     echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-      # - name: push
-      #   run: |
-      #     git push origin hotfix
-      #     gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
-      #   env:
-      #     GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+      - name: create hotfix branch
+        run: |
+          git checkout -b hotfix
+      - name: Setup the toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: install dependencies
+        run: pnpm i -F "ledger-live"
+      - name: enter prerelease mode
+        run: pnpm changeset pre enter hotfix
+      - name: commit
+        run: |
+          git add .
+          git commit -m "chore(hotfix) :rocket: entering hotfix mode"
+      - name: Get date
+        id: date
+        run: |
+          echo "date=$(date +%F)" >> $GITHUB_OUTPUT
+      - name: push
+        run: |
+          git push origin hotfix
+          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
