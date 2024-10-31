@@ -9,8 +9,7 @@ import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
-import ParentCurrencyIcon from "./ParentCurrencyIcon";
-
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 type Props = {
   balance: BigNumber;
   currency: Currency;
@@ -37,7 +36,12 @@ const AssetRowLayout = ({
   countervalueChange,
   tag,
 }: Props) => {
-  const { colors, space } = useTheme();
+  const { colors, space, theme } = useTheme();
+
+  const isFiatCurrency = currency.type === "FiatCurrency";
+  const isTokenCurrency = currency.type === "TokenCurrency";
+
+  if (isFiatCurrency) return null;
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -51,7 +55,17 @@ const AssetRowLayout = ({
         />
       )}
       <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6} alignItems="center">
-        <ParentCurrencyIcon currency={currency} size={40} />
+        {isTokenCurrency ? (
+          <CryptoIcon
+            ledgerId={currency.id}
+            ticker={currency.ticker}
+            network={currency.parentCurrency.id}
+            theme={theme}
+            size="56px"
+          />
+        ) : (
+          <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} theme={theme} size="56px" />
+        )}
         <Flex flex={1} justifyContent="center" ml={4}>
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">

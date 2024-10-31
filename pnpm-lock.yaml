@@ -854,6 +854,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/crypto-icons':
+        specifier: 1.0.2-test.next0
+        version: 1.0.2-test.next0(axios@1.7.7)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)(styled-components@5.3.11(@babel/core@7.24.3)(react-is@18.2.0)(react@18.2.0))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -1010,6 +1013,9 @@ importers:
       asyncstorage-down:
         specifier: 4.2.0
         version: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0)))
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10632,6 +10638,15 @@ packages:
       '@types/react':
         optional: true
 
+  '@ledgerhq/crypto-icons@1.0.2-test.next0':
+    resolution: {integrity: sha512-sbNuD45y0SpFoYfqQVaXg1qHDOu12p6BmCYuyTmWgkcBpJ9T/NdVr+ufKtBU7c8uUYbsC2RmPxOAcUY4XStPmQ==}
+    peerDependencies:
+      axios: '>=1.6.0'
+      react: '>=18'
+      react-dom: '>=18'
+      react-native: '>=0.74.0'
+      styled-components: '>=5.3.3'
+
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
@@ -10686,6 +10701,9 @@ packages:
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
+  '@ledgerhq/ui-shared@0.2.2':
+    resolution: {integrity: sha512-3ASYnyqnZFMRnySADZziM3IIJ2SRQ7lKrRPwpihhf+SsyP7TIo6o4UXMY8eYOupdTARlElS4Qpk4nRL/Ln62Ng==}
 
   '@ledgerhq/wallet-api-client-react@1.3.12':
     resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
@@ -13972,7 +13990,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -16310,7 +16328,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -19540,7 +19558,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -20321,8 +20339,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -20337,8 +20355,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.74.5
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -26457,7 +26475,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -26481,8 +26499,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -26492,8 +26510,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -36927,6 +36945,14 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
+  '@ledgerhq/crypto-icons@1.0.2-test.next0(axios@1.7.7)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)(styled-components@5.3.11(@babel/core@7.24.3)(react-is@18.2.0)(react@18.2.0))':
+    dependencies:
+      '@ledgerhq/ui-shared': 0.2.2
+      axios: 1.7.7
+      react: 18.2.0
+      react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0)
+      styled-components: 5.3.11(@babel/core@7.24.3)(react-is@18.2.0)(react@18.2.0)
+
   '@ledgerhq/errors@5.50.0': {}
 
   '@ledgerhq/errors@6.19.1': {}
@@ -37004,6 +37030,8 @@ snapshots:
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
+
+  '@ledgerhq/ui-shared@0.2.2': {}
 
   '@ledgerhq/wallet-api-client-react@1.3.12(react@18.3.1)':
     dependencies:
@@ -48127,7 +48155,7 @@ snapshots:
 
   compressible@2.0.18:
     dependencies:
-      mime-db: 1.52.0
+      mime-db: 1.53.0
 
   compression@1.7.4:
     dependencies:
