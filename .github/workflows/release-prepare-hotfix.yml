@@ -5,7 +5,7 @@ on:
     inputs:
       ref:
         description: the branch to release from
-        default: hotfix
+        default: hotfix-TEST-ANGUSBAYLEY
         required: true
 
 jobs:
