@@ -36,6 +36,21 @@ jobs:
       - name: install dependencies
         run: pnpm i -F "ledger-live"
 
+      - name: Generate changeset status
+        run: pnpm changeset status --output=changeset-status.json
+
+      - name: Enforce use of patch level changesets only for hotfixes
+        run: |
+          MINOR_MAJOR_CHANGESET_IDS=$(jq -r '.changesets[] | select(.releases[].type == "minor" or .releases[].type == "major") | .id' changeset-status.json)
+          if [ -n "$MINOR_MAJOR_CHANGESET_IDS" ]; then
+            echo "Major/minor changesets found:"
+            echo "$MINOR_MAJOR_CHANGESET_IDS"
+            echo "❌ Hotfixes must use patch level changesets only"
+            exit 1
+          else
+            echo "✅ No major/minor level changesets found."
+          fi
+
       - name: exit prerelease mode
         run: pnpm changeset pre exit
 
