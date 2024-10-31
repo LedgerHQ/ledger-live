@@ -20,7 +20,10 @@ import { ScreenName } from "~/const";
 import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { State } from "~/reducers/types";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import {
+  filterTokenOperationsZeroAmountEnabledSelector,
+  hiddenNftCollectionsSelector,
+} from "~/reducers/settings";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -41,17 +44,22 @@ const OperationsHistory = ({ accounts }: Props) => {
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
+  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
 
-      return !removeZeroAmountTokenOp;
+      // Remove operations coming from an NFT collection considered spam
+      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
+        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
+      );
+      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
-
   const { sections, completed } = useMemo(
     () =>
       groupAccountsOperationsByDay(accounts, {

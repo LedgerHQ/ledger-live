@@ -213,6 +213,7 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  whitelistedNftCollections: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
