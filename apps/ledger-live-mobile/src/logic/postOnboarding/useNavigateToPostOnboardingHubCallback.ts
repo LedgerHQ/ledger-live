@@ -4,11 +4,11 @@ import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 
 export function useNavigateToPostOnboardingHubCallback() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootNavigation>();
   return useCallback(
     (resetNavigationStack?: boolean) => {
       if (resetNavigationStack) {
-        (navigation as unknown as RootNavigation).reset({
+        navigation.reset({
           index: 0,
           routes: [
             {
@@ -34,8 +34,11 @@ export function useNavigateToPostOnboardingHubCallback() {
           ],
         });
       } else {
-        navigation.navigate(NavigatorName.PostOnboarding, {
-          screen: ScreenName.PostOnboardingHub,
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.PostOnboarding,
+          params: {
+            screen: ScreenName.PostOnboardingHub,
+          },
         });
       }
     },

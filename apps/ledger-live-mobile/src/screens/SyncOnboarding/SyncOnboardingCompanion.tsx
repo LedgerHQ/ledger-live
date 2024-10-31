@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -148,6 +148,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
   const deviceInitialApps = useFeature("deviceInitialApps");
+  const recoverUpsellRedirection = useFeature("recoverUpsellRedirection");
+  const hasBackupStep = !recoverUpsellRedirection?.enabled;
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const deviceName = device.deviceName || productName;
@@ -369,17 +371,21 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
       if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
         // device was just seeded
-        setCompanionStepKey(CompanionStepKey.Backup);
+        setCompanionStepKey(hasBackupStep ? CompanionStepKey.Backup : CompanionStepKey.Apps);
         seededDeviceHandled.current = true;
         return;
       } else if (
         deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
       ) {
-        // switch to the apps step
-        __DEV__
-          ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
-          : setCompanionStepKey(CompanionStepKey.Apps);
-
+        // device was already seeded
+        if (hasBackupStep) {
+          __DEV__
+            ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
+            : setCompanionStepKey(CompanionStepKey.Apps);
+        } else {
+          // switch to the apps step
+          setCompanionStepKey(CompanionStepKey.Apps);
+        }
         seededDeviceHandled.current = true;
         return;
       }
@@ -433,7 +439,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       default:
         break;
     }
-  }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, shouldRestoreApps]);
+  }, [
+    deviceOnboardingState,
+    notifyEarlySecurityCheckShouldReset,
+    hasBackupStep,
+    shouldRestoreApps,
+  ]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -638,17 +649,21 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
-        {
-          key: CompanionStepKey.Backup,
-          title: t("syncOnboarding.backup.title"),
-          doneTitle: t("syncOnboarding.backup.title"),
-          renderBody: () => (
-            <BackupStep
-              device={device}
-              onPressKeepManualBackup={() => setCompanionStepKey(CompanionStepKey.Apps)}
-            />
-          ),
-        },
+        ...(hasBackupStep
+          ? [
+              {
+                key: CompanionStepKey.Backup,
+                title: t("syncOnboarding.backup.title"),
+                doneTitle: t("syncOnboarding.backup.title"),
+                renderBody: () => (
+                  <BackupStep
+                    device={device}
+                    onPressKeepManualBackup={() => setCompanionStepKey(CompanionStepKey.Apps)}
+                  />
+                ),
+              },
+            ]
+          : []),
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -682,13 +697,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [
       t,
       productName,
-      seedPathStatus,
+      hasBackupStep,
       deviceInitialApps?.enabled,
       device,
+      seedPathStatus,
+      shouldRestoreApps,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
-      shouldRestoreApps,
     ],
   );
 

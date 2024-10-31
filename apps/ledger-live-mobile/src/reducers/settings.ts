@@ -80,6 +80,7 @@ import type {
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
+  SettingsSetHasBeenRedirectedToPostOnboardingPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -165,6 +166,7 @@ export const INITIAL_STATE: SettingsState = {
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
+  hasBeenRedirectedToPostOnboarding: false,
   onboardingType: null,
   depositFlow: {
     hasClosedNetworkBanner: false,
@@ -601,6 +603,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasBeenUpsoldProtect: (action as Action<SettingsSetHasBeenUpsoldProtectPayload>).payload,
   }),
+  [SettingsActionTypes.SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING]: (state, action) => ({
+    ...state,
+    hasBeenRedirectedToPostOnboarding: (
+      action as Action<SettingsSetHasBeenRedirectedToPostOnboardingPayload>
+    ).payload,
+  }),
   [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
@@ -874,6 +882,8 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
+export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
+  state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
