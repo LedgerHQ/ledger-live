@@ -1,0 +1,112 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "rules": {
+    "binaries": "off",
+    "classMembers": "off",
+    "dependencies": "error",
+    "devDependencies": "off",
+    "optionalPeerDependencies": "off",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "exports": "warn",
+    "files": "error",
+    "nsExports": "off",
+    "nsTypes": "off",
+    "types": "warn",
+    "unlisted": "off",
+    "unresolved": "off"
+  },
+  "ignoreExportsUsedInFile": true,
+  "project": ["src/**"],
+
+  "ignore": [
+    "**/__integrations__/*",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/tests/**",
+    "**/__test__/**",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/e2e/**",
+    "**/*.config.*",
+    "**/scripts/**",
+    "**/tools/**"
+  ],
+
+  "workspaces": {
+    "./apps/ledger-live-desktop": {
+      "entry": [
+        "src/index.ts",
+        "src/renderer/index.ts",
+        "src/preloader/index.ts",
+        "src/renderer/webworkers/workers/*.ts",
+        "src/webviewPreloader/dappPreloader.ts",
+        "src/webviewPreloader/index.ts"
+      ],
+      "ignore": ["src/newArch/features/Collectibles/**", "**/types.*"],
+      "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
+      "ignoreDependencies": ["prop-types", "allure-commandline", "msw"]
+    },
+    "./apps/ledger-live-mobile": {
+      "entry": ["index.js", "src/families/**"],
+      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "src/logic/keyboardVisible.ts"],
+      "ignoreDependencies": [
+        "@react-native-masked-view/masked-view",
+        "@react-native/gradle-plugin",
+        "@react-native/metro-config",
+        "asyncstorage-down",
+        "buffer",
+        "expo-crypto",
+        "expo-file-system",
+        "expo-image-loader",
+        "expo-modules-autolinking",
+        "expo-modules-core",
+        "prop-types",
+        "react-native-fast-pbkdf2",
+        "react-native-level-fs",
+        "react-native-navigation-bar-color",
+        "react-native-randombytes",
+        "react-native-tcp-socket",
+        "react-native-udp"
+      ]
+    },
+    "./libs/live-nft-react": {
+      "entry": ["src/index.ts", "src/tools/*", "src/hooks/*"]
+    },
+    "./libs/live-nft": {
+      "entry": ["src/api/index.ts", "src/index.ts", "src/index.test.ts", "src/types.ts"]
+    },
+    "./libs/env": {
+      "entry": ["src/index.ts"]
+    },
+    "./libs/live-hooks": {
+      "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
+    },
+    "./libs/live-countervalues": {
+      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
+    },
+    "./libs/live-countervalues-react": {
+      "entry": ["src/index.tsx", "src/portfolio.tsx"]
+    },
+    "./libs/live-wallet": {
+      "entry": [
+        "src/walletsync/index.ts",
+        "src/cloudsync/index.ts",
+        "src/liveqr/cross.ts",
+        "src/liveqr/importAccounts.ts",
+        "src/ordering.ts",
+        "src/addAccounts.ts",
+        "src/store.ts",
+        "src/accountName.ts"
+      ]
+    },
+    "./libs/ledger-key-ring-protocol": {
+      "entry": ["src/index.ts", "src/store.ts", "src/qrcode/index.ts"]
+    },
+    "./libs/hw-ledger-key-ring-protocol": {
+      "entry": ["src/index.ts"],
+      "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
+    },
+    "./libs/promise": { "entry": ["src/index.ts"] }
+  }
+}
