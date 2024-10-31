@@ -88,9 +88,9 @@ export function CurrencyCircleIcon({
 }
 function CurrencyBadge({ currency }: { currency: CryptoCurrency | TokenCurrency }) {
   return (
-    <Box horizontal alignItems={"center"} flow={3} id="currency-badge">
+    <Box horizontal alignItems="center" flow={3} id="currency-badge" flex={1}>
       <CurrencyCircleIcon size={40} currency={currency} />
-      <Box ml={2}>
+      <Box ml={2} maxWidth="fit-content">
         <Box
           ff="Inter|SemiBold"
           color="palette.text.shade50"
