@@ -89,8 +89,9 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
   const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
   const ptxSwapCoreExperimentFlag = analyticsFeatureFlagMethod("ptxSwapCoreExperiment");
-  const ptxSwapCoreExperiment =
-    ptxSwapCoreExperimentFlag?.enabled && ptxSwapCoreExperimentFlag?.params?.variant;
+  const ptxSwapCoreExperiment = ptxSwapCoreExperimentFlag?.enabled
+    ? ptxSwapCoreExperimentFlag?.params?.variant
+    : undefined;
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
