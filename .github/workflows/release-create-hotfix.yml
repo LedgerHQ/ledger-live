@@ -75,6 +75,10 @@ jobs:
       - name: push
         run: |
           git push origin hotfix-TEST-ANGUSBAYLEY
-          gh pr create --title ":fire: [TEST - NOT A REAL HOTFIX] Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix-TEST-ANGUSBAYLEY
+          gh pr create \
+            --title ":fire: [TEST - NOT A REAL HOTFIX] Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+            -F ./.github/templates/hotfix.md \
+            --base main \
+            --head hotfix-TEST-ANGUSBAYLEY
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
