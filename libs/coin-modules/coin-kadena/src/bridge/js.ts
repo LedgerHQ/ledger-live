@@ -28,7 +28,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<KadenaSigner>):
   });
 
   return {
-    preload: () => Promise.resolve({}),
+    preload: async () => Promise.resolve({}),
     hydrate: () => Promise.resolve({}),
     scanAccounts,
   };
