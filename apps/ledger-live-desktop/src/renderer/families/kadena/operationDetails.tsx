@@ -18,17 +18,18 @@ const OperationDetailsExtra = ({
     <>
       <OpDetailsSection>
         <OpDetailsTitle>
-          <Trans i18nKey={"operationDetails.extra.receiverChainId"} />
-        </OpDetailsTitle>
-        <OpDetailsData>{operation.extra.receiverChainId}</OpDetailsData>
-      </OpDetailsSection>
-      <OpDetailsSection>
-        <OpDetailsTitle>
           <Trans i18nKey={"operationDetails.extra.senderChainId"} />
         </OpDetailsTitle>
         <OpDetailsData>{operation.extra.senderChainId}</OpDetailsData>
       </OpDetailsSection>
-      {operation.extra.receiverChainId !== operation.extra.senderChainId ? (
+      <OpDetailsSection>
+        <OpDetailsTitle>
+          <Trans i18nKey={"operationDetails.extra.receiverChainId"} />
+        </OpDetailsTitle>
+        <OpDetailsData>{operation.extra.receiverChainId}</OpDetailsData>
+      </OpDetailsSection>
+      {operation.extra.receiverChainId !== operation.extra.senderChainId &&
+      operation.type === "OUT" ? (
         <OpDetailsSection>
           <OpDetailsData
             style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}
