@@ -7,7 +7,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import SendRowChainID from "./SendRowChainId";
+import SendRowChainId from "./SendRowChainId";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -21,5 +21,5 @@ type Props = {
 } & Navigation;
 export default function KadenaSendRowsCustom(props: Props) {
   const { transaction, ...rest } = props;
-  return <SendRowChainID {...rest} transaction={transaction as KadenaTransaction} />;
+  return <SendRowChainId {...rest} transaction={transaction as KadenaTransaction} />;
 }

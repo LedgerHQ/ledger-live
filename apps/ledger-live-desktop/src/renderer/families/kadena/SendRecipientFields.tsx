@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import WarnBox from "~/renderer/components/WarnBox";
 
 type Props = {
   onChange: (t: Transaction) => void;
@@ -68,6 +69,11 @@ const Root = ({ onChange, account, transaction }: Props) => {
           />
         </Box>
       </Box>
+      {transaction.receiverChainId !== transaction.senderChainId ? (
+        <WarnBox>
+          <Trans i18nKey="send.steps.details.transferCrossChainWarning" />
+        </WarnBox>
+      ) : null}
     </Box>
   );
 };
