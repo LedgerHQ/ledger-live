@@ -7,6 +7,17 @@ on:
         description: the branch to release from
         default: hotfix-TEST-ANGUSBAYLEY
         required: true
+      tag_version:
+        description: version to hotfix (e.g. 2.91.0)
+        default: latest
+        required: false
+      application:
+        description: application (LLM | LLD)
+        required: true
+        type: choice
+        options:
+          - LLM
+          - LLD
 
 jobs:
   prepare-release:
@@ -21,11 +32,38 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Checkout Repo
+
+      - name: Generate ref/tag version to use during main checkout
+        id: format-app-tag
+        run: |
+          if [ ${{ github.event.inputs.tag_version }} = 'latest' ]; then
+            main_ref="main"
+          else
+            if [ "${{ github.event.inputs.application }}" = "LLM" ]; then
+              formatted_app="live-mobile"
+            elif [ "${{ github.event.inputs.application }}" = "LLD" ]; then
+              formatted_app="@ledgerhq/live-desktop"
+            else
+              echo "Unknown application"
+              exit 1
+            fi
+            main_ref="${formatted_app}@${{ github.event.inputs.tag_version }}"
+          fi
+
+          echo "main_ref=$main_ref" >> $GITHUB_ENV
+          echo "Formatted application and tag version: $main_ref"
+
+      - name: Checkout Repo (develop branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: develop
           token: ${{ steps.generate-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Fetch hotfix branch
+        run: |
+          git fetch origin ${{ inputs.ref }}:${{ inputs.ref }}
+          git checkout ${{ inputs.ref }}
 
       - name: Setup git user
         uses: ./tools/actions/composites/setup-git-user
@@ -37,7 +75,9 @@ jobs:
         run: pnpm i -F "ledger-live"
 
       - name: Generate changeset status
-        run: pnpm changeset status --output=changeset-status.json
+        run: |
+          git fetch --tags
+          pnpm changeset status --since=${{ env.main_ref }} --output=changeset-status.json
 
       - name: Enforce use of patch level changesets only for hotfixes
         run: |
