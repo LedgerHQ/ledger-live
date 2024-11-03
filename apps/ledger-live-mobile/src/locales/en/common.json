@@ -315,6 +315,20 @@
       "title": "{{message}}",
       "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "TransactionBroadcastError": {
+      "title": "Transaction Broadcast Unsuccessfull",
+      "description": "Your transaction failed to broadcast on the {{network}} network. Your {{coin}} have not been transferred and remain in your account.",
+      "needHelp": "Need help ?",
+      "helpCenter": {
+        "title": "Help center",
+        "desc": "Visit our Help center or contact us via the widget for assistance.",
+        "cta": "Get help"
+      },
+      "technical": {
+        "title": "Technical error",
+        "cta": "Save logs"
+      }
+    },
     "FeeEstimationFailed": {
       "title": "Sorry, fee estimation failed",
       "description": "Try setting the fee manually (status: {{status}})."
@@ -494,6 +508,17 @@
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceForUnstaking": {
+      "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}. ",
+      "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",
+      "twoCtas": "<cta1>{{cta1Label}}</cta1> or <cta2>{{cta2Label}}</cta2> {{assetName}} into your account.",
+      "threeCtas": "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> or <cta3>{{cta3Label}}</cta3> {{assetName}} into your account.",
+      "ctas": {
+        "buy": "Buy",
+        "swap": "Swap",
+        "deposit": "Deposit"
+      }
     },
     "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
@@ -2845,9 +2870,9 @@
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
+      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
       "personalizedRecommendations": "Personalized experience",
-      "personalizedRecommendationsDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "personalizedRecommendationsDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -3112,6 +3137,14 @@
       "input": "Enter address",
       "inputEns": "Enter address or ENS"
     },
+    "memoTag": {
+      "input": "Enter Tag / Memo",
+      "title": "Don’t use Tag/Memo?",
+      "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+      "cta": "Add tag",
+      "ignore": "Don't add tag",
+      "learnMore": "Learn more about Tag/Memo"
+    },
     "send": {
       "title": "Send",
       "description": "Send crypto to another wallet."
@@ -3190,7 +3223,7 @@
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
-        "bannerTitle": "Learn how to withdraw from an exchange"
+        "bannerTitle": "Learn how to withdraw from exchanges?"
       },
       "securityVerify": {
         "title": "Address verification is critical for securing this transaction",
@@ -6770,12 +6803,12 @@
         "subtitle": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
         "content": {
           "able": {
-            "title": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+            "title": "With your consent, Ledger will be able to collect data about how you use Ledger Live (including page visits and clicks):",
             "diagAndUsage": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
             "personnalizationData": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
           },
           "unable": {
-            "title": "Ledger Live will never track information regarding:",
+            "title": "Ledger Live will never collect information regarding:",
             "adresses": "Your assets.",
             "balance": "Your portfolio.",
             "personnalInfos": "Your personal identifying information (such as your name or your email address)."
@@ -6787,7 +6820,7 @@
           },
           "infoText": {
             "info": "You can revoke your consent any time in the app settings.",
-            "link": "Learn more about our Tracking Policy"
+            "link": "Learn more about how we handle your data"
           }
         }
       },
@@ -6973,7 +7006,8 @@
           "title": "Invalid QR Code",
           "desc": "Only scan the QR code displayed on Ledger Live for synching your Ledger Live apps.",
           "info": "For the QR code, open “Settings”, select “General”, and then select “Ledger Sync”, “Turn on sync” and “Show QR”.",
-          "cta": "I understand"
+          "cta": "I understand",
+          "tryAgain": "Try again"
         },
         "scannedOldQrCode": {
           "title": "Ledger Live update required",

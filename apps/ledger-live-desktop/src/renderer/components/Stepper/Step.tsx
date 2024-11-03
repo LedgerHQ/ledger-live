@@ -43,8 +43,10 @@ const StepNumber = styled(Box).attrs<{
 }))<{
   status: Status;
 }>`
-  display: inline;
+  display: flex;
   text-align: center;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
   border: 1px solid
     ${p =>

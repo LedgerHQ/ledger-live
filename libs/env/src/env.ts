@@ -537,8 +537,8 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
-    parser: stringParser,
+    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon"],
+    parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
   NFT_ETH_METADATA_SERVICE: {
@@ -827,6 +827,11 @@ const envDefinitions = {
     def: 1.1,
     parser: floatParser,
     desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
+  EVM_FORCE_LEGACY_TRANSACTIONS: {
+    def: false,
+    parser: boolParser,
+    desc: "Force transaction type 0 on EVM networks",
   },
   ENABLE_NETWORK_LOGS: {
     def: false,

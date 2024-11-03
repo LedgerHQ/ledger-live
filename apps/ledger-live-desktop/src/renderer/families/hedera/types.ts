@@ -11,4 +11,5 @@ export type SendAmountProps = {
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
   trackProperties?: object;
+  autoFocus?: boolean;
 };

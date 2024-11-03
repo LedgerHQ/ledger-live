@@ -1,5 +1,6 @@
 import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
+import { Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -27,15 +28,17 @@ import CancelButton from "~/components/CancelButton";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import KeyboardView from "~/components/KeyboardView";
-import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import RetryButton from "~/components/RetryButton";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
+import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
+import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 
@@ -129,6 +132,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction],
   );
 
+  const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
+  );
+
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
 
@@ -146,7 +160,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const onPressContinue = useCallback(async () => {
+  const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
+    MemoTagDrawerState.INITIAL,
+  );
+
+  const onPressContinue = useCallback(() => {
+    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+      return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
+    }
+
+    track("SendRecipientContinue");
+
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
@@ -180,6 +204,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     navigation,
     parentAccount?.id,
     route.params,
+    memoTag?.isEmpty,
+    memoTagDrawerState,
   ]);
 
   if (!account || !transaction) return null;
@@ -252,7 +278,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                   },
                 ]}
               />
-              <LText color="grey">{<Trans i18nKey="common.or" />}</LText>
+              <Text color="neutral.c70">{t("common.or")}</Text>
               <View
                 style={[
                   styles.separatorLine,
@@ -283,6 +309,20 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+
+            {memoTag?.Input && (
+              <View style={styles.memoTagInputContainer}>
+                <memoTag.Input
+                  testID="memo-tag-input"
+                  placeholder={t("send.summary.memo.title")}
+                  onChange={memoTag.handleChange}
+                />
+                <Text mt={4} pl={2} color="alert">
+                  <TranslatedError error={memoTag.error} />
+                </Text>
+              </View>
+            )}
+
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
@@ -299,16 +339,21 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
-              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={debouncedBridgePending || !!status.errors.recipient}
+              disabled={debouncedBridgePending || !!status.errors.recipient || memoTag?.error}
               pending={debouncedBridgePending}
               onPress={onPressContinue}
             />
           </View>
         </KeyboardView>
       </SafeAreaView>
+
+      <MemoTagDrawer
+        open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
+        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
+        onNext={onPressContinue}
+      />
 
       <GenericErrorBottomModal
         error={bridgeErr}
@@ -336,6 +381,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: "transparent",
   },
+  memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
   },
@@ -361,3 +407,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+enum MemoTagDrawerState {
+  INITIAL,
+  SHOWING,
+  SHOWN,
+}

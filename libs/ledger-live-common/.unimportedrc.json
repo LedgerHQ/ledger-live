@@ -278,7 +278,7 @@
     "src/wallet-api/useDappLogic.ts",
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts",
-    "src/errors/sendFlow.ts"
+    "src/errors/transactionBroadcastErrors.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -309,6 +309,7 @@
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
+    "src/families/stellar/bridge/logic.ts",
     "src/families/stellar/logic.ts",
     "src/families/tezos/logic.ts",
     "src/families/tezos/react.ts",

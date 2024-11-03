@@ -239,6 +239,8 @@ export enum SettingsActionTypes {
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
   UNHIDE_NFT_COLLECTION = "UNHIDE_NFT_COLLECTION",
+  UNWHITELIST_NFT_COLLECTION = "UNWHITELIST_NFT_COLLECTION",
+  WHITELIST_NFT_COLLECTION = "WHITELIST_NFT_COLLECTION",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -273,6 +275,7 @@ export enum SettingsActionTypes {
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
+  SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING = "SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
   SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
@@ -316,6 +319,8 @@ export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsHideNftCollectionPayload = string;
 export type SettingsUnhideNftCollectionPayload = string;
+export type SettingsWhitelistNftCollectionPayload = string;
+export type SettingsUnwhitelistNftCollectionPayload = string;
 export type SettingsDismissBannerPayload = string;
 export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
@@ -379,6 +384,8 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
 export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsoldProtect"];
+export type SettingsSetHasBeenRedirectedToPostOnboardingPayload =
+  SettingsState["hasBeenRedirectedToPostOnboarding"];
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
@@ -412,6 +419,8 @@ export type SettingsPayload =
   | SettingsBlacklistTokenPayload
   | SettingsHideNftCollectionPayload
   | SettingsUnhideNftCollectionPayload
+  | SettingsWhitelistNftCollectionPayload
+  | SettingsUnwhitelistNftCollectionPayload
   | SettingsDismissBannerPayload
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload

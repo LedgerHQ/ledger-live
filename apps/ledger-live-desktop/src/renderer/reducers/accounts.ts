@@ -117,14 +117,17 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
 // FIXME we might reboot this idea later!
 export const activeAccountsSelector = accountsSelector;
 export const isUpToDateSelector = createSelector(activeAccountsSelector, accounts =>
-  accounts.every(a => {
+  accounts.map(a => {
     const { lastSyncDate } = a;
     const { blockAvgTime } = a.currency;
-    if (!blockAvgTime) return true;
-    const outdated =
-      Date.now() - (lastSyncDate.getTime() || 0) >
-      blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
-    return !outdated;
+    let isUpToDate = true;
+    if (blockAvgTime) {
+      const outdated =
+        Date.now() - (lastSyncDate.getTime() || 0) >
+        blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
+      isUpToDate = !outdated;
+    }
+    return { account: a, isUpToDate };
   }),
 );
 

@@ -25,7 +25,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { openModal } from "../../actions/modals";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { track } from "~/renderer/analytics/segment";
 import {

@@ -172,6 +172,8 @@ export function useCustomURI(
     if (source && deeplinkCampaign) {
       uri.searchParams.append("ajs_recover_source", source);
       uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
+      uri.searchParams.append("ajs_prop_source", source);
+      uri.searchParams.append("ajs_prop_campaign", deeplinkCampaign);
     }
 
     return uri;
@@ -189,4 +191,17 @@ export function useCustomPath(
   const uri = useCustomURI(servicesConfig, page, source, deeplinkCampaign);
 
   return usePath(servicesConfig, uri);
+}
+
+export enum Source {
+  LLM_ONBOARDING_24 = "llm-onboarding-24",
+  LLD_ONBOARDING_24 = "lld-onboarding-24",
+}
+
+export function useTouchScreenOnboardingUpsellURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+  source: Source,
+): string | undefined {
+  const campaign = "touchscreen-onboarding";
+  return useCustomURI(servicesConfig, "upsell", source, campaign);
 }

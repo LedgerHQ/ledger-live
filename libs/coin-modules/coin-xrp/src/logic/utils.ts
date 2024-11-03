@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { getAccountInfo, NEW_ACCOUNT_ERROR_MESSAGE } from "../network";
+import { getAccountInfo } from "../network";
 
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
 
@@ -15,7 +15,7 @@ export const validateTag = (tag: BigNumber) => {
 
 export const getNextValidSequence = async (address: string) => {
   const accInfo = await getAccountInfo(address, true);
-  return accInfo.account_data.Sequence;
+  return accInfo.sequence;
 };
 
 function isRecipientValid(recipient: string): boolean {
@@ -26,10 +26,7 @@ const recipientIsNew = async (recipient: string): Promise<boolean> => {
   if (!isRecipientValid(recipient)) return false;
 
   const info = await getAccountInfo(recipient);
-  if (info.error === NEW_ACCOUNT_ERROR_MESSAGE) {
-    return true;
-  }
-  return false;
+  return info.isNewAccount;
 };
 
 const cacheRecipientsNew: Record<string, boolean> = {};

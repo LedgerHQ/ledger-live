@@ -14,7 +14,7 @@ permissions:
 jobs:
   determine-affected:
     name: "Turbo Affected"
-    if: ${{github.event.pull_request.head.repo.full_name != github.repository }}
+    if: ${{github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
@@ -24,7 +24,7 @@ jobs:
   build-desktop-external:
     name: "[External] Build Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
@@ -34,7 +34,7 @@ jobs:
   test-desktop-external:
     name: "[External] Test Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name != github.repository }}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
@@ -44,7 +44,7 @@ jobs:
   build-mobile-external:
     name: "[External] Build Mobile"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.full_name != github.repository}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
@@ -59,7 +59,7 @@ jobs:
       - test-desktop-external
       - build-mobile-external
     runs-on: ubuntu-22.04
-    if: ${{ always() && !cancelled() && github.event.pull_request.head.repo.full_name != github.repository }}
+    if: ${{ always() && !cancelled() && github.event.pull_request.head.repo.fork }}
     steps:
       - name: Check result
         if: contains(needs.*.result, 'failure')

@@ -61,20 +61,17 @@ export class SoftwareDevice implements Device {
     return new PublicKey(this.keyPair.publicKey);
   }
 
-  private async generateSharedKey(): Promise<SharedKey> {
-    const xpriv = await crypto.randomBytes(64);
-    const pk = await crypto.derivePrivate(xpriv, []);
+  private generateSharedKey(): SharedKey {
+    const xpriv = crypto.randomBytes(64);
+    const pk = crypto.derivePrivate(xpriv, []);
     return { xpriv, publicKey: pk.publicKey };
   }
 
-  private async encryptSharedKey(
-    sharedKey: SharedKey,
-    recipient: Uint8Array,
-  ): Promise<EncryptedSharedKey> {
-    const kp = await crypto.randomKeypair();
-    const ecdh = await crypto.ecdh(kp, recipient);
-    const initializationVector = await crypto.randomBytes(16);
-    const encryptedXpriv = await crypto.encrypt(ecdh, initializationVector, sharedKey.xpriv);
+  private encryptSharedKey(sharedKey: SharedKey, recipient: Uint8Array): EncryptedSharedKey {
+    const kp = crypto.randomKeypair();
+    const ecdh = crypto.ecdh(kp, recipient);
+    const initializationVector = crypto.randomBytes(16);
+    const encryptedXpriv = crypto.encrypt(ecdh, initializationVector, sharedKey.xpriv);
     return {
       encryptedXpriv,
       publicKey: sharedKey.publicKey,
@@ -83,9 +80,9 @@ export class SoftwareDevice implements Device {
     };
   }
 
-  private async decryptSharedKey(encryptedSharedKey: EncryptedSharedKey): Promise<SharedKey> {
-    const ecdh = await crypto.ecdh(this.keyPair, encryptedSharedKey.ephemeralPublicKey);
-    const xpriv = await crypto.decrypt(
+  private decryptSharedKey(encryptedSharedKey: EncryptedSharedKey): SharedKey {
+    const ecdh = crypto.ecdh(this.keyPair, encryptedSharedKey.ephemeralPublicKey);
+    const xpriv = crypto.decrypt(
       ecdh,
       encryptedSharedKey.initializationVector,
       encryptedSharedKey.encryptedXpriv,
@@ -104,8 +101,8 @@ export class SoftwareDevice implements Device {
       ephemeralPublicKey: event.ephemeralPublicKey,
       initializationVector: event.nonce,
     };
-    const sharedKey = await this.decryptSharedKey(encryptedSharedKey);
-    const newKey = await crypto.derivePrivate(sharedKey.xpriv, path);
+    const sharedKey = this.decryptSharedKey(encryptedSharedKey);
+    const newKey = crypto.derivePrivate(sharedKey.xpriv, path);
     const xpriv = new Uint8Array(64);
     xpriv.set(newKey.privateKey);
     xpriv.set(newKey.chainCode, 32);
@@ -136,10 +133,10 @@ export class SoftwareDevice implements Device {
       switch (command.getType()) {
         case CommandType.Seed: {
           // Generate the shared key
-          sharedKey = await this.generateSharedKey();
+          sharedKey = this.generateSharedKey();
 
           // Encrypt the shared key and inject it in the command
-          const encryptedSharedKey = await this.encryptSharedKey(sharedKey, this.keyPair.publicKey);
+          const encryptedSharedKey = this.encryptSharedKey(sharedKey, this.keyPair.publicKey);
           (command as Seed).groupKey = sharedKey.publicKey;
           (command as Seed).encryptedXpriv = encryptedSharedKey.encryptedXpriv;
           (command as Seed).ephemeralPublicKey = encryptedSharedKey.ephemeralPublicKey;
@@ -154,10 +151,7 @@ export class SoftwareDevice implements Device {
           sharedKey = await this.deriveKey(tree, (command as Derive).path);
 
           // Encrypt the shared key and inject it in the command
-          const encryptedDerivedKey = await this.encryptSharedKey(
-            sharedKey,
-            this.keyPair.publicKey,
-          );
+          const encryptedDerivedKey = this.encryptSharedKey(sharedKey, this.keyPair.publicKey);
           (command as Derive).groupKey = sharedKey.publicKey;
           (command as Derive).encryptedXpriv = encryptedDerivedKey.encryptedXpriv;
           (command as Derive).initializationVector = encryptedDerivedKey.initializationVector;
@@ -170,7 +164,7 @@ export class SoftwareDevice implements Device {
             // If the current stream is the seed stream, read the key from the first command in the first block
             const encryptedKey = resolved.getEncryptedKey(this.keyPair.publicKey);
             if (encryptedKey) {
-              sharedKey = await this.decryptSharedKey({
+              sharedKey = this.decryptSharedKey({
                 encryptedXpriv: encryptedKey.encryptedXpriv,
                 initializationVector: encryptedKey.initialiationVector,
                 publicKey: encryptedKey.issuer,
@@ -186,7 +180,7 @@ export class SoftwareDevice implements Device {
             }
             if (!sharedKey) throw new Error("Cannot find the shared key");
           }
-          const encryptedSharedKey = await this.encryptSharedKey(
+          const encryptedSharedKey = this.encryptSharedKey(
             sharedKey!,
             (command as PublishKey).recipient,
           );
@@ -197,12 +191,10 @@ export class SoftwareDevice implements Device {
         }
       }
     }
-    const signature = (
-      await signCommandBlock(
-        lastBlock,
-        (await this.getPublicKey()).publicKey,
-        this.keyPair.privateKey,
-      )
+    const signature = signCommandBlock(
+      lastBlock,
+      (await this.getPublicKey()).publicKey,
+      this.keyPair.privateKey,
     ).signature;
     lastBlock.signature = signature;
     return lastBlock;
@@ -219,12 +211,12 @@ export class SoftwareDevice implements Device {
       publicKey: event.groupPublicKey,
       ephemeralPublicKey: event.ephemeralPublicKey,
     };
-    const sharedKey = await this.decryptSharedKey(encryptedSharedKey);
+    const sharedKey = this.decryptSharedKey(encryptedSharedKey);
 
     // Derive the key to match the path
     let index = DerivationPath.toIndexArray(event.stream.getStreamPath()!).length;
     while (index < path.length) {
-      const derivation = await crypto.derivePrivate(sharedKey.xpriv, [index]);
+      const derivation = crypto.derivePrivate(sharedKey.xpriv, [index]);
       const xpriv = new Uint8Array(64);
       xpriv.set(derivation.privateKey);
       xpriv.set(derivation.chainCode, 32);
@@ -244,8 +236,8 @@ export class SoftwareDevice implements Device {
 /**
  *
  */
-export async function createDevice(): Promise<Device> {
-  const kp = await crypto.randomKeypair();
+export function createDevice(): Device {
+  const kp = crypto.randomKeypair();
   return new SoftwareDevice(kp);
 }
 

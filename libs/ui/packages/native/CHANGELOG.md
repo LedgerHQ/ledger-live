@@ -1,5 +1,37 @@
 # @ledgerhq/native-ui
 
+## 0.25.2
+
+### Patch Changes
+
+- Updated dependencies [[`bc5048e`](https://github.com/LedgerHQ/ledger-live/commit/bc5048e0fda29b49a16b9e529fe0ace042267e8d)]:
+  - @ledgerhq/icons-ui@0.8.1
+
+## 0.25.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`bc5048e`](https://github.com/LedgerHQ/ledger-live/commit/bc5048e0fda29b49a16b9e529fe0ace042267e8d)]:
+  - @ledgerhq/icons-ui@0.8.1-next.0
+
+## 0.25.1
+
+### Patch Changes
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1
+
+## 0.25.1-next.0
+
+### Patch Changes
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1-next.0
+
 ## 0.25.0
 
 ### Minor Changes

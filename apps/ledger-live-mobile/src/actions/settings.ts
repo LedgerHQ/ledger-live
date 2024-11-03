@@ -70,6 +70,9 @@ import {
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
+  SettingsSetHasBeenRedirectedToPostOnboardingPayload,
+  SettingsWhitelistNftCollectionPayload,
+  SettingsUnwhitelistNftCollectionPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -146,6 +149,15 @@ export const hideNftCollection = createAction<SettingsHideNftCollectionPayload>(
 export const unhideNftCollection = createAction<SettingsUnhideNftCollectionPayload>(
   SettingsActionTypes.UNHIDE_NFT_COLLECTION,
 );
+
+export const whitelistNftCollection = createAction<SettingsWhitelistNftCollectionPayload>(
+  SettingsActionTypes.WHITELIST_NFT_COLLECTION,
+);
+
+export const unwhitelistNftCollection = createAction<SettingsUnwhitelistNftCollectionPayload>(
+  SettingsActionTypes.UNWHITELIST_NFT_COLLECTION,
+);
+
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
 );
@@ -263,6 +275,11 @@ export const dangerouslyOverrideState = createAction<DangerouslyOverrideStatePay
 export const setHasBeenUpsoldProtect = createAction<SettingsSetHasBeenUpsoldProtectPayload>(
   SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT,
 );
+
+export const setHasBeenRedirectedToPostOnboarding =
+  createAction<SettingsSetHasBeenRedirectedToPostOnboardingPayload>(
+    SettingsActionTypes.SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING,
+  );
 
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,

@@ -506,6 +506,13 @@ export const DEFAULT_FEATURES: Features = {
   spamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
+  ldmkTransport: {
+    ...DEFAULT_FEATURE,
+    params: {
+      warningVisible: true,
+    },
+  },
+  recoverUpsellRedirection: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

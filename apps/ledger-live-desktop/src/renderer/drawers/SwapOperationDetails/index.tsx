@@ -126,9 +126,9 @@ const SwapOperationDetails = ({
   const theme = useTheme();
   const statusColor = getStatusColor(status, theme);
   const { t } = useTranslation();
-  const url =
-    fromCurrency.type === "CryptoCurrency" &&
-    getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+  const mainCurrency =
+    fromCurrency.type === "CryptoCurrency" ? fromCurrency : fromCurrency.parentCurrency;
+  const url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
 
   useEffect(() => {
     const getProvideData = async () => {

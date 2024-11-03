@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +11,11 @@ import { hiddenNftCollectionsSelector } from "~/reducers/settings";
 import { accountSelector } from "~/reducers/accounts";
 import NftMedia from "~/components/Nft/NftMedia";
 import Skeleton from "~/components/Skeleton";
-import { unhideNftCollection } from "~/actions/settings";
+import { unhideNftCollection, whitelistNftCollection } from "~/actions/settings";
 import { State } from "~/reducers/types";
+
+const MAX_COLLECTIONS_FIRST_RENDER = 10;
+const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -88,6 +91,16 @@ const HiddenNftCollections = () => {
   const hiddenCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
+  const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
+
+  const onUnhideCollection = useCallback(
+    (collectionId: string) => {
+      dispatch(unhideNftCollection(collectionId));
+      dispatch(whitelistNftCollection(collectionId));
+    },
+    [dispatch],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: string }) => {
       const [accountId, contractAddress] = item.split("|");
@@ -95,22 +108,32 @@ const HiddenNftCollections = () => {
         <HiddenNftCollectionRow
           accountId={accountId}
           contractAddress={contractAddress}
-          onUnhide={() => dispatch(unhideNftCollection(item))}
+          onUnhide={() => onUnhideCollection(item)}
         />
       );
     },
-    [dispatch],
+    [onUnhideCollection],
   );
 
   const keyExtractor = useCallback((item: string) => item, []);
+
+  const collectionsSliced: string[] = useMemo(
+    () => hiddenCollections.slice(0, collectionsCount),
+    [collectionsCount, hiddenCollections],
+  );
+
+  const onEndReached = useCallback(() => {
+    setCollectionsCount(collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED);
+  }, [collectionsCount]);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>
       <Flex p={2}>
         <CollectionFlatList
-          data={hiddenCollections}
+          data={collectionsSliced}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
+          onEndReached={onEndReached}
         />
       </Flex>
     </Box>

@@ -1,5 +1,37 @@
 # dummy-wallet-app
 
+## 0.3.13
+
+### Patch Changes
+
+- Updated dependencies [[`17732b4`](https://github.com/LedgerHQ/ledger-live/commit/17732b4f3c8fbde9c2fcb51079779dad23af72f2), [`d5bbf11`](https://github.com/LedgerHQ/ledger-live/commit/d5bbf11403c740b1e529001a008233b2f19e3418), [`b3746c3`](https://github.com/LedgerHQ/ledger-live/commit/b3746c35af33db0e4a84887d2917511a137218b3), [`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1), [`3d8cd98`](https://github.com/LedgerHQ/ledger-live/commit/3d8cd98486402b69de7e1dcacdfe864f3d135ec9), [`e66d371`](https://github.com/LedgerHQ/ledger-live/commit/e66d3714e5e4fd6a8e3f5980a463b3bb61f40c4b), [`fc6a4f9`](https://github.com/LedgerHQ/ledger-live/commit/fc6a4f93ef3c9101c20e54d8ec6a53e7a86c25f1), [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9)]:
+  - @ledgerhq/live-common@34.13.0
+  - @ledgerhq/hw-app-eth@6.40.3
+
+## 0.3.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`17732b4`](https://github.com/LedgerHQ/ledger-live/commit/17732b4f3c8fbde9c2fcb51079779dad23af72f2), [`d5bbf11`](https://github.com/LedgerHQ/ledger-live/commit/d5bbf11403c740b1e529001a008233b2f19e3418), [`b3746c3`](https://github.com/LedgerHQ/ledger-live/commit/b3746c35af33db0e4a84887d2917511a137218b3), [`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1), [`3d8cd98`](https://github.com/LedgerHQ/ledger-live/commit/3d8cd98486402b69de7e1dcacdfe864f3d135ec9), [`e66d371`](https://github.com/LedgerHQ/ledger-live/commit/e66d3714e5e4fd6a8e3f5980a463b3bb61f40c4b), [`fc6a4f9`](https://github.com/LedgerHQ/ledger-live/commit/fc6a4f93ef3c9101c20e54d8ec6a53e7a86c25f1), [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9)]:
+  - @ledgerhq/live-common@34.13.0-next.0
+  - @ledgerhq/hw-app-eth@6.40.3-next.0
+
+## 0.3.12
+
+### Patch Changes
+
+- Updated dependencies [[`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c)]:
+  - @ledgerhq/live-common@34.12.0
+  - @ledgerhq/hw-app-eth@6.40.2
+
+## 0.3.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f644636`](https://github.com/LedgerHQ/ledger-live/commit/f644636cf1f744e8aecff5b75d3aa1b7b4caf865), [`abe4dcc`](https://github.com/LedgerHQ/ledger-live/commit/abe4dcc0cc839a860228d5d89f769546cde7fdcb), [`bfbbe66`](https://github.com/LedgerHQ/ledger-live/commit/bfbbe6611eb1f6e10272a8accce31d24779da533), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d), [`a8dff0f`](https://github.com/LedgerHQ/ledger-live/commit/a8dff0fee7496b9a79ae5c6866ffe0715299695c)]:
+  - @ledgerhq/live-common@34.12.0-next.0
+  - @ledgerhq/hw-app-eth@6.40.2-next.0
+
 ## 0.3.11
 
 ### Patch Changes

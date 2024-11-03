@@ -1,7 +1,13 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
-import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setHasBeenRedirectedToPostOnboarding,
+  setHasBeenUpsoldProtect,
+  setHasOrderedNano,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import { RebootContext } from "~/context/Reboot";
 import { knownDevicesSelector } from "~/reducers/ble";
 import { removeKnownDevices } from "~/actions/ble";
@@ -22,6 +28,8 @@ export default function ResetOnboardingStateRow() {
         dispatch(setHasOrderedNano(false));
         dispatch(completeOnboarding(false));
         dispatch(removeKnownDevices(knownDevices.map(d => d.id)));
+        dispatch(setHasBeenUpsoldProtect(false));
+        dispatch(setHasBeenRedirectedToPostOnboarding(false));
         unacceptGeneralTerms();
         requestAnimationFrame(() => {
           reboot();

@@ -389,20 +389,16 @@ export class APDU {
   }
 }
 
-async function injectTrustedProperties(
+function injectTrustedProperties(
   command: Command,
   properties: CommandResponse,
   secret: Uint8Array,
-): Promise<Command> {
+): Command {
   switch (command.getType()) {
     case CommandType.Seed: {
       const seedCommand = command as Seed;
       const seedProperties = properties as SeedCommandResponse;
-      seedCommand.encryptedXpriv = await crypto.decrypt(
-        secret,
-        seedProperties.iv,
-        seedProperties.xpriv,
-      );
+      seedCommand.encryptedXpriv = crypto.decrypt(secret, seedProperties.iv, seedProperties.xpriv);
       seedCommand.ephemeralPublicKey = seedProperties.ephemeralPublicKey;
       seedCommand.initializationVector = seedProperties.commandIv;
       seedCommand.groupKey = seedProperties.groupKey;
@@ -411,7 +407,7 @@ async function injectTrustedProperties(
     case CommandType.Derive: {
       const deriveCommand = command as Derive;
       const deriveProperties = properties as SeedCommandResponse;
-      deriveCommand.encryptedXpriv = await crypto.decrypt(
+      deriveCommand.encryptedXpriv = crypto.decrypt(
         secret,
         deriveProperties.iv,
         deriveProperties.xpriv,
@@ -428,7 +424,7 @@ async function injectTrustedProperties(
       const publishKeyProperties = properties as PublishKeyCommandResponse;
       publishKeyCommand.ephemeralPublicKey = publishKeyProperties.ephemeralPublicKey;
       publishKeyCommand.initializationVector = publishKeyProperties.commandIv;
-      publishKeyCommand.encryptedXpriv = await crypto.decrypt(
+      publishKeyCommand.encryptedXpriv = crypto.decrypt(
         secret,
         publishKeyProperties.iv,
         publishKeyProperties.xpriv,
@@ -449,7 +445,7 @@ findTrustedMember;
 
 export class ApduDevice implements Device {
   private transport: Transport;
-  private sessionKeyPair: Promise<KeyPair>;
+  private sessionKeyPair: KeyPair;
 
   constructor(transport: Transport) {
     this.transport = transport;
@@ -465,7 +461,7 @@ export class ApduDevice implements Device {
     return new PublicKey(publicKey);
   }
 
-  async getSeedId(data: Uint8Array): Promise<SeedIdResult> {
+  getSeedId(data: Uint8Array): Promise<SeedIdResult> {
     return APDU.getSeedId(this.transport, data);
   }
 
@@ -614,7 +610,7 @@ export class ApduDevice implements Device {
   }
 
   async sign(stream: CommandBlock[]): Promise<CommandBlock> {
-    const sessionKey = await this.sessionKeyPair;
+    const sessionKey = this.sessionKeyPair;
     const trustedProperties: CommandResponse[] = [];
 
     // We expect the stream to have a single block to sign (the last one)
@@ -649,8 +645,8 @@ export class ApduDevice implements Device {
     const signature = await APDU.finalizeSignature(this.transport);
 
     // Decrypt and inject trusted issuer
-    const secret = await crypto.ecdh(sessionKey, signature.sessionKey);
-    const issuer = await crypto.decrypt(secret, trustedIssuer.iv, trustedIssuer.issuer);
+    const secret = crypto.ecdh(sessionKey, signature.sessionKey);
+    const issuer = crypto.decrypt(secret, trustedIssuer.iv, trustedIssuer.issuer);
 
     // Inject trusted properties for commands
     for (let commandIndex = 0; commandIndex < blockToSign.commands.length; commandIndex++) {

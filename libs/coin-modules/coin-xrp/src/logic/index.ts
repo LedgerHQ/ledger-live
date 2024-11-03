@@ -13,6 +13,3 @@ export {
 } from "./utils";
 
 export { parseAPIValue } from "./common";
-
-//FIXME
-export { NEW_ACCOUNT_ERROR_MESSAGE } from "../network";

@@ -240,7 +240,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await drawer.selectCurrency("tether usd");
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
-      "Ethereum 3 (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
+      "Ethereum 3 (USDT)71.8174 USDT",
     );
     await drawer.back();
 
@@ -465,7 +465,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -504,7 +504,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient

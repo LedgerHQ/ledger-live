@@ -50,6 +50,7 @@ export class Layout extends Component {
     await this.drawerPortfolioButton.click();
   }
 
+  @step("Navigate to Market")
   async goToMarket() {
     await this.drawerMarketButton.click();
   }
@@ -62,6 +63,13 @@ export class Layout extends Component {
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
+  }
+
+  @step("Wait for accounts sync to be finished")
+  async waitForAccountsSyncToBeDone() {
+    await expect(this.topbarSynchronizeButton).toHaveAttribute("cursor", "default");
+    //todo: remove after https://ledgerhq.atlassian.net/browse/LIVE-14410 is solved
+    await this.page.waitForTimeout(5000);
   }
 
   @step("Open Accounts")

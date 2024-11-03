@@ -18925,7 +18925,7 @@ var package_default = {
     "doc:ljs": 'pnpm turbo doc --no-daemon --filter="./libs/ledgerjs/**"',
     "watch:ljs": 'pnpm turbo watch --no-daemon --filter="./libs/ledgerjs/**"',
     "watch:common": "pnpm turbo watch --no-daemon --filter=./libs/ledger-live-common",
-    "dev:cli": "pnpm turbo watch --no-daemon --filter=@ledgerhq/live-cli",
+    "dev:cli": "pnpm turbo watch --filter=@ledgerhq/live-cli",
     "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
@@ -18938,6 +18938,7 @@ var package_default = {
     lint: "pnpm turbo lint --no-daemon",
     "lint:fix": "pnpm turbo lint:fix --no-daemon",
     typecheck: "pnpm turbo typecheck --no-daemon",
+    "knip-check": "pnpm turbo knip-check",
     unimported: "pnpm turbo unimported",
     desktop: "pnpm --filter ledger-live-desktop",
     cli: "pnpm --filter live-cli",
@@ -19040,27 +19041,28 @@ var package_default = {
     "import:cal-tokens": 'pnpm --filter="@ledgerhq/cryptoassets" import:cal-tokens'
   },
   devDependencies: {
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.26.0",
-    "@commitlint/cli": "^17.4.2",
-    "@commitlint/config-conventional": "^17.6.5",
-    "@commitlint/prompt-cli": "^17.4.2",
+    "@changesets/changelog-github": "0.5.0",
+    "@changesets/cli": "2.27.7",
+    "@commitlint/cli": "17.8.1",
+    "@commitlint/config-conventional": "17.8.1",
+    "@commitlint/prompt-cli": "17.8.1",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
-    "@typescript-eslint/parser": "^6.2.0",
-    chalk: "^4.1.2",
-    eslint: "^8.51.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    nyc: "^15.1.0",
-    prettier: "^3.0.3",
-    rimraf: "^4.4.1",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    chalk: "4.1.2",
+    eslint: "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-json": "3.1.0",
+    "eslint-plugin-prettier": "5.1.3",
+    knip: "5.34.1",
+    nyc: "15.1.0",
+    prettier: "3.2.5",
+    rimraf: "4.4.1",
     turbo: "2.1.2",
-    typescript: "^5.4.3",
+    typescript: "5.4.3",
     unimported: "1.30.0",
-    zx: "^7.2.2"
+    zx: "7.2.3"
   },
   pnpm: {
     neverBuiltDependencies: [
@@ -19073,14 +19075,15 @@ var package_default = {
       "@ledgerhq/devices": "workspace:*",
       tslib: "2.6.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2"
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
+      "@ethersproject/providers>ws": "7.5.10"
     },
     patchedDependencies: {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.23.0": "patches/detox@20.23.0.patch",
+      "detox@20.26.2": "patches/detox@20.26.2.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
@@ -19102,7 +19105,7 @@ var package_default = {
       }
     }
   },
-  packageManager: "pnpm@9.11.0"
+  packageManager: "pnpm@9.12.3"
 };
 
 // src/main.ts
@@ -19111,6 +19114,7 @@ async function main() {
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
   const turboVersion = package_default.devDependencies.turbo;
+  const packageManager = package_default.packageManager;
   try {
     const turboOutput = (0, import_child_process.execSync)(
       `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`,
@@ -19119,7 +19123,7 @@ async function main() {
         maxBuffer: 2048 * 1024
       }
     );
-    const pnpmOutput = (0, import_child_process.execSync)(`npx pnpm list -r --depth=0 --json`, {
+    const pnpmOutput = (0, import_child_process.execSync)(`npx ${packageManager} list -r --depth=0 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024
     });

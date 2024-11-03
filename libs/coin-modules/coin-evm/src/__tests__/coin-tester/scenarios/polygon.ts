@@ -2,7 +2,7 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -11,19 +11,18 @@ import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { Transaction as EvmTransaction } from "../../../types";
 import { getCoinConfig, setCoinConfig } from "../../../config";
 import { makeAccount } from "../../fixtures/common.fixtures";
+import { callMyDealer, polygon, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarios.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "../../../hw-getAddress";
-import {
-  ERC1155Interface,
-  ERC20Interface,
-  ERC721Interface,
-  USDC_ON_POLYGON,
-  impersonnateAccount,
-  polygon,
-} from "../helpers";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+
+const USDC_ON_POLYGON = getTokenById("polygon/erc20/usd_coin_(pos)");
+const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
+const yootTokenId = "1988";
+const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";
+const platinumTokenId = "4";
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
   const send1MaticTransaction: PolygonScenarioTransaction = {
@@ -48,7 +47,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 
   const send80USDCTransaction: PolygonScenarioTransaction = {
     name: "Send 80 USDC",
-    recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
+    recipient: VITALIK,
     amount: new BigNumber(
       ethers.utils.parseUnits("80", USDC_ON_POLYGON.units[0].magnitude).toString(),
     ),
@@ -66,27 +65,23 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 
   const sendERC721Transaction: PolygonScenarioTransaction = {
     name: "Send ERC721",
-    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    recipient: VITALIK,
     mode: "erc721",
     nft: {
-      tokenId: "60528792147736380591631075209254468696410877323158186238633641510210472247297",
-      contract: "0x897B7A466905A7F0390ebCFf195F227f9DC2244c",
+      tokenId: yootTokenId,
+      contract: yootContract,
       quantity: new BigNumber(1),
-      collectionName: "Random Shit",
+      collectionName: "Courtyard.io",
     },
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(
-        currentAccount.nfts?.every(
-          nft => nft.contract !== "0x897B7A466905A7F0390ebCFf195F227f9DC2244c",
-        ),
-      ).toBe(true);
+      expect(currentAccount.nfts?.every(nft => nft.contract !== yootContract)).toBe(true);
       expect(latestOperation.type).toBe("FEES");
       const lastNftOperation = latestOperation.nftOperations?.[0];
       expect(lastNftOperation).toMatchObject({
-        contract: "0x897B7A466905A7F0390ebCFf195F227f9DC2244c",
-        tokenId: "60528792147736380591631075209254468696410877323158186238633641510210472247297",
+        contract: yootContract,
+        tokenId: yootTokenId,
         value: new BigNumber(1),
       });
     },
@@ -94,27 +89,23 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 
   const sendERC1155Transaction: PolygonScenarioTransaction = {
     name: "Send ERC1155",
-    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    recipient: VITALIK,
     mode: "erc1155",
     nft: {
-      tokenId: "60528792147736380591631075209254468696410877323158186238633641510210472247298",
-      contract: "0x631EAEd1388D1ac5A46e327f3A893c19b4d48920",
+      contract: emberContract,
+      tokenId: platinumTokenId,
       quantity: new BigNumber(10),
-      collectionName: "Random Shit 1155",
+      collectionName: "Ember Sword Badge",
     },
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(
-        currentAccount.nfts?.every(
-          nft => nft.contract !== "0x631EAEd1388D1ac5A46e327f3A893c19b4d48920",
-        ),
-      ).toBe(true);
+      expect(currentAccount.nfts?.every(nft => nft.contract !== emberContract)).toBe(true);
       expect(latestOperation.type).toBe("FEES");
       const lastNftOperation = latestOperation.nftOperations?.[0];
       expect(lastNftOperation).toMatchObject({
-        contract: "0x631EAEd1388D1ac5A46e327f3A893c19b4d48920",
-        tokenId: "60528792147736380591631075209254468696410877323158186238633641510210472247298",
+        contract: emberContract,
+        tokenId: platinumTokenId,
         value: new BigNumber(10),
       });
     },
@@ -170,7 +161,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
-      currency: getCryptoCurrencyById("polygon"),
+      currency: polygon,
       derivationMode: "",
     });
 
@@ -179,40 +170,36 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     await setBlock(lastBlockNumber + 1);
 
     // Send 100 USDC to the scenario account
-    await impersonnateAccount({
+    await callMyDealer({
       provider,
-      to: USDC_ON_POLYGON.contractAddress,
-      data: ERC20Interface.encodeFunctionData("transfer", [
-        address,
-        ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude),
-      ]),
-      addressToImpersonnate: "0x45dDa9cb7c25131DF268515131f647d726f50608",
+      drug: USDC_ON_POLYGON,
+      junkie: address,
+      dose: ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude),
     });
 
-    // Send 1 ERC721 to the scenario account
-    await impersonnateAccount({
+    // Get 1 yoot
+    await callMyDealer({
       provider,
-      to: "0x897B7A466905A7F0390ebCFf195F227f9DC2244c",
-      data: ERC721Interface.encodeFunctionData("transferFrom", [
-        "0x85d2151147d8347aac0a8cd07bb6cc363fcf88e1",
-        address,
-        "60528792147736380591631075209254468696410877323158186238633641510210472247297",
-      ]),
-      addressToImpersonnate: "0x85d2151147d8347aac0a8cd07bb6cc363fcf88e1",
+      drug: {
+        type: "Nft",
+        tokenId: yootTokenId,
+        contractAddress: yootContract,
+        standard: "ERC721",
+      },
+      junkie: address,
+      dose: ethers.BigNumber.from(1),
     });
 
-    // Send 10 ERC1155 to the scenario account
-    await impersonnateAccount({
+    await callMyDealer({
       provider,
-      to: "0x631EAEd1388D1ac5A46e327f3A893c19b4d48920",
-      data: ERC1155Interface.encodeFunctionData("safeTransferFrom", [
-        "0x85d2151147d8347aac0a8cd07bb6cc363fcf88e1",
-        address,
-        "60528792147736380591631075209254468696410877323158186238633641510210472247298",
-        10,
-        "0x",
-      ]),
-      addressToImpersonnate: "0x85d2151147d8347aac0a8cd07bb6cc363fcf88e1",
+      drug: {
+        type: "Nft",
+        tokenId: platinumTokenId,
+        contractAddress: emberContract,
+        standard: "ERC1155",
+      },
+      junkie: address,
+      dose: ethers.BigNumber.from(10),
     });
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };

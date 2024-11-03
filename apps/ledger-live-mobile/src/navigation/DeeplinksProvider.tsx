@@ -100,6 +100,7 @@ const linkingOptions = () => ({
   prefixes: [
     "ledgerlive://",
     "https://ledger.com",
+    // FIXME: We will be fixing the universal links in this epic : https://ledgerhq.atlassian.net/browse/LIVE-14732
     /**
      * Adjust universal links attached to iOS Bundle ID com.ledger.live
      * (local debug, prod & nightly builds)

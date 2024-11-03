@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { nftsByCollections } from "@ledgerhq/live-nft";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import DropDownSelector, { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
@@ -14,6 +13,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
+import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
 
 const LabelWithMeta = ({
   item,
@@ -42,18 +42,23 @@ const NFTCrumb = () => {
       ? accountSelector(state, {
           accountId: id,
         })
-      : null,
+      : undefined,
   );
-  const collections = useMemo(() => nftsByCollections(account?.nfts), [account?.nfts]);
+
+  const { collections } = useNftCollections({
+    account,
+  });
+
   const items: DropDownItemType<ProtoNFT>[] = useMemo(
     () =>
-      Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => ({
+      collections.map(([contract, nfts]: [string, ProtoNFT[]]) => ({
         key: contract,
         label: contract,
         content: nfts[0],
       })),
     [collections],
   );
+
   const activeItem: DropDownItemType<ProtoNFT> | undefined | null = useMemo(
     () => items.find(item => item.key === collectionAddress) || items[0],
     [collectionAddress, items],
