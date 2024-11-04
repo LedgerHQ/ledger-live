@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
+    "TransactionBroadcastError" : {
+      "title" : "بثّ معاملة غير ناجح",
+      "description" : "فشل بثّ معاملتك على شبكة {{network}}. {{coin}} خاصتك لم يتم تحويلها وبقيت في حسابك.",
+      "needHelp" : "بحاجة إلى مساعدة؟",
+      "helpCenter" : {
+        "title" : "مركز الدعم",
+        "desc" : "قم بزيارة مركز الدعم لدينا أو تواصل معنا عبر الأداة من أجل المساعدة.",
+        "cta" : "احصل على مساعدة"
+      },
+      "technical" : {
+        "title" : "خطأ تقني",
+        "cta" : "حفظ السجلات"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "عذراً، فشل تقدير الرسوم",
       "description" : "حاول تعيين الرسوم يدوياً (الحالة: {{status}})."
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}. ",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> or <cta2>{{cta2Label}}</cta2> {{assetName}} into your account.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> or <cta3>{{cta3Label}}</cta3> {{assetName}} into your account.",
+      "ctas" : {
+        "buy" : "Buy",
+        "swap" : "Swap",
+        "deposit" : "Deposit"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. قم بتعديل المبلغ أو تحقق من الرصيد.",
@@ -764,6 +789,12 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
@@ -2335,7 +2366,8 @@
       "swap" : "مبادلة",
       "send" : "إرسال",
       "deposit" : "تلقي",
-      "stake" : "تكديس"
+      "stake" : "تكديس",
+      "yield" : "العائد"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2582,8 @@
         "subTitle" : "دمج {{family}} تم بواسطة فريق {{team}}",
         "description" : "Ledger Live هي منصة مفتوحة المصدر.",
         "description2" : "المطورون من أي مكان في العالم بإمكانهم الدمج مع Ledger Live",
-        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger"
+        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger",
+        "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2624,7 @@
     "buy" : "شراء",
     "walletconnect" : "WalletConnect",
     "stake" : "تكديس",
+    "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
     "manage" : "إدارة",
@@ -2842,9 +2876,9 @@
       "developerMode" : "وضع المطور",
       "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
       "analytics" : "تحليلات",
-      "analyticsDesc" : "قم بتمكين Ledger من تتبع بيانات استخدام التطبيق للمساعدة على قياس أداء Ledger Live وتحسين كل من التطبيق وتجربتك.",
+      "analyticsDesc" : "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
       "personalizedRecommendations" : "تجربة مخصصة",
-      "personalizedRecommendationsDesc" : "قم بتمكين Ledger من تتبع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
+      "personalizedRecommendationsDesc" : "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal" : {
         "title" : "مشاركة التحليلات",
         "desc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
@@ -3109,6 +3143,14 @@
       "input" : "أدخل العنوان",
       "inputEns" : "أدخِل عنواناً أو ENS"
     },
+    "memoTag" : {
+      "input" : "Enter Tag / Memo",
+      "title" : "Don’t use Tag/Memo?",
+      "description" : "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+      "cta" : "Add tag",
+      "ignore" : "Don't add tag",
+      "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
+    },
     "send" : {
       "title" : "إرسال",
       "description" : "إرسال الأصول المشفرة إلى محفظة أخرى."
@@ -3132,6 +3174,13 @@
       "shareAddress" : "عنوان المشاركة",
       "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+      "memoTag" : {
+        "link" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "description" : "ربما تحتاج إلى علامة/ملاحظة (تسمية الوجهة) لتلقي هذا الأصل من منصة تداول. يمكنك استخدام أي مزيج من الأرقام مثل 1234.",
+        "cta" : "أفهم ذلك",
+        "learnMore" : "تعرّف على المزيد عن العلامات"
+      },
       "selectCrypto" : {
         "title" : "اختر الأصل المشفر الذي تريد تلقيه"
       },
@@ -3180,7 +3229,7 @@
         "adviceVerify" : "نوصي دائماً بالتحقق من عنوانك باستخدام جهازك Ledger",
         "sendWarning" : "أرسِل رموز التوكن فقط من شبكة {{network}}. الإرسال من شبكة أخرى قد يُؤدي إلى فقدان رموز التوكن خاصتك تماماً.",
         "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس",
-        "bannerTitle" : "تعلم كيف تقوم بعملية سحب من منصة تداول"
+        "bannerTitle" : "تعلّم كيف تقوم بعملية سحب من منصات التداول؟"
       },
       "securityVerify" : {
         "title" : "التحقق من العنوان أمر بالغ الأهمية لتأمين هذه المعاملة",
@@ -4509,7 +4558,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4578,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5457,9 @@
     "AccountHeader" : {
       "title" : "يمكنك أن تكسب مكافآت عن طريق تفويض حسابك",
       "btn" : "اكسب المكافآت"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ إضافة مدقق مخصص"
     }
   },
   "tron" : {
@@ -5854,6 +5910,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع. معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
@@ -6615,7 +6675,7 @@
     "title" : "توصيل الجهاز"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
       "tagMinimum" : "يتطلب {{min}} ETH",
@@ -6624,7 +6684,7 @@
         "kiln_pooling" : {
           "title" : "مُجمِع تكديس Kiln",
           "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
-          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+          "supportLink" : "تعرّف على المزيد عن مُجمِعات Kiln"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
@@ -6634,13 +6694,13 @@
         "lido" : {
           "title" : "Lido",
           "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
-          "supportLink" : "تعرف على المزيد عن Lido"
+          "supportLink" : "تعرّف على المزيد عن Lido"
         },
         "figment" : {
           "title" : "Figment",
           "tag" : "يتطلب 32 ETH",
-          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
-          "supportLink" : "تعرف على المزيد عن Figment"
+          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واحصل على مكافآت تُرسل تلقائياً إلى حسابك.",
+          "supportLink" : "تعرّف على المزيد عن Figment"
         },
         "kiln" : {
           "title" : "تكديس Kiln الفردي",
@@ -6648,6 +6708,72 @@
           "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
           "supportLink" : "تعرّف على المزيد عن Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "اختر مزود تكديس",
+      "category" : {
+        "all" : {
+          "name" : "الكل",
+          "description" : "كل مزودي تكديس إيثريوم المتاحين على Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "يمكنك تكديس ETH والحصول على مكافآت برموز توكن سائلة. ستظل قادراً على التداول والمشاركة في أنشطة التمويل اللامركزي (DeFi)."
+        },
+        "protocol" : {
+          "name" : "البروتوكول",
+          "description" : "يمكنك تكديس دفعة من 32 ETH والحصول على مكافآت العقدة الكاملة بوحدات ETH."
+        },
+        "pooling" : {
+          "name" : "التجميع",
+          "description" : "يمكنك الانضمام إلى مُجمِع لتكديس أي مبلغ من ETH والحصول على مكافآت."
+        },
+        "restaking" : {
+          "name" : "إعادة التكديس",
+          "description" : "يمكنك إعادة تكديس رمز التوكن السائل خاصتك للحصول على مكافآت إضافية."
+        }
+      },
+      "howItWorks" : "كيف يعمل تكديس ETH",
+      "lst" : "مطلوب رمز توكن سائل",
+      "noMinimum" : "ليس هناك حد أدنى",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "إعادة التكديس السائل من Kiln"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص"
+        },
+        "kelpdao" : {
+          "title" : "منظمة Kelp اللامركزية المستقلة"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "نظير لنظير"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "استراتيجيات وتكتيكات يجب معرفتها",
+      "requiredMinimum" : "يتطلب {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "مكافآت مُجمّعة تلقائياً",
+        "basic" : "المكافآت",
+        "daily" : "مكافآت يومية",
+        "eigenlayer_points" : "نقاط Eigenlayer",
+        "validator" : "مكافآت مدقق"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6807,12 @@
         "subtitle" : "مشاركة بيانات Ledger Live الخاصة بك تساعدنا على فهم تفضيلاتك، وعرض محتوى مناسب لك.",
         "content" : {
           "able" : {
-            "title" : "بموافقتك، Ledger ستكون قادرةً على تتبع بيانات حول كيف تستخدم Ledger Live (بما في ذلك زيارات الصفحات والنقرات):",
+            "title" : "With your consent, Ledger will be able to collect data about how you use Ledger Live (including page visits and clicks):",
             "diagAndUsage" : "لقياس أداء Ledger Live وتحسين كل من التطبيق وتجربتك (التحليلات).",
             "personnalizationData" : "لتزويدك بتوصيات مخصصة ومحتوى مُصمم خصيصاً ليناسب تفضيلاتك، بالإضافة إلى مساعدتنا على قياس فاعلية حملاتنا التسويقية (التخصيص)."
           },
           "unable" : {
-            "title" : "Ledger Live لن يتتبع أبداً معلومات متعلقة بما يلي:",
+            "title" : "Ledger Live will never collect information regarding:",
             "adresses" : "أصولك.",
             "balance" : "محفظتك الاستثمارية.",
             "personnalInfos" : "معلومات التعريف الشخصية الخاصة بك (مثل اسمك أو عنوان بريدك الإلكتروني)."
@@ -6698,7 +6824,7 @@
           },
           "infoText" : {
             "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
-            "link" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+            "link" : "Learn more about how we handle your data"
           }
         }
       },
@@ -6884,7 +7010,8 @@
           "title" : "كود QR غير صالح",
           "desc" : "فقط امسح ضوئياً كود QR المعروض على Ledger Live من أجل مزامنة تطبيقات Ledger Live الخاصة بك.",
           "info" : "للحصول على كود QR، افتح ”Settings (الإعدادات)“، واختر ”General (عام)“، ثم اختر ”Ledger Sync (مزامنة Ledger)“، و”Turn on Sync (تشغيل المزامنة)“ و”Show QR (عرض كود QR)“.",
-          "cta" : "أفهم ذلك"
+          "cta" : "أفهم ذلك",
+          "tryAgain" : "إعادة المحاولة"
         },
         "scannedOldQrCode" : {
           "title" : "تحديث Ledger Live مطلوب",
