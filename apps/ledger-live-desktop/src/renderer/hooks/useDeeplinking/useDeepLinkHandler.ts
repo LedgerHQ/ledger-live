@@ -1,45 +1,20 @@
-import { ipcRenderer } from "electron";
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
-import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
-import { setDeepLinkUrl } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
-import { setTrackingSource } from "../analytics/TrackPage";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "../actions/walletSync";
+import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
 import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
-
-const getAccountsOrSubAccountsByCurrency = (
-  currency: CryptoOrTokenCurrency,
-  accounts: Account[],
-) => {
-  const predicateFn = (account: SubAccount | Account) =>
-    getAccountCurrency(account).id === currency.id;
-  if (currency.type === "TokenCurrency") {
-    const tokenAccounts = accounts
-      .filter(acc => acc.subAccounts && acc.subAccounts.length > 0)
-      .map(acc => {
-        // why you do this Flow
-        const found = acc.subAccounts?.find(predicateFn);
-        return found || null;
-      })
-      .filter(Boolean);
-    return tokenAccounts;
-  }
-  return accounts.filter(predicateFn);
-};
+import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -83,6 +58,7 @@ export function useDeepLinkHandler() {
     },
     [history, location],
   );
+
   const handler = useCallback(
     (_: unknown, deeplink: string) => {
       const { pathname, searchParams, search } = new URL(deeplink);
@@ -122,20 +98,30 @@ export function useDeepLinkHandler() {
         currency,
         installApp,
         appName,
+        deeplinkSource,
+        deeplinkType,
+        deeplinkDestination,
+        deeplinkChannel,
+        deeplinkMedium,
+        deeplinkCampaign,
       } = query;
 
-      // Track deeplink only when ajsPropSource attribute exists.
-      if (ajsPropSource) {
-        track("deeplink_clicked", {
-          deeplinkSource: ajsPropSource,
-          deeplinkCampaign: ajsPropCampaign,
-          url,
-          currency,
-          installApp,
-          appName,
-          ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
-        });
-      }
+      trackDeeplinkingEvent({
+        ajsPropSource,
+        ajsPropCampaign,
+        ajsPropTrackData,
+        currency,
+        installApp,
+        appName,
+        deeplinkSource,
+        deeplinkType,
+        deeplinkDestination,
+        deeplinkChannel,
+        deeplinkMedium,
+        deeplinkCampaign,
+        url,
+      });
+
       switch (url) {
         case "accounts": {
           const { address } = query;
@@ -362,27 +348,8 @@ export function useDeepLinkHandler() {
     },
     [accounts, dispatch, location.pathname, navigate, postOnboardingDeeplinkHandler, setUrl],
   );
+
   return {
     handler,
   };
 }
-function useDeeplink() {
-  const dispatch = useDispatch();
-  const openingDeepLink = useSelector(deepLinkUrlSelector);
-  const loaded = useSelector(areSettingsLoaded);
-  const { handler } = useDeepLinkHandler();
-  useEffect(() => {
-    // subscribe to deep-linking event
-    ipcRenderer.on("deep-linking", handler);
-    return () => {
-      ipcRenderer.removeListener("deep-linking", handler);
-    };
-  }, [handler]);
-  useEffect(() => {
-    if (openingDeepLink && loaded) {
-      handler(null, openingDeepLink);
-      dispatch(setDeepLinkUrl(null));
-    }
-  }, [loaded, openingDeepLink, dispatch, handler]);
-}
-export default useDeeplink;
