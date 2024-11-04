@@ -26,8 +26,6 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
-        // const filecoin = new Fil(transport);
-
         o.next({
           type: "device-signature-requested",
         });

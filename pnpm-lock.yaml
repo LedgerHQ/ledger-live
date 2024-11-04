@@ -2440,10 +2440,6 @@ importers:
       '@zondax/cbor':
         specifier: v8.1.0-zondax-no-bigint
         version: 8.1.0-zondax-no-bigint
-      axios:
-        specifier: 1.7.7
-        version: 1.7.7
->>>>>>> 42c31c988d (fix: first push)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -2484,6 +2480,9 @@ importers:
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
       jest:
         specifier: ^29.7.0
         version: 29.7.0
