@@ -1,3 +1,4 @@
+import { useAnalytics } from "@segment/analytics-react-native";
 import {
   memberCredentialsSelector,
   setTrustchain,
@@ -22,6 +23,7 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
+  const { track } = useAnalytics();
   const trustchain = useSelector(trustchainSelector);
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
@@ -34,11 +36,12 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
+      track("ledgersync_activated");
       navigation.navigate(ScreenName.WalletSyncLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
-    [dispatch, navigation],
+    [dispatch, navigation, track],
   );
 
   return useFollowInstructionDrawer(

@@ -1,3 +1,4 @@
+import { useAnalytics } from "@segment/analytics-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function useQRCodeHost({ currentOption }: Props) {
+  const { track } = useAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const queryClient = useQueryClient();
   const trustchain = useSelector(trustchainSelector);
@@ -74,6 +76,7 @@ export function useQRCodeHost({ currentOption }: Props) {
     onSuccess: newTrustchain => {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
+        if (!trustchain) track("ledgersync_activated");
       }
       queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       navigation.navigate(NavigatorName.WalletSync, {
