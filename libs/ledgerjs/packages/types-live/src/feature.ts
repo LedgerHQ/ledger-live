@@ -121,6 +121,8 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
 };
 
 /**

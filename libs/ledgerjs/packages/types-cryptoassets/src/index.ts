@@ -163,7 +163,9 @@ export type CryptoCurrencyId =
   | "blast_sepolia"
   | "scroll"
   | "scroll_sepolia"
-  | "etherlink";
+  | "etherlink"
+  | "zksync"
+  | "zksync_sepolia";
 
 export type LedgerExplorerId =
   | "btc"
