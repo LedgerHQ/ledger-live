@@ -16,7 +16,7 @@ export type Operation = {
   date: Date;
   transactionSequenceNumber: number;
   // Field containing dedicated value for each blockchain
-  details?: Record<string, string | number | boolean | Array<unknown> | undefined>;
+  details?: Record<string, unknown>;
 };
 
 export type Transaction = {

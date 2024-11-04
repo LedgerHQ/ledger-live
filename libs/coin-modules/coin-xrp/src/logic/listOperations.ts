@@ -1,6 +1,6 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/index";
 import { getServerInfos, getTransactions } from "../network";
 import type { XrplOperation } from "../network/types";
+import { XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
 /**
@@ -9,7 +9,10 @@ import { RIPPLE_EPOCH } from "./utils";
  * @param blockHeight Height to start searching for operations
  * @returns
  */
-export async function listOperations(address: string, blockHeight: number): Promise<Operation[]> {
+export async function listOperations(
+  address: string,
+  blockHeight: number,
+): Promise<XrpOperation[]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -28,10 +31,21 @@ export async function listOperations(address: string, blockHeight: number): Prom
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: XrplOperation): Operation => {
+  (operation: XrplOperation): XrpOperation => {
     const {
       meta: { delivered_amount },
-      tx: { Fee, hash, inLedger, date, Account, Destination, DestinationTag, Sequence, Memos },
+      tx: {
+        TransactionType,
+        Fee,
+        hash,
+        inLedger,
+        date,
+        Account,
+        Destination,
+        DestinationTag,
+        Sequence,
+        Memos,
+      },
     } = operation;
 
     const type = Account === address ? "OUT" : "IN";
@@ -73,10 +87,11 @@ const convertToCoreOperation =
       };
     }
 
-    let op: Operation = {
+    let op: XrpOperation = {
       hash,
       address,
-      type,
+      type: TransactionType,
+      simpleType: type,
       value,
       fee,
       blockHeight: inLedger,

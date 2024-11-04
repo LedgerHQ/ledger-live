@@ -1,5 +1,5 @@
-import { listOperations } from "./listOperations";
-import { RIPPLE_EPOCH } from "./utils";
+import { RIPPLE_EPOCH } from "../logic";
+import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -13,6 +13,8 @@ jest.mock("../network", () => ({
 }));
 
 describe("listOperations", () => {
+  const api = createApi({ node: "https://localhost" });
+
   afterEach(() => {
     mockGetServerInfos.mockClear();
     mockGetTransactions.mockClear();
@@ -89,7 +91,7 @@ describe("listOperations", () => {
       ]);
 
       // When
-      const results = await listOperations(address, 0);
+      const results = await api.listOperations(address, 0);
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
@@ -102,7 +104,6 @@ describe("listOperations", () => {
           hash: "HASH_VALUE",
           address,
           type: "Payment",
-          simpleType: expectedType,
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
@@ -115,7 +116,6 @@ describe("listOperations", () => {
           hash: "HASH_VALUE",
           address,
           type: "Payment",
-          simpleType: expectedType,
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
@@ -131,7 +131,6 @@ describe("listOperations", () => {
           hash: "HASH_VALUE",
           address,
           type: "Payment",
-          simpleType: expectedType,
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
