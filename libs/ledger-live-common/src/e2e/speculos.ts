@@ -358,7 +358,7 @@ export async function pressBoth() {
 
 export async function pressUntilTextFound(
   targetText: string,
-  maxAttempts: number = 10,
+  maxAttempts: number = 15,
 ): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
 
