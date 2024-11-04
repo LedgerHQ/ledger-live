@@ -32,4 +32,4 @@ runs:
           main_ref="${formatted_app}@${{ inputs.tag_version }}"
         fi
 
-        echo "::set-output name=main_ref::$main_ref"
+        echo "{main_ref}={$main_ref}" >> $GITHUB_OUTPUT
