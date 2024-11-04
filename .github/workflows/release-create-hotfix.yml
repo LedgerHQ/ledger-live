@@ -28,29 +28,16 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Generate ref/tag version to use during checkout
+      - name: Generate ref/tag version to use during main checkout
+        uses: ./tools/actions/composites/generate-tag
         id: format-app-tag
-        run: |
-          if [ ${{ github.event.inputs.tag_version }} = 'latest' ]; then
-            ref="main"
-          else
-            if [ "${{ github.event.inputs.application }}" = "LLM" ]; then
-              formatted_app="live-mobile"
-            elif [ "${{ github.event.inputs.application }}" = "LLD" ]; then
-              formatted_app="@ledgerhq/live-desktop"
-            else
-              echo "Unknown application"
-              exit 1
-            fi
-            ref="${formatted_app}@${{ github.event.inputs.tag_version }}"
-          fi
-
-          echo "ref=$ref" >> $GITHUB_ENV
-          echo "Formatted application and tag version: $ref"
+        with:
+          tag_version: ${{ github.event.inputs.tag_version }}
+          application: ${{ github.event.inputs.application }}
         
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.ref }}
+          ref: ${{ steps.format-app-tag.outputs.main_ref }}
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user

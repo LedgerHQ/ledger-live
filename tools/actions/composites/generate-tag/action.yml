@@ -1,0 +1,35 @@
+name: "Format Application Tag"
+description: "Generates the ref/tag version for main checkout. Returns `main` if no tag_version supplied"
+inputs:
+  tag_version:
+    description: "The version tag to format (e.g. 2.91.0)"
+    default: "latest"
+    required: false
+  application:
+    description: "The application to use (LLM or LLD)"
+    required: true
+outputs:
+  main_ref:
+    description: "Formatted application and tag version"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate ref/tag version
+      shell: bash
+      run: |
+        if [ "${{ inputs.tag_version }}" = "latest" ]; then
+          main_ref="main"
+        else
+          if [ "${{ inputs.application }}" = "LLM" ]; then
+            formatted_app="live-mobile"
+          elif [ "${{ inputs.application }}" = "LLD" ]; then
+            formatted_app="@ledgerhq/live-desktop"
+          else
+            echo "Unknown application"
+            exit 1
+          fi
+          main_ref="${formatted_app}@${{ inputs.tag_version }}"
+        fi
+
+        echo "::set-output name=main_ref::$main_ref"
