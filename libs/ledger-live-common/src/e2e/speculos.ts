@@ -400,25 +400,15 @@ async function pressRightButton(speculosApiPort: number): Promise<void> {
 
 export function containsSubstringInEvent(targetString: string, events: string[]): boolean {
   const concatenatedEvents = events.join("");
-  //eslint-disable-next-line no-console
-  console.log(`Target String: ${targetString}`);
-  //eslint-disable-next-line no-console
-  console.log(`Concatenated Events: ${concatenatedEvents}`);
 
   let result = concatenatedEvents.includes(targetString);
 
   if (!result) {
     const regexPattern = targetString.split("").join(".*?");
     const regex = new RegExp(regexPattern, "s");
-
-    //eslint-disable-next-line no-console
-    console.log(`regex: ${regex}`);
-
     result = regex.test(concatenatedEvents);
   }
 
-  //eslint-disable-next-line no-console
-  console.log(`containsSubstringInEvent result: ${result}`);
   return result;
 }
 

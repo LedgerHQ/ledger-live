@@ -6,7 +6,7 @@ export class Transaction {
     public accountToDebit: Account,
     public accountToCredit: Account,
     public amount: string,
-    public speed: Fee,
+    public speed?: Fee,
     public memoTag?: string,
   ) {}
 }

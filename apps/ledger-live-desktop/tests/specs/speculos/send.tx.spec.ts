@@ -20,17 +20,17 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
     expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
     xrayTicket: "B2CQA-2567",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
   },
@@ -53,17 +53,17 @@ const transactionsAddressInvalid = [
     xrayTicket: "B2CQA-2710",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2711",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined, "123456"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2712",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2713",
   },
@@ -86,22 +86,22 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2717",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", undefined, "123456"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2718",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2719",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "123456"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2720",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2721",
   },
@@ -160,35 +160,35 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2808",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
     xrayTicket: "B2CQA-2809",
   },
   {
-    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001", Fee.SLOW),
+    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
     xrayTicket: "B2CQA-2810",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", Fee.SLOW),
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001"),
     xrayTicket: "B2CQA-2811",
   },
   {
-    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01", Fee.SLOW),
+    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
     xrayTicket: "B2CQA-2812",
   },
   {
-    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2814",
   },
   {
-    transaction: new Transaction(Account.ADA_1, Account.ADA_1, "1", Fee.SLOW),
+    transaction: new Transaction(Account.ADA_1, Account.ADA_1, "1", undefined, "noTag"),
     xrayTicket: "B2CQA-2815",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
     xrayTicket: "B2CQA-2816",
   },
 ];

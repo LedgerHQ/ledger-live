@@ -31,9 +31,6 @@ export class SpeculosPage extends AppPage {
     let deviceLabels: string[];
 
     switch (account.currency) {
-      case Currency.NEAR:
-        deviceLabels = [DeviceLabels.WALLET_ID, DeviceLabels.APPROVE, DeviceLabels.REJECT];
-        break;
       case Currency.SOL:
         deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
         break;
