@@ -158,7 +158,11 @@ export const LiveAppManifestSchema = z
     id: z.string().trim().min(1),
     author: z.string().optional(),
     private: z.boolean().optional(),
+<<<<<<< HEAD
     cacheBustingId: z.number().optional(),
+=======
+    nocache: z.boolean().optional(),
+>>>>>>> cab1ce5be2 (cache control)
     name: z.string().trim().min(1),
     url: z.string().trim().min(1),
     dapp: LiveAppManifestDappSchema.optional(),
