@@ -85,7 +85,7 @@ export function useQRCode() {
     onSuccess(newTrustchain) {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
-        track("ledgersync_activated");
+        if (!trustchain) track("ledgersync_activated");
       }
       dispatch(
         setFlow({
