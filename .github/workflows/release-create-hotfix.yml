@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: support/post-ghost-release-hotfix-workflow-TEST  # CHANGE THIS, TESTING ONLY
           sparse-checkout: tools/actions/composites
 
       - name: Generate ref/tag version to use during main checkout
