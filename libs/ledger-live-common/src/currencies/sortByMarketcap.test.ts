@@ -32,5 +32,6 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "persistence",
     "onomy",
     "quicksilver",
+    "crypto_org",
   ]);
 });

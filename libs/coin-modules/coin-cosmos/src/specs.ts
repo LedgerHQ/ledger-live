@@ -592,7 +592,7 @@ const injective = {
 
 const cryptoOrgMinimalTransactionAmount = new BigNumber(1000000);
 const cryptoOrg = {
-  ...generateGenericCosmosTest("crypto_org_croeseid", true, {
+  ...generateGenericCosmosTest("crypto_org", false, {
     minViableAmount: cryptoOrgMinimalTransactionAmount,
     mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
     skipOperationHistory: true,

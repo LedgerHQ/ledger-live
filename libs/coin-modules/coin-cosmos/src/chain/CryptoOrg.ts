@@ -10,7 +10,7 @@ class CryptoOrg extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
-    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/360020501120?support=true";
+    this.stakingDocUrl = "";
     this.unbondingPeriod = 28;
     this.prefix = "cro";
     this.validatorPrefix = `${this.prefix}valoper`;
