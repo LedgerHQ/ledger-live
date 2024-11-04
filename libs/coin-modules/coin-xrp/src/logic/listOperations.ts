@@ -26,35 +26,72 @@ export async function listOperations(address: string, blockHeight: number): Prom
   return transactions.map(convertToCoreOperation(address));
 }
 
-const convertToCoreOperation = (address: string) => (operation: XrplOperation) => {
-  const {
-    meta: { delivered_amount },
-    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
-  } = operation;
+const convertToCoreOperation =
+  (address: string) =>
+  (operation: XrplOperation): Operation => {
+    const {
+      meta: { delivered_amount },
+      tx: { Fee, hash, inLedger, date, Account, Destination, DestinationTag, Sequence, Memos },
+    } = operation;
 
-  const type = Account === address ? "OUT" : "IN";
-  let value =
-    delivered_amount && typeof delivered_amount === "string" ? BigInt(delivered_amount) : BigInt(0);
+    const type = Account === address ? "OUT" : "IN";
+    let value =
+      delivered_amount && typeof delivered_amount === "string"
+        ? BigInt(delivered_amount)
+        : BigInt(0);
 
-  const feeValue = BigInt(Fee);
-  if (type === "OUT") {
-    if (!Number.isNaN(feeValue)) {
-      value = value + feeValue;
+    const fee = BigInt(Fee);
+    if (type === "OUT") {
+      if (!Number.isNaN(fee)) {
+        value = value + fee;
+      }
     }
-  }
 
-  const toEpochDate = (RIPPLE_EPOCH + date) * 1000;
+    const toEpochDate = (RIPPLE_EPOCH + date) * 1000;
 
-  return {
-    hash,
-    address,
-    type,
-    value,
-    fee: feeValue,
-    blockHeight: inLedger,
-    senders: [Account],
-    recipients: [Destination],
-    date: new Date(toEpochDate),
-    transactionSequenceNumber: Sequence,
+    let details = {};
+    if (DestinationTag) {
+      details = {
+        ...details,
+        destinationTag: DestinationTag,
+      };
+    }
+
+    const memos = Memos?.map(m => {
+      const memo = {
+        data: m?.Memo?.MemoData,
+        format: m?.Memo?.MemoFormat,
+        type: m?.Memo?.MemoType,
+      };
+      // Remove `undefined` properties
+      return Object.fromEntries(Object.entries(memo).filter(([, v]) => v));
+    });
+    if (memos) {
+      details = {
+        ...details,
+        memos,
+      };
+    }
+
+    let op: Operation = {
+      hash,
+      address,
+      type,
+      value,
+      fee,
+      blockHeight: inLedger,
+      senders: [Account],
+      recipients: [Destination],
+      date: new Date(toEpochDate),
+      transactionSequenceNumber: Sequence,
+    };
+
+    if (Object.keys(details).length != 0) {
+      op = {
+        ...op,
+        details,
+      };
+    }
+
+    return op;
   };
-};
