@@ -37,8 +37,6 @@ jobs:
     steps:
       - name: Checkout feature branch
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # get tip of current branch only
   
       - name: Fetch develop branch
         run: |
