@@ -148,8 +148,48 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2574",
   },
   {
+    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+    xrayTicket: "B2CQA-2807",
+  },
+  {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
+  },
+  {
+    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2808",
+  },
+  {
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2809",
+  },
+  {
+    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001", Fee.SLOW),
+    xrayTicket: "B2CQA-2810",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", Fee.SLOW),
+    xrayTicket: "B2CQA-2811",
+  },
+  {
+    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01", Fee.SLOW),
+    xrayTicket: "B2CQA-2812",
+  },
+  {
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2813",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2814",
+  },
+  {
+    transaction: new Transaction(Account.ADA_1, Account.ADA_1, "1", Fee.SLOW),
+    xrayTicket: "B2CQA-2815",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2816",
   },
 ];
 

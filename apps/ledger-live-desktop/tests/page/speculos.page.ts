@@ -14,6 +14,17 @@ import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Currency } from "tests/enum/Currency";
 import { Swap } from "tests/models/Swap";
 import { extractNumberFromString } from "tests/utils/textParserUtils";
+import { sendBTCBasedCoin } from "tests/families/bitcoin";
+import { sendEVM } from "tests/families/evm";
+import { sendPolkadot } from "tests/families/polkadot";
+import { sendAlgorand } from "tests/families/algorand";
+import { sendTron } from "tests/families/tron";
+import { sendStellar } from "tests/families/stellar";
+import { sendCardano } from "tests/families/cardano";
+import { sendXRP } from "tests/families/xrp";
+import { delegateNear } from "tests/families/near";
+import { delegateCosmos, sendCosmos } from "tests/families/cosmos";
+import { delegateSolana, sendSolana } from "tests/families/solana";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account) {
@@ -49,85 +60,45 @@ export class SpeculosPage extends AppPage {
     await pressBoth();
   }
 
-  @step("Send method - EVM")
-  async sendEVM(tx: Transaction) {
-    const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-    const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-    expect(isAmountCorrect).toBeTruthy();
-    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-    expect(isAddressCorrect).toBeTruthy();
-
-    await pressBoth();
-  }
-
-  @step("Send method - BTC-based coin")
-  async sendBTCBasedCoin(tx: Transaction) {
-    let deviceLabel: string;
-
-    switch (tx.accountToDebit.currency) {
-      case Currency.BTC:
-        deviceLabel = DeviceLabels.CONTINUE;
-        break;
-      case Currency.DOGE:
-        deviceLabel = DeviceLabels.ACCEPT;
-        break;
-      default:
-        throw new Error(`Not a BTC-based coin: ${tx.accountToDebit.currency}`);
-    }
-
-    const events = await pressUntilTextFound(deviceLabel);
-    const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-    expect(isAmountCorrect).toBeTruthy();
-    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-    expect(isAddressCorrect).toBeTruthy();
-    await pressBoth();
-    await waitFor(DeviceLabels.CONFIRM);
-    await pressUntilTextFound(DeviceLabels.ACCEPT);
-    await pressBoth();
-  }
-
   @step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
     const currencyName = tx.accountToDebit.currency;
     switch (currencyName) {
       case Currency.sepETH:
-        await this.sendEVM(tx);
+      case Currency.POL:
+        await sendEVM(tx);
         break;
-      case Currency.BTC:
       case Currency.DOGE:
-        await this.sendBTCBasedCoin(tx);
+      case Currency.BCH:
+        await sendBTCBasedCoin(tx);
+        break;
+      case Currency.DOT:
+        await sendPolkadot(tx);
+        break;
+      case Currency.ALGO:
+        await sendAlgorand(tx);
+        break;
+      case Currency.SOL:
+        await sendSolana(tx);
+        break;
+      case Currency.TRX:
+        await sendTron(tx);
+        break;
+      case Currency.XLM:
+        await sendStellar(tx);
+        break;
+      case Currency.ATOM:
+        await sendCosmos(tx);
+        break;
+      case Currency.ADA:
+        await sendCardano(tx);
+        break;
+      case Currency.XRP:
+        await sendXRP(tx);
         break;
       default:
         throw new Error(`Unsupported currency: ${currencyName}`);
     }
-  }
-
-  @step("Delegate Method - Solana")
-  async delegateSolana() {
-    await waitFor(DeviceLabels.DELEGATE_FROM);
-    await pressUntilTextFound(DeviceLabels.APPROVE);
-    await pressBoth();
-  }
-
-  @step("Delegate Method - Near")
-  async delegateNear(delegatingAccount: Delegate) {
-    await waitFor(DeviceLabels.VIEW_HEADER);
-    const events = await pressUntilTextFound(DeviceLabels.CONTINUE_TO_ACTION);
-    const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
-    expect(isProviderCorrect).toBeTruthy();
-    await pressBoth();
-    await waitFor(DeviceLabels.VIEW_ACTION);
-    await pressUntilTextFound(DeviceLabels.SIGN);
-    await pressBoth();
-  }
-
-  @step("Delegate Method - Cosmos")
-  async delegateCosmos(delegatingAccount: Delegate) {
-    await waitFor(DeviceLabels.PLEASE_REVIEW);
-    const events = await pressUntilTextFound(DeviceLabels.CAPS_APPROVE);
-    const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
-    expect(isAmountCorrect).toBeTruthy();
-    await pressBoth();
   }
 
   @step("Sign Delegation Transaction")
@@ -135,13 +106,13 @@ export class SpeculosPage extends AppPage {
     const currencyName = delegatingAccount.account.currency.name;
     switch (currencyName) {
       case Account.SOL_1.currency.name:
-        await this.delegateSolana();
+        await delegateSolana();
         break;
       case Account.NEAR_1.currency.name:
-        await this.delegateNear(delegatingAccount);
+        await delegateNear(delegatingAccount);
         break;
       case Account.ATOM_1.currency.name:
-        await this.delegateCosmos(delegatingAccount);
+        await delegateCosmos(delegatingAccount);
         break;
       default:
         throw new Error(`Unsupported currency: ${currencyName}`);

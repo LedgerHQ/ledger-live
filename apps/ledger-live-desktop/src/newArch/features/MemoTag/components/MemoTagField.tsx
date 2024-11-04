@@ -68,6 +68,7 @@ const MemoTagField = ({
           ff="Inter"
           maxMemoLength={maxMemoLength}
           autoFocus={autoFocus}
+          data-testid="memo-tag-input"
         />
         {autoFocus && <InstructionText>{t("MemoTagField.instruction")}</InstructionText>}
       </Flex>
