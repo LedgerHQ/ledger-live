@@ -11,6 +11,21 @@ import {
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
+const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
+const trustchain = {
+  rootId: "trustchainId",
+  walletSyncEncryptionKey: "0x123",
+  applicationPath: "m/0'/16'/1'",
+};
+
+const Mocks = {
+  sdk: { getOrCreateTrustchain: jest.fn() },
+  memberCredentialsSelector: jest.fn(),
+  setTrustchain: jest.fn(),
+  setFlow: jest.fn(),
+  track: jest.fn(),
+};
+
 describe("useAddMember", () => {
   it("should create a new trustchain", async () => {
     Mocks.sdk.getOrCreateTrustchain.mockResolvedValue({
@@ -130,21 +145,6 @@ describe("useAddMember", () => {
     });
   });
 });
-
-const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
-const trustchain = {
-  rootId: "trustchainId",
-  walletSyncEncryptionKey: "0x123",
-  applicationPath: "m/0'/16'/1'",
-};
-
-const Mocks = {
-  sdk: { getOrCreateTrustchain: jest.fn() },
-  memberCredentialsSelector: jest.fn(),
-  setTrustchain: jest.fn(),
-  setFlow: jest.fn(),
-  track: jest.fn(),
-};
 
 jest.mock("react-redux", () => {
   const dispatch = jest.fn();
