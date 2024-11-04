@@ -11,7 +11,6 @@ import {
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
-  GetRecentPrioritizationFeesConfig,
   TransactionInstruction,
   ComputeBudgetProgram,
   VersionedTransaction,
