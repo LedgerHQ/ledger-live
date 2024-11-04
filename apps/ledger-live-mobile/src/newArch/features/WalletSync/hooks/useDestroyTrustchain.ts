@@ -1,3 +1,4 @@
+import { useAnalytics } from "@segment/analytics-react-native";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,6 +14,7 @@ import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const cloudSyncSDK = useCloudSyncSDK();
   const sdk = useTrustchainSdk();
@@ -31,6 +33,7 @@ export function useDestroyTrustchain() {
     mutationKey: [QueryKey.destroyTrustchain, trustchain],
     onSuccess: () => {
       dispatch(resetTrustchainStore());
+      track("ledgersync_deactivated");
       dispatch(walletSyncUpdate(null, 0));
       setCurrentStep(Steps.Activation);
     },

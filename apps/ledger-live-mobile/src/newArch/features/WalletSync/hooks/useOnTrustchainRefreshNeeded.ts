@@ -1,3 +1,4 @@
+import { useAnalytics } from "@segment/analytics-react-native";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -13,6 +14,7 @@ export function useOnTrustchainRefreshNeeded(
   trustchainSdk: TrustchainSDK,
   memberCredentials: MemberCredentials | null,
 ): (trustchain: Trustchain) => Promise<void> {
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const onTrustchainRefreshNeeded = useCallback(
     async (trustchain: Trustchain) => {
@@ -24,10 +26,11 @@ export function useOnTrustchainRefreshNeeded(
       } catch (e) {
         if (e instanceof TrustchainEjected) {
           dispatch(resetTrustchainStore());
+          track("ledgersync_deactivated");
         }
       }
     },
-    [dispatch, trustchainSdk, memberCredentials],
+    [dispatch, trustchainSdk, memberCredentials, track],
   );
   return onTrustchainRefreshNeeded;
 }

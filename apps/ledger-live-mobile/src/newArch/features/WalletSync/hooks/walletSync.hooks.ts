@@ -1,3 +1,4 @@
+import { useAnalytics } from "@segment/analytics-react-native";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "react-redux";
 import {
@@ -12,6 +13,7 @@ import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { NavigatorName, ScreenName } from "~/const";
 
 export const useLifeCycle = () => {
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const { refetch: restoreTrustchain } = useRestoreTrustchain();
@@ -19,6 +21,7 @@ export const useLifeCycle = () => {
 
   function reset() {
     dispatch(resetTrustchainStore());
+    track("ledgersync_deactivated");
     const routeName = NavigatorName.WalletSync;
     const screen = ScreenName.WalletSyncActivationInit;
     navigation.dispatch(StackActions.replace(routeName, { screen }));
