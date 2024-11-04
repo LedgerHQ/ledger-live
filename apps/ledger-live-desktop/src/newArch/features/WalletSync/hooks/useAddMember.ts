@@ -32,6 +32,7 @@ export function useAddMember({ device }: { device: Device | null }) {
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
+      track("ledgersync_activated");
       dispatch(
         setFlow({
           flow: Flow.Activation,
@@ -80,7 +81,6 @@ export function useAddMember({ device }: { device: Device | null }) {
           trustchainRef.current ?? undefined,
         );
 
-        track("ledgersync_activated");
         transitionToNextScreen(trustchainResult);
       } catch (error) {
         if (error instanceof TrustchainAlreadyInitialized) {
