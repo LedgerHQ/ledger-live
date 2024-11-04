@@ -1,8 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { ExchangeProviderNameAndSignature, getTestProviderInfo } from ".";
+import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
+import { findCurrencyData, getProvidersCDNData, getProvidersData } from "../../cal";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
-import { getProvidersData } from "./getProvidersData";
-import network from "@ledgerhq/live-network";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
@@ -210,12 +209,6 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
   },
 };
 
-type CurrencyDataResponse = {
-  id: string;
-  exchange_app_config_serialized: string;
-  exchange_app_signature: string;
-}[];
-
 type CurrencyData = {
   id: string;
   config: string;
@@ -254,35 +247,10 @@ export const getSwapProvider = async (
  * Retrieves the currency data for a given ID
  * @param currencyId The unique identifier for the currency.
  * @returns A promise that resolves to the currency data including ID, serialized config, and signature.
+ * @deprecated Use cal module `findCurrencyData` method.
  */
-export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> => {
-  const { data: currencyData } = await network<CurrencyDataResponse>({
-    method: "GET",
-    url: "https://crypto-assets-service.api.ledger.com/v1/currencies",
-    params: {
-      output: "id,exchange_app_config_serialized,exchange_app_signature",
-      id: currencyId,
-    },
-  });
-  if (!currencyData.length) {
-    throw new Error(`Exchange, missing configuration for ${currencyId}`);
-  }
-  if (currencyData.length !== 1) {
-    throw new Error(`Exchange, multiple configurations found for ${currencyId}`);
-  }
-  return {
-    id: currencyData[0].id,
-    config: currencyData[0].exchange_app_config_serialized,
-    signature: currencyData[0].exchange_app_signature,
-  } as CurrencyData;
-};
-
-export const getProvidersCDNData = async () => {
-  const providersData = await network({
-    url: "https://cdn.live.ledger.com/swap-providers/data.json",
-  });
-  return providersData.data;
-};
+export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
+  findCurrencyData(currencyId);
 
 export const fetchAndMergeProviderData = async () => {
   if (providerDataCache) {

@@ -54,8 +54,16 @@ The rest of the documentation is about testing on NanoSP.
 ```sh
 docker run --privileged -v '<ABSOLUTE_PATH_TO_APP_EXCHANGE_SRC>:/app' -t -d --name ledger-app-dev-tools ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools
 
-docker exec -it ledger-app-dev-tools bash -c 'export BOLOS_SDK="$NANOSP_SDK" && make -j DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1'
+docker exec -it ledger-app-dev-tools bash -c 'export BOLOS_SDK="$<NANO_SDK>" && make -j DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1'
 ```
+
+With `<NANO_SDK>` possible value:
+
+*   NanoS: `NANOS_SDK`
+*   NanoS+: `NANOSP_SDK`
+*   NanoX: `NANOX_SDK`
+*   Stax: `STAX_SDK`
+*   Flex: `FLEX_SDK`
 
 It is important to set the value of `DEBUG` to 1, as we need the fake Ledger private key in our test.
 

@@ -7,7 +7,7 @@ import secp256k1 from "secp256k1";
 import protobuf from "protobufjs";
 import BigNumber from "bignumber.js";
 
-describe("Check SWAP until payload signature", () => {
+describe("Check Exchange until payload signature", () => {
   let transport: Transport;
 
   beforeAll(async () => {
@@ -17,288 +17,296 @@ describe("Check SWAP until payload signature", () => {
     transport.close();
   });
 
-  it("Legacy SWAP", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.Swap);
+  describe("Check SWAP", () => {
+    it("Legacy SWAP", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.Swap);
 
-    // When
-    const transactionId = await exchange.startNewTransaction();
+      // When
+      const transactionId = await exchange.startNewTransaction();
 
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(10);
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(10);
 
-    const { partnerInfo, partnerSigned, partnerPrivKey } =
-      await appExchangeDatasetTest(legacySignFormat);
-    await exchange.setPartnerKey(partnerInfo);
+      const { partnerInfo, partnerSigned, partnerPrivKey } =
+        await appExchangeDatasetTest(legacySignFormat);
+      await exchange.setPartnerKey(partnerInfo);
 
-    await exchange.checkPartner(partnerSigned);
+      await exchange.checkPartner(partnerSigned);
 
-    const amount = new BigNumber(100000);
-    const amountToWallet = new BigNumber(1000);
-    const encodedPayload = await generateSwapPayloadProtobuf({
-      payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
-      refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
-      currencyFrom: "ETH",
-      currencyTo: "BTC",
-      amountToProvider: Buffer.from(amount.toString(16), "hex"),
-      amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      deviceTransactionId: transactionId,
-    });
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees);
-
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "der");
-    await exchange.checkTransactionSignature(payloadSignature);
-  });
-
-  it("NG SWAP", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
-
-    // When
-    const transactionId = await exchange.startNewTransaction();
-
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(64);
-
-    const { partnerInfo, partnerSigned, partnerPrivKey } =
-      await appExchangeDatasetTest(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
-
-    await exchange.checkPartner(partnerSigned);
-
-    const amount = new BigNumber(100_000);
-    const amountToWallet = new BigNumber(100_000_000_000);
-    let encodedPayload = await generateSwapPayloadProtobuf({
-      payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
-      refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
-      currencyFrom: "ETH",
-      currencyTo: "BTC",
-      amountToProvider: Buffer.from(amount.toString(16), "hex"),
-      amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
-    });
-    encodedPayload = convertToJWSPayload(encodedPayload);
-
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
-
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
-    await exchange.checkTransactionSignature(payloadSignature);
-  });
-
-  it("NG SWAP with more than 255 bytes in process transaction", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
-
-    // When
-    const transactionId = await exchange.startNewTransaction();
-
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(64);
-
-    const { partnerInfo, partnerSigned, partnerPrivKey } =
-      await appExchangeDatasetTest(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
-
-    await exchange.checkPartner(partnerSigned);
-
-    const amount = new BigNumber(100_000);
-    const amountToWallet = new BigNumber(100_000_000_000);
-    // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
-    let encodedPayload = await generateSwapPayloadProtobuf({
-      payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
-      payinExtraId: '{ extraInfo: "Go" }',
-      refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      refundExtraId: '{ extraInfo: "Go" }',
-      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
-      payoutExtraId: "bc1qer57ma0fzhqys2c",
-      currencyFrom: "ETH",
-      currencyTo: "BTC",
-      amountToProvider: Buffer.from(amount.toString(16), "hex"),
-      amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
-    });
-    encodedPayload = convertToJWSPayload(encodedPayload);
-
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
-    console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
-
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
-    console.log(
-      "DEBUG - SWAP partner payload signature:",
-      Buffer.from(payloadSignature).toString("hex"),
-    );
-    await exchange.checkTransactionSignature(payloadSignature);
-  });
-
-  it("NG SWAP with prepared data", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
-
-    // When
-    const transactionId = await exchange.startNewTransaction();
-
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(64);
-
-    const { partnerInfo, partnerSigned, apdu } = await appExchangeDataset(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
-
-    console.log("DEBUG - Swap partner APDU:", apdu.toString("hex"));
-    console.log("DEBUG - Swap partner signed:", Buffer.from(partnerSigned).toString("hex"));
-
-    await exchange.checkPartner(partnerSigned);
-
-    const encodedPayload = Buffer.from(
-      ".CipiYzFxYXIwc3Jycjd4Zmt2eTVsNjQzbHlkbnc5cmU1OWd0enp3ZjVtZHEaKmJjMXFhcjBzcnJyN3hma3Z5NWw2NDNseWRudzlyZTU5Z3R6endmNHRlcSoqMHhiNzk0ZjVlYTBiYTM5NDk0Y2U4Mzk2MTNmZmZiYTc0Mjc5NTc5MjY4OgNCVENCA0JBVEoCBH5SBgV0-95gAGIgNQrqDJf3R_HQ92CBRhSkdSOAGxrrfQvLuqKk9Gv4GEs=",
-    );
-
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
-    console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
-
-    // const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
-    const payloadSignature = Buffer.from(
-      "zGcNUYKM8sLxvT7zPU1C8vrMmanVlUroELnAeil4weo1LCk0zUBRse5-3Acv7I7II90xVTIxm26BnxRbZvVmTQ==",
-      "base64url",
-    );
-    console.log(
-      "DEBUG - SWAP partner payload signature:",
-      Buffer.from(payloadSignature).toString("hex"),
-    );
-    await exchange.checkTransactionSignature(payloadSignature);
-  });
-
-  it("NG SWAP with TON", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
-
-    // When
-    const transactionId = await exchange.startNewTransaction();
-
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(64);
-
-    const { partnerInfo, partnerSigned, apdu, partnerPrivKey } =
-      await appExchangeDatasetTest(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
-
-    console.log("DEBUG - Swap partner APDU:", apdu.toString("hex"));
-    console.log("DEBUG - Swap partner signed:", Buffer.from(partnerSigned).toString("hex"));
-
-    await exchange.checkPartner(partnerSigned);
-
-    const amount = new BigNumber(100);
-    const amountToWallet = new BigNumber(1_000);
-    // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
-    let encodedPayload = await generateSwapPayloadProtobuf({
-      payinAddress: "UQAbvs2tCnsTWxCZX7JW-dqlk0vM8x_m8aJqF4wwRWGtTEZD",
-      refundAddress: "UQAbvs2tCnsTWxCZX7JW-dqlk0vM8x_m8aJqF4wwRWGtTEZD",
-      payoutAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-      // payinAddress: "UQCa_2bcwBt5eH9gOMgHC497nyfjgSl8hGpZ90O7B17WHA==",
-      // refundAddress: "UQCa_2bcwBt5eH9gOMgHC497nyfjgSl8hGpZ90O7B17WHA==",
-      // payoutAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      currencyFrom: "TON",
-      currencyTo: "ETH",
-      amountToProvider: Buffer.from(amount.toString(16), "hex"),
-      amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
-    });
-    encodedPayload = convertToJWSPayload(encodedPayload);
-
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
-    console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
-
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
-    console.log(
-      "DEBUG - SWAP partner payload signature:",
-      Buffer.from(payloadSignature).toString("hex"),
-    );
-    await exchange.checkTransactionSignature(payloadSignature);
-
-    const configEth = {
-      config: Buffer.from("0345544808457468657265756d050345544812", "hex"),
-      signature: Buffer.from(
-        "3044022065d7931ab3144362d57e3fdcc5de921fb65024737d917f0ab1f8b173d1ed3c2e022027493568d112dc53c7177f8e5fc915d91a903780a067badf109085a73d360323",
-        "hex",
-      ),
-    };
-    let addressParameters = bip32asBuffer("44'/60'/0'/0/0");
-    await exchange.validatePayoutOrAsset(configEth.config, configEth.signature, addressParameters);
-
-    const delay = (milliseconds: number) => {
-      return new Promise(resolve => {
-        setTimeout(resolve, milliseconds);
+      const amount = new BigNumber(100000);
+      const amountToWallet = new BigNumber(1000);
+      const encodedPayload = await generateSwapPayloadProtobuf({
+        payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+        refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+        payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+        currencyFrom: "ETH",
+        currencyTo: "BTC",
+        amountToProvider: Buffer.from(amount.toString(16), "hex"),
+        amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
+        deviceTransactionId: transactionId,
       });
-    };
-    await delay(500);
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees);
 
-    const configTon = {
-      config: Buffer.from("03544f4e03544f4e00", "hex"),
-      signature: Buffer.from(
-        "3045022100b35be5d1ad0d71572b5f3d72b40766521d5492fad6ed54289a64488bec3344a902205b522b7b8c7c800826bcd0bda092e84db5d1c23f6061c8b57c8efb3641d243a7",
-        "hex",
-      ),
-    };
-    addressParameters = bip32asBuffer("44'/607'/0'/0'/0'/0'");
-    await exchange.checkRefundAddress(configTon.config, configTon.signature, addressParameters);
+      const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "der");
+      await exchange.checkTransactionSignature(payloadSignature);
+    });
+
+    it("NG SWAP", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+      // When
+      const transactionId = await exchange.startNewTransaction();
+
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(64);
+
+      const { partnerInfo, partnerSigned, partnerPrivKey } =
+        await appExchangeDatasetTest(ngSignFormat);
+      await exchange.setPartnerKey(partnerInfo);
+
+      await exchange.checkPartner(partnerSigned);
+
+      const amount = new BigNumber(100_000);
+      const amountToWallet = new BigNumber(100_000_000_000);
+      let encodedPayload = await generateSwapPayloadProtobuf({
+        payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+        refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+        payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+        currencyFrom: "ETH",
+        currencyTo: "BTC",
+        amountToProvider: Buffer.from(amount.toString(16), "hex"),
+        amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
+        deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+      });
+      encodedPayload = convertToJWSPayload(encodedPayload);
+
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+
+      const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+      await exchange.checkTransactionSignature(payloadSignature);
+    });
+
+    it("NG SWAP with more than 255 bytes in process transaction", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+      // When
+      const transactionId = await exchange.startNewTransaction();
+
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(64);
+
+      const { partnerInfo, partnerSigned, partnerPrivKey } =
+        await appExchangeDatasetTest(ngSignFormat);
+      await exchange.setPartnerKey(partnerInfo);
+
+      await exchange.checkPartner(partnerSigned);
+
+      const amount = new BigNumber(100_000);
+      const amountToWallet = new BigNumber(100_000_000_000);
+      // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
+      let encodedPayload = await generateSwapPayloadProtobuf({
+        payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+        payinExtraId: '{ extraInfo: "Go" }',
+        refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+        refundExtraId: '{ extraInfo: "Go" }',
+        payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+        payoutExtraId: "bc1qer57ma0fzhqys2c",
+        currencyFrom: "ETH",
+        currencyTo: "BTC",
+        amountToProvider: Buffer.from(amount.toString(16), "hex"),
+        amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
+        deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+      });
+      encodedPayload = convertToJWSPayload(encodedPayload);
+
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+      console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
+
+      const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+      console.log(
+        "DEBUG - SWAP partner payload signature:",
+        Buffer.from(payloadSignature).toString("hex"),
+      );
+      await exchange.checkTransactionSignature(payloadSignature);
+    });
+
+    it("NG SWAP with prepared data", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+      // When
+      const transactionId = await exchange.startNewTransaction();
+
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(64);
+
+      const { partnerInfo, partnerSigned, apdu } = await appExchangeDataset(ngSignFormat);
+      await exchange.setPartnerKey(partnerInfo);
+
+      console.log("DEBUG - Swap partner APDU:", apdu.toString("hex"));
+      console.log("DEBUG - Swap partner signed:", Buffer.from(partnerSigned).toString("hex"));
+
+      await exchange.checkPartner(partnerSigned);
+
+      const encodedPayload = Buffer.from(
+        ".CipiYzFxYXIwc3Jycjd4Zmt2eTVsNjQzbHlkbnc5cmU1OWd0enp3ZjVtZHEaKmJjMXFhcjBzcnJyN3hma3Z5NWw2NDNseWRudzlyZTU5Z3R6endmNHRlcSoqMHhiNzk0ZjVlYTBiYTM5NDk0Y2U4Mzk2MTNmZmZiYTc0Mjc5NTc5MjY4OgNCVENCA0JBVEoCBH5SBgV0-95gAGIgNQrqDJf3R_HQ92CBRhSkdSOAGxrrfQvLuqKk9Gv4GEs=",
+      );
+
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+      console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
+
+      // const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+      const payloadSignature = Buffer.from(
+        "zGcNUYKM8sLxvT7zPU1C8vrMmanVlUroELnAeil4weo1LCk0zUBRse5-3Acv7I7II90xVTIxm26BnxRbZvVmTQ==",
+        "base64url",
+      );
+      console.log(
+        "DEBUG - SWAP partner payload signature:",
+        Buffer.from(payloadSignature).toString("hex"),
+      );
+      await exchange.checkTransactionSignature(payloadSignature);
+    });
+
+    it("NG SWAP with TON", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+      // When
+      const transactionId = await exchange.startNewTransaction();
+
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(64);
+
+      const { partnerInfo, partnerSigned, apdu, partnerPrivKey } =
+        await appExchangeDatasetTest(ngSignFormat);
+      await exchange.setPartnerKey(partnerInfo);
+
+      console.log("DEBUG - Swap partner APDU:", apdu.toString("hex"));
+      console.log("DEBUG - Swap partner signed:", Buffer.from(partnerSigned).toString("hex"));
+
+      await exchange.checkPartner(partnerSigned);
+
+      const amount = new BigNumber(100);
+      const amountToWallet = new BigNumber(1_000);
+      // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
+      let encodedPayload = await generateSwapPayloadProtobuf({
+        payinAddress: "UQAbvs2tCnsTWxCZX7JW-dqlk0vM8x_m8aJqF4wwRWGtTEZD",
+        refundAddress: "UQAbvs2tCnsTWxCZX7JW-dqlk0vM8x_m8aJqF4wwRWGtTEZD",
+        payoutAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        // payinAddress: "UQCa_2bcwBt5eH9gOMgHC497nyfjgSl8hGpZ90O7B17WHA==",
+        // refundAddress: "UQCa_2bcwBt5eH9gOMgHC497nyfjgSl8hGpZ90O7B17WHA==",
+        // payoutAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+        currencyFrom: "TON",
+        currencyTo: "ETH",
+        amountToProvider: Buffer.from(amount.toString(16), "hex"),
+        amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
+        deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+      });
+      encodedPayload = convertToJWSPayload(encodedPayload);
+
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+      console.log("DEBUG - SWAP partner encoded payload:", encodedPayload.toString("hex"));
+
+      const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+      console.log(
+        "DEBUG - SWAP partner payload signature:",
+        Buffer.from(payloadSignature).toString("hex"),
+      );
+      await exchange.checkTransactionSignature(payloadSignature);
+
+      const configEth = {
+        config: Buffer.from("0345544808457468657265756d050345544812", "hex"),
+        signature: Buffer.from(
+          "3044022065d7931ab3144362d57e3fdcc5de921fb65024737d917f0ab1f8b173d1ed3c2e022027493568d112dc53c7177f8e5fc915d91a903780a067badf109085a73d360323",
+          "hex",
+        ),
+      };
+      let addressParameters = bip32asBuffer("44'/60'/0'/0/0");
+      await exchange.validatePayoutOrAsset(
+        configEth.config,
+        configEth.signature,
+        addressParameters,
+      );
+
+      const delay = (milliseconds: number) => {
+        return new Promise(resolve => {
+          setTimeout(resolve, milliseconds);
+        });
+      };
+      await delay(500);
+
+      const configTon = {
+        config: Buffer.from("03544f4e03544f4e00", "hex"),
+        signature: Buffer.from(
+          "3045022100b35be5d1ad0d71572b5f3d72b40766521d5492fad6ed54289a64488bec3344a902205b522b7b8c7c800826bcd0bda092e84db5d1c23f6061c8b57c8efb3641d243a7",
+          "hex",
+        ),
+      };
+      addressParameters = bip32asBuffer("44'/607'/0'/0'/0'/0'");
+      await exchange.checkRefundAddress(configTon.config, configTon.signature, addressParameters);
+    });
   });
 
-  it("NG Sell", async () => {
-    // Given
-    const exchange = new Exchange(transport, ExchangeTypes.SellNg);
+  describe("Check SELL", () => {
+    it("NG Sell", async () => {
+      // Given
+      const exchange = new Exchange(transport, ExchangeTypes.SellNg);
 
-    // When
-    const transactionId = await exchange.startNewTransaction();
+      // When
+      const transactionId = await exchange.startNewTransaction();
 
-    // Then
-    expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(64);
+      // Then
+      expect(transactionId).toEqual(expect.any(String));
+      expect(transactionId).toHaveLength(64);
 
-    const { partnerInfo, partnerSigned, partnerPrivKey, apdu } =
-      await appExchangeSellDataset(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
-    console.log("DEBUG - Sell partner pubkey:", partnerInfo.publicKey.toString("hex"));
-    console.log("DEBUG - Sell partner APDU:", apdu.toString("hex"));
-    console.log("DEBUG - Sell partner signed:", Buffer.from(partnerSigned).toString("hex"));
+      const { partnerInfo, partnerSigned, partnerPrivKey, apdu } =
+        await appExchangeSellDataset(ngSignFormat);
+      await exchange.setPartnerKey(partnerInfo);
+      console.log("DEBUG - Sell partner pubkey:", partnerInfo.publicKey.toString("hex"));
+      console.log("DEBUG - Sell partner APDU:", apdu.toString("hex"));
+      console.log("DEBUG - Sell partner signed:", Buffer.from(partnerSigned).toString("hex"));
 
-    await exchange.checkPartner(partnerSigned);
+      await exchange.checkPartner(partnerSigned);
 
-    const amount = new BigNumber(100_000);
-    let encodedPayload = await generateSellPayloadProtobuf({
-      traderEmail: "test@ledger.fr",
-      inCurrency: "ETH",
-      inAmount: Buffer.from(amount.toString(16), "hex"),
-      inAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
-      outCurrency: "EUR",
-      outAmount: {
-        coefficient: Buffer.from("1", "hex"),
-        exponent: 1,
-      },
-      deviceTransactionId: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+      const amount = new BigNumber(100_000);
+      let encodedPayload = await generateSellPayloadProtobuf({
+        traderEmail: "test@ledger.fr",
+        inCurrency: "ETH",
+        inAmount: Buffer.from(amount.toString(16), "hex"),
+        inAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+        outCurrency: "EUR",
+        outAmount: {
+          coefficient: Buffer.from("1", "hex"),
+          exponent: 1,
+        },
+        deviceTransactionId: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+      });
+      encodedPayload = convertToJWSPayload(encodedPayload);
+
+      const estimatedFees = new BigNumber(0);
+      await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+      console.log("DEBUG - SELL partner encoded payload:", encodedPayload.toString("hex"));
+
+      const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+      console.log(
+        "DEBUG - SELL partner payload signature:",
+        Buffer.from(payloadSignature).toString("hex"),
+      );
+      await exchange.checkTransactionSignature(payloadSignature);
     });
-    encodedPayload = convertToJWSPayload(encodedPayload);
-
-    const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
-    console.log("DEBUG - SELL partner encoded payload:", encodedPayload.toString("hex"));
-
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
-    console.log(
-      "DEBUG - SELL partner payload signature:",
-      Buffer.from(payloadSignature).toString("hex"),
-    );
-    await exchange.checkTransactionSignature(payloadSignature);
   });
 });
 
@@ -336,7 +344,6 @@ describe("Test internal sign and verification functionality", () => {
         "30440220471b035b40dafa095d615998c82202b2bd00fb45670b828f1dda3b68e5b24cc3022022a1c64d02b8c14e1e4cc2d05b00234642c11db3d4461ff5366f5af337cf0ced",
         "hex",
       );
-      console.log("DEBUG - Test internal: message signature", Buffer.from(sig).toString("hex"));
 
       // Then
       const hashBuffer = await subtle.digest("SHA-256", Buffer.from(msg, "hex"));
