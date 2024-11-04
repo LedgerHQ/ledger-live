@@ -33,25 +33,17 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Generate ref/tag version to use during main checkout
-        id: format-app-tag
-        run: |
-          if [ ${{ github.event.inputs.tag_version }} = 'latest' ]; then
-            main_ref="main"
-          else
-            if [ "${{ github.event.inputs.application }}" = "LLM" ]; then
-              formatted_app="live-mobile"
-            elif [ "${{ github.event.inputs.application }}" = "LLD" ]; then
-              formatted_app="@ledgerhq/live-desktop"
-            else
-              echo "Unknown application"
-              exit 1
-            fi
-            main_ref="${formatted_app}@${{ github.event.inputs.tag_version }}"
-          fi
+      - uses: actions/checkout@v4
+        with:
+          ref: support/post-ghost-release-hotfix-workflow-TEST  # CHANGE THIS, TESTING ONLY
+          sparse-checkout: tools/actions/composites
 
-          echo "main_ref=$main_ref" >> $GITHUB_ENV
-          echo "Formatted application and tag version: $main_ref"
+      - name: Generate ref/tag version to use during main checkout
+        uses: ./tools/actions/composites/generate-tag
+        id: format-app-tag
+        with:
+          tag_version: ${{ github.event.inputs.tag_version }}
+          application: ${{ github.event.inputs.application }}
 
       - name: Checkout Repo (develop branch)
         uses: actions/checkout@v4
@@ -77,7 +69,7 @@ jobs:
       - name: Generate changeset status
         run: |
           git fetch --tags
-          pnpm changeset status --since=${{ env.main_ref }} --output=changeset-status.json
+          pnpm changeset status --since=${{ steps.format-app-tag.outputs.main_ref }} --output=changeset-status.json
 
       - name: Enforce use of patch level changesets only for hotfixes
         run: |
