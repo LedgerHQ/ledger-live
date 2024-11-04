@@ -2,13 +2,13 @@ import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
 import { Transaction } from "../../models/Transaction";
+import { Currency } from "tests/enum/Currency";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
-  readonly recipientInput = this.page.getByPlaceholder("Enter");
-  readonly tagInput = this.page.getByPlaceholder("Optional");
+  readonly recipientInput = this.page.getByTestId("send-recipient-input");
+  readonly tagInput = this.page.getByTestId("memo-tag-input");
   readonly continueButton = this.page.getByRole("button", { name: "continue" });
-  private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(
     "text=Double-check the transaction details on your Ledger device before signing.",
   );
@@ -16,6 +16,7 @@ export class SendModal extends Modal {
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
   private feeStrategy = (fee: string) => this.page.getByText(fee);
+  private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -49,16 +50,27 @@ export class SendModal extends Modal {
 
   @step("Fill tx information")
   async craftTx(tx: Transaction) {
+    const memotagModalCurrencies = [Currency.XLM, Currency.ADA, Currency.ATOM];
+    const feeStrategyCurrencies = [Currency.sepETH, Currency.POL, Currency.DOGE, Currency.BCH];
+
     await this.fillRecipientInfo(tx);
     await this.continueButton.click();
+
+    if (memotagModalCurrencies.includes(tx.accountToDebit.currency)) {
+      await this.noTagButton.click();
+    }
+
     await this.cryptoAmountField.fill(tx.amount);
-    await this.feeStrategy(tx.speed).click();
+
+    if (feeStrategyCurrencies.includes(tx.accountToDebit.currency)) {
+      await this.feeStrategy(tx.speed).click();
+    }
+
     await this.countinueSendAmount();
   }
 
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
-    await expect(this.totalDebitValue).toBeVisible();
     const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
     expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
