@@ -267,7 +267,7 @@ export function useWebviewState(
   };
 
   const webviewPartition = useMemo(() => {
-    let _webviewPartition: WebviewPartition = {};
+    const _webviewPartition: WebviewPartition = {};
     if (manifest.cacheBustingId !== undefined) {
       // webview data will persist across LL app reloads
       // when changing cacheBustingId, the partition will change and the webview's cache will be reset
@@ -277,7 +277,7 @@ export function useWebviewState(
       _webviewPartition.partition = `persist:${idSlug}-${manifest.cacheBustingId}`;
     }
     return _webviewPartition;
-  }, [manifest, inputs]);
+  }, [manifest]);
 
   return {
     webviewState: state,
