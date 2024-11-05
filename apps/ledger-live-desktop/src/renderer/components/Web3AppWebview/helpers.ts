@@ -268,14 +268,13 @@ export function useWebviewState(
 
   const webviewPartition = useMemo(() => {
     let _webviewPartition: WebviewPartition = {};
-    // manifest.cachebustingid could be the 0 number, so we need to check if it's defined
     if (manifest.cacheBustingId !== undefined) {
       // webview data will persist across LL app reloads
       // when changing cacheBustingId, the partition will change and the webview's cache will be reset
       // NOTE: setting partition to "temp-no-cache" (anything that's not starting with "persist")
       // means that the webview will not persist data across LL app reloads
       const idSlug = manifest.id.replace(/[^a-zA-Z0-9]/g, "");
-      _webviewPartition.partition = `persist:${idSlug}-${manifest.cacheBustingId}`; // "temp-no-cache";
+      _webviewPartition.partition = `persist:${idSlug}-${manifest.cacheBustingId}`;
     }
     return _webviewPartition;
   }, [manifest, inputs]);
