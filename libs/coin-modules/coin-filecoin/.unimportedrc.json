@@ -1,23 +1,8 @@
 {
   "ignoreUnresolved": [
-    [
-      "follow-redirects",
-      [
-        "node_modules/axios/lib/adapters/http.js"
-      ]
-    ],
-    [
-      "form-data",
-      [
-        "node_modules/axios/lib/platform/node/classes/FormData.js"
-      ]
-    ],
-    [
-      "proxy-from-env",
-      [
-        "node_modules/axios/lib/adapters/http.js"
-      ]
-    ]
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
