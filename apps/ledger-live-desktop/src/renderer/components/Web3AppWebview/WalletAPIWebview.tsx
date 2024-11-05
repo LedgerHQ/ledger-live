@@ -312,7 +312,6 @@ function useWebView(
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
     window.api?.openWindow(id);
-    webview.openDevTools(); // NOTE: for debugging purposes, remove before merge
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
