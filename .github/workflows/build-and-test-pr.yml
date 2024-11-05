@@ -25,14 +25,14 @@ jobs:
     name: "Build Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   # LLM
@@ -40,21 +40,21 @@ jobs:
     name: "Build Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-mobile-e2e:
     name: "Test Mobile E2E"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   # Tests
@@ -62,28 +62,28 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-design-system:
     name: "Test Design System"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-web-tools:
     name: "Test Web Tools"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@support/no-more-setup-toolchain
     secrets: inherit
 
   # Final Check required
