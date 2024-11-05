@@ -47,10 +47,6 @@
       "require": "./lib/deviceTransactionConfig.js",
       "default": "./lib-es/deviceTransactionConfig.js"
     },
-    "./logic": {
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
-    },
     "./signer": {
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
