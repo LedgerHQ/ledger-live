@@ -387,11 +387,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const serverRef = useRef<WalletAPIServer>();
 
-    const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
-      { manifest, inputs },
-      ref,
-      serverRef,
-    );
+    const { webviewState, webviewRef, webviewProps, handleRefresh, webviewPartition } =
+      useWebviewState({ manifest, inputs }, ref, serverRef);
     useEffect(() => {
       if (onStateChange) {
         onStateChange(webviewState);
@@ -445,6 +442,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
+          {...webviewPartition}
         />
         {!widgetLoaded && !hideLoader ? (
           <Loader>
