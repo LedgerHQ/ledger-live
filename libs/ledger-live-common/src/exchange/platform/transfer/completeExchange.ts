@@ -183,7 +183,8 @@ const completeExchange = (
  */
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   if (isExchangeTypeNg(exchangeType)) {
-    return Buffer.from(signature, "base64url");
+    const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
+    return Buffer.from(base64Signature, "base64");
   }
   if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
   return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
