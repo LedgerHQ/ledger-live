@@ -182,9 +182,11 @@ const completeExchange = (
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
-  return isExchangeTypeNg(exchangeType)
-    ? Buffer.from(signature, "base64url")
-    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+  if (isExchangeTypeNg(exchangeType)) {
+    return Buffer.from(signature, "base64url");
+  }
+  if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
+  return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;
