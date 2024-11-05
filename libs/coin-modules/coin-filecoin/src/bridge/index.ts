@@ -61,4 +61,3 @@ export function createBridges(signerContext: SignerContext<FilecoinSigner>) {
     accountBridge: buildAccountBridge(signerContext),
   };
 }
-export { prepareTransaction, estimateMaxSpendable };
