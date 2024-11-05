@@ -23,17 +23,24 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    const { onMessage, onLoadError, onOpenWindow, webviewProps, webviewRef, noAccounts } =
-      useWebView(
-        {
-          manifest,
-          inputs,
-          customHandlers,
-          currentAccountHistDb,
-        },
-        ref,
-        onStateChange,
-      );
+    const {
+      onMessage,
+      onLoadError,
+      onOpenWindow,
+      // onLoadStart,
+      webviewProps,
+      webviewRef,
+      noAccounts,
+    } = useWebView(
+      {
+        manifest,
+        inputs,
+        customHandlers,
+        currentAccountHistDb,
+      },
+      ref,
+      onStateChange,
+    );
 
     const reloadWebView = () => {
       webviewRef.current?.reload();
@@ -47,10 +54,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
+    console.log("WalletAPIWebview RNWebView");
 
     return (
       <RNWebView
         ref={webviewRef}
+        // onLoadStart={onLoadStart}
+        // onLayout={() => console.log("on layout")}
+        // onSourceChanged={() => console.log("on source changed")}
         onScroll={onScroll}
         decelerationRate="normal"
         startInLoadingState={true}
@@ -71,6 +82,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         style={styles.webview}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
+        // incognito={true}
         webviewDebuggingEnabled={__DEV__}
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}

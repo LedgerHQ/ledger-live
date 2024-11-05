@@ -52,6 +52,7 @@ import {
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import _ from "lodash";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -914,6 +915,7 @@ export function useCategories(manifests, initialCategory?: CategoryId | null): C
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type CacheBustedLiveAppsdDB = StateDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>;
 export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
 
@@ -1011,6 +1013,31 @@ function calculateTimeDiff(usedAt: string) {
 
   return timeDiff;
 }
+export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheBustedLiveAppsdDB) {
+  const getLatest = useCallback(
+    (manifestId: string) => {
+      return cacheBustedLiveAppsDb[manifestId];
+    },
+    [cacheBustedLiveAppsDb],
+  )
+  const edit = useCallback(
+    (manifestId: string, cacheBustingId: number) => {
+      const _cacheBustedLiveAppsDb = {
+        ...cacheBustedLiveAppsDb,
+        [manifestId]: cacheBustingId,
+      };
+      console.log({newState: _cacheBustedLiveAppsDb})
+      setState(state => {
+        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb }
+        console.log({prevstate: newstate})
+        return newstate; 
+      });
+    },
+    [setState],
+  );
+  return { getLatest, edit };
+}
+
 export function useRecentlyUsed(
   manifests: AppManifest[],
   [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,

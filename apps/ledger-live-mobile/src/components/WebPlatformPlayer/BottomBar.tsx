@@ -60,6 +60,7 @@ export function BottomBar({
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
 
+    console.log("bottom bar reload")
     webview.reload();
   }, [webviewAPIRef]);
 
