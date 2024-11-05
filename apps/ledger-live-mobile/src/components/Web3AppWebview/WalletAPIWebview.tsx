@@ -9,7 +9,6 @@ import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/consta
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
-import { CacheMode } from "react-native-webview/lib/WebViewTypes";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
@@ -48,7 +47,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
-    let webviewCacheControl: { cacheEnabled?: boolean; cacheMode?: CacheMode; incognito?: boolean } = {};
 
     return (
       <RNWebView
@@ -78,7 +76,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
-        {...webviewCacheControl}
       />
     );
   },

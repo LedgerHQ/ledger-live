@@ -222,6 +222,7 @@ export function useWebviewState(
       return {
         reload: () => {
           const webview = safeGetRefValue(webviewRef);
+
           webview.reload();
         },
         goBack: () => {
