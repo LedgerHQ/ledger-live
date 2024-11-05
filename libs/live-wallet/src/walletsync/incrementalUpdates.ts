@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import walletsync, { DistantState, LocalState } from ".";
+import walletsync, { DistantState, LocalState } from "./root";
 import { UpdateEvent } from "../cloudsync/sdk";
 import { WalletSyncDataManagerResolutionContext } from "./types";
 import { WSState } from "../store";
