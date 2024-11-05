@@ -1,7 +1,7 @@
 import { Transaction as HederaSDKTransaction } from "@hashgraph/sdk";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { base64ToUrlSafeBase64 } from "../common-logic";
+import { base64ToUrlSafeBase64 } from "./utils";
 import { Transaction } from "../types";
 import { broadcastTransaction } from "../api/network";
 

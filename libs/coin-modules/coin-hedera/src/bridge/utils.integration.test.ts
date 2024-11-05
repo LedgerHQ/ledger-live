@@ -1,7 +1,7 @@
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
-import { calculateAmount, getEstimatedFees } from "../common-logic";
+import { calculateAmount, getEstimatedFees } from "./utils";
 
 // Balance is 1 Hbar
 const account: Account = {

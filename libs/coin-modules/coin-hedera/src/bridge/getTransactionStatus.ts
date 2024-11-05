@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { calculateAmount, getEstimatedFees } from "../common-logic";
+import { calculateAmount, getEstimatedFees } from "./utils";
 import type { Transaction } from "../types";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (

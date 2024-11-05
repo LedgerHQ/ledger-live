@@ -17,7 +17,6 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/config.ts",
     "src/index.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",

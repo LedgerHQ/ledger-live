@@ -2,8 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "../types";
-import { prepareTransaction } from "../bridge";
-import { createTransaction } from "../bridge/createTransaction";
+import { createBridges } from ".";
 
 const account: Account = {
   type: "Account",
@@ -51,9 +50,15 @@ const transaction: Transaction = {
 };
 
 describe("js-transaction", () => {
+  let bridge: ReturnType<typeof createBridges>;
+
+  beforeAll(() => {
+    const signer = jest.fn();
+    bridge = createBridges(signer);
+  });
   test("createTransaction", () => {
     const data = transaction;
-    const result = createTransaction(account);
+    const result = bridge.accountBridge.createTransaction(account);
 
     expect(result).toEqual(data);
   });
@@ -72,7 +77,7 @@ describe("js-transaction", () => {
 
   test("prepareTransaction", async () => {
     const data = transaction;
-    const result = await prepareTransaction(account, transaction);
+    const result = await bridge.accountBridge.prepareTransaction(account, transaction);
 
     expect(result).toEqual(data);
   });

@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
-import { estimateMaxSpendable } from "../bridge";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import type { Transaction } from "../types";
 
 export const estimatedFeeSafetyRate = 2;

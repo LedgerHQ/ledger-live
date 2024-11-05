@@ -58,4 +58,3 @@ export function createBridges(signerContext: SignerContext<HederaSigner>) {
     accountBridge: buildAccountBridge(signerContext),
   };
 }
-export { prepareTransaction, estimateMaxSpendable };

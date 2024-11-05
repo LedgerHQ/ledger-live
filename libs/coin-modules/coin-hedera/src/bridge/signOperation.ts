@@ -4,7 +4,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildUnsignedTransaction } from "../api/network";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { Transaction, HederaSignatureSdk, HederaSigner } from "../types";
+import { Transaction, HederaSigner } from "../types";
 
 export const buildSignOperation =
   (
@@ -25,12 +25,12 @@ export const buildSignOperation =
 
           const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
-          const res = (await signerContext(deviceId, async signer => {
+          const res = await signerContext(deviceId, async signer => {
             await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
               return await signer.signTransaction(bodyBytes);
             });
             return hederaTransaction.toBytes();
-          })) as HederaSignatureSdk;
+          });
 
           o.next({
             type: "device-signature-granted",
