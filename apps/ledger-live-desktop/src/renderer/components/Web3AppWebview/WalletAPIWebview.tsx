@@ -414,12 +414,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     if (isDapp && noAccounts) {
       return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
-    let webviewCacheControl: { partition?: string } = {};
-    if (manifest.nocache) {
-      // setting partition to "temp-no-cache" (anything that's not starting with "persist")
-      // will make the webview not cache anything
-      webviewCacheControl.partition = "temp-no-cache";
-    }
 
     return (
       <>
@@ -447,7 +441,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           // eslint-disable-next-line react/no-unknown-property
-          webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}${manifest.nocache ? ", cache=false" : ""}`}
+          webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
           {...webviewPartition}
         />

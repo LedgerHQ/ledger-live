@@ -50,12 +50,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }
     let webviewCacheControl: { cacheEnabled?: boolean; cacheMode?: CacheMode; incognito?: boolean } = {};
 
-    if (manifest.nocache) {
-      webviewCacheControl.cacheEnabled = false
-      webviewCacheControl.cacheMode = 'LOAD_NO_CACHE';
-      webviewCacheControl.incognito = true;
-    }
-
     return (
       <RNWebView
         ref={webviewRef}
