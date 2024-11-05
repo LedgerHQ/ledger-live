@@ -436,6 +436,12 @@
       "subtitle": "Go to My Ledger and update {{appName}} app to swap assets.",
       "cta": "Go to My Ledger"
     },
+    "wrongDevice": {
+      "title": "Ledger Nano S™ is not compatible with THORChain",
+      "description": "Ledger Nano S is not compatible with THORChain. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on THORChain via Ledger Live",
+      "cta": "Explore compatible devices",
+      "changeProvider": "Swap with another provider"
+    },
     "providers": {
       "title": "Choose a provider to swap crypto",
       "learnMore": "What is Swap?",

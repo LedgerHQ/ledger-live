@@ -43,6 +43,7 @@ import {
   renderAllowOpeningApp,
   renderBootloaderStep,
   renderConnectYourDevice,
+  renderHardwareUpdate,
   renderError,
   renderInWrongAppForAccount,
   renderLoading,
@@ -329,6 +330,21 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     } else {
       return renderAllowRemoveCustomLockscreen({ modelId, type });
     }
+  }
+
+  if (
+    device?.modelId === "nanoS" &&
+    (
+      request as {
+        transaction: Transaction;
+        exchange: ExchangeSwap;
+        provider: string;
+        rate: number;
+        amountExpectedTo: number;
+      }
+    )?.provider === "thorswap"
+  ) {
+    return renderHardwareUpdate();
   }
 
   if (listingApps) {
