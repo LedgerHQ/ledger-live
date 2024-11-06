@@ -35,8 +35,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - name: Install dependencies
         env:
           LANG: en_US.UTF-8
@@ -50,8 +48,16 @@ jobs:
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |
-          pnpm desktop test:jest:coverage --coverageDirectory=desktop-coverage
-          pnpm mobile test:jest:coverage --coverageDirectory=mobile-coverage
+          pnpm desktop test:jest:coverage
+          pnpm mobile test:jest:coverage
+
+      - name: Merge lcov files
+        run: |
+          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+      - name: Copy test execution files
+        run: |
+          cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
+          cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
