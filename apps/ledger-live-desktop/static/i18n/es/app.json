@@ -137,7 +137,9 @@
       "outdated" : "En pausa",
       "error" : "Error de sincronización",
       "refresh" : "Actualizar",
-      "devTools" : "Herramientas para desarrolladores"
+      "devTools" : "Herramientas para desarrolladores",
+      "failingSync_one" : "Cuenta que no se puede sincronizar:",
+      "failingSync_other" : "Cuentas que no se pueden sincronizar:"
     },
     "exchange" : "Cambia",
     "info" : "Info",
@@ -146,7 +148,10 @@
     "or" : "O",
     "clearAll" : "Borrar todo",
     "buyLedger" : "Compra un Ledger",
-    "quote" : "Cotización"
+    "quote" : "Cotización",
+    "memoTag" : {
+      "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -737,7 +742,8 @@
         "subTitle" : "La integración con {{family}} ha sido realizada por el equipo {{team}}",
         "description" : "Ledger Live es una plataforma de código abierto.",
         "description2" : "Los desarrolladores de todo el mundo pueden integrar con Ledger Live",
-        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger"
+        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
+        "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1124,8 @@
     "optionsMenu" : {
       "title" : "Opciones",
       "exportOperations" : "Exportar historial de operaciones",
-      "exportToMobile" : "Exportar a Mobile"
+      "exportToMobile" : "Exportar a Mobile",
+      "ledgerSync" : "Sincronizar cuentas"
     },
     "contextMenu" : {
       "star" : "Destacar",
@@ -1126,6 +1133,7 @@
       "send" : "Enviar",
       "swap" : "Permutar",
       "stake" : "Poner en participación",
+      "yield" : "Rendimiento",
       "buy" : "Comprar",
       "sell" : "Vender",
       "edit" : "Editar cuenta",
@@ -2252,6 +2260,10 @@
           "description" : "Pon tus CELO en participación con el validador Ledger by Figment. Garantiza cobertura completa contra penalizaciones y está respaldado por la seguridad sin concesiones de Ledger."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "¿Necesitas una etiqueta o memo?",
+      "description" : "Puede que necesites una <0>etiqueta o memo</0> para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234."
     }
   },
   "send" : {
@@ -2274,12 +2286,17 @@
           "noResolution" : {
             "title" : "No se ha encontrado la dirección para este dominio"
           }
+        },
+        "memoTag" : {
+          "question" : "¿No vas a usar una etiqueta memo?",
+          "learnMore" : "Obtén más información acerca de las etiquetas y los memos",
+          "warning" : " Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia."
         }
       },
       "amount" : {
         "title" : "Importe",
         "banner" : "El importe máximo que puede gastarse es",
-        "fees" : "Tarifa estimada máx.",
+        "fees" : "Más información sobre las tarifas",
         "standard" : "Estándar",
         "advanced" : "Avanzado",
         "nftQuantity" : "Cantidad"
@@ -2351,6 +2368,15 @@
     },
     "footer" : {
       "estimatedFees" : "Tarifas de red"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "¿No vas a usar una nota/memo?",
+        "description" : "Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+        "cta.addTag" : "Agregar etiqueta",
+        "cta.not.addTag" : "No agregar etiqueta",
+        "checkbox.label" : "No mostrar esto de nuevo."
+      }
     }
   },
   "releaseNotes" : {
@@ -2408,8 +2434,12 @@
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
-      "french" : "Français",
-      "spanish" : "Español"
+      "french" : "Francés",
+      "spanish" : "Español",
+      "german" : "Alemán",
+      "brazilian" : "Português (Br)",
+      "russian" : "Ruso",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2786,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Colección NFT (tokens no fungibles)",
-        "description" : "Puedes ver tus NFTs de Tezos directamente con Objkt en Ledger Live.",
-        "cta" : "Ver mis NFTs en Objkt"
       }
     }
   },
@@ -3682,7 +3703,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y rentabiliza tus tenencias al recibir recompensas diarias directamente en Ledger Live.",
       "tagMinimum" : "Requiere {{min}} ETH",
@@ -3693,7 +3714,7 @@
       },
       "lido" : {
         "title" : "Lido",
-        "description" : "Pon en participación cualquier cantidad de ETH para obtener liquidez inmediata y recompensas diarias.",
+        "description" : "Pon en participación cualquier monto de ETH para obtener liquidez inmediata y recompensas diarias.",
         "supportLink" : "Obtén más información acerca de Lido"
       },
       "stader-eth" : {
@@ -3703,7 +3724,7 @@
       },
       "kiln" : {
         "title" : "Puesta en participación dedicada de Kiln",
-        "tag" : "Requiere 32 ETH",
+        "tag" : "Requiere 32 ETH",
         "description" : "Pon en participación más de 32 ETH en validadores exclusivos y reclama tus recompensas fácilmente.",
         "supportLink" : "Obtener más información acerca del validador Kiln"
       },
@@ -3712,6 +3733,72 @@
         "tag" : "Requiere 32 ETH",
         "description" : "Pon en participación más de 32 ETH en validadores exclusivos y recibe recompensas automáticamente en tu cuenta.",
         "supportLink" : "Más información sobre el validador de Figment"
+      }
+    },
+    "stake" : {
+      "title" : "Seleccionar proveedor de puesta en participación",
+      "category" : {
+        "all" : {
+          "name" : "Todo",
+          "description" : "Todos los proveedores de puesta en participación de Ethereum disponibles en Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Líquido",
+          "description" : "Puedes poner ETH en participación y recibir tokens líquidos como recompensa. Seguirás pudiendo operar y realizar actividades de DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Puedes poner en participación un lote de 32 ETH y recibir recompensas por nodo completo en ETH."
+        },
+        "pooling" : {
+          "name" : "Agrupación en pools",
+          "description" : "Puedes unirte a un pool para poner en participación la cantidad de ETH que quieras y recibir recompensas."
+        },
+        "restaking" : {
+          "name" : "Volver a poner en participación",
+          "description" : "Puedes volver a poner en participación tus tokens líquidos para recibir recompensas adicionales."
+        }
+      },
+      "howItWorks" : "Cómo funciona la puesta en participación de ETH",
+      "lst" : "Tokens líquidos requeridos",
+      "noMinimum" : "Sin mínimos",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Pool de puesta en participación de Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Volver a poner en participación Kiln Liquid"
+        },
+        "kiln" : {
+          "title" : "Puesta en participación dedicada de Kiln"
+        },
+        "kelpdao" : {
+          "title" : "DAO Kelp"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Lee información sobre la puesta en participación de ETH y distintas estrategias",
+      "requiredMinimum" : "Requiere {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas con interés compuesto automático",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diarias",
+        "eigenlayer_points" : "Puntos de Eigenlayer",
+        "validator" : "Recompensas para validadores"
       }
     }
   },
@@ -4014,6 +4101,35 @@
         "title" : "Modo de desarrollador del exchange",
         "desc" : "Añadir información del proveedor del exchange",
         "placeholder" : "Información del proveedor del exchange en formato CAL"
+      },
+      "analyticsConsole" : {
+        "title" : "Permitir consola de análisis",
+        "desc" : "Muestra y permite abrir la consola de análisis."
+      },
+      "brazeTools" : {
+        "title" : "Herramientas de Braze",
+        "description" : "Generar tarjetas de Braze locales",
+        "open" : "Abrir",
+        "modal" : {
+          "title" : "Generar tarjeta de Braze local",
+          "add" : "Agregar",
+          "dismiss" : "Descartar todas las tarjetas",
+          "fields" : {
+            "notification" : "Tarjeta de contenido de notificación",
+            "action" : "Tarjeta de contenido de acción",
+            "portfolio" : "Tarjeta de contenido de portfolio",
+            "title" : "Título",
+            "description" : "Descripción",
+            "order" : "Orden",
+            "image" : "URL de imagen",
+            "mainCta" : "CTA principal",
+            "link" : "Enlace",
+            "secondaryCta" : "CTA secundario",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Ruta"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4450,20 @@
       "tokenBlacklist" : {
         "title" : "Tokens ocultos",
         "desc" : "Puedes ocultar los tokens yendo a la cuenta principal y haciendo clic derecho en el token y seleccionando “Ocultar token”.",
-        "count" : "{{count}} token",
-        "count_plural" : "{{count}} tokens"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "Colecciones de NFTs ocultas",
         "desc" : "Puedes ocultar colecciones de NFTs haciendo clic derecho sobre el nombre de la colección y seleccionando 'Ocultar colección de NFTs'.",
-        "count" : "Colección {{count}}",
-        "count_plural" : "Colecciones {{count}}"
+        "count" : "1 colección",
+        "count_other" : "Colecciones {{count}}"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Inscripciones ocultas",
+        "desc" : "Puedes ocultar inscripciones haciendo clic derecho sobre la inscripción y seleccionando \"Ocultar inscripción\".",
+        "count" : "1 inscripción",
+        "count_other" : "{{count}} inscripciones"
       },
       "fullNode" : {
         "title" : "Conectar nodo completo de Bitcoin",
@@ -5209,25 +5331,17 @@
     "link" : "Términos de uso",
     "cta" : "Continuar"
   },
+  "MemoTagField" : {
+    "label" : "Etiqueta/memo",
+    "placeholder" : "Escribir etiqueta/memo",
+    "information" : "Para garantizar que tu transacción se deposite correctamente en tu cuenta, los exchanges centralizados y algunas billeteras con custodia requieren una etiqueta o memo.",
+    "instruction" : "Copia y pega la etiqueta/memo proporcionada por el exchange o la billetera con custodia."
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "Opcional",
       "transferId" : "ID de transferencia (Memo)",
       "transferIdWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Opcional",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "Opcional, predeterminado: 0",
-      "memo" : "Memo",
-      "memoWarningText" : "El valor del memo puede ser un número entre 0 y 9223372036854775807."
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Opcional",
-      "memo" : "Memo",
-      "memoWarningText" : "Al utilizar un Memo, confirma cuidadosamente con el receptor el tipo a utilizar"
     },
     "ton" : {
       "commentPlaceholder" : "Opcional",
@@ -5257,13 +5371,8 @@
       "assetCode" : "Código del activo",
       "assetIssuer" : "Emisor del activo"
     },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Opcional",
-      "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
-    },
     "solana" : {
-      "memo" : "Memo",
+      "memo" : "Etiqueta/memo",
       "memoPlaceholder" : "Opcional"
     }
   },
@@ -5273,8 +5382,11 @@
       "description" : "La tarifa de red podría ser demasiado baja. Auméntala."
     },
     "NoSuchAppOnProvider" : {
-      "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
-      "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
+      "title" : "{{appName}} no es compatible con {{productName}}.",
+      "titleOld" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
+      "description" : "<0>Desbloquea más posibilidades con nuestros dispositivos.</0> Para acceder a esta función, renueva tu dispositivo y compra uno de los nuevos compatibles. Elige la opción que mejor se ajuste a tus necesidades y disfruta de una mayor seguridad.",
+      "exploreCTA" : "Explorar dispositivos compatibles",
+      "learnMoreCTA" : "Obtén más información sobre Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "Tienes transacciones entrantes pendientes. Ten en cuenta que las transacciones pendientes pueden revertirse."
@@ -6026,7 +6138,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "Los envíos a una dirección taproot antes de la activación de la red principal no son seguros"
@@ -6240,11 +6352,32 @@
     },
     "PinNotSet" : {
       "title" : "PIN no establecido"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "Error de transmisión de la transacción",
+      "description" : "Tu transacción no se ha transmitido a la red {{networkName}}. Tu {{currencyName}} no se ha transferido y sigue en tu cuenta.",
+      "helpCenterTitle" : "Centro de ayuda: ",
+      "helpCenterDesc" : "Visita nuestro Centro de ayuda o contacta con nosotros mediante el widget si necesitas ayuda.",
+      "needHelp" : "¿Necesitas ayuda?",
+      "getHelp" : "Obtener ayuda",
+      "technicalErrorTitle" : "Error técnico: ",
+      "saveLogs" : "Guardar registros"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Tu saldo disponible (no puesto en participación) es de {{currentBalance}}. Esta cantidad no es suficiente para pagar las tarifas de red necesarias para retirar tu {{assetName}} de la puesta en participación.",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} en tu cuenta.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> o <cta2>{{cta2Label}}</cta2> {{assetName}} en tu cuenta.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> o <cta3>{{cta3Label}}</cta3> {{assetName}} en tu cuenta.",
+      "ctas" : {
+        "buy" : "Comprar",
+        "swap" : "Permutar",
+        "deposit" : "Depositar"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
-    "memoPlaceholder" : "Opcional",
+    "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
   },
   "hedera" : {
@@ -6276,6 +6409,7 @@
     "cta" : "Pantalla de bloqueo personalizada",
     "managerCTA" : "Imagen de pantalla de bloqueo",
     "managerCTARemove" : "Eliminar",
+    "rotate" : "Girar",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elegir imagen",
@@ -6377,12 +6511,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "Al compartir tus datos de Ledger Live, nos ayudas a conocer tus preferencias y mostrarte contenido relevante para ti.",
-      "whatWeTrack" : "Con tu consentimiento, Ledger podrá hacer un seguimiento de los datos sobre cómo usas Ledger Live (incluidas las visitas a páginas y los clics):",
+      "whatWeTrack" : "Con tu consentimiento, Ledger podrá recopilar datos sobre cómo usas Ledger Live (incluidas las visitas a páginas y los clics):",
       "whatWeTrackList" : {
         "1" : "Para medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia (Análisis).",
         "2" : "Para proporcionarte recomendaciones personalizadas y contenido adaptado a tus preferencias y también para ayudarnos a medir la eficacia de nuestras campañas de marketing (Personalización)."
       },
-      "whatWeDoNotTrack" : "Ledger nunca rastreará información relativa a lo siguiente:",
+      "whatWeDoNotTrack" : "Ledger nunca recopilará información relativa a lo siguiente:",
       "whatWeDoNotTrackList" : {
         "1" : "Tus activos.",
         "2" : "Tu portfolio.",
@@ -6424,13 +6558,13 @@
     "common" : {
       "title" : "Ayúdanos a mejorar y personalizar tu experiencia",
       "revokeInfo" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-      "learnMore" : "Más información sobre nuestra Política de seguimiento"
+      "learnMore" : "Obtén más información sobre cómo gestionamos tus datos"
     },
     "profileSettings" : {
       "personalizedExp" : "Experiencia personalizada",
       "analytics" : "Análisis",
-      "personalizedExpDesc" : "Permite que la aplicación de Ledger rastree los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
-      "analyticsDesc" : "Permite que Ledger rastree los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia."
+      "personalizedExpDesc" : "Permite que la aplicación de Ledger recopile los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
+      "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia."
     }
   },
   "walletSync" : {
@@ -6584,6 +6718,11 @@
       "seeMore" : "Ver más inscripciones",
       "empty" : "Para agregar inscripciones, simplemente envíalas a tu dirección de Bitcoin.",
       "receive" : "Recibir inscripción",
+      "hide" : "Ocultar inscripción",
+      "modal" : {
+        "title" : "Ocultar inscripción",
+        "desc" : "Esta acción ocultará la siguiente inscripción <0>{{inscriptionName}}</0> de tu cuenta. Puedes mostrarla en cualquier momento desde los ajustes."
+      },
       "discoveryDrawer" : {
         "title" : "Descubre los ordinales",
         "description" : "¿Sabías que puedes hacerte con sats e inscripciones raros y valiosos?",
@@ -6650,6 +6789,20 @@
           "vintage" : "Los primeros 1000 bloques marcaron el nacimiento de Bitcoin. Los sats minados durante este periodo reciben la etiqueta de \"Vintage\"."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "Importe a enviar:",
+      "of" : "de",
+      "excludeAssets" : "Excluir activos ordinales",
+      "selectDesc" : "Elige la UTXO que quieres usar al realizar transacciones. la UTXO que esté desmarcada no se usará.",
+      "utxos" : "UTXOs",
+      "learnMore" : "Obtén más información sobre este ajuste",
+      "confirm" : "Confirmar",
+      "address" : "Dirección",
+      "transactionId" : "ID de la transacción"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "Con LDMK transport"
   }
 }
