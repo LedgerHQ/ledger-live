@@ -18,5 +18,8 @@
     "react-dom": "18.3.1",
     "react-is": "*",
     "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "eslint-config-next": "13.2.4"
   }
 }
