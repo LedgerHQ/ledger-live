@@ -192,6 +192,11 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
+        payload?.data?.onCancel?.({
+          error: new Error("User closed the drawer"),
+          name: "DrawerClosedError",
+          message: "User closed the drawer",
+        });
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"
