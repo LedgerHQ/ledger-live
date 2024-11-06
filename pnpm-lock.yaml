@@ -934,7 +934,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/types-live
       '@likashefqet/react-native-image-zoom':
         specifier: 1.3.0
-        version: 1.3.0(react-native-gesture-handler@2.16.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.9.0(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        version: 1.3.0(react-native-gesture-handler@2.16.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@react-native-async-storage/async-storage':
         specifier: 1.23.1
         version: 1.23.1(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))
@@ -1194,8 +1194,8 @@ importers:
         specifier: 3.6.1
         version: 3.6.1
       react-native-reanimated:
-        specifier: 3.9.0
-        version: 3.9.0(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        specifier: 3.16.1
+        version: 3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-restart:
         specifier: 0.0.24
         version: 0.0.24(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -6834,8 +6834,8 @@ importers:
         specifier: 0.74.6
         version: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
       react-native-reanimated:
-        specifier: 3.8.1
-        version: 3.8.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+        specifier: 3.16.1
+        version: 3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react-native-safe-area-context:
         specifier: ^4.10.9
         version: 4.10.9(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
@@ -25859,15 +25859,8 @@ packages:
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
 
-  react-native-reanimated@3.8.1:
-    resolution: {integrity: sha512-EdM0vr3JEaNtqvstqESaPfOBy0gjYBkr1iEolWJ82Ax7io8y9OVUIphgsLKTB36CtR1XtmBw0RZVj7KArc7ZVA==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-      react: '*'
-      react-native: '*'
-
-  react-native-reanimated@3.9.0:
-    resolution: {integrity: sha512-OMZV2BVmxZvm8UhlXBrESO0y/ODGTRpQRQUO7U9QXysOF9RaR8FbO6KS0x99MH19zfFTV8cLGN/vYW1dFia9Rw==}
+  react-native-reanimated@3.16.1:
+    resolution: {integrity: sha512-Wnbo7toHZ6kPLAD8JWKoKCTfNoqYOMW5vUEP76Rr4RBmJCrdXj6oauYP0aZnZq8NCbiP5bwwu7+RECcWtoetnQ==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
       react: '*'
@@ -35954,12 +35947,12 @@ snapshots:
     dependencies:
       '@lezer/common': 1.2.1
 
-  '@likashefqet/react-native-image-zoom@1.3.0(react-native-gesture-handler@2.16.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.9.0(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+  '@likashefqet/react-native-image-zoom@1.3.0(react-native-gesture-handler@2.16.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
       react-native-gesture-handler: 2.16.0(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-native-reanimated: 3.9.0(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-reanimated: 3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
 
   '@malept/cross-spawn-promise@1.1.1':
     dependencies:
@@ -58308,28 +58301,34 @@ snapshots:
       buffer: 4.9.2
       sjcl: 1.0.8
 
-  react-native-reanimated@3.8.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  react-native-reanimated@3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-transform-arrow-functions': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-class-properties': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-classes': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-optional-chaining': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-shorthand-properties': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-template-literals': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-unicode-regex': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
       convert-source-map: 2.0.0
       invariant: 2.2.4
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
 
-  react-native-reanimated@3.9.0(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+  react-native-reanimated@3.16.1(@babel/core@7.24.3)(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-transform-arrow-functions': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-class-properties': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-classes': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-optional-chaining': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-shorthand-properties': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-template-literals': 7.24.1(@babel/core@7.24.3)
+      '@babel/plugin-transform-unicode-regex': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
       convert-source-map: 2.0.0
       invariant: 2.2.4
