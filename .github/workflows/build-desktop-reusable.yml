@@ -33,7 +33,7 @@ jobs:
         config:
           [
             { name: "linux", os: "ledger-live-4xlarge", image: "linux-x86_64.AppImage" },
-            { name: "win", os: "windows-2022", dotnet: true, image: "win-x64.exe" },
+            { name: "win", os: "ledger-live-4xlarge-windows", dotnet: true, image: "win-x64.exe" },
             { name: "mac", os: "m1", image: "mac.dmg" },
           ]
     name: "Build LLD | ${{ matrix.config.name }}"
