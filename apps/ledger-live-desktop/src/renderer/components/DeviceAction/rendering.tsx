@@ -941,10 +941,10 @@ const OpenSwapBtn = () => {
 
   return (
     <ButtonV3
-      variant={"main"}
+      variant="main"
       outline
-      size={"large"}
-      width={"calc(100% - 80px)"}
+      size="large"
+      width="calc(100% - 80px)"
       ml="40px"
       mr="40px"
       onClick={onClick}
@@ -957,9 +957,9 @@ const OpenSwapBtn = () => {
 export const renderHardwareUpdate = () => (
   <Wrapper>
     <Header>
-      <Image resource={Nano} alt="NanoS" mb={"40px"}></Image>
+      <Image resource={Nano} alt="NanoS" mb="40px"></Image>
     </Header>
-    <Flex alignItems="center" flexDirection="column" rowGap={"16px"} mr={"40px"} ml={"40px"}>
+    <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
         <Trans i18nKey="swap.wrongDevice.title" />
       </Title>
@@ -970,9 +970,9 @@ export const renderHardwareUpdate = () => (
     <ButtonFooter>
       <ButtonContainer width="100%">
         <ButtonV3
-          variant={"main"}
-          size={"large"}
-          width={"calc(100% - 80px)"}
+          variant="main"
+          size="large"
+          width="calc(100% - 80px)"
           ml="40px"
           mr="40px"
           onClick={() => {
