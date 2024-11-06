@@ -18,7 +18,7 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
   version: 2,
 };
 
-let providerDataCache: Record<string, ExchangeProviderNameAndSignature> | null = null;
+const providerDataCache: Record<string, ExchangeProviderNameAndSignature> | null = null;
 
 /**
  * The result is cached after the first successful fetch to avoid redundant network calls.
@@ -31,19 +31,15 @@ export const fetchAndMergeProviderData = async () => {
     return providerDataCache;
   }
   try {
-    const [sellProvidersData, fundProviderData] = await Promise.all([
-      getProvidersData("sell"),
-      getProvidersData("fund"), // Mercuryo is currently treated as a fund provider
-    ]);
-    providerDataCache = { ...sellProvidersData, ...fundProviderData };
-    return providerDataCache;
+    const sellProvidersData = await getProvidersData("sell");
+    return { ...sellProvidersData };
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
   }
 };
 
 export const getSellProvider = async (
-  providerName: string,
+  providerId: string,
 ): Promise<ExchangeProviderNameAndSignature> => {
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
     return testSellProvider;
@@ -53,9 +49,9 @@ export const getSellProvider = async (
   if (!res) {
     throw new Error("Failed to fetch provider data");
   }
-  const provider = res[providerName.toLowerCase()];
+  const provider = res[providerId];
   if (!provider) {
-    throw new Error(`Unknown partner ${providerName}`);
+    throw new Error(`Unknown partner ${providerId}`);
   }
 
   return provider;

@@ -23,6 +23,7 @@ export async function getProvidersCDNData(): Promise<Record<string, PartnerType>
 }
 
 export type ExchangeProvider = {
+  id: string;
   name: string;
   publicKey: {
     curve: "secp256k1" | "secp256r1";
@@ -33,6 +34,7 @@ export type ExchangeProvider = {
 };
 // Exported for test purpose only
 export type ProvidersDataResponse = {
+  id: string;
   name: string;
   public_key: string;
   public_key_curve: string;
@@ -53,7 +55,7 @@ export function transformData(
 ): Record<string, ExchangeProvider> {
   const transformed = {};
   providersData.forEach(provider => {
-    const key = provider.name.toLowerCase();
+    const key = provider.id;
     transformed[key] = {
       name: provider.name,
       publicKey: {
@@ -75,7 +77,7 @@ export async function getProvidersData(
     method: "GET",
     url: `${CAL_BASE_URL}/v1/partners`,
     params: {
-      output: "name,public_key,public_key_curve,service_app_version,descriptor",
+      output: "id,name,public_key,public_key_curve,service_app_version,descriptor",
       service_name: type,
     },
   });
