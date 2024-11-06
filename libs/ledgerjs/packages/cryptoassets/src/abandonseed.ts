@@ -112,6 +112,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   etherlink: EVM_DEAD_ADDRESS,
   zksync: EVM_DEAD_ADDRESS,
   zksync_sepolia: EVM_DEAD_ADDRESS,
+  mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
 };
 
 /**

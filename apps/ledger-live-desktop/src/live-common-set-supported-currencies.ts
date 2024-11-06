@@ -95,4 +95,5 @@ setSupportedCurrencies([
   "etherlink",
   "zksync",
   "zksync_sepolia",
+  "mantra",
 ]);
