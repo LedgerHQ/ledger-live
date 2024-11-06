@@ -1,8 +1,8 @@
-import { Account, SyncConfig } from "@ledgerhq/types-live";
-import { getAccountShape } from "./synchronization";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { Account, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { getAccountShape } from "./synchronization";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {

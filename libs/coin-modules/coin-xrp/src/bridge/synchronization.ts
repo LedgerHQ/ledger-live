@@ -1,12 +1,12 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccountInfo, getServerInfos } from "../network";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { listOperations, parseAPIValue } from "../logic";
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
-import { AccountInfo } from "../types";
+import { getAccountInfo, getServerInfos } from "../network";
 import { ServerInfoResponse } from "../network/types";
+import { AccountInfo } from "../types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
