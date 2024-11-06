@@ -1018,7 +1018,7 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
       return cacheBustedLiveAppsDb[manifestId];
     },
     [cacheBustedLiveAppsDb],
-  )
+  );
   const edit = useCallback(
     (manifestId: string, cacheBustingId: number) => {
       const _cacheBustedLiveAppsDb = {
@@ -1026,8 +1026,8 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
         [manifestId]: cacheBustingId,
       };
       setState(state => {
-        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb }
-        return newstate; 
+        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
+        return newstate;
       });
     },
     [setState],
