@@ -94,3 +94,44 @@ jobs:
       - name: push changes
         run: |
           git push origin ${{ inputs.ref }}
+
+      - name: fetch develop and main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        run: |
+          git fetch origin develop main
+
+      - name: merge into main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        run: |
+          git checkout main
+          git merge ${{ inputs.ref }} --no-ff
+          git push origin main
+
+      - name: create PR to develop
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          git checkout ${{ github.event.inputs.ref }}
+          git checkout -b support/hotfix-merge-conflicts
+          git push origin support/hotfix-merge-conflicts
+          gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
+
+      - name: merge into release if present
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          if git checkout release
+          then
+            if git merge ${{ github.event.inputs.ref }} --no-ff
+            then
+              git push origin release
+            else
+              git merge --abort
+              git checkout ${{ github.event.inputs.ref }}
+              git checkout -b support/hotfix-release-merge-conflicts
+              git push origin support/hotfix-release-merge-conflicts
+              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
+            fi
+          fi
