@@ -252,7 +252,6 @@ export function useWebviewState(
       });
       if (manifest.cacheBustingId !== undefined) {
         headers["Cache-Control"] = "no-cache";
-        headers["Clear-Site-Data"] = "*";
       }
       return {
         uri: currentURI,
