@@ -98,6 +98,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
