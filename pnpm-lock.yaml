@@ -2383,6 +2383,67 @@ importers:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-hedera:
+    dependencies:
+      '@hashgraph/sdk':
+        specifier: 2.14.2
+        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../live-countervalues
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-icon:
     dependencies:
       '@faker-js/faker':
@@ -3514,9 +3575,6 @@ importers:
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
-      '@hashgraph/sdk':
-        specifier: 2.14.2
-        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -3538,6 +3596,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
+      '@ledgerhq/coin-hedera':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -3598,6 +3659,9 @@ importers:
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-exchange
+      '@ledgerhq/hw-app-hedera':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-hedera
       '@ledgerhq/hw-app-icon':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-icon
@@ -4564,6 +4628,46 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+
+  libs/ledgerjs/packages/hw-app-hedera:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/node':
+        specifier: ^20.8.10
+        version: 20.12.12
+      documentation:
+        specifier: 14.0.2
+        version: 14.0.2
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-helium:
     dependencies:
@@ -13980,7 +14084,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -16318,7 +16422,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -19551,7 +19655,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -20332,8 +20436,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -20348,8 +20452,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.74.5
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -26488,7 +26592,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -26512,8 +26616,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -26523,8 +26627,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -35941,13 +36045,13 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@hashgraph/cryptography@1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
+  '@hashgraph/cryptography@1.1.2':
     dependencies:
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
       elliptic: 6.5.5
-      expo-crypto: 10.2.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
-      expo-random: 12.3.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
+      expo-crypto: 10.2.0
+      expo-random: 12.3.0
       js-base64: 3.7.7
       tweetnacl: 1.0.3
       utf8: 3.0.0
@@ -35962,10 +36066,10 @@ snapshots:
       long: 4.0.0
       protobufjs: 6.11.4
 
-  '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)':
+  '@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)':
     dependencies:
       '@grpc/grpc-js': 1.6.7
-      '@hashgraph/cryptography': 1.1.2(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0)
+      '@hashgraph/cryptography': 1.1.2
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
@@ -37492,7 +37596,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.5.4
+      semver: 7.6.3
 
   '@npmcli/fs@3.1.1':
     dependencies:
@@ -51206,10 +51310,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-crypto@10.2.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
-    optionalDependencies:
-      react: 18.2.0
-      react-native: 0.74.5(@types/react@18.2.73)(react@18.2.0)
+  expo-crypto@10.2.0: {}
 
   expo-crypto@13.0.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo@51.0.37(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.12.25(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0))(react-native@0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
     dependencies:
@@ -51379,12 +51480,9 @@ snapshots:
       - encoding
       - supports-color
 
-  expo-random@12.3.0(react-native@0.74.5(@types/react@18.2.73)(react@18.2.0))(react@18.2.0):
+  expo-random@12.3.0:
     dependencies:
       base64-js: 1.5.1
-    optionalDependencies:
-      react: 18.2.0
-      react-native: 0.74.5(@types/react@18.2.73)(react@18.2.0)
 
   expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.2.0))(react@18.2.0):
     dependencies:
