@@ -175,8 +175,8 @@ export function useWebView(
   }, []);
 
   useEffect(() => {
-    let latestCacheBustedId = getLatest(manifest.id);
-    let init = getLatest("init");
+    const latestCacheBustedId = getLatest(manifest.id);
+    const init = getLatest("init");
     // checking for init, which is set in INITIAL_PLATFORM_STATE
     // makes sure we're not just getting the default value, undefined
     if (
@@ -193,7 +193,7 @@ export function useWebView(
         webviewRef.current.reload();
       }
     }
-  }, [manifest.id, manifest.cacheBustingId, webviewRef.current, getLatest, edit]);
+  }, [manifest.id, manifest.cacheBustingId, webviewRef, getLatest, edit]);
 
   const webviewCacheOptions = useMemo(() => {
     if (manifest.cacheBustingId !== undefined) {
@@ -205,7 +205,7 @@ export function useWebView(
     } else {
       return {};
     }
-  }, [manifest.id]);
+  }, [manifest.cacheBustingId]);
 
   return {
     onLoadError,
@@ -246,7 +246,7 @@ export function useWebviewState(
 
   const source = useMemo(
     () => {
-      let headers = getClientHeaders({
+      const headers = getClientHeaders({
         client: "ledger-live-mobile",
         theme,
       });
