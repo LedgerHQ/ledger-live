@@ -137,7 +137,9 @@
       "outdated" : "Pausiert",
       "error" : "Synchronisierungsfehler",
       "refresh" : "Neu laden",
-      "devTools" : "Entwicklertools"
+      "devTools" : "Entwicklertools",
+      "failingSync_one" : "Konto konnte nicht synchronisiert werden:",
+      "failingSync_other" : "Konten konnten nicht synchronisiert werden:"
     },
     "exchange" : "Umtauschen",
     "info" : "Informationen",
@@ -146,7 +148,10 @@
     "or" : "ODER",
     "clearAll" : "Alle löschen",
     "buyLedger" : "Ledger-Gerät kaufen",
-    "quote" : "Preis"
+    "quote" : "Preis",
+    "memoTag" : {
+      "learnMore" : "Weitere Informationen zu Tags/Memos"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -737,7 +742,8 @@
         "subTitle" : "Die {{family}}-Integration wurde vom {{team}}-Team durchgeführt",
         "description" : "Ledger Live ist eine Open-Source-Plattform.",
         "description2" : "Entwickler aus aller Welt können sich mit unserem Ledger Live integrieren",
-        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt"
+        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
+        "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1124,8 @@
     "optionsMenu" : {
       "title" : "Optionen",
       "exportOperations" : "Verlauf exportieren",
-      "exportToMobile" : "Exportieren zu Mobile"
+      "exportToMobile" : "Exportieren zu Mobile",
+      "ledgerSync" : "Konten synchronisieren"
     },
     "contextMenu" : {
       "star" : "Favorit",
@@ -1126,6 +1133,7 @@
       "send" : "Senden",
       "swap" : "Swappen",
       "stake" : "Staken",
+      "yield" : "Ertrag",
       "buy" : "Kaufen",
       "sell" : "Verkaufen",
       "edit" : "Konto bearbeiten",
@@ -1462,7 +1470,7 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Kaufen & Verkaufen",
-        "description" : "Bei unseren vertrauenswürdigen Anbietern kaufen und verkaufen"
+        "description" : "Bei vertrauenswürdigen Anbietern kaufen und verkaufen"
       },
       "swap" : {
         "title" : "Swappen",
@@ -2091,7 +2099,7 @@
         "title" : "Bestätigung",
         "success" : {
           "title" : "Beanspruchte Prämien",
-          "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt.",
+          "text" : "Deine Prämien wurden zu deinem verfügbaren Guthaben hinzugefügt.",
           "cta" : "Details anzeigen",
           "done" : "Fertig"
         },
@@ -2252,6 +2260,10 @@
           "description" : "Stake deine CELO mit dem Ledger by Figment-Validator. Garantiert vollständiger Schutz vor Slashing, unterstützt durch die kompromisslose Sicherheit von Ledger."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "Brauchst du ein Tag/Memo?",
+      "description" : "Möglicherweise brauchst du ein <0>Tag/Memo</0>, um diesen Vermögenswert von einer Börse zu erhalten. Du kannst eine beliebige Zahlenkombination verwenden, z. B. 1234."
     }
   },
   "send" : {
@@ -2274,12 +2286,17 @@
           "noResolution" : {
             "title" : "Für diese Domain wurde keine Adresse gefunden"
           }
+        },
+        "memoTag" : {
+          "question" : "Du verwendest Memo Tag nicht?",
+          "learnMore" : "Weitere Informationen zu Tags/Memos",
+          "warning" : " Deine Vermögenswerte gehen verloren, wenn du beim Senden an eine zentralisierte Börse oder eine verwahrende Geldbörse kein Tag/Memo hinzufügst."
         }
       },
       "amount" : {
         "title" : "Betrag",
         "banner" : "Maximaler Auszahlungsbetrag ist",
-        "fees" : "Geschätzte max. Gebühr",
+        "fees" : "Weitere Informationen zu Gebühren",
         "standard" : "Standart",
         "advanced" : "Advanced",
         "nftQuantity" : "Menge"
@@ -2351,6 +2368,15 @@
     },
     "footer" : {
       "estimatedFees" : "Netzgebühren"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "Du verwendest Tag/Memo nicht?",
+        "description" : "Deine Vermögenswerte gehen verloren, wenn du beim Senden an eine zentralisierte Börse oder eine verwahrende Geldbörse kein Tag/Memo hinzufügst.",
+        "cta.addTag" : "Tag hinzufügen",
+        "cta.not.addTag" : "Kein Tag hinzufügen",
+        "checkbox.label" : "Nicht erneut anzeigen."
+      }
     }
   },
   "releaseNotes" : {
@@ -2409,7 +2435,11 @@
     "languages" : {
       "english" : "Englisch",
       "french" : "Französisch",
-      "spanish" : "Spanisch"
+      "spanish" : "Spanisch",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Russisch",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2786,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT (Non Fungible Tokens) Sammlungen",
-        "description" : "Tezos-NFTs kannst du direkt über Objkt in Ledger Live einsehen.",
-        "cta" : "Meine NFTs auf Objkt anzeigen"
       }
     }
   },
@@ -3140,7 +3161,7 @@
             "success" : {
               "title" : "Erfolgreich eingelöste Prämien",
               "titleCompound" : "Erfolgreich zusammengerechnete Prämien",
-              "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
+              "text" : "Deine Prämien wurden zu deinem verfügbaren Guthaben hinzugefügt",
               "textCompound" : "Ihre Prämien <0>{{amount}}</0> wurden automatisch an <0>{{validator}}</0> übertragen",
               "cta" : "Details anzeigen"
             },
@@ -3278,7 +3299,7 @@
             "title" : "Bestätigung",
             "success" : {
               "title" : "Prämien erfolgreich eingefordert!",
-              "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
+              "text" : "Deine Prämien wurden zu deinem verfügbaren Guthaben hinzugefügt",
               "cta" : "Details anzeigen"
             },
             "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe den Transaktionsverlauf, bevor du es noch einmal versuchst."
@@ -3682,19 +3703,19 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Vermehre dein ETH-Guthaben",
       "subTitle" : "Stake deine ETH und vermehre dein Vermögen – durch tägliche Prämien direkt in Ledger Live.",
       "tagMinimum" : "Benötigt {{min}} ETH",
       "kiln_pooling" : {
-        "title" : "Kiln Staking Pool",
+        "title" : "Kiln-Staking-Pool",
         "description" : "Stake ohne Mindestbetrag. Verdiene automatisch aufgelaufene Belohnungen ohne Sperrfrist.",
-        "supportLink" : "Mehr über Kiln Pooling erfahren."
+        "supportLink" : "Mehr über Kiln-Pooling erfahren."
       },
       "lido" : {
         "title" : "Lido",
         "description" : "Stake einen beliebigen ETH-Betrag für Sofortliquidität und tägliche Belohnungen.",
-        "supportLink" : "Mehr über Lido lernen"
+        "supportLink" : "Mehr über Lido erfahren"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
@@ -3703,15 +3724,81 @@
       },
       "kiln" : {
         "title" : "Staking mit Kiln",
-        "tag" : "Benötigt 32 ETH",
+        "tag" : "Benötigt 32 ETH",
         "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und fordere deine Belohnungen ganz leicht ein.",
         "supportLink" : "Mehr über Kiln-Validator erfahren"
       },
       "figment" : {
         "title" : "Figment",
-        "tag" : "Benötigt 32 ETH",
+        "tag" : "Benötigt 32 ETH",
         "description" : "Stake mehr als 32 ETH bei speziellen Validatoren und lasse Belohnungen automatisch deinem Konto gutschreiben.",
         "supportLink" : "Mehr über Figment als Validator erfahren"
+      }
+    },
+    "stake" : {
+      "title" : "Staking-Anbieter auswählen",
+      "category" : {
+        "all" : {
+          "name" : "Alle",
+          "description" : "Alle Staking-Anbieter für Ethereum sind in Ledger Live verfügbar."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "Du kannst ETH staken und Belohnungen in Form von Liquid-Token erhalten. So kannst du weiterhin handeln und dich an DeFi-Aktivitäten beteiligen."
+        },
+        "protocol" : {
+          "name" : "Protokoll",
+          "description" : "Du kannst einen Batch von 32 ETH staken und dafür Full-Node-Belohnungen in ETH erhalten."
+        },
+        "pooling" : {
+          "name" : "Pooling",
+          "description" : "Du kannst einem Pool beitreten, um einen beliebigen ETH-Betrag zu staken und Belohnungen zu erhalten."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Du kannst dein Liquid-Token erneut staken, um zusätzliche Belohnungen zu erhalten."
+        }
+      },
+      "howItWorks" : "So funktioniert das ETH-Staking",
+      "lst" : "Benötigtes Liquid-Token",
+      "noMinimum" : "Kein Minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln-Staking-Pool"
+        },
+        "kiln_restaking" : {
+          "title" : "Liquid-Restaking mit Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp-DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Ronin Wallet"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Erfahre mehr über ETH-Staking und verschiedene Strategien",
+      "requiredMinimum" : "Benötigt {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Automatisch zusammengelegte Belohnungen",
+        "basic" : "Prämien",
+        "daily" : "Tägliche Belohnungen",
+        "eigenlayer_points" : "Eigenlayer-Punkte",
+        "validator" : "Validatorbelohnungen"
       }
     }
   },
@@ -4014,6 +4101,35 @@
         "title" : "Entwicklermodus für Börsen",
         "desc" : "Info des Börsenanbieters hinzufügen",
         "placeholder" : "Info des Börsenanbieters im CAL-Format"
+      },
+      "analyticsConsole" : {
+        "title" : "Analysekonsole zulassen",
+        "desc" : "Zeigt die Analysekonsole an und erlaubt es, sie zu öffnen."
+      },
+      "brazeTools" : {
+        "title" : "Braze-Tools",
+        "description" : "Lokale Braze-Karten erstellen",
+        "open" : "Öffnen",
+        "modal" : {
+          "title" : "Lokale Braze-Karte erstellen",
+          "add" : "Hinzufügen",
+          "dismiss" : "Alle Karten verwerfen",
+          "fields" : {
+            "notification" : "Benachrichtigungsinhaltskarte",
+            "action" : "Aktionsinhaltskarte",
+            "portfolio" : "Portfolioinhaltskarte",
+            "title" : "Titel",
+            "description" : "Beschreibung",
+            "order" : "Bestellung",
+            "image" : "Bild-URL",
+            "mainCta" : "Haupt-CTA",
+            "link" : "Link",
+            "secondaryCta" : "Sekundärer CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Pfad"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4450,20 @@
       "tokenBlacklist" : {
         "title" : "Ausgeblendete Token",
         "desc" : "Sie können Token ausblenden, indem Sie zum übergeordneten Konto gehen, dann mit der rechten Maustaste auf das Token klicken und „Token ausblenden“ wählen.",
-        "count" : "{{count}} Token",
-        "count_plural" : "{{count}} Token"
+        "count" : "1 Token",
+        "count_other" : "{{count}} Token"
       },
       "hiddenNftCollections" : {
         "title" : "Ausgeblendete NFT-Sammlungen",
         "desc" : "Sie können NFT-Sammlungen ausblenden, indem Sie mit der rechten Maustaste auf den Namen der Sammlung klicken und \"NFT-Sammlung ausblenden\" auswählen.",
-        "count" : "{{count}} Sammlung",
-        "count_plural" : "{{count}} Sammlungen"
+        "count" : "1 Sammlung",
+        "count_other" : "{{count}} Sammlungen"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Ausgeblendete Inscriptions",
+        "desc" : "Zum Ausblenden einer Inscription kannst du mit der rechten Maustaste darauf klicken und dann „Hide Inscription“ (Inscription ausblenden) auswählen.",
+        "count" : "1 Inscription",
+        "count_other" : "{{count}} Inscriptions"
       },
       "fullNode" : {
         "title" : "Bitcoin Full Node verbinden",
@@ -4496,7 +4618,7 @@
         }
       },
       "recoverySeed" : {
-        "title1" : "Wie funktioniert eine Wiederherstellungsphrase?",
+        "title1" : "Wie funktioniert eine Phrase?",
         "paragraph1" : "Ihre Wiederherstellungsphrase funktioniert wie ein einzigartiger Generalschlüssel. Ihr Ledger-Gerät verwendet sie, um private Schlüssel für jeden Krypto-Vermögenswert zu berechnen, den Sie besitzen.",
         "paragraph2" : "Um den Zugriff auf Ihre Kryptos wiederherzustellen, kann jede Wallet die gleichen privaten Schlüssel aus Ihrem Wiederherstellungssatz berechnen.",
         "link" : "Mehr zur Wiederherstellungsphrase",
@@ -4580,19 +4702,19 @@
         "selectLabel" : "Auswählen"
       },
       "selectUseCase" : {
-        "hasNoRecovery" : "Verwenden Sie Ihr {{deviceName}} zum ersten Mal?",
-        "hasRecovery" : "Haben Sie bereits eine Wiederherstellungsphrase?",
+        "hasNoRecovery" : "Verwendest du deine {{deviceName}} zum ersten Mal?",
+        "hasRecovery" : "Hast du bereits eine Wiederherstellungsphrase?",
         "options" : {
           "1" : {
-            "title" : "Einrichten eines neuen {{deviceName}}",
-            "description" : "Lassen Sie uns beginnen und Ihr Gerät einrichten!"
+            "title" : "Einrichten einer neuen {{deviceName}}",
+            "description" : "Lass uns beginnen und dein Gerät einrichten!"
           },
           "2" : {
-            "title" : "Verbinden Sie Ihr {{deviceName}}",
-            "description" : "Ist Ihr Gerät bereits eingerichtet? Verbinden Sie es mit der App!"
+            "title" : "Verbinde deine {{deviceName}}",
+            "description" : "Ist dein Gerät bereits eingerichtet? Verbinde es mit der App!"
           },
           "3" : {
-            "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
+            "title" : "Wiederherstellen deiner Wiederherstellungsphrase auf einem neuen Gerät",
             "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
           },
           "4" : {
@@ -4633,7 +4755,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo" : {
@@ -4660,7 +4782,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo2" : {
@@ -4688,7 +4810,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCode" : {
@@ -4702,7 +4824,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "quizSuccess" : {
@@ -4723,7 +4845,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCodeHowTo" : {
@@ -4742,7 +4864,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoverHowTo" : {
@@ -4796,7 +4918,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "newRecoveryPhrase" : {
@@ -4811,7 +4933,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo" : {
@@ -4840,7 +4962,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo3" : {
@@ -4858,7 +4980,7 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "genuineCheck" : {
@@ -4885,20 +5007,20 @@
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pairMyNano" : {
             "title" : "Echtheitsprüfung",
             "paragraph" : "Wir werden überprüfen, ob Ihr Nano echt ist. Das sollte schnell und einfach gehen!",
             "buttons" : {
-              "next" : "Meinen Nano prüfen",
+              "next" : "Mein Gerät überprüfen",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
             },
             "help" : {
               "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+              "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
             }
           }
         }
@@ -4948,7 +5070,7 @@
           },
           "results" : {
             "success" : {
-              "title" : "Herzlichen Glückwunsch!",
+              "title" : "Glückwunsch!",
               "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt."
             },
             "fail" : {
@@ -4965,7 +5087,7 @@
           },
           "results" : {
             "success" : {
-              "title" : "Herzlichen Glückwunsch!",
+              "title" : "Glückwunsch!",
               "text" : "Jeder, der Ihre Wiederherstellungsphrase kennt, kann Ihr Krypto-Vermögen stehlen.Wenn Sie die Phrase verlieren, müssen Sie Ihre Kryptos schnell an einen sicheren Ort übertragen."
             },
             "fail" : {
@@ -4982,7 +5104,7 @@
           },
           "results" : {
             "success" : {
-              "title" : "Herzlichen Glückwunsch!",
+              "title" : "Glückwunsch!",
               "text" : "Ihr privater Schlüssel bleibt immer offline in Ihrer Hardware-Wallet. Selbst wenn Sie mit Ihrem Nano verbunden sind, kann die Ledger-App nicht auf Ihren privaten Schlüssel zugreifen. Sie müssen jede Transaktion physisch auf Ihrem Gerät autorisieren."
             },
             "fail" : {
@@ -5209,25 +5331,17 @@
     "link" : "Nutzungsbedingungen",
     "cta" : "Weiter"
   },
+  "MemoTagField" : {
+    "label" : "Tag/Memo",
+    "placeholder" : "Tag/Memo eingeben",
+    "information" : "Um sicherzustellen, dass deine Transaktion korrekt auf deinem Konto verbucht wird, benötigen zentralisierte Börsen und manchmal auch verwahrende Wallets ein Tag/Memo.",
+    "instruction" : "Kopiere das von der zentralisierten Börse bzw. der verwahrenden Wallet angegebene Tag/Memo in die Zwischenablage, um es einzufügen."
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "Optional",
       "transferId" : "Transfer-ID (Memo)",
       "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "Optional, Standard: 0",
-      "memo" : "Memo",
-      "memoWarningText" : "Der Memowert kann eine Zahl zwischen 0 und 9223372036854775807 sein"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo",
-      "memoWarningText" : "Wenn du ein Memo verwendest, überprüfe den beim Empfänger verwendeten Typ sorgfältig"
     },
     "ton" : {
       "commentPlaceholder" : "Optional",
@@ -5257,13 +5371,8 @@
       "assetCode" : "Vermögenswerte-Code",
       "assetIssuer" : "Emittent der Vermögenswerte"
     },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Optional",
-      "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
-    },
     "solana" : {
-      "memo" : "Memo",
+      "memo" : "Tag/Memo",
       "memoPlaceholder" : "Optional"
     }
   },
@@ -5273,8 +5382,11 @@
       "description" : "Die Netzwerkgebühr ist möglicherweise zu niedrig. Bitte erhöhen."
     },
     "NoSuchAppOnProvider" : {
-      "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
-      "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
+      "title" : "{{appName}} ist nicht kompatibel mit {{productName}}.",
+      "titleOld" : "Die {{appName}}-App kann für deine spezifische Konfiguration nicht gefunden werden.",
+      "description" : "<0>Erschließe dir mehr mit unseren Geräten.</0> Wenn du diese Funktion nutzen möchtest, musst du ein Upgrade auf eines unserer kompatiblen Geräte durchführen. Wähle die beste Option für deine Bedürfnisse aus und profitiere von zusätzlicher Sicherheit.",
+      "exploreCTA" : "Kompatible Geräte entdecken",
+      "learnMoreCTA" : "Weitere Informationen zu Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "Sie haben eingehende Transaktionen ausstehend. Bitte bedenken Sie, dass ausstehende Transaktionen rückgängig gemacht werden können."
@@ -6026,7 +6138,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "Das Senden an eine taproot-Adresse ist vor der Aktivierung des Netzwerks (mainnet) unsicher"
@@ -6240,11 +6352,32 @@
     },
     "PinNotSet" : {
       "title" : "PIN nicht festgelegt"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "Transaktionsübertragung fehlgeschlagen",
+      "description" : "Deine Transaktion konnte im {{networkName}}-Netzwerk nicht übertragen werden. Deine {{currencyName}} wurden nicht übertragen und verbleiben auf deinem Konto.",
+      "helpCenterTitle" : "Hilfe-Center: ",
+      "helpCenterDesc" : "Besuche unser Hilfe-Center oder kontaktiere uns über das Widget, um Unterstützung zu erhalten.",
+      "needHelp" : "Hilfe nötig?",
+      "getHelp" : "Hilfe erhalten",
+      "technicalErrorTitle" : "Technischer Fehler: ",
+      "saveLogs" : "Protokolle speichern"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen.",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} auf deinem Konto.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> oder <cta2>{{cta2Label}}</cta2> {{assetName}} auf deinem Konto.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> oder <cta3>{{cta3Label}}</cta3> {{assetName}} auf deinem Konto.",
+      "ctas" : {
+        "buy" : "Kaufen",
+        "swap" : "Swappen",
+        "deposit" : "Einzahlen"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
-    "memoPlaceholder" : "Optional",
+    "memoPlaceholder" : "Tag/Memo eingeben",
     "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
   },
   "hedera" : {
@@ -6276,6 +6409,7 @@
     "cta" : "Individueller Sperrbildschirm",
     "managerCTA" : "Bild für Sperrbildschirm",
     "managerCTARemove" : "Entfernen",
+    "rotate" : "Drehen",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bild auswählen",
@@ -6377,12 +6511,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "Die Weitergabe deiner Ledger Live-Daten hilft uns, deine Vorlieben zu verstehen und Inhalte anzuzeigen, die für dich relevant sind.",
-      "whatWeTrack" : "Mit deiner Einwilligung kann Ledger Daten über die Nutzung von Ledger Live durch dich (einschließlich Seitenbesuche und Klicks) zu folgenden Zwecken erfassen:",
+      "whatWeTrack" : "Mit deiner Einwilligung kann Ledger zu folgenden Zwecken Daten über dein Nutzungsverhalten in Ledger Live (einschließlich Seitenaufrufen und Klicks) erfassen:",
       "whatWeTrackList" : {
         "1" : "Um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu verbessern (Analyse)",
         "2" : "Um dir personalisierte Empfehlungen und Inhalte anzuzeigen, die auf deine Vorlieben zugeschnitten sind, und die Wirksamkeit unserer Marketingkampagnen zu messen (Personalisierung)"
       },
-      "whatWeDoNotTrack" : "Ledger wird niemals die folgenden Informationen erfassen:",
+      "whatWeDoNotTrack" : "Ledger wird keinesfalls die folgenden Informationen erheben:",
       "whatWeDoNotTrackList" : {
         "1" : "Deine Vermögenswerte",
         "2" : "Dein Portfolio",
@@ -6424,13 +6558,13 @@
     "common" : {
       "title" : "Hilf mit, dein Nutzungserlebnis zu verbessern und zu personalisieren",
       "revokeInfo" : "Du kannst deine Einwilligung in den App-Einstellungen jederzeit widerrufen.",
-      "learnMore" : "Weitere Informationen über unsere Tracking-Richtlinie"
+      "learnMore" : "Erfahre mehr darüber, wie wir deine Daten verarbeiten"
     },
     "profileSettings" : {
       "personalizedExp" : "Personalisierte Nutzung",
       "analytics" : "Analysen",
-      "personalizedExpDesc" : "Ermöglicht Ledger die Verfolgung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
-      "analyticsDesc" : "Ermöglicht Ledger die Verfolgung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren."
+      "personalizedExpDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
+      "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren."
     }
   },
   "walletSync" : {
@@ -6584,6 +6718,11 @@
       "seeMore" : "Weitere Inscriptions anzeigen",
       "empty" : "Zum Hinzufügen von Inscriptions sende sie einfach an deine Bitcoin-Adresse.",
       "receive" : "Inscription empfangen",
+      "hide" : "Inscription ausblenden",
+      "modal" : {
+        "title" : "Inscription ausblenden",
+        "desc" : "Durch diesen Vorgang wird die Inscription <0>{{inscriptionName}}</0> in deinem Konto ausgeblendet. Du kannst das Ausblenden jederzeit in den Einstellungen aufheben."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinale entdecken",
         "description" : "Wusstest du, dass du möglicherweise wertvolle seltene Sats und Inscriptions besitzt?",
@@ -6650,6 +6789,20 @@
           "vintage" : "Die Anfänge von Bitcoin waren durch die ersten 1.000 Blöcke gekennzeichnet. Satoshis, die innerhalb dieses Zeitraums geschürft wurden, werden als „Vintage“ ausgezeichnet."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "Zu sendender Betrag:",
+      "of" : "von",
+      "excludeAssets" : "Ordinal-Vermögenswerte ausschließen",
+      "selectDesc" : "Wähle die UTXOs aus, die du für deine Transaktionen verwenden möchtest. Ungeprüfte UTXOs werden nicht verwendet.",
+      "utxos" : "UTXOs",
+      "learnMore" : "Weitere Informationen zu dieser Einstellung",
+      "confirm" : "Bestätigen",
+      "address" : "Adresse",
+      "transactionId" : "Transaktions-ID"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "Mit LDMK-Transport"
   }
 }
