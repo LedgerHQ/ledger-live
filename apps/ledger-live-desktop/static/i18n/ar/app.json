@@ -137,7 +137,9 @@
       "outdated" : "ايقاف مؤقت",
       "error" : "خطأ في المزامنة",
       "refresh" : "تحديث",
-      "devTools" : "أدوات المطوّرين"
+      "devTools" : "أدوات المطوّرين",
+      "failingSync_one" : "حساب فشل في المزامنة:",
+      "failingSync_other" : "حسابات فشلت في المزامنة:"
     },
     "exchange" : "تبادل",
     "info" : "معلومات",
@@ -146,7 +148,10 @@
     "or" : "أو",
     "clearAll" : "إزالة الكل",
     "buyLedger" : "شراء Ledger",
-    "quote" : "عرض أسعار"
+    "quote" : "عرض أسعار",
+    "memoTag" : {
+      "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -737,7 +742,8 @@
         "subTitle" : "دمج {{family}} تم بواسطة فريق {{team}}",
         "description" : "Ledger Live هي منصة مفتوحة المصدر.",
         "description2" : "المطورون من أي مكان في العالم بإمكانهم الدمج مع Ledger Live",
-        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger"
+        "description3" : "هذا الدمج تم تنفيذه من قِبل {{team}} بالتعاون مع Ledger",
+        "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1124,8 @@
     "optionsMenu" : {
       "title" : "الخيارات",
       "exportOperations" : "تصدير سجل الاصدارات",
-      "exportToMobile" : "تصدير إلى الجوال"
+      "exportToMobile" : "تصدير إلى الجوال",
+      "ledgerSync" : "مزامنة الحسابات"
     },
     "contextMenu" : {
       "star" : "تفضيل",
@@ -1126,6 +1133,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
+      "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
       "edit" : "تعديل الحساب",
@@ -2252,6 +2260,10 @@
           "description" : "قم بتكديس CELO خاصتك مع مُدقِّق Ledger by Figment. إنه يضمن تغطية كاملة ضد التغريم، ومدعوم من أمان Ledger الذي لا هوادة فيه."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+      "description" : "ربما تحتاج إلى <0>علامة/ملاحظة (تسمية الوجهة)</0> لتلقي هذا الأصل من منصة تداول. يمكنك استخدام أي مزيج من الأرقام مثل 1234."
     }
   },
   "send" : {
@@ -2274,12 +2286,17 @@
           "noResolution" : {
             "title" : "لم يتم العثور على عنوان لهذا النطاق"
           }
+        },
+        "memoTag" : {
+          "question" : "لا تستخدم علامة ملاحظة (تسمية الوجهة)؟",
+          "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)",
+          "warning" : " أموالك سوف تُفقَد إذا لم تقم بإضافة علامة/ملاحظة (تسمية الوجهة) عند إرسالها إلى أي منصة تداول مركزية أو محفظة وصاية."
         }
       },
       "amount" : {
         "title" : "المبلغ",
         "banner" : "أقصى مبلغ قابل للإنفاق هو",
-        "fees" : "الحد الأقصى للرسوم المُقدرة",
+        "fees" : "معرفة المزيد عن الرسوم",
         "standard" : "اعتيادي",
         "advanced" : "متقدم",
         "nftQuantity" : "الكمية"
@@ -2351,6 +2368,15 @@
     },
     "footer" : {
       "estimatedFees" : "رسوم الشبكة"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "لا تستخدم علامة/ملاحظة (تسمية الوجهة)؟",
+        "description" : "أموالك سوف تُفقَد إذا لم تقم بإضافة علامة/ملاحظة (تسمية الوجهة) عند إرسالها إلى أي منصة تداول مركزية أو محفظة وصاية.",
+        "cta.addTag" : "إضافة علامة",
+        "cta.not.addTag" : "لا تضف علامة",
+        "checkbox.label" : "لا تظهر هذا مرةً أخرى."
+      }
     }
   },
   "releaseNotes" : {
@@ -2409,7 +2435,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2786,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "مجموعة الرموز غير القابلة للاستبدال (NFT)",
-        "description" : "يمكنك رؤيتك رموز Tezos غير القابلة للاستبدال مباشرةً من خلال Objkt داخل Ledger Live.",
-        "cta" : "رؤية رموزي غير القابلة للاستبدال على Objkt"
       }
     }
   },
@@ -3682,36 +3703,102 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
       "tagMinimum" : "يتطلب {{min}} ETH",
       "kiln_pooling" : {
         "title" : "مُجمِع تكديس Kiln",
         "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+        "supportLink" : "تعرّف على المزيد عن مُجمِعات Kiln"
       },
       "lido" : {
         "title" : "Lido",
         "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
-        "supportLink" : "تعرف على المزيد عن Lido"
+        "supportLink" : "تعرّف على المزيد عن Lido"
       },
       "stader-eth" : {
         "title" : "Stader Labs",
         "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً مع وصول إلى سيولة فورية.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Stader"
+        "supportLink" : "تعرّف على المزيد عن مُجمِعات Stader"
       },
       "kiln" : {
         "title" : "تكديس Kiln المُخصص",
         "tag" : "يتطلب 32 ETH",
         "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
-        "supportLink" : "تعرف على المزيد عن مدقق Kiln"
+        "supportLink" : "تعرّف على المزيد عن مدقق Kiln"
       },
       "figment" : {
         "title" : "Figment",
         "tag" : "يتطلب 32 ETH",
-        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
-        "supportLink" : "تعرف على المزيد عن مدقق Figment"
+        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واحصل على مكافآت تُرسل تلقائياً إلى حسابك.",
+        "supportLink" : "تعرّف على المزيد عن مدقق Figment"
+      }
+    },
+    "stake" : {
+      "title" : "اختر مزود تكديس",
+      "category" : {
+        "all" : {
+          "name" : "الكل",
+          "description" : "كل مزودي تكديس إيثريوم المتاحين على Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "يمكنك تكديس ETH والحصول على مكافآت برموز توكن سائلة. ستظل قادراً على التداول والمشاركة في أنشطة التمويل اللامركزي (DeFi)."
+        },
+        "protocol" : {
+          "name" : "البروتوكول",
+          "description" : "يمكنك تكديس دفعة من 32 ETH والحصول على مكافآت العقدة الكاملة بوحدات ETH."
+        },
+        "pooling" : {
+          "name" : "التجميع",
+          "description" : "يمكنك الانضمام إلى مُجمِع لتكديس أي مبلغ من ETH والحصول على مكافآت."
+        },
+        "restaking" : {
+          "name" : "إعادة التكديس",
+          "description" : "يمكنك إعادة تكديس رمز التوكن السائل خاصتك للحصول على مكافآت إضافية."
+        }
+      },
+      "howItWorks" : "كيف يعمل تكديس ETH",
+      "lst" : "مطلوب رمز توكن سائل",
+      "noMinimum" : "ليس هناك حد أدنى",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "إعادة التكديس السائل من Kiln"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص"
+        },
+        "kelpdao" : {
+          "title" : "منظمة Kelp اللامركزية المستقلة"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "نظير لنظير"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "اقرأ عن تكديس ETH والاستراتيجيات المختلفة",
+      "requiredMinimum" : "يتطلب {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "مكافآت مُجمّعة تلقائياً",
+        "basic" : "المكافآت",
+        "daily" : "مكافآت يومية",
+        "eigenlayer_points" : "نقاط Eigenlayer",
+        "validator" : "مكافآت مدقق"
       }
     }
   },
@@ -4014,6 +4101,35 @@
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
+      "analyticsConsole" : {
+        "title" : "السماح بوحدة تحكم التحليلات",
+        "desc" : "عرض والسماح بفتح وحدة تحكم التحليلات."
+      },
+      "brazeTools" : {
+        "title" : "أدوات Braze",
+        "description" : "إنشاء بطاقات braze محلية",
+        "open" : "فتح",
+        "modal" : {
+          "title" : "إنشاء بطاقة braze محلية",
+          "add" : "إضافة",
+          "dismiss" : "تجاهل كل البطاقات",
+          "fields" : {
+            "notification" : "بطاقة محتوى الإشعار",
+            "action" : "بطاقة محتوى الإجراء",
+            "portfolio" : "Portfolio Content Card",
+            "title" : "العنوان",
+            "description" : "الوصف",
+            "order" : "الطلب",
+            "image" : "عنوان URL للصورة",
+            "mainCta" : "CTA الرئيسي",
+            "link" : "الرابط",
+            "secondaryCta" : "CTA الثانوي",
+            "cta" : "CTA",
+            "url" : "عنوان URL",
+            "path" : "المسار"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4450,20 @@
       "tokenBlacklist" : {
         "title" : "إخفاء رموز التوكن",
         "desc" : "يمكنك إخفاء رموز التوكن بالانتقال إلى الحساب الرئيسي ثم النقر بالزر الأيمن على رمز التوكن واختيار \"Hide token\" (إخفاء رمز التوكن).",
-        "count" : "{{count}} رمز توكن",
-        "count_plural" : "{{count}} رمز توكن"
+        "count" : "1 رمز توكن",
+        "count_other" : "{{count}} رمز توكن"
       },
       "hiddenNftCollections" : {
         "title" : "Hidden NFT Collections",
         "desc" : "يمكنك إخفاء مجموعات NFT عن طريق النقر بالزر الأيمن على اسم المجموعة واختيار \"إخفاء مجموعات NFT\".",
-        "count" : "{{count}} مجموعة",
-        "count_plural" : "{{count}} مجموعة"
+        "count" : "مجموعة واحدة",
+        "count_other" : "{{count}} مجموعة"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "النقوش المخفية",
+        "desc" : "يمكنك إخفاء النقش عن طريق النقر بالزر الأيمن على النقش واختيار ”Hide Inscription (إخفاء النقش)“.",
+        "count" : "نقش واحد",
+        "count_other" : "{{count}} نقوش"
       },
       "fullNode" : {
         "title" : "توصيل عقدة بيتكوين الكاملة",
@@ -5209,25 +5331,17 @@
     "link" : "شروط الاستخدام",
     "cta" : "متابعة"
   },
+  "MemoTagField" : {
+    "label" : "علامة/ملاحظة (تسمية الوجهة)",
+    "placeholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
+    "information" : "لضمان أن معاملاتك تم إيداعها بشكل صحيح في حسابك، فإن منصات التداول المركزية وأحياناً محافظ الوصاية تتطلب علامة/ملاحظة (تسمية وجهة).",
+    "instruction" : "قم بنسخ ولصق العلامة/الملاحظة (تسمية الوجهة) التي تقدمها منصة التداول أو محفظة الوصاية."
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "اختياري",
       "transferId" : "مُعرّف التحويل (ملاحظة)",
       "transferIdWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "اختياري",
-      "memo" : "ملاحظة (تسمية الوجهة)"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "اختياري، القيمة الافتراضية: 0",
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoWarningText" : "قيمة الملاحظة يمكن أن تكون رقماً بين 0 و 9223372036854775807"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "اختياري",
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم"
     },
     "ton" : {
       "commentPlaceholder" : "اختياري",
@@ -5257,13 +5371,8 @@
       "assetCode" : "كود الأصل",
       "assetIssuer" : "مُصدر الأصل"
     },
-    "cosmos" : {
-      "memo" : "ملاحظة (تسمية الوجهة)",
-      "memoPlaceholder" : "اختياري",
-      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
-    },
     "solana" : {
-      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memo" : "علامة/ملاحظة (تسمية الوجهة)",
       "memoPlaceholder" : "اختياري"
     }
   },
@@ -5273,8 +5382,11 @@
       "description" : "رسوم الشبكة قد تكون منخفضةً جداً. يُرجى زيادتها"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
+      "title" : "{{appName}} ليس متوافقاً مع {{productName}}.",
+      "titleOld" : "لا يمكن العثور على تطبيق {{appName}} للتهيئة الخاصة بك.",
+      "description" : "<0>تمكّن من المزيد مع أجهزتنا.</0> للوصول إلى هذه الميزة، قم بالترقية إلى أحد أجهزتنا المتوافقة. اختر أفضل خيار لاحتياجاتك واستمتع بأمان مُحسّن.",
+      "exploreCTA" : "استكشف الأجهزة المتوافقة",
+      "learnMoreCTA" : "تعرّف على المزيد عن مزامنة Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "لديك معاملات واردة مُعلقة. يُرجى الانتباه إلى أن المعاملات المُعلقة يمكن عكسها."
@@ -6026,7 +6138,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "الإرسال إلى عنوان taproot غير آمن قبل تنشيط الشبكة الرئيسية (mainnet)"
@@ -6240,11 +6352,32 @@
     },
     "PinNotSet" : {
       "title" : "لم يتم إعداد كود PIN"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "فشل بثّ المعاملة",
+      "description" : "فشل بثّ معاملتك على شبكة {{networkName}}. {{currencyName}} خاصتك لم يتم تحويلها وبقيت في حسابك.",
+      "helpCenterTitle" : "مركز الدعم : ",
+      "helpCenterDesc" : "قم بزيارة مركز الدعم لدينا أو تواصل معنا عبر الأداة من أجل المساعدة.",
+      "needHelp" : "بحاجة إلى مساعدة؟",
+      "getHelp" : "احصل على مساعدة",
+      "technicalErrorTitle" : "خطأ تقني : ",
+      "saveLogs" : "حفظ السجلات"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك.",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} في حسابك.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> أو <cta2>{{cta2Label}}</cta2> {{assetName}} في حسابك.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1> أو <cta2>{{cta2Label}}</cta2> أو <cta3>{{cta3Label}}</cta3> {{assetName}} في حسابك.",
+      "ctas" : {
+        "buy" : "شراء",
+        "swap" : "مبادلة",
+        "deposit" : "إيداع"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "ملاحظة (تسمية الوجهة)",
-    "memoPlaceholder" : "اختياري",
+    "memoPlaceholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
     "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
   },
   "hedera" : {
@@ -6276,6 +6409,7 @@
     "cta" : "شاشة قَفل مُخصّصة",
     "managerCTA" : "صورة شاشة القَفل",
     "managerCTARemove" : "حذف",
+    "rotate" : "تدوير",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر الصورة",
@@ -6377,12 +6511,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "مشاركة بيانات Ledger Live الخاصة بك تساعدنا على فهم تفضيلاتك، وعرض محتوى مناسب لك.",
-      "whatWeTrack" : "بموافقتك، Ledger ستكون قادرةً على تتبع بيانات حول كيف تستخدم Ledger Live (بما في ذلك زيارات الصفحات والنقرات):",
+      "whatWeTrack" : "بموافقتك، Ledger ستكون قادرةً على جمع بيانات حول كيف تستخدم Ledger Live (بما في ذلك زيارات الصفحات والنقرات):",
       "whatWeTrackList" : {
         "1" : "لقياس أداء Ledger Live وتحسين كل من التطبيق وتجربتك (التحليلات).",
         "2" : "لتزويدك بتوصيات مخصصة ومحتوى مُصمم خصيصاً ليناسب تفضيلاتك، بالإضافة إلى مساعدتنا على قياس فاعلية حملاتنا التسويقية (التخصيص)."
       },
-      "whatWeDoNotTrack" : "Ledger لن تتبع أبداً معلومات متعلقة بما يلي:",
+      "whatWeDoNotTrack" : "Ledger لن تجمع أبداً معلومات متعلقة بما يلي:",
       "whatWeDoNotTrackList" : {
         "1" : "أصولك.",
         "2" : "محفظتك الاستثمارية.",
@@ -6424,13 +6558,13 @@
     "common" : {
       "title" : "ساعدنا على التحسن وتخصيص تجربتك",
       "revokeInfo" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
-      "learnMore" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+      "learnMore" : "اعرف المزيد عن كيف نتعامل مع بياناتك"
     },
     "profileSettings" : {
       "personalizedExp" : "تجربة مخصصة",
       "analytics" : "التحليلات",
-      "personalizedExpDesc" : "قم بتمكين Ledger من تتبع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
-      "analyticsDesc" : "قم بتمكين Ledger من تتبع بيانات استخدام التطبيق للمساعدة على قياس أداء Ledger Live وتحسين كل من التطبيق وتجربتك."
+      "personalizedExpDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
+      "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Live وتحسين كلٍ من التطبيق وتجربتك."
     }
   },
   "walletSync" : {
@@ -6581,9 +6715,14 @@
   },
   "ordinals" : {
     "inscriptions" : {
-      "seeMore" : "See more inscriptions",
+      "seeMore" : "رؤية المزيد من النقوش",
       "empty" : "لإضافة نقوش، ببساطة أرسلها إلى عنوان بيتكوين الخاص بك.",
       "receive" : "تلقي نقش",
+      "hide" : "إخفاء النقش",
+      "modal" : {
+        "title" : "إخفاء النقش",
+        "desc" : "هذا الإجراء سيقوم بإخفاء النقش التالي <0>{{inscriptionName}}</0> من حسابك. يمكنك إلغاء إخفائه في أي وقت من الإعدادات."
+      },
       "discoveryDrawer" : {
         "title" : "اكتشف الترتيبات (Ordinals)",
         "description" : "هل تعرف أنك ربما تمتلك وحدات ساتوشي ونقوش نادرة قيّمة؟",
@@ -6620,36 +6759,50 @@
       },
       "rareSat" : {
         "description" : {
-          "alpha" : "Step into the birth of each bitcoin with Alpha, marking the initial satoshi. This label signifies the genesis of a Bitcoin unit.",
-          "black_epic" : "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
-          "black_legendary" : "No Description for Black Legendary",
-          "black_mythic" : "No Description for Black Mythic",
-          "black_rare" : "Denotes the final satoshi at the conclusion of each mining difficulty adjustment period.",
-          "black_uncommon" : "The concluding satoshi of each halving event, which occurs approximately every four years when the Bitcoin mining reward is halved.",
-          "block_9" : "Block 9 holds a unique distinction in Bitcoin's history. As one of the earliest blocks mined, the satoshis contained within it are some of the oldest sats in circulation. These sats offer a tangible connection to the very beginnings of Bitcoin, shortly after its inception.",
-          "block_9_450x" : "Step back in time with Block 9 450x, where sats in first bitcoin of the 9th block are highlighted. This label unfolds a captivating chapter in Bitcoin's history.",
-          "block_78" : "Block 78 holds a profound place in the annals of Bitcoin's history. This block was mined by Hal Finney, marking the first instance where someone other than the elusive Satoshi Nakamoto contributed to the blockchain's growth.",
-          "block_286" : "Unearth the significance of Block 286, representing satoshis from the second-ever Bitcoin transaction mined by Satoshi Nakamoto. These sats carry the weight of Bitcoin's elusive creator and contribute to the narrative of its enigmatic origins.",
-          "block_666" : "No Description for Block 666",
-          "common" : "No Description for Common",
-          "epic" : "Every four years, the Bitcoin network experiences a \"halving\" event where the mining reward is cut in half. The first sat of each of these halving epochs is labeled \"Epic,\" marking a significant moment in Bitcoin's economic model.",
-          "first_tx" : "On January 12, 2009, history was made when Satoshi Nakamoto sent 10 Bitcoins to a computer scientist named Hal Finney. This marked the first-ever Bitcoin transaction. Sats originating from this iconic transaction bear the \"First Transaction\" label, symbolizing the genesis of Bitcoin's peer-to-peer exchange.",
-          "hitman" : "No Description for Hitman",
-          "jpeg" : "Journey into the past with JPEG, as these satoshis might be tied to the first Bitcoin trade for an image on February 24, 2010. This label narrates a tale of innovation, showcasing Bitcoin's early forays into unconventional transactions and exchanges.",
-          "legacy" : "No Description for Legacy",
-          "legendary" : "No Description for Legendary",
-          "mythic" : "No Description for Mythic",
-          "nakamoto" : "The mystique surrounding Bitcoin's pseudonymous creator, Satoshi Nakamoto, remains undiminished. Sats that were mined by Nakamoto himself are branded with this  label, making them highly sought after by collectors.",
-          "omega" : "Experience the poetic conclusion of every bitcoin with Omega, the last satoshi. As the final satoshi in a Bitcoin unit.",
-          "paliblock" : "No Description for PaliBlock Palindrome",
-          "palindrome" : "In a playful twist, any sat whose number can be read the same forwards and backwards is branded a \"Palindrome.\" For example, a sat numbered 12321 or 45654. These unique numerical attributes add a layer of rarity and curiosity to the labeled sats.",
-          "palinception" : "Delve into the mesmerizing world of uniform palinception, where each satoshi forms a palindrome of palindromes. These intricately structured sats create a fascinating tapestry of mirrored digits.",
-          "pizza" : "One of the most iconic stories in the Bitcoin community is that of a programmer who paid 10,000 Bitcoins for two Papa John's pizzas on May 22, 2010. This event is often cited to demonstrate the meteoric rise in Bitcoin's value. Sats from this legendary transaction wear the \"Pizza\" label.",
-          "rare" : "The Bitcoin network periodically adjusts its mining difficulty to ensure that blocks are added roughly every ten minutes. The first sat of each such adjustment period is branded as \"Rare.\" This reflects the ever-evolving nature of the network's security and consensus mechanisms. ",
-          "uncommon" : "This label is designated to the first satoshi of every block. Given that a new block is added to the Bitcoin blockchain approximately every 10 minutes, these sats capture the very beginning of that timeframe.",
-          "vintage" : "The dawn of Bitcoin was marked by its initial 1,000 blocks. Sats mined within this period are branded \"Vintage,\"."
+          "alpha" : "اخْطُ في ميلاد كل بيتكوين مع Alpha، التي تُحيي ذكرى وحدة ساتوشي الأولى. هذا الوسم يدل على نشأة وحدة بيتكوين.",
+          "black_epic" : "وحدة ساتوشي الختامية لكل حدث تنصيف، والذي يحدث كل أربعة أعوام تقريباً عندما يتم تنصيف مكافأة تعدين بيتكوين.",
+          "black_legendary" : "لا وصف لـ Black Legendary (أسوَد أسطوري)",
+          "black_mythic" : "لا وصف لـ Black Mythic (أسوَد خيالي)",
+          "black_rare" : "يرمز إلى وحدة ساتوشي الأخيرة في ختام كل فترة ضبط صعوبة التعدين.",
+          "black_uncommon" : "وحدة ساتوشي الختامية لكل حدث تنصيف، والذي يحدث كل أربعة أعوام تقريباً عندما يتم تنصيف مكافأة تعدين بيتكوين.",
+          "block_9" : "الكتلة 9 لها مكانة فريدة في تاريخ بيتكوين. بصفتها واحدة من أوائل الكتل التي تم تعدينها، فإن وحدات ساتوشي المُتضمَّنة فيها هي بعض من أقدم وحدات ساتوشي قيد التداول. وحدات ساتوشي هذه تقدم اتصالاً ملموساً بالبدايات الأولى لبيتكوين، بعد وقت قصير من ظهورها.",
+          "block_9_450x" : "عُد بالزمن مع الكتلة 9 450x، حيث يُسلَّط الضوء على وحدات ساتوشي في أول بيتكوين في الكتلة التاسعة. هذه الوسم يكشف فصلاً آسراً في تاريخ بيتكوين.",
+          "block_78" : "الكتلة 78 لها مقام رفيع في سجلّات أحداث تاريخ بيتكوين. هذه الكتلة قام بتعدينها هال فيني، ممثلةً علامةً للمرة الأولى التي ساهم فيها شخص في نمو سلسلة الكتل (blockchain) بخلاف المراوغ ساتوشي ناكاموتو.",
+          "block_286" : "اكتشِف أهمية الكتلة 286، التي تمثّل وحدات ساتوشي من ثاني معاملة بيتكوين قام بتعدينها ساتوشي ناكاموتو على الإطلاق. وحدات ساتوشي هذه تحمل ثِقَل مُنشئ بيتكوين المراوغ وتساهم في سردية أصلها المبهم.",
+          "block_666" : "لا وصف لـ Block 666 (الكتلة 666)",
+          "common" : "لا وصف لـ Common (شائع)",
+          "epic" : "كل أربعة أعوام، تمرّ شبكة بيتكوين بحدث ”تنصيف“ حيث تنخفض مكافأة التعدين إلى النصف. أول وحدة ساتوشي في كل عصر من عصور التنصيف هذه تُمنح وسم ”Epic (مَلحمي)“، والذي يُحيي ذكرى لحظة هامة في نموذج بيتكوين الاقتصادي.",
+          "first_tx" : "في 12 يناير 2009، كُتِب التاريخ حين أرسل ساتوشي ناكاموتو 10 بيتكوين إلى عالِم كمبيوتر يُدعى هال فيني. كانت هذه هي أول معاملة بيتكوين على الإطلاق. وحدات ساتوشي التي نشأت من هذه المعاملة الأيقونية تحمل وسم ”First Transaction (أول معاملة)“، لترمز إلى نشأة نظام بيتكوين للتبادل من نظير لنظير.",
+          "hitman" : "لا وصف لـ Hitman (قاتل مأجور)",
+          "jpeg" : "نظرة إلى الماضي مع JPEG، حيث إن وحدات ساتوشي هذه ربما تكون مرتبطةً بأول تداول بيتكوين مقابل صورة في 24 فبراير 2010. هذا الوسم يروى حكاية ابتكار، ويستعرض مغامرات بيتكوين المبكرة في المعاملات والتبادلات غير التقليدية.",
+          "legacy" : "لا وصف لـ Legacy (كلاسيكي)",
+          "legendary" : "لا وصف لـ Legendary (أسطوري)",
+          "mythic" : "لا وصف لـ Mythic (خيالي)",
+          "nakamoto" : "الغموض الذي يحيط بمُنشئ بيتكوين ذي الاسم المستعار، ساتوشي ناكاموتو، يظّل مستمر. وحدات ساتوشي التي قام ناكاموتو بتعدينها بنفسه موسومة بهذا الوسم، مما يجعلها مطلوبةً بشدة من هواة الجَمع.",
+          "omega" : "عِش تجربة الختام الشاعري لكل بيتكوين مع Omega، آخر وحدة ساتوشي. أي أنها آخر ساتوشي في وحدة بيتكوين.",
+          "paliblock" : "لا وصف لـ PaliBlock Palindrome (كتلة تُقرأ طرداً وعكساً)",
+          "palindrome" : "في لمسة مرح، أي وحدة ساتوشي يمكن قراءة رقمها من اليمين لليسار كما يُقرأ من اليسار لليمين يتم تسميتها ”Palindrome (تُقرأ طرداً وعكساً)“. على سبيل المثال وحدة ساتوشي رقمها 12321 أو 45654. هذه الصفات الرقمية الفريدة تضيف طبقةً من الندرة والفضول إلى وحدات ساتوشي الموسومة.",
+          "palinception" : "تعمّق في عالم التسلسل المتناظر الفاتن، حيث تخلق كل وحدة ساتوشي تسلسل يًقرأ طرداً وعكساً باهراً. وحدات ساتوشي ذات الهيكل المُعقّد هذه تُنشئ نسيجاً فاتناً من الأرقام المُنعكسة.",
+          "pizza" : "إحدى القصص الأيقونية في مجتمع بيتكوين هي قصة المبرمج الذي دفع 10,000 بيتكوين مقابل اثنتين من بيتزا بابا جونز في 22 مايو 2010. هذا الحدث كثيراً ما يُستشهَد به لإظهار الارتفاع الصاروخي في قيمة بيتكوين. وحدات ساتوشي لهذه المعاملة الأسطورية يكون عليها وسم ”Pizza (بيتزا)“ .",
+          "rare" : "شبكة بيتكوين تضبط بشكل دوري صعوبة التعدين الخاصة بها لضمان أن الكُتل تُضاف كل عشر دقائق تقريباً. أول وحدة ساتوشي لكل فترة ضبط يتم تصنيفها على أنها ”Rare (النادرة)“. يعكس هذا الطبيعة دائمة التطور لأمان الشبكة وآليات الإجماع. ",
+          "uncommon" : "هذا الوسم مُخصّص لأول وحدة ساتوشي في كل كتلة. نظراً لأن كتلةً جديدةً تُضاف لسلسلة كتل بيتكوين كل 10 دقائق تقريباً، فإن وحدات ساتوشي هذه تلتقط بداية ذلك الإطار الزمني.",
+          "vintage" : "بداية بيتكوين مُحدَّدة بكتلها الـ 1,000 الأولية. وحدات ساتوشي التي تم تعدينها خلال هذه الفترة يُطلق عليها ”Vintage (الكلاسيكية)“."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "المبلغ المراد إرساله:",
+      "of" : "من",
+      "excludeAssets" : "استثناء أصول الترتيبات",
+      "selectDesc" : "اختر UTXO ( إخراج المعاملات غير المنفقة) الذي ترغب في استخدامه عند إجراء المعاملات. UTXO ( إخراج المعاملات غير المنفقة) غير المُعلّم لن يتم استخدامه.",
+      "utxos" : "UTXOs ( إخراج المعاملات غير المنفقة)",
+      "learnMore" : "تعرّف على المزيد عن هذا الإعداد",
+      "confirm" : "تأكيد",
+      "address" : "العنوان",
+      "transactionId" : "مُعرف المعاملة"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "مع تحويل LDMK"
   }
 }
