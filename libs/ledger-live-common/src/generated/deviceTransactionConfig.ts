@@ -9,8 +9,8 @@ import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
 import elrond from "@ledgerhq/coin-elrond/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
-import filecoin from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
+import filecoin from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
@@ -25,7 +25,6 @@ export default {
   casper,
   celo,
   crypto_org,
-  filecoin,
   internet_computer,
   stacks,
   algorand,
@@ -34,8 +33,8 @@ export default {
   cosmos,
   elrond,
   evm,
-  filecoin,
   hedera,
+  filecoin,
   icon,
   near,
   polkadot,

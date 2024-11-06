@@ -10,8 +10,8 @@ import { bridge as cardano } from "../../families/cardano/setup";
 import { bridge as cosmos } from "../../families/cosmos/setup";
 import { bridge as elrond } from "../../families/elrond/setup";
 import { bridge as evm } from "../../families/evm/setup";
-import { bridge as filecoin } from "../../families/filecoin/setup";
 import { bridge as hedera } from "../../families/hedera/setup";
+import { bridge as filecoin } from "../../families/filecoin/setup";
 import { bridge as icon } from "../../families/icon/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -35,8 +35,8 @@ export default {
   cosmos,
   elrond,
   evm,
-  filecoin,
   hedera,
+  filecoin,
   icon,
   near,
   polkadot,
