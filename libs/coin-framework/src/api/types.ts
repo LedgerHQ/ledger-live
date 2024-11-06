@@ -15,6 +15,8 @@ export type Operation = {
   recipients: string[];
   date: Date;
   transactionSequenceNumber: number;
+  // Field containing dedicated value for each blockchain
+  details?: Record<string, unknown>;
 };
 
 export type Transaction = {
