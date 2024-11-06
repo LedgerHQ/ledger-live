@@ -399,8 +399,17 @@ async function pressRightButton(speculosApiPort: number): Promise<void> {
 }
 
 export function containsSubstringInEvent(targetString: string, events: string[]): boolean {
-  const relevantEvent = events.find(entry => entry.includes(targetString.slice(0, 6)));
-  return !!relevantEvent && events.join("").includes(targetString);
+  const concatenatedEvents = events.join("");
+
+  let result = concatenatedEvents.includes(targetString);
+
+  if (!result) {
+    const regexPattern = targetString.split("").join(".*?");
+    const regex = new RegExp(regexPattern, "s");
+    result = regex.test(concatenatedEvents);
+  }
+
+  return result;
 }
 
 export async function takeScreenshot() {

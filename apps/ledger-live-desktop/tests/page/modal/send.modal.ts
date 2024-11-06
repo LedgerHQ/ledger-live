@@ -2,7 +2,6 @@ import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
 import { Transaction } from "../../models/Transaction";
-import { Currency } from "tests/enum/Currency";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
@@ -42,7 +41,7 @@ export class SendModal extends Modal {
   @step("Enter recipient and tag")
   async fillRecipientInfo(transaction: Transaction) {
     await this.fillRecipient(transaction.accountToCredit.address);
-    if (transaction.memoTag) {
+    if (transaction.memoTag && transaction.memoTag !== "noTag") {
       await this.tagInput.clear();
       await this.tagInput.fill(transaction.memoTag);
     }
@@ -50,19 +49,16 @@ export class SendModal extends Modal {
 
   @step("Fill tx information")
   async craftTx(tx: Transaction) {
-    const memotagModalCurrencies = [Currency.XLM, Currency.ADA, Currency.ATOM];
-    const feeStrategyCurrencies = [Currency.sepETH, Currency.POL, Currency.DOGE, Currency.BCH];
-
     await this.fillRecipientInfo(tx);
     await this.continueButton.click();
 
-    if (memotagModalCurrencies.includes(tx.accountToDebit.currency)) {
+    if (tx.memoTag === "noTag") {
       await this.noTagButton.click();
     }
 
     await this.cryptoAmountField.fill(tx.amount);
 
-    if (feeStrategyCurrencies.includes(tx.accountToDebit.currency)) {
+    if (tx.speed !== undefined) {
       await this.feeStrategy(tx.speed).click();
     }
 

@@ -12,9 +12,8 @@ export async function sendStellar(tx: Transaction) {
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
 
-  //Todo: Ractivate after QAA-319
-  //const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-  //expect(isAddressCorrect).toBeTruthy();
+  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+  expect(isAddressCorrect).toBeTruthy();
 
   await pressBoth();
 }
