@@ -17,19 +17,19 @@ import { lastConnectedDeviceSelector, onboardingTypeSelector } from "~/reducers/
 import { OnboardingType } from "~/reducers/types";
 
 /**
- * Returns a callback to open the Protect (Ledger Recover) upsell
+ * Returns a callback to open the Ledger Recover upsell
  * */
-export function useOpenProtectUpsellCallback() {
+export function useOpenRecoverUpsellCallback() {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
-  const protectFeature = useFeature("protectServicesMobile");
-  const recoverAlreadyOnboardedURI = useAlreadyOnboardedURI(protectFeature);
-  const recoverPostOnboardingURI = usePostOnboardingURI(protectFeature);
+  const recoverFeature = useFeature("protectServicesMobile");
+  const recoverAlreadyOnboardedURI = useAlreadyOnboardedURI(recoverFeature);
+  const recoverPostOnboardingURI = usePostOnboardingURI(recoverFeature);
   const touchScreenURI = useTouchScreenOnboardingUpsellURI(
-    protectFeature,
+    recoverFeature,
     Source.LLM_ONBOARDING_24,
   );
-  const recoverHomeURI = useHomeURI(protectFeature);
+  const recoverHomeURI = useHomeURI(recoverFeature);
   const dispatch = useDispatch();
   const [redirectionStarted, setRedirectionStarted] = useState(false);
   const isFocused = useIsFocused();
@@ -42,7 +42,7 @@ export function useOpenProtectUpsellCallback() {
 
   return useCallback(async () => {
     const internetConnected = await internetReachable();
-    if (internetConnected && protectFeature?.enabled) {
+    if (internetConnected && recoverFeature?.enabled) {
       const redirect = (url: string) => {
         Linking.openURL(url);
         setRedirectionStarted(true);
@@ -64,7 +64,7 @@ export function useOpenProtectUpsellCallback() {
   }, [
     lastConnectedDevice,
     onboardingType,
-    protectFeature?.enabled,
+    recoverFeature?.enabled,
     recoverAlreadyOnboardedURI,
     recoverHomeURI,
     recoverPostOnboardingURI,

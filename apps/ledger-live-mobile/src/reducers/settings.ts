@@ -169,7 +169,7 @@ export const INITIAL_STATE: SettingsState = {
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
-  hasBeenRedirectedToPostOnboarding: false,
+  hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingType: null,
   depositFlow: {
     hasClosedNetworkBanner: false,
@@ -909,6 +909,7 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
+/* NB: Protect is the former codename for Ledger Recover */
 export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
 export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
