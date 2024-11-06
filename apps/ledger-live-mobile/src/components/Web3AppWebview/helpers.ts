@@ -34,7 +34,7 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
-import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useCacheBustedLiveApps } from "@ledgerhq/live-common/src/wallet-api/react";
@@ -91,8 +91,6 @@ export function useWebView(
     return {
       reload: () => {
         const webview = safeGetRefValue(webviewRef);
-
-        console.log("first reload");
         webview.reload();
       },
       // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
@@ -128,7 +126,7 @@ export function useWebView(
     customHandlers,
   });
   const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState] = useCacheBustedLiveAppsDB();
-  const {edit, getLatest} = useCacheBustedLiveApps([
+  const { edit, getLatest } = useCacheBustedLiveApps([
     cacheBustedLiveAppsDb,
     setCacheBustedLiveAppsDbState,
   ]);
@@ -176,44 +174,39 @@ export function useWebView(
     Linking.openURL(targetUrl);
   }, []);
 
-  // const onLoadStart = useCallback(() => {
   useEffect(() => {
-    console.log("onLoadStart");
     let cacheBustedLiveAppsOrObj = cacheBustedLiveAppsDb || {};
-    // let latestCacheBustedId = cacheBustedLiveAppsOrObj[manifest.id] || 0;
-    let latestCacheBustedId = getLatest(manifest.id);//cacheBustedLiveAppsOrObj[manifest.id] || 0;
-    console.log({
-      manifestCacheBustingId: manifest.cacheBustingId,
-      cacheBustedLiveAppsDb,
-      cacheBustedLiveAppsOrObj,
-      latestCacheBustedId,
-    });
+    let latestCacheBustedId = getLatest(manifest.id);
     if (
       webviewRef.current &&
       manifest.cacheBustingId !== undefined &&
-      manifest.cacheBustingId > latestCacheBustedId
+      manifest.cacheBustingId > (latestCacheBustedId || 0)
     ) {
-      console.log({manifestcachebustiddiff: manifest.cacheBustingId})
-      console.log({manifestcachebustingsuperior: manifest.cacheBustingId > latestCacheBustedId, manifestcachebustingid: manifest.cacheBustingId, latestCacheBustedId})
       if (webviewRef.current.clearCache) {
-        console.log("clearing cache inside onLoadStart");
-        // TODO: might have to turn id into slug
-        // cacheBustedDB.edit(manifest.id, manifest.cacheBustingId);
         edit(manifest.id, manifest.cacheBustingId);
         webviewRef.current.clearCache(true);
         webviewRef.current.reload();
-      } else {
-        // TODO: abort rendering ?
       }
     }
   }, [manifest.id, manifest.cacheBustingId, webviewRef.current, getLatest]);
-  // }, [manifest.id, manifest.cacheBustingId, cacheBustedLiveAppsDb, webviewRef.current]);
+
+  const webviewCacheOptions = useMemo(() => {
+    if (manifest.cacheBustingId !== undefined) {
+      return {
+        cacheEnabled: false,
+        cacheMode: "LOAD_NO_CACHE" as CacheMode,
+        incognito: true,
+      };
+    } else {
+      return {};
+    }
+  }, [manifest.id]);
 
   return {
     onLoadError,
     onMessage,
     onOpenWindow,
-    // onLoadStart,
+    webviewCacheOptions,
     webviewProps,
     webviewRef,
     noAccounts,
@@ -252,16 +245,17 @@ export function useWebviewState(
         client: "ledger-live-mobile",
         theme,
       });
-      // headers['Cache-Control'] = 'no-cache' //
-      // console.log({headers, uri: currentURI})
-
+      if (manifest.cacheBustingId !== undefined) {
+        headers["Cache-Control"] = "no-cache";
+        headers["Clear-Site-Data"] = "*";
+      }
       return {
         uri: currentURI,
         headers,
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentURI],
+    [currentURI, manifest.id],
   );
 
   useImperativeHandle(
@@ -270,13 +264,6 @@ export function useWebviewState(
       return {
         reload: () => {
           const webview = safeGetRefValue(webviewRef);
-
-          console.log("second reload");
-          // webview.clearCache?(true)
-          // if (webview.clearCache) {
-          // console.log("clearing cache");
-          //   webview.clearCache(true);
-          // }
           webview.reload();
         },
         goBack: () => {
@@ -290,7 +277,6 @@ export function useWebviewState(
           webview.goForward();
         },
         loadURL: (url: string): void => {
-          console.log("loading url ", url);
           setURI(url);
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -314,7 +300,6 @@ export function useWebviewState(
   }, []);
 
   const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
-    console.log("onLoadStart old", nativeEvent);
     setState({
       title: nativeEvent.title,
       url: nativeEvent.url,

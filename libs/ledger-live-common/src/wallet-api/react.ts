@@ -52,7 +52,6 @@ import {
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import _ from "lodash";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -1026,10 +1025,8 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
         ...cacheBustedLiveAppsDb,
         [manifestId]: cacheBustingId,
       };
-      console.log({newState: _cacheBustedLiveAppsDb})
       setState(state => {
         const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb }
-        console.log({prevstate: newstate})
         return newstate; 
       });
     },
