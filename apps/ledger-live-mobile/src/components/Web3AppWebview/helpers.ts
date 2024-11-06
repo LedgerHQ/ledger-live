@@ -176,10 +176,9 @@ export function useWebView(
 
   useEffect(() => {
     let latestCacheBustedId = getLatest(manifest.id);
-    let init = getLatest('init');
-    console.log("???CHECKING IF CLEARING CACHE????", latestCacheBustedId, init)
-    console.log({init, latestCacheBustedId, cacheBustedLiveAppsDb})
-    // edit('init',1);
+    let init = getLatest("init");
+    // checking for init, which is set in INITIAL_PLATFORM_STATE
+    // makes sure we're not just getting the default value, undefined
     if (
       webviewRef.current &&
       init &&
@@ -187,7 +186,8 @@ export function useWebView(
       manifest.cacheBustingId > (latestCacheBustedId || 0)
     ) {
       if (webviewRef.current.clearCache) {
-        console.log("---CLEARING CACHE-----")
+        // save the latest cacheBustedId to the DiscoverDB
+        // to avoid clearingCache everytime this liveApp is loaded
         edit(manifest.id, manifest.cacheBustingId);
         webviewRef.current.clearCache(true);
         webviewRef.current.reload();

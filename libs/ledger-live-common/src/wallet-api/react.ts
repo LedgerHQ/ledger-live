@@ -1026,7 +1026,6 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
         [manifestId]: cacheBustingId,
         init: 1,
       };
-      console.log({before: cacheBustedLiveAppsDb, after: _cacheBustedLiveAppsDb});
       setState(state => {
         const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
         return newstate;
