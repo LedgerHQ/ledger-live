@@ -175,7 +175,6 @@ export function useWebView(
   }, []);
 
   useEffect(() => {
-    let cacheBustedLiveAppsOrObj = cacheBustedLiveAppsDb || {};
     let latestCacheBustedId = getLatest(manifest.id);
     if (
       webviewRef.current &&
