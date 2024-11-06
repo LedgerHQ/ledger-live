@@ -35,16 +35,15 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-        id: toolchain
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
-          install-dotnet: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -54,9 +53,9 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: lint
-        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
+        run: pnpm desktop lint:ci -p ${{ steps.setup-caches.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
@@ -77,14 +76,14 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        id: toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -95,7 +94,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: Run unit tests
         run: pnpm desktop test:jest:coverage
 
