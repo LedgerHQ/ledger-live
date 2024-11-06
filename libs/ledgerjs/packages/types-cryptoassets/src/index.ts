@@ -148,6 +148,7 @@ export type CryptoCurrencyId =
   | "syscoin"
   | "internet_computer"
   | "injective"
+  | "mantra"
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"
@@ -165,7 +166,8 @@ export type CryptoCurrencyId =
   | "scroll_sepolia"
   | "etherlink"
   | "zksync"
-  | "zksync_sepolia";
+  | "zksync_sepolia"
+  | "mantra";
 
 export type LedgerExplorerId =
   | "btc"

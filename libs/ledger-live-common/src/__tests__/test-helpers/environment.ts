@@ -103,6 +103,7 @@ setSupportedCurrencies([
   "etherlink",
   "zksync",
   "zksync_sepolia",
+  "mantra",
 ]);
 LiveConfig.setConfig(liveConfig);
 
