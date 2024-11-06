@@ -45,9 +45,18 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.0
+      - name: Add Ruby to PATH (with Debugging)
+        run: |
+          # Locate the Ruby binary
+          ruby_path=$(which ruby)
+          echo "Ruby binary found at: $ruby_path"
+          # Get the directory of the Ruby binary
+          ruby_dir=$(dirname "$ruby_path")
+          echo "Ruby directory: $ruby_dir"
+          # Add Ruby directory to PATH
+          echo "$ruby_dir" >> $GITHUB_PATH
+          echo "Ruby directory added to PATH."
+        
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
