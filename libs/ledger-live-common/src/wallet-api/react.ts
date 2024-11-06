@@ -1024,13 +1024,15 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
       const _cacheBustedLiveAppsDb = {
         ...cacheBustedLiveAppsDb,
         [manifestId]: cacheBustingId,
+        init: 1,
       };
+      console.log({before: cacheBustedLiveAppsDb, after: _cacheBustedLiveAppsDb});
       setState(state => {
         const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
         return newstate;
       });
     },
-    [setState],
+    [setState, cacheBustedLiveAppsDb],
   );
   return { getLatest, edit };
 }

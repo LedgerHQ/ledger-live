@@ -176,18 +176,24 @@ export function useWebView(
 
   useEffect(() => {
     let latestCacheBustedId = getLatest(manifest.id);
+    let init = getLatest('init');
+    console.log("???CHECKING IF CLEARING CACHE????", latestCacheBustedId, init)
+    console.log({init, latestCacheBustedId, cacheBustedLiveAppsDb})
+    // edit('init',1);
     if (
       webviewRef.current &&
+      init &&
       manifest.cacheBustingId !== undefined &&
       manifest.cacheBustingId > (latestCacheBustedId || 0)
     ) {
       if (webviewRef.current.clearCache) {
+        console.log("---CLEARING CACHE-----")
         edit(manifest.id, manifest.cacheBustingId);
         webviewRef.current.clearCache(true);
         webviewRef.current.reload();
       }
     }
-  }, [manifest.id, manifest.cacheBustingId, webviewRef.current, getLatest]);
+  }, [manifest.id, manifest.cacheBustingId, webviewRef.current, getLatest, edit]);
 
   const webviewCacheOptions = useMemo(() => {
     if (manifest.cacheBustingId !== undefined) {
