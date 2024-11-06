@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "react-redux";
 import {
@@ -8,12 +7,12 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
+import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { NavigatorName, ScreenName } from "~/const";
 
 export const useLifeCycle = () => {
-  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const { refetch: restoreTrustchain } = useRestoreTrustchain();

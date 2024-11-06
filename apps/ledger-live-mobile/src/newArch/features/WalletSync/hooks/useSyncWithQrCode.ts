@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import { useCallback, useState, useRef } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
@@ -13,6 +12,7 @@ import {
 import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { track } from "~/analytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
@@ -20,7 +20,6 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useCurrentStep } from "./useCurrentStep";
 
 export const useSyncWithQrCode = () => {
-  const { track } = useAnalytics();
   const { setCurrentStep } = useCurrentStep();
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
@@ -103,16 +102,7 @@ export const useSyncWithQrCode = () => {
         throw e;
       }
     },
-    [
-      instanceName,
-      onRequestQRCodeInput,
-      trustchain,
-      onSyncFinished,
-      sdk,
-      dispatch,
-      track,
-      setCurrentStep,
-    ],
+    [instanceName, onRequestQRCodeInput, trustchain, onSyncFinished, sdk, dispatch, setCurrentStep],
   );
 
   const handleSendDigits = useCallback(

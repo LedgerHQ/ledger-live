@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
@@ -13,6 +12,7 @@ import {
   memberCredentialsSelector,
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
@@ -31,7 +31,6 @@ interface Props {
 }
 
 export function useQRCodeHost({ currentOption }: Props) {
-  const { track } = useAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const queryClient = useQueryClient();
   const trustchain = useSelector(trustchainSelector);

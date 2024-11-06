@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -9,12 +8,12 @@ import {
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { log } from "@ledgerhq/logs";
+import { track } from "~/analytics";
 
 export function useOnTrustchainRefreshNeeded(
   trustchainSdk: TrustchainSDK,
   memberCredentials: MemberCredentials | null,
 ): (trustchain: Trustchain) => Promise<void> {
-  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const onTrustchainRefreshNeeded = useCallback(
     async (trustchain: Trustchain) => {
@@ -30,7 +29,7 @@ export function useOnTrustchainRefreshNeeded(
         }
       }
     },
-    [dispatch, trustchainSdk, memberCredentials, track],
+    [dispatch, trustchainSdk, memberCredentials],
   );
   return onTrustchainRefreshNeeded;
 }

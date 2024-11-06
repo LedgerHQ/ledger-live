@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import {
   memberCredentialsSelector,
   setTrustchain,
@@ -16,6 +15,7 @@ import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-rin
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
+import { track } from "~/analytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -23,7 +23,6 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const { track } = useAnalytics();
   const trustchain = useSelector(trustchainSelector);
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
@@ -41,7 +40,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
-    [dispatch, navigation, track],
+    [dispatch, navigation],
   );
 
   return useFollowInstructionDrawer(

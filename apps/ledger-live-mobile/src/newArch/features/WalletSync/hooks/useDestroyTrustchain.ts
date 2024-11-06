@@ -1,4 +1,3 @@
-import { useAnalytics } from "@segment/analytics-react-native";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,6 +6,7 @@ import {
   memberCredentialsSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useMutation } from "@tanstack/react-query";
+import { track } from "~/analytics";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
@@ -14,7 +14,6 @@ import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
-  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const cloudSyncSDK = useCloudSyncSDK();
   const sdk = useTrustchainSdk();
