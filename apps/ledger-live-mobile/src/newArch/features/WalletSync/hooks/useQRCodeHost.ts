@@ -12,6 +12,7 @@ import {
   memberCredentialsSelector,
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { AnalyticsEvents } from "LLM/features/Analytics/constants";
 import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
@@ -75,7 +76,7 @@ export function useQRCodeHost({ currentOption }: Props) {
     onSuccess: newTrustchain => {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
-        if (!trustchain) track("ledgersync_activated");
+        if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated);
       }
       queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       navigation.navigate(NavigatorName.WalletSync, {
