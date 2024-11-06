@@ -10,7 +10,7 @@ class Mantra extends CosmosBase {
   lcd!: string;
   constructor() {
     super();
-    this.stakingDocUrl = "";
+    this.stakingDocUrl = "https://support.ledger.com/article/Mantra-OM";
     this.unbondingPeriod = 21;
     this.prefix = "mantra";
     this.validatorPrefix = `${this.prefix}valoper`;

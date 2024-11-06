@@ -3,7 +3,7 @@
 exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
 [
   {
-    "balance": "715363",
+    "balance": "714927",
     "currencyId": "mantra",
     "derivationMode": "",
     "freshAddress": "mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn",
@@ -12,7 +12,7 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "215363",
+    "spendableBalance": "204927",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -136,6 +136,29 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 2`] = `
       "transactionSequenceNumber": 5,
       "type": "IN",
       "value": "20000",
+    },
+    {
+      "accountId": "js:2:mantra:mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn:",
+      "blockHash": null,
+      "blockHeight": 620191,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "mantravaloper1y8hxa8q0qk6h2fxtugkx67re38k03888eeqmpd",
+            "amount": "10000",
+          },
+        ],
+      },
+      "fee": "3331",
+      "hasFailed": false,
+      "hash": "FD8D25ECA06DC0EB86864C40BB445A52919C7D12C2957BB74F7FA0122E0A4DFD",
+      "id": "js:2:mantra:mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn:-FD8D25ECA06DC0EB86864C40BB445A52919C7D12C2957BB74F7FA0122E0A4DFD-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 3,
+      "type": "DELEGATE",
+      "value": "3331",
     },
   ],
   [],
