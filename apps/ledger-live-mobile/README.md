@@ -1,6 +1,6 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
-# ledger-live-mobile
+# ledger-live-mobile 
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
