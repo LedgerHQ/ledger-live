@@ -6,7 +6,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { toCBOR } from "./serializer";
 import { getAddress, getSubAccount } from "../common-logic/utils";
-import { AccountType, getPath, isError } from "./utils";
+import { AccountType } from "./utils";
 import { Transaction, FilecoinSigner } from "../types";
 
 export const buildSignOperation =
@@ -44,8 +44,7 @@ export const buildSignOperation =
 
         // Sign by device
         const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.sign(getPath(derivationPath), txPayload);
-          isError(r);
+          const r = await signer.sign(derivationPath, txPayload);
           return { r };
         });
 

@@ -9,10 +9,37 @@ import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-filecoin/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import { TransactionStatus, Transaction } from "@ledgerhq/coin-filecoin/types/index";
+import {
+  TransactionStatus,
+  Transaction,
+  FilecoinGetAddrResponse,
+  FilecoinSignature,
+  FilecoinSigner,
+} from "./types";
+import { getPath, isError } from "./common";
 
-const createSigner: CreateSigner<FilecoinApp> = (transport: Transport) => {
-  return new FilecoinApp(transport);
+const createSigner: CreateSigner<FilecoinSigner> = (transport: Transport) => {
+  const filecoin = new FilecoinApp(transport);
+  return {
+    showAddressAndPubKey: async (path: string): Promise<FilecoinGetAddrResponse> => {
+      const r = await filecoin.showAddressAndPubKey(getPath(path));
+      isError(r);
+
+      return r;
+    },
+    getAddressAndPubKey: async (path: string): Promise<FilecoinGetAddrResponse> => {
+      const r = await filecoin.getAddressAndPubKey(getPath(path));
+      isError(r);
+
+      return r;
+    },
+    sign: async (path: string, message: Uint8Array): Promise<FilecoinSignature> => {
+      const r = await filecoin.sign(getPath(path), message);
+      isError(r);
+
+      return r;
+    },
+  };
 };
 
 const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(

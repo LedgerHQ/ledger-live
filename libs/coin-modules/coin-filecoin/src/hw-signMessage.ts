@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import { getBufferFromString, getPath, isError } from "./bridge/utils";
+import { getBufferFromString } from "./bridge/utils";
 import { FilecoinSigner } from "./types";
 
 export const signMessage =
@@ -13,10 +13,8 @@ export const signMessage =
     if (!message) throw new Error("Message cannot be empty");
 
     const r = await signerContext(deviceId, signer =>
-      signer.sign(getPath(account.freshAddressPath), getBufferFromString(message)),
+      signer.sign(account.freshAddressPath, getBufferFromString(message)),
     );
-
-    isError(r);
 
     return {
       rsv: {
