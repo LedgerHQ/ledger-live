@@ -3543,8 +3543,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@blooo/hw-app-acre':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.1.1
+        version: 1.1.1
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
@@ -8762,8 +8762,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@blooo/hw-app-acre@1.0.1':
-    resolution: {integrity: sha512-lLwG2abLFks6B8rHatIfj8rOSajzjCQlT6Wa4zoZnlxWqv8o3oIZ/kQzO3Mf3CgY2i3kMk3DqNKd7yBtXyfnEg==}
+  '@blooo/hw-app-acre@1.1.1':
+    resolution: {integrity: sha512-wWYUGR0sj4Yyy3GtiFRpRuaBdIgzbg8BnXCfUeduUzjQaMWzQ66wSvaJn4pHrIAdGwmdyqJWn3UqFgb1YPq0VQ==}
 
   '@braintree/sanitize-url@6.0.4':
     resolution: {integrity: sha512-s3jaWicZd0pkP0jf5ysyHUI/RE7MHos6qlToFcGWXVp+ykHOy77OUMrfbgJ9it2C5bow7OIQwYYaHjk9XlBQ2A==}
@@ -29444,6 +29444,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@5.6.3:
+    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   typical@4.0.0:
     resolution: {integrity: sha512-VAH4IvQ7BDFYglMd7BPRDfLgxZZX4O4TFcRDA6EN5X7erNJJq+McIEp8np9aVtxrCJ6qx4GTYVfOWNjcqwZgRw==}
     engines: {node: '>=8'}
@@ -33103,7 +33108,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@blooo/hw-app-acre@1.0.1':
+  '@blooo/hw-app-acre@1.1.1':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.3
       '@ledgerhq/logs': 6.12.0
@@ -33116,7 +33121,7 @@ snapshots:
       semver: 7.5.4
       sha.js: 2.4.11
       tiny-secp256k1: 1.1.6
-      typescript: 5.6.2
+      typescript: 5.6.3
       varuint-bitcoin: 1.1.2
 
   '@braintree/sanitize-url@6.0.4': {}
@@ -33583,14 +33588,14 @@ snapshots:
       '@commitlint/types': 17.8.1
       '@types/node': 20.5.1
       chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.6.2)
-      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.6.2))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.6.2))(typescript@5.6.2)
+      cosmiconfig: 8.3.6(typescript@5.4.3)
+      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.4.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.4.3))(typescript@5.4.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
       resolve-from: 5.0.0
-      ts-node: 10.9.2(@types/node@20.5.1)(typescript@5.6.2)
-      typescript: 5.6.2
+      ts-node: 10.9.2(@types/node@20.5.1)(typescript@5.4.3)
+      typescript: 5.4.3
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -48346,7 +48351,7 @@ snapshots:
   config-file-ts@0.2.6:
     dependencies:
       glob: 10.3.12
-      typescript: 5.6.2
+      typescript: 5.4.3
 
   confusing-browser-globals@1.0.11: {}
 
@@ -48470,12 +48475,12 @@ snapshots:
     dependencies:
       layout-base: 1.0.2
 
-  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.6.2))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.6.2))(typescript@5.6.2):
+  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.4.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.4.3))(typescript@5.4.3):
     dependencies:
       '@types/node': 20.5.1
-      cosmiconfig: 8.3.6(typescript@5.6.2)
-      ts-node: 10.9.2(@types/node@20.5.1)(typescript@5.6.2)
-      typescript: 5.6.2
+      cosmiconfig: 8.3.6(typescript@5.4.3)
+      ts-node: 10.9.2(@types/node@20.5.1)(typescript@5.4.3)
+      typescript: 5.4.3
 
   cosmiconfig@5.2.1:
     dependencies:
@@ -48509,14 +48514,14 @@ snapshots:
     optionalDependencies:
       typescript: 4.9.5
 
-  cosmiconfig@8.3.6(typescript@5.6.2):
+  cosmiconfig@8.3.6(typescript@5.4.3):
     dependencies:
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.6.2
+      typescript: 5.4.3
 
   cosmjs-types@0.2.1:
     dependencies:
@@ -64854,7 +64859,7 @@ snapshots:
     transitivePeerDependencies:
       - source-map-support
 
-  ts-node@10.9.2(@types/node@20.5.1)(typescript@5.6.2):
+  ts-node@10.9.2(@types/node@20.5.1)(typescript@5.4.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -64868,7 +64873,7 @@ snapshots:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 5.6.2
+      typescript: 5.4.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -65095,6 +65100,8 @@ snapshots:
   typescript@5.4.5: {}
 
   typescript@5.6.2: {}
+
+  typescript@5.6.3: {}
 
   typical@4.0.0: {}
 
