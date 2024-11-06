@@ -33,6 +33,7 @@
     "@ethersproject/keccak256",
     "@ethersproject/signing-key",
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
-    "bn.js"
+    "bn.js",
+    "lru-cache"
   ]
 }
