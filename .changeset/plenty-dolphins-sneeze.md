@@ -2,4 +2,7 @@
 "ledger-live-desktop": patch
 ---
 
-Hide Backup section during onboarding on Flex and Stax
+Flex & Stax onboarding:
+
+- hide Backup section during onboarding on Flex and Stax
+- add Ledger Recover upsell between onboarding and post onboarding
