@@ -4112,6 +4112,8 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "mevProtection": "MEV Protection",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
