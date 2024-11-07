@@ -272,6 +272,7 @@ export const dangerouslyOverrideState = createAction<DangerouslyOverrideStatePay
   SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
 );
 
+/* NB: Protect is the former codename for Ledger Recover */
 export const setHasBeenUpsoldProtect = createAction<SettingsSetHasBeenUpsoldProtectPayload>(
   SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT,
 );

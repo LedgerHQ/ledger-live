@@ -3,37 +3,35 @@ import { useSelector } from "react-redux";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useOpenPostOnboardingCallback } from "./useOpenPostOnboardingCallback";
 import { useShouldRedirect } from "./useShouldRedirect";
-import { useOpenProtectUpsellCallback } from "./useOpenProtectUpsellCallback";
+import { useOpenRecoverUpsellCallback } from "./useOpenRecoverUpsellCallback";
 import { useIsFocused } from "@react-navigation/core";
 
 /**
- * Redirects the user to the post onboarding or the protect (Ledger Recover) upsell if needed
+ * Navigates to the post onboarding or to the Ledger Recover upsell if needed
  * */
 export function useAutoRedirectToPostOnboarding() {
-  const focused = useIsFocused();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
-  const { shouldRedirectToProtectUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
+  const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
 
-  const openProtectUpsell = useOpenProtectUpsellCallback();
+  const openRecoverUpsell = useOpenRecoverUpsellCallback();
   const openPostOnboarding = useOpenPostOnboardingCallback();
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (!isFocused) return;
-    if (shouldRedirectToProtectUpsell) {
-      openProtectUpsell();
+    if (shouldRedirectToRecoverUpsell) {
+      openRecoverUpsell();
     } else if (shouldRedirectToPostOnboarding && lastConnectedDevice) {
       openPostOnboarding(lastConnectedDevice.modelId);
     }
   }, [
     lastConnectedDevice,
     openPostOnboarding,
-    openProtectUpsell,
+    openRecoverUpsell,
     shouldRedirectToPostOnboarding,
-    shouldRedirectToProtectUpsell,
-    focused,
+    shouldRedirectToRecoverUpsell,
     isFocused,
   ]);
 }

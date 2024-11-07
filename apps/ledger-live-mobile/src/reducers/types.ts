@@ -255,6 +255,7 @@ export type SettingsState = {
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
+  /* NB: Protect is the former codename for Ledger Recover */
   hasBeenUpsoldProtect: boolean;
   hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;

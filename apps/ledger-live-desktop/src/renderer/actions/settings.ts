@@ -417,3 +417,23 @@ export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
   type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
   payload,
 });
+
+export const setHasBeenUpsoldRecover = (payload: boolean) => ({
+  type: "SET_HAS_BEEN_UPSOLD_RECOVER",
+  payload,
+});
+
+export const setOnboardingUseCase = (payload: Settings["onboardingUseCase"]) => ({
+  type: "SET_ONBOARDING_USE_CASE",
+  payload,
+});
+
+export const setHasRedirectedToPostOnboarding = (payload: boolean) => ({
+  type: "SET_HAS_REDIRECTED_TO_POST_ONBOARDING",
+  payload,
+});
+
+export const setLastOnboardedDevice = (payload: Device | null) => ({
+  type: "SET_LAST_ONBOARDED_DEVICE",
+  payload,
+});
