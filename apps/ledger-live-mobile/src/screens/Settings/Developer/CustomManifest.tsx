@@ -14,9 +14,18 @@ import AppCard from "~/screens/Platform/Catalog/AppCard";
 import Plus from "~/icons/Plus";
 import Trash from "~/icons/Trash";
 import { DEFAULT_MANIFEST } from "./manifests/metamask";
-import { LAGADO_MANIFEST_CACHE, LAGADO_MANIFEST_NOCACHE } from "./manifests/lagado";
-import { ONEINCH_MANIFEST_CACHE, ONEINCH_MANIFEST_NOCACHE } from "./manifests/1inch";
-import { HEADERS_MANIFEST_CACHE, HEADERS_MANIFEST_NOCACHE } from "./manifests/headerSniffer";
+import { LAGADO_MANIFEST, LAGADO_MANIFEST_BUST, LAGADO_MANIFEST_NOCACHE } from "./manifests/lagado";
+import {
+  ONEINCH_MANIFEST,
+  ONEINCH_MANIFEST_BUST,
+  ONEINCH_MANIFEST_NOCACHE,
+  ONEINCH_MANIFEST_V3,
+} from "./manifests/1inch";
+import {
+  HEADERS_MANIFEST,
+  HEADERS_MANIFEST_BUST,
+  HEADERS_MANIFEST_NOCACHE,
+} from "./manifests/headerSniffer";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -124,32 +133,48 @@ export default function CustomManifest({ navigation }: Props) {
           />
           <Box flexDirection="row" marginTop={20}>
             <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST)))}
+              text="Lagado"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_BUST)))}
+              text="Lagado cachebust"
+            />
+            <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_NOCACHE)))}
               text="Lagado nocache"
             />
-            <DebuggerButton
-              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_CACHE)))}
-              text="Lagado cache"
-            />
           </Box>
           <Box flexDirection="row">
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST)))}
+              text="1inch"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_V3)))}
+              text="1inch v3"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_BUST)))}
+              text="1inch cachebust"
+            />
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_NOCACHE)))}
               text="1inch nocache"
             />
-            <DebuggerButton
-              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_CACHE)))}
-              text="1inch cache"
-            />
           </Box>
           <Box flexDirection="row">
             <DebuggerButton
-              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_NOCACHE)))}
-              text="Headers Sniffer (nocache)"
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST)))}
+              text="Headers Sniffer"
             />
             <DebuggerButton
-              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_CACHE)))}
-              text="Headers Sniffer (cache)"
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_BUST)))}
+              text="Headers Sniffer cachebust"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_NOCACHE)))}
+              text="Headers Sniffer nocache"
             />
           </Box>
         </>

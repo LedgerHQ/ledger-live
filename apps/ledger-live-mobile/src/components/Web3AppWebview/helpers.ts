@@ -196,7 +196,7 @@ export function useWebView(
   }, [manifest.id, manifest.cacheBustingId, webviewRef, getLatest, edit]);
 
   const webviewCacheOptions = useMemo(() => {
-    if (manifest.cacheBustingId !== undefined) {
+    if (manifest.nocache) {
       return {
         cacheEnabled: false,
         cacheMode: "LOAD_NO_CACHE" as CacheMode,
@@ -205,7 +205,7 @@ export function useWebView(
     } else {
       return {};
     }
-  }, [manifest.cacheBustingId]);
+  }, [manifest.nocache]);
 
   return {
     onLoadError,
@@ -250,8 +250,10 @@ export function useWebviewState(
         client: "ledger-live-mobile",
         theme,
       });
-      if (manifest.cacheBustingId !== undefined) {
-        headers["Cache-Control"] = "no-cache";
+      if (manifest.nocache !== undefined) {
+        headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        headers["Pragma"] = "no-cache";
+        headers["Expires"] = "0";
       }
       return {
         uri: currentURI,
@@ -259,7 +261,7 @@ export function useWebviewState(
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentURI, manifest.id],
+    [currentURI, manifest.id, manifest.nocache],
   );
 
   useImperativeHandle(

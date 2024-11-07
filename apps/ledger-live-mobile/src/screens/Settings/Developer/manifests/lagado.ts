@@ -1,4 +1,4 @@
-export const LAGADO_MANIFEST_NOCACHE = `{
+export const LAGADO_MANIFEST = `{
   "id": "lagado",
   "author": "",
   "private": false,
@@ -33,21 +33,10 @@ export const LAGADO_MANIFEST_NOCACHE = `{
     "http://*"
   ],
   "visibility": "complete",
-  "permissions": [],
-  "dapp": {
-    "provider": "evm",
-    "nanoApp": "Ethereum",
-    "networks": [
-      {
-        "currency": "ethereum",
-        "chainID": 1,
-        "nodeURL": "https://eth-dapps.api.live.ledger.com"
-      }
-    ]
-  }
+  "permissions": []
 }`;
 
-export const LAGADO_MANIFEST_CACHE = `{
+export const LAGADO_MANIFEST_BUST = `{
   "id": "lagado",
   "author": "",
   "private": false,
@@ -83,16 +72,44 @@ export const LAGADO_MANIFEST_CACHE = `{
     "http://*"
   ],
   "visibility": "complete",
-  "permissions": [],
-  "dapp": {
-    "provider": "evm",
-    "nanoApp": "Ethereum",
-    "networks": [
-      {
-        "currency": "ethereum",
-        "chainID": 1,
-        "nodeURL": "https://eth-dapps.api.live.ledger.com"
-      }
-    ]
-  }
+  "permissions": []
+}`;
+
+export const LAGADO_MANIFEST_NOCACHE = `{
+  "id": "lagado",
+  "author": "",
+  "private": false,
+  "name": "lagado",
+  "nocache": true,
+  "url": "https://www.lagado.com/tools/cache-test",
+  "homepageUrl": "https://www.lagado.com/tools/cache-test",
+  "icon": "",
+  "platforms": [
+    "ios",
+    "android",
+    "desktop"
+  ],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "2",
+  "branch": "stable",
+  "categories": [
+    "DeFi"
+  ],
+  "currencies": [
+    "ethereum"
+  ],
+  "highlight": false,
+  "content": {
+    "description": {
+      "en": "description"
+    },
+    "shortDescription": {
+      "en": "shortDescription"
+    }
+  },
+  "domains": [
+    "http://*"
+  ],
+  "visibility": "complete",
+  "permissions": []
 }`;
