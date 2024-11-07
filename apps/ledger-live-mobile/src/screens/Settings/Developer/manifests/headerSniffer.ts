@@ -75,7 +75,6 @@ export const HEADERS_MANIFEST_BUST = `{
   "permissions": []
 }`;
 
-
 export const HEADERS_MANIFEST_NOCACHE = `{
   "id": "headersSniffer",
   "author": "",

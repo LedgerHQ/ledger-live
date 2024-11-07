@@ -72,7 +72,7 @@ export const ONEINCH_MANIFEST_V3 = `{
   ],
   "visibility": "complete",
   "permissions": []
-}`
+}`;
 
 export const ONEINCH_MANIFEST_BUST = `{
   "$schema": "https://live-app-catalog.ledger.com/schema.json",
