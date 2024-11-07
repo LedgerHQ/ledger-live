@@ -1,3 +1,4 @@
+import expect from "expect";
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";

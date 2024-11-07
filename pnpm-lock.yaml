@@ -2466,6 +2466,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
