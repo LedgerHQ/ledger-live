@@ -14,7 +14,6 @@ import { WebView } from "./WebView";
 const DEFAULT_SWAP_APP_ID = "swap-live-app-demo-3";
 const APP_MANIFEST_NOT_FOUND_ERROR = new Error("Swap Live App not found");
 
-
 export function SwapLiveApp() {
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
