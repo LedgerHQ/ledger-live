@@ -84,7 +84,6 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@hashgraph/sdk": "2.14.2",
-    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "bignumber.js": "^9.1.2",

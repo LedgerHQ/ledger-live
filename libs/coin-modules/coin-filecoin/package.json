@@ -105,7 +105,6 @@
       "@zondax/cbor": "v8.1.0-zondax-no-bigint",
       "bignumber.js": "^9.1.2",
       "ethers": "5.7.2",
-      "expect": "^27.4.6",
       "invariant": "^2.2.2",
       "iso-filecoin": "^4.1.0",
       "lodash": "^4.17.21",

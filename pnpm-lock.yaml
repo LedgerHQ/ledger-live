@@ -2399,9 +2399,6 @@ importers:
       ethers:
         specifier: 5.7.2
         version: 5.7.2
-      expect:
-        specifier: ^27.4.6
-        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2469,9 +2466,6 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
-      expect:
-        specifier: ^27.4.6
-        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -12218,6 +12212,8 @@ packages:
   '@react-native/babel-preset@0.74.87':
     resolution: {integrity: sha512-hyKpfqzN2nxZmYYJ0tQIHG99FQO0OWXp/gVggAfEUgiT+yNKas1C60LuofUsK7cd+2o9jrpqgqW4WzEDZoBlTg==}
     engines: {node: '>=18'}
+    peerDependencies:
+      '@babel/core': '*'
 
   '@react-native/babel-preset@0.74.88':
     resolution: {integrity: sha512-SQODiFGlyblFTvdvePUDrQ+qlSzhcOm7It/yW2CVKxw5zRUf50+Cj3DBkRFhQDqF3ri2EnWsLnJ3oNE7hqDUxg==}
@@ -38159,7 +38155,7 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@react-native/babel-preset@0.74.87':
+  '@react-native/babel-preset@0.74.87(@babel/core@7.24.3)':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.24.3)
@@ -38493,7 +38489,7 @@ snapshots:
   '@react-native/metro-babel-transformer@0.74.87':
     dependencies:
       '@babel/core': 7.24.3
-      '@react-native/babel-preset': 0.74.87
+      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
       hermes-parser: 0.19.1
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -45255,7 +45251,7 @@ snapshots:
       '@babel/plugin-transform-parameters': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-react': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
-      '@react-native/babel-preset': 0.74.87
+      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
       babel-plugin-react-compiler: 0.0.0-experimental-592953e-20240517
       babel-plugin-react-native-web: 0.19.10
       react-refresh: 0.14.2

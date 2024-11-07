@@ -23,11 +23,5 @@
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts"
-  ],
-  "ignoreUnused": [
-    "@ledgerhq/devices",
-    "expect",
-    "lodash",
-    "rxjs"
   ]
 }
