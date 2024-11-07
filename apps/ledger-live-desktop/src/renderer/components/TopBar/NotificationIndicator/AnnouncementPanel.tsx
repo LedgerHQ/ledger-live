@@ -10,7 +10,7 @@ import { openURL } from "~/renderer/linking";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking";
+import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkHandler";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";

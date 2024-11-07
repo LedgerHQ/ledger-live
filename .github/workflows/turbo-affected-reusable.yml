@@ -35,9 +35,12 @@ jobs:
       packages: ${{ steps.affected.outputs.packages }}
       paths: ${{ steps.affected.outputs.paths }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+  
+      - name: Fetch develop branch
+        run: |
+          git fetch origin develop:develop --depth=1
 
       - uses: actions/github-script@v7
         id: clean-refs

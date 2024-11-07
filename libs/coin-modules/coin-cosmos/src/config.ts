@@ -158,6 +158,16 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
+  config_currency_mantra: {
+    type: "object",
+    default: {
+      lcd: "https://api.mantrachain.io",
+      minGasPrice: 0.01,
+      status: {
+        type: "active",
+      },
+    },
+  },
 };
 
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";

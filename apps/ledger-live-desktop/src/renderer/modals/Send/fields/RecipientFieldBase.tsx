@@ -50,6 +50,7 @@ const RecipientFieldBase = ({
         value={value}
         onChange={onChange}
         id={"send-recipient-input"}
+        data-testid="send-recipient-input"
       />
     </Box>
   );

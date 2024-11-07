@@ -253,7 +253,7 @@ export class Account {
   static readonly ADA_1 = new Account(
     Currency.ADA,
     "Cardano 1",
-    "  addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
+    "addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
     undefined,
     0,
   );

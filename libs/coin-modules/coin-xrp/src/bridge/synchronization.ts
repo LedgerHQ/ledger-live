@@ -1,10 +1,12 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccountInfo, getServerInfos, getTransactions } from "../network";
-import { parseAPIValue } from "../logic";
-import { filterOperations } from "./logic";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { listOperations, parseAPIValue } from "../logic";
+import { getAccountInfo, getServerInfos } from "../network";
+import { ServerInfoResponse } from "../network/types";
+import { AccountInfo } from "../types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -29,36 +31,19 @@ export const getAccountShape: GetAccountShape = async info => {
     };
   }
 
-  const serverInfo = await getServerInfos();
-  const reserveMinXRP = parseAPIValue(serverInfo.info.validated_ledger.reserve_base_xrp.toString());
-  const reservePerTrustline = parseAPIValue(
-    serverInfo.info.validated_ledger.reserve_inc_xrp.toString(),
-  );
-
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
 
+  const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
-  const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  const trustlines = accountInfo.ownerCount;
-
   const balance = new BigNumber(accountInfo.balance);
-  const spendableBalance = new BigNumber(accountInfo.balance)
-    .minus(reserveMinXRP)
-    .minus(reservePerTrustline.times(trustlines));
+  const spendableBalance = await calculateSpendableBalance(accountInfo, serverInfo);
 
-  const newTransactions = await getTransactions(address, {
-    ledger_index_min: Math.max(
-      startAt, // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
-      minLedgerVersion,
-    ),
-    ledger_index_max: maxLedgerVersion,
-  });
-  const newOperations = filterOperations(newTransactions, accountId, address);
+  const newOperations = await filterOperations(accountId, address, startAt);
 
-  const operations = mergeOps(oldOperations, newOperations as Operation[]);
+  const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {
     id: accountId,
@@ -72,3 +57,48 @@ export const getAccountShape: GetAccountShape = async info => {
 
   return shape;
 };
+
+async function filterOperations(
+  accountId: string,
+  address: string,
+  startAt: number,
+): Promise<Operation[]> {
+  const operations = await listOperations(address, startAt);
+
+  return operations
+    .filter(op => op.type === "Payment")
+    .map(op => {
+      return {
+        id: encodeOperationId(accountId, op.hash, op.simpleType),
+        hash: op.hash,
+        accountId,
+        type: op.simpleType,
+        value: new BigNumber(op.value.toString()),
+        fee: new BigNumber(op.fee.toString()),
+        blockHash: null,
+        blockHeight: op.blockHeight,
+        senders: op.senders,
+        recipients: op.recipients,
+        date: op.date,
+        transactionSequenceNumber: op.transactionSequenceNumber,
+        extra: {},
+      } satisfies Operation;
+    });
+}
+
+async function calculateSpendableBalance(
+  account: AccountInfo,
+  serverInfo: ServerInfoResponse,
+): Promise<BigNumber> {
+  const reserveMinXRP = parseAPIValue(serverInfo.info.validated_ledger.reserve_base_xrp.toString());
+  const reservePerTrustline = parseAPIValue(
+    serverInfo.info.validated_ledger.reserve_inc_xrp.toString(),
+  );
+  const trustlines = account.ownerCount;
+
+  const spendableBalance = new BigNumber(account.balance)
+    .minus(reserveMinXRP)
+    .minus(reservePerTrustline.times(trustlines));
+
+  return spendableBalance;
+}

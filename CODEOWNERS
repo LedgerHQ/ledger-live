@@ -33,7 +33,6 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 apps/**/families/                                        @ledgerhq/live-blockchain-support
 apps/cli/src/commands/blockchain                         @ledgerhq/live-blockchain-support
 apps/web-tools/                                          @ledgerhq/live-blockchain-support
-docs/                                                    @ledgerhq/live-blockchain-support
 libs/coin-*/                                             @ledgerhq/live-blockchain-support
 libs/domain-service/                                     @ledgerhq/live-blockchain-support
 libs/evm-tools/                                          @ledgerhq/live-blockchain-support
