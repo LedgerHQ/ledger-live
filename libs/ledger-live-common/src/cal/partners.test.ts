@@ -169,7 +169,7 @@ describe("getProvidersData", () => {
         method: "GET",
         url: "https://crypto-assets-service.api.ledger.com/v1/partners",
         params: {
-          output: "name,public_key,public_key_curve,service_app_version,descriptor",
+          output: "id,name,public_key,public_key_curve,service_app_version,descriptor",
           service_name: "swap",
         },
       });
