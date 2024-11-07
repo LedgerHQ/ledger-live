@@ -8,6 +8,7 @@ import {
   useWalletAPIServer,
   CurrentAccountHistDB,
   useManifestCurrencies,
+  useCacheBustedLiveApps,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import type { Operation } from "@ledgerhq/types-live";
@@ -37,7 +38,6 @@ import { walletSelector } from "~/reducers/wallet";
 import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
-import { useCacheBustedLiveApps } from "@ledgerhq/live-common/src/wallet-api/react";
 
 export function useWebView(
   {
