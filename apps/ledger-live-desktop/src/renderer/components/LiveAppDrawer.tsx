@@ -60,6 +60,17 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   return "exchangeType" in data;
 }
 
+class DrawerClosedError extends Error {
+  error: this;
+  message: string;
+  constructor(message: string) {
+    super(message);
+    this.error = this;
+    this.message = message;
+    this.name = "DrawerClosedError";
+  }
+}
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -192,11 +203,7 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
-        payload?.data?.onCancel?.({
-          error: new Error("User closed the drawer"),
-          name: "DrawerClosedError",
-          message: "User closed the drawer",
-        });
+        payload?.data?.onCancel?.(new DrawerClosedError("User closed the drawer"));
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"
