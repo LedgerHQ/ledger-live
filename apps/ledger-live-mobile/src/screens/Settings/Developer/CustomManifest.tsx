@@ -2,7 +2,7 @@ import React, { useState, useCallback, useLayoutEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { Box } from "@ledgerhq/native-ui";
+import { Box, Text } from "@ledgerhq/native-ui";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { ScreenName } from "~/const";
 import KeyboardView from "~/components/KeyboardView";
@@ -13,70 +13,36 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import AppCard from "~/screens/Platform/Catalog/AppCard";
 import Plus from "~/icons/Plus";
 import Trash from "~/icons/Trash";
-
-const DEFAULT_MANIFEST = `{
-  "id": "metamask-test-dapsp",
-  "name": "Metamask Test Dapp",
-  "private": false,
-  "url": "https://metamask.github.io/test-dapp/",
-  "dapp": {
-    "networks": [
-      {
-        "currency": "ethereum",
-        "chainID": 1,
-        "nodeURL": "https://eth-dapps.api.live.ledger.com"
-      },
-      {
-        "currency": "bsc",
-        "chainID": 56,
-        "nodeURL": "https://bsc-dataseed.binance.org/"
-      },
-      {
-        "currency": "polygon",
-        "chainID": 137,
-        "nodeURL": "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE"
-      },
-      {
-        "currency": "arbitrum",
-        "chainID": 42161,
-        "nodeURL": "https://arb1.arbitrum.io/rpc"
-      },
-      {
-        "currency": "optimism",
-        "chainID": 10,
-        "nodeURL": "https://mainnet.optimism.io"
-      }
-    ]
-  },
-  "homepageUrl": "https://metamask.github.io/test-dapp/",
-  "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
-  "platforms": ["android", "ios", "desktop"],
-  "apiVersion": "^2.0.0",
-  "manifestVersion": "1",
-  "branch": "stable",
-  "categories": ["tools"],
-  "currencies": ["ethereum", "bsc", "polygon", "arbitrum", "optimism"],
-  "content": {
-    "shortDescription": {
-      "en": "Metamask Test Dapp"
-    },
-    "description": {
-      "en": "Metamask Test Dapp"
-    }
-  },
-  "permissions": [],
-  "domains": ["http://", "https://"],
-  "visibility": "complete"
-}`;
+import { DEFAULT_MANIFEST } from "./manifests/metamask";
+import { LAGADO_MANIFEST, LAGADO_MANIFEST_BUST, LAGADO_MANIFEST_NOCACHE } from "./manifests/lagado";
+import {
+  ONEINCH_MANIFEST,
+  ONEINCH_MANIFEST_BUST,
+  ONEINCH_MANIFEST_NOCACHE,
+  ONEINCH_MANIFEST_V3,
+} from "./manifests/1inch";
+import {
+  HEADERS_MANIFEST,
+  HEADERS_MANIFEST_BUST,
+  HEADERS_MANIFEST_NOCACHE,
+} from "./manifests/headerSniffer";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
-}> = ({ onPress }) => {
+  text?: string;
+}> = ({ onPress, text }) => {
   const { colors } = useTheme();
   return (
-    <TouchableOpacity style={styles.buttons} onPress={onPress}>
-      <ImportIcon size={18} color={colors.grey} />
-    </TouchableOpacity>
+    <>
+      {text && (
+        <Text flex={1} ml={4} variant="body" fontWeight="semiBold">
+          {text}
+        </Text>
+      )}
+      <TouchableOpacity style={styles.buttons} onPress={onPress}>
+        <ImportIcon size={18} color={colors.grey} />
+      </TouchableOpacity>
+    </>
   );
 };
 
@@ -157,6 +123,62 @@ export default function CustomManifest({ navigation }: Props) {
           autoCorrect={false}
           scrollEnabled={false}
         />
+        <>
+          <AddButton
+            disabled={manifest === null}
+            onPress={() => {
+              manifest !== null && addLocalManifest(JSON.parse(manifest));
+              setManifest(null);
+            }}
+          />
+          <Box flexDirection="row" marginTop={20}>
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST)))}
+              text="Lagado"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_BUST)))}
+              text="Lagado cachebust"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_NOCACHE)))}
+              text="Lagado nocache"
+            />
+          </Box>
+          <Box flexDirection="row">
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST)))}
+              text="1inch"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_V3)))}
+              text="1inch v3"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_BUST)))}
+              text="1inch cachebust"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_NOCACHE)))}
+              text="1inch nocache"
+            />
+          </Box>
+          <Box flexDirection="row">
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST)))}
+              text="Headers Sniffer"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_BUST)))}
+              text="Headers Sniffer cachebust"
+            />
+            <DebuggerButton
+              onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_NOCACHE)))}
+              text="Headers Sniffer nocache"
+            />
+          </Box>
+        </>
+
         <>
           {list.map(m => {
             return (

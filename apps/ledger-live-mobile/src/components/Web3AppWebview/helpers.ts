@@ -8,6 +8,7 @@ import {
   useWalletAPIServer,
   CurrentAccountHistDB,
   useManifestCurrencies,
+  useCacheBustedLiveApps,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import type { Operation } from "@ledgerhq/types-live";
@@ -34,8 +35,9 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
-import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
+import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 
 export function useWebView(
   {
@@ -89,7 +91,6 @@ export function useWebView(
     return {
       reload: () => {
         const webview = safeGetRefValue(webviewRef);
-
         webview.reload();
       },
       // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
@@ -124,6 +125,11 @@ export function useWebView(
     uiHook,
     customHandlers,
   });
+  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState] = useCacheBustedLiveAppsDB();
+  const { edit, getLatest } = useCacheBustedLiveApps([
+    cacheBustedLiveAppsDb,
+    setCacheBustedLiveAppsDbState,
+  ]);
 
   useEffect(() => {
     serverRef.current = server;
@@ -168,10 +174,44 @@ export function useWebView(
     Linking.openURL(targetUrl);
   }, []);
 
+  useEffect(() => {
+    const latestCacheBustedId = getLatest(manifest.id);
+    const init = getLatest("init");
+    // checking for init, which is set in INITIAL_PLATFORM_STATE
+    // makes sure we're not just getting the default value, undefined
+    if (
+      webviewRef.current &&
+      init &&
+      manifest.cacheBustingId !== undefined &&
+      manifest.cacheBustingId > (latestCacheBustedId || 0)
+    ) {
+      if (webviewRef.current.clearCache) {
+        // save the latest cacheBustedId to the DiscoverDB
+        // to avoid clearingCache everytime this liveApp is loaded
+        edit(manifest.id, manifest.cacheBustingId);
+        webviewRef.current.clearCache(true);
+        webviewRef.current.reload();
+      }
+    }
+  }, [manifest.id, manifest.cacheBustingId, webviewRef, getLatest, edit]);
+
+  const webviewCacheOptions = useMemo(() => {
+    if (manifest.nocache) {
+      return {
+        cacheEnabled: false,
+        cacheMode: "LOAD_NO_CACHE" as CacheMode,
+        incognito: true,
+      };
+    } else {
+      return {};
+    }
+  }, [manifest.nocache]);
+
   return {
     onLoadError,
     onMessage,
     onOpenWindow,
+    webviewCacheOptions,
     webviewProps,
     webviewRef,
     noAccounts,
@@ -205,15 +245,23 @@ export function useWebviewState(
   const { theme } = useTheme();
 
   const source = useMemo(
-    () => ({
-      uri: currentURI,
-      headers: getClientHeaders({
+    () => {
+      const headers = getClientHeaders({
         client: "ledger-live-mobile",
         theme,
-      }),
-    }),
+      });
+      if (manifest.nocache !== undefined) {
+        headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        headers["Pragma"] = "no-cache";
+        headers["Expires"] = "0";
+      }
+      return {
+        uri: currentURI,
+        headers,
+      };
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentURI],
+    [currentURI, manifest.id, manifest.nocache],
   );
 
   useImperativeHandle(
@@ -222,7 +270,6 @@ export function useWebviewState(
       return {
         reload: () => {
           const webview = safeGetRefValue(webviewRef);
-
           webview.reload();
         },
         goBack: () => {

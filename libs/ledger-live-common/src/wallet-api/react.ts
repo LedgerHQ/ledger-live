@@ -914,6 +914,7 @@ export function useCategories(manifests, initialCategory?: CategoryId | null): C
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type CacheBustedLiveAppsdDB = StateDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>;
 export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
 
@@ -1011,6 +1012,30 @@ function calculateTimeDiff(usedAt: string) {
 
   return timeDiff;
 }
+export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheBustedLiveAppsdDB) {
+  const getLatest = useCallback(
+    (manifestId: string) => {
+      return cacheBustedLiveAppsDb[manifestId];
+    },
+    [cacheBustedLiveAppsDb],
+  );
+  const edit = useCallback(
+    (manifestId: string, cacheBustingId: number) => {
+      const _cacheBustedLiveAppsDb = {
+        ...cacheBustedLiveAppsDb,
+        [manifestId]: cacheBustingId,
+        init: 1,
+      };
+      setState(state => {
+        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
+        return newstate;
+      });
+    },
+    [setState, cacheBustedLiveAppsDb],
+  );
+  return { getLatest, edit };
+}
+
 export function useRecentlyUsed(
   manifests: AppManifest[],
   [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,
