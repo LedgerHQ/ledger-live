@@ -87,7 +87,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsKYC: false,
   },
   uniswap: {
-    type: "CEX",
+    type: "DEX",
     needsBearerToken: false,
     displayName: "Uniswap",
     termsOfUseUrl:
