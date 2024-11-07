@@ -18,8 +18,6 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
   version: 2,
 };
 
-const providerDataCache: Record<string, ExchangeProviderNameAndSignature> | null = null;
-
 /**
  * The result is cached after the first successful fetch to avoid redundant network calls.
  * - "fund" providers currently include Mercuryo, which is stored as a fund provider.
@@ -27,9 +25,6 @@ const providerDataCache: Record<string, ExchangeProviderNameAndSignature> | null
  *   Reference: https://github.dev/LedgerHQ/crypto-assets/blob/main/assets/partners/mercuryo/common.json
  */
 export const fetchAndMergeProviderData = async () => {
-  if (providerDataCache) {
-    return providerDataCache;
-  }
   try {
     const sellProvidersData = await getProvidersData("sell");
     return { ...sellProvidersData };
