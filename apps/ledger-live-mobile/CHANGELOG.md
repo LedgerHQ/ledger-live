@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.55.0-next.1
+
+### Patch Changes
+
+- [#8334](https://github.com/LedgerHQ/ledger-live/pull/8334) [`299441f`](https://github.com/LedgerHQ/ledger-live/commit/299441f74bdfa3e0c16cc9a2a14f6be4fc9f1256) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: better logic and guard against accessing null db
+
+- Updated dependencies [[`299441f`](https://github.com/LedgerHQ/ledger-live/commit/299441f74bdfa3e0c16cc9a2a14f6be4fc9f1256)]:
+  - @ledgerhq/live-common@34.14.0-next.1
+
 ## 3.55.0-next.0
 
 ### Minor Changes
