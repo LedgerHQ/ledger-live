@@ -13,7 +13,7 @@ on:
 jobs:
   prerelease:
     name: Prerelease
-    runs-on: ubuntu-24.04
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -32,11 +32,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
-
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:

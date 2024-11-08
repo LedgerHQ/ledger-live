@@ -23,7 +23,7 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-24.04
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -40,8 +40,9 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0

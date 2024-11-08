@@ -23,10 +23,10 @@ inputs:
     default: "true"
   accountId:
     description: "aws cache account id"
-    required: true
+    required: false
   roleName:
     description: "aws cache role name"
-    required: true
+    required: false
   region:
     description: "aws cache region"
     required: false

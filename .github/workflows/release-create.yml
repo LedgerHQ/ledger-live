@@ -6,7 +6,7 @@ on:
 jobs:
   create-release:
     name: Create Release
-    runs-on: ubuntu-24.04
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       RELEASE_BRANCH: "release"
@@ -26,8 +26,9 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
       - name: install dependencies
         run: pnpm i
       - name: Build libs

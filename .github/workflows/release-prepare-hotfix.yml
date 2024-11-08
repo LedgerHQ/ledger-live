@@ -11,7 +11,7 @@ on:
 jobs:
   prepare-release:
     name: Prepare Hotfix
-    runs-on: ubuntu-24.04
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -30,8 +30,9 @@ jobs:
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
