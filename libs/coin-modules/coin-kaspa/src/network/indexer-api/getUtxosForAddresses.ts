@@ -22,16 +22,19 @@ interface Utxo {
   utxoEntry: UtxoEntry;
 }
 
-export const getUtxosForAddress = async (address: string): Promise<Utxo[]> => {
+export const getUtxosForAddresses = async (addresses: string[]): Promise<Utxo[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/${address}/utxos`, {
+    const response = await fetch(`${API_BASE}/addresses/utxos`, {
+      method: "POST",
       headers: {
         Accept: "application/json",
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ addresses }),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch UTXOs for address ${address}. Status: ${response.status}`);
+      throw new Error(`Failed to fetch UTXOs for address ${addresses}. Status: ${response.status}`);
     }
 
     return (await response.json()) as Utxo[];

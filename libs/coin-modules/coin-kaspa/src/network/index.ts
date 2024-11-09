@@ -1,3 +1,3 @@
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
-export { getBalanceForAddress } from "./indexer-api/getBalanceForAddress";
-export { getUtxosForAddress } from "./indexer-api/getUtxosForAddress";
+export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
+export { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";

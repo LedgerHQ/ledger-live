@@ -1,4 +1,4 @@
-import { getUtxosForAddress } from "../indexer-api/getUtxosForAddress";
+import { getUtxosForAddresses } from "../indexer-api/getUtxosForAddresses";
 
 interface Outpoint {
   transactionId: string;
@@ -19,8 +19,8 @@ function getUtxoForOutpoint(utxos: any[], outpoint: Outpoint): any | null {
 
 describe("getUtxosForAddress function", () => {
   it("should fetch UTXOs for given address from real API", async () => {
-    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    const result = await getUtxosForAddress(address);
+    const addresses = ["kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e"];
+    const result = await getUtxosForAddresses(addresses);
 
     const expectedUtxos = [
       {
@@ -77,7 +77,7 @@ describe("getUtxosForAddress function", () => {
   });
 
   it("should throw an error if the response is not ok", async () => {
-    const address = "invalidAddress";
-    await expect(getUtxosForAddress(address)).rejects.toThrow();
+    const addresses = ["invalidAddress"];
+    await expect(getUtxosForAddresses(addresses)).rejects.toThrow();
   });
 });
