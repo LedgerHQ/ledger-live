@@ -89,7 +89,7 @@ export async function scanAddresses(
       keepScanning = !lastAddressesToCheck.every(addr => !addr.active);
       if (keepScanning) startIndex += SCAN_BATCH_SIZE;
 
-      await updateAddressesData(addresses, accountAddresses, type, keepScanning);
+      updateAddressesData(addresses, accountAddresses, type, keepScanning);
     }
   }
 
