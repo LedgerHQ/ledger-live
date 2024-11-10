@@ -74,13 +74,9 @@ export async function scanAddresses(
 
       // Check the last GAP_LIMIT addresses for activity
       const lastAddressesToCheck = addresses.slice(-GAP_LIMIT);
-      const allInactive = lastAddressesToCheck.every(addr => !addr.active);
 
-      if (allInactive) {
-        keepScanning = false;
-      } else {
-        startIndex += SCAN_BATCH_SIZE;
-      }
+      keepScanning = !lastAddressesToCheck.every(addr => !addr.active);
+      if (keepScanning) startIndex += SCAN_BATCH_SIZE;
 
       if (type === RECEIVE_ADDRESS_TYPE) {
         accountAddresses.usedReceiveAddresses.push(...addresses.filter(addr => addr.active));
