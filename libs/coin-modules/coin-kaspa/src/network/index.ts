@@ -48,7 +48,7 @@ export async function scanAddresses(
   // need to check UTXOs and TX history for the first account addresses
 
   // go through receive address and change address
-  for (let type = 0; type <= 1; type++) {
+  for (const type of [RECEIVE_ADDRESS_TYPE, CHANGE_ADDRESS_TYPE]) {
     let keepScanning: boolean = true;
 
     while (keepScanning) {
@@ -82,7 +82,7 @@ export async function scanAddresses(
         startIndex += SCAN_BATCH_SIZE;
       }
 
-      if (type === 0) {
+      if (type === RECEIVE_ADDRESS_TYPE) {
         accountAddresses.usedReceiveAddresses.push(...addresses.filter(addr => addr.active));
 
         if (!keepScanning) {
@@ -95,7 +95,7 @@ export async function scanAddresses(
         }
       }
       // change address
-      if (type === 1) {
+      if (type === CHANGE_ADDRESS_TYPE) {
         accountAddresses.usedChangeAddresses.push(...addresses.filter(addr => addr.active));
 
         if (!keepScanning) {
