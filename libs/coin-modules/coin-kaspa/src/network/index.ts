@@ -22,6 +22,9 @@ type AccountAddress = {
   active: boolean;
 };
 
+/**
+ * Interface representing account addresses and related balance information.
+ */
 export interface AccountAddresses {
   usedReceiveAddresses: AccountAddress[];
   usedChangeAddresses: AccountAddress[];
@@ -30,6 +33,14 @@ export interface AccountAddresses {
   totalBalance: BigNumber;
 }
 
+/**
+ * Scans the addresses for an account and retrieves information such as used addresses and the total balance.
+ *
+ * @param {Buffer} compressedPublicKey - The compressed public key used for address derivation.
+ * @param {Buffer} chainCode - The chain code used for address derivation.
+ * @param {number} [startIndex=0] - The starting index for address scanning.
+ * @return {Promise<AccountAddresses>} - A promise that resolves to an AccountAddresses object containing used addresses and balance information.
+ */
 export async function scanAddresses(
   compressedPublicKey: Buffer,
   chainCode: Buffer,
@@ -78,37 +89,63 @@ export async function scanAddresses(
       keepScanning = !lastAddressesToCheck.every(addr => !addr.active);
       if (keepScanning) startIndex += SCAN_BATCH_SIZE;
 
-      if (type === RECEIVE_ADDRESS_TYPE) {
-        accountAddresses.usedReceiveAddresses.push(...addresses.filter(addr => addr.active));
-
-        if (!keepScanning) {
-          // last used address + 1
-          // + 1 has to be available, as there needs to be a GAP!
-          accountAddresses.nextReceiveAddress =
-            addresses[
-              addresses.indexOf(<AccountAddress>accountAddresses.usedReceiveAddresses.at(-1)) + 1
-            ];
-        }
-      }
-      // change address
-      if (type === CHANGE_ADDRESS_TYPE) {
-        accountAddresses.usedChangeAddresses.push(...addresses.filter(addr => addr.active));
-
-        if (!keepScanning) {
-          // last used address + 1
-          // + 1 has to be available, as there needs to be a GAP!
-          accountAddresses.nextChangeAddress =
-            addresses[
-              addresses.indexOf(<AccountAddress>accountAddresses.usedChangeAddresses.at(-1)) + 1
-            ];
-        }
-      }
+      await updateAddressesData(addresses, accountAddresses, type, keepScanning);
     }
   }
 
   return accountAddresses;
 }
 
+/**
+ * Updates the addresses data based on the type and current scanning state.
+ * If the type is RECEIVE_ADDRESS_TYPE, it updates the used receive addresses and sets the next receive address.
+ * If the type is CHANGE_ADDRESS_TYPE, it updates the used change addresses and sets the next change address.
+ *
+ * @param {AccountAddress[]} addresses - List of account addresses.
+ * @param {AccountAddresses} accountAddresses - Object containing used receive and change addresses and the next addresses.
+ * @param {number} type - Type of the addresses being updated. It can be either RECEIVE_ADDRESS_TYPE or CHANGE_ADDRESS_TYPE.
+ * @param {boolean} keepScanning - Indicates whether to keep scanning for addresses or not.
+ * @return {void}
+ */
+function updateAddressesData(
+  addresses: AccountAddress[],
+  accountAddresses: AccountAddresses,
+  type: number,
+  keepScanning: boolean,
+): void {
+  if (type === RECEIVE_ADDRESS_TYPE) {
+    accountAddresses.usedReceiveAddresses.push(...addresses.filter(addr => addr.active));
+
+    if (!keepScanning) {
+      // last used address + 1
+      // + 1 has to be available, as there needs to be a GAP!
+      accountAddresses.nextReceiveAddress =
+        addresses[
+          addresses.indexOf(<AccountAddress>accountAddresses.usedReceiveAddresses.at(-1)) + 1
+        ];
+    }
+  }
+  // change address
+  if (type === CHANGE_ADDRESS_TYPE) {
+    accountAddresses.usedChangeAddresses.push(...addresses.filter(addr => addr.active));
+
+    if (!keepScanning) {
+      // last used address + 1
+      // + 1 has to be available, as there needs to be a GAP!
+      accountAddresses.nextChangeAddress =
+        addresses[
+          addresses.indexOf(<AccountAddress>accountAddresses.usedChangeAddresses.at(-1)) + 1
+        ];
+    }
+  }
+}
+
+/**
+ * Updates the provided array of addresses with their respective balances and active status.
+ *
+ * @param {AccountAddress[]} addresses - An array of account addresses to be updated.
+ * @return {Promise<void>} A promise that resolves when the update operation is complete.
+ */
 async function updateAddressesActive(addresses: AccountAddress[]) {
   const balances = await getBalancesForAddresses(addresses.map(addr => addr.address));
   const addressesActive = await getAddressesActive(addresses.map(addr => addr.address));
