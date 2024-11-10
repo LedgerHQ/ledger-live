@@ -7,6 +7,10 @@ export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 export { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 
+// Constants to improve clarity
+const RECEIVE_ADDRESS_TYPE = 0;
+const CHANGE_ADDRESS_TYPE = 1;
+const INITIAL_BALANCE = BigNumber(0);
 const GAP_LIMIT = 50;
 const SCAN_BATCH_SIZE = 100;
 
@@ -26,7 +30,7 @@ export interface AccountAddresses {
   totalBalance: BigNumber;
 }
 
-export async function determineDerivedAddresses(
+export async function scanAddresses(
   compressedPublicKey: Buffer,
   chainCode: Buffer,
   startIndex: number = 0,
@@ -36,8 +40,8 @@ export async function determineDerivedAddresses(
   const accountAddresses: AccountAddresses = {
     usedReceiveAddresses: [],
     usedChangeAddresses: [],
-    nextChangeAddress: { type: 0, index: 0, address: "", balance: BigNumber(0), active: false },
-    nextReceiveAddress: { type: 0, index: 0, address: "", balance: BigNumber(0), active: false },
+    nextChangeAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
+    nextReceiveAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
     totalBalance: BigNumber(0),
   };
 
