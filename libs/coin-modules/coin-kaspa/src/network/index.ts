@@ -45,11 +45,9 @@ export async function scanAddresses(
     totalBalance: BigNumber(0),
   };
 
-  // all addresses until the last valid UTXO we assume as used
-  // if wallet has no utxos, fallback via transactions needed.
-  // not yet requestable as batch -> #TODO
+  // need to check UTXOs and TX history for the first account addresses
 
-  // receive address
+  // go through receive address and change address
   for (let type = 0; type <= 1; type++) {
     let keepScanning: boolean = true;
 
