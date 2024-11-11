@@ -36,6 +36,7 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import Carousel from "~/renderer/components/Carousel";
 import useActionCards from "~/renderer/hooks/useActionCards";
+import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -62,6 +63,8 @@ export default function DashboardPage() {
     [accounts],
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
+  useAutoRedirectToPostOnboarding();
 
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);

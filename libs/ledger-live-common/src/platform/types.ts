@@ -111,6 +111,7 @@ export type LiveAppManifest = {
   author?: string;
   private?: boolean;
   cacheBustingId?: number;
+  nocache?: boolean;
   name: string;
   url: string | URL;
   params?: LiveAppManifestParams;
@@ -159,6 +160,7 @@ export const LiveAppManifestSchema = z
     author: z.string().optional(),
     private: z.boolean().optional(),
     cacheBustingId: z.number().optional(),
+    nocache: z.boolean().optional(),
     name: z.string().trim().min(1),
     url: z.string().trim().min(1),
     dapp: LiveAppManifestDappSchema.optional(),

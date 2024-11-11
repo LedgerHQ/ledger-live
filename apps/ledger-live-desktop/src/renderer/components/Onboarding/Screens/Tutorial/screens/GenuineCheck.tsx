@@ -30,8 +30,8 @@ const Success = ({ device }: { device: Device }) => {
 };
 
 type Props = {
-  connectedDevice: unknown;
-  setConnectedDevice: (device: unknown) => void;
+  connectedDevice: Device;
+  setConnectedDevice: (device: Device | null) => void;
 };
 
 export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {

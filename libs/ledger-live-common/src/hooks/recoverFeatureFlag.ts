@@ -7,7 +7,7 @@ import {
 
 export function useReplacedURI(uri?: string, id?: string): string | undefined {
   return useMemo(() => {
-    return uri && id ? uri.replace("protect-simu", id) : undefined;
+    return uri && id ? uri.replace(/protect-(simu|local-dev|staging)/, id) : undefined;
   }, [id, uri]);
 }
 
@@ -26,23 +26,6 @@ export function usePostOnboardingURI(
   return useReplacedURI(uri, id);
 }
 
-export function usePostOnboardingPath(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
-): string | undefined {
-  const uri = usePostOnboardingURI(servicesConfig);
-
-  return usePath(servicesConfig, uri);
-}
-
-export function useLearnMoreURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
-): string | undefined {
-  const uri = servicesConfig?.params?.managerStatesData?.NEW?.learnMoreURI;
-  const id = servicesConfig?.params?.protectId;
-
-  return useReplacedURI(uri, id);
-}
-
 export function useQuickAccessURI(
   servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {
@@ -56,15 +39,6 @@ export function useAlreadyOnboardedURI(
   servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadyOnboardedURI;
-  const id = servicesConfig?.params?.protectId;
-
-  return useReplacedURI(uri, id);
-}
-
-export function useAlreadySubscribedURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
-): string | undefined {
-  const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadySubscribedURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
@@ -94,15 +68,6 @@ export function useUpsellPath(
   const uri = useUpsellURI(servicesConfig);
 
   return usePath(servicesConfig, uri);
-}
-
-export function useLoginURI(
-  servicesConfig: Feature_ProtectServicesMobile | Feature_ProtectServicesDesktop | null,
-): string | undefined {
-  const uri = servicesConfig?.params?.account?.loginURI;
-  const id = servicesConfig?.params?.protectId;
-
-  return useReplacedURI(uri, id);
 }
 
 export function useRestore24URI(
@@ -199,9 +164,18 @@ export enum Source {
 }
 
 export function useTouchScreenOnboardingUpsellURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
   source: Source,
 ): string | undefined {
   const campaign = "touchscreen-onboarding";
   return useCustomURI(servicesConfig, "upsell", source, campaign);
+}
+
+export function useTouchScreenOnboardingUpsellPath(
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  source: Source,
+): string | undefined {
+  const uri = useTouchScreenOnboardingUpsellURI(servicesConfig, source);
+
+  return usePath(servicesConfig, uri);
 }

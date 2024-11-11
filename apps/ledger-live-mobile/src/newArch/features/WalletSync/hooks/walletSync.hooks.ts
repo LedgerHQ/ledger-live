@@ -7,6 +7,8 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
+import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { NavigatorName, ScreenName } from "~/const";
@@ -19,6 +21,7 @@ export const useLifeCycle = () => {
 
   function reset() {
     dispatch(resetTrustchainStore());
+    track(AnalyticsEvents.LedgerSyncDeactivated);
     const routeName = NavigatorName.WalletSync;
     const screen = ScreenName.WalletSyncActivationInit;
     navigation.dispatch(StackActions.replace(routeName, { screen }));
