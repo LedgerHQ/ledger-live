@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.14.0-next.2
+
+### Patch Changes
+
+- [#8334](https://github.com/LedgerHQ/ledger-live/pull/8334) [`4799fcb`](https://github.com/LedgerHQ/ledger-live/commit/4799fcb8bd85b72ff23e246e774f812e405a4441) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - add uniswap data
+
 ## 34.14.0-next.1
 
 ### Patch Changes
