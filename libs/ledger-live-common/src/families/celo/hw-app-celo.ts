@@ -44,10 +44,7 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
       : legacyTokenInfoByAddressAndChainId(to!, chainId!);
 
     if (tokenInfo) {
-      // celo-spender-app below version 1.2.3 expected unprefixed hex strings only
-      const dataString = isModern
-        ? `0x${tokenInfo.data.toString("hex")}`
-        : tokenInfo.data.toString("hex");
+      const dataString = tokenInfo.data.toString("hex");
       await this.provideERC20TokenInformation(dataString);
     }
   }
