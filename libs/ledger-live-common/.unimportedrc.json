@@ -74,6 +74,7 @@
     "src/e2e/speculos.ts",
     "src/explorer.ts",
     "src/explorers.ts",
+    "src/families/algorand/logic.ts",
     "src/families/algorand/tokens.ts",
     "src/families/algorand/types.ts",
     "src/families/bitcoin/descriptor.ts",
