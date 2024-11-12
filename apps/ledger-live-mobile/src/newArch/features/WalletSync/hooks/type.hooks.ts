@@ -8,4 +8,5 @@ export enum QueryKey {
 
 export enum ErrorType {
   NO_TRUSTCHAIN = "No such trustchain",
+  NULL = '["useGetMembers",null] data is undefined',
 }

@@ -2375,7 +2375,7 @@
     "footer": {
       "estimatedFees": "Network fees"
     },
-    "info":{
+    "info": {
       "needMemoTag": {
         "title": "Don’t use Tag/Memo?",
         "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
@@ -2390,7 +2390,15 @@
     "version": "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork": {
-    "title": "Troubleshoot networking"
+    "title": "Troubleshoot networking",
+    "myLedgerServices": "My Ledger services (scriptrunner)",
+    "bitcoinExplorers": "Bitcoin explorers",
+    "ethereumExplorers": "Ethereum explorers",
+    "countervaluesApi": "Countervalues API",
+    "announcements": "Announcements",
+    "status": "Status",
+    "test": "TEST",
+    "renderer": "RENDERER"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",

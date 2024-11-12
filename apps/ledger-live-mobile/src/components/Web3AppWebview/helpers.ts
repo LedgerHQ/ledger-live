@@ -175,17 +175,16 @@ export function useWebView(
   }, []);
 
   useEffect(() => {
-    const latestCacheBustedId = getLatest(manifest.id);
-    const init = getLatest("init");
-    // checking for init, which is set in INITIAL_PLATFORM_STATE
-    // makes sure we're not just getting the default value, undefined
-    if (
-      webviewRef.current &&
-      init &&
-      manifest.cacheBustingId !== undefined &&
-      manifest.cacheBustingId > (latestCacheBustedId || 0)
-    ) {
-      if (webviewRef.current.clearCache) {
+    if (webviewRef && webviewRef.current && manifest.cacheBustingId !== undefined) {
+      const latestCacheBustedId = getLatest(manifest.id);
+      const init = getLatest("init");
+      // checking for init, which is set in INITIAL_PLATFORM_STATE
+      // makes sure we're not just getting the default value, undefined
+      if (
+        init &&
+        manifest.cacheBustingId > (latestCacheBustedId || 0) &&
+        webviewRef.current.clearCache
+      ) {
         // save the latest cacheBustedId to the DiscoverDB
         // to avoid clearingCache everytime this liveApp is loaded
         edit(manifest.id, manifest.cacheBustingId);

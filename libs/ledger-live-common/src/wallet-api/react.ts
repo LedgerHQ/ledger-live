@@ -1015,7 +1015,7 @@ function calculateTimeDiff(usedAt: string) {
 export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheBustedLiveAppsdDB) {
   const getLatest = useCallback(
     (manifestId: string) => {
-      return cacheBustedLiveAppsDb[manifestId];
+      return cacheBustedLiveAppsDb?.[manifestId];
     },
     [cacheBustedLiveAppsDb],
   );
