@@ -86,6 +86,16 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
+  uniswap: {
+    type: "DEX",
+    needsBearerToken: false,
+    displayName: "Uniswap",
+    termsOfUseUrl:
+      "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+    supportUrl: "mailto:support@uniswap.org",
+    mainUrl: "https://uniswap.org/",
+    needsKYC: false,
+  },
 };
 
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
