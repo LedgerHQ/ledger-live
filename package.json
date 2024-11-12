@@ -68,6 +68,7 @@
     "coin:cosmos": "pnpm --filter coin-cosmos",
     "coin:elrond": "pnpm --filter coin-elrond",
     "coin:evm": "pnpm --filter coin-evm",
+    "coin:filecoin": "pnpm --filter coin-filecoin",
     "coin:framework": "pnpm --filter coin-framework",
     "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",

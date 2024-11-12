@@ -1,7 +1,6 @@
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import crypto_org from "../families/crypto_org/hw-getAddress";
-import filecoin from "../families/filecoin/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
@@ -12,6 +11,7 @@ import { resolver as cosmos } from "../families/cosmos/setup";
 import { resolver as elrond } from "../families/elrond/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as hedera } from "../families/hedera/setup";
+import { resolver as filecoin } from "../families/filecoin/setup";
 import { resolver as icon } from "../families/icon/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
@@ -26,7 +26,6 @@ export default {
   casper,
   celo,
   crypto_org,
-  filecoin,
   internet_computer,
   stacks,
   vechain,
@@ -37,6 +36,7 @@ export default {
   elrond,
   evm,
   hedera,
+  filecoin,
   icon,
   near,
   polkadot,

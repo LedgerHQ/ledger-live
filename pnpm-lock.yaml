@@ -304,6 +304,9 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
+      '@ledgerhq/coin-filecoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -854,6 +857,9 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
+      '@ledgerhq/coin-filecoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -2355,6 +2361,79 @@ importers:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-filecoin:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@zondax/cbor':
+        specifier: v8.1.0-zondax-no-bigint
+        version: 8.1.0-zondax-no-bigint
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      iso-filecoin:
+        specifier: ^4.1.0
+        version: 4.1.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-hedera:
     dependencies:
       '@hashgraph/sdk':
@@ -3565,6 +3644,9 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
+      '@ledgerhq/coin-filecoin':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-filecoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -3754,9 +3836,6 @@ importers:
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)
-      '@zondax/cbor':
-        specifier: v8.1.0-zondax-no-bigint
-        version: 8.1.0-zondax-no-bigint
       '@zondax/ledger-casper':
         specifier: ^2.6.1
         version: 2.6.1
@@ -3814,9 +3893,6 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -3826,9 +3902,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      iso-filecoin:
-        specifier: ^4.1.0
-        version: 4.1.0
       isomorphic-ws:
         specifier: ^4.0.1
         version: 4.0.1(ws@7.5.10)
@@ -9076,6 +9149,9 @@ packages:
   '@cosmjs/utils@0.24.1':
     resolution: {integrity: sha512-VA3WFx1lMFb7esp9BqHWkDgMvHoA3D9w+uDRvWhVRpUpDc7RYHxMbWExASjz+gNblTCg556WJGzF64tXnf9tdQ==}
 
+  '@cosmjs/utils@0.25.0-alpha.2':
+    resolution: {integrity: sha512-ey+WKhnQ67L6JF1M3TLBRPXTDK8Az0uJ3m7UWWuT1p8z6K9kZfu+YiGmzJev64xuLP1kFaPJJLmBIpHH6HQ4hA==}
+
   '@cosmjs/utils@0.25.6':
     resolution: {integrity: sha512-ofOYiuxVKNo238vCPPlaDzqPXy2AQ/5/nashBo5rvPZJkxt9LciGfUEQWPCOb1BIJDNx2Dzu0z4XCf/dwzl0Dg==}
 
@@ -13859,7 +13935,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -15716,7 +15792,6 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -16009,7 +16084,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -19042,7 +19117,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -19797,8 +19872,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -19813,8 +19888,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.74.5
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -22110,8 +22185,8 @@ packages:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
 
-  jiti@2.3.3:
-    resolution: {integrity: sha512-EX4oNDwcXSivPrw2qKH2LB5PoFxEvgtv2JgwW0bU858HoLQ+kutSvjLMUqBd0PeJYEinLWhoI9Ol0eYMqj/wNQ==}
+  jiti@2.4.0:
+    resolution: {integrity: sha512-H5UpaUI+aHOqZXlYOaFP/8AzKsg+guWu+Pr3Y8i7+Y3zr1aXAvCvTAQ1RxSc6oVD8R8c7brgNtTVP91E7upH/g==}
     hasBin: true
 
   jmespath@0.15.0:
@@ -25398,7 +25473,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -25637,7 +25711,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -25661,8 +25735,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -25672,8 +25746,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -32705,7 +32779,7 @@ snapshots:
       '@cosmjs/math': 0.25.6
       '@cosmjs/socket': 0.25.6
       '@cosmjs/stream': 0.25.6
-      '@cosmjs/utils': 0.25.6
+      '@cosmjs/utils': 0.25.0-alpha.2
       axios: 0.21.4
       readonly-date: 1.0.0
       xstream: 11.14.0
@@ -32730,6 +32804,8 @@ snapshots:
       - utf-8-validate
 
   '@cosmjs/utils@0.24.1': {}
+
+  '@cosmjs/utils@0.25.0-alpha.2': {}
 
   '@cosmjs/utils@0.25.6': {}
 
@@ -33984,7 +34060,7 @@ snapshots:
       '@expo/metro-config': 0.10.7
       '@expo/osascript': 2.0.33
       '@expo/spawn-async': 1.7.2
-      body-parser: 1.20.3
+      body-parser: 1.20.2
       chalk: 4.1.2
       connect: 3.7.0
       fs-extra: 9.0.0
@@ -53544,7 +53620,7 @@ snapshots:
 
   jiti@1.21.0: {}
 
-  jiti@2.3.3: {}
+  jiti@2.4.0: {}
 
   jmespath@0.15.0: {}
 
@@ -54053,7 +54129,7 @@ snapshots:
       easy-table: 1.2.0
       enhanced-resolve: 5.17.1
       fast-glob: 3.3.2
-      jiti: 2.3.3
+      jiti: 2.4.0
       js-yaml: 4.1.0
       minimist: 1.2.8
       picocolors: 1.1.1
