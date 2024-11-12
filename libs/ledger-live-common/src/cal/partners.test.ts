@@ -13,7 +13,7 @@ describe("transformData", () => {
     [
       "prod",
       {
-        providera: {
+        providerA: {
           id: "providerA",
           name: "ProviderA",
           publicKey: {
@@ -23,7 +23,7 @@ describe("transformData", () => {
           signature: Buffer.from("a1b2c3", "hex"),
           version: 2,
         } satisfies ExchangeProvider,
-        providerb: {
+        providerB: {
           id: "providerB",
           name: "ProviderB",
           publicKey: {
@@ -38,7 +38,7 @@ describe("transformData", () => {
     [
       "test",
       {
-        providera: {
+        providerA: {
           id: "providerA",
           name: "ProviderA",
           publicKey: {
@@ -48,7 +48,7 @@ describe("transformData", () => {
           signature: Buffer.from("d1e2f3", "hex"),
           version: 2,
         } satisfies ExchangeProvider,
-        providerb: {
+        providerB: {
           id: "providerB",
           name: "ProviderB",
           publicKey: {
@@ -67,6 +67,7 @@ describe("transformData", () => {
         {
           id: "providerA",
           name: "ProviderA",
+          partner_id: "providerA",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
@@ -81,6 +82,7 @@ describe("transformData", () => {
         {
           id: "providerB",
           name: "ProviderB",
+          partner_id: "providerB",
           public_key: "abcdef1234567890",
           public_key_curve: "secp256r1",
           service_app_version: 2,
@@ -114,7 +116,7 @@ describe("getProvidersData", () => {
     [
       "prod",
       {
-        providera: {
+        providerA: {
           id: "providerA",
           name: "ProviderA",
           publicKey: {
@@ -129,7 +131,7 @@ describe("getProvidersData", () => {
     [
       "test",
       {
-        providera: {
+        providerA: {
           id: "providerA",
           name: "ProviderA",
           publicKey: {
@@ -148,6 +150,7 @@ describe("getProvidersData", () => {
         {
           id: "providerA",
           name: "ProviderA",
+          partner_id: "providerA",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
@@ -169,7 +172,9 @@ describe("getProvidersData", () => {
         method: "GET",
         url: "https://crypto-assets-service.api.ledger.com/v1/partners",
         params: {
-          output: "id,name,public_key,public_key_curve,service_app_version,descriptor",
+          env,
+          output:
+            "id,name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
           service_name: "swap",
         },
       });

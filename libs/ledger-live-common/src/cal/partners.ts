@@ -39,6 +39,7 @@ export type ProvidersDataResponse = {
   public_key: string;
   public_key_curve: string;
   service_app_version: number;
+  partner_id: string;
   descriptor: {
     data: string;
     signatures: {
@@ -55,8 +56,9 @@ export function transformData(
 ): Record<string, ExchangeProvider> {
   const transformed = {};
   providersData.forEach(provider => {
-    const key = provider.id;
+    const key = provider.partner_id;
     transformed[key] = {
+      id: provider.id,
       name: provider.name,
       publicKey: {
         curve: provider.public_key_curve,
@@ -77,8 +79,9 @@ export async function getProvidersData(
     method: "GET",
     url: `${CAL_BASE_URL}/v1/partners`,
     params: {
-      output: "id,name,public_key,public_key_curve,service_app_version,descriptor",
+      output: "id,name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
       service_name: type,
+      env,
     },
   });
 
