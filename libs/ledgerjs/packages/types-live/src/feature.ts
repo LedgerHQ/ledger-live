@@ -198,6 +198,7 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
+  llMevProtection: DefaultFeature;
 };
 
 /**

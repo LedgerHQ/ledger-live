@@ -437,3 +437,7 @@ export const setLastOnboardedDevice = (payload: Device | null) => ({
   type: "SET_LAST_ONBOARDED_DEVICE",
   payload,
 });
+export const setMevProtection = (payload: boolean) => ({
+  type: "SET_MEV_PROTECTION",
+  payload,
+});

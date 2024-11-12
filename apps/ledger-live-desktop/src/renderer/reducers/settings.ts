@@ -76,6 +76,7 @@ export type SettingsState = {
   nftsViewMode: "grid" | "list";
   collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
+  mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
@@ -178,6 +179,7 @@ export const INITIAL_STATE: SettingsState = {
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
   lastSeenDevice: null,
+  mevProtection: true,
   hasSeenOrdinalsDiscoveryDrawer: false,
   hasProtectedOrdinalsAssets: false,
   devicesModelList: [],
@@ -290,6 +292,8 @@ type HandlersPayloads = {
   SET_ONBOARDING_USE_CASE: OnboardingUseCase;
   SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
   SET_LAST_ONBOARDED_DEVICE: Device | null;
+
+  SET_MEV_PROTECTION: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -539,6 +543,10 @@ const handlers: SettingsHandlers = {
   SET_LAST_ONBOARDED_DEVICE: (state: SettingsState, { payload }) => ({
     ...state,
     lastOnboardedDevice: payload,
+  }),
+  SET_MEV_PROTECTION: (state: SettingsState, { payload }) => ({
+    ...state,
+    mevProtection: payload,
   }),
 };
 
@@ -892,3 +900,5 @@ export const onboardingUseCaseSelector = (state: State) => state.settings.onboar
 export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
+
+export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
