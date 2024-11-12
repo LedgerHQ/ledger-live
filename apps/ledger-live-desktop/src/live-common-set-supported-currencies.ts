@@ -93,4 +93,7 @@ setSupportedCurrencies([
   "scroll_sepolia",
   "ton",
   "etherlink",
+  "zksync",
+  "zksync_sepolia",
+  "mantra",
 ]);

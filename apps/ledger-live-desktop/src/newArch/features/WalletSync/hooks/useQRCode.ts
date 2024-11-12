@@ -19,6 +19,7 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { track } from "~/renderer/analytics/segment";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
 
@@ -84,6 +85,7 @@ export function useQRCode() {
     onSuccess(newTrustchain) {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
+        if (!trustchain) track("ledgersync_activated");
       }
       dispatch(
         setFlow({

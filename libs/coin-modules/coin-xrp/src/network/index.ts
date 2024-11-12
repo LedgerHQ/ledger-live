@@ -10,6 +10,7 @@ import {
   type LedgerResponse,
   type ServerInfoResponse,
   type SubmitReponse,
+  type XrplOperation,
 } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
@@ -68,7 +69,7 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
 export const getTransactions = async (
   address: string,
   options: { ledger_index_min?: number; ledger_index_max?: number } | undefined,
-): Promise<AccountTxResponse["transactions"]> => {
+): Promise<XrplOperation[]> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
     ledger_index: "validated",

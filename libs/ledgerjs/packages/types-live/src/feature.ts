@@ -121,6 +121,9 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
 };
 
 /**
@@ -164,6 +167,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
+  ptxSwapLiveAppMobile: DefaultFeature;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
@@ -195,6 +199,7 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
+  llMevProtection: DefaultFeature;
 };
 
 /**

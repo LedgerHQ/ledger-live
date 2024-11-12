@@ -26,6 +26,7 @@ import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
+import { RecoverUpsellRow } from "./RecoverUpsellRow";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -84,6 +85,7 @@ const Default = () => {
       >
         <EnableLearnPageStagingUrlToggle />
       </Row>
+      <RecoverUpsellRow />
       <Row
         title={t("settings.developer.enableStagingNftMetadataService")}
         desc={t("settings.developer.enableStagingNftMetadataServiceDesc")}

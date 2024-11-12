@@ -17,7 +17,7 @@ import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper"
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
 import { SignMessage } from "../../hw/signMessage/types";
-import { AcreMessageWithdraw } from "@ledgerhq/wallet-api-acre-module";
+import { AcreMessageSignIn, AcreMessageWithdraw } from "@ledgerhq/wallet-api-acre-module";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency) => {
   return new Acre({ transport, currency: currency.id });
@@ -75,9 +75,40 @@ export function createWithdrawSigner(): SignMessage {
   };
 }
 
+export function createSignInSigner(): SignMessage {
+  const signIn =
+    (signerContext: SignerContext) =>
+    async (deviceId: string, account: Account, container: AcreMessageSignIn & AnyMessage) => {
+      const path =
+        "path" in container && container.path ? container.path : account.freshAddressPath;
+      const result = (await signerContext(deviceId, account.currency, signer =>
+        (signer as unknown as Acre).signERC4361Message(
+          path,
+          Buffer.from(container.message as string).toString("hex"),
+        ),
+      )) as BitcoinSignature;
+      const v = result["v"] + 27 + 4;
+      const signature = `${v.toString(16)}${result["r"]}${result["s"]}`;
+      return {
+        rsv: result,
+        signature,
+      };
+    };
+
+  return (transport, account, messageData) => {
+    const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
+    return signIn(signerContext)(
+      "",
+      account,
+      messageData as unknown as AcreMessageSignIn & AnyMessage,
+    );
+  };
+}
+
 const messageSigner = {
   signMessage: createMessageSigner(),
   signWithdraw: createWithdrawSigner(),
+  signIn: createSignInSigner(),
 };
 
 const resolver: Resolver = (

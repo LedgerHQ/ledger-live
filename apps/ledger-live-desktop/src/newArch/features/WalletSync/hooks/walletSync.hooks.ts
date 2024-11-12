@@ -1,3 +1,4 @@
+import { track } from "~/renderer/analytics/segment";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "react-redux";
 import { ErrorType } from "./type.hooks";
@@ -19,6 +20,7 @@ export const useLifeCycle = () => {
 
   function reset() {
     dispatch(resetTrustchainStore());
+    track("ledgersync_deactivated");
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     sdk.invalidateJwt();
   }

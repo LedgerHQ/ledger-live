@@ -27,13 +27,16 @@ export type XrplOperation = {
     Amount: string;
     DeliverMax: string;
     Destination: string;
-    DestinationTag: number;
+    DestinationTag?: number;
     Fee: string;
     Flags: number;
     LastLedgerSequence: number;
-    Memos: {
+    // cf. https://xrpl.org/docs/references/protocol/transactions/common-fields#memos-field
+    Memos?: {
       Memo: {
-        MemoData: string;
+        MemoData?: string;
+        MemoFormat?: string;
+        MemoType?: string;
       };
     }[];
     Sequence: number;

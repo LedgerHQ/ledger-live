@@ -78,6 +78,7 @@ export const getVotesCount = (
     case "osmosis":
     case "cosmos":
     case "coreum":
+    case "mantra":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;

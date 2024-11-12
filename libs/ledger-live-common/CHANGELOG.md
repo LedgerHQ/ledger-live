@@ -1,5 +1,17 @@
 ## 34.5.0-next.4
 
+## 34.13.1
+
+### Patch Changes
+
+- [#8261](https://github.com/LedgerHQ/ledger-live/pull/8261) [`5cd0ca8`](https://github.com/LedgerHQ/ledger-live/commit/5cd0ca8d0eeb55004090e74464ca7064fa3298de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: hex signature
+
+## 34.13.1-hotfix.0
+
+### Patch Changes
+
+- [#8261](https://github.com/LedgerHQ/ledger-live/pull/8261) [`5cd0ca8`](https://github.com/LedgerHQ/ledger-live/commit/5cd0ca8d0eeb55004090e74464ca7064fa3298de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: hex signature
+
 ## 34.13.0
 
 ### Minor Changes

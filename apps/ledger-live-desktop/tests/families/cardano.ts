@@ -22,7 +22,6 @@ export async function sendCardano(tx: Transaction) {
   await waitFor(DeviceLabels.CONFIRM_TRANSACTION);
   await pressBoth();
 
-  //Todo: Ractivate after QAA-319
-  //const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-  //expect(isAddressCorrect).toBeTruthy();
+  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+  expect(isAddressCorrect).toBeTruthy();
 }
