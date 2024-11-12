@@ -55,9 +55,9 @@ export class Layout extends Component {
     await this.drawerMarketButton.click();
   }
 
-  @step("Check if there is a input error visible")
-  async checkInputErrorNotVisible() {
-    await this.inputError.waitFor({ state: "hidden" });
+  @step("Check input error state visibibility: $0")
+  async checkInputErrorVisibibility(expectedState: "visible" | "hidden") {
+    await this.inputError.waitFor({ state: expectedState });
   }
 
   @step("synchronize accounts")

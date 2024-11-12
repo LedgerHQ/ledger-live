@@ -18,6 +18,8 @@ import { delegateModal } from "tests/page/modal/delegate.modal";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { SendDrawer } from "./drawer/send.drawer";
 import { AssetDrawer } from "./drawer/asset.drawer";
+import { PasswordlockModal } from "./modal/passwordlock.modal";
+import { LockscreenPage } from "tests/page/lockscreen.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -39,4 +41,6 @@ export class Application extends PageHolder {
   public delegateDrawer = new DelegateDrawer(this.page);
   public sendDrawer = new SendDrawer(this.page);
   public assetDrawer = new AssetDrawer(this.page);
+  public password = new PasswordlockModal(this.page);
+  public LockscreenPage = new LockscreenPage(this.page);
 }
