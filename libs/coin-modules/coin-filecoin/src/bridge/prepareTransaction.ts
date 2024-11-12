@@ -56,8 +56,8 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         from: senderValidation.parsedAddress.toString(),
         methodNum: method,
         blockIncl: BroadcastBlockIncl,
-        params: tokenAccountTxn ? encodeTxnParams(paramsForEstimation) : undefined, // If token transfer, the eth call params are required to estimate fees
-        value: tokenAccountTxn ? "0" : undefined, // If token transfer, the value should be 0 (avoid any native token transfer on fee estimation)
+        ...(tokenAccountTxn && { params: encodeTxnParams(paramsForEstimation) }), // If token transfer, the eth call params are required to estimate fees
+        ...(tokenAccountTxn && { value: "0" }), // If token transfer, the value should be 0 (avoid any native token transfer on fee estimation)
       });
 
       patch.gasFeeCap = new BigNumber(result.gas_fee_cap);

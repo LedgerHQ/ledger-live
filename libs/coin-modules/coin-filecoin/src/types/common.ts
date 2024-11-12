@@ -10,8 +10,8 @@ export interface EstimatedFeesRequest {
   from: string;
   methodNum?: number;
   blockIncl?: number;
-  params?: string | undefined;
-  value?: string | undefined;
+  params?: string;
+  value?: string;
 }
 
 export interface EstimatedFeesResponse {
