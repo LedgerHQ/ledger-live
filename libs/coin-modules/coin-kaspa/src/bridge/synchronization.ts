@@ -8,6 +8,7 @@ import { KaspaAccount } from "../types/bridge";
 import { BigNumber } from "bignumber.js";
 import KaspaBIP32 from "../lib/bip32";
 import { parseExtendedPublicKey } from "../lib/kaspa-util";
+import { AccountAddresses, scanAddresses, getBalancesForAddresses } from "../network";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const { index, address, initialAccount } = info;
@@ -29,22 +30,16 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
   // console.log(compressedPublicKey)
-  const kaspaBip32: KaspaBIP32 = new KaspaBIP32(compressedPublicKey, chainCode);
+
+  const accountAddresses: AccountAddresses = await scanAddresses(
+    compressedPublicKey,
+    chainCode,
+    0,
+  );
 
 
-  const accountAddresses: string[] = [];
 
-  const balance: BigNumber = BigNumber(0);
 
-  // go through receive and sender address types
-  for (let type = 0; type < 1; type++) {
-    // for now, go through 100 txs,
-    for (let index = 0; index < 100; index++) {
-      accountAddresses.push(kaspaBip32.getAddress(type, index));
-    }
-  }
-
-  // console.log(accountAddresses);
 
   const oldOperations = initialAccount?.operations || [];
   //
@@ -59,8 +54,8 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
     id: accountId,
     xpub: xpub,
     blockHeight: 0, // this doesn't really make sense in Kaspa
-    balance,
-    spendableBalance,
+    balance: accountAddresses.totalBalance,
+    spendableBalance: accountAddresses.totalBalance,
     operations,
     operationsCount: operations.length,
   };
