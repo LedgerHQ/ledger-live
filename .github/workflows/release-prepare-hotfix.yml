@@ -45,17 +45,12 @@ jobs:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
 
-      - name: Checkout Repo (develop branch)
+      - name: Checkout Repo (hotfix branch)
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
           fetch-depth: 0
-
-      - name: Fetch hotfix branch
-        run: |
-          git fetch origin ${{ inputs.ref }}:${{ inputs.ref }}
-          git checkout ${{ inputs.ref }}
 
       - name: Setup git user
         uses: ./tools/actions/composites/setup-git-user
