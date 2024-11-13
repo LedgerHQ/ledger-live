@@ -1,0 +1,36 @@
+import React, { useEffect, useState } from "react";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
+import Switch from "~/renderer/components/Switch";
+import Box from "~/renderer/components/Box";
+import { useTranslation } from "react-i18next";
+import { SettingsSectionRow } from "../../SettingsSection";
+
+const ExchangeTestPartnerMode = () => {
+  const { t } = useTranslation();
+  const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    setEnableExchangeDevMode(getEnv("MOCK_EXCHANGE_TEST_PARTNER"));
+  }, []);
+
+  useEffect(() => {
+    setEnv("MOCK_EXCHANGE_TEST_PARTNER", enableExchangeTestPartnerMode);
+  }, [enableExchangeTestPartnerMode]);
+
+  const handleChangeSwitch = () => {
+    setEnableExchangeDevMode(!enableExchangeTestPartnerMode);
+  };
+
+  return (
+    <SettingsSectionRow
+      title={t("settings.developer.exchangeTestPartnerMode.title")}
+      desc={t("settings.developer.exchangeTestPartnerMode.desc")}
+    >
+      <Box grow horizontal flow={2} alignItems="center">
+        <Switch isChecked={enableExchangeTestPartnerMode} onChange={handleChangeSwitch} />
+      </Box>
+    </SettingsSectionRow>
+  );
+};
+
+export default ExchangeTestPartnerMode;

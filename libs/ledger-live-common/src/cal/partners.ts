@@ -50,8 +50,8 @@ export type ProvidersDataResponse = {
 // Exported for test purpose only
 export function transformData(
   providersData: ProvidersDataResponse,
-  env: "prod" | "test",
 ): Record<string, ExchangeProvider> {
+  const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
   const transformed = {};
   providersData.forEach(provider => {
     const key = provider.partner_id;
@@ -70,8 +70,8 @@ export function transformData(
 
 export async function getProvidersData(
   type: "swap" | "fund" | "sell",
-  env: "prod" | "test" = "prod",
 ): Promise<Record<string, ExchangeProvider>> {
+  const env = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
   const { data: providersData } = await network<ProvidersDataResponse>({
     method: "GET",
     url: `${CAL_BASE_URL}/v1/partners`,
@@ -82,5 +82,5 @@ export async function getProvidersData(
     },
   });
 
-  return transformData(providersData, env);
+  return transformData(providersData);
 }

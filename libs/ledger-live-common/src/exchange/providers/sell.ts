@@ -20,8 +20,7 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
 
 export const fetchAndMergeProviderData = async () => {
   try {
-    const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
-    const sellProvidersData = await getProvidersData("sell", env);
+    const sellProvidersData = await getProvidersData("sell");
     return { ...sellProvidersData };
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
@@ -31,12 +30,11 @@ export const fetchAndMergeProviderData = async () => {
 export const getSellProvider = async (
   providerId: string,
 ): Promise<ExchangeProviderNameAndSignature> => {
+  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
+    return testSellProvider;
+  }
   const res = await fetchAndMergeProviderData();
-
   if (!res) {
-    if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
-      return testSellProvider;
-    }
     throw new Error("Failed to fetch provider data");
   }
   const provider = res[providerId];

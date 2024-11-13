@@ -90,7 +90,7 @@ describe("transformData", () => {
         },
       ];
 
-      const result = transformData(providersData, env as "prod" | "test");
+      const result = transformData(providersData);
       expect(result).toEqual(expected);
     },
   );
@@ -100,7 +100,7 @@ describe("transformData", () => {
 
     const expected: Record<string, ExchangeProvider> = {};
 
-    const result = transformData(providersData, "prod");
+    const result = transformData(providersData);
     expect(result).toEqual(expected);
   });
 });
@@ -157,7 +157,7 @@ describe("getProvidersData", () => {
 
       (network as jest.Mock).mockResolvedValue({ data: mockProvidersData });
 
-      const result = await getProvidersData("swap", env as "prod" | "test");
+      const result = await getProvidersData("swap");
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
