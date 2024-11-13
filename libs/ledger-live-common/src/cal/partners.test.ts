@@ -13,7 +13,7 @@ describe("transformData", () => {
     [
       "prod",
       {
-        providerA: {
+        providera: {
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -22,7 +22,7 @@ describe("transformData", () => {
           signature: Buffer.from("a1b2c3", "hex"),
           version: 2,
         } satisfies ExchangeProvider,
-        providerB: {
+        providerb: {
           name: "ProviderB",
           publicKey: {
             curve: "secp256r1",
@@ -36,7 +36,7 @@ describe("transformData", () => {
     [
       "test",
       {
-        providerA: {
+        providera: {
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -45,7 +45,7 @@ describe("transformData", () => {
           signature: Buffer.from("d1e2f3", "hex"),
           version: 2,
         } satisfies ExchangeProvider,
-        providerB: {
+        providerb: {
           name: "ProviderB",
           publicKey: {
             curve: "secp256r1",
@@ -62,7 +62,7 @@ describe("transformData", () => {
       const providersData = [
         {
           name: "ProviderA",
-          partner_id: "providerA",
+          partner_id: "providera",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
@@ -76,7 +76,7 @@ describe("transformData", () => {
         },
         {
           name: "ProviderB",
-          partner_id: "providerB",
+          partner_id: "providerb",
           public_key: "abcdef1234567890",
           public_key_curve: "secp256r1",
           service_app_version: 2,
