@@ -14,7 +14,6 @@ describe("transformData", () => {
       "prod",
       {
         providerA: {
-          id: "providerA",
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -24,7 +23,6 @@ describe("transformData", () => {
           version: 2,
         } satisfies ExchangeProvider,
         providerB: {
-          id: "providerB",
           name: "ProviderB",
           publicKey: {
             curve: "secp256r1",
@@ -39,7 +37,6 @@ describe("transformData", () => {
       "test",
       {
         providerA: {
-          id: "providerA",
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -49,7 +46,6 @@ describe("transformData", () => {
           version: 2,
         } satisfies ExchangeProvider,
         providerB: {
-          id: "providerB",
           name: "ProviderB",
           publicKey: {
             curve: "secp256r1",
@@ -65,7 +61,6 @@ describe("transformData", () => {
     (env: string, expected: Record<string, ExchangeProvider>) => {
       const providersData = [
         {
-          id: "providerA",
           name: "ProviderA",
           partner_id: "providerA",
           public_key: "1234567890abcdef",
@@ -80,7 +75,6 @@ describe("transformData", () => {
           },
         },
         {
-          id: "providerB",
           name: "ProviderB",
           partner_id: "providerB",
           public_key: "abcdef1234567890",
@@ -117,7 +111,6 @@ describe("getProvidersData", () => {
       "prod",
       {
         providerA: {
-          id: "providerA",
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -132,7 +125,6 @@ describe("getProvidersData", () => {
       "test",
       {
         providerA: {
-          id: "providerA",
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -148,7 +140,6 @@ describe("getProvidersData", () => {
     async (env: string, expected: Record<string, ExchangeProvider>) => {
       const mockProvidersData: ProvidersDataResponse = [
         {
-          id: "providerA",
           name: "ProviderA",
           partner_id: "providerA",
           public_key: "1234567890abcdef",
@@ -173,8 +164,7 @@ describe("getProvidersData", () => {
         url: "https://crypto-assets-service.api.ledger.com/v1/partners",
         params: {
           env,
-          output:
-            "id,name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
+          output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
           service_name: "swap",
         },
       });
