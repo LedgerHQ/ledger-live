@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-env",
-  "version": "2.4.1-next.0",
+  "version": "2.4.1",
   "description": "Ledger Live environment definition",
   "keywords": [
     "Ledger"
