@@ -110,7 +110,7 @@ describe("getProvidersData", () => {
     [
       "prod",
       {
-        providerA: {
+        providera: {
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -124,7 +124,7 @@ describe("getProvidersData", () => {
     [
       "test",
       {
-        providerA: {
+        providera: {
           name: "ProviderA",
           publicKey: {
             curve: "secp256k1",
@@ -141,7 +141,7 @@ describe("getProvidersData", () => {
       const mockProvidersData: ProvidersDataResponse = [
         {
           name: "ProviderA",
-          partner_id: "providerA",
+          partner_id: "providera",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
