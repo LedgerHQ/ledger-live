@@ -65,7 +65,6 @@ export function transformData(
       signature: Buffer.from(provider.descriptor.signatures[env], "hex"),
     };
   });
-  debugger;
   return transformed;
 }
 
