@@ -111,6 +111,7 @@
     "jsqr": "1.4.0",
     "lodash": "4.17.21",
     "msw": "2.3.4",
+    "node-addon-api": "^8.2.2",
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",

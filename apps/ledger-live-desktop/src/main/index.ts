@@ -15,7 +15,19 @@ import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
 import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
+/* import path from "path";
+#TODO remove commented code 
+// Resolve the correct path to MacWebAuthnModule.node
+const nativeModulePath = app.isPackaged
+  ? path.join(process.resourcesPath, "native-new/build/Release/MacWebAuthnModule.node")
+  : path.join(__dirname, "../native-new/build/Release/MacWebAuthnModule.node"); // Note the `../` adjustment for `src` folder
 
+let webAuthnModule: any;
+try {
+  webAuthnModule = require(nativeModulePath);
+} catch (error) {
+  console.error("Failed to load native module:", error);
+} */
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
@@ -127,6 +139,14 @@ app.on("ready", async () => {
     console.log("reloading renderer ...");
     loadWindow();
   });
+  /*   ipcMain.handle("trigger-webauthn", async event => {
+    try {
+      const result = await webAuthnModule.authenticate();
+      console.log("Authentication successful:", result);
+    } catch (error) {
+      console.error("Authentication failed:", error);
+    }
+  }); */
 
   // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb

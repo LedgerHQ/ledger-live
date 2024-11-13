@@ -35,6 +35,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 
+const webAuthnModule = require("./build/Release/webauthn_module.node");
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
@@ -48,10 +50,23 @@ type Props = {
 
 const queryClient = new QueryClient();
 
+async function requestWebAuthn() {
+  try {
+    const result = await webAuthnModule.authenticate();
+    console.log("Authentication successful:", result);
+  } catch (error) {
+    console.error("Authentication failed:", error);
+  }
+}
+
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useBraze();
+
+  useEffect(() => {
+    requestWebAuthn();
+  }, []);
 
   useEffect(() => {
     const reload = (e: KeyboardEvent) => {
