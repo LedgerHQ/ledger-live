@@ -13,7 +13,7 @@ const Pagination = ({ children, currentIndex }: SubProps) => {
   return (
     <FooterCarouselBullets>
       {children.map((child, index) => (
-        <Bullet key={child.key} type={getItemStatus(index, currentIndex)} />
+        <Bullet key={child.key} type={getItemStatus(index, currentIndex, children.length)} />
       ))}
     </FooterCarouselBullets>
   );
