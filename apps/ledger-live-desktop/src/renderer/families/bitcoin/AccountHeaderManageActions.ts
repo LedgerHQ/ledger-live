@@ -53,7 +53,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         {
           key: "Stake",
           icon: IconCoins,
-          label: t("accounts.contextMenu.yield"),
+          label: t("accounts.contextMenu.earn"),
           event: "button_clicked2",
           eventProperties: {
             button: "stake",

@@ -94,11 +94,11 @@ export default function AssetBalanceSummaryHeader({
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
 
   const availableOnSwap = currenciesAll.includes(currency.id);
-  const yieldStakeLabelCoin =
+  const earnStakeLabelCoin =
     currency &&
     (("family" in currency && currency.family === "bitcoin") ||
       ("parentCurrency" in currency && currency.parentCurrency.family === "bitcoin"))
-      ? t("accounts.contextMenu.yield")
+      ? t("accounts.contextMenu.earn")
       : t("accounts.contextMenu.stake");
 
   const onBuy = useCallback(() => {
@@ -214,7 +214,7 @@ export default function AssetBalanceSummaryHeader({
 
         {availableOnStake && (
           <Button variant="color" onClick={onStake} buttonTestId="asset-page-stake-button">
-            {yieldStakeLabelCoin}
+            {earnStakeLabelCoin}
           </Button>
         )}
       </Box>

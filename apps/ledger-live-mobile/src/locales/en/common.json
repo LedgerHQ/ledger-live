@@ -2360,8 +2360,7 @@
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake",
-      "yield": "Yield"
+      "stake": "Stake"
     },
     "recoverBanner": {
       "subscribeDone": {

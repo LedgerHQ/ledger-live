@@ -152,7 +152,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(canBeStaken
               ? [
                   {
-                    label: currency.id === "bitcoin" ? t("account.yield") : t("account.stake"),
+                    label: currency.id === "bitcoin" ? t("account.earn") : t("account.stake"),
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
