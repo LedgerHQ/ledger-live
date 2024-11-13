@@ -18,12 +18,6 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
   version: 2,
 };
 
-/**
- * The result is cached after the first successful fetch to avoid redundant network calls.
- * - "fund" providers currently include Mercuryo, which is stored as a fund provider.
- *   If this behavior changes, this logic should be revisited.
- *   Reference: https://github.dev/LedgerHQ/crypto-assets/blob/main/assets/partners/mercuryo/common.json
- */
 export const fetchAndMergeProviderData = async () => {
   try {
     const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
