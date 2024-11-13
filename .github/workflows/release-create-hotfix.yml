@@ -35,7 +35,7 @@ jobs:
           sparse-checkout: tools/actions/composites
 
       - name: Generate ref/tag version to use during main checkout
-        uses: ./tools/actions/composites/generate-tag
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -47,12 +47,12 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: enter prerelease mode
