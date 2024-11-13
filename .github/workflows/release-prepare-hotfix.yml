@@ -33,7 +33,8 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v4
+      - name: Checkout composite actions
+        uses: actions/checkout@v4
         with:
           ref: support/post-ghost-release-hotfix-workflow-TEST  # CHANGE THIS, TESTING ONLY
           sparse-checkout: tools/actions/composites
