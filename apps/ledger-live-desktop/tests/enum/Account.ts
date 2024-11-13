@@ -409,6 +409,13 @@ export class Account {
     1,
   );
 
+  static readonly ETH_USDC_1 = new Account(
+    Currency.ETH_USDC,
+    "Ethereum 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+    AccountType.ERC20,
+  );
+
   static readonly ETH_LIDO = new Account(
     Currency.ETH_LIDO,
     "Ethereum 1",
