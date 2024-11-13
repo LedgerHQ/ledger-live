@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "TransactionBroadcastError" : {
+      "title" : "交易广播失败",
+      "description" : "您的交易未能在 {{network}} 网络上广播。您的 {{coin}} 未转移，仍在您的账户中。",
+      "needHelp" : "需要帮助？",
+      "helpCenter" : {
+        "title" : "帮助中心",
+        "desc" : "如需帮助，请访问我们的帮助中心或通过小部件联系我们。",
+        "cta" : "获得帮助"
+      },
+      "technical" : {
+        "title" : "技术错误",
+        "cta" : "保存日志"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "抱歉，费用估算失败",
       "description" : "请尝试手动设置费用 (状态：{{status}})"
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。 ",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> 或 <cta2>{{cta2Label}}</cta2> {{assetName}} 到您的账户",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>、<cta2>{{cta2Label}}</cta2> 或 <cta3>{{cta3Label}}</cta3> {{assetName}} 到您的账户。",
+      "ctas" : {
+        "buy" : "买入",
+        "swap" : "互换",
+        "deposit" : "存款"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
@@ -2335,7 +2360,8 @@
       "swap" : "互换",
       "send" : "发送",
       "deposit" : "接收",
-      "stake" : "质押"
+      "stake" : "质押",
+      "yield" : "收益率"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2576,8 @@
         "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
         "description" : "Ledger Live 是一个开源平台。",
         "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
+        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
+        "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2618,7 @@
     "buy" : "买入",
     "walletconnect" : "WalletConnect",
     "stake" : "质押",
+    "yield" : "收益率",
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
@@ -2842,9 +2870,9 @@
       "developerMode" : "开发者模式",
       "developerModeDesc" : "在“我的 Ledger”中显示开发者应用程序并启用测试网应用程序。",
       "analytics" : "数据分析",
-      "analyticsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
+      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
       "personalizedRecommendations" : "个性化体验",
-      "personalizedRecommendationsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
+      "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {
         "title" : "分享数据分析",
         "desc" : "允许数据分析以帮助 Ledger 改善用户体验",
@@ -3109,6 +3137,14 @@
       "input" : "输入地址",
       "inputEns" : "请输入地址或 ENS"
     },
+    "memoTag" : {
+      "input" : "输入标签/备忘标签",
+      "title" : "不使用标签/备忘标签？",
+      "description" : "将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。",
+      "cta" : "添加标签",
+      "ignore" : "不添加标签",
+      "learnMore" : "详细了解“标签/备忘标签”"
+    },
     "send" : {
       "title" : "发送",
       "description" : "将加密货币发送到另一个钱包。"
@@ -3132,6 +3168,13 @@
       "shareAddress" : "分享地址",
       "addressCopied" : "地址已复制到剪贴板",
       "taprootWarning" : "确保发送方支持 taproot",
+      "memoTag" : {
+        "link" : "需要标签/备忘标签？",
+        "title" : "需要标签/备忘标签？",
+        "description" : "您可能需要有标签/备忘标签才能从交易所接收该笔资产。您可以使用任意数字组合，例如 1234。",
+        "cta" : "我了解",
+        "learnMore" : "详细了解标签"
+      },
       "selectCrypto" : {
         "title" : "选择您要接收的加密货币"
       },
@@ -3180,7 +3223,7 @@
         "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
         "sendWarning" : "仅从 {{network}} 网络发送代币。从其他网络发送可能会导致您的代币永久丢失。",
         "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励",
-        "bannerTitle" : "了解如何从交易所提取款项"
+        "bannerTitle" : "了解如何从交易所提取款项？"
       },
       "securityVerify" : {
         "title" : "核实地址对于保障交易安全至关重要",
@@ -4509,7 +4552,7 @@
       "tr" : "Türk",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4572,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5451,9 @@
     "AccountHeader" : {
       "title" : "您可以通过将您的账户委托出去，从而赚取奖励",
       "btn" : "赚取奖励"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ 添加自定义验证者"
     }
   },
   "tron" : {
@@ -6615,7 +6665,7 @@
     "title" : "连接设备"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
       "tagMinimum" : "需要 {{min}} ETH",
@@ -6644,10 +6694,76 @@
         },
         "kiln" : {
           "title" : "Kiln 单独质押",
-          "tag" : "需要 32 枚以太币",
+          "tag" : "需要 32 ETH",
           "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
           "supportLink" : "详细了解 Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "选择权益质押服务提供商",
+      "category" : {
+        "all" : {
+          "name" : "全部",
+          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+        },
+        "liquid" : {
+          "name" : "流动性质押",
+          "description" : "您可以质押以太币，获得流动代币奖励。您仍然可以进行交易，并参与 DeFi 活动。"
+        },
+        "protocol" : {
+          "name" : "协议",
+          "description" : "您可以一次质押 32 ETH，获得完整节点奖励的以太币。"
+        },
+        "pooling" : {
+          "name" : "大池质押",
+          "description" : "您可以加入一个质押池，质押任意数量的以太币并获得奖励。"
+        },
+        "restaking" : {
+          "name" : "再质押",
+          "description" : "您可以再质押您的流动代币，获得额外奖励。"
+        }
+      },
+      "howItWorks" : "以太币质押的运作方式",
+      "lst" : "需要流动代币",
+      "noMinimum" : "无最低限制",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 流动性再质押"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "需要了解的策略和战术",
+      "requiredMinimum" : "需要 {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自动以复利计算奖励",
+        "basic" : "奖励",
+        "daily" : "每日奖励",
+        "eigenlayer_points" : "Eigenlayer 积分",
+        "validator" : "验证者奖励"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6797,12 @@
         "subtitle" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容。",
         "content" : {
           "able" : {
-            "title" : "获得您的同意后，Ledger 将会跟踪有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
+            "title" : "获得您的同意后，Ledger 将会收集有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
             "diagAndUsage" : "衡量 Ledger Live 的性能，优化应用程序并提升您的体验（数据分析）。",
             "personnalizationData" : "为您提供根据您的偏好定制的个性化推荐及内容，帮助我们衡量营销活动的效果（个性化）。"
           },
           "unable" : {
-            "title" : "Ledger Live 绝不会跟踪以下相关信息：",
+            "title" : "Ledger Live 绝不会收集以下相关信息：",
             "adresses" : "您的资产。",
             "balance" : "您的资产组合。",
             "personnalInfos" : "您的个人身份信息（例如您的姓名或电子邮件地址）。"
@@ -6698,7 +6814,7 @@
           },
           "infoText" : {
             "info" : "您可以随时在应用程序设置中撤回您的同意。",
-            "link" : "详细了解我们的《跟踪政策》"
+            "link" : "详细了解我们如何处理您的数据"
           }
         }
       },
@@ -6884,7 +7000,8 @@
           "title" : "无效二维码",
           "desc" : "只需扫描 Ledger Live 上显示的二维码，即可同步 Ledger Live 应用程序。",
           "info" : "要查看二维码，请打开“设置”，选择“常规”，然后依次选择“Ledger Sync”、“开启同步”和“显示二维码”。",
-          "cta" : "我了解"
+          "cta" : "我了解",
+          "tryAgain" : "请重试"
         },
         "scannedOldQrCode" : {
           "title" : "需要更新 Ledger Live",
