@@ -8,14 +8,14 @@ import {
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
 import { expect } from "@playwright/test";
-import { Transaction } from "tests/models/Transaction";
+import { NFTTransaction, Transaction } from "tests/models/Transaction";
 import { Delegate } from "tests/models/Delegate";
 import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Currency } from "tests/enum/Currency";
 import { Swap } from "tests/models/Swap";
 import { extractNumberFromString } from "tests/utils/textParserUtils";
 import { sendBTCBasedCoin } from "tests/families/bitcoin";
-import { sendEVM } from "tests/families/evm";
+import { sendEVM, sendEvmNFT } from "tests/families/evm";
 import { sendPolkadot } from "tests/families/polkadot";
 import { sendAlgorand } from "tests/families/algorand";
 import { sendTron } from "tests/families/tron";
@@ -58,6 +58,18 @@ export class SpeculosPage extends AppPage {
     await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await pressBoth();
+  }
+
+  @step("Sign Send NFT Transaction")
+  async signSendNFTTransaction(tx: NFTTransaction) {
+    const currencyName = tx.accountToDebit.currency;
+    switch (currencyName) {
+      case Currency.ETH:
+        await sendEvmNFT(tx);
+        break;
+      default:
+        throw new Error(`Unsupported currency: ${currencyName}`);
+    }
   }
 
   @step("Sign Send Transaction")

@@ -41,4 +41,5 @@ export enum DeviceLabels {
   NEW_ORDINARY_TRANSACTION = "New ordinary transaction",
   SEND_TO_ADDRESS_2 = "Send to address (2/2)",
   CONFIRM_TRANSACTION = "Confirm transaction",
+  REVIEW_TRANSACTION = "Review transaction",
 }
