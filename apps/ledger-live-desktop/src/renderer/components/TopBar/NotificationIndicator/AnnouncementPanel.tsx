@@ -1,7 +1,6 @@
-import React, { useCallback, useRef, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { InView } from "react-intersection-observer";
 import { useDispatch } from "react-redux";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
@@ -16,6 +15,7 @@ import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import LogContentCardWrapper from "LLD/components/DynamicContent/LogContentCardWrapper";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -243,27 +243,7 @@ const Separator = styled.div`
 `;
 
 export function AnnouncementPanel() {
-  const { notificationsCards, logNotificationImpression, groupNotifications, onClickNotif } =
-    useNotifications();
-
-  const timeoutByUUID = useRef<Record<string, NodeJS.Timeout>>({});
-  const handleInViewNotif = useCallback(
-    (visible: boolean, uuid: keyof typeof timeoutByUUID.current) => {
-      const timeouts = timeoutByUUID.current;
-
-      if (notificationsCards.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
-        timeouts[uuid] = setTimeout(() => {
-          logNotificationImpression(uuid);
-          delete timeouts[uuid];
-        }, 2000);
-      }
-      if (!visible && timeouts[uuid]) {
-        clearTimeout(timeouts[uuid]);
-        delete timeouts[uuid];
-      }
-    },
-    [logNotificationImpression, notificationsCards],
-  );
+  const { notificationsCards, groupNotifications, onClickNotif } = useNotifications();
 
   const groups = useMemo(
     () => groupNotifications(notificationsCards),
@@ -305,12 +285,8 @@ export function AnnouncementPanel() {
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
             {group.data.map(({ title, description, path, url, viewed, id, cta }, index) => (
-              <React.Fragment key={id}>
-                <InView
-                  as="div"
-                  onChange={visible => handleInViewNotif(visible, id)}
-                  onClick={() => onClickNotif(group.data[index])}
-                >
+              <div key={id} onClick={() => onClickNotif(group.data[index])}>
+                <LogContentCardWrapper id={id}>
                   <Article
                     title={title}
                     text={description}
@@ -322,9 +298,9 @@ export function AnnouncementPanel() {
                       href: url || path || urls.ledger,
                     }}
                   />
-                </InView>
+                </LogContentCardWrapper>
                 {index < group.data.length - 1 ? <Separator /> : null}
-              </React.Fragment>
+              </div>
             ))}
           </React.Fragment>
         ))}
