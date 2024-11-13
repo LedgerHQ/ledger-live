@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import { Props } from "./types";
+import { ChevronArrow } from "./ChevronArrow";
 
 const Embla = styled.div`
   overflow: hidden;
@@ -15,6 +16,15 @@ const EmblaContainer = styled.div`
 const EmblaSlide = styled.div`
   flex: 0 0 100%;
   min-width: 0;
+`;
+
+const CarouselContainer = styled.div`
+  position: relative;
+
+  --hover-transition: 0;
+  &:hover {
+    --hover-transition: 1;
+  }
 `;
 
 /**
@@ -47,13 +57,22 @@ const Carousel = ({ children, variant = "default" }: Props) => {
 
   return (
     <div>
-      <Embla ref={emblaRef}>
-        <EmblaContainer>
-          {children.map(child => (
-            <EmblaSlide key={child.key}>{child}</EmblaSlide>
-          ))}
-        </EmblaContainer>
-      </Embla>
+      <CarouselContainer>
+        {variant === "default" && (
+          <>
+            <ChevronArrow direction="left" onClick={() => emblaApi?.scrollPrev()} />
+            <ChevronArrow direction="right" onClick={() => emblaApi?.scrollNext()} />
+          </>
+        )}
+
+        <Embla ref={emblaRef}>
+          <EmblaContainer>
+            {children.map(child => (
+              <EmblaSlide key={child.key}>{child}</EmblaSlide>
+            ))}
+          </EmblaContainer>
+        </Embla>
+      </CarouselContainer>
 
       <Footer
         children={children}
