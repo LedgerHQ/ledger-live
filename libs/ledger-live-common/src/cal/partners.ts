@@ -56,7 +56,6 @@ export function transformData(
   providersData.forEach(provider => {
     const key = provider.partner_id;
     transformed[key] = {
-      id: provider.id,
       name: provider.name,
       publicKey: {
         curve: provider.public_key_curve,
