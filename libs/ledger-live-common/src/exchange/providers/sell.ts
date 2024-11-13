@@ -37,12 +37,12 @@ export const fetchAndMergeProviderData = async () => {
 export const getSellProvider = async (
   providerId: string,
 ): Promise<ExchangeProviderNameAndSignature> => {
-  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
-    return testSellProvider;
-  }
   const res = await fetchAndMergeProviderData();
 
   if (!res) {
+    if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
+      return testSellProvider;
+    }
     throw new Error("Failed to fetch provider data");
   }
   const provider = res[providerId];
