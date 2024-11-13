@@ -7,10 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { track, TrackScreen } from "~/analytics";
-import { hideNftCollection } from "~/actions/settings";
+import { hideNftCollection, unwhitelistNftCollection } from "~/actions/settings";
 import { accountSelector } from "~/reducers/accounts";
 import { State } from "~/reducers/types";
 import QueuedDrawer from "../QueuedDrawer";
+import { whitelistedNftCollectionsSelector } from "~/reducers/settings";
 
 type Props = {
   nftId?: string;
@@ -24,6 +25,8 @@ const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Pr
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const whitelistedNftCollections = useSelector(whitelistedNftCollectionsSelector);
+
   const { accountId } = decodeNftId(nftId ?? "");
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId }),
@@ -35,10 +38,15 @@ const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Pr
       drawer: "Hide NFT Confirmation",
     });
 
-    dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
+    const collectionId = `${account?.id}|${nftContract}`;
+    if (whitelistedNftCollections.includes(collectionId)) {
+      dispatch(unwhitelistNftCollection(collectionId));
+    }
+
+    dispatch(hideNftCollection(collectionId));
     onClose();
     navigation.goBack();
-  }, [account?.id, dispatch, navigation, nftContract, onClose]);
+  }, [account?.id, dispatch, navigation, nftContract, onClose, whitelistedNftCollections]);
 
   const onPressClose = useCallback(() => {
     track("button_clicked", {

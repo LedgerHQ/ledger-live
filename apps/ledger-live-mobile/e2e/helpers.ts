@@ -151,7 +151,7 @@ export async function launchApp() {
     launchArgs: {
       wsPort: port,
       detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*"\\)',
     },
     languageAndLocale: {
       language: "en-US",

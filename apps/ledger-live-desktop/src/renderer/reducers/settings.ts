@@ -30,6 +30,7 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
 import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
+import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 
 /* Initial state */
 
@@ -82,6 +83,7 @@ export type SettingsState = {
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  whitelistedNftCollections: string[];
   hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -116,6 +118,10 @@ export type SettingsState = {
   starredMarketCoins: string[];
   hasSeenOrdinalsDiscoveryDrawer: boolean;
   hasProtectedOrdinalsAssets: boolean;
+  hasBeenUpsoldRecover: boolean;
+  hasBeenRedirectedToPostOnboarding: boolean;
+  onboardingUseCase: OnboardingUseCase | null;
+  lastOnboardedDevice: Device | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -182,6 +188,7 @@ export const INITIAL_STATE: SettingsState = {
   latestFirmware: null,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
+  whitelistedNftCollections: [],
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -211,6 +218,11 @@ export const INITIAL_STATE: SettingsState = {
 
   //Market
   starredMarketCoins: [],
+
+  hasBeenUpsoldRecover: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
+  hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
+  onboardingUseCase: null,
+  lastOnboardedDevice: null,
 };
 
 /* Handlers */
@@ -228,6 +240,8 @@ type HandlersPayloads = {
   BLACKLIST_TOKEN: string;
   UNHIDE_NFT_COLLECTION: string;
   HIDE_NFT_COLLECTION: string;
+  WHITELIST_NFT_COLLECTION: string;
+  UNWHITELIST_NFT_COLLECTION: string;
   UNHIDE_ORDINALS_ASSET: string;
   HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
@@ -271,6 +285,11 @@ type HandlersPayloads = {
   MARKET_REMOVE_STARRED_COINS: string;
   SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: boolean;
   SET_HAS_PROTECTED_ORDINALS_ASSETS: boolean;
+
+  SET_HAS_BEEN_UPSOLD_RECOVER: boolean;
+  SET_ONBOARDING_USE_CASE: OnboardingUseCase;
+  SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
+  SET_LAST_ONBOARDED_DEVICE: Device | null;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -334,9 +353,25 @@ const handlers: SettingsHandlers = {
     const collections = state.hiddenNftCollections;
     return {
       ...state,
-      hiddenNftCollections: [...collections, collectionId],
+      hiddenNftCollections: [...new Set(collections.concat(collectionId))],
     };
   },
+
+  UNWHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
+    const ids = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: ids.filter(id => id !== collectionId),
+    };
+  },
+  WHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
+    const collections = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: [...new Set(collections.concat(collectionId))],
+    };
+  },
+
   UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
     const ids = state.hiddenOrdinalsAsset;
     return {
@@ -488,6 +523,22 @@ const handlers: SettingsHandlers = {
   SET_HAS_PROTECTED_ORDINALS_ASSETS: (state: SettingsState, { payload }) => ({
     ...state,
     hasProtectedOrdinalsAssets: payload,
+  }),
+  SET_HAS_BEEN_UPSOLD_RECOVER: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasBeenUpsoldRecover: payload,
+  }),
+  SET_ONBOARDING_USE_CASE: (state: SettingsState, { payload }) => ({
+    ...state,
+    onboardingUseCase: payload,
+  }),
+  SET_HAS_REDIRECTED_TO_POST_ONBOARDING: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasBeenRedirectedToPostOnboarding: payload,
+  }),
+  SET_LAST_ONBOARDED_DEVICE: (state: SettingsState, { payload }) => ({
+    ...state,
+    lastOnboardedDevice: payload,
   }),
 };
 
@@ -761,6 +812,8 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
+export const whitelistedNftCollectionsSelector = (state: State) =>
+  state.settings.whitelistedNftCollections;
 export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
@@ -834,3 +887,8 @@ export const hasSeenOrdinalsDiscoveryDrawerSelector = (state: State) =>
   state.settings.hasSeenOrdinalsDiscoveryDrawer;
 export const hasProtectedOrdinalsAssetsSelector = (state: State) =>
   state.settings.hasProtectedOrdinalsAssets;
+export const hasBeenUpsoldRecoverSelector = (state: State) => state.settings.hasBeenUpsoldRecover;
+export const onboardingUseCaseSelector = (state: State) => state.settings.onboardingUseCase;
+export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
+  state.settings.hasBeenRedirectedToPostOnboarding;
+export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;

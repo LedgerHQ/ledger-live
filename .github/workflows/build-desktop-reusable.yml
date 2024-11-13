@@ -19,10 +19,6 @@ on:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
-      prNumber:
-        description: PR number
-        type: string
-        required: false
 
 permissions:
   id-token: write
@@ -155,11 +151,11 @@ jobs:
             return JSON.stringify(obj);
 
       - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !cancelled() && inputs.prNumber != '' }}
+        if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ inputs.prNumber }}
+          prNumber: ${{ github.event.number}}
           mode: desktop
 
       - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop

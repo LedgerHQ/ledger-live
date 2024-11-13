@@ -1,5 +1,33 @@
 # @ledgerhq/hw-app-eth
 
+## 6.41.0
+
+### Minor Changes
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Refactoring of transaction decoding and fix EIP-155 applied incorrectly for legacy transactions (type 0). The `v` can now be used as is, representing either the EIP-155 value or the parity (0/1) for transactions using EIP-2718. Ethers full library has now also been removes from dependencies to decrease install and bundle sizes.
+
+### Patch Changes
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/types-live@6.53.0
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2
+  - @ledgerhq/domain-service@1.2.11
+
+## 6.41.0-next.0
+
+### Minor Changes
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Refactoring of transaction decoding and fix EIP-155 applied incorrectly for legacy transactions (type 0). The `v` can now be used as is, representing either the EIP-155 value or the parity (0/1) for transactions using EIP-2718. Ethers full library has now also been removes from dependencies to decrease install and bundle sizes.
+
+### Patch Changes
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`35d6de2`](https://github.com/LedgerHQ/ledger-live/commit/35d6de2ace269f30fc39a3f022673a82d0c48193), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/types-live@6.53.0-next.0
+  - @ledgerhq/evm-tools@1.3.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2-next.0
+  - @ledgerhq/domain-service@1.2.11-next.0
+
 ## 6.40.3
 
 ### Patch Changes

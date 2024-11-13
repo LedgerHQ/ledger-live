@@ -1,15 +1,7 @@
 import React from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen, act } from "tests/testUtils";
+import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { WalletSyncTestApp, simpleTrustChain, walletSyncActivatedState } from "./shared";
-
-jest.mock("../hooks/useQRCode", () => ({
-  useQRCode: () => ({
-    startQRCodeProcessing: () => jest.fn(),
-    url: "https://ledger.com",
-    error: null,
-    isLoading: false,
-  }),
-}));
 
 jest.mock("../hooks/useGetMembers", () => ({
   useGetMembers: () => ({
@@ -20,61 +12,59 @@ jest.mock("../hooks/useGetMembers", () => ({
   }),
 }));
 
-const openDrawer = async () => {
-  const { user } = render(<WalletSyncTestApp />, {
-    initialState: {
-      walletSync: walletSyncActivatedState,
-      trustchain: {
-        trustchain: simpleTrustChain,
-        memberCredentials: {
-          pubkey: "pubkey",
-          privatekey: "privatekey",
-        },
-      },
-    },
-  });
-  const button = screen.getByRole("button", { name: "Manage" });
+jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
+  createQRCodeHostInstance: jest.fn(),
+}));
 
-  return {
-    button,
-    user,
-  };
-};
+jest.useFakeTimers({ advanceTimers: true });
 
 describe("Synchronize flow", () => {
   it("should open drawer and should do Synchronize flow with QRCode", async () => {
-    const { button, user } = await openDrawer();
-    await user.click(button);
+    let resolveQRCodeFlowPromise: unknown = null;
+    let requestDisplayDigits: unknown = null;
+    const mockPromiseQRCodeCandidate = new Promise(resolve => {
+      resolveQRCodeFlowPromise = resolve;
+    });
+    (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayDigits }) => {
+      requestDisplayDigits = onDisplayDigits;
+      return mockPromiseQRCodeCandidate;
+    });
 
-    const row = await screen.findByTestId("walletSync-synchronize");
+    const { user } = render(<WalletSyncTestApp />, {
+      initialState: {
+        walletSync: walletSyncActivatedState,
+        trustchain: {
+          trustchain: simpleTrustChain,
+          memberCredentials: {
+            pubkey: "pubkey",
+            privatekey: "privatekey",
+          },
+        },
+      },
+    });
 
-    await user.click(row);
+    await user.click(screen.getByRole("button", { name: "Manage" }));
 
-    // QRCode Page
-    expect(
-      await screen.findByText(/Sync with the Ledger Live app on another phone/i),
-    ).toBeDefined();
+    await user.click(await screen.findByTestId("walletSync-synchronize"));
 
-    //TODO: Fix this test
-    //PinCode Page after scanning QRCode
-    // Need to wait 3 seconds to simulate the time taken to scan the QR code
-    // setTimeout(async () => {
-    //   await waitFor(() => {
-    //     screen.debug();
-    //     expect(screen.getByText("Your Ledger Sync code")).toBeDefined();
-    //   });
-    // }, 3000);
+    await screen.findByText(/sync with the ledger live app on another phone/i);
 
-    // //Succes Page after PinCode
-    // setTimeout(async () => {
-    //   await waitFor(() => {
-    //     screen.debug();
-    //     expect(
-    //       screen.getByText(
-    //         "Changes in your crypto accounts will now automatically appear across Ledger Live apps on synched phones and computers.",
-    //       ),
-    //     ).toBeDefined();
-    //   });
-    // }, 3000);
+    act(() => {
+      if (typeof requestDisplayDigits === "function") requestDisplayDigits("321");
+    });
+
+    expect(await screen.findByTestId(/pin-code-digit-0/i)).toHaveTextContent("3");
+    expect(await screen.findByTestId(/pin-code-digit-1/i)).toHaveTextContent("2");
+    expect(await screen.findByTestId(/pin-code-digit-2/i)).toHaveTextContent("1");
+
+    if (typeof resolveQRCodeFlowPromise === "function") resolveQRCodeFlowPromise();
+
+    expect(await screen.findByText(/Hang tight.../i)).toBeDefined();
+
+    await act(async () => {
+      jest.advanceTimersByTime(3 * 1000);
+    });
+
+    expect(await screen.findByText(/sync successful!/i)).toBeDefined();
   });
 });

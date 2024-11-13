@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { from, of, Observable } from "rxjs";
+import { from, of, Observable, Subscription } from "rxjs";
 import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -7,10 +7,15 @@ import { initState, reducer, runAll, getActionPlan } from "@ledgerhq/live-common
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import type { AppOp } from "@ledgerhq/live-common/apps/types";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 
 const prettyActionPlan = (ops: AppOp[]) =>
   ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
+
+export type AppsUpdateTestAllJobOpts = DeviceCommonOpts &
+  Partial<{
+    index: number;
+  }>;
 
 export default {
   description: "test script to install and uninstall all apps",
@@ -21,13 +26,7 @@ export default {
       type: Number,
     },
   ],
-  job: ({
-    device,
-    index,
-  }: Partial<{
-    device: string;
-    index: number;
-  }>) =>
+  job: ({ device, index }: AppsUpdateTestAllJobOpts) =>
     withDevice(device || "")(t => {
       const exec = execWithTransport(t);
       // $FlowFixMe
@@ -40,7 +39,7 @@ export default {
               map((e: any) => e.result),
               mergeMap(listAppsResult => {
                 return listAppsResult.appsListNames.slice(index || 0).reduce(
-                  ($state, name) =>
+                  ($state: any, name: string) =>
                     $state.pipe(
                       mergeMap((s: any) => {
                         if (s.currentError) {
@@ -57,7 +56,7 @@ export default {
                         console.log(
                           "on device: " +
                             s.installed
-                              .map(i => i.name + (!i.updated ? " (outdated)" : ""))
+                              .map((i: any) => i.name + (!i.updated ? " (outdated)" : ""))
                               .join(", "),
                         );
                         s = reducer(s, {
@@ -81,7 +80,7 @@ export default {
                       }),
                       mergeMap(state =>
                         new Observable(o => {
-                          let sub;
+                          let sub: Subscription;
                           const timeout = setTimeout(() => {
                             sub = listAppsUseCase(t, deviceInfo).subscribe(o);
                           }, 4000);
@@ -93,7 +92,7 @@ export default {
                           filter((e: any) => e.type === "result"),
                           map(e => e.result),
                           map(results => {
-                            const app = results.installed.find(a => a.name === name);
+                            const app = results.installed.find((a: any) => a.name === name);
 
                             if (!app) {
                               throw new Error(

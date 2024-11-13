@@ -77,11 +77,11 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
         id: update-snapshots
         with:
-          os: ubuntu-latest
+          os: ubuntu-22.04
 
   report-start:
     name: Report start
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: inputs.commentId != ''
     steps:
       - name: generate token
@@ -115,7 +115,7 @@ jobs:
     needs: ["generate-screenshots-linux", "report-start"]
     if: ${{ !cancelled() }}
     name: Report end
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-22.04
     steps:
       - name: generate token
         id: generate-token

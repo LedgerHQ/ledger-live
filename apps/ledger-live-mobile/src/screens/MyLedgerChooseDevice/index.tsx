@@ -22,6 +22,7 @@ import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/type
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
+import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerChooseDevice>
@@ -45,6 +46,15 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
+
+  /**
+   * FIXME:
+   * This is here because for now the Recover upsell redirect to this screen (My Ledger)
+   * via a deeplink, and after the Recover upsell, we are supposed to automatically redirect
+   * to the post-onboarding hub.
+   * When the Recover webpage is fixed to only redirect to the Portfolio screen, this can be removed.
+   */
+  useAutoRedirectToPostOnboarding();
 
   const onSelectDevice = (device?: Device) => {
     if (device)

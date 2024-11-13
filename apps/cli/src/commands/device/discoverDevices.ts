@@ -2,6 +2,8 @@ import { map, tap, scan as rxScan } from "rxjs/operators";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import type { DeviceEvent } from "@ledgerhq/live-common/hw/index";
 
+export type DiscoverDevicesJobOpts = Partial<{ module: string; interactive: boolean }>;
+
 export default {
   args: [
     {
@@ -17,13 +19,7 @@ export default {
       desc: "interactive mode that accumulate the events instead of showing them",
     },
   ],
-  job: ({
-    module,
-    interactive,
-  }: Partial<{
-    module: string;
-    interactive: boolean;
-  }>) => {
+  job: ({ module, interactive }: DiscoverDevicesJobOpts) => {
     const events = discoverDevices(m => (!module ? true : module.split(",").includes(m.id)));
     if (!interactive) return events;
     return events

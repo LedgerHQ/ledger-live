@@ -218,6 +218,12 @@ export const hideNftCollection = (collectionId: string) => ({
   type: "HIDE_NFT_COLLECTION",
   payload: collectionId,
 });
+
+export const whitelistNftCollection = (collectionId: string) => ({
+  type: "WHITELIST_NFT_COLLECTION",
+  payload: collectionId,
+});
+
 export const hideOrdinalsAsset = (inscriptionId: string) => ({
   type: "HIDE_ORDINALS_ASSET",
   payload: inscriptionId,
@@ -250,6 +256,10 @@ export const showToken = (tokenId: string) => ({
 });
 export const unhideNftCollection = (collectionId: string) => ({
   type: "UNHIDE_NFT_COLLECTION",
+  payload: collectionId,
+});
+export const unwhitelistNftCollection = (collectionId: string) => ({
+  type: "UNWHITELIST_NFT_COLLECTION",
   payload: collectionId,
 });
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({
@@ -405,5 +415,25 @@ export const setHasSeenOrdinalsDiscoveryDrawer = (payload: boolean) => ({
 
 export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
   type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
+  payload,
+});
+
+export const setHasBeenUpsoldRecover = (payload: boolean) => ({
+  type: "SET_HAS_BEEN_UPSOLD_RECOVER",
+  payload,
+});
+
+export const setOnboardingUseCase = (payload: Settings["onboardingUseCase"]) => ({
+  type: "SET_ONBOARDING_USE_CASE",
+  payload,
+});
+
+export const setHasRedirectedToPostOnboarding = (payload: boolean) => ({
+  type: "SET_HAS_REDIRECTED_TO_POST_ONBOARDING",
+  payload,
+});
+
+export const setLastOnboardedDevice = (payload: Device | null) => ({
+  type: "SET_LAST_ONBOARDED_DEVICE",
   payload,
 });

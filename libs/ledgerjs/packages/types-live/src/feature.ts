@@ -121,6 +121,9 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
 };
 
 /**
@@ -193,6 +196,8 @@ export type Features = CurrencyFeatures & {
   spamFilteringTx: Feature_SpamFilteringTx;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
+  ldmkTransport: Feature_LdmkTransport;
+  recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
 };
 
 /**
@@ -402,6 +407,10 @@ export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   project: string;
 }>;
 
+export type Feature_LdmkTransport = Feature<{
+  warningVisible: boolean;
+}>;
+
 export type Feature_NpsRatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
@@ -549,6 +558,7 @@ export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
+export type Feature_RecoverUpsellRedirection = DefaultFeature;
 
 /**
  * Utils types.

@@ -174,11 +174,15 @@ test("Market", async ({ page }) => {
 
   await test.step("go to bitcoin page", async () => {
     await marketPage.openCoinPage("btc");
+    await page.getByTestId("chart-container").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("market-btc-page.png", {
       mask: [
         page.getByTestId("chart-container"),
         page.getByTestId("market-price-delta"),
         page.getByTestId("market-price"),
+        page.getByTestId("market-price-stats-price"),
+        page.getByTestId("market-price-stats-variation"),
+        page.getByTestId("market-cap"),
       ],
     });
   });

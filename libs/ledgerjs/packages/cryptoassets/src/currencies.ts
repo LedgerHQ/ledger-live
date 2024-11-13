@@ -4222,6 +4222,72 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  etherlink: {
+    type: "CryptoCurrency",
+    id: "etherlink",
+    coinType: CoinType.ETH,
+    name: "Etherlink",
+    managerAppName: "Ethereum",
+    ticker: "XTZ",
+    scheme: "etherlink",
+    color: "#38FF9C",
+    family: "evm",
+    units: ethereumUnits("XTZ", "XTZ"),
+    ethereumLikeInfo: {
+      chainId: 42793,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.etherlink.com/tx/$hash",
+        address: "https://explorer.etherlink.com/address/$address",
+        token: "https://explorer.etherlink.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  zksync: {
+    type: "CryptoCurrency",
+    id: "zksync",
+    coinType: CoinType.ETH,
+    name: "ZKsync",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "zksync",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 324,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.zksync.io/tx/$hash",
+        address: "https://explorer.zksync.io/address/$address",
+        token: "https://explorer.zksync.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  zksync_sepolia: {
+    type: "CryptoCurrency",
+    id: "zksync_sepolia",
+    coinType: CoinType.ETH,
+    name: "ZKsync Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "zksync_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    ethereumLikeInfo: {
+      chainId: 300,
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia-era.zksync.network/tx/$hash",
+        address: "https://sepolia-era.zksync.network/address/$address",
+        token: "https://sepolia-era.zksync.network/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {
@@ -4253,25 +4319,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  etherlink: {
+  mantra: {
     type: "CryptoCurrency",
-    id: "etherlink",
-    coinType: CoinType.ETH,
-    name: "Etherlink",
-    managerAppName: "Ethereum",
-    ticker: "XTZ",
-    scheme: "etherlink",
-    color: "#38FF9C",
-    family: "evm",
-    units: ethereumUnits("XTZ", "XTZ"),
-    ethereumLikeInfo: {
-      chainId: 42793,
-    },
+    id: "mantra",
+    coinType: CoinType.ATOM,
+    name: "Mantra",
+    managerAppName: "Cosmos",
+    ticker: "OM",
+    scheme: "mantra",
+    color: "#ffb386",
+    family: "cosmos",
+    units: [
+      {
+        name: "Mantra",
+        code: "OM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Mantra",
+        code: "uom",
+        magnitude: 0,
+      },
+    ],
     explorerViews: [
       {
-        tx: "https://explorer.etherlink.com/tx/$hash",
-        address: "https://explorer.etherlink.com/address/$address",
-        token: "https://explorer.etherlink.com/token/$contractAddress?a=$address",
+        tx: "https://www.mintscan.io/mantra/txs/$hash",
+        address: "https://www.mintscan.io/mantra/validators/$address",
       },
     ],
   },

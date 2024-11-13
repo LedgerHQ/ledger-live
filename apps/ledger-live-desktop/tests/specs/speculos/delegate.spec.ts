@@ -3,6 +3,7 @@ import { Account } from "../../enum/Account";
 import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { commandCLI } from "tests/utils/cliUtils";
 
 const e2eDelegationAccounts = [
   {
@@ -52,7 +53,15 @@ for (const account of e2eDelegationAccounts) {
       userdata: "skip-onboarding",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${account.delegate.account.currency.ticker} --index ${account.delegate.account.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: account.delegate.account.currency.ticker,
+            index: account.delegate.account.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -99,7 +108,15 @@ for (const validator of validators) {
       userdata: "skip-onboarding",
       speculosApp: validator.delegate.account.currency.speculosApp,
       cliCommands: [
-        `liveData --currency ${validator.delegate.account.currency.ticker} --index ${validator.delegate.account.index} --add`,
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: validator.delegate.account.currency.ticker,
+            index: validator.delegate.account.index,
+            add: true,
+            appjson: "",
+          },
+        },
       ],
     });
 
@@ -134,7 +151,15 @@ test.describe("Staking flow from different entry point", () => {
     userdata: "skip-onboarding",
     speculosApp: delegateAccount.account.currency.speculosApp,
     cliCommands: [
-      `liveData --currency ${delegateAccount.account.currency.ticker} --index ${delegateAccount.account.index} --add`,
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: delegateAccount.account.currency.ticker,
+          index: delegateAccount.account.index,
+          add: true,
+          appjson: "",
+        },
+      },
     ],
   });
 

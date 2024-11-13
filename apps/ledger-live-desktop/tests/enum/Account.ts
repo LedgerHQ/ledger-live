@@ -13,7 +13,7 @@ export class Account {
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
-    "bc1qm6tw2c0u842qjs7g2n2c7ulh76f6xn4sk0dsyt",
+    "bc1qm4mm7usmutz9sryheuytjpzj0yuy83pkg49qzk",
     undefined,
     0,
   );
@@ -218,6 +218,14 @@ export class Account {
     1,
   );
 
+  static readonly TRX_3 = new Account(
+    Currency.TRX,
+    "Tron 3",
+    "TWBAMUMc69Z82zJtXh1TqdPyWv7PNyud6p",
+    undefined,
+    2,
+  );
+
   static readonly XRP_1 = new Account(
     Currency.XRP,
     "XRP 1",
@@ -234,10 +242,18 @@ export class Account {
     1,
   );
 
+  static readonly XRP_3 = new Account(
+    Currency.XRP,
+    "XRP 3",
+    "rn2Z2yShWcvdTSQVo1EqjUpD1sjwBkZALb",
+    undefined,
+    2,
+  );
+
   static readonly ADA_1 = new Account(
     Currency.ADA,
     "Cardano 1",
-    "  addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
+    "addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
     undefined,
     0,
   );
@@ -336,12 +352,21 @@ export class Account {
     undefined,
     1,
   );
+
   static readonly POL_1 = new Account(
     Currency.POL,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
     undefined,
     0,
+  );
+
+  static readonly POL_2 = new Account(
+    Currency.POL,
+    "Polygon 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+    undefined,
+    1,
   );
 
   static readonly BSC_1 = new Account(
@@ -428,7 +453,7 @@ export class Account {
     Currency.TRX_USDT,
     "Tron 1",
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
-    AccountType.TRC20,
+    undefined,
     0,
   );
 

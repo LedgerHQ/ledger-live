@@ -218,4 +218,11 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },
   updateLedgerLive: "https://support.ledger.com/article/4410960111889-zd",
+
+  // Node errors
+  txBroadcastErrors: {
+    badTxns: "https://support.ledger.com/article/5129526865821-zd",
+    blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
+    txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
+  },
 };

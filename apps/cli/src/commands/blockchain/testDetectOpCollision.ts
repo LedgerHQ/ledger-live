@@ -7,10 +7,13 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { Account } from "@ledgerhq/types-live";
+
+export type TestDetectOpCollisionJobOpts = ScanCommonOpts;
+
 export default {
   description: "Detect operation collisions",
   args: [...scanCommonOpts],
-  job: (opts: ScanCommonOpts) =>
+  job: (opts: TestDetectOpCollisionJobOpts) =>
     scan(opts).pipe(
       reduce((all: Account[], a) => all.concat(a), []),
       concatMap(accounts => {

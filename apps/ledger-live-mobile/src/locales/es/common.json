@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
+    "TransactionBroadcastError" : {
+      "title" : "La transmisión de transacción ha fallado",
+      "description" : "Tu transacción no se ha transmitido a la red {{network}}. Tu {{coin}} no se ha transferido y sigue en tu cuenta.",
+      "needHelp" : "¿Necesitas ayuda?",
+      "helpCenter" : {
+        "title" : "Centro de ayuda",
+        "desc" : "Visita nuestro Centro de ayuda o contacta con nosotros mediante el widget si necesitas ayuda.",
+        "cta" : "Obtener ayuda"
+      },
+      "technical" : {
+        "title" : "Error técnico",
+        "cta" : "Guardar registros"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "El cálculo de tarifas ha fallado",
       "description" : "Intenta configurar la tarifa manualmente (estado: {{status}})."
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Tu saldo disponible (no puesto en participación) es de {{currentBalance}}. Esta cantidad no es suficiente para pagar las tarifas de red necesarias para retirar tu {{assetName}} de la puesta en participación. ",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} en tu cuenta.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> o <cta2>{{cta2Label}}</cta2> {{assetName}} en tu cuenta.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> o <cta3>{{cta3Label}}</cta3> {{assetName}} en tu cuenta.",
+      "ctas" : {
+        "buy" : "Comprar",
+        "swap" : "Permutar",
+        "deposit" : "Depositar"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Modifica el importe o verifica el saldo.",
@@ -2335,7 +2360,8 @@
       "swap" : "Permutar",
       "send" : "Enviar",
       "deposit" : "Recibir",
-      "stake" : "Participar"
+      "stake" : "Participar",
+      "yield" : "Rendimiento"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2576,8 @@
         "subTitle" : "La integración con {{family}} ha sido realizada por el equipo {{team}}",
         "description" : "Ledger Live es una plataforma de código abierto.",
         "description2" : "Los desarrolladores de todo el mundo pueden integrar con Ledger Live",
-        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger"
+        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
+        "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2618,7 @@
     "buy" : "Comprar",
     "walletconnect" : "WalletConnect",
     "stake" : "Participar",
+    "yield" : "Rendimiento",
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
@@ -2842,9 +2870,9 @@
       "developerMode" : "Modo de desarrollador",
       "developerModeDesc" : "Muestra las aplicaciones de desarrollador en Mi Ledger y habilita las aplicaciones Testnet.",
       "analytics" : "Análisis",
-      "analyticsDesc" : "Permite que Ledger rastree los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia.",
+      "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia.",
       "personalizedRecommendations" : "Experiencia personalizada",
-      "personalizedRecommendationsDesc" : "Permite que la aplicación de Ledger rastree los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
+      "personalizedRecommendationsDesc" : "Permite que la aplicación de Ledger recopile los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
       "analyticsModal" : {
         "title" : "Compartir análisis",
         "desc" : "Habilita los análisis para ayudar a Ledger a mejorar la experiencia de usuario",
@@ -3109,6 +3137,14 @@
       "input" : "Ingresar dirección",
       "inputEns" : "Ingresa la dirección o el ENS"
     },
+    "memoTag" : {
+      "input" : "Escribir nota/memo",
+      "title" : "¿No vas a usar una nota/memo?",
+      "description" : "Tus fondos se perderán si no agregas una nota/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+      "cta" : "Agregar etiqueta",
+      "ignore" : "No agregar etiqueta",
+      "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
+    },
     "send" : {
       "title" : "Enviar",
       "description" : "Envía cripto a otra billetera."
@@ -3132,6 +3168,13 @@
       "shareAddress" : "Compartir dirección",
       "addressCopied" : "Dirección copiada en el portapapeles",
       "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
+      "memoTag" : {
+        "link" : "¿Necesitas una etiqueta o memo?",
+        "title" : "¿Necesitas una etiqueta o memo?",
+        "description" : "Puede que necesites una etiqueta o memo para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234.",
+        "cta" : "Entiendo",
+        "learnMore" : "Obtén más información acerca de las etiquetas"
+      },
       "selectCrypto" : {
         "title" : "Elige la cripto que quieres recibir"
       },
@@ -3180,7 +3223,7 @@
         "adviceVerify" : "Siempre recomendamos verificar la dirección con el dispositivo Ledger.",
         "sendWarning" : "Envía únicamente tokens desde la red {{network}}. El envío desde otra red puede suponer la pérdida permanente de tus tokens.",
         "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación",
-        "bannerTitle" : "Descubre cómo retirar fondos de un exchange"
+        "bannerTitle" : "¿Quieres aprender a retirar activos de exchanges?"
       },
       "securityVerify" : {
         "title" : "La verificación de la dirección es fundamental para garantizar la seguridad de esta transacción",
@@ -4509,7 +4552,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4528,8 +4571,12 @@
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
-      "french" : "Français",
-      "spanish" : "Español"
+      "french" : "Francés",
+      "spanish" : "Español",
+      "german" : "Alemán",
+      "brazilian" : "Português (Br)",
+      "russian" : "Ruso",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5451,9 @@
     "AccountHeader" : {
       "title" : "Puedes recibir recompensas delegando tu cuenta",
       "btn" : "Recibir recompensas"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ Agregar validador personalizado"
     }
   },
   "tron" : {
@@ -6615,7 +6665,7 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
       "tagMinimum" : "Requiere {{min}} ETH",
@@ -6633,7 +6683,7 @@
         },
         "lido" : {
           "title" : "Lido",
-          "description" : "Pon en participación cualquier cantidad de ETH para obtener liquidez inmediata y recompensas diarias.",
+          "description" : "Pon en participación cualquier monto de ETH para obtener liquidez inmediata y recompensas diarias.",
           "supportLink" : "Obtén más información acerca de Lido"
         },
         "figment" : {
@@ -6648,6 +6698,72 @@
           "description" : "Pon en participación más de 32 ETH en validadores exclusivos y reclama tus recompensas fácilmente.",
           "supportLink" : "Más información sobre Kiln"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Seleccionar proveedor de puesta en participación",
+      "category" : {
+        "all" : {
+          "name" : "Todo",
+          "description" : "Todos los proveedores de puesta en participación de Ethereum disponibles en Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Líquido",
+          "description" : "Puedes poner ETH en participación y recibir tokens líquidos como recompensa. Seguirás pudiendo operar y realizar actividades de DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocolo",
+          "description" : "Puedes poner en participación un lote de 32 ETH y recibir recompensas por nodo completo en ETH."
+        },
+        "pooling" : {
+          "name" : "Agrupación en pools",
+          "description" : "Puedes unirte a un pool para poner en participación la cantidad de ETH que quieras y recibir recompensas."
+        },
+        "restaking" : {
+          "name" : "Volver a poner en participación",
+          "description" : "Puedes volver a poner en participación tus tokens líquidos para recibir recompensas adicionales."
+        }
+      },
+      "howItWorks" : "Cómo funciona la puesta en participación de ETH",
+      "lst" : "Tokens líquidos requeridos",
+      "noMinimum" : "Sin mínimos",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Pool de puesta en participación de Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Volver a poner en participación Kiln Liquid"
+        },
+        "kiln" : {
+          "title" : "Puesta en participación dedicada de Kiln"
+        },
+        "kelpdao" : {
+          "title" : "DAO Kelp"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Estrategias y tácticas que debes saber",
+      "requiredMinimum" : "Requiere {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Recompensas con interés compuesto automático",
+        "basic" : "Recompensas",
+        "daily" : "Recompensas diarias",
+        "eigenlayer_points" : "Puntos de Eigenlayer",
+        "validator" : "Recompensas para validadores"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6797,12 @@
         "subtitle" : "Al compartir tus datos de Ledger Live, nos ayudas a conocer tus preferencias y mostrarte contenido relevante para ti.",
         "content" : {
           "able" : {
-            "title" : "Con tu consentimiento, Ledger podrá hacer un seguimiento de los datos sobre cómo usas Ledger Live (incluidas las visitas a páginas y los clics):",
+            "title" : "Con tu consentimiento, Ledger podrá recopilar datos sobre cómo usas Ledger Live (incluidas las visitas a páginas y los clics):",
             "diagAndUsage" : "Para medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia (Análisis).",
             "personnalizationData" : "Para proporcionarte recomendaciones personalizadas y contenido adaptado a tus preferencias y también para ayudarnos a medir la eficacia de nuestras campañas de marketing (Personalización)."
           },
           "unable" : {
-            "title" : "Ledger nunca recopilará información relativa a lo siguiente:",
+            "title" : "Ledger Live nunca recopilará información relativa a lo siguiente:",
             "adresses" : "Tus activos.",
             "balance" : "Tu portfolio.",
             "personnalInfos" : "Tu información personal (como tu nombre o tu dirección de correo electrónico)."
@@ -6698,7 +6814,7 @@
           },
           "infoText" : {
             "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-            "link" : "Más información sobre nuestra Política de seguimiento"
+            "link" : "Obtén más información sobre cómo gestionamos tus datos"
           }
         }
       },
@@ -6884,7 +7000,8 @@
           "title" : "Código QR no válido",
           "desc" : "Escanea solo el código QR mostrado en Ledger Live para sincronizar tus aplicaciones Ledger Live.",
           "info" : "Para obtener el código QR, abre “Ajustes”, selecciona “General” y, a continuación, selecciona “Ledger Sync”, “Activar Sync” y “Mostrar QR”.",
-          "cta" : "Entiendo"
+          "cta" : "Entiendo",
+          "tryAgain" : "Inténtalo de nuevo"
         },
         "scannedOldQrCode" : {
           "title" : "Es necesario actualizar Ledger Live",

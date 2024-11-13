@@ -5,7 +5,8 @@ import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
   let module: Api;
-  const address = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB";
+  const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
+  const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
   const xrpPubKey = process.env["PUB_KEY"]!;
   const xrpSecretKey = process.env["SECRET_KEY"]!;
 
@@ -16,7 +17,6 @@ describe("Xrp Api", () => {
   describe("estimateFees", () => {
     it("returns a default value", async () => {
       // Given
-      const address = "rDCyjRD2TcSSGUQpEcEhJGmDWfjPJpuGxu";
       const amount = BigInt(100);
 
       // When
@@ -56,12 +56,20 @@ describe("Xrp Api", () => {
   });
 
   describe("getBalance", () => {
-    it("returns a list regarding address parameter", async () => {
+    it("returns an amount above 0 when address has transactions", async () => {
       // When
       const result = await module.getBalance(address);
 
       // Then
-      expect(result).toBeGreaterThan(0);
+      expect(result).toBeGreaterThan(BigInt(0));
+    });
+
+    it("returns 0 when address has no transaction", async () => {
+      // When
+      const result = await module.getBalance(emptyAddress);
+
+      // Then
+      expect(result).toBe(BigInt(0));
     });
   });
 
@@ -76,14 +84,16 @@ describe("Xrp Api", () => {
       });
 
       // Then
-      expect(result.slice(0, 34)).toEqual("120000228000000024001BCDA6201B001F");
+      expect(result.slice(0, 34)).toEqual("1200002280000000240002588F201B001D");
       expect(result.slice(38)).toEqual(
-        "61400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
+        "61400000000000000A68400000000000000181142A6ADC782DAFDDB464E434B684F01416B8A33B208314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
       );
     });
   });
 
-  describe("combine", () => {
+  // To enable this test, you need to fill an `.env` file at the root of this package. Example can be found in `.env.integ.test.example`.
+  // The value hardcoded here depends on the value filled in the `.env` file.
+  describe.skip("combine", () => {
     it("returns a signed raw transaction", async () => {
       // Given
       const rawTx =

@@ -14,7 +14,7 @@ jobs:
     outputs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -65,7 +65,7 @@ jobs:
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
-          pnpm add -g node-gyp
+          pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build

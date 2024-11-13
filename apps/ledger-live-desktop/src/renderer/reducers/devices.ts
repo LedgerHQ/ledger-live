@@ -22,7 +22,6 @@ type HandlersPayloads = {
   RESET_DEVICES: never;
   ADD_DEVICE: Device;
   REMOVE_DEVICE: Device;
-  SET_CURRENT_DEVICE: Device;
 };
 type DevicesHandlers<PreciseKey = true> = Handlers<DevicesState, HandlersPayloads, PreciseKey>;
 
@@ -42,10 +41,6 @@ const handlers: DevicesHandlers = {
         ? null
         : state.currentDevice,
     devices: state.devices.filter(d => d.deviceId !== device.deviceId),
-  }),
-  SET_CURRENT_DEVICE: (state, { payload: currentDevice }) => ({
-    ...state,
-    currentDevice,
   }),
 };
 

@@ -35,7 +35,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
     scanAccounts,
     nftResolvers,
     getPreloadStrategy: () => ({
-      preloadMaxAge: 1 * 60 * 60 * 1000, // 1 hour cache
+      preloadMaxAge: 24 * 60 * 60 * 1000, // 1 day cache
     }),
   };
 }

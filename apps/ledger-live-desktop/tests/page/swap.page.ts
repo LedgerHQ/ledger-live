@@ -4,13 +4,18 @@ import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 import { Account } from "tests/enum/Account";
+import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
-  private originCurrencyDropdown = this.page.getByTestId("origin-currency-dropdown");
+  private fromAccountCoinSelector = "from-account-coin-selector";
+  private fromAccountAmoutInput = "from-account-amount-input";
+  private toAccountCoinSelector = "to-account-coin-selector";
+  private errorSpan = (text: RegExp | string) => `span[color*="error"]:has-text("${text}")`;
+  private numberOfQuotes = "number-of-quotes";
   private originCurrencyAmount = this.page.getByTestId("origin-currency-amount-value");
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
@@ -30,17 +35,11 @@ export class SwapPage extends AppPage {
   private advancedFeesSelector = this.page.getByTestId("advanced-fee-mode-selector");
   private customFeeTextbox = this.page.getByTestId("currency-textbox");
 
-  // Quote Filter Components
-  private centralisedQuoteFilterButton = this.page.getByTestId("centralised-quote-filter-button");
-  private decentralisedQuoteFilterButton = this.page.getByTestId(
-    "decentralised-quote-filter-button",
-  );
-  private floatQuoteFilterButton = this.page.getByTestId("float-quote-filter-button");
-  private fixedQuoteFilterButton = this.page.getByTestId("fixed-quote-filter-button");
-
   // Quote Components
   private quoteContainer = (providerName: string, exchangeType: string) =>
     this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
+  private quoteSelector = (providerName: string, rate: string) =>
+    `quote-container-${providerName}-${rate}`;
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -49,6 +48,8 @@ export class SwapPage extends AppPage {
   readonly swapId = this.page.getByTestId("swap-id");
   private seeDetailsButton = this.page.locator('button:has-text("See details")');
   readonly detailsSwapId = this.page.getByTestId("details-swap-id").first();
+
+  private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
   async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
@@ -120,6 +121,13 @@ export class SwapPage extends AppPage {
     await this.quoteContainer(providerName, exchangeType).click();
   }
 
+  @step("Select exchange quote with provider $1")
+  async selectQuote(electronApp: ElectronApplication, providerName: string, rate: string) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.quoteSelector(providerName, rate))).toBeEnabled();
+    await webview.getByTestId(this.quoteSelector(providerName, rate)).click();
+  }
+
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
@@ -151,22 +159,6 @@ export class SwapPage extends AppPage {
   getAccountName(account: Account) {
     //erc20 accounts names are stored in account currency property
     return account.accountType ? account.currency.name : account.accountName;
-  }
-
-  @step("Select account to swap from")
-  async selectAccountToSwapFrom(accountToSwapFrom: Account) {
-    await this.originCurrencyDropdown.click();
-    const accName = this.getAccountName(accountToSwapFrom);
-    if (accountToSwapFrom.accountType) {
-      await this.dropdownOptions
-        .locator(this.optionWithTextAndFollowingText(accountToSwapFrom.accountName, accName))
-        .first()
-        .click();
-    } else {
-      await this.dropdownOptions.locator(this.optionWithText(accName)).first().click();
-    }
-    const selectedAccountFrom = this.originCurrencyDropdown.locator(this.dropdownSelectedValue);
-    await expect(selectedAccountFrom).toHaveText(accName);
   }
 
   @step("Fill in amount: $0")
@@ -207,5 +199,48 @@ export class SwapPage extends AppPage {
         return swapHistoryStyles.getPropertyValue("opacity") === "1";
       }
     });
+  }
+
+  @step("Select currency to swap from")
+  async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
+  }
+
+  @step("Fill in amount: $1")
+  async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountAmoutInput).fill(amount);
+    //wait for potential origin amount error to be loaded
+    await this.page.waitForTimeout(500);
+  }
+
+  @step("Select currency to swap to: $1")
+  async selectAssetTo(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.toAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Verify swap amount error message is displayed: $2")
+  async verifySwapAmountErrorMessageIsDisplayed(
+    electronApp: ElectronApplication,
+    accountToDebit: Account,
+    message: string | RegExp,
+  ) {
+    const [, webview] = electronApp.windows();
+    if (!accountToDebit.accountType) {
+      const errorSpan = await webview.locator('span[color*="error"]').textContent();
+      expect(errorSpan).toMatch(message);
+      //that specific amount error doesn't trigger quotes
+      if (message instanceof RegExp) {
+        await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
+      }
+    } else {
+      await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+      await expect(webview.locator(this.errorSpan(message))).toBeVisible();
+    }
+    await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
   }
 }

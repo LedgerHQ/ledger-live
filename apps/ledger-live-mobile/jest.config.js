@@ -54,10 +54,13 @@ module.exports = {
     "!src/**/__integration__/**",
     "!src/**/__tests__/**",
   ],
-  coverageReporters: ["json", "lcov", "json-summary"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
-    ["jest-sonar", { outputName: "sonar-test-execution-report.xml", reportedFilePath: "absolute" }],
+    [
+      "jest-sonar",
+      { outputName: "llm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
   ],
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),

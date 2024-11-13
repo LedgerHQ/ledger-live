@@ -86,15 +86,6 @@
           "enabled": true,
           "overridesRemote": true
         },
-        "ptxSwapLiveAppDemoZero": {
-          "enabled": true,
-          "params": {
-            "manifest_id": "swap-live-app-demo-0",
-            "currencies": [],
-            "families": []
-          },
-          "overridesRemote": true
-        },
         "llmNewDeviceSelection": {
           "enabled": true,
           "overridesRemote": true

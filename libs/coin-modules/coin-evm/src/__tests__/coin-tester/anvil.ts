@@ -8,7 +8,7 @@ const delay = (timing: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, timing));
 
 const ensureEnv = () => {
-  const mandatory_env_variables = ["SEED"];
+  const mandatory_env_variables = ["SEED", "GH_TOKEN"];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
     throw new Error(
@@ -22,7 +22,7 @@ export const spawnAnvil = async (rpc: string): Promise<void> => {
   console.log("Starting anvil...");
   await compose.upOne("anvil", {
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: {
       ...process.env,
       RPC: rpc,
@@ -54,7 +54,7 @@ export const killAnvil = async (): Promise<void> => {
   console.log("Stopping anvil...");
   await compose.down({
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: process.env,
   });
 };

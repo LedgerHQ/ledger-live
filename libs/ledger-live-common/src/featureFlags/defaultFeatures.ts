@@ -80,6 +80,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
+  currencyZkSync: DEFAULT_FEATURE,
+  currencyZkSyncSepolia: DEFAULT_FEATURE,
+  currencyMantra: DEFAULT_FEATURE,
 };
 
 /**
@@ -506,6 +509,13 @@ export const DEFAULT_FEATURES: Features = {
   spamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
+  ldmkTransport: {
+    ...DEFAULT_FEATURE,
+    params: {
+      warningVisible: true,
+    },
+  },
+  recoverUpsellRedirection: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

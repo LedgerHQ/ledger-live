@@ -12,6 +12,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { multiline } from "~/renderer/styles/helpers";
+import { urls } from "~/config/urls";
 import { StepProps } from "../types";
 import NodeError from "./Confirmation/NodeError";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
@@ -89,7 +90,7 @@ function StepConfirmation({
         />
         {signed ? (
           <NodeError
-            error={createTransactionBroadcastError(error, {
+            error={createTransactionBroadcastError(error, urls, {
               coin: ticker,
               network: String(mainAccount?.currency.name),
             })}

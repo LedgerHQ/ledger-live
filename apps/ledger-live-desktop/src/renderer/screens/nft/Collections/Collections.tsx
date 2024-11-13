@@ -1,14 +1,12 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
-import { nftsByCollections } from "@ledgerhq/live-nft";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { TokenShowMoreIndicator, IconAngleDown } from "~/renderer/screens/account/TokensList";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
-import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { supportLinkByTokenType } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { track } from "~/renderer/analytics/segment";
@@ -19,9 +17,7 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
-import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useHideSpamCollection } from "~/renderer/hooks/useHideSpamCollection";
+import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
 
 const INCREMENT = 5;
 const EmptyState = styled.div`
@@ -46,13 +42,15 @@ type Props = {
   account: Account;
 };
 const Collections = ({ account }: Props) => {
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
-
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
   const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
+
+  const { fetchNextPage, hasNextPage, collectionsLength, collections } = useNftCollections({
+    account,
+  });
+
   const onOpenGallery = useCallback(() => {
     history.push(`/account/${account.id}/nft-collection`);
   }, [account.id, history]);
@@ -72,21 +70,6 @@ const Collections = ({ account }: Props) => {
     [account.id, history],
   );
 
-  const { enabled, hideSpamCollection } = useHideSpamCollection();
-
-  const { nfts, fetchNextPage, hasNextPage } = useCheckNftAccount({
-    nftsOwned: account.nfts || [],
-    addresses: account.freshAddress,
-    chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
-    ...(enabled && { action: hideSpamCollection }),
-  });
-
-  const collections = useMemo(
-    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
-    [account.nfts, nfts, nftsFromSimplehashFeature],
-  );
-  const collectionsLength = Object.keys(collections).length;
   const onShowMore = useCallback(() => {
     setNumberOfVisibleCollections(numberOfVisibleCollections =>
       Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
@@ -95,17 +78,10 @@ const Collections = ({ account }: Props) => {
       fetchNextPage();
     }
   }, [collectionsLength, fetchNextPage, hasNextPage]);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-  const filteredCollections = useMemo(
-    () =>
-      Object.entries(collections).filter(
-        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
-      ),
-    [account.id, collections, hiddenNftCollections],
-  );
+
   const visibleCollections = useMemo(
     () =>
-      filteredCollections
+      collections
         .slice(0, numberOfVisibleCollections)
         .map(([contract, nfts]: [string, (ProtoNFT | NFT)[]]) => (
           <Row
@@ -116,7 +92,7 @@ const Collections = ({ account }: Props) => {
             nfts={nfts}
           />
         )),
-    [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
+    [account, collections, numberOfVisibleCollections, onOpenCollection],
   );
 
   useEffect(() => {
@@ -169,7 +145,7 @@ const Collections = ({ account }: Props) => {
             </Button>
           </EmptyState>
         )}
-        {filteredCollections.length > numberOfVisibleCollections ? (
+        {collections.length > numberOfVisibleCollections ? (
           <TokenShowMoreIndicator expanded onClick={onShowMore}>
             <Box horizontal alignContent="center" justifyContent="center" py={3}>
               <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
