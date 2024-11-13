@@ -533,6 +533,13 @@ export enum ScreenName {
   Web3HubSearch = "Web3HubSearch",
   Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
+
+  // Add Accountv2 / Receive shared screens
+  ConnectDevice = "ConnectDevice",
+  SelectNetwork = "SelectNetwork",
+  SelectDevice = "SelectDevice",
+  SelectAccounts = "SelectAccounts",
+  ScanDeviceAccounts = "ScanDeviceAccounts",
 }
 
 export enum NavigatorName {
@@ -651,4 +658,6 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  AssetSelection = "AssetSelection",
+  DeviceSelection = "DeviceSelection",
 }
