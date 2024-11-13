@@ -5,6 +5,7 @@ import {
   type ExchangeProvider,
 } from "./partners";
 import network from "@ledgerhq/live-network";
+import { setEnv } from "@ledgerhq/live-env";
 
 jest.mock("@ledgerhq/live-network");
 
@@ -12,6 +13,7 @@ describe("transformData", () => {
   it.each([
     [
       "prod",
+      false,
       {
         providera: {
           name: "ProviderA",
@@ -35,6 +37,7 @@ describe("transformData", () => {
     ],
     [
       "test",
+      true,
       {
         providera: {
           name: "ProviderA",
@@ -58,7 +61,8 @@ describe("transformData", () => {
     ],
   ])(
     "should transform providers data correctly with %p env",
-    (env: string, expected: Record<string, ExchangeProvider>) => {
+    (_env: string, testConfig: boolean, expected: Record<string, ExchangeProvider>) => {
+      setEnv("MOCK_EXCHANGE_TEST_CONFIG", testConfig);
       const providersData = [
         {
           name: "ProviderA",
@@ -109,6 +113,7 @@ describe("getProvidersData", () => {
   it.each([
     [
       "prod",
+      false,
       {
         providera: {
           name: "ProviderA",
@@ -123,6 +128,7 @@ describe("getProvidersData", () => {
     ],
     [
       "test",
+      true,
       {
         providera: {
           name: "ProviderA",
@@ -137,7 +143,8 @@ describe("getProvidersData", () => {
     ],
   ])(
     "should fetch and transform providers data with %p signature",
-    async (env: string, expected: Record<string, ExchangeProvider>) => {
+    async (_env: string, testConfig: boolean, expected: Record<string, ExchangeProvider>) => {
+      setEnv("MOCK_EXCHANGE_TEST_CONFIG", testConfig);
       const mockProvidersData: ProvidersDataResponse = [
         {
           name: "ProviderA",
@@ -163,7 +170,7 @@ describe("getProvidersData", () => {
         method: "GET",
         url: "https://crypto-assets-service.api.ledger.com/v1/partners",
         params: {
-          env,
+          env: "prod",
           output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
           service_name: "swap",
         },

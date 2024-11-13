@@ -52,6 +52,7 @@ export function transformData(
   providersData: ProvidersDataResponse,
 ): Record<string, ExchangeProvider> {
   const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  console.log("env!!!", env);
   const transformed = {};
   providersData.forEach(provider => {
     const key = provider.partner_id;
