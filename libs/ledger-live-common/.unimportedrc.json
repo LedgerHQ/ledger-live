@@ -413,8 +413,7 @@
     "bigint-buffer",
     "jayson/lib/client/browser",
     "node-fetch",
-    "rpc-websockets/dist/lib/client",
-    "rpc-websockets/dist/lib/client/websocket",
+    "rpc-websockets",
     "superstruct"
   ]
 }
