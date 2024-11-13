@@ -593,10 +593,10 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
 
     switch (first.program) {
       case "spl-associated-token-account":
-        switch (first.instruction.type) {
-          case "associate":
-            return "OPT_IN";
+        if (first.instruction.type === "associate") {
+          return "OPT_IN";
         }
+        break;
       case "spl-token":
         switch (first.instruction.type) {
           case "closeAccount":
@@ -668,10 +668,10 @@ function getTokenAccOperationType({
   if (mainIx !== undefined && otherIxs.length === 0) {
     switch (mainIx.program) {
       case "spl-associated-token-account":
-        switch (mainIx.instruction.type) {
-          case "associate":
-            return "NONE"; // ATA opt-in operation is added to the main account
+        if (mainIx.instruction.type === "associate") {
+          return "NONE"; // ATA opt-in operation is added to the main account
         }
+        break;
       case "spl-token":
         switch (mainIx.instruction.type) {
           case "freezeAccount":
