@@ -83,6 +83,7 @@ import type {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsUnwhitelistNftCollectionPayload,
   SettingsWhitelistNftCollectionPayload,
+  SettingsSetMevProtectionPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -181,6 +182,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
+  mevProtection: true,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -694,6 +696,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
     ),
   }),
+
+  [SettingsActionTypes.SET_MEV_PROTECTION]: (state, action) => ({
+    ...state,
+    mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -925,3 +932,5 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+
+export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
