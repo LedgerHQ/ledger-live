@@ -86,8 +86,6 @@ export async function getProvidersData({
       env: partnerSignatureEnv,
     },
   });
-  console.log("____________");
-  console.log(providersData);
 
   return transformData(providersData, ledgerSignatureEnv);
 }
