@@ -50,8 +50,8 @@ export type ProvidersDataResponse = {
 // Exported for test purpose only
 export function transformData(
   providersData: ProvidersDataResponse,
+  ledgerSignatureEnv: "prod" | "test" = "prod",
 ): Record<string, ExchangeProvider> {
-  const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
   const transformed = {};
   providersData.forEach(provider => {
     const key = provider.partner_id;
@@ -62,25 +62,32 @@ export function transformData(
         data: Buffer.from(provider.public_key, "hex"),
       },
       version: provider.service_app_version,
-      signature: Buffer.from(provider.descriptor.signatures[env], "hex"),
+      signature: Buffer.from(provider.descriptor.signatures[ledgerSignatureEnv], "hex"),
     };
   });
   return transformed;
 }
 
-export async function getProvidersData(
-  type: "swap" | "fund" | "sell",
-): Promise<Record<string, ExchangeProvider>> {
-  const env = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
+export async function getProvidersData({
+  type,
+  partnerSignatureEnv = "prod",
+  ledgerSignatureEnv = "prod",
+}: {
+  type: "swap" | "fund" | "sell";
+  partnerSignatureEnv?: "test" | "prod";
+  ledgerSignatureEnv?: "test" | "prod";
+}): Promise<Record<string, ExchangeProvider>> {
   const { data: providersData } = await network<ProvidersDataResponse>({
     method: "GET",
     url: `${CAL_BASE_URL}/v1/partners`,
     params: {
       output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
       service_name: type,
-      env,
+      env: partnerSignatureEnv,
     },
   });
+  console.log("____________");
+  console.log(providersData);
 
-  return transformData(providersData);
+  return transformData(providersData, ledgerSignatureEnv);
 }

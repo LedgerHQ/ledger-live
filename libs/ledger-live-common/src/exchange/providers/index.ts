@@ -33,6 +33,8 @@ export const getProviderConfig = async (
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProvider) {
     return testProvider;
   }
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
 
   switch (exchangeType) {
     case ExchangeTypes.Fund:
@@ -41,7 +43,11 @@ export const getProviderConfig = async (
 
     case ExchangeTypes.Sell:
     case ExchangeTypes.SellNg:
-      return await getSellProvider(provider.toLowerCase());
+      return await getSellProvider({
+        providerId: provider.toLowerCase(),
+        ledgerSignatureEnv,
+        partnerSignatureEnv,
+      });
 
     default:
       throw new Error(`Unknown partner ${provider} type`);
