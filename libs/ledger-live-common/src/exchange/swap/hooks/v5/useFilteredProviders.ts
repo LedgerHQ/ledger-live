@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useFeature } from "../../../../featureFlags";
 import { fetchAndMergeProviderData } from "../../../providers/swap";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const useFilteredProviders = () => {
   const [providers, setProviders] = useState<string[]>([]);
@@ -12,7 +13,10 @@ export const useFilteredProviders = () => {
 
   const fetchProviders = useCallback(async () => {
     try {
-      const data = await fetchAndMergeProviderData();
+      const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+      const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
+
+      const data = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
 
       let filteredProviders = Object.keys(data);
       if (!ptxSwapMoonpayProviderFlag?.enabled) {

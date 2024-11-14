@@ -18,7 +18,10 @@ describe("findExchangeCurrencyData", () => {
 describe("fetchAndMergeProviderData", () => {
   it("returns all data in expected format", async () => {
     // When
-    const providers = await fetchAndMergeProviderData();
+    const providers = await fetchAndMergeProviderData({
+      ledgerSignatureEnv: "prod",
+      partnerSignatureEnv: "prod",
+    });
 
     // Then
     expect(providers).toEqual({

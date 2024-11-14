@@ -299,8 +299,10 @@ function mergeProviderData(baseData, additionalData) {
 }
 
 export const getAvailableProviders = async (): Promise<string[]> => {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
   if (isIntegrationTestEnv()) {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(await fetchAndMergeProviderData(env));
+  return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
 };
