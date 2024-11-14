@@ -27,6 +27,7 @@ const ChevronArrowContainer = styled.button<ContainerProps>`
 
   position: absolute;
   top: 50%;
+  left: ${({ direction }) => (direction === "left" ? "0" : "auto")};
   right: ${({ direction }) => (direction === "left" ? "auto" : "0")};
   z-index: 1;
 
@@ -34,12 +35,12 @@ const ChevronArrowContainer = styled.button<ContainerProps>`
   scale: var(--dir) 1;
   translate: calc(-50% * var(--dir)) -50%;
 
-  background: ${({ theme }) => theme.colors.background.main}; // Fake the transparent clip
+  background-color: ${({ theme }) => theme.colors.background.default}; // Fake the transparent clip
   border-radius: 100%;
   border: none;
   outline: none;
 
-  &::before {
+  ::before {
     content: "";
     display: block;
     position: absolute;
@@ -54,10 +55,14 @@ const ChevronArrowContainer = styled.button<ContainerProps>`
   svg {
     color: ${({ theme }) => theme.colors.primary.c100};
   }
+  ::before,
+  svg {
+    cursor: pointer;
+  }
 
   transition: opacity 0.2s ease-in-out;
   opacity: var(--hover-transition);
-  &::before,
+  ::before,
   svg {
     transition: translate 0.2s ease-in-out;
     translate: calc(-50% + 50% * var(--hover-transition)) 0;
