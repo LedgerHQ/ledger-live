@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeProviderNameAndSignature } from ".";
 import { getProvidersData } from "../../cal";
 
