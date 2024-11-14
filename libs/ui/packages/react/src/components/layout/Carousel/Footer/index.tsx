@@ -9,6 +9,8 @@ const Footers: { [key in Variant]: FC<SubProps> } = {
 };
 
 const Footer = (props: SubProps) => {
+  if (props.children.length === 1) return null;
+
   const Component = Footers[props.variant];
   return <Component {...props} />;
 };

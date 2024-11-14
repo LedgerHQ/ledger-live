@@ -19,12 +19,12 @@ const EmblaSlide = styled.div`
 `;
 
 const CarouselContainer = styled.div`
-  position: relative;
+        position: relative;
 
-  --hover-transition: 0;
-  &:hover {
-    --hover-transition: 1;
-  }
+        --hover-transition: 0;
+        &:hover {
+          --hover-transition: 1;
+        }
 `;
 
 /**
@@ -58,7 +58,7 @@ const Carousel = ({ children, variant = "default" }: Props) => {
   return (
     <div>
       <CarouselContainer>
-        {variant === "default" && (
+        {variant === "default" && children.length > 1 && (
           <>
             <ChevronArrow direction="left" onClick={() => emblaApi?.scrollPrev()} />
             <ChevronArrow direction="right" onClick={() => emblaApi?.scrollNext()} />
@@ -83,4 +83,5 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     </div>
   );
 };
+
 export default Carousel;
