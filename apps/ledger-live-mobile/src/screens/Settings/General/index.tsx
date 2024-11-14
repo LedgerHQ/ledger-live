@@ -11,6 +11,7 @@ import DateFormatRow from "./DateFormatRow";
 import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
 import WalletSyncRow from "./WalletSyncRow";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import MevProtection from "./MevProtection";
 
 export default function GeneralSettings() {
   return (
@@ -24,6 +25,9 @@ export default function GeneralSettings() {
       </FeatureToggle>
       <ThemeSettingsRow />
       <AuthSecurityToggle />
+      <FeatureToggle featureId="llMevProtection">
+        <MevProtection />
+      </FeatureToggle>
       <ReportErrorsRow />
       <AnalyticsRow />
       <FeatureToggle featureId="llmAnalyticsOptInPrompt">

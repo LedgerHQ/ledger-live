@@ -287,6 +287,7 @@ export enum SettingsActionTypes {
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
+  SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -396,6 +397,7 @@ export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnaly
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
+export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
@@ -458,6 +460,7 @@ export type SettingsPayload =
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
+  | SettingsSetMevProtectionPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 

@@ -889,4 +889,20 @@ export const getMockedMethods = (): {
   },
   // manual
   { method: "getLatestBlockhash", params: [], answer: LATEST_BLOCKHASH_MOCK },
+  {
+    method: "getRecentPrioritizationFees",
+    params: [
+      ["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"]
+    ],
+    answer: [[
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+    ]],
+  },
 ];

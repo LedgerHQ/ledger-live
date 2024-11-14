@@ -13,6 +13,7 @@ import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 
+import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -184,6 +185,14 @@ function SendSummary({ navigation, route }: Props) {
             <TranslatedError error={status.warnings.recipient} />
           </LText>
         ) : null}
+
+        <MemoTagSummary
+          transaction={transaction}
+          account={mainAccount}
+          navigation={navigation}
+          route={route}
+        />
+
         <SendRowsCustom
           transaction={transaction}
           account={mainAccount}

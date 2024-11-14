@@ -200,6 +200,7 @@ export type Features = CurrencyFeatures & {
   ldmkTransport: Feature_LdmkTransport;
   recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
   llMevProtection: DefaultFeature;
+  llmNetworkBasedAddAccountFlow: DefaultFeature;
 };
 
 /**
