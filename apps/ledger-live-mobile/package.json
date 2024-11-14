@@ -82,6 +82,7 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
