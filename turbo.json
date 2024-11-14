@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "daemon": false,
   "globalDependencies": ["turbo.json"],
   "globalEnv": [
     "ANDROID_HOME",
@@ -110,7 +111,13 @@
     },
     "watch": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "watch:es": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "coverage": {
       "cache": false
