@@ -4,10 +4,10 @@ import prodAPI from "./api";
 import mockAPI from "./api.mock";
 
 const api: CounterValuesAPI = {
-  fetchHistorical: (granularity, pair) =>
+  fetchHistorical: (granularity, pair, granularitiesRates) =>
     getEnv("MOCK_COUNTERVALUES")
-      ? mockAPI.fetchHistorical(granularity, pair)
-      : prodAPI.fetchHistorical(granularity, pair),
+      ? mockAPI.fetchHistorical(granularity, pair, granularitiesRates)
+      : prodAPI.fetchHistorical(granularity, pair, granularitiesRates),
   fetchLatest: (pairs, batchStrategySolver) =>
     getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchLatest(pairs, batchStrategySolver)

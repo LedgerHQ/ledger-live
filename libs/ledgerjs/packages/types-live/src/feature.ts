@@ -201,6 +201,7 @@ export type Features = CurrencyFeatures & {
   recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
   llMevProtection: DefaultFeature;
   llmNetworkBasedAddAccountFlow: DefaultFeature;
+  llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
 };
 
 /**
@@ -535,6 +536,11 @@ export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
   learnMoreLink: string;
+}>;
+
+export type Feature_LlCounterValueGranularitiesRates = Feature<{
+  daily: number;
+  hourly: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

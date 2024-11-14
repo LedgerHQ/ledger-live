@@ -202,7 +202,12 @@ export function Countervalues({
       type: "pending",
     });
 
-    loadCountervalues(state, userSettings, batchStrategySolver).then(
+    loadCountervalues(
+      state,
+      userSettings,
+      batchStrategySolver,
+      userSettings.granularitiesRates,
+    ).then(
       state => {
         dispatch({
           type: "success",
