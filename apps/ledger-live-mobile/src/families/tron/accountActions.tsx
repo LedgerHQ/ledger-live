@@ -4,7 +4,6 @@ import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { TRX } from "@ledgerhq/native-ui/assets/cryptoIcons";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 
