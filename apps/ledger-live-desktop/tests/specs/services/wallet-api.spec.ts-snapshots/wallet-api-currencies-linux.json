@@ -211,7 +211,7 @@
     "id": "crypto_org",
     "ticker": "CRO",
     "name": "Cronos POS Chain",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
@@ -220,7 +220,7 @@
     "id": "crypto_org_croeseid",
     "ticker": "CRO",
     "name": "Cronos POS Chain Croeseid",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
