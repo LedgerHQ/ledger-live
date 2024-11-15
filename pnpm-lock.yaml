@@ -4111,9 +4111,6 @@ importers:
       date-fns:
         specifier: ^2.23.0
         version: 2.30.0
-      eip55:
-        specifier: ^2.1.1
-        version: 2.1.1
       expect:
         specifier: ^27.4.6
         version: 27.5.1

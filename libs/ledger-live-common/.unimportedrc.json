@@ -132,6 +132,8 @@
     "src/families/tezos/types.ts",
     "src/families/tron/react.ts",
     "src/families/tron/types.ts",
+    "src/families/vechain/logic.ts",
+    "src/families/vechain/types.ts",
     "src/families/xrp/types.ts",
     "src/featureFlags/FeatureFlagsContext.ts",
     "src/featureFlags/groupedFeatures.ts",
