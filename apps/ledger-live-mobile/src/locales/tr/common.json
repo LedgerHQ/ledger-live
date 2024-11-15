@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
+    "TransactionBroadcastError" : {
+      "title" : "İşlem Yayımlanamadı",
+      "description" : "İşleminiz {{network}} ağında yayımlanamadı. {{coin}} transferiniz gerçekleştirilmedi ve ilgili tutar hesabınızda kaldı.",
+      "needHelp" : "Yardım mı gerekli?",
+      "helpCenter" : {
+        "title" : "Yardım merkezi",
+        "desc" : "Yardım merkezimizi ziyaret edin veya yardım almak için widget aracılığıyla bize ulaşın.",
+        "cta" : "Yardım alın"
+      },
+      "technical" : {
+        "title" : "Teknik hata",
+        "cta" : "Logları kaydedin"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "Üzgünüz, ücret tahmini başarısız oldu",
       "description" : "Ücreti manuel olarak ayarlamayı deneyin (durum: {{status}})."
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor. ",
+      "oneCta" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>.",
+      "twoCtas" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1> veya <cta2>{{cta2Label}}</cta2>.",
+      "threeCtas" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> veya <cta3>{{cta3Label}}</cta3>.",
+      "ctas" : {
+        "buy" : "satın alın",
+        "swap" : "takas edin",
+        "deposit" : "yatırın"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
@@ -2335,7 +2360,8 @@
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
-      "stake" : "Stake et"
+      "stake" : "Stake et",
+      "yield" : "Getiri"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2576,8 @@
         "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
         "description" : "Ledger Live, açık kaynaklı bir platformdur.",
         "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
+        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
+        "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2618,7 @@
     "buy" : "Satın Al",
     "walletconnect" : "WalletConnect",
     "stake" : "Stake et",
+    "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
@@ -2842,9 +2870,9 @@
       "developerMode" : "Geliştirici modu",
       "developerModeDesc" : "Geliştirici uygulamalarını My Ledger'da görün ve Testnet uygulamalarını etkinleştirin.",
       "analytics" : "Analiz",
-      "analyticsDesc" : "Ledger Live'ın performansının ölçülmesini ve hem uygulamanın hem de deneyiminizin geliştirilmesini sağlamak için Ledger'ın uygulama kullanım verilerini takip etmesine izin verin.",
+      "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
-      "personalizedRecommendationsDesc" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunulmasını sağlamak ve pazarlama kampanyalarımızın performansını ölçebilmemiz için Ledger'ın uygulama kullanımı verilerini takip etmesine izin verin.",
+      "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {
         "title" : "Analiz verilerini paylaş",
         "desc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin",
@@ -3109,6 +3137,14 @@
       "input" : "Adresi girin",
       "inputEns" : "Adres ya da ENS adı girin"
     },
+    "memoTag" : {
+      "input" : "Etiket / Memo girin",
+      "title" : "Etiket/Memo eklenmesin mi?",
+      "description" : "Fonlarınızı herhangi bir merkezî borsaya veya custodial cüzdana gönderirken bir Etiket/Memo eklemezseniz kaybolacaktır.",
+      "cta" : "Etiket ekle",
+      "ignore" : "Etiket ekleme",
+      "learnMore" : "Etiket/Memo hakkında daha fazla bilgi edinin"
+    },
     "send" : {
       "title" : "Gönder",
       "description" : "Başka bir cüzdana kripto gönderin."
@@ -3132,6 +3168,13 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "memoTag" : {
+        "link" : "Etikete/Memo'ya mı ihtiyacınız var?",
+        "title" : "Etikete/Memo'ya mı ihtiyacınız var?",
+        "description" : "Bu varlığı bir kripto para borsasından almak için bir Etikete/Memo'ya ihtiyacınız olabilir. 1234 gibi herhangi bir sayı kombinasyonunu kullanabilirsiniz.",
+        "cta" : "Anladım",
+        "learnMore" : "Etiketler hakkında daha fazla bilgi edinin"
+      },
       "selectCrypto" : {
         "title" : "Almak istediğiniz kriptoyu seçin"
       },
@@ -3180,7 +3223,7 @@
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
         "sendWarning" : "Sadece {{network}} ağındaki token'ları gönderin. Başka bir ağdan gönderirseniz token'ları kalıcı olarak kaybedebilirsiniz.",
         "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
-        "bannerTitle" : "Borsadan nasıl çekim yapacağınızı öğrenin"
+        "bannerTitle" : "Kripto para borsalarından nasıl çekim yapabileceğinizi öğrenmek mi istiyorsunuz?"
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
@@ -4509,7 +4552,7 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce"
+      "pt" : "Portekizce (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4572,11 @@
     "languages" : {
       "english" : "İngilizce",
       "french" : "Fransızca",
-      "spanish" : "İspanyolca"
+      "spanish" : "İspanyolca",
+      "german" : "Almanca",
+      "brazilian" : "Portekizce (Br)",
+      "russian" : "Rusça",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5451,9 @@
     "AccountHeader" : {
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
       "btn" : "Ödüller kazanın"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ Özel doğrulayıcı ekle"
     }
   },
   "tron" : {
@@ -6615,7 +6665,7 @@
     "title" : "Cihazı bağlayın"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller kazanarak bakiyenizi artırın.",
       "tagMinimum" : "{{min}} ETH gerektirir",
@@ -6634,7 +6684,7 @@
         "lido" : {
           "title" : "Lido",
           "description" : "Anında likidite ve günlük ödüller için herhangi bir miktarda ETH stake edin.",
-          "supportLink" : "Lido hakkında daha fazla bilgi alın"
+          "supportLink" : "Lideo hakkında daha fazla bilgi alın"
         },
         "figment" : {
           "title" : "Figment",
@@ -6648,6 +6698,72 @@
           "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödülleri kolayca alın.",
           "supportLink" : "Kiln hakkında daha fazla bilgi edinin"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "Staking sağlayıcısı seçin",
+      "category" : {
+        "all" : {
+          "name" : "Tümü",
+          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Live'da mevcuttur."
+        },
+        "liquid" : {
+          "name" : "Liquid",
+          "description" : "ETH stake edip ödül olarak liquid token'lar alabilirsiniz. Yatırım yapmaya ve DeFi faaliyetlerine katılmaya devam edebilirsiniz."
+        },
+        "protocol" : {
+          "name" : "Protocol",
+          "description" : "32 ETH stake ederek ETH cinsinden tam node ödülleri alabilirsiniz."
+        },
+        "pooling" : {
+          "name" : "Havuza Katılma",
+          "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
+        },
+        "restaking" : {
+          "name" : "Yeniden Stake Etme",
+          "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
+        }
+      },
+      "howItWorks" : "ETH staking'de süreç nasıl işler?",
+      "lst" : "Liquid token gerektirir",
+      "noMinimum" : "Alt limit yok",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking havuzu"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln Liquid yeniden stake etme"
+        },
+        "kiln" : {
+          "title" : "Kiln ile özel staking"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO'su"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "Bilmeniz gereken stratejiler ve taktikler",
+      "requiredMinimum" : "{{min}} ETH gerektirir",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Otomatik olarak bileştirilen ödüller",
+        "basic" : "Ödüller",
+        "daily" : "Günlük ödüller",
+        "eigenlayer_points" : "Eigenlayer puanları",
+        "validator" : "Doğrulayıcı ödülleri"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6797,12 @@
         "subtitle" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemizi sağlar.",
         "content" : {
           "able" : {
-            "title" : "Sizin açık rızanızla Ledger, Ledger Live'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) takip edebilecektir:",
+            "title" : "Sizin açık rızanızla Ledger, Ledger Live'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) toplayabilir:",
             "diagAndUsage" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için (Analizler).",
             "personnalizationData" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sağlamanın yanı sıra pazarlama kampanyalarımızın etkinliğini ölçebilmemiz için (Kişiselleştirme)."
           },
           "unable" : {
-            "title" : "Ledger Live şu bilgileri hiçbir zaman takip etmez:",
+            "title" : "Ledger Live şunlarla ilgili bilgileri hiçbir zaman toplamaz:",
             "adresses" : "Varlıklarınız.",
             "balance" : "Portföyünüz.",
             "personnalInfos" : "Kişiyi tanımlayıcı bilgileriniz (adınız soyadınız veya e-posta adresiniz gibi)."
@@ -6698,7 +6814,7 @@
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-            "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
+            "link" : "Verilerinizi nasıl kullandığımız hakkında daha fazla bilgi edinin"
           }
         }
       },
@@ -6884,7 +7000,8 @@
           "title" : "Geçersiz Karekod",
           "desc" : "Ledger Live uygulamalarınızı senkronize etmek için sadece Ledger Live'da gösterilen karekodu tarayın.",
           "info" : "Karekod için \"Ayarlar\"ı açın, \"Genel\"i seçin ve ardından sırasıyla \"Ledger Sync\", \"Senkronizasyonu aç\" ve \"Karekodu Göster\" adımlarını izleyin.",
-          "cta" : "Anladım"
+          "cta" : "Anladım",
+          "tryAgain" : "Tekrar dene"
         },
         "scannedOldQrCode" : {
           "title" : "Ledger Live güncellemesi gerekli",

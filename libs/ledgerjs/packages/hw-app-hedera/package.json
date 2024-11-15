@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-hedera",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ledger Hardware Wallet Hedera Application API",
   "keywords": [
     "Ledger",

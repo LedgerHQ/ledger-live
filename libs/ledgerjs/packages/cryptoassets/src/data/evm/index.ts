@@ -14,6 +14,7 @@ import polygon_tokens from "./137/erc20.json";
 import bittorrent_tokens from "./199/erc20.json";
 import energy_web_tokens from "./246/erc20.json";
 import fantom_tokens from "./250/erc20.json";
+import zksync_tokens from "./324/erc20.json";
 import astar_tokens from "./592/erc20.json";
 import metis_tokens from "./1088/erc20.json";
 import polygon_zk_evm_tokens from "./1101/erc20.json";
@@ -49,6 +50,7 @@ import polygon_tokens_hash from "./137/erc20-hash.json";
 import bittorrent_tokens_hash from "./199/erc20-hash.json";
 import energy_web_tokens_hash from "./246/erc20-hash.json";
 import fantom_tokens_hash from "./250/erc20-hash.json";
+import zksync_tokens_hash from "./324/erc20-hash.json";
 import astar_tokens_hash from "./592/erc20-hash.json";
 import metis_tokens_hash from "./1088/erc20-hash.json";
 import polygon_zk_evm_tokens_hash from "./1101/erc20-hash.json";
@@ -84,6 +86,7 @@ import polygon_signatures from "./137/erc20-signatures.json";
 import bittorrent_signatures from "./199/erc20-signatures.json";
 import energy_web_signatures from "./246/erc20-signatures.json";
 import fantom_signatures from "./250/erc20-signatures.json";
+import zksync_signatures from "./324/erc20-signatures.json";
 import astar_signatures from "./592/erc20-signatures.json";
 import metis_signatures from "./1088/erc20-signatures.json";
 import polygon_zk_evm_signatures from "./1101/erc20-signatures.json";
@@ -120,6 +123,7 @@ export const tokens = {
   199: bittorrent_tokens as ERC20Token[],
   246: energy_web_tokens as ERC20Token[],
   250: fantom_tokens as ERC20Token[],
+  324: zksync_tokens as ERC20Token[],
   592: astar_tokens as ERC20Token[],
   1088: metis_tokens as ERC20Token[],
   1101: polygon_zk_evm_tokens as ERC20Token[],
@@ -157,6 +161,7 @@ export const signatures = {
   199: bittorrent_signatures,
   246: energy_web_signatures,
   250: fantom_signatures,
+  324: zksync_signatures,
   592: astar_signatures,
   1088: metis_signatures,
   1101: polygon_zk_evm_signatures,
@@ -194,6 +199,7 @@ export const hashes = {
   199: bittorrent_tokens_hash,
   246: energy_web_tokens_hash,
   250: fantom_tokens_hash,
+  324: zksync_tokens_hash,
   592: astar_tokens_hash,
   1088: metis_tokens_hash,
   1101: polygon_zk_evm_tokens_hash,

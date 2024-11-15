@@ -1,5 +1,49 @@
 # @ledgerhq/coin-evm
 
+## 2.5.0
+
+### Minor Changes
+
+- [#8305](https://github.com/LedgerHQ/ledger-live/pull/8305) [`408dd7d`](https://github.com/LedgerHQ/ledger-live/commit/408dd7d7a25f6c9b99e8e4a35180f08ad0ac4b26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change preload cache duration from 1 hour to 1 day in order to delay new synchronizations from block 0
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add new coin-tester helper `callMyDealer` capable of providing any token or NFT without the need to know a previous owner. Also adds 2 new scenarii for Blast & Scroll.
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make coin-tester script run tests sequentially
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-env@2.4.1
+  - @ledgerhq/coin-framework@0.19.0
+  - @ledgerhq/cryptoassets@13.7.0
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/live-network@2.0.3
+  - @ledgerhq/domain-service@1.2.11
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#8305](https://github.com/LedgerHQ/ledger-live/pull/8305) [`408dd7d`](https://github.com/LedgerHQ/ledger-live/commit/408dd7d7a25f6c9b99e8e4a35180f08ad0ac4b26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change preload cache duration from 1 hour to 1 day in order to delay new synchronizations from block 0
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add new coin-tester helper `callMyDealer` capable of providing any token or NFT without the need to know a previous owner. Also adds 2 new scenarii for Blast & Scroll.
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make coin-tester script run tests sequentially
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-env@2.4.1-next.0
+  - @ledgerhq/coin-framework@0.19.0-next.0
+  - @ledgerhq/cryptoassets@13.7.0-next.0
+  - @ledgerhq/evm-tools@1.3.0-next.0
+  - @ledgerhq/live-network@2.0.3-next.0
+  - @ledgerhq/domain-service@1.2.11-next.0
+
 ## 2.4.3
 
 ### Patch Changes
