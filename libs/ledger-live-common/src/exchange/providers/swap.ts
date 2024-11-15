@@ -86,6 +86,16 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
+  uniswap: {
+    type: "DEX",
+    needsBearerToken: false,
+    displayName: "Uniswap",
+    termsOfUseUrl:
+      "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+    supportUrl: "mailto:support@uniswap.org",
+    mainUrl: "https://uniswap.org/",
+    needsKYC: false,
+  },
 };
 
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
@@ -221,7 +231,10 @@ export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
   const testProviderInfo = getTestProviderInfo();
-  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProviderInfo) {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
+
+  if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
       needsBearerToken: false,
@@ -234,7 +247,7 @@ export const getSwapProvider = async (
     };
   }
 
-  const res = await fetchAndMergeProviderData();
+  const res = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
 
   if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
@@ -252,14 +265,14 @@ export const getSwapProvider = async (
 export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
   findCurrencyData(currencyId);
 
-export const fetchAndMergeProviderData = async () => {
+export const fetchAndMergeProviderData = async env => {
   if (providerDataCache) {
     return providerDataCache;
   }
 
   try {
     const [providersData, providersExtraData] = await Promise.all([
-      getProvidersData("swap"),
+      getProvidersData({ type: "swap", ...env }),
       getProvidersCDNData(),
     ]);
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
@@ -286,8 +299,10 @@ function mergeProviderData(baseData, additionalData) {
 }
 
 export const getAvailableProviders = async (): Promise<string[]> => {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
   if (isIntegrationTestEnv()) {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(await fetchAndMergeProviderData());
+  return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
 };

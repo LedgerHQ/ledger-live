@@ -269,6 +269,7 @@ export type SettingsState = {
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
+  mevProtection: boolean;
 };
 
 export type NotificationsSettings = {

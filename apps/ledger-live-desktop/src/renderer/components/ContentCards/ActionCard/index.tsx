@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Actions, Body, CardContainer, Header, Description, Title } from "./components";
 import { Link } from "@ledgerhq/react-ui";
-import { useInView } from "react-intersection-observer";
 
 type Props = {
   img?: string;
@@ -23,19 +22,11 @@ type Props = {
       dataTestId?: string;
     };
   };
-
-  onView?: Function;
 };
 
-const ActionCard = ({ img, leftContent, title, description, actions, onView }: Props) => {
-  const { ref, inView } = useInView({ threshold: 0.5, triggerOnce: true });
-
-  useEffect(() => {
-    if (inView) onView?.();
-  }, [onView, inView]);
-
+const ActionCard = ({ img, leftContent, title, description, actions }: Props) => {
   return (
-    <CardContainer ref={ref}>
+    <CardContainer>
       {(img && <Header src={img} />) || leftContent}
       <Body>
         <Title>{title}</Title>

@@ -29,6 +29,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es && node scripts/createModulePackage.mjs",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -53,8 +53,8 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/spl-token": "^0.3.7",
-    "@solana/web3.js": "1.77.3",
+    "@solana/spl-token": "0.4.9",
+    "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9.1.2",
     "bs58": "^4.0.1",
     "expect": "^27.4.6",
@@ -80,6 +80,7 @@
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-solana.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

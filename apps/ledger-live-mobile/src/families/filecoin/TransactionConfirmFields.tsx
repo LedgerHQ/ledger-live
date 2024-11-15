@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/filecoin/deviceTransactionConfig";
+import { ExtraDeviceTransactionField } from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 import LText from "~/components/LText";
 import { DataRow } from "~/components/ValidateOnDeviceDataRow";
 

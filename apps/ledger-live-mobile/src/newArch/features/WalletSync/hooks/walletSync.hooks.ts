@@ -30,6 +30,7 @@ export const useLifeCycle = () => {
 
   const includesErrorActions: { [key: string]: () => void } = {
     [ErrorType.NO_TRUSTCHAIN]: () => reset(),
+    [ErrorType.NULL]: () => reset(),
   };
 
   function handleError(error: Error) {

@@ -94,4 +94,9 @@ export class AccountsPage extends AppPage {
     }
     return accountNames;
   }
+
+  @step("Compare number of accounts present in app.json")
+  async compareAccountsCountFromJson(count1: number, count2: number) {
+    expect(count1).toBe(count2);
+  }
 }

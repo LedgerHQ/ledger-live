@@ -31,6 +31,7 @@ const targets = [
   "NoAssociatedAccounts",
   "EditOperationPanel",
   "MemoTagInput",
+  "MemoTagSummary",
 ];
 
 async function genTarget(target) {

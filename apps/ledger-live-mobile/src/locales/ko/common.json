@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "문제가 발생했습니다. 다시 시도하세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
+    "TransactionBroadcastError" : {
+      "title" : "트랜잭션 브로드캐스트에 실패했습니다",
+      "description" : "트랜잭션 실패. {{network}} 네트워크에서 브로드캐스트에 실패하여 이체되지 못한 {{coin}}(이)가 계정에 남아 있습니다.",
+      "needHelp" : "도움이 필요하십니까?",
+      "helpCenter" : {
+        "title" : "지원 센터",
+        "desc" : "도움이 필요하시면 지원 센터를 방문하거나 위젯을 통해 문의하세요.",
+        "cta" : "도움 받기"
+      },
+      "technical" : {
+        "title" : "기술적 에러",
+        "cta" : "로그 저장"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "죄송합니다, 수수료 추정에 실패했습니다",
       "description" : "수수료를 수동으로 설정해 보세요 (상태: {{status}})."
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다. ",
+      "oneCta" : "본인 계정에 {{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나",
+      "twoCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나 <cta2>{{cta2Label}}</cta2>, 또는",
+      "threeCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2>, <cta3>{{cta3Label}}</cta3>하세요.",
+      "ctas" : {
+        "buy" : "구매",
+        "swap" : "스왑",
+        "deposit" : "입금"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
@@ -2335,7 +2360,8 @@
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
-      "stake" : "스테이킹"
+      "stake" : "스테이킹",
+      "yield" : "이자"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2576,8 @@
         "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
         "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
         "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
-        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
+        "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2618,7 @@
     "buy" : "구매",
     "walletconnect" : "WalletConnect",
     "stake" : "스테이킹",
+    "yield" : "이자",
     "sell" : "판매",
     "swap" : "스왑",
     "manage" : "관리",
@@ -2842,9 +2870,9 @@
       "developerMode" : "개발자 모드",
       "developerModeDesc" : "My Ledger에 개발자 앱을 표시하고 Testnet 앱을 활성화합니다.",
       "analytics" : "애널리틱스",
-      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
+      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
       "personalizedRecommendations" : "맞춤화된 경험",
-      "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
+      "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
       "analyticsModal" : {
         "title" : "애널리틱스 공유",
         "desc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요.",
@@ -3109,6 +3137,14 @@
       "input" : "주소 입력",
       "inputEns" : "주소 또는 ENS를 입력하세요"
     },
+    "memoTag" : {
+      "input" : "태그 / 메모 입력",
+      "title" : "태그/메모를 사용하지 않으시나요?",
+      "description" : "중앙화된 거래소나 수탁 지갑으로 자산을 보낼 때 태그/메모를 추가하지 않으면 자금이 손실됩니다.",
+      "cta" : "태그 추가",
+      "ignore" : "태그 추가 안 함",
+      "learnMore" : "태그/메모에 대해 더 알아보기"
+    },
     "send" : {
       "title" : "전송",
       "description" : "암호화폐를 다른 지갑으로 전송합니다"
@@ -3132,6 +3168,13 @@
       "shareAddress" : "주소 공유",
       "addressCopied" : "클립보드에 주소 복사됨",
       "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+      "memoTag" : {
+        "link" : "태그/메모가 필요하세요?",
+        "title" : "태그/메모가 필요하세요?",
+        "description" : "거래소에서 이 자산을 수령하려면 태그/메모가 필요할 수 있습니다. 1234와 같은 숫자 조합을 사용할 수 있습니다.",
+        "cta" : "이해합니다",
+        "learnMore" : "태그에 대해 더 알아보기"
+      },
       "selectCrypto" : {
         "title" : "수령하려는 암호화폐 선택"
       },
@@ -3180,7 +3223,7 @@
         "adviceVerify" : "언제나 Ledger 장치로 주소를 인증할 것을 권장합니다.",
         "sendWarning" : "{{network}} 네트워크에서만 토큰을 전송해야 합니다. 다른 네트워크에서 전송하면 토큰을 영구적으로 손실할 수 있습니다.",
         "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다",
-        "bannerTitle" : "거래소 인출 방법 알아보기"
+        "bannerTitle" : "거래소 출금 방법 알아보기"
       },
       "securityVerify" : {
         "title" : "이 트랜잭션을 안전하게 진행하려면 주소 확인이 반드시 필요합니다",
@@ -4509,7 +4552,7 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português"
+      "pt" : "Português (Br)"
     }
   },
   "deviceLocalization" : {
@@ -4528,8 +4571,12 @@
     "installingLanguage" : "언어 설치 중",
     "languages" : {
       "english" : "영어",
-      "french" : "프랑스어",
-      "spanish" : "스페인어"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5451,9 @@
     "AccountHeader" : {
       "title" : "계정을 위임하여 보상을 받을 수 있습니다.",
       "btn" : "보상 받기"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ 커스텀 검증인 추가"
     }
   },
   "tron" : {
@@ -6615,11 +6665,11 @@
     "title" : "장치 연결"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
-      "close" : "종료",
+      "close" : "닫기",
       "providers" : {
         "kiln_pooling" : {
           "title" : "Kiln 스테이킹 풀",
@@ -6648,6 +6698,72 @@
           "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하고 간단히 보상을 받으세요.",
           "supportLink" : "Kiln 자세히 알아보기"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "스테이킹 업체 선정",
+      "category" : {
+        "all" : {
+          "name" : "전체",
+          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+        },
+        "liquid" : {
+          "name" : "리퀴드(Liquid)",
+          "description" : "ETH를 스테이킹하고 리퀴드 토큰으로 보상을 받을 수 있으며, 여전히 자산 거래 및 디파이 활동 역시 참여 가능합니다."
+        },
+        "protocol" : {
+          "name" : "프로토콜(Protocol)",
+          "description" : "32 ETH 배치를 스테이킹하고 ETH로 전체 노드 보상을 받을 수 있습니다."
+        },
+        "pooling" : {
+          "name" : "풀링(Pooling)",
+          "description" : "풀에 참여하여 원하는 금액의 ETH를 스테이킹해 보상을 받을 수 있습니다."
+        },
+        "restaking" : {
+          "name" : "리스테이킹(Restaking)",
+          "description" : "리퀴드 토큰을 리스테이킹해 추가 보상을 받을 수 있습니다."
+        }
+      },
+      "howItWorks" : "ETH 스테이킹의 원리",
+      "lst" : "리퀴드 토큰 필요",
+      "noMinimum" : "최소 한도 없음",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 리퀴드 스테이킹"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs"
+        }
+      },
+      "readAbout" : "꼭 알아야 할 전략",
+      "requiredMinimum" : "{{min}} ETH 필요",
+      "rewardsStrategy" : {
+        "auto-compounded" : "자동 복리 보상",
+        "basic" : "보상",
+        "daily" : "일일 보상",
+        "eigenlayer_points" : "Eigenlayer 포인트",
+        "validator" : "검증인 보상"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6797,12 @@
         "subtitle" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
         "content" : {
           "able" : {
-            "title" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 추적할 수 있습니다.",
+            "title" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
             "diagAndUsage" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
             "personnalizationData" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
           },
           "unable" : {
-            "title" : "Ledger Live는 다음과 관련한 정보를 결코 추적하지 않습니다.",
+            "title" : "Ledger Live는 다음과 관련한 정보를 결코 수집하지 않습니다.",
             "adresses" : "고객 자산.",
             "balance" : "고객 포트폴리오.",
             "personnalInfos" : "사용자 개인 식별 정보(예: 이름이나 이메일 주소)"
@@ -6698,7 +6814,7 @@
           },
           "infoText" : {
             "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-            "link" : "당사 추적 정책 자세히 살펴보기"
+            "link" : "Ledger의 고객 데이터 처리 방법에 대해 자세히 알아보세요"
           }
         }
       },
@@ -6884,7 +7000,8 @@
           "title" : "유효하지 않은 QR 코드",
           "desc" : "Ledger Live 앱을 동기화하려면 Ledger Live에 표시된 QR 코드만 스캔합니다.",
           "info" : "QR 코드의 경우 \"설정\"을 열고 \"일반\"을 선택한 다음 \"Ledger 동기화\", \"동기화 켜기\" 및 \"QR 표시\"를 선택합니다.",
-          "cta" : "이해합니다"
+          "cta" : "이해합니다",
+          "tryAgain" : "다시 시도하세요"
         },
         "scannedOldQrCode" : {
           "title" : "Ledger Live 업데이트 필요",
