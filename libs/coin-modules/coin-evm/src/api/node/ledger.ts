@@ -258,6 +258,7 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
 export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
   currency,
   signedTxHex,
+  broadcastConfig,
 ) => {
   const config = getCoinConfig(currency).info;
   const { node } = config || /* istanbul ignore next */ {};
@@ -265,14 +266,14 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
+  const mevParam = broadcastConfig?.mevProtected ? "?mevProtected=true" : "";
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send${mevParam}`,
     data: { tx: signedTxHex },
   });
-
   return hash;
 };
 
