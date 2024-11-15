@@ -8,7 +8,7 @@ const CarouselStory = (args: Omit<Props, "children"> & { children: number }) => 
     <div
       key={index}
       style={{
-        backgroundColor: index === 0 ? "transparent" : `hsl(${Math.random() * 360}, 100%, 75%)`,
+        backgroundColor: "hsl(" + Math.random() * 360 + ", 100%, 75%)",
         padding: "16px 24px",
         borderRadius: "5px",
       }}

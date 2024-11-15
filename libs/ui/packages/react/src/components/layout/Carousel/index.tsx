@@ -1,6 +1,6 @@
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Footer from "./Footer";
 import { Props } from "./types";
 import { ChevronArrow } from "./ChevronArrow";
@@ -19,19 +19,12 @@ const EmblaSlide = styled.div`
 `;
 
 const CarouselContainer = styled.div<Pick<Props, "variant">>`
-  ${({ theme, variant }) => {
-    if (variant === "default") {
-      return css`
-        position: relative;
+  position: relative;
 
-        --hover-transition: 0;
-        &:hover {
-          --hover-transition: 1;
-        }
-        background-color: ${theme.colors.background.card};
-      `;
-    }
-  }}
+  --hover-transition: 0;
+  &:hover {
+    --hover-transition: 1;
+  }
 `;
 
 /**
