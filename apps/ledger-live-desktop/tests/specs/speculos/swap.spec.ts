@@ -112,6 +112,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
+  //todo: flaky balance retrieval, reactivate after LIVE-14410
   /*{
     swap: new Swap(
       Account.SOL_1,
