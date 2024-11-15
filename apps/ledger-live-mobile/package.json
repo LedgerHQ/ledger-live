@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.55.0",
+  "version": "3.56.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
-    "@braze/react-native-sdk": "8.4.0",
+    "@braze/react-native-sdk": "10.0.0",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",

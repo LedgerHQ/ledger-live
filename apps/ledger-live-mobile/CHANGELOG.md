@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.56.0
+
+### Minor Changes
+
+- [#8370](https://github.com/LedgerHQ/ledger-live/pull/8370) [`04eeae0`](https://github.com/LedgerHQ/ledger-live/commit/04eeae00ff9f40f76c35d01bf4818fe915e5e1bd) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Upgrade Braze package
+
+## 3.56.0-hotfix.0
+
+### Minor Changes
+
+- [#8370](https://github.com/LedgerHQ/ledger-live/pull/8370) [`04eeae0`](https://github.com/LedgerHQ/ledger-live/commit/04eeae00ff9f40f76c35d01bf4818fe915e5e1bd) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Upgrade Braze package
+
 ## 3.55.0
 
 ### Minor Changes
