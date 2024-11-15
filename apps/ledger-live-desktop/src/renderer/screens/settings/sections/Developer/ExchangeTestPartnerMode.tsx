@@ -7,11 +7,7 @@ import { SettingsSectionRow } from "../../SettingsSection";
 
 const ExchangeTestPartnerMode = () => {
   const { t } = useTranslation();
-  const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(false);
-
-  useEffect(() => {
-    setEnableExchangeDevMode(getEnv("MOCK_EXCHANGE_TEST_PARTNER"));
-  }, []);
+  const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(getEnv("MOCK_EXCHANGE_TEST_PARTNER"));
 
   useEffect(() => {
     setEnv("MOCK_EXCHANGE_TEST_PARTNER", enableExchangeTestPartnerMode);
