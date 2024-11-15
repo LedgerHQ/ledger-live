@@ -2,7 +2,6 @@ import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import crypto_org from "../families/crypto_org/transaction";
 import internet_computer from "../families/internet_computer/transaction";
-import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
@@ -28,7 +27,6 @@ export default {
   celo,
   crypto_org,
   internet_computer,
-  vechain,
   algorand,
   bitcoin,
   cardano,

@@ -2,7 +2,6 @@ import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import crypto_org from "../families/crypto_org/specs";
 import internet_computer from "../families/internet_computer/specs";
-import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
@@ -28,7 +27,6 @@ export default {
   celo,
   crypto_org,
   internet_computer,
-  vechain,
   algorand,
   bitcoin,
   cardano,
