@@ -82,6 +82,27 @@ Produces a development .ipa signed with the developer's current certificates (ca
 
 Produces a development .apk that can be installed on Android phones. Not eligible for Google PlayStore
 
+## Watch deps
+
+In another terminal and in parallel to `pnpm dev:llm`, you can watch different libs from the monorepo
+
+```bash
+# watch common
+pnpm watch:common
+
+# watch ljs
+pnpm watch:ljs
+
+# watch coin integrations
+pnpm watch:coin
+
+# watch specific lib
+pnpm turbo run watch --filter="./libs/ledgerjs/packages/hw-app-btc"
+
+# watch specific coin integration
+pnpm turbo run watch --filter="./libs/coin-modules/coin-bitcoin"
+```
+
 ## Environment variables
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.

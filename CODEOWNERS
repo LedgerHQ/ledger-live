@@ -57,6 +57,10 @@ apps/ledger-live-desktop/src/renderer/screens/earn/                  @ledgerhq/p
 apps/ledger-live-desktop/src/renderer/screens/exchange/              @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/stake/                 @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/swapWeb/               @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal	@ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal_deprecated	@ledgerhq/ptx
+apps/ledger-live-mobile/src/families/evm/StakingDrawer/              @ledgerhq/ptx
+apps/ledger-live-mobile/src/families/evm/StakingDrawer_deprecated/   @ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/earn.ts                          @ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/swap.ts                          @ledgerhq/ptx
 apps/ledger-live-mobile/src/components/ProviderIcon/                 @ledgerhq/ptx

@@ -55,9 +55,9 @@ export class Layout extends Component {
     await this.drawerMarketButton.click();
   }
 
-  @step("Check if there is a input error visible")
-  async checkInputErrorNotVisible() {
-    await this.inputError.waitFor({ state: "hidden" });
+  @step("Check input error state visibibility: $0")
+  async checkInputErrorVisibibility(expectedState: "visible" | "hidden") {
+    await this.inputError.waitFor({ state: expectedState });
   }
 
   @step("synchronize accounts")
@@ -67,7 +67,7 @@ export class Layout extends Component {
 
   @step("Wait for accounts sync to be finished")
   async waitForAccountsSyncToBeDone() {
-    await expect(this.topbarSynchronizeButton).toHaveAttribute("cursor", "default");
+    await expect(this.topbarSynchronizeButton).not.toHaveText("Synchronizing");
     //todo: remove after https://ledgerhq.atlassian.net/browse/LIVE-14410 is solved
     await this.page.waitForTimeout(5000);
   }

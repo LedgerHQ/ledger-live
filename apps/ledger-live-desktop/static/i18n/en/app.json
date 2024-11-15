@@ -2375,7 +2375,7 @@
     "footer": {
       "estimatedFees": "Network fees"
     },
-    "info":{
+    "info": {
       "needMemoTag": {
         "title": "Don’t use Tag/Memo?",
         "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
@@ -2390,7 +2390,15 @@
     "version": "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork": {
-    "title": "Troubleshoot networking"
+    "title": "Troubleshoot networking",
+    "myLedgerServices": "My Ledger services (scriptrunner)",
+    "bitcoinExplorers": "Bitcoin explorers",
+    "ethereumExplorers": "Ethereum explorers",
+    "countervaluesApi": "Countervalues API",
+    "announcements": "Announcements",
+    "status": "Status",
+    "test": "TEST",
+    "renderer": "RENDERER"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
@@ -4104,6 +4112,8 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "mevProtection": "MEV Protection",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },

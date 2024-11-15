@@ -13,4 +13,5 @@ export type SwapFormNavigatorParamList = {
     | SwapSelectCurrency
     | SwapPendingOperation;
   [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapLiveApp]: undefined;
 };
