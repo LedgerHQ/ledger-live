@@ -7,6 +7,7 @@ import {
   setDynamicContentLearnCards,
   setDynamicContentCategoriesCards,
   setDynamicContentMobileCards,
+  setIsDynamicContentLoading,
 } from "../actions/dynamicContent";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
@@ -33,8 +34,16 @@ export const useDynamicContentLogic = () => {
   const dismissedContentCardsIds = Object.keys(dismissedContentCards);
 
   const fetchData = useCallback(async () => {
+    dispatch(setIsDynamicContentLoading(true));
+
     // Fetch data from Braze
-    const contentCards: BrazeContentCard[] = await Braze.getContentCards();
+    let contentCards: BrazeContentCard[] = [];
+    try {
+      contentCards = await Braze.getContentCards();
+    } catch (error) {
+      console.error("Error fetching dynamic content", error);
+    }
+
     const filteredContentCards = filterCardsThatHaveBeenDismissed(
       contentCards,
       dismissedContentCardsIds,
@@ -70,6 +79,7 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
+    dispatch(setIsDynamicContentLoading(false));
   }, [Braze, dismissedContentCardsIds, dispatch]);
 
   const clearOldDismissedContentCards = () => {
