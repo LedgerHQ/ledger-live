@@ -1,7 +1,7 @@
 import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
 import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 
-export type VechainCoinConfig = () => CurrencyConfig
+export type VechainCoinConfig = () => CurrencyConfig;
 
 let coinConfig: CoinConfig<CurrencyConfig> | undefined;
 

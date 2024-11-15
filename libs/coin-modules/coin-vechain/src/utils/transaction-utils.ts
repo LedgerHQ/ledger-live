@@ -1,6 +1,6 @@
+import BigNumber from "bignumber.js";
 import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX } from "../constants";
 import crypto from "crypto";
-import BigNumber from "bignumber.js";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import params from "../contracts/abis/params";
 import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";

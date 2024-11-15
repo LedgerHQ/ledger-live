@@ -17,7 +17,6 @@ import resolver from "../hw-getAddress";
 import { VechainCoinConfig, setCoinConfig } from "../config";
 import { VechainSigner } from "../signer";
 import type { Transaction } from "../types";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/lib/config";
 
 export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

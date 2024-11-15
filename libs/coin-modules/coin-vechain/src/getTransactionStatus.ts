@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -6,7 +7,6 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { calculateTransactionInfo } from "./utils/transaction-utils";
 import { isValid } from "./utils/address-utils";

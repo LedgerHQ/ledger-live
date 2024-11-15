@@ -1,6 +1,6 @@
+import BigNumber from "bignumber.js";
 import vip180 from "../contracts/abis/VIP180";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { EventLog, TransferLog } from "../api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getFees } from "../api";

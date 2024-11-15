@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network/network";
 import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "./types";
 import type { Operation } from "@ledgerhq/types-live";
@@ -7,7 +8,6 @@ import { TransferEventSignature } from "../contracts/constants";
 import { Transaction } from "thor-devkit";
 import { HEX_PREFIX } from "../constants";
 import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
 

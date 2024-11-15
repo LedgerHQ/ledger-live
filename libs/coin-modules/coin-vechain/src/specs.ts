@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import expect from "expect";
 import type {
@@ -11,8 +12,6 @@ import type { Transaction } from "./types";
 import { pickSiblings, botTest, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-
-import BigNumber from "bignumber.js";
 import speculosDeviceActions from "./speculos-deviceActions";
 
 const MIN_VET_TRANSACTION_AMOUNT = 1000000000000000000;
