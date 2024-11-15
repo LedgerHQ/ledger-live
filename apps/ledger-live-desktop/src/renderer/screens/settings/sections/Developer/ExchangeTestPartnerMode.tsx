@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import Switch from "~/renderer/components/Switch";
 import Box from "~/renderer/components/Box";
@@ -7,11 +7,13 @@ import { SettingsSectionRow } from "../../SettingsSection";
 
 const ExchangeTestPartnerMode = () => {
   const { t } = useTranslation();
-  const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(getEnv("MOCK_EXCHANGE_TEST_PARTNER"));
+  const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(
+    getEnv("MOCK_EXCHANGE_TEST_PARTNER"),
+  );
 
   const handleChangeSwitch = () => {
     setEnableExchangeDevMode(!enableExchangeTestPartnerMode);
-        setEnv("MOCK_EXCHANGE_TEST_PARTNER", !enableExchangeTestPartnerMode);
+    setEnv("MOCK_EXCHANGE_TEST_PARTNER", !enableExchangeTestPartnerMode);
   };
 
   return (
