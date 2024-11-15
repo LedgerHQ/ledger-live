@@ -13,18 +13,40 @@ const maybeGetUpdatedSwapHistory = async (
   let consolidatedSwapHistory: SwapOperation[] = [];
 
   if (swapHistory) {
-    for (const { provider, swapId, status, operationId } of swapHistory) {
+    for (const swap of swapHistory) {
+      const { provider, swapId, status, operationId } = swap;
+      let updatedSwap = { ...swap };
+
       if (isSwapOperationPending(status)) {
-        const transactionId =
-          provider === "thorswap"
-            ? operations?.find(o => o.id.includes(operationId))?.hash
-            : undefined;
-        pendingSwapIds.push({
-          provider,
-          swapId,
-          transactionId,
-          ...(provider === "thorswap" && { operationId }), // to be removed after Thorswap is fully migrated
-        });
+        // if swapId is in operationId, then we can get the status from the operation
+        // it means DEX swap like Uniswap
+        if (operationId && swapId && operationId.includes(swapId)) {
+          const operation = operations?.find(o => o.id.includes(operationId));
+          if (operation) {
+            let newStatus;
+            if (operation.blockHeight) {
+              newStatus = operation.hasFailed ? "refunded" : "finished";
+            } else {
+              newStatus = "pending";
+            }
+            if (newStatus !== swap.status) {
+              accountNeedsUpdating = true;
+              updatedSwap.status = newStatus;
+            }
+          }
+        } else {
+          // Collect all others swaps that need status update via getMultipleStatus
+          const transactionId =
+            provider === "thorswap"
+              ? operations?.find(o => o.id.includes(operationId))?.hash
+              : undefined;
+          pendingSwapIds.push({
+            provider,
+            swapId,
+            transactionId,
+            ...(provider === "thorswap" && { operationId }),
+          });
+        }
       }
     }
 
@@ -35,10 +57,8 @@ const maybeGetUpdatedSwapHistory = async (
 
         if (!existingItem) {
           uniquePendingSwapIdsMap.set(item.swapId, item);
-        } else {
-          if (item.transactionId && !existingItem.transactionId) {
-            uniquePendingSwapIdsMap.set(item.swapId, item);
-          }
+        } else if (item.transactionId && !existingItem.transactionId) {
+          uniquePendingSwapIdsMap.set(item.swapId, item);
         }
       }
 
@@ -61,10 +81,10 @@ const maybeGetUpdatedSwapHistory = async (
 
         return swap;
       });
+    }
 
-      if (accountNeedsUpdating) {
-        return consolidatedSwapHistory;
-      }
+    if (accountNeedsUpdating) {
+      return consolidatedSwapHistory;
     }
   }
 };
