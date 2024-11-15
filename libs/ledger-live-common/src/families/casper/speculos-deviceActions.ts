@@ -33,7 +33,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) =>
-        `${transaction.fees.toNumber().toLocaleString("en-US").replaceAll(",", " ")} motes`,
+        `${transaction.fees.toNumber().toLocaleString("en-US").replace(/,/g, " ")} motes`,
     },
     {
       title: "Target",
@@ -45,7 +45,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ status }) =>
-        `${status.amount.toNumber().toLocaleString("en-US").replaceAll(",", " ")} motes`,
+        `${status.amount.toNumber().toLocaleString("en-US").replace(/,/g, " ")} motes`,
     },
     {
       title: "APPROVE",
