@@ -62,13 +62,16 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     emblaApi.on("reInit", updateIndex);
   }, [emblaApi, updateIndex]);
 
+  const handleGotoPrevSlide = () => emblaApi?.scrollPrev();
+  const handleGotoNextSlide = () => emblaApi?.scrollNext();
+
   return (
     <div>
       <CarouselContainer variant={variant}>
         {variant === "default" && children.length > 1 && (
           <>
-            <ChevronArrow direction="left" onClick={() => emblaApi?.scrollPrev()} />
-            <ChevronArrow direction="right" onClick={() => emblaApi?.scrollNext()} />
+            <ChevronArrow direction="left" onClick={handleGotoPrevSlide} />
+            <ChevronArrow direction="right" onClick={handleGotoNextSlide} />
           </>
         )}
 
