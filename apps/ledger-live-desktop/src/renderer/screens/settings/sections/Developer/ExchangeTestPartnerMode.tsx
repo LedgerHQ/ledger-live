@@ -9,12 +9,9 @@ const ExchangeTestPartnerMode = () => {
   const { t } = useTranslation();
   const [enableExchangeTestPartnerMode, setEnableExchangeDevMode] = useState<boolean>(getEnv("MOCK_EXCHANGE_TEST_PARTNER"));
 
-  useEffect(() => {
-    setEnv("MOCK_EXCHANGE_TEST_PARTNER", enableExchangeTestPartnerMode);
-  }, [enableExchangeTestPartnerMode]);
-
   const handleChangeSwitch = () => {
     setEnableExchangeDevMode(!enableExchangeTestPartnerMode);
+        setEnv("MOCK_EXCHANGE_TEST_PARTNER", !enableExchangeTestPartnerMode);
   };
 
   return (
