@@ -320,9 +320,6 @@ export enum ScreenName {
   // ton
   TonEditComment = "TonEditComment",
 
-  // crypto_org
-  CryptoOrgEditMemo = "CryptoOrgEditMemo",
-
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
   AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",

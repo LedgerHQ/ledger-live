@@ -17,6 +17,7 @@ import Coreum from "./Coreum";
 import Injective from "./Injective";
 import Dydx from "./Dydx";
 import Mantra from "./Mantra";
+import CryptoOrg from "./CryptoOrg";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -77,6 +78,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "mantra":
         cosmosChainParams[currencyId] = new Mantra();
+        break;
+      case "crypto_org":
+        cosmosChainParams[currencyId] = new CryptoOrg();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

@@ -25,7 +25,11 @@ import { bridge as xrp } from "../../families/xrp/setup";
 export default {
   casper,
   celo,
+<<<<<<< HEAD
   crypto_org,
+=======
+  internet_computer,
+>>>>>>> 83ebc75b9f (fix: move crypto org into cosmos coin module)
   algorand,
   bitcoin,
   cardano,

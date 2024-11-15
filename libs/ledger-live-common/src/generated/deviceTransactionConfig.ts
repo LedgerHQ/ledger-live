@@ -24,7 +24,11 @@ import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 export default {
   casper,
   celo,
+<<<<<<< HEAD
   crypto_org,
+=======
+  internet_computer,
+>>>>>>> 83ebc75b9f (fix: move crypto org into cosmos coin module)
   algorand,
   bitcoin,
   cardano,

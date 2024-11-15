@@ -40,6 +40,7 @@ export const IDS = [
   "persistence",
   "onomy",
   "mantra",
+  "crypto_org",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -532,6 +533,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/mantra/txs/$hash",
         address: "https://www.mintscan.io/mantra/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "crypto_org",
+    coinType: 394,
+    name: "Cronos POS Chain",
+    managerAppName: "Cronos POS Chain",
+    ticker: "CRO",
+    scheme: "crypto_org",
+    color: "#0e1c37",
+    family: "cosmos",
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 8,
+      },
+      {
+        name: "Micro-CRO",
+        code: "baseCRO",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://cronos-pos.org/explorer/tx/$hash",
+        address: "https://cronos-pos.org/explorer/account/$address",
       },
     ],
   },
