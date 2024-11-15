@@ -15,7 +15,7 @@ const maybeGetUpdatedSwapHistory = async (
   if (swapHistory) {
     for (const swap of swapHistory) {
       const { provider, swapId, status, operationId } = swap;
-      let updatedSwap = { ...swap };
+      const updatedSwap = { ...swap };
 
       if (isSwapOperationPending(status)) {
         // if swapId is in operationId, then we can get the status from the operation
