@@ -15,19 +15,39 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/bridge/index.ts",
+    "src/account.ts",
+    "src/api/index.ts",
+    "src/api/sdk.ts",
+    "src/api/types.ts",
+    "src/bridge/js.ts",
     "src/broadcast.ts",
-    "src/buildOptimisticOperation.ts",
-    "src/buildTransaction.ts",
-    "src/cli.ts",
+    "src/buildOptimisticOperatioin.ts",
+    "src/cli-transaction.ts",
     "src/config.ts",
+    "src/constants.ts",
+    "src/contracts/abis/VIP180.ts",
+    "src/contracts/abis/params.ts",
+    "src/contracts/constants.ts",
     "src/createTransaction.ts",
+    "src/datasets/vechain.scanAccounts.1.ts",
+    "src/datasets/vechain.ts",
     "src/estimateMaxSpendable.ts",
     "src/getTransactionStatus.ts",
+    "src/logic.ts",
+    "src/mock.ts",
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
-    "src/synchronization.ts",
-    "src/tokens.ts"
+    "src/synchronisation.ts",
+    "src/utils/address-utils.ts",
+    "src/utils/hex-utils.ts",
+    "src/utils/mapping-utils.ts",
+    "src/utils/pad-address.ts",
+    "src/utils/transaction-utils.ts"
   ],
-  "ignoreUnused": ["rxjs"]
+  "ignoreUnused": [
+    "@ledgerhq/live-env",
+    "@ledgerhq/live-network",
+    "lodash",
+    "rxjs"
+  ]
 }

@@ -3238,57 +3238,27 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../../evm-tools
-      '@ledgerhq/hw-app-vet':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-vet
-      '@ledgerhq/hw-transport':
-        specifier: ^6.31.2
-        version: 6.31.2
-      '@ledgerhq/live-config':
-        specifier: ^3.0.0
-        version: 3.0.0
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
-      '@ledgerhq/live-promise':
-        specifier: workspace:^
-        version: link:../../promise
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/logs
-      axios:
-        specifier: 0.26.1
-        version: 0.26.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      imurmurhash:
-        specifier: ^0.1.4
-        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      react-native-get-random-values:
-        specifier: ^1.8.0
-        version: 1.11.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -3308,9 +3278,6 @@ importers:
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
-      '@types/imurmurhash':
-        specifier: ^0.1.4
-        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -10996,9 +10963,6 @@ packages:
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
-  '@ledgerhq/errors@6.18.0':
-    resolution: {integrity: sha512-L3jQWAGyooxRDk/MRlW2v4Ji9+kloBtdmz9wBkHaj2j0n+05rweJSV3GHw9oye1BYMbVFqFffmT4H3hlXlCasw==}
-
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
@@ -11024,9 +10988,6 @@ packages:
   '@ledgerhq/hw-transport@6.30.6':
     resolution: {integrity: sha512-fT0Z4IywiuJuZrZE/+W0blkV5UCotDPFTYKLkKCLzYzuE6javva7D/ajRaIeR+hZ4kTmKF4EqnsmDCXwElez+w==}
 
-  '@ledgerhq/hw-transport@6.31.2':
-    resolution: {integrity: sha512-B27UIzMzm2IXPGYnEB95R7eHxpXBkTBHh6MUJJQZVknt8LilEz1tfpTYUdzAKDGQ+Z5MZyYb01Eh3Zqm3kn3uw==}
-
   '@ledgerhq/hw-transport@6.31.3':
     resolution: {integrity: sha512-rFplkHWF5NXtlYwAusqLlMu298NHtRD+2q/jrTYc//uu/xJO9LkDIgKid6IVF2+e1Wj7yX6YQVrU6L0Yu1ntEw==}
 
@@ -11047,9 +11008,6 @@ packages:
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
-
-  '@ledgerhq/live-config@3.0.0':
-    resolution: {integrity: sha512-iisns2TFXHLPAYAgpXF/wggvcSscPaxZnMgixRsZho35tL0Dap4hhIT/35f3VuYS/dKDmahTrNjJzeIYEDJ7/Q==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -16655,9 +16613,6 @@ packages:
 
   axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
-
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -36181,8 +36136,6 @@ snapshots:
 
   '@ledgerhq/errors@5.50.0': {}
 
-  '@ledgerhq/errors@6.18.0': {}
-
   '@ledgerhq/errors@6.19.1': {}
 
   '@ledgerhq/hw-app-eth@5.11.0':
@@ -36228,13 +36181,6 @@ snapshots:
       '@ledgerhq/logs': 6.12.0
       events: 3.3.0
 
-  '@ledgerhq/hw-transport@6.31.2':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.18.0
-      '@ledgerhq/logs': 6.12.0
-      events: 3.3.0
-
   '@ledgerhq/hw-transport@6.31.3':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
@@ -36261,10 +36207,6 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
-
-  '@ledgerhq/live-config@3.0.0':
-    dependencies:
-      lodash: 4.17.21
 
   '@ledgerhq/logs@5.50.0': {}
 
@@ -45318,10 +45260,6 @@ snapshots:
       follow-redirects: 1.15.6
 
   axios@0.24.0:
-    dependencies:
-      follow-redirects: 1.15.6
-
-  axios@0.26.1:
     dependencies:
       follow-redirects: 1.15.6
 
