@@ -168,6 +168,16 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
+  config_currency_crypto_org: {
+    type: "object",
+    default: {
+      lcd: "https://cryptocom-api.polkachu.com",
+      minGasPrice: 0.025,
+      status: {
+        type: "active",
+      },
+    },
+  },
 };
 
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
