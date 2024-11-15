@@ -195,6 +195,16 @@ describe("fetchAndMergeProviderData", () => {
         type: "CEX",
         version: 2,
       },
+      uniswap: {
+        continuesInProviderLiveApp: false,
+        displayName: "Uniswap",
+        mainUrl: "https://uniswap.org/",
+        needsKYC: false,
+        supportUrl: "mailto:support@uniswap.org",
+        termsOfUseUrl:
+          "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+        type: "DEX",
+      },
       wyre: {
         name: "Wyre",
         publicKey: {
