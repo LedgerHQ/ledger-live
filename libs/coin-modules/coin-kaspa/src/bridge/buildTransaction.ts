@@ -2,6 +2,10 @@ import type { Account } from "@ledgerhq/types-live";
 
 import type { Transaction } from "./types";
 import { getNonce } from "./logic";
+import { AccountAddresses, scanAddresses, scanUtxos } from "../network";
+import { addressToScriptPublicKey, parseExtendedPublicKey } from "../lib/kaspa-util";
+import { selectUtxos } from "../lib/utxoSelection";
+import { BigNumber } from "bignumber.js";
 
 const getTransactionParams = (a: Account, t: Transaction) => {
   switch (t.mode) {
@@ -35,43 +39,63 @@ export const buildTransaction = async (a: Account, t: Transaction) => {
   const params = getTransactionParams(a, t);
   const nonce = getNonce(a);
 
-  const txparams = {
-    address,
-    nonce,
-    params,
-  };
+  if (params.method === "transferAll") {
+    throw new Error("The 'transferAll' method is not supported yet.");
+  }
 
-  const txInputs = []
-  const txOutputs = []
+  // method is regular transfer now.
+  const recipient = params.args.dest;
+  const amount: BigNumber = params.args.value;
 
+  const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(a.xpub, "hex"));
 
+  const utxos = await scanUtxos(compressedPublicKey, chainCode);
+
+  const selectedUtxos = selectUtxos(utxos, recipient.length > 67, amount, 1);
+
+  const txInputs = selectedUtxos.map(utxo => {
+    return {
+      previousOutpoint: {
+        transactionId: utxo.outpoint.transactionId,
+        index: utxo.outpoint.index,
+      },
+      signatureScript: "",
+      sequence: "0",
+      sigOpCount: 0,
+      value: utxo.utxoEntry.amount.toString(),
+      addressType: utxo.accountType,
+      addressIndex: utxo.accountIndex,
+    };
+  });
+
+  // amount to recipient, change to nextChangeAddress
+  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
+  const changeAmount: BigNumber = selectedUtxos
+    .reduce((sum, utxo) => {
+      return sum.plus(new BigNumber(utxo.utxoEntry.amount));
+    }, new BigNumber(0))
+    .minus(amount);
+
+  const txOutputs = [
+    {
+      amount: amount,
+      scriptPublicKey: addressToScriptPublicKey(recipient),
+    },
+    {
+      amount: changeAmount,
+      scriptPublicKey: addressToScriptPublicKey(accountAddresses.nextChangeAddress.address),
+      addressType: accountAddresses.nextChangeAddress.type,
+      addressIndex: accountAddresses.nextChangeAddress.index,
+    },
+  ];
 
   const unsignedTx = {
     version: 0,
-    inputs: [
-      {
-        previousOutpoint: {
-          transactionId: "string",
-          index: 0,
-        },
-        signatureScript: "string",
-        sequence: 0,
-        sigOpCount: 0,
-      },
-    ],
-    outputs: [
-      {
-        amount: 0,
-        scriptPublicKey: {
-          version: 0,
-          scriptPublicKey: "string",
-        },
-      },
-    ],
+    inputs: txInputs,
+    outputs: txOutputs,
     lockTime: 0,
-    subnetworkId: "string",
+    subnetworkId: "0000000000000000000000000000000000000000",
   };
 
-  // Will likely be a call to MyCoin SDK
-  return JSON.stringify(unsigned);
+  return JSON.stringify(unsignedTx);
 };
