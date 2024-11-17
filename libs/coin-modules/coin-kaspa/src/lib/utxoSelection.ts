@@ -39,8 +39,14 @@ export function selectUtxos(
     Math.max(0, utxos.length - MAX_TX_INPUTS),
     utxos.length,
   );
-  const maximumMass =
+
+  let maximumMass =
     DEFAULT_MASS_WITHOUT_INPUT + Math.min(MAX_TX_INPUTS, utxos.length) * MASS_PER_UTXO_INPUT;
+
+  if (recipient_is_ecdsa) {
+    maximumMass += ADDTIONAL_MASS_FOR_ECDSA_OUTPUT;
+  }
+
   const maximumSpendableAmount = spendableUtxos.minus(maximumMass * feerate);
 
   if (amount.gt(maximumSpendableAmount)) {
