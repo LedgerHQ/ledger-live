@@ -41,7 +41,7 @@ export const buildSignOperation =
           type: "signed",
           signedOperation: {
             operation,
-            signature: tx.inputs[0].signature || "",
+            signature: JSON.stringify(tx.toApiJSON()),
           },
         });
       }

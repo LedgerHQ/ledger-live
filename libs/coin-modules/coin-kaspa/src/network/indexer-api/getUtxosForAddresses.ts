@@ -1,4 +1,5 @@
 import { API_BASE } from "./config";
+import { BigNumber } from "bignumber.js";
 
 interface Outpoint {
   transactionId: string;
@@ -10,7 +11,7 @@ interface ScriptPublicKey {
 }
 
 interface UtxoEntry {
-  amount: string;
+  amount: BigNumber;
   scriptPublicKey: ScriptPublicKey;
   blockDaaScore: string;
   isCoinbase: boolean;

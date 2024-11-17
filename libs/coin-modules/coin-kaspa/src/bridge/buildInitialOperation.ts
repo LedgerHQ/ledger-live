@@ -1,10 +1,12 @@
-import { KaspaAccount, KaspaOperation, Transaction } from "../types/bridge";
+import { KaspaAccount, KaspaTransaction } from "../types/bridge";
 import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 export const buildInitialOperation = (
   account: KaspaAccount,
-  transaction: Transaction,
-): KaspaOperation => {
+  transaction: KaspaTransaction,
+): Operation => {
   const { id } = account;
 
   const senders = [transaction.recipient];
@@ -18,10 +20,10 @@ export const buildInitialOperation = (
     hash: "",
     type,
     value,
-    fee: 0,
     blockHash: null,
     blockHeight: null,
     senders,
+    fee: BigNumber(0),
     recipients,
     accountId: id,
     date: new Date(),

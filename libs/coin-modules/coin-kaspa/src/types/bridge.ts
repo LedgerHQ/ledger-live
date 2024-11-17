@@ -5,6 +5,7 @@ import type {
   OperationExtra,
   OperationExtraRaw,
   OperationRaw,
+  SignedOperation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -19,13 +20,13 @@ export type KaspaAccountRaw = AccountRaw & {
   later: "maybe";
 };
 
-export type KaspaOperation = Operation & {
-  later: "maybe";
+export type KaspaSignedOperation = SignedOperation & {
+  signedTxJson: string;
 };
 
-export type KaspaOperationRaw = OperationRaw & {
-  later: "maybe";
-};
+export type KaspaOperation = Operation;
+
+export type KaspaOperationRaw = OperationRaw;
 
 export type KaspaOperationExtra = OperationExtra & {
   later: "maybe";
@@ -61,32 +62,30 @@ export type KaspaScriptPublicKey = {
 export type KaspaTransactionOutput = {
   amount: number;
   scriptPublicKey: KaspaScriptPublicKey;
+  addressType?: number;
+  addressIndex?: number;
 };
 
-// TODO: implement rbf functions
-export type KaspaTransaction = {
-  version: number;
-  inputs: KaspaTransactionInput[];
-  outputs: KaspaTransactionOutput[] | null;
-  locktime: number;
-  subnetworkId: string;
-};
-
-export type KaspaTransactionCommon = TransactionCommon & {
-  fees: number | null;
-  rbf: boolean;
-};
-
-export type KaspaTransactionCommonRaw = TransactionCommonRaw & {
+export type KaspaTransaction = TransactionCommon & {
+  inputs?: KaspaTransactionInput[];
+  outputs?: KaspaTransactionOutput[] | null;
   family: "kaspa";
-  fees: BigNumber | null | undefined;
+  feerate: number | null;
   rbf: boolean;
 };
 
-export type KaspaTransactionStatusCommon = TransactionStatusCommon & {
+export type KaspaTransactionRaw = TransactionCommonRaw & {
+  inputs?: KaspaTransactionInput[];
+  outputs?: KaspaTransactionOutput[] | null;
+  family: "kaspa";
+  feerate: number | null;
+  rbf: boolean;
+};
+
+export type KaspaTransactionStatus = TransactionStatusCommon & {
   later: "maybe";
 };
-export type KaspaTransactionStatusCommonRaw = TransactionStatusCommonRaw & {
+export type KaspaTransactionStatusRaw = TransactionStatusCommonRaw & {
   later: "maybe";
 };
 
@@ -101,7 +100,7 @@ export type KaspaUtxo = {
   accountIndex: number;
   outpoint: KaspaOutpoint;
   utxoEntry: {
-    amount: "string";
+    amount: BigNumber;
     scriptPublicKey: {
       version: number;
       scriptPublicKey: string;

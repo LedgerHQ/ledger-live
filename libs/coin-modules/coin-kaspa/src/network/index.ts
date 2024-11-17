@@ -8,6 +8,7 @@ import { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 export { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
+export { submitTransaction } from "./indexer-api/submitTransaction";
 
 // Constants to improve clarity
 const RECEIVE_ADDRESS_TYPE = 0;
