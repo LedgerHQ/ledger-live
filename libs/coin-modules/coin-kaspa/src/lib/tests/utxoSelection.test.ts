@@ -83,39 +83,75 @@ const sampleUtxoSet: KaspaUtxo[] = [
 ];
 
 describe("selectUtxos function with low-fee strategy", () => {
+  const feerate = 1;
+  const recipient_is_ecdsa = false;
+
   test("error if spending more than 9997_964 with 2036 mass", () => {
     const utxos = [sampleUtxo];
-    const recipient_is_ecdsa = false;
     const amount = BigNumber(1_0000_0000 - 2036 + 1);
-    const feerate = 1;
-
     expect(() => selectUtxos(utxos, recipient_is_ecdsa, amount, feerate)).toThrow(Error);
   });
 
-  test("check ordering - low fees - ascending - 1 utxo needed", () => {
+  test("check ordering - lowest utxo needed #1", () => {
     const utxos = sampleUtxoSet;
-    const recipient_is_ecdsa = false;
-    const amount = BigNumber(1_0000_0000 - 50_000);
-    const feerate = 1;
+    const amount = BigNumber(1_0000_0000 - 2_036);
 
     const result = selectUtxos(utxos, recipient_is_ecdsa, amount, feerate);
-
     expect(result.length).toBe(1);
-    console.log("Amount", result[0].utxoEntry.amount.toNumber());
     expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
   });
 
-  test("check ordering - low fees - ascending - 2 utxos needed", () => {
-    const utxos = sampleUtxoSet;
+  test("check ordering - lowest utxo needed #2", () => {
+    const amount = BigNumber(9000_0000);
 
-    const recipient_is_ecdsa = false; // amount nee
-    const amount = BigNumber(1_0000_0000 - 2036 + 1);
-    const feerate = 1;
+    const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
 
-    const result = selectUtxos(utxos, recipient_is_ecdsa, amount, feerate);
+    expect(result.length).toBe(1);
+    expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+  });
+
+  test("check ordering - two lowest utxos needed #1", () => {
+    const amount = BigNumber(9999_9999);
+
+    const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
 
     expect(result.length).toBe(2);
     expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+    expect(result[1].utxoEntry.amount.eq(BigNumber(5_0000_0000))).toBe(true);
+  });
+
+  test("check ordering - two lowest utxos needed #2", () => {
+    const amount = BigNumber(6_0000_0000 - 3154);
+    const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
+
+    expect(result.length).toBe(2);
+    expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+    expect(result[1].utxoEntry.amount.eq(BigNumber(5_0000_0000))).toBe(true);
+  });
+
+  test("check ordering - all utxo needed", () => {
+    const amount = BigNumber(6_0000_0000 - 3153);
+    const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
+
+    expect(result.length).toBe(3);
+    expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+    expect(result[1].utxoEntry.amount.eq(BigNumber(5_0000_0000))).toBe(true);
+    expect(result[2].utxoEntry.amount.eq(BigNumber(10_0000_0000))).toBe(true);
+  });
+
+  test("check ordering - all utxo needed", () => {
+    const amount = BigNumber(16_0000_0000 - 4272); // 3 utxo inputs is okay
+    const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
+
+    expect(result.length).toBe(3);
+    expect(result[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+    expect(result[1].utxoEntry.amount.eq(BigNumber(5_0000_0000))).toBe(true);
+    expect(result[2].utxoEntry.amount.eq(BigNumber(10_0000_0000))).toBe(true);
+  });
+
+  test("check ordering - error - too much", () => {
+    const amount = BigNumber(16_0000_0000 - 4271); // 3 utxo inputs, 1 sompi too much
+    expect(() => selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate)).toThrow(Error);
   });
 });
 describe("selectUtxos function with high-fee strategy", () => {
@@ -123,23 +159,56 @@ describe("selectUtxos function with high-fee strategy", () => {
   const utxos = sampleUtxoSet;
   const recipient_is_ecdsa = false;
 
-  test("check ordering - higher fees - descending - 1 utxo needed", () => {
-    const amount = BigNumber(4_0000_0000);
-    const result = selectUtxos(utxos, recipient_is_ecdsa, amount, feerate);
+  test("check list of amounts and selected utxos", () => {
+    const test_list = [
+      {
+        amount: BigNumber(9000_0000),
+        expectSelection: [BigNumber(1_0000_0000)],
+      },
+      {
+        amount: BigNumber(1_0000_0000 - 2036 * 2), // minus exactly one input
+        expectSelection: [BigNumber(1_0000_0000)],
+      },
+      {
+        amount: BigNumber(1_0000_0000 - 2036 * feerate + 1),
+        expectSelection: [BigNumber(5_0000_0000)],
+      },
+      {
+        amount: BigNumber(5_0000_0000 - 2036 * feerate), // minus exactly one input
+        expectSelection: [BigNumber(5_0000_0000)],
+      },
+      {
+        amount: BigNumber(5_0000_0000 - 2036 * feerate + 1),
+        expectSelection: [BigNumber(10_0000_0000)],
+      },
+      {
+        amount: BigNumber(10_0000_0000 - 2036 * 2 + 1), // minus exactly one input
+        expectSelection: [BigNumber(5_0000_0000), BigNumber(10_0000_0000)],
+      },
+      {
+        amount: BigNumber(16_0000_0000 - 4272 * 2), // minus exactly one input
+        expectSelection: [BigNumber(1_0000_0000), BigNumber(5_0000_0000), BigNumber(10_0000_0000)],
+      },
+    ];
 
-    // only one 5KAS UTXO needed
-    expect(result.length).toBe(1);
-    expect(result[0].utxoEntry.amount.eq(BigNumber(5_0000_0000))).toBe(true);
+    test_list.forEach(test_case => {
+      const { amount, expectSelection } = test_case;
+
+      const result = selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate);
+
+      expect(result.length).toBe(expectSelection.length);
+
+      expectSelection.forEach((expAmount: BigNumber, index: number) => {
+        // console.log("result value", result[index].utxoEntry.amount);
+        // console.log("expection value", expAmount);
+        expect(result[index].utxoEntry.amount.eq(expAmount)).toBe(true);
+      });
+    });
   });
 
-  test("check ordering - higher fees - descending - 2 utxos needed", () => {
-    const amount = BigNumber(5_0000_0000); // 10 KAS -> need 2 utxos
-    const result = selectUtxos(utxos, recipient_is_ecdsa, amount, feerate);
-
-    expect(result.length).toBe(1);
-
-    // check utxos, 1 KAS and 5 KAS
-    expect(result[0].utxoEntry.amount.eq(BigNumber(10_0000_0000))).toBe(true);
+  test("check ordering - higher fees - too much", () => {
+    const amount = BigNumber(16_0000_0000 - 4272 * 2 + 1);
+    expect(() => selectUtxos(sampleUtxoSet, recipient_is_ecdsa, amount, feerate)).toThrow(Error);
   });
 });
 
