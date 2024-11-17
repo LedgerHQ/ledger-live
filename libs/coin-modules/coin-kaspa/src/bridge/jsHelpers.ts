@@ -27,16 +27,19 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
-  AccountRaw,
   CurrencyBridge,
   DerivationMode,
   Operation,
   ScanAccountEvent,
   SyncConfig,
   TransactionCommon,
-  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { KaspaAccount, KaspaAccountRaw, KaspaTransactionCommon, KaspaTransactionStatusCommon } from "../types/bridge";
+import {
+  KaspaAccount,
+  KaspaAccountRaw,
+  KaspaTransaction,
+  KaspaTransactionStatus,
+} from "../types/bridge";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -147,9 +150,9 @@ Operation[] {
 
 export const makeSync =
   <
-    T extends KaspaTransactionCommon = KaspaTransactionCommon,
+    T extends KaspaTransaction = KaspaTransaction,
     A extends KaspaAccount = KaspaAccount,
-    U extends KaspaTransactionStatusCommon = KaspaTransactionStatusCommon,
+    U extends KaspaTransactionStatus = KaspaTransactionStatus,
     R extends KaspaAccountRaw = KaspaAccountRaw,
   >({
     getAccountShape,

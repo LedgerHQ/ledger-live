@@ -14,7 +14,14 @@ import type {
 
 import type { BigNumber } from "bignumber.js";
 
-export type KaspaAccount = Account;
+export type KaspaAccount = Account & {
+  nextChangeAddress: string;
+  nextChangeAddressType: number;
+  nextChangeAddressIndex: number;
+  nextReceiveAddress: string;
+  nextReceiveAddressType: number;
+  nextReceiveAddressIndex: number;
+};
 
 export type KaspaAccountRaw = AccountRaw & {
   later: "maybe";

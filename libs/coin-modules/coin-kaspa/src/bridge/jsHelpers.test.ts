@@ -143,5 +143,8 @@ function createAccount(init: Partial<Account>): KaspaAccount {
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
     xpub: init.xpub ?? "",
+    nextChangeAddress: "",
+    nextChangeAddressIndex: 0,
+    nextChangeAddressType: 1,
   };
 }

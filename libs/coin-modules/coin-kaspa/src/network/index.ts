@@ -17,6 +17,10 @@ const INITIAL_BALANCE = BigNumber(0);
 const GAP_LIMIT = 20;
 const SCAN_BATCH_SIZE = 200;
 
+const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size) ) / 1_118 (per_input))
+const MASS_PER_UTXO_INPUT = 1_118;
+const DEFAULT_MASS_WITHOUT_INPUT = 918;
+
 type AccountAddress = {
   type: number;
   index: number;
@@ -34,6 +38,7 @@ export interface AccountAddresses {
   nextChangeAddress: AccountAddress;
   nextReceiveAddress: AccountAddress;
   totalBalance: BigNumber;
+  spendableBalance: BigNumber;
 }
 
 /**
@@ -57,6 +62,7 @@ export async function scanAddresses(
     nextChangeAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
     nextReceiveAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
     totalBalance: BigNumber(0),
+    spendableBalance: BigNumber(0),
   };
 
   // need to check UTXOs and TX history for the first account addresses
@@ -95,6 +101,25 @@ export async function scanAddresses(
       updateAddressesData(addresses, accountAddresses, type, keepScanning);
     }
   }
+
+  const countUsedAddresses =
+    accountAddresses.usedChangeAddresses.length + accountAddresses.usedReceiveAddresses.length;
+  const spendableBalance = [
+    ...accountAddresses.usedChangeAddresses,
+    ...accountAddresses.usedReceiveAddresses,
+  ]
+    .sort((a, b) => b.balance.minus(a.balance).toNumber())
+    .slice(0, MAX_TX_INPUTS)
+    .map(utxo => utxo.balance)
+    .reduce((acc, v) => acc.plus(v), BigNumber(0))
+    .minus(
+      BigNumber(
+        DEFAULT_MASS_WITHOUT_INPUT +
+          MASS_PER_UTXO_INPUT * Math.min(MAX_TX_INPUTS, countUsedAddresses),
+      ),
+    );
+
+  accountAddresses.spendableBalance = spendableBalance;
 
   return accountAddresses;
 }
