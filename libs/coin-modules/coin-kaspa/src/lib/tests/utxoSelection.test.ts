@@ -120,7 +120,6 @@ describe("selectUtxos function", () => {
     const result = selectUtxos(utxos, recipient_is_ecdsa, amount, feerate);
 
     expect(result.length).toBe(1);
-    console.log("Amount", result[0].utxoEntry.amount.toNumber());
     expect(result[0].utxoEntry.amount.eq(BigNumber(10_0000_0000))).toBe(true);
   });
 
