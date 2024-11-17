@@ -18,8 +18,6 @@ const GAP_LIMIT = 20;
 const SCAN_BATCH_SIZE = 200;
 
 const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size) ) / 1_118 (per_input))
-const MASS_PER_UTXO_INPUT = 1_118;
-const DEFAULT_MASS_WITHOUT_INPUT = 918;
 
 type AccountAddress = {
   type: number;
@@ -111,13 +109,7 @@ export async function scanAddresses(
     .sort((a, b) => b.balance.minus(a.balance).toNumber())
     .slice(0, MAX_TX_INPUTS)
     .map(utxo => utxo.balance)
-    .reduce((acc, v) => acc.plus(v), BigNumber(0))
-    .minus(
-      BigNumber(
-        DEFAULT_MASS_WITHOUT_INPUT +
-          MASS_PER_UTXO_INPUT * Math.min(MAX_TX_INPUTS, countUsedAddresses),
-      ),
-    );
+    .reduce((acc, v) => acc.plus(v), BigNumber(0));
 
   accountAddresses.spendableBalance = spendableBalance;
 
