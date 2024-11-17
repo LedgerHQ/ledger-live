@@ -3,7 +3,7 @@ import { StatusCodes } from "@ledgerhq/errors";
 
 // import { Transaction } from "./transaction";
 import { publicKeyToAddress } from "./kaspa-util";
-import { Transaction } from "./transaction";
+import { KaspaHwTransaction } from "./kaspaHwTransaction";
 
 const BIP32Path = require("bip32-path");
 
@@ -91,13 +91,13 @@ export default class Kaspa {
     /**
      * Sign a Kaspa transaction. Applies the signatures into the input objects
      *
-     * @param {Transaction} transaction - the Transaction object
+     * @param {KaspaHwTransaction} transaction - the Transaction object
      *
      *
      * @example
      * kaspa.signTransaction(transaction)
      */
-    async signTransaction(transaction: Transaction): Promise<void> {
+    async signTransaction(transaction: KaspaHwTransaction): Promise<void> {
         const header = transaction.serialize();
 
         await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);

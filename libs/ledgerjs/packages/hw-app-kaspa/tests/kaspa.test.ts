@@ -3,7 +3,7 @@ import {
     RecordStore,
   } from "@ledgerhq/hw-transport-mocker";
 import Kaspa from "../src/Kaspa";
-import { TransactionInput, TransactionOutput, Transaction } from "../src/transaction";
+import { TransactionInput, TransactionOutput, KaspaHwTransaction } from "../src/transaction";
 
 describe("kaspa", () => {
     it("getVersion", async () => {

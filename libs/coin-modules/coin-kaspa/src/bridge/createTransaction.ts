@@ -1,11 +1,14 @@
-import { KaspaTransaction, KaspaTransactionInput, KaspaTransactionOutput } from "../types/bridge";
+import { KaspaTransaction } from "../types/bridge";
+import { BigNumber } from "bignumber.js";
 
 export const createTransaction = (): KaspaTransaction => ({
-  locktime: 0,
-  inputs: Array<KaspaTransactionInput>(),
-  outputs: Array<KaspaTransactionOutput>(),
-  subnetworkId: "0000000000000000000000000000000000000000",
-  version: 0,
+  amount: BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  feesStrategy: "slow",
+  family: "kaspa",
+  feerate: 1,
+  rbf: true,
 });
 
 export default createTransaction;

@@ -5,13 +5,11 @@ import {
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { KaspaAccount } from "../types/bridge";
-import { BigNumber } from "bignumber.js";
-import KaspaBIP32 from "../lib/bip32";
 import { parseExtendedPublicKey } from "../lib/kaspa-util";
-import { AccountAddresses, scanAddresses, getBalancesForAddresses } from "../network";
+import { AccountAddresses, scanAddresses } from "../network";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
-  const { index, address, initialAccount } = info;
+  const { initialAccount } = info;
 
   // @ts-ignore
   const xpub =
@@ -24,22 +22,14 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
     type: "js",
     version: "2",
     currencyId: "kaspa",
-    xpubOrAddress: address,
+    xpubOrAddress: xpub,
     derivationMode: "",
   });
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
   // console.log(compressedPublicKey)
 
-  const accountAddresses: AccountAddresses = await scanAddresses(
-    compressedPublicKey,
-    chainCode,
-    0,
-  );
-
-
-
-
+  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
 
   const oldOperations = initialAccount?.operations || [];
   //
@@ -48,7 +38,6 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const operations = mergeOps(oldOperations, newOperations);
 
   // assume spendableBalance is balance as there is no significant time you need to wait for
-  const spendableBalance = balance;
 
   return {
     id: accountId,

@@ -8,7 +8,7 @@ type TransactionApiJSON = {
     };
 };
 
-export class Transaction {
+export class KaspaHwTransaction {
     inputs: TransactionInput[];
     outputs: TransactionOutput[];
     version: number;
@@ -243,7 +243,7 @@ export function toBigEndianHex(numberToConvert: number) {
 }
 
 export default {
-    Transaction,
+    Transaction: KaspaHwTransaction,
     TransactionInput,
     TransactionOutput,
 };

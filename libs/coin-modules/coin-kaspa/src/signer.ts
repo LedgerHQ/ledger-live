@@ -1,4 +1,4 @@
-import { Transaction } from "./types/transaction";
+import { KaspaHwTransaction } from "./bridge/kaspaHwTransaction";
 
 export type KaspaAddress = {
   address: string;
@@ -18,5 +18,5 @@ export interface KaspaSigner {
     account?: number,
   ): Promise<KaspaSignature>;
 
-  signTransaction(transaction: Transaction): Promise<void>;
+  signTransaction(transaction: KaspaHwTransaction): Promise<void>;
 }

@@ -6,7 +6,7 @@ import { KaspaTransaction } from "../types/bridge";
  * @param {*} t
  * @param {*} patch
  */
-export const updateTransaction = (
-  t: KaspaTransaction,
-  patch: $Shape<KaspaTransaction>
-) => ({ ...t, ...patch });
+export const updateTransaction = (t: KaspaTransaction, patch: Partial<KaspaTransaction>) => ({
+  ...t,
+  ...patch,
+});
