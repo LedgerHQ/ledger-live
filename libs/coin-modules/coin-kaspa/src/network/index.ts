@@ -2,6 +2,8 @@ import KaspaBIP32 from "../lib/bip32";
 import { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 import { BigNumber } from "bignumber.js";
 import { getAddressesActive } from "./indexer-api/getAddressesActive";
+import { KaspaUtxo } from "../types/bridge";
+import { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
@@ -11,8 +13,8 @@ export { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 const RECEIVE_ADDRESS_TYPE = 0;
 const CHANGE_ADDRESS_TYPE = 1;
 const INITIAL_BALANCE = BigNumber(0);
-const GAP_LIMIT = 50;
-const SCAN_BATCH_SIZE = 100;
+const GAP_LIMIT = 20;
+const SCAN_BATCH_SIZE = 200;
 
 type AccountAddress = {
   type: number;
@@ -78,12 +80,12 @@ export async function scanAddresses(
       // fetch address information via API and update object
       await updateAddressesActive(addresses);
 
-      // update balance and utxo count
+      // update balance
       for (const addr of addresses) {
         accountAddresses.totalBalance = accountAddresses.totalBalance.plus(addr.balance);
       }
 
-      // Check the last GAP_LIMIT addresses for activity
+      // Check the last GAP_LIMIT addresses for inactivity ( active = false )
       const lastAddressesToCheck = addresses.slice(-GAP_LIMIT);
 
       keepScanning = !lastAddressesToCheck.every(addr => !addr.active);
@@ -164,4 +166,36 @@ async function updateAddressesActive(addresses: AccountAddress[]) {
       addresses[addressIndex].active = true;
     }
   }
+}
+
+function getTypeAndIndexFromAccountAddresses(accountAddreses: AccountAddress[], address: string) {
+  const foundAddress = accountAddreses.find(addr => addr.address === address);
+  if (foundAddress) {
+    return { accountType: foundAddress.type, accountIndex: foundAddress.index };
+  } else {
+    throw new Error(`Address ${address} not found in addresses set.`);
+  }
+}
+
+export async function scanUtxos(
+  compressedPublicKey: Buffer,
+  chainCode: Buffer,
+): Promise<KaspaUtxo[]> {
+  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
+
+  const allUsedAddresses = [
+    ...accountAddresses.usedReceiveAddresses,
+    ...accountAddresses.usedChangeAddresses,
+  ];
+
+  const utxoResponse = await getUtxosForAddresses(allUsedAddresses.map(addrObj => addrObj.address));
+
+  const kaspaUtxos = utxoResponse.map(utxo => {
+    return {
+      ...utxo,
+      ...getTypeAndIndexFromAccountAddresses(allUsedAddresses, utxo.address),
+    };
+  });
+
+  return kaspaUtxos as KaspaUtxo[];
 }

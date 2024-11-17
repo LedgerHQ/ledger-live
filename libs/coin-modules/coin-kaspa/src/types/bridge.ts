@@ -12,7 +12,6 @@ import type {
 } from "@ledgerhq/types-live";
 
 import type { BigNumber } from "bignumber.js";
-import { Transaction } from "../../lib/types";
 
 export type KaspaAccount = Account;
 
@@ -89,4 +88,25 @@ export type KaspaTransactionStatusCommon = TransactionStatusCommon & {
 };
 export type KaspaTransactionStatusCommonRaw = TransactionStatusCommonRaw & {
   later: "maybe";
+};
+
+type KaspaOutpoint = {
+  transactionId: string;
+  index: number;
+};
+
+export type KaspaUtxo = {
+  address: string;
+  accountType: number;
+  accountIndex: number;
+  outpoint: KaspaOutpoint;
+  utxoEntry: {
+    amount: "string";
+    scriptPublicKey: {
+      version: number;
+      scriptPublicKey: string;
+    };
+    blockDaaScore: string;
+    isCoinbase: boolean;
+  };
 };
