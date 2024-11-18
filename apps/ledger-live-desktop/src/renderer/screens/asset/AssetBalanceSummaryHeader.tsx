@@ -23,6 +23,7 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { AccountLike, BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -94,12 +95,7 @@ export default function AssetBalanceSummaryHeader({
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
 
   const availableOnSwap = currenciesAll.includes(currency.id);
-  const earnStakeLabelCoin =
-    currency &&
-    (("family" in currency && currency.family === "bitcoin") ||
-      ("parentCurrency" in currency && currency.parentCurrency.family === "bitcoin"))
-      ? t("accounts.contextMenu.earn")
-      : t("accounts.contextMenu.stake");
+  const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");

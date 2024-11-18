@@ -1,19 +1,19 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { NearFamily } from "./types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
   account,
   parentAccount,
   source,
 }) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const { nearResources } = mainAccount;
   const stakingEnabled = canStake(mainAccount);
@@ -52,7 +52,7 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",

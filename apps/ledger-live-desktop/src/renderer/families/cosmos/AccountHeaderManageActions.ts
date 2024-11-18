@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
@@ -17,6 +18,8 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
+
   const mainAccount = getMainAccount(account, parentAccount);
   const { cosmosResources } = mainAccount;
   const earnRewardEnabled = canDelegate(mainAccount);
@@ -52,7 +55,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       tooltip: disabledLabel,
       event: "button_clicked2",
       eventProperties: {

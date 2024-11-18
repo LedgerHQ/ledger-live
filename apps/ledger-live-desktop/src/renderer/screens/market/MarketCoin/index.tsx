@@ -11,6 +11,7 @@ import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
 import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -67,10 +68,7 @@ export default function MarketCoinScreen() {
     changeCounterCurrency,
   } = useMarketCoin();
 
-  const earnStakeLabelCoin =
-    currency && currency.id === "bitcoin"
-      ? t("accounts.contextMenu.earn")
-      : t("accounts.contextMenu.stake");
+  const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const { name, ticker, image, internalCurrency, price } = currency || {};
 

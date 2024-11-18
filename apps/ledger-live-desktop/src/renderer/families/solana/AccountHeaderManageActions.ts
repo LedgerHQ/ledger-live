@@ -1,14 +1,14 @@
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SolanaFamily } from "./types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ account, source }) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account);
   const { solanaResources } = mainAccount;
 
@@ -39,7 +39,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ acco
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",

@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
@@ -7,6 +6,7 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SubAccount } from "@ledgerhq/types-live";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderManageActions = (props: {
   account: ElrondAccount | SubAccount;
@@ -14,8 +14,8 @@ const AccountHeaderManageActions = (props: {
   source?: string;
 }) => {
   const { account, source } = props;
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
   const validators = useElrondRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
@@ -57,7 +57,7 @@ const AccountHeaderManageActions = (props: {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",
