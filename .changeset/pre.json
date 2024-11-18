@@ -125,5 +125,36 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "blue-files-train",
+    "bright-icons-explode",
+    "chilly-eggs-hammer",
+    "cyan-experts-raise",
+    "few-owls-cross",
+    "five-waves-promise",
+    "good-boxes-boil",
+    "grumpy-badgers-invite",
+    "long-fireants-cheer",
+    "loud-pumas-fix",
+    "mean-pugs-hang",
+    "metal-walls-rush",
+    "mighty-points-hope",
+    "moody-deers-marry",
+    "orange-radios-thank",
+    "red-bobcats-leave",
+    "rotten-months-glow",
+    "seven-nails-knock",
+    "shaggy-shoes-beg",
+    "small-hairs-flow",
+    "smart-items-laugh",
+    "sour-badgers-matter",
+    "sweet-needles-kiss",
+    "tall-moons-invent",
+    "ten-pigs-dress",
+    "tiny-feet-type",
+    "two-icons-jog",
+    "two-seas-push",
+    "unlucky-boats-bow",
+    "wild-chefs-smash"
+  ]
 }
