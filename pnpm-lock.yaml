@@ -3767,16 +3767,16 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
       '@celo/contractkit':
-        specifier: ^8.3.0
+        specifier: ^8.3.1
         version: 8.3.1
       '@celo/utils':
         specifier: ^7.0.0
         version: 7.0.0
       '@celo/wallet-base':
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
       '@celo/wallet-ledger':
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
       '@crypto-org-chain/chain-jslib':
         specifier: 1.1.2
@@ -40547,7 +40547,7 @@ snapshots:
 
   '@stacks/transactions@4.3.8':
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       '@noble/secp256k1': 1.7.1
       '@stacks/common': 4.3.5
       '@stacks/network': 4.3.5
@@ -44834,7 +44834,7 @@ snapshots:
 
   '@xrplf/isomorphic@1.0.0':
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       eventemitter3: 5.0.1
       ws: 8.17.1
     transitivePeerDependencies:
@@ -46625,7 +46625,7 @@ snapshots:
 
   c32check@2.0.0:
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       base-x: 4.0.0
 
   cac@6.7.14: {}
