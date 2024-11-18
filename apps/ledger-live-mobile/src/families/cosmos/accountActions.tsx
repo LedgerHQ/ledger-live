@@ -8,6 +8,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -19,6 +20,7 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const delegationDisabled = !canDelegate(account);
+  const label = getStakeLabelLocaleBased();
   const startWithValidator =
     account.cosmosResources && account.cosmosResources?.delegations.length > 0;
   const navigationParams: NavigationParamsType = delegationDisabled
@@ -49,7 +51,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "COSMOS",

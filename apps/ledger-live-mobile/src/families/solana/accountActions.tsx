@@ -6,6 +6,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -17,6 +18,7 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const delegationDisabled = account.solanaResources?.stakes.length > 1;
+  const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = delegationDisabled
     ? [
@@ -48,7 +50,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "SOL",

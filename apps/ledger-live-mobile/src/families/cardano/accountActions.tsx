@@ -6,6 +6,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { NavigatorName, ScreenName } from "../../const";
 import { NavigationParamsType } from "../../components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -17,6 +18,7 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }) => {
   const isAlreadyDelegated = !!account.cardanoResources?.delegation?.poolId;
+  const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = [
     NavigatorName.CardanoDelegationFlow,
@@ -37,7 +39,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {

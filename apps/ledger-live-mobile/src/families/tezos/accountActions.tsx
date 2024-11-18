@@ -9,6 +9,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
@@ -50,6 +51,7 @@ const getMainActions = ({
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const delegationDisabled = isAccountDelegating(account) || account.type !== "Account";
+  const label = getStakeLabelLocaleBased();
   const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
@@ -77,7 +79,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "XTZ",
