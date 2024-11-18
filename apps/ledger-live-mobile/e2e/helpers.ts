@@ -172,11 +172,11 @@ export async function launchSpeculos(appName: string, proxyPort: number) {
   }
   const speculosPort = portCounter++;
   const speculosPidOffset =
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100;
+    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = expect.getState().testPath || "unknown";
-  const speculosDevice = await startSpeculos(testName, specs[appName]);
+  const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
   const speculosApiPort = speculosDevice.ports.apiPort;
