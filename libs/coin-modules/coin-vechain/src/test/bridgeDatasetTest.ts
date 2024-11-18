@@ -22,7 +22,7 @@ listSupported.push(getCryptoCurrencyById("vechain"));
 setSupportedCurrencies(listSupported.map(c => c.id) as CryptoCurrencyId[]);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const vechain: CurrenciesData<Transaction> = {
+const vechain: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: ["balance", "spendableBalance", "estimateMaxSpendable"], // the balance depends on VTHO and it's earned without operations
   scanAccounts: vechainScanAccounts1,
 

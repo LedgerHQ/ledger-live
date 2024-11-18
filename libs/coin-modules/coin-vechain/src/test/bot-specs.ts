@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import expect from "expect";
 import type {
   AppSpec,
   TransactionArg,

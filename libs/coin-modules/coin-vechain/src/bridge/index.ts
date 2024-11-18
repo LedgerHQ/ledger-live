@@ -15,7 +15,6 @@ import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import resolver from "../signer";
-import { VechainCoinConfig, setCoinConfig } from "../config";
 import type { Transaction, VechainSigner } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
@@ -56,12 +55,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<VechainSigner>,
-  coinConfig: VechainCoinConfig,
-) {
-  setCoinConfig(coinConfig);
-
+export function createBridges(signerContext: SignerContext<VechainSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

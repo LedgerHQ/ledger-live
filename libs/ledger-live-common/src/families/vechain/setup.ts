@@ -2,26 +2,24 @@
 
 import { createBridges } from "@ledgerhq/coin-vechain/index";
 import makeCliTools from "@ledgerhq/coin-vechain/test/cli";
-import vechainResolver from "@ledgerhq/coin-vechain/signer";
-import { Transaction, VechainSigner } from "@ledgerhq/coin-vechain/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import vechainResolver, { signMessage } from "@ledgerhq/coin-vechain/signer/index";
+import { Transaction, VechainSigner } from "./types";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import Vet from "@ledgerhq/hw-app-vet";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
-import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
-import { VechainCoinConfig } from "@ledgerhq/coin-vechain/lib/config";
 
 const createSigner: CreateSigner<VechainSigner> = (transport: Transport) => new Vet(transport);
 
-const getCoinConfig: VechainCoinConfig = () =>
-  getCurrencyConfiguration<ReturnType<VechainCoinConfig>>(getCryptoCurrencyById("ton"));
+const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner), getCoinConfig);
+const messageSigner = {
+  signMessage,
+};
 
 const resolver: Resolver = createResolver(createSigner, vechainResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver };
+export { bridge, cliTools, messageSigner, resolver };

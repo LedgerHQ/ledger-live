@@ -4,5 +4,5 @@ module.exports = {
   coverageDirectory: "coverage",
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/"],
 };
