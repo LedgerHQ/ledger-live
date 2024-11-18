@@ -147,6 +147,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
         <Ellipsis>
           {distribution ? (
             <CounterValue
+              data-testid={`asset-row-${currency.name.toLowerCase()}-value`}
               currency={currency}
               value={amount}
               color="palette.text.shade100"

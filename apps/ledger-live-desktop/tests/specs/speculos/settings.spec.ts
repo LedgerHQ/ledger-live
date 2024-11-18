@@ -83,3 +83,45 @@ test.describe("Password", () => {
     },
   );
 });
+
+test.describe("counter value selection", () => {
+  const account = Account.ETH_1;
+  test.use({
+    userdata: "skip-onboarding",
+    cliCommands: [
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: account.currency.currencyId,
+          index: account.index,
+          appjson: "",
+          add: true,
+        },
+      },
+    ],
+    speculosApp: account.currency.speculosApp,
+  });
+
+  test(
+    "User can select a counter value to display amount",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-804",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await app.layout.goToSettings();
+      await app.settings.changeCounterValue("euro");
+      await app.settings.expectCounterValue("Euro - EUR");
+      await app.layout.goToPortfolio();
+
+      await app.layout.waitForAccountsSyncToBeDone();
+      await app.portfolio.expectTotalBalanceCounterValue("€");
+      await app.portfolio.expectBalanceDiffCounterValue("€");
+      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectOperationCounterValue("€");
+    },
+  );
+});
