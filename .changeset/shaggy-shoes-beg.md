@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-common": minor
 ---
 
 Add translation for troubleshooting network
