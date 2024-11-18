@@ -423,7 +423,12 @@ export const makeScanAccounts =
 
       async function main() {
         try {
-          const derivationModes = scheme ? [scheme] : getDerivationModesForCurrency(currency);
+          let derivationModes: DerivationMode[] = [];
+          if (scheme === null || scheme === undefined) {
+            derivationModes = getDerivationModesForCurrency(currency);
+          } else {
+            derivationModes = [scheme];
+          }
 
           for (const derivationMode of derivationModes) {
             if (finished) break;
