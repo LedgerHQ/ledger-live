@@ -834,8 +834,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@braze/react-native-sdk':
-        specifier: 8.4.0
-        version: 8.4.0
+        specifier: 10.0.0
+        version: 10.0.0
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -8902,8 +8902,8 @@ packages:
   '@blooo/hw-app-acre@1.1.1':
     resolution: {integrity: sha512-wWYUGR0sj4Yyy3GtiFRpRuaBdIgzbg8BnXCfUeduUzjQaMWzQ66wSvaJn4pHrIAdGwmdyqJWn3UqFgb1YPq0VQ==}
 
-  '@braze/react-native-sdk@8.4.0':
-    resolution: {integrity: sha512-ypXVQD9lzIkQVgxQQoAYNZK/log/nHpPzz53iIsFelAM2hbT6NkyEEjM3SO0kO3UcZWZZvVtdR96ueX6wQep9g==}
+  '@braze/react-native-sdk@10.0.0':
+    resolution: {integrity: sha512-MnGOyYZy+rtlMFnqOM1ehfJ3Ri8rFklHZsz3bxcwUXYUQj8Ywz4s8BmH/MBQ0b95+bAQotC4yC8PN+xG9R4wgg==}
 
   '@braze/web-sdk@4.10.2':
     resolution: {integrity: sha512-S5OtBpmHDeZZVG1WjCdJ1w/SjzhGGULPkNjJONnl4YqUKK85BrGxK3beWXutduT5uoUl1Vfq4c32wx/DRsVDBw==}
@@ -32135,7 +32135,7 @@ snapshots:
       typescript: 5.6.3
       varuint-bitcoin: 1.1.2
 
-  '@braze/react-native-sdk@8.4.0': {}
+  '@braze/react-native-sdk@10.0.0': {}
 
   '@braze/web-sdk@4.10.2': {}
 
