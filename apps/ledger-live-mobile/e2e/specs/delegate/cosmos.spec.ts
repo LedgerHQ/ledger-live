@@ -10,7 +10,7 @@ import { Application } from "../../page";
 import DeviceAction from "../../models/DeviceAction";
 import BigNumber from "bignumber.js";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";
@@ -20,7 +20,7 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
-    app = await Application.init({
+    await app.init({
       userdata: "onboardingcompleted",
       knownDevices: [knownDevice],
       testAccounts: [testAccount],

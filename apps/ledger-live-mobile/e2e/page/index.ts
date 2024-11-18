@@ -29,15 +29,26 @@ import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
 import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { lastValueFrom, Observable } from "rxjs";
+import path from "path";
+import fs from "fs";
+import { getEnv } from "@ledgerhq/live-env";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
+  cliCommands?: (Observable<unknown> | Promise<unknown> | string)[];
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
 };
 
+export const getUserdataPath = (userdata: string) => {
+  return path.resolve("e2e", "userdata", `${userdata}.json`);
+};
+
 export class Application {
+  public userdataSpeculos: string | undefined = undefined;
+  public userdataPath: string | undefined = undefined;
   public account = new AccountPage();
   public accounts = new AccountsPage();
   public addAccount = new AddAccountDrawer();
@@ -65,13 +76,47 @@ export class Application {
   public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
 
-  static async init({ speculosApp, userdata, knownDevices, testAccounts }: ApplicationOptions) {
-    const app = new Application();
-    userdata && (await loadConfig(userdata, true));
+  constructor() {
+    if (!getEnv("MOCK")) {
+      // Create a temporary userdata file for Speculos tests
+      const originalUserdata = "onboardingcompleted";
+      this.userdataSpeculos = `temp-userdata-${Date.now()}`;
+      this.userdataPath = getUserdataPath(this.userdataSpeculos);
+      const originalFilePath = getUserdataPath(originalUserdata);
+      fs.copyFileSync(originalFilePath, this.userdataPath);
+    }
+  }
+
+  async init({
+    speculosApp,
+    cliCommands,
+    userdata,
+    knownDevices,
+    testAccounts,
+  }: ApplicationOptions) {
+    let proxyPort = 0;
+    if (speculosApp) {
+      proxyPort = await this.common.addSpeculos(speculosApp.name);
+      process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
+      require("@ledgerhq/live-cli/src/live-common-setup");
+    }
+
+    if (cliCommands?.length) {
+      await Promise.all(
+        cliCommands.map(async cmd => {
+          const result = cmd instanceof Observable ? await lastValueFrom(cmd) : await cmd;
+          // eslint-disable-next-line no-console
+          console.log("CLI result: ", result);
+        }),
+      );
+    }
+
+    if (this.userdataSpeculos) await loadConfig(this.userdataSpeculos, true);
+    else userdata && (await loadConfig(userdata, true));
     knownDevices && (await loadBleState({ knownDevices }));
     testAccounts && (await loadAccounts(testAccounts));
-    speculosApp && (await app.common.addSpeculos(speculosApp.name));
 
-    return app;
+    const userdataSpeculosPath = getUserdataPath(this.userdataSpeculos!);
+    if (fs.existsSync(userdataSpeculosPath)) fs.unlinkSync(userdataSpeculosPath);
   }
 }
