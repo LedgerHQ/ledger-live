@@ -72,7 +72,7 @@ function formatCommand(mainAccount: Account, tx: Transaction, command: Command) 
     case "token.transfer":
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
-      return formatCreateATA(command);
+      return formatCreateATA(mainAccount, command);
     case "stake.createAccount":
       return formatStakeCreateAccount(mainAccount, tx, command);
     case "stake.delegate":
@@ -147,8 +147,8 @@ function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: Tok
   return "\n" + str;
 }
 
-function formatCreateATA(command: TokenCreateATACommand) {
-  const token = getTokenById(toTokenId(command.mint));
+function formatCreateATA(mainAccount: Account, command: TokenCreateATACommand) {
+  const token = getTokenById(toTokenId(mainAccount.currency.id, command.mint));
   const str = [`  OPT IN TOKEN: ${token.ticker}`].filter(Boolean).join("\n");
   return "\n" + str;
 }
