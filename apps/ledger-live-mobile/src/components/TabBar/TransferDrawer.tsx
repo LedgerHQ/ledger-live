@@ -22,6 +22,7 @@ import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { EntryOf } from "~/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 type ButtonItem = {
   title: string;
@@ -42,6 +43,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const {
     quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
   } = useQuickActions();
+  const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToasts();
 
@@ -158,7 +160,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         page,
         drawer: "stake",
       },
-      title: t("transfer.stake.title"),
+      title: t(stakeLabel),
       description: t("transfer.stake.description"),
       Icon: STAKE.icon,
       onPress: () => onNavigate(STAKE.route),

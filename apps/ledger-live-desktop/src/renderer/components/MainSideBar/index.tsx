@@ -35,6 +35,7 @@ import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -238,6 +239,7 @@ const MainSideBar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const earnLabel = useGetStakeLabelLocaleBased();
   const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
   const isCardDisabled = !manifest;
 
@@ -456,7 +458,7 @@ const MainSideBar = () => {
                 />
                 <SideBarListItem
                   id={"earn"}
-                  label={t("sidebar.earn")}
+                  label={earnLabel}
                   icon={IconsLegacy.LendMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
