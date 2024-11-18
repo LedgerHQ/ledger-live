@@ -37,7 +37,7 @@ import createTransaction from "./createTransaction";
 import { compact } from "lodash/fp";
 import { SYSTEM_ACCOUNT_RENT_EXEMPT, assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
-import { ChainAPI, LATEST_BLOCKHASH_MOCK } from "./api";
+import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
@@ -964,7 +964,11 @@ const baseTx = {
 } as Transaction;
 
 const baseAPI = {
-  getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
+  getLatestBlockhash: () =>
+    Promise.resolve({
+      blockhash: LATEST_BLOCKHASH_MOCK,
+      lastValidBlockHeight: LAST_VALID_BLOCK_HEIGHT_MOCK,
+    }),
   getFeeForMessage: (_msg: unknown) => Promise.resolve(testOnChainData.fees.lamportsPerSignature),
   getRecentPrioritizationFees: (_: string[]) => {
     return Promise.resolve([

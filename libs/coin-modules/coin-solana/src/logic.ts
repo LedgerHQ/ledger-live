@@ -36,8 +36,8 @@ export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccount
   };
 }
 
-export function toTokenId(mint: string): string {
-  return `solana/spl/${mint}`;
+export function toTokenId(currencyId: string, mint: string): string {
+  return `${currencyId}/spl/${mint}`;
 }
 
 export function toTokenMint(tokenId: string): string {
@@ -48,8 +48,8 @@ export function toSubAccMint(subAcc: TokenAccount): string {
   return toTokenMint(subAcc.token.id);
 }
 
-export function tokenIsListedOnLedger(mint: string): boolean {
-  return findTokenById(toTokenId(mint))?.type === "TokenCurrency";
+export function tokenIsListedOnLedger(currencyId: string, mint: string): boolean {
+  return findTokenById(toTokenId(currencyId, mint))?.type === "TokenCurrency";
 }
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {
