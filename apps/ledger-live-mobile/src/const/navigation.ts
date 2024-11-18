@@ -80,6 +80,7 @@ export enum ScreenName {
   Card = "Card",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
+  ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeHistory = "ExchangeHistory",
   ExchangeSelectAccount = "ExchangeSelectAccount",
   ExchangeSelectCurrency = "ExchangeSelectCurrency",

@@ -3092,6 +3092,13 @@
       "desc": "Try out the Developer features and let us know what you think.",
       "customManifest": {
         "title": "Load Custom Platform Manifest"
+      },
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "description": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format",
+        "currentSetting": "Current Setting",
+        "error": "Invalid CAL value"
       }
     },
     "debug": {
