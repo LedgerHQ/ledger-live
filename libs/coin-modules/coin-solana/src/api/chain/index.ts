@@ -8,13 +8,16 @@ import {
   FetchMiddleware,
   VersionedMessage,
   PublicKey,
-  sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
   TransactionInstruction,
   ComputeBudgetProgram,
   VersionedTransaction,
   TransactionMessage,
+  SendTransactionError,
+  BlockhashWithExpiryBlockHeight,
+  Commitment,
+  GetLatestBlockhashConfig,
 } from "@solana/web3.js";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
@@ -23,6 +26,7 @@ import { Awaited } from "../../logic";
 import { getStakeActivation } from "./stake-activation";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+export const LAST_VALID_BLOCK_HEIGHT_MOCK = 280064048;
 
 export type Config = {
   readonly endpoint: string;
@@ -31,7 +35,9 @@ export type Config = {
 export type ChainAPI = Readonly<{
   getBalance: (address: string) => Promise<number>;
 
-  getLatestBlockhash: () => Promise<string>;
+  getLatestBlockhash: (
+    commitmentOrConfig?: Commitment | GetLatestBlockhashConfig,
+  ) => Promise<BlockhashWithExpiryBlockHeight>;
 
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
@@ -66,7 +72,10 @@ export type ChainAPI = Readonly<{
     address: string,
   ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
 
-  sendRawTransaction: (buffer: Buffer) => ReturnType<Connection["sendRawTransaction"]>;
+  sendRawTransaction: (
+    buffer: Buffer,
+    recentBlockhash?: BlockhashWithExpiryBlockHeight,
+  ) => ReturnType<Connection["sendRawTransaction"]>;
 
   findAssocTokenAccAddress: (owner: string, mint: string) => Promise<string>;
 
@@ -105,23 +114,24 @@ export function getChainAPI(
           fetch(url, options);
         };
 
+  let _connection: Connection;
   const connection = () => {
-    return new Connection(config.endpoint, {
-      ...(fetchMiddleware ? { fetchMiddleware } : {}),
-      commitment: "finalized",
-      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
-    });
+    if (!_connection) {
+      _connection = new Connection(config.endpoint, {
+        ...(fetchMiddleware ? { fetchMiddleware } : {}),
+        commitment: "finalized",
+        confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+      });
+    }
+    return _connection;
   };
 
   return {
     getBalance: (address: string) =>
       connection().getBalance(new PublicKey(address)).catch(remapErrors),
 
-    getLatestBlockhash: () =>
-      connection()
-        .getLatestBlockhash()
-        .then(r => r.blockhash)
-        .catch(remapErrors),
+    getLatestBlockhash: (commitmentOrConfig?: Commitment | GetLatestBlockhashConfig) =>
+      connection().getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
 
     getFeeForMessage: (msg: VersionedMessage) =>
       connection()
@@ -201,10 +211,39 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
-    sendRawTransaction: (buffer: Buffer) => {
-      return sendAndConfirmRawTransaction(connection(), buffer, {
-        commitment: "confirmed",
-      }).catch(remapErrors);
+    sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
+      return (async () => {
+        const conn = connection();
+
+        const commitment = "confirmed";
+
+        const signature = await conn.sendRawTransaction(buffer, {
+          preflightCommitment: commitment,
+        });
+
+        if (!recentBlockhash) {
+          recentBlockhash = await conn.getLatestBlockhash(commitment);
+        }
+        const { value: status } = await conn.confirmTransaction(
+          {
+            blockhash: recentBlockhash.blockhash,
+            lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+            signature,
+          },
+          commitment,
+        );
+        if (status.err) {
+          if (signature != null) {
+            throw new SendTransactionError({
+              action: "send",
+              signature: signature,
+              transactionMessage: `Status: (${JSON.stringify(status)})`,
+            });
+          }
+          throw new Error(`Raw transaction ${signature} failed (${JSON.stringify(status)})`);
+        }
+        return signature;
+      })().catch(remapErrors);
     },
 
     findAssocTokenAccAddress: (owner: string, mint: string) => {
@@ -245,7 +284,7 @@ export function getChainAPI(
           // RecentBlockhash can by any public key during simulation
           // since 'replaceRecentBlockhash' is set to 'true' below
           recentBlockhash: PublicKey.default.toString(),
-        }).compileToV0Message(),
+        }).compileToLegacyMessage(),
       );
       const rpcResponse = await connection().simulateTransaction(testTransaction, {
         replaceRecentBlockhash: true,
