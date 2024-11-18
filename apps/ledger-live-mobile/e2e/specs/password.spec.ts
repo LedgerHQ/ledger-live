@@ -1,13 +1,13 @@
 import { device } from "detox";
 import { Application } from "../page";
 
-let app: Application;
+const app = new Application();
 
 const CORRECT_PASSWORD = "passWORD$123!";
 
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    app = await Application.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
+    await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

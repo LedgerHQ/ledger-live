@@ -271,6 +271,9 @@ importers:
       '@types/express':
         specifier: 4.17.21
         version: 4.17.21
+      '@types/invariant':
+        specifier: 2.2.37
+        version: 2.2.37
       '@types/lodash':
         specifier: 4.17.7
         version: 4.17.7
@@ -1323,6 +1326,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
+      '@ledgerhq/live-cli':
+        specifier: workspace:^
+        version: link:../cli
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
