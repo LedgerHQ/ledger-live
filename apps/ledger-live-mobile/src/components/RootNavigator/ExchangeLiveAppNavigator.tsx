@@ -33,6 +33,7 @@ const createExchangeScreen =
       lastScreen,
       platform,
       referrer,
+      mode,
     } = props.route.params || {};
     const resolvedCurrency = currency
       ? findCryptoCurrencyByKeyword(currency)?.id
@@ -54,6 +55,7 @@ const createExchangeScreen =
             lastScreen,
             platform: platform || defaultPlatform,
             referrer: referrer,
+            mode,
           },
         }}
       />
@@ -76,6 +78,7 @@ export default function ExchangeLiveAppNavigator() {
           headerStyle: styles.headerNoShadow,
           title: "",
         }}
+        initialParams={{ mode: "onRamp" }}
       >
         {props => <ExchangeBuy {...props} />}
       </Stack.Screen>
@@ -85,6 +88,7 @@ export default function ExchangeLiveAppNavigator() {
         options={{
           headerStyle: styles.headerNoShadow,
         }}
+        initialParams={{ mode: "offRamp" }}
       >
         {props => <ExchangeSell {...props} />}
       </Stack.Screen>

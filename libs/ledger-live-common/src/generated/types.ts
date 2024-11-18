@@ -99,7 +99,7 @@ import type {
   TransactionRaw as stacksTransactionRaw,
   TransactionStatus as stacksTransactionStatus,
   TransactionStatusRaw as stacksTransactionStatusRaw,
-} from "../families/stacks/types";
+} from "@ledgerhq/coin-stacks/types/index";
 import type {
   Transaction as stellarTransaction,
   TransactionRaw as stellarTransactionRaw,

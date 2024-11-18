@@ -18,7 +18,10 @@ describe("findExchangeCurrencyData", () => {
 describe("fetchAndMergeProviderData", () => {
   it("returns all data in expected format", async () => {
     // When
-    const providers = await fetchAndMergeProviderData();
+    const providers = await fetchAndMergeProviderData({
+      ledgerSignatureEnv: "prod",
+      partnerSignatureEnv: "prod",
+    });
 
     // Then
     expect(providers).toEqual({
@@ -158,21 +161,6 @@ describe("fetchAndMergeProviderData", () => {
         termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
         type: "DEX",
       },
-      ssaitest: {
-        name: "ssaitest",
-        publicKey: {
-          curve: "secp256k1",
-          data: Buffer.from(
-            "0414d746bc20fa933d07c342d2eb0545236be68794f7a55f4b6fac0789c25c553b0a7f78011c7e79d679f9c23ff4412e15b899925079bfeb169768b4b2447b8084",
-            "hex",
-          ),
-        },
-        signature: Buffer.from(
-          "3045022100eef022406ef785114590ef28b03d598025af977a703b2e0287921fa17543e08c022057ca2e6af31f9864bb54634a42bad223d2dccf920e73ed867d59eb6759b5652d",
-          "hex",
-        ),
-        version: 1,
-      },
       thorswap: {
         continuesInProviderLiveApp: false,
         displayName: "THORChain",
@@ -194,6 +182,16 @@ describe("fetchAndMergeProviderData", () => {
         termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
         type: "CEX",
         version: 2,
+      },
+      uniswap: {
+        continuesInProviderLiveApp: false,
+        displayName: "Uniswap",
+        mainUrl: "https://uniswap.org/",
+        needsKYC: false,
+        supportUrl: "mailto:support@uniswap.org",
+        termsOfUseUrl:
+          "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+        type: "DEX",
       },
       wyre: {
         name: "Wyre",

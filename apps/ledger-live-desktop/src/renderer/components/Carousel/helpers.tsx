@@ -52,7 +52,6 @@ type SlideRes = {
 
 export const useDefaultSlides = (): {
   slides: SlideRes[];
-  logSlideImpression: (index: number) => void;
   dismissCard: (index: number) => void;
 } => {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
@@ -64,21 +63,6 @@ export const useDefaultSlides = (): {
     const cards = braze.getCachedContentCards().cards;
     setCachedContentCards(cards);
   }, []);
-
-  const logSlideImpression = useCallback(
-    (index: number) => {
-      if (portfolioCards && portfolioCards.length > index) {
-        const slide = portfolioCards[index];
-        if (slide?.id) {
-          const currentCard = cachedContentCards.find(card => card.id === slide.id);
-          if (currentCard) {
-            isTrackedUser && braze.logContentCardImpressions([currentCard]);
-          }
-        }
-      }
-    },
-    [portfolioCards, cachedContentCards, isTrackedUser],
-  );
 
   const dismissCard = useCallback(
     (index: number) => {
@@ -129,7 +113,6 @@ export const useDefaultSlides = (): {
 
   return {
     slides,
-    logSlideImpression,
     dismissCard,
   };
 };

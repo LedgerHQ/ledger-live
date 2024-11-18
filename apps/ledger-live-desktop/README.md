@@ -9,7 +9,6 @@
 
 Minimum system requirements can be found on [Ledger Support website](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
 
-
 <a href="https://github.com/LedgerHQ/ledger-live-desktop/releases">
   <p align="center">
     <img src="./docs/screenshot.png" width="550"/>
@@ -52,6 +51,28 @@ pnpm i
 ```bash
 # launch the app in dev mode
 pnpm dev:lld
+```
+
+## Watch deps
+
+In another terminal and in parallel to `pnpm dev:lld`, you can watch different libs from the monorepo
+LLD is using vite and will import in priority the esm libs so we need to watch and build for esm in some libs
+
+```bash
+# watch common
+pnpm watch:common
+
+# watch ljs
+pnpm watch:es:ljs
+
+# watch coin integrations
+pnpm watch:es:coin
+
+# watch specific lib
+pnpm turbo run watch:es --filter="./libs/ledgerjs/packages/hw-app-btc"
+
+# watch specific coin integration
+pnpm turbo run watch:es --filter="./libs/coin-modules/coin-bitcoin"
 ```
 
 ## Build

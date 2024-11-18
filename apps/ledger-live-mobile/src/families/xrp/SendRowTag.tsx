@@ -12,7 +12,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { useSettings } from "~/hooks";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -28,7 +27,6 @@ export default function XrpTagRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
-  const { locale } = useSettings();
   const editTag = useCallback(() => {
     navigation.navigate(ScreenName.XrpEditTag, {
       ...route.params,
@@ -42,7 +40,7 @@ export default function XrpTagRow({ account, transaction }: Props) {
     <View>
       <SummaryRow title={<Trans i18nKey="send.summary.tag" />}>
         <View style={styles.tagContainer}>
-          {tag && <LText style={styles.tagText}>{tag.toLocaleString(locale)}</LText>}
+          {tag && <LText style={styles.tagText}>{tag.toString()}</LText>}
           <LText
             style={[
               styles.link,

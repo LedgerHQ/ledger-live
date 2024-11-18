@@ -43,7 +43,7 @@ describe("getProvidersData", () => {
     // Given
 
     // When
-    const partners = await getProvidersData("swap");
+    const partners = await getProvidersData({ type: "swap" });
 
     // Then
     expect(partners["changelly"]).toEqual({

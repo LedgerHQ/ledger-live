@@ -8,10 +8,18 @@ import network from "@ledgerhq/live-network";
 
 jest.mock("@ledgerhq/live-network");
 
+const test = "test" as "prod" | "test";
+const prod = "prod" as "prod" | "test";
+
+beforeEach(() => {
+  jest.resetModules();
+  jest.clearAllMocks();
+});
+
 describe("transformData", () => {
   it.each([
     [
-      "prod",
+      prod,
       {
         providera: {
           name: "ProviderA",
@@ -34,7 +42,7 @@ describe("transformData", () => {
       },
     ],
     [
-      "test",
+      test,
       {
         providera: {
           name: "ProviderA",
@@ -57,11 +65,12 @@ describe("transformData", () => {
       },
     ],
   ])(
-    "should transform providers data correctly with %p env",
-    (env: string, expected: Record<string, ExchangeProvider>) => {
+    "should transform providers data correctly with %p Ledger signature env",
+    (ledgerSignatureEnv: "prod" | "test", expected: Record<string, ExchangeProvider>) => {
       const providersData = [
         {
           name: "ProviderA",
+          partner_id: "providera",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
@@ -75,6 +84,7 @@ describe("transformData", () => {
         },
         {
           name: "ProviderB",
+          partner_id: "providerb",
           public_key: "abcdef1234567890",
           public_key_curve: "secp256r1",
           service_app_version: 2,
@@ -88,7 +98,7 @@ describe("transformData", () => {
         },
       ];
 
-      const result = transformData(providersData, env as "prod" | "test");
+      const result = transformData(providersData, ledgerSignatureEnv);
       expect(result).toEqual(expected);
     },
   );
@@ -98,7 +108,7 @@ describe("transformData", () => {
 
     const expected: Record<string, ExchangeProvider> = {};
 
-    const result = transformData(providersData, "prod");
+    const result = transformData(providersData);
     expect(result).toEqual(expected);
   });
 });
@@ -106,7 +116,8 @@ describe("transformData", () => {
 describe("getProvidersData", () => {
   it.each([
     [
-      "prod",
+      prod,
+      prod,
       {
         providera: {
           name: "ProviderA",
@@ -120,7 +131,38 @@ describe("getProvidersData", () => {
       },
     ],
     [
-      "test",
+      prod,
+      test,
+      {
+        providera: {
+          name: "ProviderA",
+          publicKey: {
+            curve: "secp256k1",
+            data: Buffer.from("1234567890abcdef", "hex"),
+          },
+          signature: Buffer.from("a1b2c3", "hex"),
+          version: 2,
+        } satisfies ExchangeProvider,
+      },
+    ],
+    [
+      test,
+      test,
+      {
+        providera: {
+          name: "ProviderA",
+          publicKey: {
+            curve: "secp256k1",
+            data: Buffer.from("1234567890abcdef", "hex"),
+          },
+          signature: Buffer.from("d1e2f3", "hex"),
+          version: 2,
+        } satisfies ExchangeProvider,
+      },
+    ],
+    [
+      test,
+      prod,
       {
         providera: {
           name: "ProviderA",
@@ -134,11 +176,16 @@ describe("getProvidersData", () => {
       },
     ],
   ])(
-    "should fetch and transform providers data with %p signature",
-    async (env: string, expected: Record<string, ExchangeProvider>) => {
+    "should fetch and transform providers data with %p Ledger signature env and %p partner signature",
+    async (
+      ledgerSignatureEnv: "prod" | "test",
+      partnerSignatureEnv: "prod" | "test",
+      expected: Record<string, ExchangeProvider>,
+    ) => {
       const mockProvidersData: ProvidersDataResponse = [
         {
           name: "ProviderA",
+          partner_id: "providera",
           public_key: "1234567890abcdef",
           public_key_curve: "secp256k1",
           service_app_version: 2,
@@ -154,13 +201,18 @@ describe("getProvidersData", () => {
 
       (network as jest.Mock).mockResolvedValue({ data: mockProvidersData });
 
-      const result = await getProvidersData("swap", env as "prod" | "test");
+      const result = await getProvidersData({
+        type: "swap",
+        ledgerSignatureEnv,
+        partnerSignatureEnv,
+      });
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
         url: "https://crypto-assets-service.api.ledger.com/v1/partners",
         params: {
-          output: "name,public_key,public_key_curve,service_app_version,descriptor",
+          env: partnerSignatureEnv,
+          output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
           service_name: "swap",
         },
       });
@@ -172,6 +224,6 @@ describe("getProvidersData", () => {
   it("should handle errors when fetching data", async () => {
     (network as jest.Mock).mockRejectedValue(new Error("Network error"));
 
-    await expect(getProvidersData("swap")).rejects.toThrow("Network error");
+    await expect(getProvidersData({ type: "swap" })).rejects.toThrow("Network error");
   });
 });
