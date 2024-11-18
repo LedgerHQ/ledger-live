@@ -37,8 +37,6 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const newOperations = initialAccount?.operations || [];
   const operations = mergeOps(oldOperations, newOperations);
 
-  // assume spendableBalance is balance as there is no significant time you need to wait for
-
   return {
     id: accountId,
     xpub: xpub,
