@@ -122,7 +122,7 @@
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
-    "@celo/connect": "^6.0.3",
+    "@celo/connect": "^6.0.2",
     "@celo/contractkit": "^8.3.1",
     "@celo/utils": "^7.0.0",
     "@celo/wallet-base": "^6.0.3",
