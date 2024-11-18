@@ -1,15 +1,14 @@
 import BigNumber from "bignumber.js";
-import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX } from "../constants";
+import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX } from "../types";
 import crypto from "crypto";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import params from "../contracts/abis/params";
 import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";
-import { Query } from "../api/types";
-import { query } from "../api/sdk";
+import { query } from "../network";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction, TransactionInfo } from "../types";
+import { Transaction, TransactionInfo, Query } from "../types";
 import { isValid } from "./address-utils";
-import { calculateClausesVet, calculateClausesVtho } from "../logic";
+import { calculateClausesVet, calculateClausesVtho } from "./logic";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
 
 const GAS_COEFFICIENT = 15000;

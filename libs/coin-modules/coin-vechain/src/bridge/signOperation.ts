@@ -3,8 +3,7 @@ import { Transaction as ThorTransaction } from "thor-devkit";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
-import type { Transaction } from "./types";
-import { VechainSigner, VechainSignature } from "./signer";
+import type { Transaction, VechainSigner } from "../types";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -29,9 +28,9 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        const signature = (await signerContext(deviceId, signer =>
+        const signature = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, unsigned.encode().toString("hex")),
-        )) as VechainSignature;
+        );
 
         o.next({ type: "device-signature-granted" });
 

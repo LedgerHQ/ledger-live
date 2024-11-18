@@ -3,27 +3,27 @@ import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
+  makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { getAccountShape, sync } from "../synchronisation";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
-import resolver from "../hw-getAddress";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { getAccountShape } from "./synchronisation";
+import { buildSignOperation } from "./signOperation";
+import { broadcast } from "./broadcast";
+import resolver from "../signer";
 import { VechainCoinConfig, setCoinConfig } from "../config";
-import { VechainSigner } from "../signer";
-import type { Transaction } from "../types";
+import type { Transaction, VechainSigner } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    getAddressFn: getAddress,
+    getAddressFn: getAddressWrapper(getAddress),
   });
 
   return {
@@ -32,6 +32,8 @@ export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>)
     scanAccounts,
   };
 }
+
+const sync = makeSync({ getAccountShape });
 
 export function buildAccountBridge(
   signerContext: SignerContext<VechainSigner>,

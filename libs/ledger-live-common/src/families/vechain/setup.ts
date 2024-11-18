@@ -1,10 +1,9 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-vechain/bridge/js";
-import makeCliTools from "@ledgerhq/coin-vechain/cli-transaction";
-import vechainResolver from "@ledgerhq/coin-vechain/hw-getAddress";
-import { VechainSigner } from "@ledgerhq/coin-vechain/signer";
-import { Transaction } from "@ledgerhq/coin-vechain/types";
+import { createBridges } from "@ledgerhq/coin-vechain/index";
+import makeCliTools from "@ledgerhq/coin-vechain/test/cli";
+import vechainResolver from "@ledgerhq/coin-vechain/signer";
+import { Transaction, VechainSigner } from "@ledgerhq/coin-vechain/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";

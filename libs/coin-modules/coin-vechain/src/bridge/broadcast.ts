@@ -2,8 +2,8 @@ import { Transaction as VeChainThorTransaction } from "thor-devkit";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 
-import { Transaction } from "./types";
-import { submit } from "./api";
+import { Transaction } from "../types";
+import { submit } from "../network";
 
 /**
  * Broadcast the signed transaction

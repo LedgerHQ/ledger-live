@@ -8,10 +8,9 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { calculateTransactionInfo } from "./utils/transaction-utils";
-import { isValid } from "./utils/address-utils";
-import type { Transaction } from "./types";
-import { NotEnoughVTHO } from "./errors";
+import { calculateTransactionInfo, isValid } from "../common-logic";
+import type { Transaction } from "../types";
+import { NotEnoughVTHO } from "../errors";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,

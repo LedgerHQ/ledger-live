@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { calculateGasFees } from "./utils/transaction-utils";
-import type { Transaction } from "./types";
+import { calculateGasFees } from "../common-logic";
+import type { Transaction } from "../types";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { Transaction as VeChainThorTransaction } from "thor-devkit";
-import { VTHO_ADDRESS } from "./contracts/constants";
-import VIP180 from "./contracts/abis/VIP180";
-import { HEX_PREFIX } from "./constants";
+import { VTHO_ADDRESS } from "../contracts/constants";
+import VIP180 from "../contracts/abis/VIP180";
+import { HEX_PREFIX } from "../types";
 
 export const calculateClausesVtho = async (
   recipient: string,

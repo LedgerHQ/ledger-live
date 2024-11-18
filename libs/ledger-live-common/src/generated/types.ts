@@ -129,7 +129,7 @@ import type {
   TransactionRaw as vechainTransactionRaw,
   TransactionStatus as vechainTransactionStatus,
   TransactionStatusRaw as vechainTransactionStatusRaw,
-} from "@ledgerhq/coin-vechain/types";
+} from "@ledgerhq/coin-vechain/types/index";
 import type {
   Transaction as xrpTransaction,
   TransactionRaw as xrpTransactionRaw,

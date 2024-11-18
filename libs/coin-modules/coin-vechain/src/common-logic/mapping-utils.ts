@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import vip180 from "../contracts/abis/VIP180";
 import { Operation } from "@ledgerhq/types-live";
-import { EventLog, TransferLog } from "../api/types";
+import { EventLog, TransferLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getFees } from "../api";
+import { getFees } from "../network";
 
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],

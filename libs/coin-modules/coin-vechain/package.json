@@ -6,6 +6,8 @@
     "Ledger",
     "LedgerWallet",
     "VeChain",
+    "vet",
+    "vtho",
     "Hardware Wallet"
   ],
   "repository": {
@@ -35,9 +37,37 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./logic": {
+      "require": "./lib/common-logic/index.js",
+      "default": "./lib-es/common-logic/index.js"
+    },
+    "./network": {
+      "require": "./lib/network/index.js",
+      "default": "./lib-es/network/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },

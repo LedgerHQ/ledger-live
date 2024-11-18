@@ -8,11 +8,11 @@ import type {
   TransactionTestInput,
   SpeculosTransport,
 } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 import { pickSiblings, botTest, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import speculosDeviceActions from "./speculos-deviceActions";
+import speculosDeviceActions from "./bot-deviceActions";
 
 const MIN_VET_TRANSACTION_AMOUNT = 1000000000000000000;
 const MAX_VTHO_FEE_FOR_VTHO_TRANSACTION = 1040000000000000000;

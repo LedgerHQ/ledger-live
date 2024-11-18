@@ -1,12 +1,15 @@
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network/network";
-import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "./types";
+import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "../types";
 import type { Operation } from "@ledgerhq/types-live";
-import { mapVetTransfersToOperations, mapTokenTransfersToOperations } from "../utils/mapping-utils";
-import { padAddress } from "../utils/pad-address";
+import {
+  mapVetTransfersToOperations,
+  mapTokenTransfersToOperations,
+  padAddress,
+} from "../common-logic";
 import { TransferEventSignature } from "../contracts/constants";
 import { Transaction } from "thor-devkit";
-import { HEX_PREFIX } from "../constants";
+import { HEX_PREFIX } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");

@@ -7,10 +7,10 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 
-import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
+import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "../network";
 import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { VTHO_ADDRESS } from "./contracts/constants";
-import { GetAccountShape, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { VTHO_ADDRESS } from "../contracts/constants";
+import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
@@ -84,5 +84,3 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
 
   return shape;
 };
-
-export const sync = makeSync({ getAccountShape });

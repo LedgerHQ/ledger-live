@@ -1,6 +1,6 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import eip55 from "eip55";
-import { VechainSigner } from "./signer";
+import { VechainSigner } from "../types";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 

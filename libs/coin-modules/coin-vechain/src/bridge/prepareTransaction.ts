@@ -1,10 +1,13 @@
 import { Account } from "@ledgerhq/types-live";
 import { Transaction as VeChainThorTransaction } from "thor-devkit";
-import { calculateTransactionInfo } from "./utils/transaction-utils";
-import { isValid } from "./utils/address-utils";
-import { Transaction } from "./types";
-import { getBlockRef } from "./api";
-import { calculateClausesVet, calculateClausesVtho } from "./logic";
+import {
+  calculateTransactionInfo,
+  isValid,
+  calculateClausesVet,
+  calculateClausesVtho,
+} from "../common-logic";
+import { Transaction } from "../types";
+import { getBlockRef } from "../network";
 
 /**
  * Prepare transaction before checking status
