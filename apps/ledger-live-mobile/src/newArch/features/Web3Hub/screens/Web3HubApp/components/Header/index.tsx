@@ -33,6 +33,10 @@ export default function Web3HubAppHeader({
   const { colors } = useTheme();
   const captureTab = useCaptureTab();
 
+  const handleCapture = () => {
+    captureTab(manifest);
+  };
+
   return (
     <AnimatedBar
       layoutY={layoutY}
@@ -66,7 +70,7 @@ export default function Web3HubAppHeader({
             )}
           </Flex>
 
-          <TabButton navigation={navigation} onClick={() => captureTab(manifest)} />
+          <TabButton navigation={navigation} onClick={handleCapture} />
         </Flex>
       }
     />

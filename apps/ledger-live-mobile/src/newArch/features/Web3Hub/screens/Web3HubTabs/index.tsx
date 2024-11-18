@@ -5,6 +5,7 @@ import type { TabData, TabsProps } from "LLM/features/Web3Hub/types";
 import React, { useCallback, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import { useAtom } from "jotai";
 import { NavigatorName, ScreenName } from "~/const";
 import Header from "./components/Header";
@@ -14,8 +15,6 @@ import { tabHistoryAtom } from "../../db";
 const edges = ["top", "bottom", "left", "right"] as const;
 
 const identityFn = (item: TabData) => item.id;
-
-const newTab = "New tab";
 
 type PropRenderItem = {
   item: TabData;
@@ -37,6 +36,7 @@ const renderItem = ({ item, extraData }: PropRenderItem) => {
 };
 
 export default function Web3HubTabs({ navigation }: TabsProps) {
+  const { t } = useTranslation();
   const listRef = useRef(null);
   const { colors } = useTheme();
   const [tabs, setTabs] = useAtom(tabHistoryAtom);
@@ -96,7 +96,9 @@ export default function Web3HubTabs({ navigation }: TabsProps) {
             alignItems={"center"}
             columnGap={2}
           >
-            <Text style={{ color: "white", fontWeight: "bold" }}>{newTab}</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              {t("common.web3hub.components.tabs.newTab")}
+            </Text>
             <IconsLegacy.PlusMedium size={16} color={"black"} />
           </Flex>
         </Flex>
