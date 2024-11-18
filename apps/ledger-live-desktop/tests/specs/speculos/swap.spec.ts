@@ -406,7 +406,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
           await app.swap.verifySwapAmountErrorMessageIsDisplayed(
             electronApp,
             swap.accountToDebit,
-            "No quotes available.",
+            "Not enough balance, including network fee.",
           );
         }
       },
