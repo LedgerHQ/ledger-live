@@ -53,7 +53,7 @@ export const buildSignOperation =
   ({ account, deviceId, transaction }) =>
     new Observable(subscriber => {
       const main = async () => {
-        const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
+        const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
           account.freshAddress,
           transaction,
           await api(),
@@ -78,6 +78,9 @@ export const buildSignOperation =
           signedOperation: {
             operation: buildOptimisticOperation(account, transaction),
             signature: Buffer.from(signedTx.serialize()).toString("hex"),
+            rawData: {
+              recentBlockhash,
+            },
           },
         });
       };
