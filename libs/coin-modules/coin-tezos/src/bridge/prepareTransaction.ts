@@ -34,6 +34,7 @@ export const prepareTransaction: AccountBridge<
   }
 
   const estimation = await getEstimatedFees({ account, transaction });
+  console.log({estimationPrepareTransaction: estimation});
   const minGasLimit = coinConfig.getCoinConfig().fees.minGasLimit;
   const minStorageLimit = coinConfig.getCoinConfig().fees.minStorageLimit;
   const minFees = coinConfig.getCoinConfig().fees.minFees;
