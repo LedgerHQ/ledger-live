@@ -26,6 +26,7 @@ export default class AddAccountDrawer {
   continueButtonId = "add-accounts-continue-button";
   succesCtaId = "add-accounts-success-cta";
 
+  @Step("Open add account via deeplink")
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
@@ -35,32 +36,38 @@ export default class AddAccountDrawer {
     await tapById(this.modalButtonId);
   }
 
+  @Step("Select currency")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
     await scrollToId(id);
     await tapById(id);
   }
 
+  @Step("Start accounts discovery")
   async startAccountsDiscovery() {
     await waitForElementById(this.continueButtonId, 120000);
   }
 
+  @Step("Expect account discovered")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
     await expect(this.accountCard(this.accountId(currencyId, index))).toBeVisible();
     await expect(this.accountTitleId(accountName, index)).toHaveText(accountName);
   }
 
+  @Step("Finish account discovery")
   async finishAccountsDiscovery() {
     await waitForElementById(this.continueButtonId);
     await tapById(this.continueButtonId);
   }
 
+  @Step("Close add account success screen")
   async tapSuccessCta() {
     await waitForElementById(this.succesCtaId);
     await tapById(this.succesCtaId);
   }
 
+  @Step("Add only first discovered account")
   async addFirstAccount(currency: Currency) {
     await this.startAccountsDiscovery();
     await this.expectAccountDiscovery(currency.name, currency.currencyId);
@@ -73,13 +80,5 @@ export default class AddAccountDrawer {
     await this.finishAccountsDiscovery();
     await this.tapSuccessCta();
     return accountId;
-  }
-
-  async addAccount(currency: Currency) {
-    await this.startAccountsDiscovery();
-    const accountName = await this.expectAccountDiscovery(currency.name, currency.currencyId);
-    await this.finishAccountsDiscovery();
-    await this.tapSuccessCta();
-    return accountName;
   }
 }

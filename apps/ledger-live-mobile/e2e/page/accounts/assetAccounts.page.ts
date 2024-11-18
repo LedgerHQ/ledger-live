@@ -17,10 +17,12 @@ export default class AssetAccountsPage {
   accountRowId = (accountId: string) => `account-row-${accountId}`;
   accountNameRegExp = /account-row-name-.*/;
 
+  @Step("Wait for asset page to load")
   async waitForAccountPageToLoad(assetName: string) {
     await waitForElementById(this.titleId(assetName.toLowerCase()));
   }
 
+  @Step("Expect asset balance to be visible")
   async expectAccountsBalanceVisible() {
     await expect(this.assetBalance()).toBeVisible();
   }
@@ -39,6 +41,7 @@ export default class AssetAccountsPage {
     await openDeeplink(link);
   }
 
+  @Step("Go to the account")
   async goToAccount(accountId: string) {
     await scrollToId(this.accountNameRegExp);
     await tapById(this.accountRowId(accountId));
