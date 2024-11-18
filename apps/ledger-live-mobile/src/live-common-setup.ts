@@ -53,6 +53,8 @@ setSupportedCurrencies([
   "bsc",
   "polkadot",
   "solana",
+  "solana_testnet",
+  "solana_devnet",
   "ripple",
   "litecoin",
   "polygon",
