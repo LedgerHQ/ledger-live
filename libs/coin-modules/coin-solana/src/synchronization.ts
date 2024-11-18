@@ -87,7 +87,7 @@ export const getAccountShapeWithAPI = async (
   const nextSubAccs: TokenAccount[] = [];
 
   for (const [mint, accs] of onChainTokenAccsByMint.entries()) {
-    if (!tokenIsListedOnLedger(mint)) {
+    if (!tokenIsListedOnLedger(currency.id, mint)) {
       continue;
     }
 
@@ -114,6 +114,7 @@ export const getAccountShapeWithAPI = async (
     const nextSubAcc =
       subAcc === undefined
         ? newSubAcc({
+            currencyId: currency.id,
             mainAccountId,
             assocTokenAcc,
             txs,
@@ -245,10 +246,12 @@ export const getAccountShapeWithAPI = async (
 };
 
 function newSubAcc({
+  currencyId,
   mainAccountId,
   assocTokenAcc,
   txs,
 }: {
+  currencyId: string;
   mainAccountId: string;
   assocTokenAcc: OnChainTokenAccount;
   txs: TransactionDescriptor[];
@@ -257,7 +260,7 @@ function newSubAcc({
 
   const creationDate = new Date((firstTx.info.blockTime ?? Date.now() / 1000) * 1000);
 
-  const tokenId = toTokenId(assocTokenAcc.info.mint.toBase58());
+  const tokenId = toTokenId(currencyId, assocTokenAcc.info.mint.toBase58());
   const tokenCurrency = getTokenById(tokenId);
 
   const accosTokenAccPubkey = assocTokenAcc.onChainAcc.pubkey;
