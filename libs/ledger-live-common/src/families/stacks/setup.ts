@@ -2,7 +2,7 @@
 
 import { createBridges } from "@ledgerhq/coin-stacks";
 import stacksResolver, { signMessage } from "@ledgerhq/coin-stacks/signer/index";
-import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
+import makeCliTools from "@ledgerhq/coin-stacks/test/cli";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
 import BlockstackApp from "@zondax/ledger-stacks";
