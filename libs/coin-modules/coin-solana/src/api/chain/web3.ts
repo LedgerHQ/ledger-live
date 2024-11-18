@@ -211,7 +211,7 @@ export const buildTokenTransferInstructions = async (
     );
   }
 
-  return instructions;
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubkey);
 };
 
 export async function findAssociatedTokenAccountPubkey(
@@ -288,10 +288,12 @@ export async function appendMaybePriorityFeeInstructions(
   const writableAccs = instructions
     .map(ix => ix.keys.filter(acc => acc.isWritable).map(acc => acc.pubkey.toBase58()))
     .flat();
-  const priorityFeeIx = await buildMaybePriorityFeeInstruction(api, writableAccs);
-  if (priorityFeeIx) instructions.unshift(priorityFeeIx);
-  const computeUnitsIx = await buildComputeUnitInstruction(api, instructions, payer);
+  const [priorityFeeIx, computeUnitsIx] = await Promise.all([
+    buildMaybePriorityFeeInstruction(api, writableAccs),
+    buildComputeUnitInstruction(api, instructions, payer),
+  ]);
 
+  if (priorityFeeIx) instructions.unshift(priorityFeeIx);
   if (computeUnitsIx) instructions.unshift(computeUnitsIx);
   return instructions;
 }
@@ -319,11 +321,10 @@ export async function buildComputeUnitInstruction(
     : null;
 }
 
-export function buildCreateAssociatedTokenAccountInstruction({
-  mint,
-  owner,
-  associatedTokenAccountAddress,
-}: TokenCreateATACommand): TransactionInstruction[] {
+export function buildCreateAssociatedTokenAccountInstruction(
+  api: ChainAPI,
+  { mint, owner, associatedTokenAccountAddress }: TokenCreateATACommand,
+): Promise<TransactionInstruction[]> {
   const ownerPubKey = new PublicKey(owner);
   const mintPubkey = new PublicKey(mint);
   const associatedTokenAccPubkey = new PublicKey(associatedTokenAccountAddress);
@@ -337,7 +338,7 @@ export function buildCreateAssociatedTokenAccountInstruction({
     ),
   ];
 
-  return instructions;
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
 }
 
 export async function buildStakeDelegateInstructions(
