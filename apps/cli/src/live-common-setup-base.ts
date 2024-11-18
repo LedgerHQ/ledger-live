@@ -44,6 +44,8 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "solana",
+  "solana_testnet",
+  "solana_devnet",
   "osmosis",
   "fantom",
   "moonbeam",
