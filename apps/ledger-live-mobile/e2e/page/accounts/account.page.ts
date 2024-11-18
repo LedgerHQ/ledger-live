@@ -19,17 +19,20 @@ export default class AccountPage {
     await tapByElement(this.accountAdvancedLogRow());
   }
 
+  @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
     await scrollToId(id, this.accountScreenScrollView);
     await expect(getElementById(id)).toBeVisible();
   }
 
+  @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
     await expect(this.accountGraph(accountId)).toBeVisible();
     await expect(this.accountBalance(accountId)).toBeVisible();
   }
 
+  @Step("Expect address index")
   async expectAddressIndex(indexNumber: number) {
     await this.openAccountSettings();
     await this.openAccountAdvancedLogs();
