@@ -223,9 +223,9 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
     log("info", `sleeping for ${sleepTimeMS} ms, waiting for a new blockhash`);
     await sleep(sleepTimeMS);
     const blockhash = await api.getLatestBlockhash();
-    if (blockhash !== currentBlockhash) {
+    if (blockhash.blockhash !== currentBlockhash) {
       log("info", "got a new blockhash");
-      return blockhash;
+      return blockhash.blockhash;
     }
     log("info", "got same blockhash");
   }
