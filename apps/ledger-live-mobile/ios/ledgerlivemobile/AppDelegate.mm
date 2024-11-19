@@ -4,7 +4,6 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 #import "RNCConfig.h"
-#import "RNSplashScreen.h"  // here
 #import <BrazeKit/BrazeKit-Swift.h>
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
@@ -71,14 +70,22 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
     [self registerForPushNotifications];
   }
 
-  [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-
-  [self.window makeKeyAndVisible];
+  BOOL didFinish = [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
-  [RNSplashScreen show];
 
-  return YES;
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [UIViewController new];
+  rootViewController.view = rootView;
+  self.window.rootViewController = rootViewController;
+
+  [self.window makeKeyAndVisible];
+  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+  UIViewController *vc = [sb instantiateInitialViewController];
+  rootView.loadingView = vc.view;
+
+
+  return didFinish;
 }
 
 - (void)registerForPushNotifications {
