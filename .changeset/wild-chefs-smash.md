@@ -1,8 +1,8 @@
 ---
-"@ledgerhq/coin-filecoin": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-filecoin": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 support: move filecoin to its own coin module

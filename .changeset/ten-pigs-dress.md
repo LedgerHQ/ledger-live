@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-stacks": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-stacks": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 support: move stacks to its own coin module
