@@ -3,16 +3,15 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
 type Props = {
   account: AccountLike;
 };
 
 function AptosAccountHeader({ account }: Props) {
-  const unit = getAccountUnit(account);
+  const unit = (account as Account).currency.units[0];
   const { delegatedAmount } = account as AptosAccount;
 
   return (

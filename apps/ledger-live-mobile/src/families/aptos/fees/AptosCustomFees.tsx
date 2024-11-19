@@ -11,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSelector } from "react-redux";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 import KeyboardView from "../../../components/KeyboardView";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -58,8 +58,8 @@ const AptosCustomFees = ({ navigation, route }: NavigationProps) => {
   const { theme } = useThemeStyled();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
+  const unit = currency.units[0];
 
   const gasPriceFieldElement = useRef<{ resetData: () => void }>();
   const gasLimitElement = useRef<{ resetData: () => void }>();

@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -40,8 +40,8 @@ export default function SendRowsFee({
   route,
   setTransaction,
 }: Props) {
-  const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
+  const unit = currency.units[0];
   const { fees } = transaction as AptosTransaction;
   const { colors } = useTheme();
 
