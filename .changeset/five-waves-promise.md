@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Some icons on allocation screen were not well displayed. So change to use ParentCurrencyIcon component (same as the one on the portfolio)

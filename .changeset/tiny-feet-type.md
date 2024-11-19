@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/types-live": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/types-live": minor
+"@ledgerhq/live-common": minor
 ---
 
 New feature flag for new add account workflow

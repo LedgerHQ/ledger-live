@@ -22,7 +22,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                moduleName:@"ledgerlivemobile"
@@ -32,16 +32,16 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
-
+  
   if ([googleServiceInfoName length] == 0) {
     googleServiceInfoName = @"GoogleService-Info";
   }
-
+  
   // Initialize Firebase with the correct GoogleService-Info.plist file
   NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
-
+  
   // Setup Braze
   NSString *brazeApiKeyFromEnv = [RNCConfig envFor:@"BRAZE_IOS_API_KEY"];
   NSString *brazeCustomEndpointFromEnv = [RNCConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
@@ -72,12 +72,14 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   }
 
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-
+    
   [self.window makeKeyAndVisible];
-
+  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+  UIViewController *vc = [sb instantiateInitialViewController];
+  rootView.loadingView = vc.view;
+  
   [super application:application didFinishLaunchingWithOptions:launchOptions];
-  [RNSplashScreen show];
-
+  
   return YES;
 }
 
@@ -145,23 +147,23 @@ static Braze *_braze;
   blurEffectView.frame = [self.window bounds];
   blurEffectView.tag = 12345;
   logoView.tag = 12346;
-
+  
   blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.window addSubview:blurEffectView];
   [self.window addSubview:logoView];
   [self.window bringSubviewToFront:logoView];
-
+  
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
   logoView.frame = CGRectMake(0, 0, 128, 128);
-
+  
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
 }
 
 - (void) hideOverlay{
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
-
+  
   [UIView animateWithDuration:0.5 animations:^{
     blurEffectView.alpha = 0;
     logoView.alpha = 0;
