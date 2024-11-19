@@ -72,6 +72,7 @@ const Wrapper = styled.div<Pick<PortfolioContentCardProps, "image" | "tag" | "on
   background-repeat: no-repeat;
   background-size: 50% auto;
 
+  cursor: pointer;
   padding: 16px;
   padding-top: ${p => (p.tag ? "16px" : "24px")};
   padding-right: 50%;
