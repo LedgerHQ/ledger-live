@@ -14,8 +14,12 @@ const EmblaContainer = styled.div`
 `;
 
 const EmblaSlide = styled.div`
+  display: flex;
   flex: 0 0 100%;
   min-width: 0;
+  > * {
+    flex-basis: 100%;
+  }
 `;
 
 const CarouselContainer = styled.div<Pick<Props, "variant">>`

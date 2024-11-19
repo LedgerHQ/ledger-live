@@ -78,12 +78,15 @@ export const PortfolioContentCards: StoryObj<Args> = {
       <PortfolioContentCard
         title="Ledger Recover"
         description="Get peace of mind and start your free trial."
-        cta="Start my free trial"
-        tag="New"
-        image="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='526' viewBox='0 0 450 526'><defs><linearGradient id='g' x0='0' y0='0' x1='1' y1='1'><stop stop-color='%23000' offset='0%' /><stop stop-color='%23FFF' offset='100%' /></linearGradient></defs><path d='M0,0 H450 V526 Q0,526 0,0 z' fill='url(%23g)' /></svg>"
+        cta={index % 2 ? undefined : "Start my free trial"}
+        tag={index % 3 ? undefined : "New"}
+        image={(index + 1) % 4 ? IMAGE_SRC : undefined}
         onClick={() => onSlideAction(`click on slide ${index}`)}
         onClose={() => onSlideAction(`close slide ${index}`)}
       />
     )) satisfies Parameters["Slide"],
   },
 };
+
+const IMAGE_SRC =
+  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='526' viewBox='0 0 450 526'><defs><linearGradient id='g' x0='0' y0='0' x1='1' y1='1'><stop stop-color='%23000' offset='0%' /><stop stop-color='%23FFF' offset='100%' /></linearGradient></defs><path d='M0,0 H450 V526 Q0,526 0,0 z' fill='url(%23g)' /></svg>";
