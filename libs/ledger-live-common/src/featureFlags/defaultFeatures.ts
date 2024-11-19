@@ -526,6 +526,7 @@ export const DEFAULT_FEATURES: Features = {
       hourly: 2 * 24 * 60 * 60 * 1000,
     },
   },
+  llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
 };
 
 // Firebase SDK treat JSON values as strings
