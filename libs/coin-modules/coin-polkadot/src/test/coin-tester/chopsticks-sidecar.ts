@@ -27,8 +27,8 @@ export async function spawnChopsticksAndSidecar() {
 
   let chopsticksStarted = false;
   let sidecarStarted = false;
-  async function checkChopsticksLogs(has_started_max_retry = 20) {
-    if (has_started_max_retry === 0) {
+  async function checkChopsticksLogs(maxRetries = 50) {
+    if (maxRetries === 0) {
       throw new Error("Failed to start chopsticks and/or sidecar container(s)");
     }
 
@@ -48,7 +48,7 @@ export async function spawnChopsticksAndSidecar() {
     if (chopsticksStarted && sidecarStarted) return;
 
     await delay(200);
-    return checkChopsticksLogs(has_started_max_retry - 1);
+    return checkChopsticksLogs(maxRetries - 1);
   }
 
   await checkChopsticksLogs();
