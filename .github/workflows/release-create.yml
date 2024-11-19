@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      RELEASE_BRANCH: "release"
+      RELEASE_BRANCH: "release-angusbayley-TEST"
     steps:
       - name: generate token
         id: generate-token
@@ -44,6 +44,17 @@ jobs:
         run: |
           git add .
           git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
+      - name: Move patch updates to minor
+        # For more info about why we do this, see this doc:
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases 
+        run: |
+          for file in .changeset/*.md; do
+            if grep -q ": patch" "$file"; then
+              # target the line after the first "---" and replace ": patch" with ": minor"
+              sed -i '/---/!b;n;s/: patch/: minor/' "$file"
+              echo "Updated $file to minor"
+            fi
+          done
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: commit
@@ -57,6 +68,6 @@ jobs:
       - name: push
         run: |
           git push origin $RELEASE_BRANCH
-          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
+          gh pr create --title ":rocket: [NOT A REAL RELEASE - TEST ONLY, by @angusbayley] Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
