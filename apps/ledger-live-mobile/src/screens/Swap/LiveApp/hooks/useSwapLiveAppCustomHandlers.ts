@@ -1,21 +1,25 @@
-import { useSelector } from "react-redux";
-import { accountsSelector } from "~/reducers/accounts";
-import { useMemo } from "react";
-import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { getFee } from "../customHandlers/getFee";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
+import { accountsSelector } from "~/reducers/accounts";
+import { swapCustomHandlers } from "../customHandlers";
 
 export function useSwapLiveAppCustomHandlers(manifest: LiveAppManifest) {
   const accounts = useSelector(accountsSelector);
   const ptxCustomHandlers = usePTXCustomHandlers(manifest, accounts);
+  const dispatch = useDispatch();
 
   return useMemo<WalletAPICustomHandlers>(
     () =>
       ({
         ...ptxCustomHandlers,
-        "custom.getFee": getFee(accounts),
+        ...swapCustomHandlers({
+          accounts,
+          dispatch,
+        }),
       }) as WalletAPICustomHandlers,
-    [ptxCustomHandlers, accounts],
+    [ptxCustomHandlers, accounts, dispatch],
   );
 }

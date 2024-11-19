@@ -101,6 +101,8 @@ export const getFee =
     const currentTransaction = preparedTransaction;
     const customFeeConfig = baseTransaction && getCustomFeesPerFamily(currentTransaction);
 
+    console.log({ currentTransaction, currentStatus, customFeeConfig });
+
     // Handle non-drawer case
     if (!params.openDrawer) {
       return formatFeeResult({
