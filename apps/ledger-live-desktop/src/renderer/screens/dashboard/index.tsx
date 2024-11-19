@@ -84,7 +84,8 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
-  const isActionCardsCampainRunning = useActionCards().length > 0;
+  const { actionCards } = useActionCards();
+  const isActionCardsCampainRunning = actionCards.length > 0;
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();

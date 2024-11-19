@@ -4138,6 +4138,10 @@
         "desc": "Add exchange provider's info",
         "placeholder": "Exchange provider's info in CAL format"
       },
+      "exchangeTestPartnerMode": {
+        "title": "Exchange in Test Partner Mode",
+        "desc": "Enable use of the partner stage public key"
+      },
       "analyticsConsole": {
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
@@ -6616,7 +6620,6 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?"
     },
-
     "manage": {
       "cta": "Manage",
       "synchronize": {

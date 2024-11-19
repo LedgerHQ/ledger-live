@@ -1,3 +1,15 @@
+# 2.92.0
+
+### 🌷 Improvements
+
+You can now buy Ton, CSPR, and ICP directly from the app.
+
+We've added a filter to keep spam NFTs out of your transaction history.
+
+NFT support for BNB and AVAX is now available.
+
+We've improved the Send and Receive flow for assets that support Memo tags, making it smoother and more intuitive.
+
 # 2.91.1
 
 This release includes minor bug fixes.

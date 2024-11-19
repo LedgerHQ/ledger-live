@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useTransition, animated } from "react-spring";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
@@ -8,6 +8,7 @@ import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgre
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
 import { track } from "~/renderer/analytics/segment";
+import LogContentCardWrapper from "LLD/components/DynamicContent/LogContentCardWrapper";
 
 const CarouselWrapper = styled(Card)`
   position: relative;
@@ -149,28 +150,19 @@ const Carousel = ({
   speed?: number;
   type?: "slide" | "flip";
 }) => {
-  const { slides, logSlideImpression, dismissCard } = useDefaultSlides();
+  const { slides, dismissCard } = useDefaultSlides();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
-  const [hasLoggedFirstImpression, setHasLoggedFirstImpression] = useState(false);
-
-  useEffect(() => {
-    if (!hasLoggedFirstImpression) {
-      setHasLoggedFirstImpression(true);
-      logSlideImpression(0);
-    }
-  }, [hasLoggedFirstImpression, logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
     (newIndex: number) => {
       if (index !== newIndex) {
         setIndex(newIndex);
-        logSlideImpression(newIndex);
       }
     },
-    [index, logSlideImpression],
+    [index],
   );
 
   const onChooseSlide = useCallback(
@@ -232,10 +224,12 @@ const Carousel = ({
       <Slides>
         {transitions.map(({ item, props, key }) => {
           if (!slides?.[item]) return null;
-          const { Component } = slides[item];
+          const { Component, id } = slides[item];
           return (
             <animated.div key={key} style={{ ...props }}>
-              <Component />
+              <LogContentCardWrapper id={id}>
+                <Component />
+              </LogContentCardWrapper>
             </animated.div>
           );
         })}

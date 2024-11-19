@@ -137,7 +137,9 @@
       "outdated" : "已暂停",
       "error" : "同步错误",
       "refresh" : "刷新",
-      "devTools" : "开发工具"
+      "devTools" : "开发工具",
+      "failingSync_one" : "未同步的账户：",
+      "failingSync_other" : "未同步的账户："
     },
     "exchange" : "兑换",
     "info" : "信息",
@@ -146,7 +148,10 @@
     "or" : "或者",
     "clearAll" : "清除所有",
     "buyLedger" : "购买 Ledger 设备",
-    "quote" : "报价"
+    "quote" : "报价",
+    "memoTag" : {
+      "learnMore" : "详细了解“标签/备忘标签”"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -430,6 +435,12 @@
       "title" : "请在您的设备上更新 {{appName}} 应用程序",
       "subtitle" : "要互换资产，请前往 My Ledger（我的 Ledger）并更新 {{appName}} 应用程序。",
       "cta" : "前往 My Ledger（我的 Ledger）"
+    },
+    "wrongDevice" : {
+      "title" : "Ledger Nano S™ 不兼容 THORChain",
+      "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
+      "cta" : "浏览兼容设备",
+      "changeProvider" : "使用其他提供商进行互换"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -737,7 +748,8 @@
         "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
         "description" : "Ledger Live 是一个开源平台。",
         "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
+        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
+        "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1130,8 @@
     "optionsMenu" : {
       "title" : "选项",
       "exportOperations" : "导出操作历史记录。",
-      "exportToMobile" : "导出至移动版"
+      "exportToMobile" : "导出至移动版",
+      "ledgerSync" : "同步账户"
     },
     "contextMenu" : {
       "star" : "星标",
@@ -1126,6 +1139,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "yield" : "收益率",
       "buy" : "买入",
       "sell" : "卖出",
       "edit" : "编辑账户",
@@ -2252,6 +2266,10 @@
           "description" : "使用 Ledger by Figment 验证器权益质押您的 CELO。它保证全面防止削减，由 Ledger 提供妥善的安全防护。"
         }
       }
+    },
+    "memoTag" : {
+      "title" : "需要标签/备忘标签？",
+      "description" : "您可能需要有<0>标签/备忘标签</0>才能从交易所接收该笔资产。您可以使用任意数字组合，例如 1234。"
     }
   },
   "send" : {
@@ -2274,12 +2292,17 @@
           "noResolution" : {
             "title" : "未找到此网域的地址"
           }
+        },
+        "memoTag" : {
+          "question" : "不使用备忘标签？",
+          "learnMore" : "详细了解“标签/备忘标签”",
+          "warning" : " 将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。"
         }
       },
       "amount" : {
         "title" : "数额",
         "banner" : "最大可支出数额为",
-        "fees" : "最高预估费用",
+        "fees" : "详细了解费用",
         "standard" : "标准",
         "advanced" : "高级",
         "nftQuantity" : "数量"
@@ -2351,6 +2374,15 @@
     },
     "footer" : {
       "estimatedFees" : "网络费用"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "不使用标签/备忘标签？",
+        "description" : "将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。",
+        "cta.addTag" : "添加标签",
+        "cta.not.addTag" : "不添加标签",
+        "checkbox.label" : "不再显示。"
+      }
     }
   },
   "releaseNotes" : {
@@ -2409,7 +2441,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2792,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT（非同质化代币）收藏",
-        "description" : "您可以在 Ledger Live 中通过 Objkt 直接查看泰索斯 Tezos NFT。",
-        "cta" : "在 Objkt 上查看我的 NFT"
       }
     }
   },
@@ -3682,7 +3709,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "质押您的以太币，通过直接在 Ledger Live 中接收每日奖励来增长您的持有量",
       "tagMinimum" : "需要 {{min}} ETH",
@@ -3703,7 +3730,7 @@
       },
       "kiln" : {
         "title" : "Kiln 专属质押",
-        "tag" : "需要 32 枚以太币",
+        "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
         "supportLink" : "了解关于 Kiln 验证者的更多信息"
       },
@@ -3712,6 +3739,72 @@
         "tag" : "需要 32 ETH",
         "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
         "supportLink" : "详细了解 Figment 验证者"
+      }
+    },
+    "stake" : {
+      "title" : "选择权益质押服务提供商",
+      "category" : {
+        "all" : {
+          "name" : "全部",
+          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+        },
+        "liquid" : {
+          "name" : "流动性质押",
+          "description" : "您可以质押以太币，获得流动代币奖励。您仍然可以进行交易，并参与 DeFi 活动。"
+        },
+        "protocol" : {
+          "name" : "协议",
+          "description" : "您可以一次质押 32 ETH，获得完整节点奖励的以太币。"
+        },
+        "pooling" : {
+          "name" : "大池质押",
+          "description" : "您可以加入一个质押池，质押任意数量的以太币并获得奖励。"
+        },
+        "restaking" : {
+          "name" : "再质押",
+          "description" : "您可以再质押您的流动代币，获得额外奖励。"
+        }
+      },
+      "howItWorks" : "以太币质押的运作方式",
+      "lst" : "需要流动代币",
+      "noMinimum" : "无最低限制",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 流动性再质押"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "了解以太币质押及各种不同策略",
+      "requiredMinimum" : "需要 {{min}} ETH",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自动以复利计算奖励",
+        "basic" : "奖励",
+        "daily" : "每日奖励",
+        "eigenlayer_points" : "Eigenlayer 积分",
+        "validator" : "验证者奖励"
       }
     }
   },
@@ -4014,6 +4107,35 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "analyticsConsole" : {
+        "title" : "允许分析控制台",
+        "desc" : "显示并允许打开分析控制台。"
+      },
+      "brazeTools" : {
+        "title" : "Braze 工具",
+        "description" : "生成本地 Braze 卡",
+        "open" : "打开",
+        "modal" : {
+          "title" : "生成本地 Braze 卡",
+          "add" : "添加",
+          "dismiss" : "关闭所有卡",
+          "fields" : {
+            "notification" : "通知内容卡",
+            "action" : "行动内容卡",
+            "portfolio" : "资产组合内容卡",
+            "title" : "标题",
+            "description" : "描述",
+            "order" : "编号",
+            "image" : "图片网址",
+            "mainCta" : "主要号召性用语",
+            "link" : "链接",
+            "secondaryCta" : "次要号召性用语",
+            "cta" : "号召性用语",
+            "url" : "网址",
+            "path" : "路径"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4456,20 @@
       "tokenBlacklist" : {
         "title" : "隐藏代币列表",
         "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
-        "count" : "{{count}} 枚代币",
-        "count_plural" : "{{count}} 枚代币"
+        "count" : "1 枚代币",
+        "count_other" : "{{count}} 枚代币"
       },
       "hiddenNftCollections" : {
         "title" : "隐藏的 NFT 藏品",
         "desc" : "您可以通过右键单击藏品集名称并选择 \"隐藏 NFT 藏品集\" 来隐藏 NFT 收藏品。",
-        "count" : "{{count}} 个藏品集",
-        "count_plural" : "{{count}} 个藏品集"
+        "count" : "1 个收藏",
+        "count_other" : "{{count}} 个藏品集"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "隐藏的铭文",
+        "desc" : "右键点击该铭文并选择“隐藏铭文”，即可隐藏铭文。",
+        "count" : "1 个铭文",
+        "count_other" : "{{count}} 个铭文"
       },
       "fullNode" : {
         "title" : "连接比特币完整节点",
@@ -5209,25 +5337,17 @@
     "link" : "使用条款",
     "cta" : "继续"
   },
+  "MemoTagField" : {
+    "label" : "标签/备忘标签",
+    "placeholder" : "输入标签/备忘标签",
+    "information" : "为确保交易正确存入您的账户，中心化交易所和托管钱包有时要求添加标签/备忘标签。",
+    "instruction" : "复制并粘贴交易所或托管钱包提供的标签/备忘标签。"
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "可选",
       "transferId" : "转账 ID（备忘标签）",
       "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "可选",
-      "memo" : "Memo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "可选，默认：0",
-      "memo" : "Memo",
-      "memoWarningText" : "Memo（目的地标签）的值可以是 0 到 9223372036854775807 之间的数字"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "可选",
-      "memo" : "Memo",
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
     },
     "ton" : {
       "commentPlaceholder" : "可选",
@@ -5257,13 +5377,8 @@
       "assetCode" : "资产代码",
       "assetIssuer" : "资产发行者"
     },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "可选",
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
-    },
     "solana" : {
-      "memo" : "Memo",
+      "memo" : "标签/备忘标签",
       "memoPlaceholder" : "可选"
     }
   },
@@ -5273,8 +5388,11 @@
       "description" : "网络费用可能太低。请增加"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
-      "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
+      "title" : "{{appName}} 与 {{productName}} 不兼容。",
+      "titleOld" : "无法为您的特定配置找到 {{appName}} 应用程序。",
+      "description" : "<0>使用我们的设备解锁更多功能。</0>要使用此功能，请升级为任一款我们的兼容设备。选择最符合您需求的设备，享受更高的安全性。",
+      "exploreCTA" : "浏览兼容设备",
+      "learnMoreCTA" : "详细了解 Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "您有待处理的转入交易。请小心，待处理交易可以撤销。"
@@ -6026,7 +6144,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "在激活主网之前，发送到 taproot 地址不安全"
@@ -6240,11 +6358,32 @@
     },
     "PinNotSet" : {
       "title" : "识别码未设置"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "交易广播失败",
+      "description" : "您的交易未能在 {{networkName}} 网络上广播。您的 {{currencyName}} 未转移，仍在您的账户中。",
+      "helpCenterTitle" : "帮助中心： ",
+      "helpCenterDesc" : "如需帮助，请访问我们的帮助中心或通过小部件联系我们。",
+      "needHelp" : "需要帮助？",
+      "getHelp" : "获得帮助",
+      "technicalErrorTitle" : "技术错误： ",
+      "saveLogs" : "保存日志"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> 或 <cta2>{{cta2Label}}</cta2> {{assetName}} 到您的账户",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>、<cta2>{{cta2Label}}</cta2> 或 <cta3>{{cta3Label}}</cta3> {{assetName}} 到您的账户。",
+      "ctas" : {
+        "buy" : "买入",
+        "swap" : "互换",
+        "deposit" : "存款"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
-    "memoPlaceholder" : "可选",
+    "memoPlaceholder" : "输入标签/备忘标签",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
   },
   "hedera" : {
@@ -6276,6 +6415,7 @@
     "cta" : "自定义锁屏界面",
     "managerCTA" : "锁屏图片",
     "managerCTARemove" : "删除",
+    "rotate" : "旋转",
     "steps" : {
       "choose" : {
         "stepLabel" : "选择图片",
@@ -6377,12 +6517,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容。",
-      "whatWeTrack" : "获得您的同意后，Ledger 将会跟踪有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
+      "whatWeTrack" : "获得您的同意后，Ledger 将会收集有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
       "whatWeTrackList" : {
         "1" : "衡量 Ledger Live 的性能，优化应用程序并提升您的体验（数据分析）。",
         "2" : "为您提供根据您的偏好定制的个性化推荐及内容，帮助我们衡量营销活动的效果（个性化）。"
       },
-      "whatWeDoNotTrack" : "Ledger 绝不会跟踪以下相关信息：",
+      "whatWeDoNotTrack" : "Ledger 绝不会收集以下相关信息：",
       "whatWeDoNotTrackList" : {
         "1" : "您的资产。",
         "2" : "您的资产组合。",
@@ -6424,13 +6564,13 @@
     "common" : {
       "title" : "请帮助我们改进并提供个性化体验",
       "revokeInfo" : "您可以随时在应用程序设置中撤回您的同意。",
-      "learnMore" : "详细了解我们的《跟踪政策》"
+      "learnMore" : "详细了解我们如何处理您的数据"
     },
     "profileSettings" : {
       "personalizedExp" : "个性化体验",
       "analytics" : "数据分析",
-      "personalizedExpDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
-      "analyticsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。"
+      "personalizedExpDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
+      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。"
     }
   },
   "walletSync" : {
@@ -6584,6 +6724,11 @@
       "seeMore" : "查看更多铭文",
       "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
       "receive" : "接收铭文",
+      "hide" : "隐藏铭文",
+      "modal" : {
+        "title" : "隐藏铭文",
+        "desc" : "此操作将在您的账户中隐藏以下铭文 <0>{{inscriptionName}}</0>。您可以随时在设置中取消隐藏。"
+      },
       "discoveryDrawer" : {
         "title" : "了解序数铭文",
         "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
@@ -6650,6 +6795,20 @@
           "vintage" : "比特币发展初期是指前 1,000 个区块。这一时期开采的聪均标记为 “Vintage”（古董）。"
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "发送数额：",
+      "of" : "/",
+      "excludeAssets" : "排除序数铭文资产",
+      "selectDesc" : "选择您在进行交易时想要使用的 UTXO。未选中的 UTXO 不会被使用。",
+      "utxos" : "UTXO",
+      "learnMore" : "详细了解此设置",
+      "confirm" : "确认",
+      "address" : "地址",
+      "transactionId" : "交易 ID"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "使用 LDMK transport"
   }
 }

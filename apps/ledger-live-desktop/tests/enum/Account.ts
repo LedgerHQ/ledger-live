@@ -8,6 +8,7 @@ export class Account {
     public readonly address: string,
     public readonly accountType?: AccountType,
     public readonly index?: number,
+    public readonly ensName?: string,
   ) {}
 
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
@@ -120,6 +121,15 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
     undefined,
     1,
+  );
+
+  static readonly ETH_MC = new Account(
+    Currency.ETH,
+    "Ethereum MC",
+    "0x4258A05DBA420A398bcdFB389E4250759b4223ea",
+    undefined,
+    undefined,
+    "ldgrqamco.eth",
   );
 
   static readonly ETH_3 = new Account(
@@ -407,6 +417,13 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
     AccountType.ERC20,
     1,
+  );
+
+  static readonly ETH_USDC_1 = new Account(
+    Currency.ETH_USDC,
+    "Ethereum 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+    AccountType.ERC20,
   );
 
   static readonly ETH_LIDO = new Account(

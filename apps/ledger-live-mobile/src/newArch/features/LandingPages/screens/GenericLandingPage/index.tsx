@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -8,6 +8,8 @@ import { TrackScreen } from "~/analytics";
 import { LandingPageUseCase } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { filterCategoriesByLocation } from "~/dynamicContent/utils";
+import { useSelector } from "react-redux";
+import { isDynamicContentLoadingSelector } from "~/reducers/dynamicContent";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<LandingPagesNavigatorParamList, ScreenName.GenericLandingPage>
@@ -15,6 +17,7 @@ type NavigationProps = BaseComposite<
 
 const GenericLandingPage = (props: NavigationProps) => {
   const useCase = props.route.params?.useCase;
+  const isLoading = useSelector(isDynamicContentLoadingSelector);
   const { categoriesCards } = useDynamicContent();
 
   useEffect(() => {
@@ -22,15 +25,19 @@ const GenericLandingPage = (props: NavigationProps) => {
       props.navigation.goBack();
     }
     const categoriesToDisplay = filterCategoriesByLocation(categoriesCards, useCase);
-    if (categoriesToDisplay.length === 0) {
+    if (categoriesToDisplay.length === 0 && !isLoading) {
       props.navigation.goBack();
     }
-  }, [categoriesCards, props.navigation, useCase]);
+  }, [categoriesCards, isLoading, props.navigation, useCase]);
 
   return (
-    <Flex>
+    <Flex height="100%" justifyContent={isLoading ? "center" : "normal"}>
       <TrackScreen name="Landing Page" useCase={useCase} />
-      <ContentCardsLocation locationId={props.route.params?.useCase} mb={8} />
+      {isLoading ? (
+        <InfiniteLoader />
+      ) : (
+        <ContentCardsLocation locationId={props.route.params?.useCase} mb={8} />
+      )}
     </Flex>
   );
 };

@@ -112,6 +112,73 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
+  //todo: flaky balance retrieval, reactivate after LIVE-14410
+  /*{
+    swap: new Swap(
+      Account.SOL_1,
+      Account.ETH_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2828",
+  },
+  {
+    swap: new Swap(
+      Account.SOL_1,
+      Account.BTC_NATIVE_SEGWIT_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2827",
+  },
+  {
+    swap: new Swap(
+      Account.SOL_1,
+      Account.ETH_USDT_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2829",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.ETH_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2830",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.SOL_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2831",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.BTC_NATIVE_SEGWIT_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2832",
+  },*/
 ];
 
 for (const { swap, xrayTicket } of swaps) {

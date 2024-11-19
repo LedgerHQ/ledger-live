@@ -14,6 +14,8 @@ export type CountervaluesSettings = {
   marketCapBatchingAfterRank: number;
   // throw exception in "loadCountervalues" if ANY error occurs (for test purpose)
   disableAutoRecoverErrors?: boolean;
+
+  granularitiesRates?: Record<RateGranularity, number>;
 };
 // This is the internal state of countervalues.
 export type CounterValuesState = {
@@ -49,6 +51,7 @@ export type CounterValuesAPI = {
   fetchHistorical: (
     granularity: RateGranularity,
     pair: TrackingPair,
+    granularitiesRates?: Record<RateGranularity, number>,
   ) => Promise<Record<string, number>>;
   fetchLatest: (
     pairs: TrackingPair[],

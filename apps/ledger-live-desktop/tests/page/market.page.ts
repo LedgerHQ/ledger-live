@@ -29,8 +29,9 @@ export class MarketPage extends AppPage {
   @step("Switch market range for $0")
   async switchMarketRange(range: string) {
     await this.marketRangeSelect.click();
-    // TODO: For some reason need to hack selects like that
-    await this.page.click(`text=${range}`);
+    await this.page.click(`#react-select-3-listbox >> text=${range}`);
+    // NOTE: this.page.click(`text=${range}`);
+    // won't work on 7th row if the coin starts with d (e.g. "dogecoin")
   }
 
   @step("Toggle star filter")

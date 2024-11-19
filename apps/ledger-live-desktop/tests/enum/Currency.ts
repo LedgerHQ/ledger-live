@@ -55,6 +55,7 @@ export class Currency {
   );
   static readonly TON = new Currency("Ton", "TON", "ton", AppInfos.TON);
   static readonly ETH_USDT = new Currency("Tether USD", "USDT", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH_USDC = new Currency("USD Coin", "USDC", "ethereum", AppInfos.ETHEREUM);
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
