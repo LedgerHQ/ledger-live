@@ -51,8 +51,7 @@ export const getTransactions = async (address: string): Promise<TxApiResponse[]>
       throw new Error("Network response was not ok.");
     }
 
-    const transactions: TxApiResponse[] = await response.json();
-    return transactions;
+    return (await response.json()) as TxApiResponse[];
   } catch (error) {
     console.error("Error fetching transactions:", error);
     throw error;

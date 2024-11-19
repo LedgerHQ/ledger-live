@@ -2,8 +2,10 @@ import KaspaBIP32 from "../lib/bip32";
 import { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 import { BigNumber } from "bignumber.js";
 import { getAddressesActive } from "./indexer-api/getAddressesActive";
-import { KaspaUtxo } from "../types/bridge";
+import { KaspaOperation, KaspaUtxo } from "../types/bridge";
 import { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
+import getTransactions from "./indexer-api/getTransactions";
+import { OperationType } from "@ledgerhq/types-live";
 
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
@@ -193,6 +195,60 @@ function getTypeAndIndexFromAccountAddresses(accountAddreses: AccountAddress[], 
   } else {
     throw new Error(`Address ${address} not found in addresses set.`);
   }
+}
+
+export async function scanOperations(addresses: string[]): Promise<KaspaOperation[]> {
+  const operations: KaspaOperation[] = [];
+  const fetchedTxs = await Promise.all(addresses.map(addr => getTransactions(addr))).then(results =>
+    results.flat(),
+  );
+
+  for (const tx of fetchedTxs) {
+    const myInputAmount: BigNumber = tx.inputs.reduce((acc: BigNumber, v): BigNumber => {
+      if (addresses.includes(v.previous_outpoint_address)) {
+        return acc.plus(BigNumber(v.previous_outpoint_amount));
+      }
+      return acc;
+    }, BigNumber(0));
+
+    const myOutputAmount: BigNumber = tx.outputs.reduce((acc: BigNumber, v) => {
+      if (addresses.includes(v.script_public_key_address)) {
+        return acc.plus(BigNumber(v.amount));
+      }
+      return acc;
+    }, BigNumber(0));
+
+    const totalOutputAmount: BigNumber = tx.outputs.reduce(
+      (acc: BigNumber, v) => acc.plus(BigNumber(v.amount)),
+      BigNumber(0),
+    );
+    const totalInputAmount: BigNumber = tx.inputs.reduce(
+      (acc: BigNumber, v) => acc.plus(BigNumber(v.previous_outpoint_amount)),
+      BigNumber(0),
+    );
+
+    // console.log(`In ${myInputAmount.toString()}`);
+    // console.log(`Out ${myOutputAmount.toString()}`);
+
+    const operationType: OperationType = myOutputAmount.gt(myInputAmount) ? "IN" : "OUT";
+
+    operations.push({
+      id: "kaspa",
+      hash: tx.transaction_id,
+      type: operationType,
+      value: myOutputAmount.minus(myInputAmount).absoluteValue(),
+      fee: totalInputAmount.minus(totalOutputAmount),
+      senders: tx.inputs.map(inp => inp.previous_outpoint_address),
+      recipients: tx.outputs.map(output => output.script_public_key_address),
+      blockHeight: tx.accepting_block_blue_score,
+      blockHash: tx.block_hash[0],
+      accountId: "kaspa?",
+      date: new Date(tx.block_time * 1000),
+      extra: {},
+    } as KaspaOperation);
+  }
+
+  return operations;
 }
 
 export async function scanUtxos(
