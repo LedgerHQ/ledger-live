@@ -129,38 +129,20 @@ export const createAction = (
           appName: "Exchange",
         };
       }
-      if (!exchange || !mainFromAccount || !mainToAccount) {
-        return {
-          appName: "Exchange",
-          requireLatestFirmware,
-        };
-      } else {
-        const shouldAddEthApp =
-          (mainFromAccount.currency.family === "evm" || mainToAccount.currency.family === "evm") &&
-          mainFromAccount.currency.managerAppName !== "Ethereum" &&
-          mainToAccount.currency.managerAppName !== "Ethereum";
-        const dependencies: AppRequest["dependencies"] = [
-          {
-            account: mainFromAccount,
-          },
-          {
-            account: mainToAccount,
-          },
-        ];
-
-        if (shouldAddEthApp) {
-          dependencies.push({
-            appName: "Ethereum",
-          });
-        }
-
-        return {
-          appName: "Exchange",
-          dependencies,
-          requireLatestFirmware,
-        };
+      const dependencies: AppRequest["dependencies"] = [];
+      if (mainFromAccount) {
+        dependencies.push({ appName: mainFromAccount?.currency?.managerAppName });
       }
-    }, [exchange, mainFromAccount, mainToAccount, requireLatestFirmware]);
+
+      if (mainToAccount) {
+        dependencies.push({ appName: mainToAccount?.currency?.managerAppName });
+      }
+      return {
+        appName: "Exchange",
+        dependencies,
+        requireLatestFirmware,
+      };
+    }, [mainFromAccount, mainToAccount, requireLatestFirmware]);
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 

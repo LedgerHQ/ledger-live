@@ -18,6 +18,7 @@ export type ExchangeStartFundParams = {
 export type ExchangeStartSellParams = {
   exchangeType: "SELL";
   provider: string;
+  fromAccountId: string;
 };
 
 export type ExchangeStartSwapParams = {

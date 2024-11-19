@@ -72,6 +72,7 @@ type ExchangeStartParamsUiRequest =
   | {
       exchangeType: "SELL";
       provider: string;
+      exchange: Partial<Exchange>;
     }
   | {
       exchangeType: "SWAP";
@@ -125,12 +126,12 @@ export const handlers = ({
       }
 
       let exchangeParams: ExchangeStartParamsUiRequest;
-
+      console.log("params", params);
       // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
       if (params.exchangeType == "SWAP") {
         exchangeParams = extractSwapStartParam(params, accounts);
       } else if (params.exchangeType == "SELL") {
-        exchangeParams = extractSellStartParam(params);
+        exchangeParams = extractSellStartParam(params, accounts);
       } else {
         exchangeParams = {
           exchangeType: params.exchangeType,
@@ -362,13 +363,30 @@ function extractSwapStartParam(
   };
 }
 
-function extractSellStartParam(params: ExchangeStartSellParams): ExchangeStartParamsUiRequest {
-  if (!("provider" in params)) {
-    throw new ExchangeError(createWrongSellParams(params));
+function extractSellStartParam(
+  params: ExchangeStartSellParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
+  const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
   }
+
+  const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
 
   return {
     exchangeType: params.exchangeType,
     provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+    },
   };
 }
