@@ -70,7 +70,7 @@ export const PortfolioContentCards: StoryObj<Args> = {
     Slide: (({ index, onSlideAction }) => (
       <PortfolioContentCard
         title="Ledger Recover"
-        shortDescription="Get peace of mind and start your free trial."
+        description="Get peace of mind and start your free trial."
         cta="Start my free trial"
         tag="New"
         image="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='526' viewBox='0 0 450 526'><defs><linearGradient id='g' x0='0' y0='0' x1='1' y1='1'><stop stop-color='%23000' offset='0%' /><stop stop-color='%23FFF' offset='100%' /></linearGradient></defs><path d='M0,0 H450 V526 Q0,526 0,0 z' fill='url(%23g)' /></svg>"

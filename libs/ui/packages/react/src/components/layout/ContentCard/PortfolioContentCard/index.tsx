@@ -9,7 +9,7 @@ import Tag from "../../../Tag";
 export type PortfolioContentCardProps = {
   title: string;
   cta?: string;
-  shortDescription: string;
+  description: string;
   tag?: string;
   image?: string;
 
@@ -20,7 +20,7 @@ export type PortfolioContentCardProps = {
 export default function PortfolioContentCard({
   title,
   cta,
-  shortDescription,
+  description,
   tag,
   image,
   onClick,
@@ -40,7 +40,7 @@ export default function PortfolioContentCard({
       )}
       <Text variant="h4Inter">{title}</Text>
       <Text mb={3} variant="small" color="neutral.c70">
-        {shortDescription}
+        {description}
       </Text>
       {cta && (
         <Button variant="main" outline={false} onClick={onClick}>
