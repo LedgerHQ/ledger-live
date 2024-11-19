@@ -21,25 +21,33 @@ export async function spawnChopsticksAndSidecar() {
 
   await compose.upAll({
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: process.env,
   });
 
+  let chopsticksStarted = false;
+  let sidecarStarted = false;
   async function checkChopsticksLogs(has_started_max_retry = 20) {
     if (has_started_max_retry === 0) {
-      throw new Error("Failed to start chopsticks container. Check possible logs.");
+      throw new Error("Failed to start chopsticks and/or sidecar container(s)");
     }
 
-    const { out } = await compose.logs(["chopsticks", "sidecar-api"], { cwd });
+    const [{ out: outChopsticks }, { out: outSidecar }] = await Promise.all([
+      compose.logs("chopsticks", { cwd }),
+      compose.logs("sidecar-api", { cwd }),
+    ]);
 
-    if (out.includes("listening on port 8000")) {
-      console.log(chalk.bgBlueBright(" -  Chopsticks READY ✅  - "));
-      return;
+    if (!chopsticksStarted && outChopsticks.includes("listening on http://[::]:8000")) {
+      console.log(chalk.bgBlueBright(" -  CHOPSTICKS READY ✅  - "));
+      chopsticksStarted = true;
     }
+    if (!sidecarStarted && outSidecar.includes("Listening on http://0.0.0.0:8080/")) {
+      console.log(chalk.bgRedBright(" -  SIDECAR READY ✅  - "));
+      sidecarStarted = true;
+    }
+    if (chopsticksStarted && sidecarStarted) return;
 
-    console.log("Waiting for chopsticks to start...");
-    await delay(3 * 1000); // 3 seconds
-
+    await delay(200);
     return checkChopsticksLogs(has_started_max_retry - 1);
   }
 
@@ -50,7 +58,7 @@ export const killChopsticksAndSidecar = async (): Promise<void> => {
   console.log("Stopping chopsticks...");
   await compose.down({
     cwd,
-    log: true,
+    log: Boolean(process.env.DEBUG),
     env: process.env,
   });
 };

@@ -1,7 +1,7 @@
-import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import { basicScenario } from "./scenarios/basic";
+import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { killChopsticksAndSidecar } from "./chopsticks-sidecar";
+import { PolkadotScenario } from "./scenarii/Polkadot";
 
 global.console = require("console");
 jest.setTimeout(300_000);
@@ -11,7 +11,7 @@ export const defaultNanoApp = { firmware: "2.3.0" as const, version: "100.0.5" a
 describe("Polkadot Deterministic Tester", () => {
   it("Basic scenario", async () => {
     try {
-      await executeScenario(basicScenario);
+      await executeScenario(PolkadotScenario);
     } catch (e) {
       if (e != "done") {
         await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
