@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse aus ed25519 Kurve"
     },
@@ -2871,6 +2877,8 @@
       "developerModeDesc" : "Zeigen Sie Entwickler-Apps in My Ledger an und aktivieren Sie Testnet-Apps.",
       "analytics" : "Analysen",
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren.",
+      "mevProtection" : "MEV-Schutz",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
       "personalizedRecommendations" : "Personalisierte Nutzung",
       "personalizedRecommendationsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
       "analyticsModal" : {
@@ -5904,6 +5912,10 @@
         "description" : "Du kannst Belohnungen verdienen, indem du deine SOL-Werte an einen Validator delegierst."
       },
       "reserveWarning" : "Bitte stelle sicher, dass du mindestens {{amount}} SOL in deiner Wallet hast, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung deines Stakes zu decken."
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Kontrolliere vor dem Signieren die Transaktionsdetails auf deinem Ledger-Gerät sorgfältig. Transaktionen mit Solana-SPL-Token weisen eindeutige Merkmale auf. Weitere Informationen findest du unter: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
