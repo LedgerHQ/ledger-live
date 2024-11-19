@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { v2 as compose } from "docker-compose";
+import * as compose from "docker-compose";
 
 const cwd = __dirname;
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
