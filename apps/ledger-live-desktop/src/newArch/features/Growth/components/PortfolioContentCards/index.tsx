@@ -7,7 +7,7 @@ import Slide from "./Slide";
 const PortfolioContentCards = () => {
   const { portfolioCards, logSlideClick, logSlideImpression, dismissCard } = usePortfolioCards();
   return (
-    <Carousel onChange={logSlideImpression}>
+    <Carousel autoPlay={6000} onChange={logSlideImpression}>
       {portfolioCards.map((card, index) => (
         <Slide
           key={card.id}

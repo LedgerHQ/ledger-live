@@ -1,4 +1,5 @@
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
@@ -34,9 +35,11 @@ const CarouselContainer = styled.div<Pick<Props, "variant">>`
 /**
  * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
-const Carousel = ({ children, variant = "default", onChange }: Props) => {
+const Carousel = ({ children, variant = "default", autoPlay = 0, onChange }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    ...(autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : []),
+  ]);
 
   const updateIndex = useCallback(() => {
     if (!emblaApi) return;
@@ -94,3 +97,9 @@ const Carousel = ({ children, variant = "default", onChange }: Props) => {
 };
 
 export default Carousel;
+
+const AutoplayFlags = {
+  play: true,
+  stopOnMouseEnter: true,
+  stopOnInteraction: false,
+};

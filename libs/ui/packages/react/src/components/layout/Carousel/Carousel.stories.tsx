@@ -23,6 +23,9 @@ export default {
       defaultValue: "default",
       control: "inline-radio",
     },
+    autoPlay: {
+      description: "The time in milliseconds between automatic slide change (0 for no auto-play).",
+    },
     onChange: {
       description: "Function called when a new slide is shown.",
     },
@@ -30,6 +33,7 @@ export default {
   args: {
     variant: "default",
     children: 5,
+    autoPlay: 0,
   },
   parameters: {
     docs: {
