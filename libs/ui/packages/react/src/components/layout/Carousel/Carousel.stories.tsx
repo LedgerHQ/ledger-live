@@ -22,6 +22,9 @@ export default {
       defaultValue: "default",
       control: "inline-radio",
     },
+    onChange: {
+      description: "Function called when a new slide is shown.",
+    },
     onSlideAction: {},
   },
   args: {
@@ -46,7 +49,11 @@ export default {
       </SlideContext.Provider>
     ),
   ],
-  render: (args: Args) => <Carousel variant={args.variant}>{useContext(SlideContext)}</Carousel>,
+  render: (args: Args) => (
+    <Carousel variant={args.variant} onChange={args.onChange}>
+      {useContext(SlideContext)}
+    </Carousel>
+  ),
 } satisfies Meta<Args>;
 
 export const Default: StoryObj<Args> = {
