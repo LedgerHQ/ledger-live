@@ -11,7 +11,7 @@ export type PortfolioContentCardProps = {
   cta?: string;
   shortDescription: string;
   tag?: string;
-  image: string;
+  image?: string;
 
   onClick: ReactEventHandler;
   onClose: ReactEventHandler;
@@ -54,7 +54,7 @@ export default function PortfolioContentCard({
 
 const Wrapper = styled.div<Pick<PortfolioContentCardProps, "image" | "tag" | "onClick">>`
   background-color: ${p => p.theme.colors.background.card};
-  background-image: url("${p => p.image}");
+  background-image: ${p => (p.image ? `url("${p.image}")` : "none")};
   background-position: right center;
   background-repeat: no-repeat;
   background-size: 50% auto;
