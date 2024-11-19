@@ -367,6 +367,10 @@ function extractSellStartParam(
   params: ExchangeStartSellParams,
   accounts: AccountLike[],
 ): ExchangeStartParamsUiRequest {
+  if (!("provider" in params)) {
+    throw new ExchangeError(createWrongSellParams(params));
+  }
+
   const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
 
   if (!realFromAccountId) {
