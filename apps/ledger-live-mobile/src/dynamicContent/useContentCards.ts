@@ -1,15 +1,19 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDynamicContentLogic } from "./useDynamicContentLogic";
 
 const HookDynamicContentCards = () => {
   const { refreshDynamicContent, fetchData, clearOldDismissedContentCards } =
     useDynamicContentLogic();
 
-  useEffect(() => {
+  const fetchContentCardsData = useCallback(async () => {
     clearOldDismissedContentCards();
     refreshDynamicContent();
-    fetchData();
-  }, [fetchData, refreshDynamicContent, clearOldDismissedContentCards]);
+    await fetchData();
+  }, [refreshDynamicContent, fetchData, clearOldDismissedContentCards]);
+
+  useEffect(() => {
+    fetchContentCardsData();
+  }, [fetchContentCardsData]);
 
   return null;
 };
