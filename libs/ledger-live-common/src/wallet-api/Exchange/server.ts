@@ -126,7 +126,7 @@ export const handlers = ({
       }
 
       let exchangeParams: ExchangeStartParamsUiRequest;
-      console.log("params", params);
+
       // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
       if (params.exchangeType == "SWAP") {
         exchangeParams = extractSwapStartParam(params, accounts);
