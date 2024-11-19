@@ -2,7 +2,7 @@ import { waitFor, renderHook } from "@testing-library/react";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { notifyManager } from "@tanstack/react-query";
 
-import { wrapper, generateNftsOwned } from "../../tools/helperTests";
+import { wrapper, generateNftsOwned, generateNft } from "../../tools/helperTests";
 import { useCheckNftAccount } from "../useCheckNftAccount";
 
 jest.setTimeout(30000);
@@ -78,5 +78,58 @@ describe("useCheckNftAccount", () => {
 
     expect(callCount).toBe(nftsOwned.length / pagedBy);
     expect(result.current.nfts.length).toEqual(nftsOwned.length);
+  });
+
+  it("should call action", async () => {
+    const addresses = "0x34";
+    const chains = ["ethereum"];
+
+    const actionMockMulti = jest.fn();
+
+    const { result: resultBis } = renderHook(
+      () =>
+        useCheckNftAccount({
+          addresses,
+          nftsOwned: [
+            generateNft("0x1221", "1"),
+            generateNft("0x2321", "7"),
+            generateNft("0x27B21", "3"),
+          ],
+          chains,
+          threshold: 80,
+          action: actionMockMulti,
+        }),
+      {
+        wrapper,
+      },
+    );
+
+    await waitFor(() => !resultBis.current.hasNextPage);
+
+    expect(actionMockMulti).toHaveBeenCalledTimes(3);
+  });
+  it("should not call action", async () => {
+    const addresses = "0x34";
+    const chains = ["ethereum"];
+
+    const actionMockUnique = jest.fn();
+
+    const { result } = renderHook(
+      () =>
+        useCheckNftAccount({
+          addresses,
+          nftsOwned,
+          chains,
+          threshold: 80,
+          action: actionMockUnique,
+        }),
+      {
+        wrapper,
+      },
+    );
+
+    await waitFor(() => !result.current.hasNextPage);
+
+    expect(actionMockUnique).not.toHaveBeenCalled();
   });
 });
