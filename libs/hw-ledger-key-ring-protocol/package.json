@@ -22,7 +22,7 @@
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "bip32": "^4.0.0",
-    "secp256k1": "^5.0.0",
+    "secp256k1": "^4.0.4",
     "create-hmac": "^1.1.7",
     "tiny-secp256k1": "1"
   },
