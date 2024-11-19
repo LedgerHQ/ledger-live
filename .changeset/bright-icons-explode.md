@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": minor
+"@ledgerhq/live-common": patch
 ---
 
 add uniswap data
