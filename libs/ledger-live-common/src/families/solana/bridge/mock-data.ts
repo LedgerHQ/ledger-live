@@ -1,10 +1,7 @@
 /* eslint-disable */
 import { PublicKey } from "@solana/web3.js";
-import { ChainAPI } from "../api";
-import { Functions } from "../utils";
-
-export const LATEST_BLOCKHASH_MOCK =
-  "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+import { LATEST_BLOCKHASH_MOCK, ChainAPI } from "@ledgerhq/coin-solana/api/index";
+import { Functions } from "@ledgerhq/coin-solana/utils";
 
 export const getMockedMethods = (): {
   method: Functions<ChainAPI>;

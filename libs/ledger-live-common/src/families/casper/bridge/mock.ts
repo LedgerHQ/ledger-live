@@ -26,7 +26,7 @@ import {
   CASPER_MINIMUM_VALID_AMOUNT_CSPR,
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
 } from "../consts";
-import { getMainAccount } from "../../../account/helpers";
+import { getMainAccount } from "../../../account";
 
 const receive = makeAccountBridgeReceive();
 

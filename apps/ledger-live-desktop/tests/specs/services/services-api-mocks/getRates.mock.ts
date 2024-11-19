@@ -179,3 +179,34 @@ export const getRatesMock = () => {
     },
   ]);
 };
+
+// services-api-mocks/getProvidersCDNData.mock.js
+export const getProvidersCDNDataMock = () =>
+  JSON.stringify({
+    changelly: {
+      needsKYC: false,
+      needsBearerToken: false,
+      type: "CEX",
+    },
+    cic: {
+      needsKYC: false,
+      needsBearerToken: false,
+      type: "CEX",
+    },
+    moonpay: {
+      needsKYC: true,
+      needsBearerToken: false,
+      type: "CEX",
+      version: 2,
+    },
+    oneinch: {
+      type: "DEX",
+      needsKYC: false,
+      needsBearerToken: false,
+    },
+    paraswap: {
+      type: "DEX",
+      needsKYC: false,
+      needsBearerToken: false,
+    },
+  });

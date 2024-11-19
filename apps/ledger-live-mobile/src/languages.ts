@@ -36,7 +36,7 @@ export const localeIds = Object.keys(allLocales) as localeKeys[];
  */
 export const supportedLocales: localeKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "ar"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 export type Locale = keyof typeof languages;
 
@@ -49,6 +49,10 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
   en: "english",
   fr: "french",
   es: "spanish",
+  pt: "brazilian",
+  ru: "russian",
+  de: "german",
+  tr: "turkish",
 };
 
 /**
@@ -71,7 +75,6 @@ export const fullySupportedLocales: Locale[] = [
   "ja",
   "ko",
   "pt",
-  "ar",
 ];
 export const locales = supportedLocales.reduce(
   (obj, key) => {

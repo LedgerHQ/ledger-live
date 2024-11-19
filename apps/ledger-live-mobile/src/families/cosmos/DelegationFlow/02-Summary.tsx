@@ -1,15 +1,11 @@
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosAccount, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -34,6 +30,7 @@ import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
 import Config from "react-native-config";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -356,7 +353,7 @@ function SummaryWords({
   onChangeValidator: () => void;
   onChangeAmount: () => void;
 }) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, amount, {
     disableRounding: true,
     alwaysShowSign: false,
@@ -388,7 +385,7 @@ function SummaryWords({
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>

@@ -12,6 +12,9 @@ import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -30,7 +33,7 @@ const LeftContainer = styled(Flex).attrs({
   width: "386px",
   height: "100%",
   padding: "40px",
-  zIndex: 999,
+  zIndex: 49,
 })``;
 
 const Presentation = styled(Flex).attrs({ flexDirection: "column" })``;
@@ -140,6 +143,20 @@ export function Welcome() {
     };
   }, []);
 
+  const {
+    analyticsOptInPromptProps,
+    isFeatureFlagsAnalyticsPrefDisplayed,
+    openAnalyticsOptInPrompt,
+    onSubmit,
+  } = useAnalyticsOptInPrompt({
+    entryPoint: EntryPoint.onboarding,
+  });
+
+  const extendedAnalyticsOptInPromptProps = {
+    ...analyticsOptInPromptProps,
+    onSubmit,
+  };
+
   return (
     <WelcomeContainer>
       <LeftContainer>
@@ -159,11 +176,15 @@ export function Welcome() {
             </Button>
           )}
           <Button
-            data-test-id="v3-onboarding-get-started-button"
+            data-testid="v3-onboarding-get-started-button"
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
-            onClick={handleAcceptTermsAndGetStarted}
+            onClick={_ => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                : handleAcceptTermsAndGetStarted();
+            }}
             mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
@@ -171,7 +192,11 @@ export function Welcome() {
           <Button
             iconPosition="right"
             variant="main"
-            onClick={buyNanoX}
+            onClick={_ => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalyticsOptInPrompt("Onboarding", buyNanoX)
+                : buyNanoX();
+            }}
             outline={true}
             flexDirection="column"
             whiteSpace="normal"
@@ -223,6 +248,9 @@ export function Welcome() {
             <source src={BuyNanoX} type="video/webm" />
           </video>
         </VideoWrapper>
+        {isFeatureFlagsAnalyticsPrefDisplayed && (
+          <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
+        )}
       </RightContainer>
     </WelcomeContainer>
   );

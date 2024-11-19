@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
-export const formatAmount = (account: CeloAccount, amount: BigNumber) => {
-  const unit = getAccountUnit(account);
+export const formatAmount = (amount: BigNumber, unit: Unit) => {
   return formatCurrencyUnit(unit, new BigNumber(amount), {
     disableRounding: false,
     alwaysShowSign: false,

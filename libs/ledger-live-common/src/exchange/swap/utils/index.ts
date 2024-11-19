@@ -1,7 +1,7 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getProviderConfig } from "../";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
-import { Account, SubAccount, AccountLike } from "@ledgerhq/types-live";
+import { getSwapProvider, SWAP_DATA_CDN } from "../../providers/swap";
 
 export const FILTER = {
   centralised: "centralised",
@@ -55,20 +55,14 @@ export const getAvailableAccountsById = (
     .filter(acc => getAccountCurrency(acc)?.id === id && !acc.disabled)
     .sort((a, b) => b.balance.minus(a.balance).toNumber());
 
-export const isRegistrationRequired = (provider: string): boolean => {
-  const { needsBearerToken, needsKYC } = getProviderConfig(provider);
+export const isRegistrationRequired = async (provider: string): Promise<boolean> => {
+  const { needsBearerToken, needsKYC } = await getSwapProvider(provider);
   return needsBearerToken || needsKYC;
 };
 
 export const getProviderName = (provider: string): string => {
-  switch (provider) {
-    case "cic":
-      return provider.toUpperCase();
-    case "oneinch":
-      return "1inch";
-    default:
-      return provider.charAt(0).toUpperCase() + provider.slice(1);
-  }
+  const { displayName } = SWAP_DATA_CDN[provider] ?? { displayName: "" };
+  return displayName;
 };
 
 export const getNoticeType = (provider: string): { message: string; learnMore: boolean } => {

@@ -3,19 +3,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
 // eslint-disable-next-line no-restricted-imports
-import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
+import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-  FlattenAccountsOptions,
-} from "@ledgerhq/live-common/account/index";
+} from "@ledgerhq/live-wallet/ordering";
 import { reorderAccounts } from "~/renderer/actions/accounts";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
+import { CountervaluesSettings } from "@ledgerhq/live-countervalues/types";
+import { useDistribution as useDistributionRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
@@ -23,10 +22,12 @@ import {
   counterValueCurrencySelector,
   userThemeSelector,
 } from "~/renderer/reducers/settings";
-import { BehaviorSubject } from "rxjs";
-const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject(
-  [] as TrackingPair[],
-);
+import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
+import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
+import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { walletSelector } from "../reducers/wallet";
+import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 
 // provide redux states via custom hook wrapper
 
@@ -48,9 +49,10 @@ export function useCalculateCountervalueCallback() {
   });
 }
 export function useSortAccountsComparator() {
-  const accounts = useSelector(getOrderAccounts);
+  const orderAccounts = useSelector(getOrderAccounts);
   const calc = useCalculateCountervalueCallback();
-  return sortAccountsComparatorFromOrder(accounts, calc);
+  const walletState = useSelector(walletSelector);
+  return sortAccountsComparatorFromOrder(orderAccounts, walletState, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);
@@ -104,36 +106,38 @@ export const themeSelector = createSelector(
   userThemeSelector,
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
-export function useUserSettings() {
-  const trackingPairs = useTrackingPairs();
+
+export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
+  const countervalue = useSelector(counterValueCurrencySelector);
+
+  // countervalues for top coins (market performance feature)
+  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
+
+  // countervalues for accounts
+  const accounts = useSelector(accountsSelector);
+  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
+
+  // countervalues for on demand session tracking pairs
+  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
+
+  // we merge all usecases that require tracking pairs
+  const trackingPairs = useMemo(
+    () =>
+      resolveTrackingPairs(
+        extraSessionTrackingPairs.concat(trPairs).concat(trackingPairsForTopCoins),
+      ),
+    [extraSessionTrackingPairs, trackingPairsForTopCoins, trPairs],
+  );
+
   return useMemo(
     () => ({
       trackingPairs,
       autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "config_countervalues_marketCapBatchingAfterRank",
+      ),
     }),
     [trackingPairs],
-  );
-}
-export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
-  const value = extraSessionTrackingPairsChanges.value;
-  if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
-    extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
-}
-export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([] as TrackingPair[]);
-  useEffect(() => {
-    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
-    return () => sub && sub.unsubscribe();
-  }, []);
-  return extraSessionTrackingPair;
-}
-export function useTrackingPairs(): TrackingPair[] {
-  const accounts = useSelector(accountsSelector);
-  const countervalue = useSelector(counterValueCurrencySelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
-  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
-  return useMemo(
-    () => extraSessionTrackingPairs.concat(trPairs),
-    [extraSessionTrackingPairs, trPairs],
   );
 }

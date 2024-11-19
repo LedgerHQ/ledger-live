@@ -25,6 +25,7 @@ import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-env";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -155,6 +156,7 @@ const AppsList = ({
       addAccount,
     ],
   );
+
   return (
     <>
       <InstallSuccessBanner
@@ -164,7 +166,7 @@ const AppsList = ({
       />
       <UpdateAllApps
         optimisticState={optimisticState}
-        update={update}
+        update={getEnv("MOCK_APP_UPDATE") ? device : update}
         state={state}
         dispatch={dispatch}
         isIncomplete={isIncomplete}
@@ -181,7 +183,7 @@ const AppsList = ({
       )}
       <Card mt={0}>
         {isDeviceTab && !installedApps.length ? (
-          <Box pb={6} pt={8} data-test-id="manager-no-apps-empty-state">
+          <Box pb={6} pt={8} data-testid="manager-no-apps-empty-state">
             <Box mb={4} mt={5} horizontal color="palette.text.shade30" justifyContent="center">
               <NoResults />
             </Box>
@@ -224,7 +226,7 @@ const AppsList = ({
               )}
             </FilterHeader>
             {displayedAppList.length ? (
-              displayedAppList.map(app => mapApp(app, !isDeviceTab))
+              displayedAppList.map((app: App) => mapApp(app, !isDeviceTab))
             ) : (
               <Placeholder
                 query={query}

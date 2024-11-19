@@ -8,28 +8,38 @@ export enum PostOnboardingActionId {
   claimMock = "claimMock",
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
+  assetsTransferMock = "assetsTransferMock",
+  buyCryptoMock = "buyCryptoMock",
+  customImageMock = "customImageMock",
+  recoverMock = "recoverMock",
   customImage = "customImage",
-  claimNft = "claimNft",
   assetsTransfer = "assetsTransfer",
   buyCrypto = "buyCrypto",
+  recover = "recover",
 }
 
 export type WithNavigationParams = {
   /**
    * Navigation params when the user presses the button for this action
    * - In LLM, this will be used like this:
-   *  `navigation.navigate(...navigationParams)`
-   * - In LLD, this will be used like this:
-   *  `history.push(...navigationParams)`
+   *  `navigation.navigate(...getNavigationParams)`
    */
-  navigationParams?: any[];
+  getNavigationParams: (options: {
+    deviceModelId: DeviceModelId;
+    protectId: string;
+  }) => [screen: any] | [screen: any, navigationParams: any];
 };
 
 type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: (openModalCallback?: any, navigationCallback?: any) => void;
+  startAction: (args: {
+    openModalCallback: (modalName: any) => void;
+    navigationCallback: (location: Record<string, unknown> | string) => void;
+    deviceModelId: DeviceModelId;
+    protectId: string;
+  }) => void;
   /**
    * Optional Redux dispatch function
    */
@@ -83,7 +93,20 @@ export type PostOnboardingAction = {
    * Will appear in an success alert at the bottom of the post-onboarding hub
    * after completing this action.
    * */
-  actionCompletedPopupLabel: string;
+  actionCompletedPopupLabel?: string;
+
+  /**
+   * Async function that returns true if the action has already been completed prior to entering
+   * the post-onboarding and false otherwise
+   */
+  getIsAlreadyCompleted?: (args: { protectId: string }) => Promise<boolean>;
+
+  /**
+   * Used to set the action as complete when clicking on it.
+   * Especially useful when the action opens a live app and we can't know
+   * when the action as been successfully finished
+   */
+  shouldCompleteOnStart?: boolean;
 
   /**
    * Value to use in the "button" property of the event sent when the user
@@ -118,6 +141,12 @@ export type PostOnboardingState = {
    * Did the user dismiss the post onboarding entry point on the wallet page.
    */
   walletEntryPointDismissed: boolean;
+
+  /**
+   * Date of when the PostOnboarding banner was first displayed to the user
+   * Used to dismiss it automatically after some time
+   */
+  entryPointFirstDisplayedDate: Date | null;
 
   /**
    * List of all actions that have to be completed in this post onboarding

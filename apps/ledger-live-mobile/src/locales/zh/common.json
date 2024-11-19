@@ -94,10 +94,12 @@
     "comingSoon" : "敬请期待",
     "restart" : "重新启动",
     "loadMore" : "加载更多",
+    "selectAccount" : "选择账户",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "报价"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -126,6 +128,9 @@
       "title" : "抱歉，蓝牙已禁用",
       "description" : "请在您的手机设置中启用蓝牙。({{state}} 状态)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
+    },
     "CantOpenDevice" : {
       "title" : "抱歉，连接失败",
       "description" : "您的 Ledger 设备必须解锁并在范围内才能使用蓝牙。"
@@ -144,7 +149,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "抱歉，“我的 Ledger”连接失败",
+      "title" : "抱歉，与 Ledger 设备建立安全连接失败",
       "description" : {
         "ios" : {
           "nanoX" : "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
@@ -328,8 +333,8 @@
       "description" : "请使用“我的 Ledger”卸载所有应用程序，然后检查是否有固件更新，再重新安装应用程序。"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "桌面程序需要设备更新",
-      "description" : "请在 Ledger Live 桌面程序上更新您的 Nano X 设备固件"
+      "title" : "更新设备固件",
+      "description" : "要访问此功能，请将您的设备固件更新到最新版本"
     },
     "GenuineCheckFailed" : {
       "title" : "设备验证失败",
@@ -340,12 +345,12 @@
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "已在 Ledger Stax 上弃用锁屏图片",
+      "title" : "已在 {{productName}} 上弃用锁屏图片",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "已在 Ledger Stax 上取消加载锁屏图片",
+      "title" : "已在 {{productName}} 上取消加载锁屏图片",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
@@ -367,6 +372,9 @@
     },
     "InvalidRecipient" : {
       "title" : "无效的接收方"
+    },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} 浏览器的响应无效"
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "语言安装被设备端拒绝",
@@ -487,12 +495,16 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceSwap" : {
+      "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
+      "description" : "请确保该账户资金充足。"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
     "NotEnoughGas" : {
-      "title" : "父账户余额不足以支付网络费用",
+      "title" : "您的账户中需要有 {{fees}} {{ticker}} 以支付 {{cryptoName}} 网络上的交易费用。<link0>购买 {{ticker}}</link0> 或向账户存入更多资产。",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
     },
     "NotEnoughGasSwap" : {
@@ -606,14 +618,24 @@
     "TronNotEnoughEnergy" : {
       "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
+    "TronNoUnfrozenResource" : {
+      "title" : "没有可提取的已解冻资产"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "没有足够的已委托资产"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "资产尚未解冻",
+      "description" : "您需要等到 {{time}} 才能提取"
+    },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
       "description" : "请在“我的 Ledger”中卸载并重新安装 {{managerAppName}} 应用程序。",
       "primaryCTA" : "打开“我的 Ledger”"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager（管理器）已被在设备上禁用",
-      "description" : "请在您的设备上启用管理器，然后重试。"
+      "title" : "安全连接在设备上被拒绝",
+      "description" : "请在您的设备上允许安全连接并重试。"
     },
     "UserRefusedAddress" : {
       "title" : "接收地址被拒",
@@ -767,6 +789,18 @@
     "CardanoStakeKeyDepositError" : {
       "title" : "请确保您有 {{depositAmount}} ADA 可用于该存款"
     },
+    "CardanoFeeHigh" : {
+      "title" : "网络费用异常高。",
+      "description" : "网络费用异常高，请仔细核对您的交易。"
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "网络费用异常高。",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano 无效协议参数",
+      "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -871,6 +905,9 @@
     "NearStakingThresholdNotMet" : {
       "title" : "数额必须至少为 {{threshold}}"
     },
+    "PinNotSet" : {
+      "title" : "识别码未设置"
+    },
     "PriorityFeeTooLow" : {
       "title" : "优先费用低于推荐值"
     },
@@ -898,9 +935,65 @@
     "InvalidMemoICP" : {
       "title" : "Memo（目的地标签）需要是数字"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "代币转账的接收人无效，代币转账支持的账户类型：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "抱歉，费用估算失败",
+      "description" : "网络费用估算失败。检查输入，交易最有可能失败"
+    },
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
+    },
+    "SequenceNumberError" : {
+      "title" : "序列号错误",
+      "description" : "请关闭窗口，稍后再重试"
+    },
+    "TonCommentInvalid" : {
+      "title" : "备注不得超过 120 个字符，不包含特殊字符"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "无法互换：需使用 Tezos 账户发起发送/委托或更改交易对。"
+    },
+    "CustomError" : {
+      "title" : "抱歉，请重试。",
+      "description" : "服务器无法处理您的请求。请稍后再试或联系 Ledger 客服。",
+      "errorCode" : "代码：{{errorCode}}",
+      "errorMessage" : "{{errorMessage}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "不再同步"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "您已不再同步",
+      "description" : "请重试或联系 Ledger 客服。"
+    },
+    "TrustchainNotFound" : {
+      "title" : "提取您的数据时出现错误",
+      "description" : "请重试或联系 Ledger 客服。"
+    },
+    "TonExcessFee" : {
+      "title" : "这构成了代币转移。您将支付 0.1 TON 的费用，任何超额部分将会退还给您。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "主账户 (TON) 资金不足，无法计算费用。所需最低余额为 0.1 TON。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "资金不足。所需最低余额为 0.02 TON。"
+    },
+    "BackupAppDataError" : {
+      "title" : "应用程序数据备份过程中出错"
+    },
+    "RestoreAppDataError" : {
+      "title" : "恢复应用程序数据过程中出错"
+    },
+    "DeleteAppDataError" : {
+      "title" : "删除应用程序数据过程中出错"
+    },
+    "ScannedNewImportQrCode" : {
+      "title" : "需要更新",
+      "description" : "要同步您的应用程序，请确保两个应用程序都已更新至最新版本。"
     }
   },
   "crash" : {
@@ -918,6 +1011,10 @@
     "noConnectionError" : {
       "title" : "无连接",
       "description" : "您似乎无法访问互联网。请检查您的连接并重试。"
+    },
+    "noAccounts" : {
+      "title" : "您需要使用账户才能访问此应用程序。",
+      "add" : "添加账户"
     }
   },
   "location" : {
@@ -1238,6 +1335,9 @@
       "referralProgram" : {
         "title" : "推荐好友",
         "desc" : "若您的好友购买一个 Ledger 设备，则双方均可赚取价值 20 美元的比特币。"
+      },
+      "filter" : {
+        "all" : "全部"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1308,9 +1408,10 @@
     },
     "welcomeBackStep" : {
       "title" : "欢迎回来",
-      "subtitle" : "选择您想要访问钱包的方式：",
+      "subtitle" : "告诉我们您希望以何种方式访问钱包：",
       "connect" : "连接 Ledger 设备",
-      "sync" : "与 Ledger Live 桌面版同步"
+      "sync" : "与 Ledger Live 桌面版同步",
+      "walletSync" : "使用 Ledger Sync"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "不使用设备探索",
@@ -1952,9 +2053,8 @@
   "earlySecurityCheck" : {
     "title" : "正品检查和操作系统更新检查",
     "idle" : {
-      "description" : "这可以确保您的 Ledger Stax 是官方 Ledger 设备。",
       "learnMore" : "详细了解正品检查",
-      "checkCta" : "检查 Ledger Stax"
+      "checkCta" : "检查 {{ productName }}"
     },
     "completed" : {
       "continueCta" : "继续设置"
@@ -1977,7 +2077,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "此 Ledger Stax 未通过正品检查",
+      "title" : "{{ productName }} 未通过正品检查",
       "description" : "此 {{productName}} 不能安全使用。请联系 Ledger 客服。",
       "supportCta" : "联系 Ledger 客服"
     },
@@ -2025,12 +2125,12 @@
       "refused" : {
         "title" : "操作系统版本 {{firmwareVersion}} 可用",
         "description" : "建议执行此更新以享用最新的安全性和功能。",
-        "updateCta" : "更新 Ledger Stax",
+        "updateCta" : "更新 {{ productName }}",
         "skipCta" : "跳过更新"
       },
       "inactive" : {
         "title" : "操作系统更新检查",
-        "description" : "这将检查 Ledger Stax 操作系统是否为最新。 "
+        "description" : "这将检查您的 {{productName}} 操作系统是否为最新版本。 "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2132,19 +2232,22 @@
       "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
       "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，启动秘密恢复短语备份的恢复流程。"
     },
-    "softwareChecksSteps" : {
-      "title" : "硬件和软件检查",
-      "description" : "检查您的设备是否可以安全使用并具有最新的安全功能。",
-      "doneTitle" : "{{productName}} 为正品，且是最新版本",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "检验真伪",
-        "title" : "该检查可确保您的 Ledger Stax 为 Ledger 官方正品。",
-        "checkCta" : "开始正品检查"
+    "backup" : {
+      "title" : "秘密恢复短语备份",
+      "description" : "利用数字加密备份，没有秘密恢复短语也能恢复钱包访问权限。\n\n选择是否需要数字备份：",
+      "backupChoice" : {
+        "title" : "我需要数字备份",
+        "titleSelected" : "Ledger Recover",
+        "tag" : "热门",
+        "description" : "订阅 Ledger Recover，每月 9.99 美元。免费开始试用。可随时取消！",
+        "tryCta" : "免费试用",
+        "redeemCodeCta" : "我有兑换码",
+        "howItWorksCta" : "我想进一步了解"
       },
-      "updateAvailableDrawer" : {
-        "title" : "找到新软件",
-        "description" : "要使用最新的安全功能，我们强烈建议更新您的 {{productName}}",
-        "updateCta" : "更新"
+      "manualBackup" : {
+        "title" : "不需要，有纸质备份就行了",
+        "description" : "如果没有数字备份，恢复表就是您恢复钱包访问权限的唯一办法。谨防丢失。",
+        "cta" : "我了解"
       }
     },
     "appsStep" : {
@@ -2168,15 +2271,7 @@
     "discover" : "探索",
     "nanoX" : "Nano X",
     "market" : "市场",
-    "earn" : "赚取",
-    "learn" : "学习"
-  },
-  "learn" : {
-    "pageTitle" : "学习",
-    "sectionShows" : "显示",
-    "sectionVideo" : "视频",
-    "sectionPodcast" : "播客",
-    "sectionArticles" : "文章"
+    "earn" : "赚取"
   },
   "portfolio" : {
     "totalBalance" : "总余额",
@@ -2226,10 +2321,17 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
-      "currencyPriceChange" : "最近 24 小时变化"
+      "currencyPriceChange" : {
+        "day" : "最近 24 小时变化",
+        "week" : "最近 7 天变化",
+        "month" : "最近 30 天变化",
+        "year" : "最近一年变化",
+        "all" : "最近一年变化"
+      }
     },
     "quickActions" : {
       "buy" : "买入",
+      "sell" : "卖出",
       "swap" : "互换",
       "send" : "发送",
       "deposit" : "接收",
@@ -2257,11 +2359,26 @@
     "description" : "您可以选择直接使用您的 Ledger 添加加密货币，或从 Ledger Live 桌面版导入加密货币。",
     "add" : {
       "title" : "用您的 Ledger",
-      "description" : "使用您的 Ledger 创建或导入资产"
+      "description" : "使用您的 Ledger 创建或导入资产账户"
     },
     "import" : {
       "title" : "从桌面程序导入",
       "description" : "从 Ledger Live 桌面版导入资产"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "添加另一个账户",
+      "drawerSubTitle" : "使用 Ledger 设备添加您的资产，或直接从 Ledger Live™ 桌面版应用程序导入资产。",
+      "import" : {
+        "title" : "从桌面程序导入",
+        "description" : "从 Ledger Live 桌面版导入资产"
+      },
+      "add" : {
+        "title" : "使用 Ledger 设备",
+        "description" : "使用 Ledger 设备创建或导入您的加密货币账户"
+      },
+      "walletSync" : {
+        "title" : "使用 Ledger Sync"
+      }
     }
   },
   "byteSize" : {
@@ -2313,6 +2430,9 @@
       "VOTE" : "已投票",
       "FREEZE" : "已冻结",
       "UNFREEZE" : "已解冻",
+      "UNDELEGATE_RESOURCE" : "已解除委托",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "提取",
+      "LEGACYUNFREEZE" : "已解冻",
       "REWARD" : "已申领的奖励",
       "FEES" : "费用",
       "OPT_IN" : "选择加入",
@@ -2376,6 +2496,7 @@
       "delegated" : "已委托 ({{amount}})",
       "delegatedTo" : "已委托给",
       "delegatedAmount" : "已委托数额",
+      "deposit" : "存款",
       "redelegated" : "已重新委托 ({{amount}})",
       "redelegatedFrom" : "已重新委托自",
       "redelegatedTo" : "已重新委托至",
@@ -2431,6 +2552,10 @@
         "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
       }
+    },
+    "willBedeprecatedBanner" : {
+      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
+      "contactSupport" : "联系客服"
     },
     "tokens" : {
       "contractAddress" : "合约地址",
@@ -2499,10 +2624,6 @@
       },
       "currency" : {
         "title" : "货币"
-      },
-      "endpointConfig" : {
-        "title" : "Node（节点）",
-        "desc" : "要使用的 API 节点"
       },
       "delete" : {
         "title" : "从资产组合中删除账户",
@@ -2653,6 +2774,7 @@
     "moreAssets" : "添加更多"
   },
   "help" : {
+    "chatbot" : "Ledger 聊天机器人",
     "gettingStarted" : {
       "title" : "快速入门",
       "desc" : "从这里开始"
@@ -2694,6 +2816,8 @@
       "languageDesc" : "设置 Ledger Live 显示的语言。",
       "dateFormat" : "日期格式",
       "dateFormatDesc" : "设置 Ledger Live 的日期格式",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "应用程序锁",
@@ -2718,7 +2842,9 @@
       "developerMode" : "开发者模式",
       "developerModeDesc" : "在“我的 Ledger”中显示开发者应用程序并启用测试网应用程序。",
       "analytics" : "数据分析",
-      "analyticsDesc" : "允许数据分析以帮助 Ledger 改善用户体验。",
+      "analyticsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
+      "personalizedRecommendations" : "个性化体验",
+      "personalizedRecommendationsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {
         "title" : "分享数据分析",
         "desc" : "允许数据分析以帮助 Ledger 改善用户体验",
@@ -2825,13 +2951,9 @@
         "title" : "公告",
         "desc" : "接收重要 Ledger Live 更新"
       },
-      "recommendations" : {
-        "title" : "推荐",
-        "desc" : "使用个性化推荐和特别优惠，丰富您的体验"
-      },
       "largeMover" : {
         "title" : "大幅波动工具",
-        "desc" : "当比特币和以太币价格出现重要波动时，您会收到通知。"
+        "desc" : "如果您拥有比特币、以太币、SOL、ADA 或瑞波币，您会在价格出现重要波动时收到通知"
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
@@ -2928,6 +3050,10 @@
         },
         "platformManifest" : {
           "title" : "加载平台清单"
+        },
+        "mockAppUpdate" : {
+          "title" : "Mock 应用程序更新",
+          "description" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序"
         }
       }
     },
@@ -3029,7 +3155,8 @@
       "addAccount" : {
         "title" : "正在检查账户……",
         "subtitle" : "检查您在区块链上是否已经有 {{currencyName}} 账户。",
-        "foundAccounts" : "已找到 {{count}} 个账户",
+        "foundAccount" : "已找到 {{count}} 个账户",
+        "foundAccount_plural" : "已找到 {{count}} 个账户",
         "stopSynchronization" : "停止同步",
         "addingAccount" : "未找到账户。正在创建新的 {{currencyName}} 账户……"
       },
@@ -3043,6 +3170,7 @@
         }
       },
       "receiveConfirmation" : {
+        "utxoWarning" : "出于隐私原因，每笔交易都会生成一个新地址。以前的地址仍然有效。",
         "title" : "接收 {{currencyTicker}}",
         "onCurrencyName" : "在 {{currencyName}} 上",
         "copyAdress" : "复制地址",
@@ -3099,7 +3227,7 @@
     },
     "stake" : {
       "title" : "权益质押",
-      "description" : "增长您的加密资产持有量。"
+      "description" : "权益质押您持有的加密货币。"
     },
     "swap" : {
       "title" : "互换",
@@ -3112,9 +3240,6 @@
         "title" : "欢迎使用互换（Swap）",
         "whatIsSwap" : "什么是互换（Swap）？",
         "disclaimer" : "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
-      },
-      "main" : {
-        "header" : "互换"
       },
       "notAvailable" : {
         "title" : "服务暂时不可用，或在您的国家不可用"
@@ -3592,6 +3717,8 @@
         "value" : "Memo 价值"
       },
       "validateMemo" : "验证 Memo",
+      "comment" : "备注",
+      "validateComment" : "验证备注",
       "quantity" : "数量"
     },
     "validation" : {
@@ -3687,7 +3814,7 @@
       "description" : "冻结 TRX 从而安全地赚取奖励，同时依旧掌控您的资产。",
       "steps" : {
         "0" : "委托出去的资产依旧为您所有。",
-        "1" : "3 天后您可以解冻您的资产。",
+        "1" : "您可随时解冻自己的资产，14 天解冻期满后方可使用。",
         "2" : "使用您的 Ledger 设备安全冻结资产并投票。"
       },
       "howVotingWorks" : "如何投票",
@@ -3822,30 +3949,9 @@
     "tokens" : {
       "title" : "添加代币",
       "createParentCurrencyAccount" : "添加 {{parrentCurrencyName}} 账户",
-      "erc20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 ERC20 代币。\n您可以直接通过以太坊账户接收代币。",
-        "learnMore" : "了解关于 ERC20 的更多详情"
-      },
-      "trc10" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 TRC10 代币。\n您可以直接通过 Tron 波场账户接收代币。",
-        "learnMore" : "了解关于 TRC10 的更多详情"
-      },
-      "trc20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 TRC20 代币。\n您可以直接通过 Tron 波场账户接收代币。",
-        "learnMore" : "了解关于 TRC20 的更多详情"
-      },
-      "bep20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 BEP-20 代币。\n您可以直接通过 BNB 币安账户接收代币。",
-        "learnMore" : "了解关于 BEP-20 的更多详情"
-      },
-      "vip180" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 是 VIP180 代币。\n您可以直接在 VET 账户中接收代币。",
-        "learnMore" : "详细了解 VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。\n您可以直接在 {{currency}} 账户上接收代币。",
+        "learnMore" : "了解关于 {{tokenType}} 的更多信息"
       }
     },
     "showMoreChainType" : "更多地址类型",
@@ -3874,9 +3980,9 @@
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
-    "allowManagerPermission" : "允许 Ledger 管理器在您的 {{productName}} 上运行",
+    "allowManagerPermission" : "允许与 Ledger 设备建立安全连接",
     "allowRenaming" : "允许在您的 {{productName}} 上重命名",
-    "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
+    "allowRemoveCustomLockscreen" : "确认移除 {{productName}} 上的图片",
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
     "loading" : "正在加载……",
     "turnOnAndUnlockDevice" : "开机并解锁您的设备",
@@ -4257,8 +4363,8 @@
     "viewUpdateChangelog" : "查看更新变更日志",
     "waitForFirmwareUpdate" : "等待设备上的固件更新完成",
     "waitForInstallationToFinish" : "等待在 {{deviceName}} 上完成安装",
-    "staxBatteryLow" : "Ledger Stax 电池电量太低，无法更新",
-    "staxBatteryLowDescription" : "要开始更新操作系统，您的 Ledger Stax 必须至少有 {{lowBatteryPercentage}}% 的电量，或者正在充电。",
+    "batteryLow" : "{{productName}} 电池电量太低，无法更新",
+    "batteryLowDescription" : "要开始更新操作系统，您的 {{productName}} 必须至少有 {{lowBatteryPercentage}}% 的电量，或者正在充电。",
     "updateCancelled" : "已在 {{deviceName}} 上取消安装操作系统更新",
     "updateCancelledDescription" : "如果是误操作，请重新启动更新。",
     "updateNotYetComplete" : "正在更新操作系统",
@@ -4302,7 +4408,8 @@
       "installUpdate" : {
         "titleInactive" : "安装更新",
         "titleActive" : "正在安装更新",
-        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
+        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。",
+        "descriptionNanoXBle" : "{{deviceName}} 会重启多次。\n\n如果设备关机且没有自动重启，您将需要自行为设备开机。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4333,6 +4440,14 @@
       "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
       "pleaseConnectUsbTitle" : "需要使用 USB 线",
       "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "设备已断开",
+          "description" : "与 {{deviceName}} 的连接断开，无法继续更新"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -5344,7 +5459,7 @@
             "description" : "将 TRX 委托给第三方候选人从而赚取奖励。点击继续按钮以冻结资产并投票。",
             "bullet" : {
               "delegate" : "委托出去的资产依旧为您所有。",
-              "access" : "您可以在冻结 3 天后访问您的资产。",
+              "access" : "冻结资产可立即解冻，14 天解冻期满后方可使用。",
               "ledger" : "使用您的 Ledger 设备安全地进行委托。"
             },
             "button" : {
@@ -5362,7 +5477,7 @@
       },
       "unfreeze" : {
         "title" : "解冻",
-        "description" : "解冻 TRX 以重新将其添加到您的可用余额。您将不再赚取奖励。"
+        "description" : "解冻 TRX 以将其重新添加到您的可用余额。您将无法继续赚取奖励。14 天解冻期满后方可使用这些资产"
       },
       "vote" : {
         "title" : "投票",
@@ -5812,7 +5927,6 @@
         "status" : "状态",
         "active" : "活跃",
         "inactive" : "不活跃",
-        "rewards" : "奖励",
         "pending" : "待处理",
         "available" : "可提取"
       },
@@ -5920,6 +6034,9 @@
       "freeze" : "请在您的设备上确认，以便完成该操作",
       "unfreeze" : "请在您的设备上确认，以便完成该操作",
       "claimReward" : "请在您的设备上确认，以便完成该操作",
+      "legacyUnfreeze" : "请在您的设备上确认，以便完成该操作",
+      "withdrawExpireUnfreeze" : "请在您的设备上确认，以便完成该操作",
+      "undelegateResource" : "请在您的设备上确认，以便完成该操作",
       "vote" : "请在您的设备上确认，以便完成该操作",
       "delegate" : "请在您的设备上确认，以便完成该操作",
       "redelegate" : "请在您的设备上确认，以便完成该操作",
@@ -5944,9 +6061,12 @@
     "votes" : "选票",
     "validator" : "验证者",
     "infoWording" : {
-      "freeze" : "冻结的代币会有 3 天的锁定期。",
+      "freeze" : "冻结代币后可获取带宽或能量并收到等量的 TRON Power (TP)。",
       "unfreeze" : "您的 {{resource}} 点数将被减少，且您的全部投票也将被取消。",
+      "legacyUnfreeze" : "您的 {{resource}} 点数将被减少，且您的全部投票也将被取消。",
       "claimReward" : "每 24 小时可申领一次奖励。",
+      "withdrawExpireUnfreeze" : "已解冻资产在解冻期满后方可提取",
+      "unDelegateResource" : "取消委托 {{resource}}",
       "cosmos" : {
         "claimReward" : "如果已选的验证者有待领取的奖励，它们将被自动申领。",
         "redelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。",
@@ -6105,6 +6225,7 @@
       "subtitle" : "浏览与 Ledger 完全集成的 Web3",
       "section" : {
         "recentlyUsed" : "最近使用",
+        "locallyLoaded" : "本地加载",
         "categories" : "类别",
         "clearAll" : "清除所有"
       },
@@ -6146,6 +6267,9 @@
     "webPlatformPlayer" : {
       "infoPanel" : {
         "website" : "网站"
+      },
+      "back" : {
+        "card" : "所有卡片"
       }
     }
   },
@@ -6202,9 +6326,10 @@
       },
       "order" : {
         "topGainers" : "顶尖获利者",
-        "market_cap" : "排名",
-        "market_cap_asc" : "排名（市值）升序",
-        "market_cap_desc" : "排名（市值）降序"
+        "topLosers" : "跌幅排名",
+        "marketCap" : "排名",
+        "asc" : "排名（市值）升序",
+        "desc" : "排名（市值）降序"
       },
       "currency" : "货币",
       "time" : "时间",
@@ -6274,7 +6399,7 @@
     "designedForStax" : {
       "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
       "drawer" : {
-        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
+        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
         "cta" : "知道了"
       }
     },
@@ -6331,7 +6456,7 @@
   },
   "customImage" : {
     "title" : "锁屏图片",
-    "replace" : "替换",
+    "change" : "更改",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "从我的图片库中选择",
@@ -6350,80 +6475,63 @@
     "commitRequested" : "与您看到的一样？\n保存下来！",
     "confirmPicture" : "在 {{productName}} 上确认",
     "landingPage" : {
-      "title" : "选择任意数字艺术或照片。\n自定义您的 Ledger Stax。\n打造您的个性风格。",
+      "title" : "选择任意数字艺术或照片。\n自定义您的 {{productName}}。\n打造您的个性风格。",
       "choosePicture" : "选择图片"
     },
     "confirmCrop" : "确认剪裁",
     "confirmContrast" : "确认对比",
-    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏图片",
+    "keepOnDevice" : "保留",
+    "discardOnDevice" : "放弃",
+    "nftEntryPointButtonLabel" : "设置为锁屏图片",
     "customImage" : "自定义图片",
     "doThisLater" : "以后再说",
     "preview" : {
       "title" : "预览",
       "loading" : "正在加载预览",
       "setPicture" : "设置为锁屏界面",
-      "editPicture" : "编辑图片"
+      "editPicture" : "编辑图片",
+      "pickDeviceModel" : "选择设备"
     },
     "nftGallery" : {
       "title" : "我的 NFT"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "免费访问全球最安全的 NFT 市场",
-      "description" : {
-        "title" : "利用 Ledger Infinity Pass（无限通行证），您可以：",
-        "1" : "抢先体验最新 NFT 发布活动",
-        "2" : "访问史上最安全的 NFT 市场",
-        "3" : "免费领取一个 NFT"
-      },
-      "claimButton" : "领取 Ledger Market Pass（市场通行证）",
-      "backButton" : "我已经领取了 Market Pass（市场通行证）"
-    },
-    "qrScan" : {
-      "title" : "扫描 Ledger Market Pass（市场通行证）上的二维码",
-      "description" : {
-        "1" : "您将在 Ledger Stax 的包装盒中找到您的专属 Ledger Market Pass（市场通行证）。\n\n首先将通行证背面的二维码放在框中。请在光线充足且带有简洁浅色背景的区域操作。"
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
-      "title" : "接下来，使用您的 {{productName}}：",
-      "allDoneTitle" : "到此结束！",
+      "title" : "接下来，使用您的 {{productName}}...",
+      "allDoneTitle" : "一切准备就绪！继续探索您的资产组合",
       "skip" : "以后再说",
-      "viewWallet" : "查看我的钱包"
+      "viewWallet" : "探索我的资产组合"
     },
     "entryPointCard" : {
       "title" : "使用 {{productName}} 的下一步操作是什么？",
-      "description" : "领取 Infinity NFT，定制其锁屏界面，或将您的资产从其他交易所转出。",
+      "description" : "从任何交易所或钱包转移资产，购买加密货币，自定义锁屏或订阅 Ledger Recover。",
       "buttonLabel" : "查看后续步骤"
     },
     "actions" : {
-      "customImage" : {
-        "title" : "设置锁屏图片",
-        "titleCompleted" : "锁屏图片已设置",
-        "description" : "选择要设置为锁屏界面的任意数字艺术或图片。",
-        "popupLabel" : "锁屏已设置"
-      },
-      "claimNft" : {
-        "title" : "领取 Infinity NFT",
-        "titleCompleted" : "已领取 Infinity NFT",
-        "description" : "您可以凭此 NFT 访问 [ Ledger ] Market，这是我们的 NFT 市场。",
-        "popupLabel" : "已领取 NFT",
-        "tagLabel" : "赠品"
-      },
       "assetsTransfer" : {
         "title" : "将您的资产转移至 Ledger",
         "titleCompleted" : "资产已转入 Ledger",
-        "description" : "轻松从比特币基地 (Coinbase) 或任何其他交易所或钱包转移资产。",
+        "description" : "从任何交易所或钱包直接转入您的 Ledger。",
         "popupLabel" : "资产已转移"
       },
       "buyCrypto" : {
         "title" : "购买加密货币",
-        "titleCompleted" : "资产已转入 Ledger",
-        "description" : "从买入服务提供商根据您的偏好提供的 500 多种币和最佳报价中进行选择",
+        "titleCompleted" : "已购买的加密货币",
+        "description" : "根据您的偏好，从 500 多种币和最佳报价中进行选择。",
         "popupLabel" : "已购买的加密货币"
+      },
+      "customImage" : {
+        "title" : "自定义锁屏界面",
+        "titleCompleted" : "已自定义锁屏界面",
+        "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
+        "popupLabel" : "已成功自定义锁屏界面"
+      },
+      "recover" : {
+        "title" : "订阅 Ledger Recover",
+        "titleCompleted" : "已订阅 Ledger Recover",
+        "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
+        "popupLabel" : "已成功订阅 Ledger Recover"
       }
     }
   },
@@ -6510,24 +6618,35 @@
     "ethereum" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
+      "tagMinimum" : "需要 {{min}} ETH",
       "close" : "关闭",
       "providers" : {
-        "lido" : {
-          "title" : "使用 Lido 赚取",
-          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无最低以太币数量要求。无锁定期。",
-          "supportLink" : "了解关于 Lido 的更多信息"
-        },
-        "kiln" : {
-          "title" : "Kiln 专属质押",
-          "tag" : "需要 32 枚以太币",
-          "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
-          "supportLink" : "了解关于 Kiln 验证者的更多信息"
-        },
         "kiln_pooling" : {
           "title" : "Kiln 质押池",
-          "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
-          "supportLink" : "了解关于 Kiln 池的更多信息",
-          "tag" : "无最低限制"
+          "description" : "权益质押没有最低限制。自动按复利赚取奖励，无锁定期。",
+          "supportLink" : "了解关于 Kiln 池的更多信息"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "权益质押没有最低限制。自动按复利赚取奖励，获得即时流动性。",
+          "supportLink" : "详细了解 Stader"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "权益质押任意数量的以太币，获得即时流动性和每日奖励。",
+          "supportLink" : "了解关于 Lido 的更多信息"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "需要 32 ETH",
+          "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
+          "supportLink" : "详细了解 Figment"
+        },
+        "kiln" : {
+          "title" : "Kiln 单独质押",
+          "tag" : "需要 32 枚以太币",
+          "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
+          "supportLink" : "详细了解 Kiln"
         }
       }
     },
@@ -6542,7 +6661,6 @@
         },
         "swap" : {
           "title" : "互换",
-          "label" : "热门",
           "body" : "安全地转换加密货币"
         },
         "receive" : {
@@ -6554,6 +6672,308 @@
     "getFundsModal" : {
       "text" : "获取 {{coin}} 进行权益质押",
       "description" : "使用 Ledger Live 直接在您的 Ledger 设备上买入、互换或接收加密货币。"
+    }
+  },
+  "analyticsOptIn" : {
+    "variantA" : {
+      "main" : {
+        "title" : "请帮助我们改进并提供个性化体验",
+        "subtitle" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容。",
+        "content" : {
+          "able" : {
+            "title" : "获得您的同意后，Ledger 将会跟踪有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
+            "diagAndUsage" : "衡量 Ledger Live 的性能，优化应用程序并提升您的体验（数据分析）。",
+            "personnalizationData" : "为您提供根据您的偏好定制的个性化推荐及内容，帮助我们衡量营销活动的效果（个性化）。"
+          },
+          "unable" : {
+            "title" : "Ledger Live 绝不会跟踪以下相关信息：",
+            "adresses" : "您的资产。",
+            "balance" : "您的资产组合。",
+            "personnalInfos" : "您的个人身份信息（例如您的姓名或电子邮件地址）。"
+          },
+          "moreOptions" : "管理您的偏好",
+          "ctas" : {
+            "refuse" : "全部拒绝",
+            "accept" : "全部接受"
+          },
+          "infoText" : {
+            "info" : "您可以随时在应用程序设置中撤回您的同意。",
+            "link" : "详细了解我们的《跟踪政策》"
+          }
+        }
+      },
+      "details" : {
+        "title" : "管理您的偏好",
+        "analytics" : {
+          "title" : "数据分析",
+          "description" : "为了评估 Ledger Live 的性能，优化应用程序并提升体验，我同意收集我的数据，包括页面访问量和点击量。"
+        },
+        "personalizedExp" : {
+          "title" : "个性化",
+          "description" : "为了接收符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果，我们会分享应用程序使用数据，包括点击量、页面访问量和转化数据。"
+        },
+        "ctas" : {
+          "notNow" : "以后再说",
+          "accept" : "接受",
+          "acceptAll" : "全部接受",
+          "confirm" : "验证"
+        },
+        "infoText" : {
+          "info" : "您可以随时在应用程序设置中撤回您的同意。",
+          "link" : "详细了解我们的《跟踪政策》"
+        }
+      }
+    },
+    "variantB" : {
+      "main" : {
+        "title" : "帮助我们改进 Ledger Live",
+        "description" : "分享您的 Ledger Live 分析数据可帮助我们了解用户如何使用 Ledger Live，修复错误，改进用户体验。",
+        "bulletPoints" : {
+          "1" : "分析数据包括页面访问量、点击量。",
+          "2" : "我们不会收集或查看有关您的余额、账户和资产组合的任何信息。",
+          "3" : "分析是完全匿名的。我们无法查看或收集您的个人信息。"
+        },
+        "ctas" : {
+          "refuse" : "拒绝",
+          "share" : "分享"
+        },
+        "infoText" : {
+          "info" : "您可以随时在应用程序设置中撤回您的同意。",
+          "link" : "详细了解我们的《跟踪政策》"
+        }
+      },
+      "details" : {
+        "title" : "享受个性化体验",
+        "description" : "分享您的 Ledger Live 个性化数据，让我们可以为您展示符合您个人偏好的内容。",
+        "bulletPoints" : {
+          "1" : "个性化数据包括转化数据、点击量、页面访问量。",
+          "2" : "我们无法跟踪或收集您的任何个人信息或资产组合信息。"
+        },
+        "ctas" : {
+          "refuse" : "拒绝",
+          "allow" : "允许"
+        },
+        "infoText" : {
+          "info" : "您可以随时在应用程序设置中撤回您的同意。",
+          "link" : "详细了解我们的《跟踪政策》"
+        }
+      }
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activation" : {
+      "screen" : {
+        "title" : "为该手机开启 Ledger Sync？",
+        "description" : "此操作会自动同步您所有手机和电脑上的加密货币账户，即使换用新设备也会自动同步。",
+        "mainCta" : "开启 Ledger Sync",
+        "secondCta" : "我已经开启了",
+        "learnMore" : "Ledger Sync 如何运作？"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "选择 Ledger 设备"
+    },
+    "deviceAction" : {
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
+    },
+    "loading" : {
+      "title" : "请耐心等候...",
+      "activation" : "最多可能需要 30 秒。\n请停留在此界面。",
+      "synch" : "我们正在更新已同步实例..."
+    },
+    "success" : {
+      "sync" : "同步成功",
+      "syncDesc" : "您的加密货币账户更改将自动显示在已同步手机和电脑上的 Ledger Live 应用程序中。",
+      "activation" : "该手机已开启 Ledger Sync",
+      "syncAnother" : "与另一个 Ledger Live 应用程序同步",
+      "close" : "关闭"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "与另一个 Ledger Live 应用程序同步",
+        "description" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。"
+      },
+      "manageKey" : {
+        "title" : "删除同步",
+        "description" : "您在不同手机和电脑上的加密货币账户将停止同步。",
+        "success" : "您的 Ledger Live 应用程序不再同步",
+        "successHint" : "您可以随时重新开启同步。",
+        "confirm" : {
+          "delete" : "是，删除",
+          "cancel" : "保持同步",
+          "title" : "确定要删除同步吗？",
+          "desc" : "您在不同手机和电脑上的加密货币账户将停止同步。此操作不会对您的资金产生任何影响。"
+        }
+      },
+      "manageInstances" : {
+        "title" : "Ledger Live 已在以下设备上同步：",
+        "remove" : "删除"
+      },
+      "synchronizedInstances" : {
+        "cta" : "管理",
+        "title" : "{{count}} 个 Ledger Live 应用程序已同步",
+        "title_plural" : "{{count}} 个 Ledger Live 应用程序已同步",
+        "error" : "实例",
+        "unsecuredError" : {
+          "title" : "连接您用来启用 Ledger Sync 的 Ledger 设备",
+          "description" : "如果您没有那个 Ledger 设备，请选择“删除同步”。",
+          "cta" : "连接另一个 Ledger 设备",
+          "ctaDelete" : "删除同步"
+        },
+        "autoRemoveError" : {
+          "title" : "您无法在使用该手机时将其移除",
+          "description" : "要移除该手机，请使用另一部已启用 Ledger Sync 的手机或电脑。如果您没有其他设备，请选择“删除同步”。",
+          "info" : "删除加密密钥将导致您的设备取消同步，所有已同步数据都将被删除。但是，这不会对您的资金产生影响。您可以随时重新同步自己的账户。",
+          "cta" : "我了解",
+          "ctaDelete" : "删除同步"
+        },
+        "success" : "您在 {{member}} 上的 Ledger Live 应用程序不再连接至 Ledger Sync"
+      },
+      "errors" : {
+        "fetching" : "提取已同步实例时出现错误。",
+        "ledgerSyncUnavailable" : "由于我们遇到了技术问题，Ledger Sync 暂时不可用。我们正在进行修复。"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "选择同步方法",
+        "scan" : {
+          "title" : "扫描二维码"
+        },
+        "connectDevice" : {
+          "title" : "使用我的 Ledger 设备"
+        }
+      },
+      "qrCode" : {
+        "title" : "同步 Ledger Live 应用程序",
+        "show" : {
+          "title" : "显示二维码",
+          "explanation" : {
+            "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live 应用程序",
+              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>扫描二维码</0>",
+              "step3" : "扫描二维码"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "扫描",
+          "description" : "扫描二维码",
+          "explanation" : {
+            "title" : "如需与另一部手机或电脑上的 Ledger Live 同步……",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live。",
+              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>显示二维码</0>",
+              "step3" : "扫描二维码"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "输入 Ledger Sync 代码",
+          "desc" : "输入电脑上显示的代码，在两个应用程序之间同步您的加密货币账户。",
+          "error" : {
+            "title" : "代码不匹配",
+            "desc" : "确保您输入的是另一个 Ledger Live 实例上显示的代码。",
+            "tryAgain" : "请重试"
+          }
+        },
+        "scannedInvalidQrCode" : {
+          "title" : "无效二维码",
+          "desc" : "只需扫描 Ledger Live 上显示的二维码，即可同步 Ledger Live 应用程序。",
+          "info" : "要查看二维码，请打开“设置”，选择“常规”，然后依次选择“Ledger Sync”、“开启同步”和“显示二维码”。",
+          "cta" : "我了解"
+        },
+        "scannedOldQrCode" : {
+          "title" : "需要更新 Ledger Live",
+          "desc" : "若要继续同步，请更新非最新版本 Ledger Live 应用程序。",
+          "info" : "如需详细了解如何更新，请查看<0>这篇文章<0>。",
+          "cta" : "我了解"
+        },
+        "unbacked" : {
+          "title" : "未检测到同步",
+          "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync。",
+          "cta" : "开启 Ledger Sync"
+        },
+        "unbackedOnboarding" : {
+          "title" : "未检测到同步",
+          "description" : "为另一个 Ledger Live 应用程序打开同步，然后返回此处选择“重试”。",
+          "info" : "如果未在任何地方启用 Ledger Sync，则继续但不启用 Ledger Sync。",
+          "cta" : "请重试",
+          "cancel" : "继续但不同步"
+        },
+        "backedWithDifferentSeeds" : {
+          "title" : "使用了不同的 Ledger 设备在每个应用程序上启用 Ledger Sync",
+          "description" : "要同步两个 Ledger Live 应用程序，您需要使用同一个 Ledger 设备。",
+          "info" : "要解决此问题，请删除其中一个应用程序的同步，然后扫描二维码再次开启同步。",
+          "cta" : "我了解"
+        },
+        "alreadyBacked" : {
+          "title" : "两个 Ledger Live 应用程序均已同步",
+          "cta" : "知道了"
+        }
+      },
+      "unbackedOnboarding" : {
+        "title" : "未检测到同步",
+        "description" : "如果已启用 Ledger Sync，请选择“重试”，确保连接您用来启用它的 Ledger 设备。",
+        "info" : "或者，继续但不启用 Ledger Sync。",
+        "cta" : "请重试",
+        "cancel" : "继续但不同步"
+      },
+      "alreadySecureError" : {
+        "title" : "此应用程序已受此 Ledger 设备保护",
+        "description" : "如果您想尝试创建新的备份，请连接您用于创建其他加密密钥的 Ledger 设备。",
+        "cta" : "我了解"
+      },
+      "alreadySecureOtherSeedError" : {
+        "title" : "您无法使用此 Ledger 设备同步",
+        "description" : "如果您仍希望同步这两个应用程序，请删除您的密钥，然后重试。",
+        "cta" : "删除我的加密密钥"
+      }
+    }
+  },
+  "web3hub" : {
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "透明签名已启用",
+        "clearSigningDisabled" : "透明签名已禁用",
+        "checkbox" : "不要再提醒我。",
+        "CTA" : "打开 {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "探索",
+        "description" : "探索 Ledger 精心策划的 web3 最佳体验"
+      },
+      "label" : {
+        "clearSigning" : "透明签名"
+      }
+    },
+    "main" : {
+      "manifestsList" : {
+        "title" : "探索"
+      },
+      "header" : {
+        "title" : "探索 web3",
+        "placeholder" : "搜索或输入网址"
+      },
+      "clearSigning" : {
+        "title" : "透明签名"
+      }
+    },
+    "app" : {
+      "selectAccountModal" : {
+        "networkHeader" : {
+          "title" : "选择网络"
+        },
+        "accountHeader" : {
+          "title" : "选择账户"
+        },
+        "addAccountItem" : {
+          "name" : "添加账户"
+        }
+      }
     }
   }
 }

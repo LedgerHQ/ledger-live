@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { DeviceModel } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
 import CustomImageManagerButton from "./CustomImageManagerButton";
@@ -61,6 +61,8 @@ type Props = {
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
+  hasCustomLockScreen: boolean;
+  setHasCustomLockScreen: (value: boolean) => void;
 };
 
 /**
@@ -79,11 +81,13 @@ const DeviceInformationSummary = ({
   isIncomplete,
   installQueue,
   uninstallQueue,
+  hasCustomLockScreen,
+  setHasCustomLockScreen,
 }: Props) => {
   const navigationLocked = useSelector(isNavigationLocked);
 
   return (
-    <Card p={20} mb={4} data-test-id="device-storage-card">
+    <Card p={20} mb={4} data-testid="device-storage-card">
       <Flex flexDirection="row">
         <Box position="relative" flex="0 0 140px" mr={20}>
           <DeviceIllustration deviceModel={deviceModel} />
@@ -142,7 +146,7 @@ const DeviceInformationSummary = ({
             />
           </div>
           <Flex
-            data-test-id="device-options-container"
+            data-testid="device-options-container"
             alignSelf="flex-start"
             justifyContent="flex-start"
             alignItems="flex-end"
@@ -158,12 +162,15 @@ const DeviceInformationSummary = ({
               />
             )}
 
-            {deviceModel.id === DeviceModelId.stax ? (
+            {isCustomLockScreenSupported(deviceModel.id) ? (
               <>
                 {deviceInfo.languageId !== undefined && <VerticalSeparator />}
-                <FeatureToggle featureId="customImage">
-                  <CustomImageManagerButton disabled={navigationLocked} />
-                </FeatureToggle>
+                <CustomImageManagerButton
+                  disabled={navigationLocked}
+                  deviceModelId={deviceModel.id}
+                  hasCustomLockScreen={hasCustomLockScreen}
+                  setHasCustomLockScreen={setHasCustomLockScreen}
+                />
               </>
             ) : null}
           </Flex>

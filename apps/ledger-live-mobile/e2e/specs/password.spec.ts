@@ -1,56 +1,40 @@
-import { device, expect } from "detox";
-import PortfolioPage from "../models/wallet/portfolioPage";
-import SettingsPage from "../models/settings/settingsPage";
-import GeneralSettingsPage from "../models/settings/generalSettingsPage";
-import PasswordEntryPage from "../models/passwordEntryPage";
-import { loadConfig } from "../bridge/server";
+import { device } from "detox";
+import { Application } from "../page";
+
+let app: Application;
 
 const CORRECT_PASSWORD = "passWORD$123!";
 
-let portfolioPage: PortfolioPage;
-let settingsPage: SettingsPage;
-let generalSettingsPage: GeneralSettingsPage;
-let passwordEntryPage: PasswordEntryPage;
-
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-
-    portfolioPage = new PortfolioPage();
-    settingsPage = new SettingsPage();
-    generalSettingsPage = new GeneralSettingsPage();
-    passwordEntryPage = new PasswordEntryPage();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it("should open on Portfolio page", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
-  });
-
-  it("should go to Settings", async () => {
-    await portfolioPage.navigateToSettings();
-  });
-
-  it("should go navigate to General settings", async () => {
-    await settingsPage.navigateToGeneralSettings();
-  });
-
-  it("should toggle Password lock", async () => {
-    await generalSettingsPage.togglePassword();
-  });
-
-  it("should enter password twice", async () => {
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // use a linebreak instead of pressing the confirm button to handle the keyboard if it appears
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // confirm password step
-  });
-
-  it("should need to enter password to unlock app", async () => {
+  $TmsLink("B2CQA-1763");
+  it("should ask for the password when lock is toggled", async () => {
+    await app.portfolio.navigateToSettings();
+    await app.settings.navigateToGeneralSettings();
+    await app.settingsGeneral.togglePassword();
+    await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD);
+    await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD); // confirm password step
     await device.sendToHome();
     await device.launchApp(); // restart LLM
-    await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
-    await passwordEntryPage.login();
+    await app.passwordEntry.expectLock();
   });
 
-  it("should be back on General Settings page", async () => {
-    await expect(generalSettingsPage.preferredCurrencyButton()).toBeVisible();
+  $TmsLink("B2CQA-2343");
+  it("should stay locked with incorrect password", async () => {
+    await app.passwordEntry.enterPassword("INCORRECT_PASSWORD");
+    await app.passwordEntry.login();
+    await app.passwordEntry.expectLock();
+  });
+
+  $TmsLink("B2CQA-1763");
+  it("should unlock with correct password", async () => {
+    await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
+    await app.passwordEntry.login();
+    await app.passwordEntry.expectNoLock();
+    await app.settingsGeneral.expectpreferredCurrencyButton();
   });
 });

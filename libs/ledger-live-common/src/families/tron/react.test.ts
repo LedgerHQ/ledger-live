@@ -1,6 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import { setSupportedCurrencies } from "../../currencies/index";
 setSupportedCurrencies(["tron"]);
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from "@testing-library/react";
 import {
   useTronSuperRepresentatives,
   getLastVotedDate,
@@ -17,9 +21,17 @@ import {
   mockAccountNoVote,
   mockAccountV2,
 } from "./data.mock";
-import superRepresentatives from "./api/superRepresentativesData.mock";
+import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
 
-jest.mock("./api", () => {
+jest.mock("@ledgerhq/coin-tron/network", () => {
+  return {
+    getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
+      return Promise.resolve(superRepresentatives);
+    }),
+  };
+});
+
+jest.mock("@ledgerhq/coin-tron/logic/utils", () => {
   return {
     extractBandwidthInfo: jest.fn().mockImplementation(() => {
       return {
@@ -28,9 +40,6 @@ jest.mock("./api", () => {
         gainedUsed: 0,
         gainedLimit: 0,
       };
-    }),
-    getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
-      return Promise.resolve(superRepresentatives);
     }),
   };
 });

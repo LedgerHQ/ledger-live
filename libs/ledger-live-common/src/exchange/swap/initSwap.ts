@@ -1,5 +1,9 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  WrongDeviceForAccountPayout,
+  WrongDeviceForAccountRefund,
+} from "@ledgerhq/errors";
 import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
@@ -7,17 +11,25 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
-import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
-import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
+import { getCurrencyExchangeConfig } from "../";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
+import {
+  SwapGenericAPIError,
+  SwapRateExpiredError,
+  TransactionRefusedOnDevice,
+} from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { getProviderConfig, getSwapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL, getSwapUserIP } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
+import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
+import { getSwapProvider } from "../providers";
+import { convertToAppExchangePartnerKey } from "../providers";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -36,6 +48,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
     const confirmSwap = async () => {
       let ignoreTransportError;
+      let magnitudeAwareRate;
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async transport => {
         const ratesFlag =
@@ -46,12 +59,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const deviceTransactionId = await swap.startNewTransaction();
         if (unsubscribed) return;
 
-        const { provider, rateId, payoutNetworkFees } = exchangeRate;
+        const { provider, rateId } = exchangeRate;
         const { fromParentAccount, fromAccount, toParentAccount, toAccount } = exchange;
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
-        const unitFrom = getAccountUnit(exchange.fromAccount);
-        const unitTo = getAccountUnit(exchange.toAccount);
+        const unitFrom = getAccountCurrency(exchange.fromAccount).units[0];
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
@@ -60,10 +72,12 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getProviderConfig(provider);
+        const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),
+
+          ...(getSwapUserIP() !== undefined ? getSwapUserIP() : {}),
         };
 
         const data = {
@@ -91,7 +105,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           });
 
           if (unsubscribed || !res || !res.data) return;
-        } catch (e) {
+        } catch (e: any) {
+          if (e.msg.messageKey == "WRONG_OR_EXPIRED_RATE_ID") {
+            o.next({
+              type: "init-swap-error",
+              error: new SwapRateExpiredError(),
+              swapId,
+            });
+          }
           o.next({
             type: "init-swap-error",
             error: new SwapGenericAPIError(),
@@ -139,6 +160,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction,
         );
         if (unsubscribed) return;
+
         const errorsKeys = Object.keys(errors);
 
         if (errorsKeys.length > 0) {
@@ -153,7 +175,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         await swap.setPartnerKey(convertToAppExchangePartnerKey(swapProviderConfig));
         if (unsubscribed) return;
 
-        await swap.checkPartner(swapProviderConfig.signature);
+        await swap.checkPartner(swapProviderConfig.signature!);
         if (unsubscribed) return;
 
         await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
@@ -178,18 +200,18 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         );
         if (unsubscribed) return;
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
-          await swap.checkPayoutAddress(
+          await swap.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
-              accountName: payoutAccount.name,
+            throw new WrongDeviceForAccountPayout(undefined, {
+              accountName: getDefaultAccountName(payoutAccount),
             });
           }
 
@@ -212,19 +234,26 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         );
         if (unsubscribed) return;
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
-          getCurrencyExchangeConfig(refundCurrency);
+          await getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
         // NB Floating rates may change the original amountTo so we can pass an override
         // to properly render the amount on the device confirmation steps. Although changelly
         // made the calculation inside the binary payload, we still have to deal with it here
         // to not break their other clients.
-        let amountExpectedTo;
 
-        if (swapResult?.amountExpectedTo) {
-          amountExpectedTo = new BigNumber(swapResult.amountExpectedTo)
-            .times(new BigNumber(10).pow(unitTo.magnitude))
-            .minus(new BigNumber(payoutNetworkFees || 0))
-            .toString();
+        let amountExpectedTo;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+          magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
+        }
+
+        let amountExpectedFrom;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+            throw new Error("AmountFrom received from partner's payload mismatch user input");
         }
 
         o.next({
@@ -241,8 +270,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
-              accountName: refundAccount.name,
+            throw new WrongDeviceForAccountRefund(undefined, {
+              accountName: getDefaultAccountName(refundAccount),
             });
           }
 
@@ -256,7 +285,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (ignoreTransportError) return;
 
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
-          throw new TransactionRefusedOnDevice();
+          throw new TransactionRefusedOnDevice("", { step: "SIGN_COIN_TRANSACTION" });
         }
 
         throw e;
@@ -270,6 +299,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         initSwapResult: {
           transaction,
           swapId,
+          magnitudeAwareRate,
         },
       });
     };

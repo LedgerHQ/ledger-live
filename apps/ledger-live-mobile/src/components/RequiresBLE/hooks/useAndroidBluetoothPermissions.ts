@@ -58,8 +58,8 @@ async function requestBluetoothPermissions(): Promise<RequestMultipleResult> {
       generalStatus: allGranted
         ? RESULTS.GRANTED
         : someNeverAskAgain
-        ? RESULTS.NEVER_ASK_AGAIN
-        : RESULTS.DENIED,
+          ? RESULTS.NEVER_ASK_AGAIN
+          : RESULTS.DENIED,
     };
   });
 }

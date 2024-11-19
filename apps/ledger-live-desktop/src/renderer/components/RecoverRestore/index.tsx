@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -12,7 +12,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { OnboardingContext, UseCase } from "../Onboarding";
 import { ScreenId } from "../Onboarding/Screens/Tutorial";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getVersion from "@ledgerhq/live-common/hw/getVersion";
+import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
 import { first } from "rxjs/operators";
 import { Subscription, from } from "rxjs";
 import {
@@ -158,7 +158,7 @@ const RecoverRestore = () => {
             variant="h3Inter"
             color="neutral.c100"
             mt={16}
-            data-test-id="recover-restore-connect-text"
+            data-testid="recover-restore-connect-text"
           >
             {t("recoverRestore.title")}
           </Text>

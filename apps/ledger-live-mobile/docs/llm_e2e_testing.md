@@ -14,8 +14,7 @@ The following script will ensure a clean local environment for running detox tes
 
 ```bash
 pnpm clean
-pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-pnpm mobile pod
+pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
 pnpm build:llm:deps
 pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
 pnpm mobile e2e:build -c android.emu.debug
@@ -34,23 +33,24 @@ Next, follow the steps in the Detox [Environment Setup](https://wix.github.io/De
 
 Prerequisites for all Detox tests:
 
-- Node is installed (currently we use v16)
+- Node is installed (currently we use v20)
 
 ### Tips for iOS setup
 
-Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only). After following the above React Native and Detox steps, you should have the following setup:
+Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as `applesimutils` (MacOS only). After following the above React Native and Detox steps, you should have the following setup:
 
 - XCode and XCode command line tools - run `xcode-select -v` and `xcrun --version` to make sure these are working
-- `rbenv` is installed and `which ruby` points to an `rbenv` shim, not `usr/bin/ruby`. Be sure to follow the steps to add `rbenv` to your shell profile.
-- An iPhone simulator for iPhone 13 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
+- Latest `ruby` is installed with brew, make sure `$PATH` is updated - `which ruby` points to `/opt/homebrew/opt/ruby/bin/ruby`, not `usr/bin/ruby`.
+- An iPhone simulator for iPhone 14 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
 - `applesimutils` is installed via npm.
 
 ### Tips for Android setup
 
 The Android toolkit can be more complex than the iOS one. Once you've done the React Native and Detox setup steps, follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for further steps. The main things to make sure of are:
 
-- Java version 11 installed. Check with `java -version`
-- Android 12.0 (API Level 11) is installed.
+- Java version 17 installed. Check with `java -version`
+- Android 12L (API Level 32) is installed.
+- An Android Virtual Device (AVD) named 'Pixel 6 Pro API 32'
 - Android SDK Build Tools, SDK Platform Tools, SDK Command Line Tools, Android Emulator, CMake 3.10.2 and NDK 21.4.7075529 are installed. You can do this through Android Studio > Tools > SDK Tools, or via the [command line](https://wix.github.io/Detox/docs/guide/android-dev-env#heres-how-to-install-them-using-the-command-line).
 - Your shell profile (for example `~/.zshrc`) should have environmental variables setup something like this:
 
@@ -71,7 +71,7 @@ export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin/sdkmanager:$AND
 Clean your local environment to remove `node_modules` and previous iOS and Android mobile app builds:
 
 ```bash
-pnpm clean
+pnpm clean && pnpm store prune
 ```
 
 Install dependencies:
@@ -80,12 +80,18 @@ Install dependencies:
 pnpm i
 ```
 
-> There is a filtered version of this command which should be quicker and includes only dependencies needed for LLM: `pnpm i --filter="live-mobile..." --filter="ledger-live"`.
+> There is a filtered version of this command which should be quicker and includes only dependencies needed for LLM: `pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-\*-app..."`.
 
 Build dependencies for the mobile app:
 
 ```bash
 pnpm build:llm:deps
+```
+
+Build Dummy Live SDK and Dummy Wallet API apps for testing
+
+```bash
+pnpm build:dummy-apps
 ```
 
 ### Android Tests
@@ -126,9 +132,9 @@ Most files for the tests are in the `/e2e` LLM app folder.
   - perform mock device actions.
   - do quick navigations around the app (useful for setting up tests).
 
-- `/models`: The models contain logic for interacting with elements on specific pages in the application. They roughly follow the Page Object Model that is standard in UI testing.
+- `/models` and `/page` : The models contain logic for interacting with elements on specific pages in the application. They roughly follow the Page Object Model that is standard in UI testing.
 
-- `/setups`: This is the application data that will be used to start the session, it contains all the information regarding user settings, existing accounts, operations, balances, etc. It allows us to test different scenarios with independent configurations.
+- `/userdata`: This is the application data that will be used to start the session, it contains all the information regarding user settings, existing accounts, operations, balances, etc. It allows us to test different scenarios with independent configurations.
 
 - `/specs`: The test suites themselves. We make use of the helpers and combine the snippets from the flows to build the different test scenarios. Ideally we should be able to reuse parts from flows in the specs.
 
@@ -199,31 +205,28 @@ Test files go in the `apps/ledger-live-mobile/e2e/specs` directory. Import the r
 
 ```js
 import { expect, waitFor /* ... */ } from "detox";
-import OnboardingSteps from "../models/onboarding/onboardingSteps";
-import PortfolioPage from "../models/portfolioPage";
+import { Application } from "../page";
 
-let onboardingSteps: OnboardingSteps;
-let portfolioPage: PortfolioPage;
+let app: Application;
+
 describe("Onboarding", () => {
   beforeAll(async () => {
     // Load some configs and setup your pages here
-    await loadConfig("1AccountBTC1AccountETH", true);
-    onboardingSteps = new OnboardingSteps();
-    onboardingSteps = new PortfolioPage();
+    app = await Application.init("1AccountBTC1AccountETH");
   })
 
   it("onboarding step should be visible", async () => {
      // test assertions
-    await expect(onboardingSteps.getSomeElement()).toBeVisible();
+    await expect(app.onboardingSteps.getSomeElement()).toBeVisible();
   });
 
   it("should be able to start onboarding", async () => {
     // test actions (tap on some element)
-    await onboardingSteps.startOnboarding();
+    await app.onboardingSteps.startOnboarding();
   });
 
   it("should do some other stuffs", async () => {
-    await onboardingSteps.DoIOwnDevice(true);
+    await app.onboardingSteps.DoIOwnDevice(true);
     // ...
   })
 

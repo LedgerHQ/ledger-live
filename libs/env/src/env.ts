@@ -108,34 +108,14 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.5,
+    def: 1.3, // Same as Keplr
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
-  },
-  API_RIPPLE_RPC: {
-    parser: stringParser,
-    def: "https://xrplcluster.com/ledgerlive",
-    desc: "XRP Ledger full history open JSON-RPC endpoint",
   },
   API_FILECOIN_ENDPOINT: {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
-  },
-  API_NEAR_ARCHIVE_NODE: {
-    def: "https://near.coin.ledger.com/node/",
-    parser: stringParser,
-    desc: "Archive node endpoint for NEAR",
-  },
-  API_NEAR_INDEXER: {
-    def: "https://near.coin.ledger.com/indexer/",
-    parser: stringParser,
-    desc: "Datahub Indexer API for NEAR",
-  },
-  API_NEAR_STAKING_POSITIONS_API: {
-    def: "https://validators-near.coin.ledger.com/",
-    parser: stringParser,
-    desc: "NEAR staking positions API",
   },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
@@ -151,6 +131,16 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://polkadot-sidecar.coin.ledger.com",
     desc: "Polkadot Sidecar API url",
+  },
+  API_POLKADOT_SIDECAR_CREDENTIALS: {
+    parser: stringParser,
+    def: "",
+    desc: "Polkadot Sidecar API credentials",
+  },
+  API_POLKADOT_NODE: {
+    parser: stringParser,
+    def: "https://polkadot-fullnodes.api.live.ledger.com",
+    desc: "Polkadot Node",
   },
   ELROND_API_ENDPOINT: {
     parser: stringParser,
@@ -249,11 +239,9 @@ const envDefinitions = {
   },
   BUY_API_BASE: {
     def: "https://buy.api.live.ledger.com/buy/v1",
-
     parser: stringParser,
     desc: "Buy crypto API base url - version 1",
   },
-
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -263,6 +251,36 @@ const envDefinitions = {
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
+  },
+  ICON_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3d",
+    desc: "ICON debug RPC url",
+  },
+  ICON_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v1",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_TESTNET_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3d",
+    desc: "ICON Berlin Testnet debug",
+  },
+  ICON_TESTNET_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.berlin.icon.community/api/v1",
+    desc: "ICON Berlin Testnet API url",
   },
   COINAPPS: {
     def: "",
@@ -329,11 +347,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
-  EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
-    parser: stringArrayParser,
-    desc: "set the currency ids where EIP1559 is enabled",
-  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -345,14 +358,9 @@ const envDefinitions = {
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   EIP1559_BASE_FEE_MULTIPLIER: {
-    def: 1.5,
+    def: 1.27,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
-  },
-  ETHEREUM_GAS_LIMIT_AMPLIFIER: {
-    def: 1.2,
-    parser: floatParser,
-    desc: "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
   },
   EXPERIMENTAL_BLE: {
     def: false,
@@ -519,6 +527,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the countervalues resolution into a MOCK mode for test purpose",
   },
+  MOCK_APP_UPDATE: {
+    def: false,
+    parser: boolParser,
+    desc: "Always shows app update in the manager",
+  },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
    * Ledger test private key
@@ -544,8 +557,8 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
-    parser: stringParser,
+    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon"],
+    parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
   NFT_ETH_METADATA_SERVICE: {
@@ -593,10 +606,20 @@ const envDefinitions = {
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
   },
+  SIMPLE_HASH_API_BASE: {
+    def: "https://simplehash.api.live.ledger.com/api/v0",
+    parser: stringParser,
+    desc: "SimpleHash API base url",
+  },
   SKIP_ONBOARDING: {
     def: false,
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
+  },
+  SPECULOS_API_PORT: {
+    def: 0,
+    parser: intParser,
+    desc: "API port for speculos",
   },
   SPECULOS_PID_OFFSET: {
     def: 0,
@@ -619,6 +642,16 @@ const envDefinitions = {
     def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
+  },
+  SWAP_USER_IP: {
+    def: "",
+    parser: stringParser,
+    desc: "Swap IP",
+  },
+  SWAP_DISABLE_APPS_INSTALL: {
+    def: false,
+    parser: boolParser,
+    desc: "bypass app checks on Nano for speculos swap tests",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
@@ -660,6 +693,16 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
+  CLOUD_SYNC_API_STAGING: {
+    def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "wallet sync api staging base url",
+  },
+  CLOUD_SYNC_API_PROD: {
+    def: "https://cloud-sync.api.live.ledger.com",
+    parser: stringParser,
+    desc: "wallet sync api production base url",
+  },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
     parser: floatParser,
@@ -689,6 +732,16 @@ const envDefinitions = {
     def: 100,
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
+  },
+  TRUSTCHAIN_API_STAGING: {
+    def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "Trustchain API Staging",
+  },
+  TRUSTCHAIN_API_PROD: {
+    def: "https://trustchain.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Trustchain API Prod",
   },
   PLATFORM_DEBUG: {
     def: false,
@@ -760,10 +813,10 @@ const envDefinitions = {
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
-  CURRENCY_CONFIG_BASE_URL: {
-    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
+  CAL_SERVICE_URL: {
+    def: "https://crypto-assets-service.api.ledger.com",
     parser: stringParser,
-    desc: "Currency config firebase url",
+    desc: "Cryptoassets list service url",
   },
   FEATURE_FLAGS: {
     def: "{}",
@@ -819,6 +872,11 @@ const envDefinitions = {
     def: 20,
     parser: intParser,
     desc: "Configure the low battery percentage threshold",
+  },
+  LOG_DRAWERS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable logs for drawers",
   },
 };
 

@@ -1,9 +1,9 @@
 import React, { useMemo, memo, useCallback } from "react";
-import { camelCase } from "lodash";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
+import { isAppAssociatedCurrencySupported } from "@ledgerhq/live-common/apps/filtering";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
@@ -16,7 +16,8 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import ToolTip from "~/renderer/components/Tooltip";
 
 const AppRowContainer = styled.div`
   display: flex;
@@ -27,16 +28,40 @@ const AppRowContainer = styled.div`
   font-size: 12px;
 `;
 
-const AppName = styled.div`
+const AppTitleAndSubtitleContainer = styled.div`
   flex: 1;
   flex-direction: column;
-  padding-left: 15px;
+  padding: 0px 15px;
   max-height: 40px;
   min-width: 160px;
   & > * {
     display: block;
   }
 `;
+
+const AppTitleText = styled(Text).attrs({
+  ff: "Inter|Bold",
+  fontSize: 3,
+  color: "palette.text.shade100",
+})`
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const AppSubtitleText = styled(Text).attrs({
+  ff: "Inter|Regular",
+  fontSize: 3,
+  color: "palette.text.shade60",
+})`
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const appInfoSeparatorString = " • ";
 
 type Props = {
   optimisticState: State;
@@ -67,7 +92,7 @@ const Item = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, type, currencyId } = app;
+  const { name, authorName } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
   const currency = useMemo(
@@ -84,13 +109,8 @@ const Item = ({
     [app.name, state.apps],
   );
 
-  // FIXME No explicit mapping between Currency.id and FeatureId
-  const flag = useFeature(camelCase(`currency_${currencyId}`) as FeatureId);
-
-  // when the flag doesn't exist it's equivalent to being enabled
-  const currencyFlagEnabled = !flag || flag.enabled;
-  const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
-  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
+  const { getFeature, isFeature } = useFeatureFlags();
+  const isLiveSupported = isAppAssociatedCurrencySupported({ app, isFeature, getFeature });
 
   const bytes = useMemo(
     () =>
@@ -101,32 +121,50 @@ const Item = ({
     [app.bytes, availableApp?.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
   );
 
+  const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") || {};
+
+  const appTitle = `${app.displayName}${currency ? ` (${currency.ticker})` : ""}`;
+
+  const appSubtitle = (
+    <>
+      <Trans
+        i18nKey="manager.applist.item.version"
+        values={{
+          version: onlyUpdate && newVersion && newVersion !== version ? newVersion : version,
+        }}
+      />
+      {appInfoSeparatorString}
+      {authorName && displayAppDeveloperName ? (
+        <>
+          {authorName}
+          {appInfoSeparatorString}
+        </>
+      ) : null}
+      <ByteSize value={bytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
+    </>
+  );
+
   return (
     <AppRowContainer id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
         <AppIcon app={app} />
-        <AppName>
-          <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>{`${app.displayName}${
-            currency ? ` (${currency.ticker})` : ""
-          }`}</Text>
-          <Text ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-            <Trans
-              i18nKey="manager.applist.item.version"
-              values={{
-                version: onlyUpdate && newVersion && newVersion !== version ? newVersion : version,
-              }}
-            />{" "}
-            •{" "}
-            <ByteSize
-              value={bytes}
-              deviceModel={deviceModel}
-              firmwareVersion={deviceInfo.version}
-            />
-          </Text>
-        </AppName>
+        <ToolTip
+          content={
+            <>
+              {appTitle}
+              {appInfoSeparatorString}
+              {appSubtitle}
+            </>
+          }
+        >
+          <AppTitleAndSubtitleContainer>
+            <AppTitleText>{appTitle}</AppTitleText>
+            <AppSubtitleText>{appSubtitle}</AppSubtitleText>
+          </AppTitleAndSubtitleContainer>
+        </ToolTip>
       </Box>
       <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
-        {isLiveSupported && currencyFlagEnabled ? (
+        {isLiveSupported ? (
           <>
             <Box>
               <IconCheckFull size={16} />
@@ -161,7 +199,6 @@ const Item = ({
         setAppUninstallDep={setAppUninstallDep}
         isLiveSupported={isLiveSupported}
         addAccount={onAddAccount}
-        featureFlagActivated={currencyFlagEnabled}
       />
     </AppRowContainer>
   );

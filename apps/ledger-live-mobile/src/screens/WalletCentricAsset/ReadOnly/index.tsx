@@ -4,7 +4,6 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
@@ -27,7 +26,6 @@ import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/Acc
 import { ScreenName } from "~/const";
 import AssetMarketSection from "../AssetMarketSection";
 import AssetGraph from "../AssetGraph";
-import { ReferralProgram } from "../referralProgram";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
@@ -41,7 +39,6 @@ const currencyBalanceBigNumber = BigNumber(0);
 const accounts: AccountLike[] = [];
 
 const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
-  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
@@ -70,11 +67,6 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty
         />
       </Flex>,
-      featureReferralProgramMobile?.enabled &&
-      featureReferralProgramMobile?.params?.path &&
-      currency.ticker === "BTC" ? (
-        <ReferralProgram key="ReferralProgram" />
-      ) : null,
       <SectionContainer px={6} isFirst key="EmptyAccountCard">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions currency={currency} />
@@ -107,16 +99,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         )}
       </SectionContainer>,
     ],
-    [
-      onAssetCardLayout,
-      currentPositionY,
-      graphCardEndPosition,
-      currency,
-      t,
-      hasOrderedNano,
-      featureReferralProgramMobile?.enabled,
-      featureReferralProgramMobile?.params?.path,
-    ],
+    [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano],
   );
 
   return (

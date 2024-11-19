@@ -52,6 +52,7 @@ export const ReceiveActionDefault = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     iconComponent={<IconReceive size={14} />}
     labelComponent={<Trans i18nKey="receive.title" />}
+    accountActionsTestId="receive-account-action-button"
   />
 );
 export const SwapActionDefault = ({ onClick }: { onClick: () => void }) => {

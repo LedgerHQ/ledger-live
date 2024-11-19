@@ -136,12 +136,13 @@ const InstallSetOfApps = ({
           const state = !listedApps
             ? ItemState.Idle
             : currentAppOp?.name === appName
-            ? ItemState.Active
-            : skipped?.reason === SkipReason.NoSuchAppOnProvider
-            ? ItemState.Skipped
-            : !installQueue?.includes(appName) || skipped?.reason === SkipReason.AppAlreadyInstalled
-            ? ItemState.Installed
-            : ItemState.Idle;
+              ? ItemState.Active
+              : skipped?.reason === SkipReason.NoSuchAppOnProvider
+                ? ItemState.Skipped
+                : !installQueue?.includes(appName) ||
+                    skipped?.reason === SkipReason.AppAlreadyInstalled
+                  ? ItemState.Installed
+                  : ItemState.Idle;
 
           return (
             <>
@@ -180,8 +181,6 @@ const InstallSetOfApps = ({
       <TrackScreen category="Restore Applications Start" />
       <Restore
         deviceName={productName}
-        deviceModelId={selectedDevice.modelId}
-        lastSeenDeviceModelId={lastSeenDeviceModelId}
         onConfirm={() => {
           track("button_clicked", { button: "Restore applications" });
           setUserConfirmed(true);

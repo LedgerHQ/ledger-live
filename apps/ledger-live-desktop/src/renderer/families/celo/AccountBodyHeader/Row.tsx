@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -23,6 +22,8 @@ import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
 import { ModalActions } from "../modals";
 import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const voteActions = (vote: CeloVote): Array<{ key: ModalActions; label: React.ReactNode }> => {
   const actions: Array<{ key: ModalActions; label: React.ReactNode }> = [];
   if (vote.activatable)
@@ -52,6 +53,9 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
   );
   const onExternalLinkClick = () => onExternalLink(vote);
   const actions = voteActions(vote);
+
+  const unit = useAccountUnit(account);
+
   const { validatorGroups } = useCeloPreloadData();
   const validatorGroup = useMemo(
     () =>
@@ -61,7 +65,6 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
   );
   const status = voteStatus(vote);
   const formatAmount = (amount: number) => {
-    const unit = getAccountUnit(account);
     return formatCurrencyUnit(unit, new BigNumber(amount), {
       disableRounding: false,
       alwaysShowSign: false,
@@ -108,7 +111,9 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
           <Trans i18nKey={`celo.revoke.steps.vote.${status}`} />
         </Box>
       </S.Column>
-      <S.Column>{formatAmount(vote.amount.toNumber() ?? 0)}</S.Column>
+      <S.Column>
+        <Discreet>{formatAmount(vote.amount.toNumber() ?? 0)}</Discreet>
+      </S.Column>
       <S.Column>
         {actions.length > 0 && <ManageDropDown actions={actions} onSelect={onSelect} />}
         {actions.length === 0 && (

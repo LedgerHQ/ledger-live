@@ -1,19 +1,28 @@
-import { getAccountBannerState } from "./banner";
-import * as preloadedData from "./preloadedData";
-import * as logic from "./logic";
-import type { CosmosAccount, CosmosValidatorItem } from "./types";
-import data from "./preloadedData.mock";
-import cryptoFactory from "./chain/chain";
-import defaultConfig from "../../config/defaultConfig";
-import { BigNumber } from "bignumber.js";
+/* eslint-disable @typescript-eslint/no-var-requires */
 
-jest.mock("./js-prepareTransaction", () => ({
+import { getAccountBannerState } from "./banner";
+import * as preloadedData from "@ledgerhq/coin-cosmos/preloadedData";
+import type { CosmosAccount, CosmosValidatorItem } from "./types";
+import data from "@ledgerhq/coin-cosmos/preloadedData.mock";
+import { BigNumber } from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "../../config/sharedConfig";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+
+jest.mock("@ledgerhq/coin-cosmos/prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
-jest.mock("./chain/chain");
+jest.mock("@ledgerhq/coin-cosmos/chain/chain");
 
-const LEDGER_VALIDATOR_ADDRESS = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+jest.mock("@ledgerhq/coin-cosmos/logic", () => ({
+  ...jest.requireActual("@ledgerhq/coin-cosmos/logic"),
+  canDelegate: jest.fn(),
+  canRedelegate: jest.fn(),
+}));
+
+LiveConfig.setConfig(liveConfig);
+const LEDGER_VALIDATOR_ADDRESS = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   x => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS,
 );
@@ -27,15 +36,12 @@ const cheapValidator: CosmosValidatorItem | undefined = data.validators.find(
 const account: CosmosAccount = {
   type: "Account",
   id: "js:2:cosmos:cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u:",
-  starred: false,
   used: false,
   seedIdentifier: "02d4c121ce2bb160ebf39aa0be0050b4d553e18872985ac3a4e21904fd1442defe",
   derivationMode: "",
   index: 1,
   freshAddress: "cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u",
   freshAddressPath: "44'/118'/1'/0/0",
-  name: "Cosmos 2 - Nano X Static Account",
-  freshAddresses: [],
   blockHeight: 5417472,
   creationDate: new Date("2022-08-02T16:09:08.906Z"),
   balance: new BigNumber("200250"),
@@ -43,7 +49,6 @@ const account: CosmosAccount = {
   operations: [],
   operationsCount: 1,
   pendingOperations: [],
-  unit: { name: "Atom", code: "ATOM", magnitude: 6 },
   currency: {
     type: "CryptoCurrency",
     id: "cosmos",
@@ -112,8 +117,8 @@ describe("cosmos/banner", () => {
     });
     it("should not display the banner", async () => {
       jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
-      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
-      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       const result = getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: false,
@@ -124,8 +129,8 @@ describe("cosmos/banner", () => {
     });
     it("should return display delegate mode", async () => {
       jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
-      jest.spyOn(logic, "canDelegate").mockReturnValue(true);
-      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(true);
+      require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       const result = getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: true,
@@ -136,8 +141,8 @@ describe("cosmos/banner", () => {
     });
     it("should return display redelegate mode", async () => {
       jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
-      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
-      jest.spyOn(logic, "canRedelegate").mockReturnValue(true);
+      require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(true);
       account.cosmosResources.redelegations.push({
         validatorSrcAddress: "xxxx",
         validatorDstAddress: expensiveValidator?.validatorAddress as string,
@@ -158,8 +163,8 @@ describe("cosmos/banner", () => {
     });
     it("should return not display redelegate mode", async () => {
       jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
-      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
-      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
+      require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       account.cosmosResources.redelegations.push({
         validatorSrcAddress: "xxxx",
         validatorDstAddress: expensiveValidator?.validatorAddress as string,

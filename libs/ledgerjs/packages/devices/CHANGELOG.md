@@ -1,5 +1,139 @@
 # @ledgerhq/devices
 
+## 8.4.4
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1
+
+## 8.4.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1-next.0
+
+## 8.4.3
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0
+
+## 8.4.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-next.0
+
+## 8.4.2
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Rename Ledger Europa
+
+## 8.4.2-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Rename Ledger Europa
+
+## 8.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0
+
+## 8.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0-next.0
+
+## 8.4.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#7017](https://github.com/LedgerHQ/ledger-live/pull/7017) [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add type narrowing helper isDeviceModelId
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/errors@6.17.0
+
+## 8.4.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#7017](https://github.com/LedgerHQ/ledger-live/pull/7017) [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add type narrowing helper isDeviceModelId
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/errors@6.17.0-next.0
+
+## 8.3.0
+
+### Minor Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - add device model europa
+
+### Patch Changes
+
+- [#6399](https://github.com/LedgerHQ/ledger-live/pull/6399) [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Europa USB and Bluetooth UUIDs
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.4
+
+## 8.3.0-next.0
+
+### Minor Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - add device model europa
+
+### Patch Changes
+
+- [#6399](https://github.com/LedgerHQ/ledger-live/pull/6399) [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Europa USB and Bluetooth UUIDs
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.4-next.0
+
+## 8.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3
+
+## 8.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3-next.0
+
+## 8.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a)]:
+  - @ledgerhq/errors@6.16.2
+
+## 8.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.2-next.0
+
 ## 8.2.0
 
 ### Minor Changes

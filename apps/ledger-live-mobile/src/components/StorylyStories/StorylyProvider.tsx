@@ -1,8 +1,10 @@
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
+import { Linking } from "react-native";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import { Storyly } from "storyly-react-native";
+import { useSettings } from "~/hooks";
 
 interface StorylyProviderProps {
   children: ReactNode;
@@ -26,13 +28,12 @@ const getTokenForInstanceId = (stories: StoriesType, targetInstanceId: string): 
 const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   const [url, setUrl] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const { language } = useSettings();
 
   const storylyRef = useRef<Storyly>(null);
 
-  const {
-    // @ts-expect-error TYPINGS
-    params: { stories },
-  } = useFeature("storyly") || {};
+  const { params } = useFeature("storyly") || {};
+  const stories = params?.stories;
 
   useEffect(() => {
     if (url) {
@@ -56,13 +57,22 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   };
 
   const clear = () => {
-    storylyRef?.current?.close();
+    storylyRef?.current?.closeStory();
     setUrl(null);
     setToken(null);
   };
 
   const handleEvent = (e: Storyly.StoryEvent) => {
-    if (e.event === "StoryGroupClosed" || e.event === "StoryGroupCompleted") clear();
+    if (
+      (e.event === "StoryPreviousClicked" && e.story?.index === 0) ||
+      ["StoryGroupClosed", "StoryGroupCompleted"].includes(e.event)
+    ) {
+      clear();
+    }
+    if (e.event === "StoryCTAClicked" && e?.story?.actionUrl) {
+      Linking.openURL(e.story.actionUrl);
+      clear();
+    }
   };
 
   return (
@@ -76,6 +86,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
             style={{ flex: 1 }} // necessary for touches to work
             onLoad={handleLoad}
             onEvent={handleEvent}
+            storylyLocale={language}
           />
         </Flex>
       ) : null}

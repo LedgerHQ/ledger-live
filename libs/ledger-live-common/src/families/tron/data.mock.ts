@@ -1,5 +1,5 @@
 import { fromAccountRaw } from "../../account/serialization";
-import { TronAccount } from "./types";
+import { TronAccount } from "@ledgerhq/coin-tron/types";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
@@ -7,18 +7,11 @@ export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const mockAccount = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -236,7 +229,6 @@ export const mockAccount = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -282,18 +274,11 @@ export const mockAccount = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoReward = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -466,7 +451,6 @@ export const mockAccountNoReward = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -513,18 +497,11 @@ export const mockAccountNoReward = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoVote = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -645,7 +622,6 @@ export const mockAccountNoVote = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -701,7 +677,6 @@ export const mockAccountV2 = fromAccountRaw({
   derivationMode: "",
   index: 0,
   freshAddress: "TRON_ID",
-  freshAddresses: [],
   freshAddressPath: "44'/195'/0'/0/0",
   subAccounts: [],
   name: "Tron 2",
@@ -728,7 +703,6 @@ export const mockAccountV2 = fromAccountRaw({
     cacheTransactionInfoById: {},
   },
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2023-12-21T09:22:46.747Z",
   blockHeight: 57506253,
   operationsCount: 96,

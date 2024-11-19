@@ -1,13 +1,14 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import getTransactionStatus from "../js-getTransactionStatus";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import signOperation from "../js-signOperation";
-import broadcast from "../js-broadcast";
-import { scanAccounts, sync } from "../js-synchronisation";
-import receive from "../js-receive";
-import { createTransaction, prepareTransaction } from "../js-transaction";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { Transaction, TransactionStatus } from "../types";
+import { getTransactionStatus } from "../getTransactionStatus";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import { scanAccounts, sync } from "../synchronisation";
+import { signOperation } from "../signOperation";
+import { broadcast } from "../broadcast";
+import { receive } from "../receive";
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
@@ -15,7 +16,7 @@ const currencyBridge: CurrencyBridge = {
   scanAccounts,
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction: defaultUpdateTransaction,

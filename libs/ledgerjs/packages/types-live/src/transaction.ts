@@ -82,7 +82,7 @@ export type TransactionCommon = {
   recipientDomain?: DomainServiceResolution;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
-  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
+  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null | undefined;
 };
 
 /**
@@ -94,7 +94,7 @@ export type TransactionCommonRaw = {
   recipientDomain?: DomainServiceResolution;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
-  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
+  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null | undefined;
 };
 
 /**
@@ -133,7 +133,7 @@ export type TransactionStatusCommon = {
   // total amount that the sender will spend (in account currency)
   totalSpent: BigNumber;
   // should the recipient be non editable
-  recipientIsReadOnly?: boolean;
+  recipientIsReadOnly?: boolean | undefined;
 };
 /**
  *
@@ -145,5 +145,5 @@ export type TransactionStatusCommonRaw = {
   amount: string;
   totalSpent: string;
   useAllAmount?: boolean;
-  recipientIsReadOnly?: boolean;
+  recipientIsReadOnly?: boolean | undefined;
 };

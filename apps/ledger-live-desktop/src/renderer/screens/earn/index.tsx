@@ -9,9 +9,9 @@ import {
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -28,7 +28,7 @@ const Earn = () => {
   useDeepLinkListener();
 
   return (
-    <Card grow style={{ overflow: "hidden" }} data-test-id="earn-app-container">
+    <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{
@@ -46,6 +46,7 @@ const Earn = () => {
             locale: locale,
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
+            OS: "web",
           }}
         />
       ) : null}

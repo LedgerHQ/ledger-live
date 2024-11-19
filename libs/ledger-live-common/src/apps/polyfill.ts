@@ -1,8 +1,7 @@
 // polyfill the unfinished support of apps logic
-import uniq from "lodash/uniq";
 import semver from "semver";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
+import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
 const reverseDep = {};
@@ -18,7 +17,7 @@ export const whitelistDependencies = [
   "Avalanche Test",
 ];
 
-export function declareDep(name: string, dep: string): void {
+function declareDep(name: string, dep: string): void {
   if (whitelistDependencies.includes(name)) {
     return;
   }
@@ -40,32 +39,41 @@ export function declareDep(name: string, dep: string): void {
   ["APWine", "Ethereum"],
   ["ArtBlocks", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
+  ["Astar EVM", "Ethereum"],
+  ["Binance Smart Chain", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Cometh", "Ethereum"],
   ["Compound", "Ethereum"],
   ["DODO", "Ethereum"],
   ["EnergyWebChain", "Ethereum"],
   ["Euler", "Ethereum"],
+  ["Flare", "Ethereum"],
   ["Harvest", "Ethereum"],
   ["Kiln", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["Lido", "Ethereum"],
   ["Morpho", "Ethereum"],
+  ["Moonbeam", "Ethereum"],
+  ["Moonriver", "Ethereum"],
   ["Nested", "Ethereum"],
+  ["Oasys", "Ethereum"],
   ["OlympusDAO", "Ethereum"],
   ["Opensea", "Ethereum"],
   ["Paraswap", "Ethereum"],
   ["POAP", "Ethereum"],
+  ["Polygon", "Ethereum"],
   ["Rarible", "Ethereum"],
   ["Ricochet", "Ethereum"],
   ["RocketPool", "Ethereum"],
   ["RSK Test", "Ethereum"],
   ["RSK", "Ethereum"],
+  ["Shiden EVM", "Ethereum"],
   ["Spool", "Ethereum"],
   ["Staderlabs", "Ethereum"],
   ["StakeDAO", "Ethereum"],
   ["ThunderCore", "Ethereum"],
   ["Volta", "Ethereum"],
+  ["XDC Network", "Ethereum"],
   ["Yearn", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 
@@ -94,27 +102,14 @@ export const getDependencies = (appName: string, appVersion?: string): string[] 
 export const getDependents = (appName: string): string[] => reverseDep[appName] || [];
 
 function matchAppNameAndCryptoCurrency(appName: string, crypto: CryptoCurrency) {
-  return (
-    appName.toLowerCase() === crypto.managerAppName.toLowerCase() &&
-    (crypto.managerAppName !== "Ethereum" ||
-      // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-      appName === "Ethereum")
-  );
-}
-
-export const polyfillApplication = (app: Application): Application => {
-  const crypto = listCryptoCurrencies(true, true).find(crypto =>
-    matchAppNameAndCryptoCurrency(app.name, crypto),
-  );
-
-  if (crypto && !app.currencyId) {
-    return { ...app, currencyId: crypto.id };
+  if (appName === "Ethereum") {
+    return crypto.id === "ethereum";
   }
 
-  return app;
-};
+  return appName.toLowerCase() === crypto.managerAppName.toLowerCase();
+}
 
-export const getCurrencyIdFromAppName = (
+const getCurrencyIdFromAppName = (
   appName: string,
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
   const crypto =
@@ -154,8 +149,8 @@ export const mapApplicationV2ToApp = ({
     name === "Exchange"
       ? AppType.swap
       : Object.values(AppType).includes(type)
-      ? type
-      : AppType.currency,
+        ? type
+        : AppType.currency,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
 });
@@ -179,13 +174,4 @@ export const calculateDependencies = (): void => {
       declareDep(currency.managerAppName + " Test", family.managerAppName);
     }
   });
-};
-
-export const polyfillApp = (app: App): App => {
-  const dependencies = whitelistDependencies.includes(app.name) ? [] : app.dependencies;
-
-  return {
-    ...app,
-    dependencies: uniq(dependencies.concat(getDependencies(app.name, app.version))),
-  };
 };

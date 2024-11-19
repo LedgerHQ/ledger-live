@@ -1,16 +1,12 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
-import { formatDistanceToNow } from "date-fns";
+import { intervalToDuration } from "date-fns";
+
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
-import {
-  ServerError,
-  createCurrencyNotFound,
-  Transport,
-  Permission,
-} from "@ledgerhq/wallet-api-core";
+import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { StateDB } from "../hooks/useDBRaw";
 import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
@@ -22,10 +18,15 @@ import {
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
-import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
+import {
+  listCurrencies,
+  findCryptoCurrencyById,
+  findTokenById,
+  getCryptoCurrencyById,
+} from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
-  bitcoinFamillyAccountGetXPubLogic,
+  bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
   startExchangeLogic,
   completeExchangeLogic,
@@ -34,6 +35,8 @@ import {
   receiveOnAccountLogic,
   signMessageLogic,
   signTransactionLogic,
+  bitcoinFamilyAccountGetAddressLogic,
+  bitcoinFamilyAccountGetPublicKeyLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -41,24 +44,33 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
+import {
+  DISCOVER_INITIAL_CATEGORY,
+  INITIAL_PLATFORM_STATE,
+  MAX_RECENTLY_USED_LENGTH,
+} from "./constants";
 import { DiscoverDB } from "./types";
+import { LiveAppManifest } from "../platform/types";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
-export function safeGetRefValue<T>(ref: RefObject<T>): T {
+export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
     throw new Error("Ref objects doesn't have a current value");
   }
   return ref.current;
 }
 
-export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[] {
+export function useWalletAPIAccounts(
+  walletState: WalletState,
+  accounts: AccountLike[],
+): WalletAPIAccount[] {
   return useMemo(() => {
     return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToWalletAPIAccount(account, parentAccount);
+      return accountToWalletAPIAccount(walletState, account, parentAccount);
     });
-  }, [accounts]);
+  }, [walletState, accounts]);
 }
 
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
@@ -70,6 +82,16 @@ export function useWalletAPICurrencies(): WalletAPICurrency[] {
       return filtered;
     }, []);
   }, []);
+}
+
+export function useManifestCurrencies(manifest: AppManifest) {
+  return useMemo(() => {
+    return (
+      manifest.dapp?.networks.map(network => {
+        return getCryptoCurrencyById(network.currency);
+      }) ?? []
+    );
+  }, [manifest.dapp?.networks]);
 }
 
 export function useGetAccountIds(
@@ -105,7 +127,7 @@ export function useGetAccountIds(
 
 export interface UiHook {
   "account.request": (params: {
-    accounts$: Observable<WalletAPIAccount[]>;
+    accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
@@ -167,7 +189,7 @@ export interface UiHook {
   }) => void;
 }
 
-function usePermission(manifest: AppManifest): Permission {
+export function usePermission(manifest: AppManifest): Permission {
   return useMemo(
     () => ({
       currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
@@ -258,9 +280,8 @@ function useDeviceTransport({ manifest, tracking }) {
   return useMemo(() => ({ ref, subscribe, close, exchange }), [close, exchange, subscribe]);
 }
 
-const allCurrenciesAndTokens = listCurrencies(true);
-
 export type useWalletAPIServerOptions = {
+  walletState: WalletState;
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: TrackingAPI;
@@ -274,6 +295,7 @@ export type useWalletAPIServerOptions = {
 };
 
 export function useWalletAPIServer({
+  walletState,
   manifest,
   accounts,
   tracking,
@@ -305,7 +327,7 @@ export function useWalletAPIServer({
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  const walletAPIAccounts = useWalletAPIAccounts(accounts);
+  const walletAPIAccounts = useWalletAPIAccounts(walletState, accounts);
   const walletAPICurrencies = useWalletAPICurrencies();
 
   const { server, onMessage } = useWalletAPIServerRaw({
@@ -330,72 +352,74 @@ export function useWalletAPIServer({
 
       return new Promise((resolve, reject) => {
         // handle no curencies selected case
-        const currencyIds = currencies.map(({ id }) => id);
-
-        let currencyList: CryptoOrTokenCurrency[] = [];
-        // if single currency available redirect to select account directly
-        if (currencyIds.length === 1) {
-          const currency = findCryptoCurrencyById(currencyIds[0]) || findTokenById(currencyIds[0]);
+        const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
+          const currency = findCryptoCurrencyById(id) || findTokenById(id);
           if (currency) {
-            currencyList = [currency];
+            prev.push(currency);
           }
+          return prev;
+        }, []);
 
-          if (!currencyList[0]) {
-            tracking.requestAccountFail(manifest);
-            // @TODO replace with correct error
-            reject(new ServerError(createCurrencyNotFound(currencyIds[0])));
-          }
-        } else {
-          currencyList = allCurrenciesAndTokens.filter(({ id }) => currencyIds.includes(id));
-        }
-
+        let done = false;
         uiAccountRequest({
           accounts$,
           currencies: currencyList,
           onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+            if (done) return;
+            done = true;
             tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(account, parentAccount));
+            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
           },
           onCancel: () => {
+            if (done) return;
+            done = true;
             tracking.requestAccountFail(manifest);
             reject(new Error("Canceled by user"));
           },
         });
       });
     });
-  }, [manifest, server, tracking, uiAccountRequest]);
+  }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;
 
     server.setHandler("account.receive", ({ account, tokenCurrency }) =>
       receiveOnAccountLogic(
+        walletState,
         { manifest, accounts, tracking },
         account.id,
         (account, parentAccount, accountAddress) =>
-          new Promise((resolve, reject) =>
-            uiAccountReceive({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiAccountReceive({
               account,
               parentAccount,
               accountAddress,
               onSuccess: accountAddress => {
+                if (done) return;
+                done = true;
                 tracking.receiveSuccess(manifest);
                 resolve(accountAddress);
               },
               onCancel: () => {
+                if (done) return;
+                done = true;
                 tracking.receiveFail(manifest);
                 reject(new Error("User cancelled"));
               },
               onError: error => {
+                if (done) return;
+                done = true;
                 tracking.receiveFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
         tokenCurrency,
       ),
     );
-  }, [accounts, manifest, server, tracking, uiAccountReceive]);
+  }, [walletState, accounts, manifest, server, tracking, uiAccountReceive]);
 
   useEffect(() => {
     if (!uiMessageSign) return;
@@ -407,18 +431,25 @@ export function useWalletAPIServer({
         message.toString("hex"),
         (account: AccountLike, message: AnyMessage) =>
           new Promise((resolve, reject) => {
+            let done = false;
             return uiMessageSign({
               account,
               message,
               onSuccess: signature => {
+                if (done) return;
+                done = true;
                 tracking.signMessageSuccess(manifest);
                 resolve(Buffer.from(signature.replace("0x", ""), "hex"));
               },
               onCancel: () => {
+                if (done) return;
+                done = true;
                 tracking.signMessageFail(manifest);
                 reject(new UserRefusedOnDevice());
               },
               onError: error => {
+                if (done) return;
+                done = true;
                 tracking.signMessageFail(manifest);
                 reject(error);
               },
@@ -451,22 +482,27 @@ export function useWalletAPIServer({
           account.id,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSign({
                 account,
                 parentAccount,
                 signFlowInfos,
                 options,
                 onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionSuccess(manifest);
                   resolve(signedOperation);
                 },
                 onError: error => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionFail(manifest);
                   reject(error);
                 },
-              }),
-            ),
+              });
+            }),
           tokenCurrency,
         );
 
@@ -486,22 +522,27 @@ export function useWalletAPIServer({
           account.id,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSign({
                 account,
                 parentAccount,
                 signFlowInfos,
                 options,
                 onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionSuccess(manifest);
                   resolve(signedOperation);
                 },
                 onError: error => {
+                  if (done) return;
+                  done = true;
                   tracking.signTransactionFail(manifest);
                   reject(error);
                 },
-              }),
-            ),
+              });
+            }),
           tokenCurrency,
         );
 
@@ -570,9 +611,12 @@ export function useWalletAPIServer({
 
           tracking.deviceTransportRequested(manifest);
 
+          let done = false;
           return uiDeviceTransport({
             appName,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
+              if (done) return;
+              done = true;
               tracking.deviceTransportSuccess(manifest);
 
               if (!deviceParam) {
@@ -596,6 +640,8 @@ export function useWalletAPIServer({
               resolve("1");
             },
             onCancel: () => {
+              if (done) return;
+              done = true;
               tracking.deviceTransportFail(manifest);
               reject(new Error("User cancelled"));
             },
@@ -617,9 +663,12 @@ export function useWalletAPIServer({
 
           tracking.deviceSelectRequested(manifest);
 
+          let done = false;
           return uiDeviceSelect({
             appName,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
+              if (done) return;
+              done = true;
               tracking.deviceSelectSuccess(manifest);
 
               if (!deviceParam) {
@@ -641,6 +690,8 @@ export function useWalletAPIServer({
               resolve(deviceParam.deviceId);
             },
             onCancel: () => {
+              if (done) return;
+              done = true;
               tracking.deviceSelectFail(manifest);
               reject(new Error("User cancelled"));
             },
@@ -691,8 +742,28 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
+    server.setHandler("bitcoin.getAddress", ({ accountId, derivationPath }) => {
+      return bitcoinFamilyAccountGetAddressLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("bitcoin.getPublicKey", ({ accountId, derivationPath }) => {
+      return bitcoinFamilyAccountGetPublicKeyLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {
-      return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
+      return bitcoinFamilyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
 
@@ -706,19 +777,24 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         exchangeType,
         exchangeType =>
-          new Promise((resolve, reject) =>
-            uiExchangeStart({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiExchangeStart({
               exchangeType,
               onSuccess: (nonce: string) => {
+                if (done) return;
+                done = true;
                 tracking.startExchangeSuccess(manifest);
                 resolve(nonce);
               },
               onCancel: error => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
       );
     });
   }, [uiExchangeStart, accounts, manifest, server, tracking]);
@@ -748,19 +824,24 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         request,
         request =>
-          new Promise((resolve, reject) =>
-            uiExchangeComplete({
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiExchangeComplete({
               exchangeParams: request,
               onSuccess: (hash: string) => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeSuccess(manifest);
                 resolve(hash);
               },
               onCancel: error => {
+                if (done) return;
+                done = true;
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            }),
-          ),
+            });
+          }),
       );
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
@@ -792,8 +873,11 @@ export interface Categories {
   reset: () => void;
 }
 
-export function useCategories(manifests): Categories {
-  const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
+/** e.g. "all", "restaking", "services", etc */
+export type CategoryId = Categories["selected"];
+
+export function useCategories(manifests, initialCategory?: CategoryId | null): Categories {
+  const [selected, setSelected] = useState(initialCategory || DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
@@ -830,6 +914,66 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
+export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
+
+export interface LocalLiveApp {
+  state: LiveAppManifest[];
+  addLocalManifest: (LiveAppManifest) => void;
+  removeLocalManifestById: (string) => void;
+  getLocalLiveAppManifestById: (string) => LiveAppManifest | undefined;
+}
+
+export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): LocalLiveApp {
+  useEffect(() => {
+    if (LocalLiveAppDb === undefined) {
+      setState(discoverDB => {
+        return { ...discoverDB, localLiveApp: INITIAL_PLATFORM_STATE.localLiveApp };
+      });
+    }
+  }, [LocalLiveAppDb, setState]);
+
+  const addLocalManifest = useCallback(
+    (newLocalManifest: LiveAppManifest) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
+          manifest => manifest.id !== newLocalManifest.id,
+        );
+
+        newLocalLiveAppList.push(newLocalManifest);
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const removeLocalManifestById = useCallback(
+    (manifestId: string) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp.filter(
+          manifest => manifest.id !== manifestId,
+        );
+
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const getLocalLiveAppManifestById = useCallback(
+    (manifestId: string): LiveAppManifest | undefined => {
+      return LocalLiveAppDb.find(manifest => manifest.id === manifestId);
+    },
+    [LocalLiveAppDb],
+  );
+
+  return {
+    state: LocalLiveAppDb,
+    addLocalManifest,
+    removeLocalManifestById,
+    getLocalLiveAppManifestById,
+  };
+}
 
 export interface RecentlyUsed {
   data: RecentlyUsedManifest[];
@@ -837,29 +981,55 @@ export interface RecentlyUsed {
   clear: () => void;
 }
 
-export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
+export type RecentlyUsedManifest = AppManifest & { usedAt: UsedAt };
+export type UsedAt = {
+  unit: Intl.RelativeTimeFormatUnit;
+  diff: number;
+};
 
+function calculateTimeDiff(usedAt: string) {
+  const start = new Date();
+  const end = new Date(usedAt);
+  const interval = intervalToDuration({ start, end });
+  const units: Intl.RelativeTimeFormatUnit[] = [
+    "years",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+  ];
+  let timeDiff = { unit: units[-1], diff: 0 };
+
+  for (const unit of units) {
+    if (interval[unit] > 0) {
+      timeDiff = { unit, diff: interval[unit] };
+      break;
+    }
+  }
+
+  return timeDiff;
+}
 export function useRecentlyUsed(
   manifests: AppManifest[],
-  [recentlyUsed, setState]: RecentlyUsedDB,
+  [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,
 ): RecentlyUsed {
   const data = useMemo(
     () =>
-      recentlyUsed
-        .map(r => {
-          const res = manifests.find(m => m.id === r.id);
-          const distance = formatDistanceToNow(new Date(r.usedAt));
+      recentlyUsedManifestsDb
+        .map(recentlyUsed => {
+          const res = manifests.find(manifest => manifest.id === recentlyUsed.id);
           return res
             ? {
                 ...res,
-                usedAt: distance[0].toUpperCase() + distance.slice(1) + " ago",
+                usedAt: calculateTimeDiff(recentlyUsed.usedAt),
               }
             : res;
         })
-        .filter(m => m !== undefined) as AppManifest[],
-    [recentlyUsed, manifests],
+        .filter(manifest => manifest !== undefined) as RecentlyUsedManifest[],
+    [recentlyUsedManifestsDb, manifests],
   );
-
   const append = useCallback(
     (manifest: AppManifest) => {
       setState(state => {

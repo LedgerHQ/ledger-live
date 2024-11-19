@@ -5,7 +5,6 @@ import {
   getFiatCurrencyByTicker,
   formatCurrencyUnit,
   parseCurrencyUnit,
-  chopCurrencyUnitDecimals,
   formatShort,
   decodeURIScheme,
   encodeURIScheme,
@@ -13,7 +12,11 @@ import {
 } from "../currencies";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 
-test("erc20 are all consistent with those on ledgerjs side", () => {
+/*
+  skipped because ledgerjs data is now lighter (from the POV of hw-app-eth)
+  (using cryptoassets-evm-signatures instead of cryptoassets)
+*/
+test.skip("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({
     withDelisted: true,
@@ -26,6 +29,9 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
     }
 
     if (token.tokenType === "erc20") {
+      if (token.parentCurrency.family === "filecoin") {
+        continue;
+      }
       const tokenData = byContractAddressAndChainId(
         token.contractAddress,
         token.parentCurrency.ethereumLikeInfo?.chainId || 0,
@@ -254,19 +260,6 @@ test("formatShort", () => {
   );
   expect(formatShort(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(123456))).toBe("1.2k");
   expect(formatShort(getCryptoCurrencyById("ethereum").units[0], new BigNumber(600000))).toBe("0");
-});
-test("chopCurrencyUnitDecimals", () => {
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1")).toBe("1");
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234")).toBe("1234");
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.56")).toBe(
-    "1234.56",
-  );
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678")).toBe(
-    "1234.56",
-  );
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678 EUR")).toBe(
-    "1234.56 EUR",
-  );
 });
 test("encodeURIScheme", () => {
   expect(

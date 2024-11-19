@@ -25,6 +25,8 @@ test("mock load with nothing to track", async () => {
   const state = await loadCountervalues(initialState, {
     trackingPairs: [],
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -48,6 +50,8 @@ test("mock load with btc-usd to track", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -97,6 +101,8 @@ test("mock load with eth-btc to track", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -117,6 +123,8 @@ test("mock load with btc-eth to track", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -137,6 +145,8 @@ test("DAI EUR latest price", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -157,6 +167,8 @@ test("calculate(now()) is calculate(null)", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -184,6 +196,8 @@ test("missing rate in mock", async () => {
       },
     ],
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   expect(
@@ -205,6 +219,8 @@ test("missing rate in mock is filled by autofillGaps", async () => {
       },
     ],
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   expect(state).toBeDefined();
   // shifting rates to the right. hole in data looks up in older datapoint

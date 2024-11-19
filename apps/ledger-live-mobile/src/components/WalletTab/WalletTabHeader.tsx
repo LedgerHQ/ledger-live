@@ -1,6 +1,5 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -15,7 +14,6 @@ function WalletTabHeader({
   hidePortfolio: boolean;
   animated?: boolean;
 }) {
-  const walletNftGalleryFeature = useFeature("walletNftGallery");
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
   const y = animated
     ? 0
@@ -49,12 +47,7 @@ function WalletTabHeader({
         ]}
         mode={"margin"}
       >
-        <Box
-          flex={1}
-          px={6}
-          pb={walletNftGalleryFeature?.enabled ? 0 : 6}
-          justifyContent={"flex-end"}
-        >
+        <Box flex={1} px={6} pb={0} justifyContent={"flex-end"}>
           <Header hidePortfolio={hidePortfolio} />
         </Box>
       </AnimatedFlex>

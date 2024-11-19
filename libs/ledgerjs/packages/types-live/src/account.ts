@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -31,34 +31,6 @@ export type TokenAccount = {
   token: TokenCurrency;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  creationDate: Date;
-  operationsCount: number;
-  operations: Operation[];
-  pendingOperations: Operation[];
-  starred: boolean;
-  // Cache of balance history that allows a performant portfolio calculation.
-  // currently there are no "raw" version of it because no need to at this stage.
-  // could be in future when pagination is needed.
-  balanceHistoryCache: BalanceHistoryCache;
-  // Swap operations linked to this account
-  swapHistory: SwapOperation[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
-};
-
-/** A child account belongs to an Account but has its own address */
-export type ChildAccount = {
-  type: "ChildAccount";
-  id: string;
-  name: string;
-  starred: boolean;
-  // id of the parent account this token account belongs to
-  parentId: string;
-  currency: CryptoCurrency;
-  address: string;
-  balance: BigNumber;
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -110,19 +82,10 @@ export type Account = {
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number;
   // next receive address. to be used to display to user.
-  // (deprecated - corresponds to freshAddresses[0].address)
   freshAddress: string;
   // The path linked to freshAddress. to be used to validate with the device if it corresponds to freshAddress.
   // example: 44'/0'/0'/0/0
-  // (deprecated - corresponds to freshAddresses[0].derivationPath)
   freshAddressPath: string;
-  // an array containing all fresh addresses and paths
-  // may be empty if no sync has occurred
-  freshAddresses: Address[];
-  // account name
-  name: string;
-  // starred
-  starred: boolean;
   // says if the account essentially "exists". an account has been used in the past, but for some reason the blockchain finds it empty (no ops, no balance,..)
   used: boolean;
   // account balance in satoshi
@@ -138,9 +101,7 @@ export type Account = {
   // currency of this account
   currency: CryptoCurrency;
   // Some blockchains may use a different currency than the main one to pay fees
-  feesCurrency?: CryptoCurrency | TokenCurrency;
-  // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
-  unit: Unit;
+  feesCurrency?: CryptoCurrency | TokenCurrency | undefined;
   // The total number of operations (operations[] can be partial)
   operationsCount: number;
   // lazy list of operations that exists on the blockchain.
@@ -154,9 +115,6 @@ export type Account = {
   pendingOperations: Operation[];
   // used to know when the last sync happened
   lastSyncDate: Date;
-  // A configuration for the endpoint to use. (usecase: Ripple node)
-  // FIXME drop and introduce a config{} object
-  endpointConfig?: string | null | undefined;
   // An account can have sub accounts.
   // A sub account can be either a token account or a child account in some blockchain.
   // They are attached to the parent account in the related blockchain.
@@ -169,7 +127,7 @@ export type Account = {
   // I'm just inside the Ethereum 1: { account: Ethereum 1, parentAccount: undefined }
   // "account" is the primary account that you use/select/view. It is a `AccountLike`.
   // "parentAccount", if available, is the contextual account. It is a `?Account`.
-  subAccounts?: SubAccount[];
+  subAccounts?: TokenAccount[];
   // Cache of balance history that allows a performant portfolio calculation.
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
@@ -178,21 +136,23 @@ export type Account = {
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
-  syncHash?: string;
+  syncHash?: string | undefined;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
   nfts?: ProtoNFT[];
 };
 
-/** super type that is either a token or a child account */
-export type SubAccount = TokenAccount | ChildAccount;
+/**
+ * deprecated use TokenAccount instead
+ */
+export type SubAccount = TokenAccount;
 
 /** One of the Account type */
-export type AccountLike = Account | SubAccount;
+export type AccountLike<A extends Account = Account> = A | TokenAccount;
 
 /**
  * An array of AccountLikes
  */
-export type AccountLikeArray = AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
+export type AccountLikeArray = AccountLike[] | TokenAccount[] | Account[];
 
 /** */
 export type TokenAccountRaw = {
@@ -209,28 +169,6 @@ export type TokenAccountRaw = {
   spendableBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
-};
-
-/** */
-export type ChildAccountRaw = {
-  type: "ChildAccountRaw";
-  id: string;
-  name: string;
-  starred?: boolean;
-  parentId: string;
-  currencyId: string;
-  address: string;
-  creationDate?: string;
-  operationsCount?: number;
-  operations: OperationRaw[];
-  pendingOperations: OperationRaw[];
-  balance: string;
-  balanceHistoryCache?: BalanceHistoryCache;
-  swapHistory?: SwapOperationRaw[];
 };
 
 /** */
@@ -242,8 +180,7 @@ export type AccountRaw = {
   index: number;
   freshAddress: string;
   freshAddressPath: string;
-  freshAddresses: Address[];
-  name: string;
+  name?: string;
   starred?: boolean;
   used?: boolean;
   balance: string;
@@ -257,21 +194,16 @@ export type AccountRaw = {
   feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
-  unitMagnitude: number;
   lastSyncDate: string;
-  endpointConfig?: string | null | undefined;
-  subAccounts?: SubAccountRaw[];
+  subAccounts?: TokenAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
-  syncHash?: string;
+  syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
 };
 
 /** */
-export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
-
-/** */
-export type AccountRawLike = AccountRaw | SubAccountRaw;
+export type AccountRawLike = AccountRaw | TokenAccountRaw;
 
 /** */
 export type AccountIdParams = {
@@ -280,4 +212,17 @@ export type AccountIdParams = {
   currencyId: string;
   xpubOrAddress: string;
   derivationMode: DerivationMode;
+};
+
+/**
+ * This represent the user's data part of an account which contains all user's custom information that aren't part of on-chain data
+ * The object is serializable.
+ */
+export type AccountUserData = {
+  // the Account#id
+  id: string;
+  // user's name for this account
+  name: string;
+  // user's starred account ids: it can be more than the account.id because token accounts can also be starred
+  starredIds: string[];
 };

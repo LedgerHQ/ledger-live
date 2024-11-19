@@ -1,19 +1,19 @@
 {
   "name": "@actions/generate-release-message",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "creates a changelog to be used during the creation of a Github Release",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup -d build main.ts",
+    "build": "tsup --target node20 -d build main.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },
   "devDependencies": {
-    "@actions/core": "^1.10.1",
-    "@actions/github": "^6.0.0",
-    "semver": "^7.3.7",
-    "tsup": "^7.0.0"
+    "@actions/core": "1.10.1",
+    "@actions/github": "6.0.0",
+    "semver": "7.5.4",
+    "tsup": "7.3.0"
   }
 }

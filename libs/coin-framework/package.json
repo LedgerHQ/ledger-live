@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.11.0",
+  "version": "0.18.5",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -20,69 +20,74 @@
   },
   "typesVersions": {
     "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
       "lib/*": [
         "lib/*"
       ],
       "lib-es/*": [
         "lib-es/*"
+      ],
+      "account": [
+        "lib/account/index"
+      ],
+      "currencies": [
+        "lib/currencies/index"
+      ],
+      "serialization": [
+        "lib/serialization/index"
+      ],
+      "*": [
+        "lib/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./account/*": {
-      "require": "./lib/account/*.js",
-      "default": "./lib-es/account/*.js"
+    "./account": {
+      "require": "./lib/account/index.js",
+      "default": "./lib-es/account/index.js"
     },
     "./batcher/*": {
       "require": "./lib/batcher/*.js",
       "default": "./lib-es/batcher/*.js"
     },
-    "./bot/*": {
-      "require": "./lib/bot/*.js",
-      "default": "./lib-es/bot/*.js"
+    "./bot": {
+      "require": "./lib/bot/index.js",
+      "default": "./lib-es/bot/index.js"
     },
-    "./bridge/*": {
-      "require": "./lib/bridge/*.js",
-      "default": "./lib-es/bridge/*.js"
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
     },
-    "./currencies/*": {
-      "require": "./lib/currencies/*.js",
-      "default": "./lib-es/currencies/*.js"
+    "./currencies": {
+      "require": "./lib/currencies/index.js",
+      "default": "./lib-es/currencies/index.js"
     },
     "./nft/*": {
       "require": "./lib/nft/*.js",
       "default": "./lib-es/nft/*.js"
     },
+    "./serialization": {
+      "require": "./lib/serialization/index.js",
+      "default": "./lib-es/serialization/index.js"
+    },
     "./transaction/*": {
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -91,8 +96,6 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "lru-cache": "^7.14.1",
-    "numeral": "^2.0.6",
     "prando": "^6.0.1",
     "rxjs": "^7.8.1"
   },
@@ -116,7 +119,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest",
+    "test": "cross-env TZ=America/Paris jest",
     "unimported": "unimported"
   }
 }

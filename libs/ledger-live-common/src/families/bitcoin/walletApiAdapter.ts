@@ -4,8 +4,8 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import createTransaction from "./js-createTransaction";
-import { Transaction } from "./types";
+import createTransaction from "@ledgerhq/coin-bitcoin/createTransaction";
+import { Transaction } from "@ledgerhq/coin-bitcoin/types";
 
 const CAN_EDIT_FEES = true;
 
@@ -14,10 +14,10 @@ const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = tx => !!tx
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIBitcoinTransaction,
   Transaction
-> = ({ walletApiTransaction }) => {
+> = ({ account, walletApiTransaction }) => {
   const hasFeesProvided = areFeesProvided(walletApiTransaction);
 
-  const liveTx: Transaction = createTransaction();
+  const liveTx: Transaction = createTransaction(account);
 
   if (walletApiTransaction.amount) {
     liveTx.amount = walletApiTransaction.amount;

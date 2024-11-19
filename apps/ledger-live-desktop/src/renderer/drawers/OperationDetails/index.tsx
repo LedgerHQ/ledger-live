@@ -1,7 +1,6 @@
 import {
   findSubAccountById,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -11,8 +10,8 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
@@ -43,7 +42,6 @@ import CounterValue from "~/renderer/components/CounterValue";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
@@ -79,6 +77,9 @@ import {
   Separator,
   TextEllipsis,
 } from "./styledComponents";
+import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 const mapStateToProps = (
   state: State,
@@ -96,7 +97,9 @@ const mapStateToProps = (
         })
       : undefined;
   let account: AccountLike | undefined | null;
-  if (parentAccount) {
+  if (parentAccount && parentId === accountId) {
+    account = parentAccount;
+  } else if (parentAccount) {
     account = findSubAccountById(parentAccount, accountId);
   } else {
     account = accountSelector(state, {
@@ -106,8 +109,8 @@ const mapStateToProps = (
   const mainCurrency = parentAccount
     ? parentAccount.currency
     : account && account.type !== "TokenAccount"
-    ? account.currency
-    : null;
+      ? account.currency
+      : null;
   const confirmationsNb = mainCurrency
     ? confirmationsNbForCurrencySelector(state, {
         currency: mainCurrency,
@@ -144,15 +147,17 @@ const OperationD = (props: Props) => {
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+
+  const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
-  const { name } = mainAccount;
+  const name = useAccountName(mainAccount);
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
   const currency = getAccountCurrency(account);
   const mainCurrency = getAccountCurrency(mainAccount);
   const { status, metadata } = useNftMetadata(contract, tokenId, currency.id);
   const show = useMemo(() => status === "loading", [status]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const marketColor = getMarketColor({
@@ -214,12 +219,11 @@ const OperationD = (props: Props) => {
     [account],
   );
   const openAmountDetails = useCallback(() => {
-    const data = {
+    setDrawer(AmountDetails, {
       operation,
       account,
       onRequestBack: props.onRequestBack,
-    };
-    setDrawer(AmountDetails, data);
+    });
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}`;
@@ -321,6 +325,7 @@ const OperationD = (props: Props) => {
         color="palette.text.shade60"
         mt={0}
         mb={1}
+        data-testid="transaction-type"
       >
         <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
@@ -346,14 +351,15 @@ const OperationD = (props: Props) => {
                       !isConfirmed && operation.type === "IN"
                         ? colors.warning
                         : amount.isNegative()
-                        ? "palette.text.shade80"
-                        : undefined
+                          ? "palette.text.shade80"
+                          : undefined
                     }
                     unit={unit}
                     alwaysShowSign
                     showCode
                     val={amount}
                     fontSize={7}
+                    data-testid="amountReceived-drawer"
                     disableRounding
                   />
                 </ToolTip>
@@ -487,7 +493,13 @@ const OperationD = (props: Props) => {
               />
             </Box>
           ) : undefined}
-          <Text ff="Inter|SemiBold" textAlign="center" fontSize={4} color="palette.text.shade60">
+          <Text
+            data-testid="operation-type"
+            ff="Inter|SemiBold"
+            textAlign="center"
+            fontSize={4}
+            color="palette.text.shade60"
+          >
             <Trans i18nKey={`operation.type.${operation.type}`} />
           </Text>
         </OpDetailsData>
@@ -503,13 +515,13 @@ const OperationD = (props: Props) => {
             {hasFailed
               ? t("operationDetails.failed")
               : isConfirmed
-              ? t("operationDetails.confirmed")
-              : t("operationDetails.notConfirmed")}
+                ? t("operationDetails.confirmed")
+                : t("operationDetails.notConfirmed")}
             {getEnv("PLAYWRIGHT_RUN")
               ? ""
               : hasFailed
-              ? null
-              : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
+                ? null
+                : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
           </Box>
         </OpDetailsData>
       </OpDetailsSection>
@@ -540,10 +552,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName =
-                opAccount.type === "ChildAccount"
-                  ? opAccount.name
-                  : getAccountCurrency(opAccount).name;
+              const subAccountName = getAccountCurrency(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent
@@ -625,9 +634,7 @@ const OperationD = (props: Props) => {
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
-        <OpDetailsData>
-          <FormattedDate date={date} />
-        </OpDetailsData>
+        <OpDetailsData>{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />
       <OpDetailsSection>

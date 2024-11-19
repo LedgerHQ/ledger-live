@@ -1,5 +1,251 @@
 # @ledgerhq/react-ui
 
+## 0.16.3
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1
+
+## 0.16.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1-next.0
+
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies [[`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd)]:
+  - @ledgerhq/icons-ui@0.8.0
+
+## 0.16.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd)]:
+  - @ledgerhq/icons-ui@0.8.0-next.0
+
+## 0.16.1
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/crypto-icons-ui@1.5.0
+  - @ledgerhq/ui-shared@0.2.2
+  - @ledgerhq/icons-ui@0.7.4
+
+## 0.16.1-next.0
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/crypto-icons-ui@1.5.0-next.0
+  - @ledgerhq/ui-shared@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.7.4-next.0
+
+## 0.16.0
+
+### Minor Changes
+
+- [#7633](https://github.com/LedgerHQ/ledger-live/pull/7633) [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework QRCode Step in LLD + Add TabSelector in react-ui
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- Updated dependencies [[`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4), [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1
+  - @ledgerhq/icons-ui@0.7.3
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#7633](https://github.com/LedgerHQ/ledger-live/pull/7633) [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework QRCode Step in LLD + Add TabSelector in react-ui
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- Updated dependencies [[`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4), [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1-next.0
+  - @ledgerhq/icons-ui@0.7.3-next.0
+
+## 0.15.4
+
+### Patch Changes
+
+- [#7435](https://github.com/LedgerHQ/ledger-live/pull/7435) [`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Ledger Sync check status
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0
+  - @ledgerhq/icons-ui@0.7.2
+
+## 0.15.4-next.0
+
+### Patch Changes
+
+- [#7435](https://github.com/LedgerHQ/ledger-live/pull/7435) [`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Ledger Sync check status
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0-next.0
+  - @ledgerhq/icons-ui@0.7.2-next.0
+
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies [[`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e)]:
+  - @ledgerhq/icons-ui@0.7.1
+
+## 0.15.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a)]:
+  - @ledgerhq/icons-ui@0.7.1-hotfix.0
+
+## 0.15.2
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0
+
+## 0.15.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0-next.0
+
+## 0.15.1
+
+### Patch Changes
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new Numbered List component
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+## 0.15.1-next.1
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+## 0.15.1-next.0
+
+### Patch Changes
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new Numbered List component
+
+## 0.15.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6899](https://github.com/LedgerHQ/ledger-live/pull/6899) [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix border-radius in our react DS for the Button
+
+### Patch Changes
+
+- [#7000](https://github.com/LedgerHQ/ledger-live/pull/7000) [`ae52133`](https://github.com/LedgerHQ/ledger-live/commit/ae521336bffb13be2d48c821593fa06813b39657) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color of clearable element in Input"
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0
+  - @ledgerhq/icons-ui@0.7.0
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6899](https://github.com/LedgerHQ/ledger-live/pull/6899) [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix border-radius in our react DS for the Button
+
+### Patch Changes
+
+- [#7000](https://github.com/LedgerHQ/ledger-live/pull/7000) [`ae52133`](https://github.com/LedgerHQ/ledger-live/commit/ae521336bffb13be2d48c821593fa06813b39657) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color of clearable element in Input"
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0-next.0
+  - @ledgerhq/icons-ui@0.7.0-next.0
+
+## 0.14.18
+
+### Patch Changes
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Tag component: add "tiny" size, fix paddings that were too big.
+
+## 0.14.18-next.0
+
+### Patch Changes
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Tag component: add "tiny" size, fix paddings that were too big.
+
+## 0.14.17
+
+### Patch Changes
+
+- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
+  - @ledgerhq/icons-ui@0.6.4
+
+## 0.14.17-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
+  - @ledgerhq/icons-ui@0.6.4-next.0
+
+## 0.14.16
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0
+  - @ledgerhq/icons-ui@0.6.3
+
+## 0.14.16-next.0
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0-next.0
+  - @ledgerhq/icons-ui@0.6.3-next.0
+
+## 0.14.15
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`e06087e`](https://github.com/LedgerHQ/ledger-live/commit/e06087eadd39b83873db32dde8a1d919cf3708a9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`26f343b`](https://github.com/LedgerHQ/ledger-live/commit/26f343b3c08d06ce6e812947d4c63a6e5bae8a9e), [`f882dde`](https://github.com/LedgerHQ/ledger-live/commit/f882dde22ec194c5cd3dd9413b8c103108eba820)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2
+
+## 0.14.15-next.0
+
+### Patch Changes
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2-next.0
+
 ## 0.14.14
 
 ### Patch Changes

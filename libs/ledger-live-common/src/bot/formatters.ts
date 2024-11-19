@@ -20,10 +20,10 @@ export const formatTime = (t: number): string =>
   !t
     ? "N/A"
     : t > 3000
-    ? t > 100000
-      ? formatTimeMinSec(t)
-      : `${Math.round(t / 100) / 10}s`
-    : `${t < 5 ? t.toFixed(2) : t.toFixed(0)}ms`;
+      ? t > 100000
+        ? formatTimeMinSec(t)
+        : `${Math.round(t / 100) / 10}s`
+      : `${t < 5 ? t.toFixed(2) : t.toFixed(0)}ms`;
 
 const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
 
@@ -67,7 +67,7 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (account && maxSpendable) {
-    str += `max spendable ~${formatCurrencyUnit(account.unit, maxSpendable)}\n`;
+    str += `max spendable ~${formatCurrencyUnit(account.currency.units[0], maxSpendable)}\n`;
   }
 
   if (unavailableMutationReasons) {
@@ -76,7 +76,7 @@ export function formatReportForConsole<T extends Transaction>({
     if (account && !account.used) {
       detail = "account is empty";
     } else {
-      const byErrorMessage = groupBy(unavailableMutationReasons, "message");
+      const byErrorMessage = groupBy(unavailableMutationReasons, r => r.error.message);
       const keys = Object.keys(byErrorMessage);
 
       if (keys.length === 1) {

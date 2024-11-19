@@ -1,6 +1,3 @@
-import "lodash.product";
-// @ts-expect-error we imported lodash.product but not recognized by TS in lodash
-import { product } from "lodash";
 import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
 import flatMap from "lodash/flatMap";
@@ -13,7 +10,7 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
@@ -101,20 +98,22 @@ export async function inferTransactions(
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = getAccountBridge(mainAccount, null);
-  const specific = perFamily[mainAccount.currency.family];
+  const specific = perFamily[mainAccount.currency.family as keyof typeof perFamily];
 
   const inferAccounts: (account: Account, opts: Record<string, any>) => AccountLikeArray =
-    (specific && specific.inferAccounts) || ((account, _opts) => [account]);
+    (specific && "inferAccounts" in specific && specific.inferAccounts) ||
+    ((account, _opts) => [account]);
 
   const inferTransactions: (
     transactions: Array<{
-      account: AccountLike;
-      transaction: Transaction;
+      account: AccountLike<Account>;
+      transaction: any;
+      mainAccount: Account;
     }>,
     opts: Record<string, any>,
     { inferAmount }: any,
   ) => Transaction[] =
-    (specific && specific.inferTransactions) ||
+    (specific && "inferTransactions" in specific && specific.inferTransactions) ||
     ((inferred, _opts, _r) => inferred.map(({ transaction }) => transaction));
 
   let all: Array<{
@@ -169,4 +168,14 @@ export async function inferTransactions(
   );
 
   return transactions;
+}
+
+function product<A, B>(arr1: A[], arr2: B[]): [A, B][] {
+  const result: [A, B][] = [];
+  arr1.forEach(item1 => {
+    arr2.forEach(item2 => {
+      result.push([item1, item2]);
+    });
+  });
+  return result;
 }

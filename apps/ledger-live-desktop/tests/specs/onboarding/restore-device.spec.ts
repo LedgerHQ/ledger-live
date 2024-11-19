@@ -1,6 +1,10 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { OnboardingPage } from "../../models/OnboardingPage";
+import { OnboardingPage } from "../../page/onboarding.page";
+
+test.use({
+  settings: { hasSeenAnalyticsOptInPrompt: false },
+});
 
 enum Nano {
   nanoX = "nanoX",
@@ -24,8 +28,10 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
+        await onboardingPage.hoverDevice(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
+          animations: "disabled",
         });
       });
 
@@ -43,7 +49,7 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-restore-tutorial", `get-started-2-${nano}.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 
@@ -56,12 +62,12 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-3.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 
         await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-4.png`], {
-          mask: [onboardingPage.page.locator("[role=animation]")],
+          mask: [onboardingPage.roleAnimation],
         });
         await onboardingPage.continuePinDrawer();
 

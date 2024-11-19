@@ -10,7 +10,10 @@ import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "
 import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 
 const SEED_IDENTIFIER = "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
-const ACCOUNT_2 = "0203A17118eC0e64c4e4FdbDbEe0eA14D118C9aAf08C6c81bbB776Cae607cEB84EcB";
+const RECIPIENT_ADDRESS_SECP256k1 =
+  "0203A17118eC0e64c4e4FdbDbEe0eA14D118C9aAf08C6c81bbB776Cae607cEB84EcB";
+const RECIPIENT_ADDRESS_EDSA25519 =
+  "0203A17118eC0e64c4e4FdbDbEe0eA14D118C9aAf08C6c81bbB776Cae607cEB84EcB";
 
 const casper: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -36,18 +39,16 @@ const casper: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "44'/506'/0'/0/1",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
         currencyId: "casper",
-        unitMagnitude: 9,
         lastSyncDate: "",
         balance: "1000",
       },
       transactions: [
         {
-          name: "Not a valid address",
+          name: "not a valid address",
           transaction: fromTransactionRaw({
             family: "casper",
             recipient: "novalidaddress",
@@ -62,10 +63,10 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Not enough balance",
+          name: "not enough balance",
           transaction: fromTransactionRaw({
             family: "casper",
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             fees: getEstimatedFees().toString(),
             amount: (300 * 1e9).toString(),
           }),
@@ -77,10 +78,10 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Amount Required",
+          name: "amount required",
           transaction: fromTransactionRaw({
             family: "casper",
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             amount: "0",
             fees: getEstimatedFees().toString(),
           }),
@@ -92,11 +93,11 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Minimum Amount Required",
+          name: "minimum amount required",
           transaction: fromTransactionRaw({
             family: "casper",
             fees: getEstimatedFees().toString(),
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             amount: "1",
           }),
 
@@ -108,10 +109,10 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "New account and sufficient amount",
+          name: "sufficient amount - recipient address secp256k1",
           transaction: fromTransactionRaw({
             family: "casper",
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             amount: "3",
             fees: getEstimatedFees().toString(),
           }),
@@ -122,10 +123,24 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Invalid TransferID",
+          name: "sufficient amount - recipient address ed25519",
           transaction: fromTransactionRaw({
             family: "casper",
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_EDSA25519,
+            amount: "3",
+            fees: getEstimatedFees().toString(),
+          }),
+          expectedStatus: {
+            amount: new BigNumber("3"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "invalid transferID",
+          transaction: fromTransactionRaw({
+            family: "casper",
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             fees: getEstimatedFees().toString(),
             amount: "3",
             transferId: "afdsaf1",
@@ -139,10 +154,10 @@ const casper: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "May block account warning",
+          name: "may block account warning",
           transaction: fromTransactionRaw({
             family: "casper",
-            recipient: ACCOUNT_2,
+            recipient: RECIPIENT_ADDRESS_SECP256k1,
             fees: getEstimatedFees().toString(),
             amount: (999 * 1e9).toString(),
           }),

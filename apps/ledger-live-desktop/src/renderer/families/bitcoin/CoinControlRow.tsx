@@ -17,6 +17,7 @@ import {
   TransactionStatus,
   UtxoStrategy,
 } from "@ledgerhq/live-common/families/bitcoin/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type CoinControlRowProps = {
   utxo: BitcoinOutput;
@@ -64,6 +65,7 @@ export const CoinControlRow = ({
   updateTransaction,
   bridge,
 }: CoinControlRowProps) => {
+  const unit = useAccountUnit(account);
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.excluded ? s.reason || "" : "";
   const input = (status.txInputs || []).find(
@@ -128,7 +130,7 @@ export const CoinControlRow = ({
         <FormattedVal
           disableRounding
           val={utxo.value}
-          unit={account.unit}
+          unit={unit}
           showCode
           fontSize={4}
           color="palette.text.shade100"

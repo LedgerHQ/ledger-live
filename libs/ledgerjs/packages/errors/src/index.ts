@@ -10,6 +10,9 @@ export { serializeError, deserializeError, createCustomErrorClass, addCustomErro
 
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
+export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
+  "AccountAwaitingSendPendingOperations",
+);
 export const AmountRequired = createCustomErrorClass("AmountRequired");
 export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
@@ -78,6 +81,7 @@ export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
+export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
   "NotEnoughBalanceInParentAccount",
@@ -90,6 +94,8 @@ export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 // Error message specifically for the PTX swap flow
 export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
+export const TronEmptyAccount = createCustomErrorClass("TronEmptyAccount");
+export const MaybeKeepTronAccountAlive = createCustomErrorClass("MaybeKeepTronAccountAlive");
 export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
 export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
 export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
@@ -119,6 +125,7 @@ export const UserRefusedAddress = createCustomErrorClass("UserRefusedAddress");
 export const UserRefusedFirmwareUpdate = createCustomErrorClass("UserRefusedFirmwareUpdate");
 export const UserRefusedAllowManager = createCustomErrorClass("UserRefusedAllowManager");
 export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice"); // TODO rename because it's just for transaction refusal
+export const PinNotSet = createCustomErrorClass("PinNotSet");
 export const ExpertModeRequired = createCustomErrorClass("ExpertModeRequired");
 export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenUserCancelled");
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
@@ -138,6 +145,8 @@ export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInA
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
+export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
@@ -151,8 +160,19 @@ export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
-export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
-export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
+type NetworkType = {
+  status: number;
+  url: string | undefined;
+  method: string;
+};
+export const LedgerAPI4xx = createCustomErrorClass<
+  NetworkType,
+  LedgerErrorConstructor<NetworkType>
+>("LedgerAPI4xx");
+export const LedgerAPI5xx = createCustomErrorClass<
+  NetworkType,
+  LedgerErrorConstructor<NetworkType>
+>("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
 
 // SpeedUp / Cancel EVM tx
@@ -171,6 +191,11 @@ export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
+
+export const SequenceNumberError = createCustomErrorClass("SequenceNumberError");
+export const DisabledTransactionBroadcastError = createCustomErrorClass(
+  "DisabledTransactionBroadcastError",
+);
 
 // Represents the type of all the classes created with createCustomErrorClass
 export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
@@ -233,7 +258,7 @@ export const StatusCodes = {
   CONDITIONS_OF_USE_NOT_SATISFIED: 0x6985,
   CONTRADICTION_INVALIDATION: 0x9810,
   CONTRADICTION_SECRET_CODE_STATUS: 0x9808,
-  CUSTOM_IMAGE_BOOTLOADER: 0x662f,
+  DEVICE_IN_RECOVERY_MODE: 0x662f,
   CUSTOM_IMAGE_EMPTY: 0x662e,
   FILE_ALREADY_EXISTS: 0x6a89,
   FILE_NOT_FOUND: 0x9404,
@@ -263,6 +288,21 @@ export const StatusCodes = {
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
   NOT_ENOUGH_SPACE: 0x5102,
+  APP_NOT_FOUND_OR_INVALID_CONTEXT: 0x5123,
+  INVALID_APP_NAME_LENGTH: 0x670a,
+  GEN_AES_KEY_FAILED: 0x5419,
+  INTERNAL_CRYPTO_OPERATION_FAILED: 0x541a,
+  INTERNAL_COMPUTE_AES_CMAC_FAILED: 0x541b,
+  ENCRYPT_APP_STORAGE_FAILED: 0x541c,
+  INVALID_BACKUP_STATE: 0x6642,
+  PIN_NOT_SET: 0x5502,
+  INVALID_BACKUP_LENGTH: 0x6733,
+  INVALID_RESTORE_STATE: 0x6643,
+  INVALID_CHUNK_LENGTH: 0x6734,
+  INVALID_BACKUP_HEADER: 0x684a,
+
+  // Not documented:
+  TRUSTCHAIN_WRONG_SEED: 0xb007,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -318,6 +358,8 @@ export class TransportStatusError extends Error {
     this.statusCode = statusCode;
     this.statusText = statusText;
 
+    Object.setPrototypeOf(this, TransportStatusError.prototype);
+
     // Maps to a LockedDeviceError
     if (canBeMappedToChildError && statusCode === StatusCodes.LOCKED_DEVICE) {
       return new LockedDeviceError(message);
@@ -332,6 +374,7 @@ export class LockedDeviceError extends TransportStatusError {
       this.message = message;
     }
     this.name = "LockedDeviceError";
+    Object.setPrototypeOf(this, LockedDeviceError.prototype);
   }
 }
 

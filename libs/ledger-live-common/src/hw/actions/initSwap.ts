@@ -4,7 +4,7 @@ import { concat, Observable, of } from "rxjs";
 import { catchError, scan, tap } from "rxjs/operators";
 import { getMainAccount } from "../../account";
 import type {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapInput,
   InitSwapResult,
@@ -30,7 +30,7 @@ type State = {
 type InitSwapState = AppState & State;
 
 type InitSwapRequest = {
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   requireLatestFirmware?: boolean;
@@ -59,11 +59,11 @@ const mapResult = ({
         initSwapResult,
       }
     : initSwapError
-    ? {
-        initSwapError,
-        swapId,
-      }
-    : null;
+      ? {
+          initSwapError,
+          swapId,
+        }
+      : null;
 
 const initialState: State = {
   initSwapResult: null,

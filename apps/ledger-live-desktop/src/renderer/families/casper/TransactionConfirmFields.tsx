@@ -1,11 +1,12 @@
 import invariant from "invariant";
 import React from "react";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { CasperFieldComponentProps } from "./types";
 import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/casper/deviceTransactionConfig";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const CasperExtendedAmountField = ({
   account,
@@ -15,7 +16,7 @@ const CasperExtendedAmountField = ({
 }: CasperFieldComponentProps) => {
   invariant(transaction.family === "casper", "casper transaction");
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const specifiedAmount = (field as ExtraDeviceTransactionField).value;
 
   return (

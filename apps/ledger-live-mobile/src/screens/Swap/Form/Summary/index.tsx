@@ -4,11 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  getAccountName,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
@@ -30,6 +26,9 @@ import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/Sw
 import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
+import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
+import { useMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 interface Props {
   provider?: string;
@@ -119,8 +118,8 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
     return rate
       ? rate.times(valueNum) // NB Allow to override the rate for swap
       : typeof rawCounterValue === "number"
-      ? new BigNumber(rawCounterValue)
-      : rawCounterValue;
+        ? new BigNumber(rawCounterValue)
+        : rawCounterValue;
   }, [effectiveUnit, exchangeRate?.magnitudeAwareRate, rawCounterValue]);
 
   const onEditNetworkFees = useCallback(() => {
@@ -154,7 +153,11 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
 
   const fromUnit = from.currency?.units[0];
   const mainFromAccount = from.account && getMainAccount(from.account, from.parentAccount);
-  const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
+  const mainAccountUnit = useMaybeAccountUnit(mainFromAccount);
+  const editableFee =
+    mainFromAccount && EDITABLE_FEE_FAMILIES.includes(mainFromAccount.currency.family);
+
+  const toAccountName = useMaybeAccountName(to.account);
 
   if (
     !provider ||
@@ -203,7 +206,10 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
         </Text>
       </Item>
 
-      <Item title={t("transfer.swap2.form.details.label.fees")} onEdit={onEditNetworkFees}>
+      <Item
+        title={t("transfer.swap2.form.details.label.fees")}
+        onEdit={editableFee && onEditNetworkFees}
+      >
         <Text>
           <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
         </Text>
@@ -213,7 +219,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
         <Item title={t("transfer.swap2.form.details.label.target")} onEdit={onEditTargetAccount}>
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}
-            <Text marginLeft={2}>{getAccountName(to.account)}</Text>
+            <Text marginLeft={2}>{toAccountName}</Text>
           </Flex>
         </Item>
       ) : (

@@ -2,7 +2,6 @@ import "../../../__tests__/test-helpers/setup";
 import { fetchFullTxs } from "../bridge/utils/api";
 import flatMap from "lodash/flatMap";
 import { mapTxToOps } from "../bridge/utils/misc";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "../../../account";
 
 describe("sync for token transfers", () => {
@@ -20,7 +19,7 @@ describe("sync for token transfers", () => {
     const rawTxs = await fetchFullTxs(address);
 
     // Contains operations for txn of type token_transfer
-    const operations = flatMap(rawTxs, mapTxToOps(accountId, { address } as AccountShapeInfo));
+    const operations = flatMap(rawTxs, mapTxToOps(accountId, address));
 
     expect(operations.length).toBeTruthy();
   });

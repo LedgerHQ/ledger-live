@@ -5,7 +5,7 @@ import QRCode from "react-native-qrcode-svg";
 import VersionNumber from "react-native-version-number";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import { createStructuredSelector } from "reselect";
-import { encode, Settings } from "@ledgerhq/live-common/cross";
+import { encode, Settings } from "@ledgerhq/live-wallet/liveqr/cross";
 import { dataToFrames } from "qrloop";
 import { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/reducers/accounts";
@@ -13,8 +13,11 @@ import { exportSettingsSelector } from "~/reducers/settings";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { State } from "~/reducers/types";
+import { walletSelector } from "~/reducers/wallet";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export type Props = {
+  walletState: WalletState;
   accounts: Account[];
   settings: Settings;
   children?: React.ReactNode;
@@ -33,8 +36,9 @@ class ExportAccounts extends PureComponent<
   timer: NodeJS.Timeout | undefined;
 
   componentDidMount() {
-    const { accounts, settings } = this.props;
+    const { accounts, settings, walletState } = this.props;
     const data = encode({
+      walletState,
       accounts,
       settings,
       exporterName: "mobile",
@@ -100,10 +104,12 @@ export default connect(
   createStructuredSelector<
     State,
     {
+      walletState: WalletState;
       accounts: Account[];
       settings: Settings;
     }
   >({
+    walletState: walletSelector,
     accounts: accountsSelector,
     settings: exportSettingsSelector,
   }),

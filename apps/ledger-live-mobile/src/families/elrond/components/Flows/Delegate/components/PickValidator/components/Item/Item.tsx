@@ -1,5 +1,4 @@
 import React from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
@@ -16,6 +15,7 @@ import LedgerLogo from "~/icons/LiveLogo";
 import type { ItemPropsType } from "./types";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -25,6 +25,7 @@ const Item = (props: ItemPropsType) => {
   const { colors } = useTheme();
   const { onSelect, item, account } = props;
   const name = item.identity.name || item.contract;
+  const unit = useAccountUnit(account);
 
   /*
    * Return null in case the item has a setting of disabled.
@@ -64,7 +65,7 @@ const Item = (props: ItemPropsType) => {
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode={true}
-              unit={getAccountUnit(account)}
+              unit={unit}
               value={new BigNumber(item.totalActiveStake)}
             />
           </Text>

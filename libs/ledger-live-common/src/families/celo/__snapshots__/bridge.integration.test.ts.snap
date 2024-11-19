@@ -35,24 +35,14 @@ exports[`celo currency bridge scanAccounts Celo 1 1`] = `
     "derivationMode": "",
     "freshAddress": "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
     "freshAddressPath": "44'/52752'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
-        "derivationPath": "44'/52752'/0'/0/0",
-      },
-    ],
     "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
     "index": 0,
-    "name": "Celo 1",
-    "nfts": undefined,
     "operationsCount": 10,
     "pendingOperations": [],
     "seedIdentifier": "0453390dcc1e6f1be0fb34f837b278ed1b4c84097c7493c13a0d915c735af1d8aa445d2738a95e8f50bc22abd2e17cb868d4db22a623d99d861740eb93373d50a3",
     "spendableBalance": "83719000010000",
-    "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": true,
   },
   {
@@ -71,24 +61,14 @@ exports[`celo currency bridge scanAccounts Celo 1 1`] = `
     "derivationMode": "",
     "freshAddress": "0x2cC7E5913bADa8FA2895bDeF7F4C2E36C2368Abb",
     "freshAddressPath": "44'/52752'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "0x2cC7E5913bADa8FA2895bDeF7F4C2E36C2368Abb",
-        "derivationPath": "44'/52752'/1'/0/0",
-      },
-    ],
     "id": "js:2:celo:0x2cC7E5913bADa8FA2895bDeF7F4C2E36C2368Abb:",
     "index": 1,
-    "name": "Celo 2",
-    "nfts": undefined,
     "operationsCount": 0,
     "pendingOperations": [],
     "seedIdentifier": "0453390dcc1e6f1be0fb34f837b278ed1b4c84097c7493c13a0d915c735af1d8aa445d2738a95e8f50bc22abd2e17cb868d4db22a623d99d861740eb93373d50a3",
     "spendableBalance": "0",
-    "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": false,
   },
 ]
@@ -101,7 +81,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14356282,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "150000000000000000",
       },
@@ -109,15 +88,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x13b90cebe150eadbebd525200f2ff7ae8e838defbee31a9812a802356705b0f2",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x13b90cebe150eadbebd525200f2ff7ae8e838defbee31a9812a802356705b0f2-LOCK",
-      "operator": undefined,
       "recipients": [
         "0x6cc083aed9e3ebe302a6336dbc7c921c9f03349e",
       ],
       "senders": [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "LOCK",
       "value": "33936000000000",
     },
@@ -125,7 +101,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14356260,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "0",
       },
@@ -133,15 +108,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x1bedc04795ee8c4b8739e661498ad7721f5f0f8dc957a7e2009314d447be20a8",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x1bedc04795ee8c4b8739e661498ad7721f5f0f8dc957a7e2009314d447be20a8-REGISTER",
-      "operator": undefined,
       "recipients": [
         "0x7d21685c17607338b313a7174bab6620bad0aab7",
       ],
       "senders": [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "REGISTER",
       "value": "23628500000000",
     },
@@ -149,7 +121,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 15545261,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "1000000000000",
       },
@@ -157,15 +128,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x374851f85b8e09848861425e01ef3f276a4dc39cd746df3681a214a40a30c864",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x374851f85b8e09848861425e01ef3f276a4dc39cd746df3681a214a40a30c864-IN",
-      "operator": undefined,
       "recipients": [
         "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
       ],
       "senders": [
         "0x835bD367715a74Ab03E91EdCCaF804c82BfE6b93",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "IN",
       "value": "1000000000000",
     },
@@ -173,7 +141,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14356275,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "50000000000000000",
         "celoSourceValidator": "0x0861a61bf679a30680510ecc238ee43b82c5e843",
@@ -182,15 +149,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x3f8609e7d154aac9d4165d0587ecbf058dcd45a9b86d313558c0066069d8ef0d",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x3f8609e7d154aac9d4165d0587ecbf058dcd45a9b86d313558c0066069d8ef0d-VOTE",
-      "operator": undefined,
       "recipients": [
         "0x0861a61bf679a30680510ecc238ee43b82c5e843",
       ],
       "senders": [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "VOTE",
       "value": "104239000000000",
     },
@@ -198,7 +162,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14345376,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "399893159500000000",
       },
@@ -206,15 +169,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x6aa0cc933bfcf828bad4bfc16f9474b287aa754ec37f19563724ea60c1c2e2da",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x6aa0cc933bfcf828bad4bfc16f9474b287aa754ec37f19563724ea60c1c2e2da-IN",
-      "operator": undefined,
       "recipients": [
         "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
       ],
       "senders": [
         "0x330be4C2B77f0f08f037c1D04788D00344765556",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "IN",
       "value": "399893159500000000",
     },
@@ -222,7 +182,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 15975626,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "1000000000000",
       },
@@ -230,15 +189,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x857cbd64d3e9afde598b6622dae0d713f4c50d6d79e95c59dfc4a1bc9bf17c5e",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x857cbd64d3e9afde598b6622dae0d713f4c50d6d79e95c59dfc4a1bc9bf17c5e-IN",
-      "operator": undefined,
       "recipients": [
         "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
       ],
       "senders": [
         "0x74d7aC2d24D96640d236613132B8e6c1Edf20bCD",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "IN",
       "value": "1000000000000",
     },
@@ -246,7 +202,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14391317,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "199497368500000000",
       },
@@ -254,15 +209,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x9d8263a088cf91dd3376b2c4a033a51401414441cf747fde724901b4480b563f",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x9d8263a088cf91dd3376b2c4a033a51401414441cf747fde724901b4480b563f-OUT",
-      "operator": undefined,
       "recipients": [
         "0xDE680aC69f10F8B7e8B547f6da866369D059ac81",
       ],
       "senders": [
         "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "OUT",
       "value": "199497368500000000",
     },
@@ -270,7 +222,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 18940246,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "10000",
       },
@@ -278,15 +229,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0x9ed4be7c7526fc5b039ea34e450ab7341de59cc173d1b1b2cdd058432ecf8c1e",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x9ed4be7c7526fc5b039ea34e450ab7341de59cc173d1b1b2cdd058432ecf8c1e-IN",
-      "operator": undefined,
       "recipients": [
         "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
       ],
       "senders": [
         "0xdecF377bbfD6c9c2556553934C4D14B1EeCFdd7d",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "IN",
       "value": "10000",
     },
@@ -294,7 +242,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14356307,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "50000000000000000",
         "celoSourceValidator": "0x35ae10f412503abcf9275133613e8df7f56e72be",
@@ -303,15 +250,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0xb1d95aa993e5175effba1eec6aa7e5a557c5e1d6f8c3d4414fbe6e206b6f8841",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0xb1d95aa993e5175effba1eec6aa7e5a557c5e1d6f8c3d4414fbe6e206b6f8841-VOTE",
-      "operator": undefined,
       "recipients": [
         "0x35ae10f412503abcf9275133613e8df7f56e72be",
       ],
       "senders": [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "VOTE",
       "value": "100051500000000",
     },
@@ -319,7 +263,6 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
       "blockHeight": 14356267,
-      "contract": undefined,
       "extra": {
         "celoOperationValue": "50000000000000000",
       },
@@ -327,15 +270,12 @@ exports[`celo currency bridge scanAccounts Celo 1 2`] = `
       "hasFailed": false,
       "hash": "0xd00974d8cb71e48ac9a3085579c9b589a4d67cec348aa61b9b48cc7b3bcd54bf",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0xd00974d8cb71e48ac9a3085579c9b589a4d67cec348aa61b9b48cc7b3bcd54bf-LOCK",
-      "operator": undefined,
       "recipients": [
         "0x6cc083aed9e3ebe302a6336dbc7c921c9f03349e",
       ],
       "senders": [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
-      "standard": undefined,
-      "tokenId": undefined,
       "type": "LOCK",
       "value": "33936000000000",
     },

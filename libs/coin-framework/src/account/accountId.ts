@@ -1,10 +1,8 @@
-import memoize from "lodash/memoize";
 import invariant from "invariant";
 import { asDerivationMode } from "../derivation";
-import { getCryptoCurrencyById, findTokenById } from "../currencies";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import type { AccountIdParams, DerivationMode } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findTokenByAddressInCurrency, findTokenById } from "@ledgerhq/cryptoassets";
+import type { AccountIdParams } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(!value.includes(":"), "AccountId '%s' component must not use colon", ctx);
@@ -49,9 +47,10 @@ export function encodeAccountId({
 export function encodeTokenAccountId(accountId: string, token: TokenCurrency): string {
   return accountId + "+" + safeEncodeTokenId(token.id);
 }
+
 export function decodeTokenAccountId(id: string): {
   accountId: string;
-  token: TokenCurrency | null | undefined;
+  token: TokenCurrency | undefined;
 } {
   const [accountId, tokenId] = id.split("+");
   const decodedTokenId = safeDecodeTokenId(tokenId);
@@ -65,6 +64,7 @@ export function decodeTokenAccountId(id: string): {
     token,
   };
 }
+
 export function decodeAccountId(accountId: string): AccountIdParams {
   invariant(typeof accountId === "string", "accountId is not a string");
   const splitted = accountId.split(":");
@@ -78,26 +78,3 @@ export function decodeAccountId(accountId: string): AccountIdParams {
     derivationMode: asDerivationMode(derivationMode),
   };
 }
-// you can pass account because type is shape of Account
-// wallet name is a lib-core concept that usually identify a pool of accounts with the same (seed, cointype, derivation scheme) config.
-export function getWalletName({
-  seedIdentifier,
-  derivationMode,
-  currency,
-}: {
-  seedIdentifier: string;
-  derivationMode: DerivationMode;
-  currency: CryptoCurrency;
-}): string {
-  return `${seedIdentifier}_${currency.id}_${derivationMode}`;
-}
-export const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(
-  accountId => {
-    try {
-      const { currencyId } = decodeAccountId(accountId);
-      return getCryptoCurrencyById(currencyId).family;
-    } catch (e) {
-      return null;
-    }
-  },
-);

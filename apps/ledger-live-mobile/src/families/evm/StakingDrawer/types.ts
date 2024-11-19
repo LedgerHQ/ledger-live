@@ -1,12 +1,5 @@
-export type EthStakingProviders = {
-  listProvider: Array<{
-    id: string;
-    name: string;
-    liveAppId: string;
-    supportLink?: string;
-    icon?: string;
-    queryParams?: Record<string, string>;
-  }>;
-};
+import { Feature_EthStakingProviders } from "@ledgerhq/types-live";
 
-export type ListProvider = EthStakingProviders["listProvider"][number];
+export type ListProvider = NonNullable<
+  Feature_EthStakingProviders["params"]
+>["listProvider"][number];

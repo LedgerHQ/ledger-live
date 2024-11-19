@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import {
   encodeAccountId,
   decodeAccountId,
-  shortAddressPreview,
   emptyHistoryCache,
 } from "@ledgerhq/live-common/account/index";
 import {
@@ -19,9 +18,8 @@ import {
   getDerivationScheme,
   runDerivationScheme,
   asDerivationMode,
-  DerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 export const getStaticProps = async () => ({ props: {} });
 
@@ -52,21 +50,16 @@ function inferAccount(id: string): Account {
   });
   const account: Account = {
     type: "Account",
-    name:
-      currency.name + " " + (derivationMode || "legacy") + " " + shortAddressPreview(xpubOrAddress),
     xpub: xpubOrAddress,
     seedIdentifier: xpubOrAddress,
-    starred: true,
     used: true,
     swapHistory: [],
     id,
     derivationMode,
     currency,
-    unit: currency.units[0],
     index,
     freshAddress: xpubOrAddress,
     freshAddressPath,
-    freshAddresses: [],
     creationDate: new Date(),
     lastSyncDate: new Date(0),
     blockHeight: 0,

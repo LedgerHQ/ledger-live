@@ -2,13 +2,13 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { ExchangeRate, ExchangeRateResponseRaw } from "../../types";
+import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
-import { getSwapAPIBaseURL } from "../..";
+import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
   providers: Array<string>;
@@ -94,17 +94,21 @@ export async function fetchRates({
     from: currencyFrom,
     to: toCurrencyId,
     amountFrom: fromCurrencyAmount, // not sure why amountFrom thinks it can be undefined here
-    providers,
+    providers: providers,
   };
-
+  const headers = getSwapUserIP();
   try {
     const { data } = await network<ExchangeRateResponseRaw[]>({
       method: "POST",
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
       data: requestBody,
+      ...(headers !== undefined ? { headers } : {}),
     });
-    const enrichedResponse = enrichRatesResponse(data, unitTo, unitFrom);
+    const filteredData = data.filter(
+      response => ![300, 304, 306, 308].includes((response as ExchangeRateErrorDefault)?.errorCode),
+    ); // remove backend only errors
+    const enrichedResponse = enrichRatesResponse(filteredData, unitTo, unitFrom);
 
     const allErrored = enrichedResponse.every(res => !!res.error);
 

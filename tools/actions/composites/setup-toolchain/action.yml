@@ -4,18 +4,18 @@ inputs:
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
-  install_dotnet:
+  install-dotnet:
     description: "dotnet setup for Windows"
     required: false
-  skip_pnpm_cache:
+  skip-pnpm-cache:
     description: "true to skip pnpm caching, false by default"
     required: false
     default: "false"
-  skip_pod_cache:
+  skip-pod-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
-  skip_turbo_cache:
+  skip-turbo-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
@@ -41,23 +41,21 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # ⚠️ We have issues with the runners and proto,
-    # so for the moment we're not using it at all in the CI.
-    - uses: actions/setup-dotnet@v3.2.0
-      if: inputs.install_dotnet != ''
+    - uses: actions/setup-dotnet@v4
+      if: inputs.install-dotnet != ''
       with:
         dotnet-version: 2.1.816
 
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@v4
       with:
-        version: 8.14.1
+        version: 9.11.0
     - name: Get pnpm store directory
       shell: bash
       run: |
         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v3
+      uses: aws-actions/configure-aws-credentials@v4
       if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:
@@ -66,7 +64,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'true'
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -79,7 +77,7 @@ runs:
         region: ${{ inputs.region }}
         use-fallback: false
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 20.11.0
         registry-url: "https://registry.npmjs.org"
@@ -93,7 +91,7 @@ runs:
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: ./tools/actions/turborepo-s3-cache
+      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
       with:
         server-token: "${{ inputs.turbo-server-token }}"
         cleanup-cache-folder: "true"
@@ -104,76 +102,10 @@ runs:
 
     - name: Cache LLM pods
       uses: actions/cache@v3
-      if: inputs.skip_pod_cache != 'true'
+      if: inputs.skip-pod-cache != 'true'
       with:
         path: |
           apps/ledger-live-mobile/ios/Pods
           ~/Library/Caches/CocoaPods
           ~/.cocoapods
         key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-
-    # Using the proto toolchain manager:
-    # - name: Setup proto
-    #   if: ${{ runner.os != 'Windows' }}
-    #   shell: bash
-    #   run: |
-    #     curl -fsSL https://moonrepo.dev/install/proto.sh | bash
-    #     echo "Adding $HOME/.proto/bin to GITHUB_PATH"
-    #     echo "$HOME/.proto/bin" >> $GITHUB_PATH
-    #     if [[ -z "${HOME}" ]]; then
-    #       # EC2 runners don't have a HOME variable
-    #       echo "Adding /root/.proto/bin to PATH"
-    #       echo "/root/.proto/bin" >> $GITHUB_PATH
-    #     fi
-    # # - name: Setup proto (Windows)
-    # #   if: ${{ runner.os == 'Windows' }}
-    # #   shell: powershell
-    # #   run: |
-    # #     irm https://moonrepo.dev/install/proto.ps1 | iex
-    # #     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-    # #     echo "Adding ${Home}\.proto\bin to GITHUB_PATH"
-    # #     echo "${Home}\.proto\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    # # - name: Update proto (bash)
-    # #   if: ${{ runner.os != 'Windows' }}
-    # #   shell: bash
-    # #   run: |
-    # #     proto upgrade
-    # - name: Use proto (bash)
-    #   if: ${{ runner.os != 'Windows' }}
-    #   shell: bash
-    #   run: |
-    #     proto --version
-    #     proto use
-    #     which node
-    #     proto run node -- --version
-    #     node --version
-    #     which pnpm
-    #     proto run pnpm -- --version
-    #     pnpm --version
-    #     which npm
-    #     proto run npm -- --version
-    #     npm --version
-    # # - name: Use proto (powershell)
-    # #   if: ${{ runner.os == 'Windows' }}
-    # #   shell: powershell
-    # #   run: |
-    # #     proto use
-    # #     echo ${env:PATH}
-    # #     Get-Command node
-    # #     node --version
-    # #     Get-Command pnpm
-    # #     pnpm --version
-    # #     Get-Command npm
-    # #     npm --version
-    # - name: Get pnpm store directory
-    #   if: ${{ runner.os != 'Windows' }}
-    #   id: pnpm-cache
-    #   shell: bash
-    #   run: |
-    #     echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-    # - name: Setup pnpm cache
-    #   if: ${{ runner.os != 'Windows' }}
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-    #     key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}

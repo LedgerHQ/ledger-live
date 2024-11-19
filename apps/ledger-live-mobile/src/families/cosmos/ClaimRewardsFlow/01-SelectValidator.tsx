@@ -9,7 +9,7 @@ import type {
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
@@ -19,6 +19,7 @@ import Item from "../shared/Item";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
 import BigNumber from "bignumber.js";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<
   CosmosClaimRewardsFlowParamList,
@@ -44,7 +45,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
     };
   }).transaction as Transaction;
   invariant(transaction && transaction.validators, "transaction and validators required");
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const delegations = useCosmosFamilyMappedDelegations(mainAccount, "claimReward");
   const onSelect = useCallback(
     (validator: CosmosValidatorItem, value?: BigNumber | null) => {

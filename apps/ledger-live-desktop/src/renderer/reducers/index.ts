@@ -9,6 +9,12 @@ import settings, { SettingsState } from "./settings";
 import swap, { SwapStateType } from "./swap";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import market, { MarketState } from "./market";
+import wallet from "./wallet";
+import { WalletState } from "@ledgerhq/live-wallet/store";
+import walletSync, { WalletSyncState } from "./walletSync";
+import trustchain from "./trustchain";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 export type State = {
   accounts: AccountsState;
@@ -20,6 +26,10 @@ export type State = {
   UI: UIState;
   swap: SwapStateType;
   postOnboarding: PostOnboardingState;
+  market: MarketState;
+  wallet: WalletState;
+  walletSync: WalletSyncState;
+  trustchain: TrustchainStore;
 };
 
 export default combineReducers({
@@ -32,4 +42,8 @@ export default combineReducers({
   UI,
   postOnboarding,
   swap,
+  market,
+  wallet,
+  walletSync,
+  trustchain,
 });

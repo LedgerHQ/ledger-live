@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -11,6 +10,7 @@ import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import ValidatorImage from "./ValidatorImage";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const ValidatorRow = ({
   onPress,
@@ -26,7 +26,7 @@ const ValidatorRow = ({
   amount: BigNumber;
 }) => {
   const { colors } = useTheme();
-
+  const unit = useAccountUnit(account);
   const onPressT = useCallback(() => {
     onPress(validator, vote);
   }, [onPress, validator, vote]);
@@ -68,7 +68,7 @@ const ValidatorRow = ({
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={amount} />
+            <CurrencyUnitValue showCode unit={unit} value={amount} />
           </Text>
         </Text>
       </View>

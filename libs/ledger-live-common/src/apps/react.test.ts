@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 import { Subject } from "rxjs";
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from "@testing-library/react";
 import { initState } from ".";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import {
@@ -13,10 +16,11 @@ import { AppType, SortOptions } from "./filtering";
 import { calculateDependencies } from "./polyfill";
 
 calculateDependencies();
+
 const mockedState = initState(
   mockListAppsResult(
-    "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
-    "Litecoin (outdated), Ethereum, Ethereum Classic",
+    "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain",
+    "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain",
     deviceInfo155,
   ),
 );
@@ -48,8 +52,12 @@ test("Apps hooks - useAppUninstallNeedsDeps - Expect dep apps", () => {
   const { result = <any>{} } = renderHook(() =>
     useAppUninstallNeedsDeps(mockedState, mockedState.appByName["Ethereum"]),
   );
-  expect(result.current.dependents.length).toBe(1);
-  expect(result.current.dependents[0].name).toBe("Ethereum Classic");
+  expect(result.current.dependents.map(({ name }) => name)).toEqual([
+    "Ethereum Classic",
+    "Aave",
+    "Polygon",
+    "Binance Smart Chain",
+  ]);
 });
 test("Apps hooks - useAppUninstallNeedsDeps - Expect no dep apps", () => {
   const { result } = renderHook(() =>
@@ -131,7 +139,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps", () => {
       },
     }),
   );
-  expect(result.current.device.length).toBe(3);
+  expect(result.current.device.length).toBe(6);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
   const { result } = renderHook(() =>
@@ -144,7 +152,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
       },
     }),
   );
-  expect(result.current.catalog.length).toBe(9);
+  expect(result.current.catalog.length).toBe(12);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps with query", () => {
   const { result } = renderHook(() =>
@@ -176,8 +184,8 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
 const mockedStateWithInstallQueue = {
   ...initState(
     mockListAppsResult(
-      "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
-      "Litecoin (outdated), Ethereum, Ethereum Classic",
+      "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain",
+      "Litecoin (outdated), Ethereum, Ethereum Classic, Aave, Polygon, Binance Smart Chain",
       deviceInfo155,
     ),
   ),
@@ -203,6 +211,9 @@ test('Apps hooks - useAppsSections - Sort "device" category apps with installing
     "Ethereum",
     "Litecoin",
     "Ethereum Classic",
+    "Aave",
+    "Polygon",
+    "Binance Smart Chain",
   ]);
   expect(installQueueResult.current.device.map(elt => elt.name)).toMatchObject([
     // Apps being installed
@@ -212,5 +223,8 @@ test('Apps hooks - useAppsSections - Sort "device" category apps with installing
     "Ethereum",
     "Litecoin",
     "Ethereum Classic",
+    "Aave",
+    "Polygon",
+    "Binance Smart Chain",
   ]);
 });

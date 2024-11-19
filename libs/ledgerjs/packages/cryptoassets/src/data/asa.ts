@@ -4,9 +4,10 @@ export type AlgorandASAToken = [
   string, // name
   string, // contractAddress
   number, // precision
-  boolean?, // enableCountervalues
 ];
 
 import tokens from "./asa.json";
+
+export { default as hash } from "./asa-hash.json";
 
 export default tokens as AlgorandASAToken[];

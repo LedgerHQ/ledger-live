@@ -6,12 +6,10 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { addAccounts } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { replaceAccounts } from "~/renderer/actions/accounts";
 import { closeModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
@@ -22,13 +20,14 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
 export type Props = {
   // props from redux
   device: Device | undefined | null;
   existingAccounts: Account[];
   closeModal: (a: string) => void;
-  replaceAccounts: (a: Account[]) => void;
+  addAccountsAction: typeof addAccountsAction;
   blacklistedTokenIds?: string[];
 } & UserProps;
 
@@ -132,7 +131,7 @@ const mapStateToProps = createStructuredSelector({
   blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
 const mapDispatchToProps = {
-  replaceAccounts,
+  addAccountsAction,
   closeModal,
 };
 const INITIAL_STATE: State = {
@@ -149,16 +148,14 @@ class AddAccounts extends PureComponent<Props, State> {
   state = INITIAL_STATE;
   STEPS = createSteps(this.props.currency && !this.props.preventSkippingCurrencySelection);
   handleClickAdd = async () => {
-    const { replaceAccounts, existingAccounts } = this.props;
+    const { addAccountsAction, existingAccounts } = this.props;
     const { scannedAccounts, checkedAccountsIds, editedNames } = this.state;
-    replaceAccounts(
-      addAccounts({
-        scannedAccounts,
-        existingAccounts,
-        selectedIds: checkedAccountsIds,
-        renamings: editedNames,
-      }),
-    );
+    addAccountsAction({
+      scannedAccounts,
+      existingAccounts,
+      selectedIds: checkedAccountsIds,
+      renamings: editedNames,
+    });
   };
 
   handleStepChange = (step: St) =>

@@ -124,3 +124,12 @@ export function decodeVarint(stream: Buffer, index: number): DecodeResult {
 
   throw new Error("Too many bytes when decoding varint.");
 }
+
+export const padHexString = (str: string) => {
+  return str.length % 2 ? "0" + str : str;
+};
+
+export function hexBuffer(str: string): Buffer {
+  const strWithoutPrefix = str.startsWith("0x") ? str.slice(2) : str;
+  return Buffer.from(padHexString(strWithoutPrefix), "hex");
+}

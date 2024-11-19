@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -31,6 +30,7 @@ import { NearStakingFlowParamList } from "../StakingFlow/types";
 import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -47,7 +47,7 @@ function StakingAmount({ navigation, route }: Props) {
     "account and near transaction required",
   );
   const bridge = getAccountBridge(account, undefined);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);

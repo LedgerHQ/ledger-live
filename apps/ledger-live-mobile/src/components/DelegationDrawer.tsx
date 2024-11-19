@@ -3,7 +3,7 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
@@ -19,6 +19,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import { normalize } from "~/helpers/normalizeSize";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const { height } = getWindowDimensions();
 type Props = {
@@ -50,7 +51,7 @@ export default function DelegationDrawer({
 }: Props) {
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const iconWidth = normalize(64);
   return (
     <QueuedDrawer style={styles.modal} isRequestingToBeOpened={isOpen} onClose={onClose}>

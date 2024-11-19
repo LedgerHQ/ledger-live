@@ -42,7 +42,6 @@ import type {
   DeviceActionEvent,
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
-import { accountDataToAccount, accountToAccountData } from "../cross";
 import type {
   Account,
   AccountLike,
@@ -53,6 +52,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
 let appCandidates;
 const localCache = {};
@@ -66,14 +66,6 @@ const cache = makeBridgeCacheSystem({
     return Promise.resolve(localCache[c.id]);
   },
 });
-
-// simulate the export/inport of an account
-async function crossAccount(account: Account): Promise<Account> {
-  const a = accountDataToAccount(accountToAccountData(account));
-  a.name += " cross";
-  const synced = await syncAccount(a);
-  return synced;
-}
 
 const defaultScanAccountsRetries = 2;
 const delayBetweenScanAccountRetries = 5000;
@@ -183,11 +175,6 @@ export async function runWithAppSpec<T extends Transaction>(
       );
     }
 
-    // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
-    // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
-    for (let i = 0; i < accounts.length; i += spec.crossAccountFrequency || 10) {
-      accounts[i] = await crossAccount(accounts[i]);
-    }
     appReport.accountsBefore = accounts;
     if (!spec.allowEmptyAccounts) {
       invariant(accounts.length > 0, "unexpected empty accounts for " + currency.name);
@@ -391,12 +378,17 @@ export async function runOnAccount<T extends Transaction>({
     const accountBridge = getAccountBridge(account);
     const accountBeforeTransaction = account;
     report.account = account;
-    log("engine", `spec ${spec.name}/${account.name}`);
+    log("engine", `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)}`);
     const maxSpendable = await accountBridge.estimateMaxSpendable({
       account,
     });
     report.maxSpendable = maxSpendable;
-    log("engine", `spec ${spec.name}/${account.name} maxSpendable=${maxSpendable.toString()}`);
+    log(
+      "engine",
+      `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(
+        account,
+      )} maxSpendable=${maxSpendable.toString()}`,
+    );
     const candidates: Array<{
       mutation: MutationSpec<T>;
       tx: T;
@@ -548,7 +540,7 @@ export async function runOnAccount<T extends Transaction>({
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
     // sign the transaction with speculos
-    log("engine", `spec ${spec.name}/${account.name} signing`);
+    log("engine", `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)} signing`);
     const signedOperation = await firstValueFrom(
       accountBridge
         .signOperation({
@@ -559,7 +551,10 @@ export async function runOnAccount<T extends Transaction>({
         .pipe(
           tap(e => {
             latestSignOperationEvent = e;
-            log("engine", `spec ${spec.name}/${account.name}: ${e.type}`);
+            log(
+              "engine",
+              `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)}: ${e.type}`,
+            );
           }),
           autoSignTransaction({
             transport: device.transport,
@@ -604,7 +599,12 @@ export async function runOnAccount<T extends Transaction>({
     deepFreezeOperation(optimisticOperation);
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
-    log("engine", `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`);
+    log(
+      "engine",
+      `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)}/${
+        optimisticOperation.hash
+      } broadcasted`,
+    );
 
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
@@ -663,7 +663,12 @@ export async function runOnAccount<T extends Transaction>({
     report.finalAccount = finalAccount;
     report.operation = operation;
     report.confirmedTime = now();
-    log("engine", `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`);
+    log(
+      "engine",
+      `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)}/${
+        optimisticOperation.hash
+      } confirmed`,
+    );
 
     const destinationBeforeTransaction = destination;
     if (destination && mutation.testDestination) {
@@ -743,7 +748,13 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
         timeout({
           each: 10 * 60 * 1000,
           with: () =>
-            throwError(() => new Error("account sync timeout for " + initialAccount.name)),
+            throwError(
+              () =>
+                new Error(
+                  "account sync timeout for " +
+                    getDefaultAccountNameForCurrencyIndex(initialAccount),
+                ),
+            ),
         }),
       ),
   );
@@ -852,7 +863,7 @@ function awaitAccountOperation<T>({
   account: Account;
   value: T;
 }> {
-  log("engine", "awaitAccountOperation on " + account.name);
+  log("engine", "awaitAccountOperation on " + getDefaultAccountNameForCurrencyIndex(account));
   let syncCounter = 0;
   let acc = account;
   let lastSync = now();
@@ -872,7 +883,10 @@ function awaitAccountOperation<T>({
     await delay(Math.max(loopDebounce, targetInterval - spent));
 
     lastSync = now();
-    log("engine", "sync #" + syncCounter++ + " on " + account.name);
+    log(
+      "engine",
+      "sync #" + syncCounter++ + " on " + getDefaultAccountNameForCurrencyIndex(account),
+    );
     acc = await syncAccount(acc);
     const r = await loop();
     return r;

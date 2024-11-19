@@ -61,6 +61,12 @@ const reducer = (state: RenameDeviceState, e: Event): RenameDeviceState => {
     case "deviceChange":
       return getInitialState(e.device);
 
+    case "disconnected":
+      return {
+        ...getInitialState(state.device),
+        isLoading: !!e.expected,
+      };
+
     case "error":
       return {
         ...getInitialState(state.device),

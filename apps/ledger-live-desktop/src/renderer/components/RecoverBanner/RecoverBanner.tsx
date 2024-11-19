@@ -1,26 +1,35 @@
 import { Flex, ProgressLoader, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "react-i18next";
-import Button from "~/renderer/components/ButtonV3";
-import { useTheme } from "styled-components";
 import { RecoverBannerType } from "./types";
+import ActionCard from "../ContentCards/ActionCard";
+import { Card } from "../Box";
+import styled from "styled-components";
 
-export default function RecoverBanner() {
+const Wrapper = styled(Card)`
+  background-color: ${p => p.theme.colors.opacityPurple.c10};
+  margin: 20px 0px;
+`;
+
+/**
+ * @prop children: if a child is passed, it will be rendered instead of the default banner. this allows to do a passthrough to have first the recover banner, then the rest of the content.
+ */
+export default function RecoverBanner({ children }: { children?: React.ReactNode }) {
   const [storageData, setStorageData] = useState<string>();
   const [displayBannerData, setDisplayBannerData] = useState<boolean>();
   const [stepNumber, setStepNumber] = useState<number>(0);
 
   const { t } = useTranslation();
   const history = useHistory();
-  const { colors } = useTheme();
 
   const recoverServices = useFeature("protectServicesDesktop");
+
   const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
-  const protectID = recoverServices?.params?.protectId ?? "";
+  const protectID = recoverServices?.params?.protectId ?? "protect-prod";
   const recoverUnfinishedOnboardingPath = useCustomPath(
     recoverServices,
     "activate",
@@ -80,73 +89,45 @@ export default function RecoverBanner() {
     getStorageSubscriptionState();
   }, [getStorageSubscriptionState]);
 
-  if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return null;
+  const passthrough = children || null;
+  if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return passthrough;
 
   return (
-    <Flex justifyContent="center" mb={20}>
-      <Flex
-        position="relative"
-        columnGap={12}
-        bg={colors.opacityPurple.c10}
-        justifyContent="space-between"
-        alignItems="center"
-        borderRadius="8px"
-        overflow="hidden"
-        width="100%"
-      >
-        <Flex alignItems="center" justifyContent="center" ml={3} width={40}>
-          <ProgressLoader
-            progress={(stepNumber * 100) / maxStepNumber}
-            radius={20}
-            stroke={4}
-            showPercentage={false}
-          />
-          <Text
-            display="block"
-            flex={1}
-            textAlign="center"
-            fontSize="12px"
-            lineHeight="15px"
-            fontWeight="medium"
-          >
-            {`${stepNumber}/${maxStepNumber - 1}`}
-          </Text>
-        </Flex>
-        <Flex flex={1} flexDirection="column" py={3} overflow="hidden">
-          <Text
-            fontWeight="semiBold"
-            fontSize="13px"
-            lineHeight="16px"
-            whiteSpace="nowrap"
-            textOverflow="ellipsis"
-            width="100%"
-            overflow="hidden"
-          >
-            {recoverBannerSelected.title}
-          </Text>
-          <Text
-            mt={1}
-            fontSize="12px"
-            lineHeight="15px"
-            fontWeight="medium"
-            whiteSpace="nowrap"
-            textOverflow="ellipsis"
-            width="100%"
-            overflow="hidden"
-            color="pallette.neutral.c80"
-          >
-            {recoverBannerSelected.description}
-          </Text>
-        </Flex>
-        <Flex alignItems="center" p={3} pl={0} columnGap={3}>
-          <Button outline={false} onClick={onCloseBanner}>
-            {recoverBannerSelected.secondaryCta}
-          </Button>
-          <Button variant="main" outline={false} onClick={onRedirectRecover}>
-            {recoverBannerSelected.primaryCta}
-          </Button>
-        </Flex>
-      </Flex>
-    </Flex>
+    <Wrapper>
+      <ActionCard
+        leftContent={
+          <Flex alignItems="center" justifyContent="center" ml={3} width={40}>
+            <ProgressLoader
+              progress={(stepNumber * 100) / maxStepNumber}
+              radius={20}
+              stroke={4}
+              showPercentage={false}
+            />
+            <Text
+              display="block"
+              flex={1}
+              textAlign="center"
+              fontSize="12px"
+              lineHeight="15px"
+              fontWeight="medium"
+            >
+              {`${stepNumber}/${maxStepNumber - 1}`}
+            </Text>
+          </Flex>
+        }
+        title={recoverBannerSelected.title}
+        description={recoverBannerSelected.description}
+        actions={{
+          primary: {
+            label: recoverBannerSelected.primaryCta,
+            action: onRedirectRecover,
+          },
+          dismiss: {
+            label: recoverBannerSelected.secondaryCta,
+            action: onCloseBanner,
+          },
+        }}
+      />
+    </Wrapper>
   );
 }

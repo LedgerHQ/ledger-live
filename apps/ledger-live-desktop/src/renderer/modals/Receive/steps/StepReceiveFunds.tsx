@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { DisconnectedDevice } from "@ledgerhq/errors";
@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -29,13 +29,20 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
+import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
+import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
+import MemoTagInfo from "~/newArch/features/MemoTag/components/MemoTagInfo";
+import { MEMO_TAG_COINS } from "~/newArch/features/MemoTag/constants";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -51,17 +58,24 @@ const QRCodeWrapper = styled.div`
   width: 208px;
   background: white;
 `;
+
 const Receive1ShareAddress = ({
   account,
   name,
   address,
   showQRCodeModal,
 }: {
-  account: AccountLike;
+  account: Account;
   name: string;
   address: string;
   showQRCodeModal: () => void;
 }) => {
+  const { currency } = account;
+
+  const isUTXOCompliantCurrency = isUTXOCompliant(currency.family);
+  const shouldRenderMemoTagInfo =
+    currency.explorerId && MEMO_TAG_COINS.includes(currency.explorerId);
+
   return (
     <>
       <Box horizontal alignItems="center" flow={2} mb={4}>
@@ -90,6 +104,19 @@ const Receive1ShareAddress = ({
         <LinkShowQRCode onClick={showQRCodeModal} address={address} />
       </Box>
       <ReadOnlyAddressField address={address} />
+
+      {isUTXOCompliantCurrency && (
+        <Box mt={3}>
+          <UTXOAddressAlert />
+        </Box>
+      )}
+      <FeatureToggle featureId="lldMemoTag">
+        {shouldRenderMemoTagInfo && (
+          <Box mt={3}>
+            <MemoTagInfo />
+          </Box>
+        )}
+      </FeatureToggle>
     </>
   );
 };
@@ -135,6 +162,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
     </>
   );
 };
+
 const StepReceiveFunds = (props: StepProps) => {
   const {
     isAddressVerified,
@@ -151,12 +179,25 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
     receiveTokenMode,
     receiveNFTMode,
+    isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
+  const completeAction = useCompleteActionCallback();
+
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const receivedCurrencyId: string | undefined =
+    account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
+  const isStakingEnabledForAccount =
+    !!receivedCurrencyId &&
+    receiveStakingFlowConfig?.enabled &&
+    receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
+  const isDirectStakingEnabledForAccount =
+    !!receivedCurrencyId && receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.direct;
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
-  const name = token ? token.name : getAccountName(account);
+  const maybeAccountName = useMaybeAccountName(account);
+  const name = token ? token.name : maybeAccountName || getDefaultAccountName(account);
   const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
@@ -188,6 +229,7 @@ const StepReceiveFunds = (props: StepProps) => {
       hideQRCodeModal();
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
+
   const onVerify = useCallback(() => {
     // if device has changed since the beginning, we need to re-entry device
     if (device !== initialDevice.current || !isAddressVerified) {
@@ -196,17 +238,19 @@ const StepReceiveFunds = (props: StepProps) => {
     onChangeAddressVerified(null);
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
+
   const onFinishReceiveFlow = useCallback(() => {
-    const id = mainAccount?.currency?.id;
-    const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
+    completeAction(PostOnboardingActionId.assetsTransfer);
+    const dismissModal =
+      global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
       !receiveNFTMode &&
       !receiveTokenMode &&
-      receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params?.[id]?.enabled
+      isStakingEnabledForAccount &&
+      !isFromPostOnboardingEntryPoint
     ) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "continue",
         page: window.location.hash
           .split("/")
@@ -216,7 +260,8 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account: name,
       });
-      if (receiveStakingFlowConfig?.params?.[id]?.direct) {
+      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
+      if (isDirectStakingEnabledForAccount) {
         dispatch(
           openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
@@ -233,16 +278,19 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    mainAccount,
-    currencyName,
-    dispatch,
-    name,
-    onClose,
-    receiveStakingFlowConfig?.enabled,
-    receiveStakingFlowConfig?.params,
+    receivedCurrencyId,
+    isFromPostOnboardingEntryPoint,
     receiveNFTMode,
     receiveTokenMode,
+    isStakingEnabledForAccount,
+    isDirectStakingEnabledForAccount,
+    currencyName,
+    name,
+    dispatch,
+    mainAccount,
+    onClose,
     transitionTo,
+    completeAction,
   ]);
 
   // when address need verification we trigger it on device
@@ -293,11 +341,7 @@ const StepReceiveFunds = (props: StepProps) => {
                   <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
                     <Trans i18nKey="common.reverify" />
                   </Button>
-                  <Button
-                    data-test-id="modal-continue-button"
-                    primary
-                    onClick={onFinishReceiveFlow}
-                  >
+                  <Button data-testid="modal-continue-button" primary onClick={onFinishReceiveFlow}>
                     <Trans i18nKey="common.done" />
                   </Button>
                 </Box>

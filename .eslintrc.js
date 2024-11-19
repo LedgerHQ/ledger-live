@@ -17,6 +17,15 @@ module.exports = {
     "no-inner-declarations": "off",
     // Enables no-unused-vars only from TypeScript
     "no-unused-vars": "off",
+    "no-restricted-imports": [
+      2,
+      {
+        paths: [
+          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+        ],
+      },
+    ],
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

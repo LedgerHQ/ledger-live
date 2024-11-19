@@ -1,16 +1,17 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import useMemoOnce from "../../hooks/useMemoOnce";
-import { useBridgeSync } from "../../bridge/react";
-import {
-  getCurrentPolkadotPreloadData,
-  getPolkadotPreloadDataUpdates,
-} from "@ledgerhq/coin-polkadot/preload";
 import type {
   PolkadotValidator,
   PolkadotNomination,
   PolkadotSearchFilter,
   PolkadotAccount,
-} from "@ledgerhq/coin-polkadot/types";
+} from "@ledgerhq/coin-polkadot";
+import {
+  getCurrentPolkadotPreloadData,
+  getPolkadotPreloadDataUpdates,
+} from "@ledgerhq/coin-polkadot/bridge/state";
+import useMemoOnce from "../../hooks/useMemoOnce";
+import { useBridgeSync } from "../../bridge/react";
+
 const SYNC_REFRESH_RATE = 6000; // 6s - block time
 
 export function usePolkadotPreloadData() {

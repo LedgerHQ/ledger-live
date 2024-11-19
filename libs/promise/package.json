@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-promise",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Ledger Live Promise utilities",
   "keywords": [
     "Ledger"

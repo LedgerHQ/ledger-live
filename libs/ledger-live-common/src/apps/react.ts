@@ -1,6 +1,6 @@
 import { useState, useReducer, useEffect, useMemo } from "react";
 import type { Exec, State, Action, ListAppsResult } from "./types";
-import type { AppType, SortOptions } from "./filtering";
+import type { AppType, FilterOptions, SortOptions } from "./filtering";
 import { useSortedFilteredApps } from "./filtering";
 import {
   reducer,
@@ -11,12 +11,15 @@ import {
 } from "./logic";
 import { runAppOp } from "./runner";
 import { App } from "@ledgerhq/types-live";
+import { useFeatureFlags } from "../featureFlags";
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
 type UseAppsRunnerResult = [State, (arg0: Action) => void];
 // use for React apps. support dynamic change of the state.
 export const useAppsRunner = (
   listResult: ListAppsResult,
   exec: Exec,
+  storage: StorageProvider<AppStorageType>,
   appsToRestore?: string[],
 ): UseAppsRunnerResult => {
   // $FlowFixMe for ledger-live-mobile older react/flow version
@@ -33,7 +36,7 @@ export const useAppsRunner = (
 
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe(event => {
+      const sub = runAppOp({ state, appOp, exec, storage }).subscribe(event => {
         dispatch({
           type: "onRunnerEvent",
           event,
@@ -85,17 +88,21 @@ export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSecti
     () => apps.filter(({ name }) => installed.some(i => i.name === name && !i.updated)),
     [apps, installed],
   );
+  const { getFeature, isFeature } = useFeatureFlags();
   const update = appsUpdating.length > 0 ? appsUpdating : updatableAppList;
-  const filterParam = useMemo(
+  const filterParam: FilterOptions = useMemo(
     () => ({
       query: opts.query,
       installedApps: installed,
       type: [opts.appFilter],
+      getFeature,
+      isFeature,
     }),
-    [installed, opts.appFilter, opts.query],
+    [getFeature, installed, isFeature, opts.appFilter, opts.query],
   );
 
   const catalog = useSortedFilteredApps(apps, filterParam, opts.sort);
+
   const installedAppList = useSortedFilteredApps(
     apps,
     {
@@ -103,6 +110,8 @@ export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSecti
       installedApps: installed,
       installQueue,
       type: ["installed"],
+      getFeature,
+      isFeature,
     },
     {
       type: "default",

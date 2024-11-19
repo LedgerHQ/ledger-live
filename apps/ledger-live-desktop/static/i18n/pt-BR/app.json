@@ -27,10 +27,12 @@
       "title" : "Explorar",
       "section" : {
         "recentlyUsed" : "Usado recentemente",
+        "locallyLoaded" : "Aplicativos Live carregados localmente",
         "browse" : "Navegar"
       },
       "filter" : {
-        "categories" : "Categorias"
+        "categories" : "Categorias",
+        "all" : "todos"
       },
       "branch" : {
         "soon" : "Em breve",
@@ -143,7 +145,8 @@
     "add" : "Adicionar",
     "or" : "OU",
     "clearAll" : "Limpar tudo",
-    "buyLedger" : "Comprar uma Ledger"
+    "buyLedger" : "Comprar uma Ledger",
+    "quote" : "Cotação"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -275,7 +278,6 @@
   },
   "sidebar" : {
     "card" : "Cartão",
-    "learn" : "Aprender",
     "menu" : "Menu",
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
@@ -302,7 +304,7 @@
   "swap2" : {
     "title" : "Trocar",
     "tabs" : {
-      "exchange" : "Negociar",
+      "exchange" : "Trocar",
       "history" : "Histórico"
     },
     "form" : {
@@ -334,7 +336,7 @@
         "label" : {
           "provider" : "provedor",
           "rate" : "taxa",
-          "fees" : "taxas de rede",
+          "fees" : "Taxas de Rede",
           "target" : "conta de destino"
         },
         "tooltip" : {
@@ -363,13 +365,20 @@
       }
     },
     "history" : {
-      "disclaimer" : "Suas transações de troca feitas no desktop não estão sincronizadas com o aplicativo Ledger Live mobile",
+      "disclaimer" : "As transações podem não aparecer no histórico de troca mas são processadas com segurança. Verifique ‘Detalhes das Últimas Operações’ em sua conta para ver todas as transações",
       "empty" : {
         "title" : "O seu histórico de trocas aparecerá aqui",
         "description" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
       },
       "export" : "Exportar Operações",
-      "exporting" : "Exportando..."
+      "exporting" : "Exportando...",
+      "status" : {
+        "pending" : "Pendente",
+        "onhold" : "Retida",
+        "expired" : "Expirada",
+        "finished" : "Finalizada",
+        "refunded" : "Reembolsada"
+      }
     },
     "exchangeDrawer" : {
       "title" : "Confirme sua negociação",
@@ -377,6 +386,7 @@
         "title" : "Transação transmitida com sucesso",
         "description" : "Sua operação de troca foi enviada à rede para ser confirmada. Aguarde sua transação ser confirmada e o provedor processar e enviar seu {{targetCurrency}}.",
         "disclaimer" : "Anote o número Swap ID da sua troca para caso precise de ajuda do <0>suporte do <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Fale sobre sua experiência",
         "seeDetails" : "Ver Detalhes"
       }
     },
@@ -422,7 +432,7 @@
       "cta" : "Ir para Minha Ledger"
     },
     "providers" : {
-      "title" : "Escolha um provedor para trocar criptos",
+      "title" : "Escolha um provedor para trocar cripto",
       "learnMore" : "O que é Troca (Swap)?",
       "cta" : "Continuar",
       "filter" : {
@@ -522,7 +532,8 @@
         "refunded" : "Para mais informações, contate o provedor da troca com sua Swap ID.",
         "pending" : "Aguarde enquanto o provedor da troca processa a transação.",
         "onhold" : "Para resolver a situação, contate o provedor da troca com sua Swap ID.",
-        "finished" : "Sua troca foi concluída com sucesso."
+        "finished" : "Sua troca foi concluída com sucesso.",
+        "unknown" : "Para mais informações, fale com o provedor da troca e informe a sua Swap ID."
       },
       "date" : "Data",
       "from" : "De",
@@ -729,6 +740,10 @@
         "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger"
       }
     },
+    "willBeDeprecatedBanner" : {
+      "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
+      "contactSupport" : "Falar com o suporte"
+    },
     "lastOperations" : "Últimas Operações",
     "contractAddress" : "Contrato:",
     "openInExplorer" : "Abrir no explorador",
@@ -844,6 +859,9 @@
       "selectAccount" : "Escolha uma conta",
       "continue" : "Continuar"
     }
+  },
+  "card" : {
+    "backToCard" : "todos os cartões"
   },
   "lend" : {
     "title" : "Emprestar Cripto",
@@ -1076,7 +1094,7 @@
     },
     "emptyAccountDeposit" : {
       "title" : "Você não tem uma conta {{ asset }}.",
-      "description" : "Para depositar fundos e emprestar criptos, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
+      "description" : "Para depositar fundos e emprestar criptomoedas, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
       "ctaBuy" : "Comprar {{ asset }}",
       "ctaReceive" : "Receber {{ asset }}"
     }
@@ -1166,7 +1184,7 @@
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
         "title" : "Esta {{deviceName}} é autêntica",
-        "description" : "É seguro usar esta Ledger Stax. Você pode prosseguir com a configuração.",
+        "description" : "É seguro usar esta {{productName}}. Você pode seguir com a configuração.",
         "continueOnDevice" : "Toque em sua {{productName}} para iniciar a configuração"
       },
       "pinContent" : {
@@ -1197,6 +1215,24 @@
         "restoreChoiceRecoverDescription" : "Se você se inscreveu no Ledger Recover, entre com os seus dados para restaurar a sua Frase de Recuperação Secreta.",
         "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}."
       },
+      "backup" : {
+        "title" : "Backup para sua Frase de Recuperação Secreta",
+        "description" : "Com um backup digital criptografado, você pode restaurar o acesso aos seus ativos sem a sua Frase de Recuperação Secreta.\n\nEscolha se você deseja um backup digital:",
+        "backupChoice" : {
+          "title" : "Quero um backup digital",
+          "titleSelected" : "Ledger Recover",
+          "tag" : "Populares",
+          "description" : "Inscreva-se no Ledger Recover por US$9,99 por mês. Comece gratuitamente. Cancele a qualquer momento!",
+          "tryCta" : "Teste grátis",
+          "redeemCodeCta" : "Tenho um código de resgate",
+          "howItWorksCta" : "Quero saber mais"
+        },
+        "manualBackup" : {
+          "title" : "Não, papel está OK",
+          "description" : "Sem um backup digital, a Folha de Recuperação é a única maneira de restaurar o acesso aos seus ativos. Não a perca.",
+          "cta" : "Eu entendo"
+        }
+      },
       "softwareCheckContent" : {
         "title" : {
           "active" : "Verificação de autenticidade e\nde atualização do sistema operacional",
@@ -1204,7 +1240,7 @@
         },
         "exitWarningDrawer" : {
           "title" : "Cancelar a Verificação de Autenticidade e a verificação de atualização do sistema operacional?",
-          "description" : "A Verificação de Autenticidade é obrigatória para continuar configurando a Ledger Stax usando o aplicativo Ledger Live.",
+          "description" : "A Verificação de autenticidade é obrigatória para continuar configurando a sua {{productName}} pelo Ledger Live.",
           "cancelCheckCTA" : "Cancelar verificações",
           "resumeCheckCTA" : "Retomar verificações"
         },
@@ -1257,7 +1293,7 @@
         }
       },
       "installApplications" : {
-        "title" : "Instalando aplicativos em {{productName}}",
+        "title" : "Instalando aplicativos na {{productName}}",
         "titleCompleted" : "Aplicativos instalados na {{productName}}",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
@@ -1295,28 +1331,34 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "Em seguida, use sua\nLedger Stax para... ",
-      "titleCompleted" : "Tudo pronto!\nContinue a explorar sua carteira.",
-      "exploreCTA" : "Explorar carteira"
+      "title" : "Em seguida, use sua {{productName}} para... ",
+      "titleCompleted" : "Tudo pronto!\nContinue a explorar seu portfólio.",
+      "exploreCTA" : "Explorar meu portfólio"
     },
     "postOnboardingContent" : {
       "skipLink" : "Farei isso mais tarde."
     },
     "postOnboardingBanner" : {
-      "title" : "O que vem por aí para a sua Ledger Stax?",
-      "description" : "Resgate o Infinity NFT, personalize sua tela de bloqueio ou\ntransfira seus ativos de outras corretoras.",
-      "link" : "Veja os próximos passos"
+      "title" : "O que fazer agora com sua {{productName}}?",
+      "description" : "Transfira seus ativos de qualquer corretora ou carteira, compre criptomoedas, personalize sua tela de bloqueio ou assine o Ledger Recover.",
+      "link" : "Veja os próximos passos",
+      "dismiss" : "Talvez mais tarde"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "Comprar cripto",
-        "description" : "Escolha entre mais de 500 moedas e as melhores cotações de provedores, personalizadas de acordo com suas preferências.",
+        "description" : "Escolha entre mais de 500 moedas e as melhores cotações conforme sua preferência.",
         "actionCompletedPopupLabel" : "Cripto comprada"
       },
       "assetsTransfer" : {
         "title" : "Transfira seus ativos para a Ledger",
-        "description" : "Transfira facilmente ativos da Coinbase ou de qualquer outra corretora ou carteira.",
+        "description" : "De qualquer corretora ou carteira, diretamente para a sua Ledger.",
         "actionCompletedPopupLabel" : "Ativos transferidos"
+      },
+      "recover" : {
+        "title" : "Inscrever-se no Ledger Recover",
+        "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
+        "actionCompletedPopupLabel" : "Você se inscreveu com sucesso no Ledger Recover"
       }
     }
   },
@@ -1362,7 +1404,7 @@
     },
     "sell" : {
       "title" : "vender cripto",
-      "description" : "Venda Bitcoin com nosso parceiro diretamente do Ledger Live"
+      "description" : "Venda Bitcoin pelo nosso provedor diretamente no Ledger Live"
     },
     "stakeAlgorand" : {
       "title" : "Staking de ALGORAND",
@@ -1409,6 +1451,7 @@
   },
   "dashboard" : {
     "title" : "Portfólio",
+    "header" : "Saldo do portfólio",
     "emptyAccountTile" : {
       "desc" : "Adicione contas para gerenciar outros criptoativos",
       "createAccount" : "Adicionar Conta"
@@ -1419,16 +1462,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Comprar / Vender",
-        "description" : "Comprar e vender com provedores confiáveis"
+        "description" : "Comprar e vender com nossos provedores de confiança"
       },
       "swap" : {
         "title" : "Trocar",
-        "description" : "Troque cripto por cripto em segurança",
+        "description" : "Trocar cripto por cripto",
         "label" : "Populares"
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Multiplique suas criptos com a Ledger"
+        "description" : "Faça staking de suas criptos com a Ledger"
       }
     },
     "recoverBanner" : {
@@ -1450,6 +1493,34 @@
         "primaryCta" : "Conectar",
         "secondaryCta" : "Talvez mais tarde"
       }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "gráfico de {{time}}",
+      "buy" : "Comprar",
+      "swap" : "Trocar",
+      "gainers" : "Melhores",
+      "losers" : "Piores",
+      "error" : {
+        "title" : "Desculpe, não foi possível carregar o gráfico",
+        "description" : "Tente novamente mais tarde"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "Nenhum ativo dentre os {{count}} principais apresentou alta em {{trend}}",
+          "description" : "Tente visualizar as principais baixas ou volte mais tarde"
+        },
+        "losers" : {
+          "title" : "Nenhum ativo dentre os {{count}} principais apresentou baixa em {{trend}}",
+          "description" : "Tente visualizar as principais altas ou volte mais tarde"
+        }
+      },
+      "trend" : {
+        "day" : "24 horas",
+        "week" : "7 dias",
+        "month" : "30 dias",
+        "year" : "ano",
+        "all" : "ano"
+      }
     }
   },
   "currentAddress" : {
@@ -1459,7 +1530,8 @@
     "messageIfSkipped" : "Seu endereço {{name}} não foi confirmado no seu dispositivo Ledger. É mais seguro verificá-lo.",
     "showQrCode" : "Mostrar QR Code",
     "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
-    "dashStakingWarning" : "Certifique-se de não usar esse endereço para receber recompensas de staking"
+    "dashStakingWarning" : "Certifique-se de não usar esse endereço para receber recompensas de staking",
+    "utxoWarning" : "Por motivos de privacidade, um novo endereço é gerado a cada transação. Os anteriores ainda são válidos."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1516,7 +1588,7 @@
     "detailsPage" : {
       "priceStatistics" : "Estatísticas de preço",
       "tradingVolume" : "Volume de negociação",
-      "24hLowHight" : "Mínimo em 24h / Máximo em 24h",
+      "24hLowHight" : "Min 24h / Max 24h",
       "7dLowHigh" : "Mínimo em 7d / Máximo em 7d",
       "allTimeHigh" : "Máxima Histórica",
       "allTimeLow" : "Mínima Histórica",
@@ -1756,7 +1828,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir uma conexão segura na {{productName}}",
+    "allowManagerPermission" : "Permitir conexão segura",
     "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -1789,7 +1861,8 @@
       "provider" : "Provedor",
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
-      "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>"
+      "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
+      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>"
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -1800,8 +1873,8 @@
       "targetAccount" : "Conta de destino"
     },
     "sell" : {
-      "notice" : "Verifique os detalhes da venda no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-      "confirm" : "Confirmar transação de venda"
+      "notice" : "Verifique os detalhes no seu dispositivo antes de enviar. Os endereços são comunicados com segurança para que você não precise verificá-los.",
+      "confirm" : "Confirmar transação"
     },
     "fund" : {
       "notice" : "Verifique os detalhes de fundos no seu dispositivo antes de enviá-lo. Os endereços são comunicados de forma segura para que você não precise verificá-los.",
@@ -1924,7 +1997,8 @@
       "updateBtn" : "Atualizar Firmware",
       "installUpdate" : "Instalar atualização",
       "banner" : {
-        "warning" : "Atualização do firmware {{latestFirmware}} disponível",
+        "warning" : "Atualização do OS disponível",
+        "version" : "Versão {{latestFirmware}}",
         "cta" : "Ir para Minha Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
@@ -1982,7 +2056,7 @@
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
       "successTitle" : "O sistema operacional da sua {{deviceName}} está atualizado.",
       "successTitleApps" : "O sistema operacional da sua {{deviceName}} está\natualizado. Só mais uma coisa…",
-      "successSubtitleApps" : "Para iniciar a restauração de aplicativos em sua Ledger Stax, selecione\no botão \"Restaurar aplicativos\" abaixo.",
+      "successSubtitleApps" : "Para iniciar a restauração de aplicativos em sua {{deviceName}},\nselecione o botão “Restaurar aplicativos” abaixo.",
       "sucessCTAApps" : "Restaurar aplicativos",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
@@ -2120,7 +2194,13 @@
   },
   "sell" : {
     "title" : "Vender",
-    "titleCrypto" : "Vender {{currency}}"
+    "titleCrypto" : "Vender {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "Transação transmitida com sucesso",
+        "description" : "Sua operação foi enviada para a rede para confirmação. Aguarde até que sua transação seja confirmada e que o provedor a processe."
+      }
+    }
   },
   "receive" : {
     "title" : "Receber",
@@ -2207,6 +2287,15 @@
       "summary" : {
         "title" : "Resumo"
       },
+      "networkFee" : {
+        "title" : "Escolha a taxa de rede"
+      },
+      "reviewSummary" : {
+        "title" : "Revise os detalhes"
+      },
+      "connectLedger" : {
+        "title" : "Conecte a Ledger"
+      },
       "device" : {
         "title" : "Dispositivo"
       },
@@ -2264,9 +2353,6 @@
       "estimatedFees" : "Taxas de rede"
     }
   },
-  "sign" : {
-    "title" : "Assinar Transação"
-  },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
     "version" : "Ledger Live {{versionNb}}"
@@ -2293,7 +2379,7 @@
   "removeCustomLockscreen" : {
     "title" : "Remover imagem da tela de bloqueio",
     "cta" : "Remover",
-    "confirmation" : "Confirme a remoção da imagem em sua Ledger Stax",
+    "confirmation" : "Confirme a remoção da imagem em sua {{productName}}",
     "success" : "Imagem da tela de bloqueio removida"
   },
   "changeCustomLockscreen" : {
@@ -3518,6 +3604,12 @@
         },
         "warning" : "Escolha cuidadosamente seu validador: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
       },
+      "states" : {
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "activating" : "Ativando",
+        "deactivating" : "Desativando"
+      },
       "flow" : {
         "title" : "Delegar",
         "steps" : {
@@ -3593,22 +3685,33 @@
     "stake" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições recebendo recompensas diárias diretamente no Ledger Live.",
+      "tagMinimum" : "Requer {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "Reserva de staking Kiln",
+        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+        "supportLink" : "Saiba mais sobre a reserva da Kiln"
+      },
       "lido" : {
-        "title" : "Ganhar com a Lido",
-        "description" : "Faça staking de Ethereum com a Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem mínimo.",
+        "title" : "Lido",
+        "description" : "Faça staking de qualquer quantia de ETH para obter liquidez instantânea e recompensas diárias.",
         "supportLink" : "Saiba mais sobre a Lido"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
+        "supportLink" : "Saiba mais sobre a reserva da Stader"
       },
       "kiln" : {
         "title" : "Staking dedicado Kiln",
         "tag" : "Requer 32 ETH",
-        "description" : "Aplique em staking com validadores dedicados. Requer múltiplos de 32 ETH. Recompensas são resgatadas manualmente. Saia a qualquer momento.",
+        "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
         "supportLink" : "Saiba mais sobre o validador Kiln"
       },
-      "kiln_pooling" : {
-        "title" : "Reserva de staking Kiln",
-        "tag" : "Sem mínimo",
-        "description" : "Junte-se a uma reserva de staking. Não requer mínimo de ETH. Recompensas são compostas automaticamente Saia a qualquer momento.",
-        "supportLink" : "Saiba mais sobre a reserva da Kiln"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "Requer 32 ETH",
+        "description" : "Faça staking de mais de 32 ETH em validadores dedicados e receba recompensas enviadas automaticamente para sua conta.",
+        "supportLink" : "Saiba mais sobre o validador Figment"
       }
     }
   },
@@ -3885,7 +3988,11 @@
       "region" : "Região",
       "regionDesc" : "Selecione sua região para atualizar formatos de datas, horário e moedas.",
       "stock" : "Indicador de mercado regional",
-      "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho."
+      "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Sincronize suas contas cripto em diferentes smartphones e computadores.",
+      "marketPerformanceWidget" : "Widget Desempenho do Mercado",
+      "marketPerformanceWidgetDesc" : "Ative esse recurso para visualizar as principais altas e baixas em períodos selecionados na página Portfólio."
     },
     "developer" : {
       "search" : "Buscar",
@@ -3901,8 +4008,115 @@
       "userId" : "ID de usuário",
       "debugApps" : "Permitir debug de aplicativos",
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
+      "debugReactQuery" : "Permitir debug do ReactQuery",
+      "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange em Modo Desenvolvedor",
+        "desc" : "Informe o provedor de Exchange",
+        "placeholder" : "Info. do provedor de Exchange em formato CAL"
+      },
+      "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "Ferramentas SimpleHash",
+          "description" : "Fornece algumas ferramentas úteis para usar o SimpleHash",
+          "cta" : "Abrir",
+          "tabs" : {
+            "spam" : "Relatório de Spam",
+            "refresh" : "Atualizar Metadados",
+            "check" : "Pontuação de Spam"
+          }
+        },
+        "debugSpamNft" : {
+          "report" : "Reportar",
+          "contractAddress" : "Endereço do Contrato",
+          "contractAddressDesc" : "contract_address do NFT reportado ou o próprio contrato",
+          "chainId" : "ID da Cadeia",
+          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato reportado",
+          "collectionId" : "ID da Coleção",
+          "collectionIdDesc" : "SimpleHash do ID da coleção do NFT reportado",
+          "tokenId" : "ID do Token",
+          "tokenIdDesc" : "token_id do NFT reportado",
+          "eventType" : "Tipo de Evento",
+          "eventTypeDesc" : "Tipo de denúncia que você deseja fazer",
+          "success" : "A denúncia foi enviada com sucesso. Pode levar de 5 a 10 minutos para ter efeito.",
+          "error" : "Ocorreu um erro ao enviar a denúncia. Tente novamente mais tarde.",
+          "reportType" : {
+            "title" : "O que você gostaria de denunciar?",
+            "desc" : "Selecione o tipo de denúncia que você deseja fazer",
+            "individual" : "Denúncia de spam para um NFT singular",
+            "contract" : "Denúncia de spam para um contrato",
+            "collection" : "Denúncia de spam para uma coleção"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "Atualizar",
+          "contractAddress" : "Endereço do Contrato",
+          "contractAddressDesc" : "contract_address do NFT atualizado ou o próprio contrato",
+          "chainId" : "ID da Cadeia",
+          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato atualizado",
+          "tokenId" : "ID do Token",
+          "tokenIdDesc" : "token_id do NFT atualizado",
+          "success" : "A atualização foi enviada com sucesso. Pode levar de 5 a 10 minutos para ter efeito.",
+          "error" : "Ocorreu um erro ao enviar a atualização. Tente novamente mais tarde.",
+          "refreshType" : {
+            "desc" : "O que você gostaria de atualizar?",
+            "nft" : "Atualizar metadados de um NFT individual",
+            "contract" : "Atualizar metadados de um contrato"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "Verificar",
+          "contractAddress" : "Endereço do Contrato",
+          "contractAddressDesc" : "contract_address do NFT atualizado ou o próprio contrato",
+          "chainId" : "ID da Cadeia",
+          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato verificado",
+          "tokenId" : "ID do Token",
+          "tokenIdDesc" : "token_id do NFT verificado",
+          "result" : {
+            "title" : "Esse contrato tem uma pontuação de spam de {{score}}.",
+            "desc" : "A pontuação é um valor numérico de 0 a 100, sendo que 0 é considerado não spam e 100 é considerado provavelmente spam.\n Se a resposta for nula, a coleção não tem informações suficientes para ser pontuada ou ainda não foi avaliada"
+          },
+          "error" : "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
+          "refreshType" : {
+            "desc" : "O que você gostaria de verificar?",
+            "nft" : "Um NFT individual",
+            "contract" : "Um contrato"
+          }
+        },
+        "back" : "Voltar"
+      },
+      "debugWalletSync" : {
+        "title" : "Debug do Ledger Sync",
+        "description" : "Permite que você inicie um fluxo específico do Ledger Sync ou verifique o estado atual do Ledger Sync",
+        "cta" : "Abrir",
+        "modal" : {
+          "check" : {
+            "title" : "Verificador",
+            "trustchain" : {
+              "name" : "ID da Trustchain: ",
+              "emptyId" : "ID vazio",
+              "applicationPath" : "Caminho do aplicativo: ",
+              "emptyApplicationPath" : "Caminho do aplicativo vazio",
+              "cloudSyncVersion" : "Versão de sincronização na nuvem: ",
+              "lastSyncInfo" : "Informações da sincronização mais recente: ",
+              "uniported" : "Contas não importadas: "
+            },
+            "copied" : "Texto copiado para a área de transferência!",
+            "export" : "Exportar"
+          },
+          "generator" : {
+            "title" : "Gerador",
+            "flow" : "Selecione um Fluxo",
+            "step" : "Selecione uma Etapa",
+            "instance" : "Gerar Membros",
+            "cta" : "Aplicar"
+          }
+        }
+      },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
+      "mockAppUpdate" : "Atualização simulada do aplicativo",
+      "mockAppUpdateDesc" : "Exibe a versão atual do aplicativo em Minha Ledger para reinstalar a mesma versão",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
       "catalogUrlDesc" : "Insira a URL do provedor de aplicativos da sua escolha",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
@@ -3929,6 +4143,17 @@
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Criar um aplicativo local",
+          "modify" : "Modificar um aplicativo local"
+        },
+        "addNetwork" : "Adicionar uma nova rede",
+        "removeNetwork" : "Remover a última rede",
+        "export" : "Exportar",
+        "modify" : "Modificar",
+        "create" : "Criar"
+      },
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -3971,6 +4196,7 @@
       "releaseNotesBtn" : "Detalhes",
       "termsBtn" : "Ler",
       "faq" : "Suporte Ledger",
+      "chatbot" : "Chatbot da Ledger",
       "faqDesc" : "Se você tiver algum problema, obtenha ajuda usando o Ledger Live com sua carteira hardware.",
       "terms" : "Termos de uso",
       "termsDesc" : "Ao utilizar o Ledger Live, considera-se que você aceitou nossos termos de uso.",
@@ -4026,9 +4252,13 @@
           "description" : "Testar todos os stories usadas no Ledger Live",
           "longDesc" : "Esta é uma ferramenta disponibilizada tal como se encontra para a equipe validar stories storyly usados no aplicativo."
         },
-        "testPostonboarding" : {
-          "title" : "Testar pós-introdução",
-          "description" : "Testar todos os recursos pós-introdução"
+        "testStaxPostonboarding" : {
+          "title" : "Testar Pós-Introdução da Stax",
+          "description" : "Testar todos os recursos de pós-introdução da Stax"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Testar Pós-Introdução da Europa",
+          "description" : "Testar todos os recursos de pós-introdução da Europa"
         },
         "1559DeactivateGate" : {
           "title" : "Desativar taxa de prioridade mínima (EIP1559)",
@@ -4118,7 +4348,7 @@
         "desc" : "Configure seu node completo de Bitcoin para sincronizar e enviar transações sem usar os exploradores da Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
-        "title" : "Esconder transações de tokens quando o valor é 0",
+        "title" : "Esconder transações de tokens quando o valor for 0",
         "desc" : "Esconder transações de tokens sem valor pode prevenir possíveis ataques de envenenamento de endereço na Ethereum, Polygon, BSC, Tron..."
       }
     }
@@ -4153,7 +4383,7 @@
     "downloadInProgress" : "Baixando atualização...",
     "downloadProgress" : "{{progress}}% concluído",
     "checking" : "Verificando Atualização...",
-    "checkSuccess" : "Nova atualização do Ledger Live disponível, ela será instalada automaticamente quando você fechar o aplicativo",
+    "checkSuccess" : "Nova atualização disponível. Ela será instalada automaticamente quando você fechar o Ledger Live e executará o aplicativo.",
     "quitAndInstall" : "Instalar e reiniciar agora",
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
@@ -4166,6 +4396,17 @@
     "troubleshooting" : "Clique aqui para ver possíveis soluções",
     "logs" : "Salvar Registros",
     "dataFolder" : "Ver dados de usuário"
+  },
+  "approve" : {
+    "title" : "Aprove o token",
+    "description" : "Aprove o token em seu dispositivo Ledger",
+    "unlimited" : "Você está autorizando esse provedor a acessar uma quantidade ilimitada do token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "limited" : "Você está autorizando esse provedor a acessar o token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>"
+  },
+  "sign" : {
+    "title" : "Assinar Transação",
+    "description" : "Assine a transação no seu dispositivo Ledger"
   },
   "exportOperationsModal" : {
     "title" : "Histórico de operações",
@@ -4284,7 +4525,7 @@
         "contactSupportCTA" : "Falar com o suporte",
         "continueCTA" : "Continuar",
         "title" : "Marque os conteúdos da caixa",
-        "description" : "Se o seu {{device}} já veio com um código PIN ou frase de recuperação, não é seguro usá-lo e você deve entrar em contato com o Suporte Ledger.",
+        "description" : "Se a sua {{device}} veio junto com um código PIN ou frase de recuperação, não é seguro utilizá-la. Entre em contato com o Suporte Ledger imediatamente.",
         "alert" : "Use apenas frases de recuperação que seu dispositivo exibiu quando foi configurado"
       }
     },
@@ -4296,14 +4537,14 @@
       },
       "useLedgerSeeds" : {
         "title" : "Recomendamos usar apenas frases de recuperação da Ledger",
-        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação externas. Recomendamos configurar sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
+        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação geradas por carteiras de outros fabricantes. Recomendamos que você configure a sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
         "gotIt" : "Entendi"
       }
     },
     "screens" : {
       "welcome" : {
         "title" : "A mais segura carteira de criptomoedas e NFTs.",
-        "description" : "Gerencie, compre e multiplique suas criptos e NFTs de forma segura no Ledger Live.",
+        "description" : "Gerencie, compre e multiplique suas criptomoedas e NFTs com segurança no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
         "buyLink" : "Sem dispositivo? Compre uma Ledger",
@@ -4313,7 +4554,7 @@
         "privacyPolicy" : "Política de privacidade",
         "steps" : {
           "0" : {
-            "title" : "Acesse suas criptos",
+            "title" : "Acesse sua cripto",
             "desc" : "Seus criptoativos estão armazenados na blockchain. Use sua chave privada para acessá-los e gerenciá-los"
           },
           "1" : {
@@ -4372,7 +4613,7 @@
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir da frase de recuperação",
             "paragraph1" : "Restaure sua Nano usando sua frase de recuperação para recuperar, substituir ou fazer backup da sua carteira hardware Ledger.",
-            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar suas criptos.",
+            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar seus criptoativos.",
             "buttons" : {
               "next" : "OK, vamos lá!",
               "prev" : "Passo Anterior",
@@ -4401,7 +4642,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4429,7 +4670,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4562,7 +4803,7 @@
             "title" : "Sua Frase de Recuperação Secreta",
             "paragraph1" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
             "paragraph2" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
-            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos ficarão vulneráveis.",
+            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos estarão vulneráveis.",
             "buttons" : {
               "next" : "Frase de recuperação",
               "prev" : "Passo Anterior",
@@ -4579,7 +4820,7 @@
             },
             "selectLength" : {
               "title" : "Selecione o comprimento da frase de recuperação",
-              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptos."
+              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptomoedas."
             },
             "enterWord" : {
               "title" : "Insira a palavra nº 1...",
@@ -4667,7 +4908,7 @@
       "heading" : "Noções Básicas",
       "screens" : {
         "accessYourCoins" : {
-          "title" : "Acesse suas criptos",
+          "title" : "Acesse sua cripto",
           "description" : "Seus criptoativos estão armazenados na blockchain. Você precisa de uma chave privada para acessá-los e gerenciá-los."
         },
         "ownYourPrivateKey" : {
@@ -4702,7 +4943,7 @@
         "1" : {
           "text" : "Como usuário Ledger, meus criptoativos estão armazenados:",
           "answers" : {
-            "1" : "Em minha Ledger Nano",
+            "1" : "Na minha Ledger Nano",
             "2" : "Na blockchain"
           },
           "results" : {
@@ -4736,7 +4977,7 @@
         "3" : {
           "text" : "Quando conecto minha Ledger Nano ao aplicativo Ledger Live, minha chave privada...",
           "answers" : {
-            "1" : "permanece desconectada",
+            "1" : "ainda está offline",
             "2" : "se conecta brevemente à internet"
           },
           "results" : {
@@ -4898,6 +5139,8 @@
     "warning" : "Sempre verifique se o endereço exibido no seu dispositivo corresponde exatamente ao fornecido por{{recipientWording}}",
     "secureContract" : "Verifique os detalhes do depósito no seu dispositivo antes de enviá-lo. O endereço do contrato é fornecido com segurança para que você não precise verificá-lo.",
     "verifyData" : "Sempre verifique os detalhes da operação no seu dispositivo.",
+    "doubleCheck" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -4985,6 +5228,10 @@
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo",
       "memoWarningText" : "Ao usar um memo, verifique cuidadosamente o tipo de memo usado com o destinatário"
+    },
+    "ton" : {
+      "commentPlaceholder" : "Opcional",
+      "comment" : "Comentários"
     },
     "stellar" : {
       "memo" : "Memo",
@@ -5204,7 +5451,7 @@
       "description" : "Use o My Ledger para desinstalar todos os aplicativos e verifique se há uma atualização de firmware disponível antes de reinstalá-los"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "Atualizar firmware da Nano",
+      "title" : "Atualizar o Firmware do Dispositivo",
       "description" : "Para acessar este recurso, atualize o firmware do seu dispositivo para a versão mais recente"
     },
     "FirmwareNotRecognized" : {
@@ -5219,10 +5466,6 @@
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Restauração do idioma\ncancelada no dispositivo",
       "description" : "Se foi um engano, tente novamente agora."
-    },
-    "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "A Restauração do Idioma foi cancelada na Ledger Stax",
-      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
     },
     "LanguageNotFound" : {
       "title" : "Idioma não encontrado",
@@ -5331,18 +5574,35 @@
       "title" : "Impossível calcular quantia e taxas",
       "description" : "Impossível calcular quantia e taxas"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Destinatário inválido para transferência de token, tipos de conta compatíveis para a transferência de token: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Desculpe, falha na estimativa de taxas",
+      "description" : "A estimativa de taxa falhou na rede. Verifique suas entradas, é provável que a transação vá falhar"
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "Endereço do destinatário inativo. Envie pelo menos {{minimalAmount}} para ativá-lo"
     },
     "NotEnoughGas" : {
-      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"
+      "title" : "Você precisa de {{fees}} {{ticker}} em sua conta para pagar as taxas de transação na rede {{cryptoName}}.  <link0>Compre {{ticker}}</link0> ou deposite mais em sua conta."
     },
     "NotEnoughGasSwap" : {
       "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para habilitar o recebimento de tokens TRC20. <link0>Saiba mais </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Você precisa de pelo menos 0,1 TRX para manter essa conta Tron ativa e 1,1 TRX para as taxas de rede. <link0>Saiba mais </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "A versão do seu sistema operacional está desatualizada",
@@ -5387,9 +5647,16 @@
       "title" : "Conta não buscada pelo node completo",
       "description" : "Configure seu node completo para buscar as contas associadas a este dispositivo. Seu node completo deve primeiro buscar esta conta na blockchain para que você possa adicioná-la ao seu portfólio."
     },
+    "SwapRateExpiredError" : {
+      "title" : "Cotação Expirada",
+      "description" : "A cotação expirou. Atualize e tente novamente."
+    },
+    "PayinExtraIdError" : {
+      "message" : "Faltando o ID extra necessário para a troca"
+    },
     "SwapGenericAPIError" : {
       "title" : "Algo deu errado",
-      "description" : "A transação de negociação não foi concluída. Tente novamente ou contate o suporte."
+      "description" : "A transação falhou. Tente novamente."
     },
     "TimeoutError" : {
       "title" : "O servidor demorou muito para responder",
@@ -5407,9 +5674,24 @@
       "title" : "Algo deu errado. Reconecte seu dispositivo",
       "description" : "Uma ação já estava pendente no dispositivo Ledger. Recuse ou reconecte."
     },
+    "UnresponsiveDeviceError" : {
+      "title" : "Algo deu errado.",
+      "description" : "Não é possível acessar seu dispositivo.\nUma ação pode estar pendente. Recuse ou reconecte."
+    },
     "TransportStatusError" : {
       "title" : "Algo deu errado. Reconecte seu dispositivo",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "Não está mais sincronizada"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "Você não está mais sincronizado",
+      "description" : "Tente novamente ou contate o Suporte Ledger."
+    },
+    "TrustchainNotFound" : {
+      "title" : "Algo deu errado ao buscar seus dados",
+      "description" : "Tente novamente ou contate o Suporte Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Abra o aplicativo {{appName}}",
@@ -5420,7 +5702,7 @@
       "description" : "Reinicie seu dispositivo sem tocar nos botões quando o logotipo aparecer. Contate o Suporte Ledger se o problema persistir."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger negado no dispositivo"
+      "title" : "Conexão segura negada no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalação da atualização do sistema\noperacional cancelada no dispositivo",
@@ -5461,6 +5743,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Algo deu errado",
       "description" : "Verifique se sua carteira hardware está configurada com a frase de recuperação ou passphrase associada à conta selecionada."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
@@ -5506,6 +5796,13 @@
       "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
     },
+    "SequenceNumberError" : {
+      "title" : "Erro do número de sequência",
+      "description" : "Feche a janela e tente novamente mais tarde"
+    },
+    "TonCommentInvalid" : {
+      "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
+    },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
     },
@@ -5528,7 +5825,7 @@
       "title" : "A taxa de prioridade é mais alta do que o necessário. Você pode estar pagando mais que o necessário"
     },
     "MaxFeeTooLow" : {
-      "title" : "A taxa máxima é mais baixa do que o valor recomendado"
+      "title" : "A taxa é mais baixa do que o valor recomendado"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "A taxa de prioridade máxima não pode ser maior do que a taxa máxima"
@@ -5655,6 +5952,9 @@
     "InvalidXRPTag" : {
       "title" : "Tag de destino XRP inválida"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "Resposta inválida do explorador {{currencyName}}"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Saldo insuficiente para delegar"
     },
@@ -5687,6 +5987,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "A quantia deve ser menor que {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Valor indisponível. Ajuste o valor."
     },
     "PolkadotElectionClosed" : {
       "title" : "A eleição dos validadores deve ser encerrada"
@@ -5757,6 +6060,18 @@
     },
     "CardanoStakeKeyDepositError" : {
       "title" : "Certifique-se de que você tem {{depositAmount}} ADA disponível para o depósito"
+    },
+    "CardanoFeeHigh" : {
+      "title" : "Taxas de rede excepcionalmente altas.",
+      "description" : "Taxas de rede atipicamente altas, verifique sua transação novamente."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "Taxas de rede excepcionalmente altas.",
+      "description" : "Transacionar ADA está temporariamente indisponível. Ressincronize sua conta e tente novamente, ou entre em contato com o suporte se precisar de ajuda."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Parâmetros de protocolo inválidos da Cardana",
+      "description" : "Transacionar ADA está temporariamente indisponível. Ressincronize sua conta e tente novamente, ou entre em contato com o suporte se precisar de ajuda."
     },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
@@ -5839,24 +6154,16 @@
       "description" : "Tente novamente com outra imagem"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de bloqueio\ncancelada na Ledger Stax",
+      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de bloqueio\ncancelada na Ledger Stax",
+      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Sua Ledger Stax não tem uma imagem na tela de bloqueio para ser removida",
+      "title" : "Seu dispositivo não tem uma imagem na tela de bloqueio para remover",
       "description" : "A imagem personalizada na tela de bloqueio foi removida anteriormente."
-    },
-    "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "A restauração da imagem da tela de bloqueio foi cancelada na Ledger Stax",
-      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
-    },
-    "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "A restauração da imagem da tela de bloqueio foi cancelada na Ledger Stax",
-      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
     },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
@@ -5906,6 +6213,33 @@
     },
     "TezosUnrevealedAccount" : {
       "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
+    },
+    "newAddressTRC20" : {
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX a este endereço para ativá-lo."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Estamos enfrentando um problema com a nossa infraestrutura Bitcoin. Tente novamente mais tarde."
+    },
+    "TonExcessFee" : {
+      "title" : "Isso constitui uma transferência de token. Você pagará 0,1 TON em taxas e qualquer extra será devolvido a você."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Fundos insuficientes na conta principal (TON) para calcular taxas. O saldo mínimo exigido é de 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Fundos insuficientes. O saldo mínimo exigido é de 0,02 TON."
+    },
+    "BackupAppDataError" : {
+      "title" : "Erro durante o backup dos dados do aplicativo"
+    },
+    "RestoreAppDataError" : {
+      "title" : "Erro ao restaurar dados do aplicativo"
+    },
+    "DeleteAppDataError" : {
+      "title" : "Erro ao excluir dados do aplicativo"
+    },
+    "PinNotSet" : {
+      "title" : "PIN não definido"
     }
   },
   "cryptoOrg" : {
@@ -5979,7 +6313,7 @@
     },
     "postOnboarding" : {
       "title" : "Personalizar a tela de bloqueio",
-      "description" : "Escolha qualquer NFT ou foto como a tela de bloqueio de sua Ledger Stax.",
+      "description" : "Escolha qualquer arte digital ou foto para exibir na tela de bloqueio da sua {{productName}}.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Tela de bloqueio personalizada",
@@ -6001,7 +6335,7 @@
     },
     "progress" : {
       "loading" : "Carregando...",
-      "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
+      "progress" : "Não saia do Ledger Live enquanto os aplicativos são instalados.",
       "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
       "skipped" : "Ainda indisponíveis para {{ productName }}",
@@ -6031,9 +6365,291 @@
       "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seu registro e entre em contato com o Suporte Ledger.",
       "contactSupport" : "Fale com o Suporte Ledger",
       "saveLog" : "Salvar registro"
+    },
+    "noAccounts" : {
+      "title" : "Você precisa de uma conta para acessar este aplicativo.",
+      "add" : "Adicionar Conta"
     }
   },
   "recoverRestore" : {
     "title" : "Conectar e desbloquear sua Ledger"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "O compartilhamento de seus dados do Ledger Live nos ajuda a entender suas preferências e a mostrar conteúdo relevante para você.",
+      "whatWeTrack" : "Com o seu consentimento, a Ledger poderá registrar dados sobre como você usa o Ledger Live (incluindo visitas a páginas e cliques):",
+      "whatWeTrackList" : {
+        "1" : "Para medir o desempenho do Ledger Live e aprimorar o aplicativo e sua experiência (Métricas).",
+        "2" : "Para fornecer recomendações personalizadas e conteúdo adaptado às suas preferências, bem como para nos ajudar a medir a eficácia de nossas campanhas de marketing (Personalização)."
+      },
+      "whatWeDoNotTrack" : "A Ledger nunca monitorará informações relacionadas a:",
+      "whatWeDoNotTrackList" : {
+        "1" : "Seus ativos.",
+        "2" : "Seu portfólio.",
+        "3" : "Suas informações pessoais que possam identificar você."
+      },
+      "managePreferences" : "Gerenciar suas preferências",
+      "refuse" : "Recusar todos",
+      "accept" : "Aceitar todos",
+      "analyticsData" : {
+        "title" : "Métricas",
+        "description" : "Para medir o desempenho do Ledger Live e melhorar o aplicativo e sua experiência, compartilhamos dados de uso, incluindo visitas a páginas e cliques."
+      },
+      "personalizationData" : {
+        "title" : "Personalização",
+        "description" : "Para receber recomendações e conteúdos personalizados que correspondam às suas preferências e para nos ajudar a medir o desempenho de nossas campanhas de marketing, compartilhamos dados de uso do aplicativo, que inclui cliques, visitas a páginas e dados de conversão."
+      },
+      "share" : "Compartilhar"
+    },
+    "variantB" : {
+      "accept" : "Aceitar",
+      "refuse" : "Recusar",
+      "analytics" : {
+        "description" : "Compartilhar seus dados de uso do Ledger Live nos ajuda a entender como o Ledger Live é usado, a corrigir bugs e a melhorar a experiência de uso.",
+        "details" : {
+          "1" : "As métricas incluem visitas a páginas, cliques.",
+          "2" : "Não coletaremos nem visualizaremos nenhuma informação sobre seu saldo, contas e portfólio.",
+          "3" : "As métricas são completamente anônimas. Não podemos ver nem coletar suas informações pessoais."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "Tenha uma experiência personalizada",
+        "description" : "Compartilhar seus dados de personalização do Ledger Live nos permite exibir o conteúdo que corresponde às suas preferências.",
+        "details" : {
+          "1" : "Os dados de personalização incluem dados de conversão, cliques e visitas a páginas.",
+          "2" : "Não podemos rastrear nem coletar qualquer informação pessoal sua nem do seu portfólio."
+        }
+      }
+    },
+    "common" : {
+      "title" : "Ajude-nos a melhorar e a personalizar a sua experiência",
+      "revokeInfo" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
+      "learnMore" : "Saiba mais sobre nossa Política de Monitoramento"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "Experiência personalizada",
+      "analytics" : "Métricas",
+      "personalizedExpDesc" : "Permitir que a Ledger rastreie os dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
+      "analyticsDesc" : "Permitir que a Ledger rastreie os dados de uso do aplicativo para ajudar a medir o desempenho do Ledger Live e aprimorar o aplicativo e sua experiência."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "close" : "Fechar",
+    "activate" : {
+      "title" : "Ativar o Ledger Sync para esse computador?",
+      "description" : "Sincronize automaticamente suas contas cripto em todos os seus telefones e computadores, mesmo ao fazer transição para um novo dispositivo.",
+      "cta" : "Ative o Ledger Sync",
+      "alreadySync" : "Já ativei",
+      "learnMore" : "Como o Ledger Sync funciona?"
+    },
+    "manage" : {
+      "cta" : "Gerenciar",
+      "synchronize" : {
+        "label" : "Sincronizar com outro aplicativo Ledger Live",
+        "description" : "Sincronize suas contas cripto em diferentes smartphones e computadores."
+      },
+      "backup" : {
+        "label" : "Excluir sincronização",
+        "description" : "Suas contas cripto sincronizadas em diferentes aplicativos Ledger Live não serão mais sincronizadas."
+      },
+      "instance" : {
+        "label" : "1 aplicativo Ledger Live sincronizado",
+        "label_other" : "{{count}} aplicativos Ledger Live sincronizados",
+        "cta" : "Gerenciar"
+      }
+    },
+    "loading" : {
+      "title" : "Aguente firme...",
+      "activation" : "Isso pode demorar até 30 segundos.\nPermaneça nesta tela."
+    },
+    "error" : {
+      "title" : "Algo deu errado",
+      "description" : "Tente novamente mais tarde.",
+      "cta" : "Tentar novamente",
+      "fetching" : "Algo deu errado ao buscar seus dados.",
+      "ledgerSyncDown" : "O Ledger Sync está temporariamente indisponível devido a alguns problemas técnicos de nossa parte. Estamos trabalhando para consertá-los."
+    },
+    "unsecuredError" : {
+      "title" : "Conecte o mesmo dispositivo Ledger que você usou para ativar o Ledger Sync",
+      "description" : "Se você não possui o mesmo dispositivo Ledger, selecione “Excluir sincronização”.",
+      "cta" : "Conectar outra Ledger",
+      "ctaDelete" : "Excluir sincronização"
+    },
+    "alreadySecureError" : {
+      "title" : "Este aplicativo já está protegido por esta Ledger",
+      "description" : "Se estiver tentando criar um novo backup, conecte o dispositivo Ledger usado para criar sua outra chave de encriptação.",
+      "cta" : "Eu entendo"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "Não é possível usar esta Ledger para sincronizar",
+      "description" : "Se ainda quiser sincronizar os dois aplicativos, exclua sua chave e tente novamente.",
+      "cta" : "Excluir sincronização"
+    },
+    "autoRemoveError" : {
+      "title" : "Você não pode remover esse computador enquanto estiver usando-o",
+      "description" : "Para remover, use outro smartphone ou computador com o Ledger Sync ativado. Se você não possui outro dispositivo, selecione “Excluir sincronização”.",
+      "cta" : "Eu entendo",
+      "ctaDelete" : "Excluir sincronização"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Ledger Sync ativado no Ledger Live nesse computador"
+      },
+      "synch" : {
+        "title" : "Sincronização bem-sucedida!",
+        "desc" : "Alterações nas suas contas cripto aparecerão automaticamente nos aplicativos Ledger Live em telefones e computadores sincronizados. "
+      },
+      "synchAnother" : "Sincronizar com outro aplicativo Ledger Live",
+      "close" : "Fechar"
+    },
+    "manageBackup" : {
+      "deleteBackup" : {
+        "title" : "Tem certeza que deseja excluir a sincronização?",
+        "description" : "Suas contas cripto nos aplicativos Ledger Live em diferentes telefones e computadores interromperão a sincronização. Isso não impacta seus fundos de nenhum modo. ",
+        "delete" : "Sim, excluir",
+        "cancel" : "Manter sincronização"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Seus aplicativos Ledger Live não estão mais sincronizados",
+        "description" : "Você pode ativar a sincronização a qualquer momento"
+      },
+      "deleteBackupError" : {
+        "title" : "Algo deu errado"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Escolha seu método de sincronização",
+        "description" : "Você pode optar por sincronizar diretamente com sua Ledger ou escaneando um QR code no Ledger Live.",
+        "scan" : {
+          "title" : "Exibir QR code",
+          "description" : "Sincronizar escaneando um QR code"
+        },
+        "connectDevice" : {
+          "title" : "Use sua Ledger",
+          "description" : "Sincronize assinando com sua Ledger"
+        }
+      },
+      "qrCode" : {
+        "title" : "Sincronize seus aplicativos Ledger Live",
+        "options" : {
+          "mobile" : "Sincronizar com smartphone",
+          "desktop" : "Sincronizar com computador"
+        },
+        "mobile" : {
+          "description" : "Sincronize o aplicativo Ledger Live em outro telefone",
+          "steps" : {
+            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
+            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Mostrar QR</0>",
+            "step3" : "Escanear QR Code"
+          }
+        },
+        "desktop" : {
+          "description" : "Sincronize suas contas com outro aplicativo Ledger Live",
+          "steps" : {
+            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
+            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Usar sua Ledger/0>",
+            "step3" : "Conectar sua Ledger"
+          }
+        }
+      },
+      "unbackedError" : {
+        "title" : "Sincronização não detectada",
+        "description" : "Ative o Ledger Sync neste Ledger Live ou no qual você está sincronizando",
+        "cta" : "Ativar o Ledger Sync"
+      },
+      "pinCode" : {
+        "title" : "Seu código Ledger Sync",
+        "description" : "Para sincronizar suas contas cripto nos aplicativos Ledger Live, insira esse código no Ledger Live no seu telefone.",
+        "error" : {
+          "title" : "Os códigos não correspondem",
+          "description" : "Certifique-se de que o código digitado seja o mesmo exibido na outra instância do Ledger Live."
+        }
+      }
+    },
+    "manageInstances" : {
+      "title" : "O Ledger Live está sincronizado",
+      "remove" : "Remover",
+      "deleteInstanceSuccess" : "Seu aplicativo Ledger Live em {{instanceName}} não está mais conectado ao Ledger Sync",
+      "deleteInstanceError" : "Algo deu errado com a dessincronização de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuar em sua Ledger {{wording}}",
+      "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "Ver mais inscrições",
+      "empty" : "Para adicionar Inscriptions, basta enviá-las para seu endereço Bitcoin.",
+      "receive" : "Receber Inscription",
+      "discoveryDrawer" : {
+        "title" : "Explorar Ordinals",
+        "description" : "Você sabe que é possível ter valiosos Sats Raros e Inscriptions?",
+        "learnMore" : "Saiba mais",
+        "protectTitle" : "Proteja seus ativos ordinals",
+        "protectDescription" : "Exclua seus ativos Ordinals de suas transações."
+      },
+      "detailsDrawer" : {
+        "description" : "Descrição",
+        "collectionName" : "Nome da Coleção",
+        "inscriptionId" : "ID da inscrição",
+        "inscriptionNumber" : "Número de inscrições",
+        "mintedTo" : "Emitido para",
+        "genesisTx" : "Transação gênesis",
+        "blockNumber" : "Número do bloco",
+        "contentType" : "Tipo de conteúdo",
+        "createdDate" : "Data de criação",
+        "satribute" : "Raridade do Sat",
+        "satNumber" : "Número Sat",
+        "satName" : "Nome Sat",
+        "location" : "Local",
+        "outputValue" : "Valor de saída",
+        "storedOnChain" : "Armazenado On-Chain",
+        "hide" : "Ocultar"
+      }
+    },
+    "rareSats" : {
+      "empty" : "Para adicionar Sats Raros, basta enviá-los para seu endereço Bitcoin.",
+      "receive" : "Receber Sat Raro",
+      "title" : "Sats Raros",
+      "table" : {
+        "type" : "Quantia / Tipo de Sat",
+        "year" : "Ano"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "Saiba o nascimento de cada bitcoin com Alpha, marcando o satoshi inicial. Esse rótulo significa a gênese de uma unidade de Bitcoin.",
+          "black_epic" : "O satoshi final de cada evento de halving, que ocorre aproximadamente a cada quatro anos, quando a recompensa de mineração do Bitcoin é reduzida pela metade.",
+          "black_legendary" : "Nenhuma descrição para Black Legendary",
+          "black_mythic" : "Nenhuma descrição para Black Mythic",
+          "black_rare" : "Denota o satoshi final na conclusão de cada período de ajuste de dificuldade de mineração.",
+          "black_uncommon" : "O satoshi final de cada evento de halving, que ocorre aproximadamente a cada quatro anos, quando a recompensa de mineração do Bitcoin é reduzida pela metade.",
+          "block_9" : "O bloco 9 tem uma distinção única na história do Bitcoin. Como um dos primeiros blocos minerados, os satoshis incluídos nele são alguns dos sats mais antigos em circulação. Esses sats oferecem uma conexão tangível com os primórdios do Bitcoin, logo após sua criação.",
+          "block_9_450x" : "Volte no tempo com o Bloco 9 450x, em que os sats do primeiro bitcoin do 9º bloco são destacados. Esse selo revela um capítulo cativante da história do Bitcoin.",
+          "block_78" : "O bloco 78 ocupa um lugar marcante nos anais da história do Bitcoin. Este bloco foi minerado por Hal Finney, marcando o primeiro caso em que alguém diferente do enigmático Satoshi Nakamoto contribuiu para o crescimento da blockchain.",
+          "block_286" : "Descubra o significado do Bloco 286, que representa os satoshis da segunda transação de Bitcoin minerada por Satoshi Nakamoto. Esses sats carregam o peso do enigmático criador do Bitcoin e contribuem para a narrativa de suas origens misteriosas.",
+          "block_666" : "Nenhuma descrição para o Bloco 666",
+          "common" : "Sem descrição para Common",
+          "epic" : "A cada quatro anos, a rede Bitcoin passa por um evento de “halving”, em que a recompensa de mineração é cortada pela metade. O primeiro sat de cada uma dessas épocas de halving do Bitcoin é rotulado como “Épico”, marcando um momento significativo no modelo econômico do Bitcoin.",
+          "first_tx" : "Em 12 de janeiro de 2009, história foi feita quando Satoshi Nakamoto enviou 10 Bitcoins para um cientista da computação chamado Hal Finney. Essa foi a primeira transação de Bitcoin. Os Sats originados dessa transação icônica têm o rótulo “First Transaction” (Primeira transação), simbolizando a gênese das negociações peer-to-peer em Bitcoin.",
+          "hitman" : "Nenhuma descrição para Hitman",
+          "jpeg" : "Volte ao passado com o JPEG, pois esses satoshis podem estar vinculados à primeira negociação de Bitcoin por uma imagem em 24 de fevereiro de 2010. Esse selo narra uma história de inovação, mostrando as primeiras incursões do Bitcoin em transações e trocas não convencionais.",
+          "legacy" : "Nenhuma descrição para Legacy",
+          "legendary" : "Nenhuma descrição para Legendary",
+          "mythic" : "Nenhuma descrição para Mythic",
+          "nakamoto" : "A mística em torno do criador pseudônimo do Bitcoin, Satoshi Nakamoto, continua inalterada. Os Sats que foram minerados pelo próprio Nakamoto são marcados com este selo, o que os torna muito procurados entre colecionadores.",
+          "omega" : "Viva a conclusão poética de cada bitcoin com Omega, o último satoshi. O satoshi final em uma unidade de Bitcoin.",
+          "paliblock" : "Nenhuma descrição para o PaliBlock Palindrome",
+          "palindrome" : "Em uma reviravolta divertida, qualquer sat cujo número possa ser lido da mesma forma para frente e para trás é chamado de “Palíndromo”. Por exemplo, um sat com o número 12321 ou 45654. Esses atributos numéricos exclusivos acrescentam uma camada de raridade e curiosidade aos sats com selo.",
+          "palinception" : "Mergulhe no fascinante mundo da “palinception” uniforme, em que cada satoshi forma um palíndromo de palíndromos. Esses sats intrincadamente estruturados criam uma fascinante tapeçaria de dígitos espelhados.",
+          "pizza" : "Uma das histórias mais icônicas da comunidade Bitcoin é a de um programador que pagou 10.000 Bitcoins por duas pizzas Papa John's em 22 de maio de 2010. Esse evento é frequentemente citado para demonstrar o aumento meteórico do valor do Bitcoin. Os sats dessa lendária transação carregam o selo “Pizza”.",
+          "rare" : "A rede Bitcoin ajusta periodicamente sua dificuldade de mineração para garantir que os blocos sejam adicionados aproximadamente a cada dez minutos. O primeiro sat do primeiro dia útil de cada período de ajuste é marcado como “Raro”. Isso reflete a natureza, em constante evolução, da segurança da rede e de seus mecanismos de consenso. ",
+          "uncommon" : "Esse selo é designado para o primeiro satoshi de cada bloco. Considerando que um novo bloco é adicionado à blockchain do Bitcoin aproximadamente a cada 10 minutos, esses sats capturam o início desse período de tempo.",
+          "vintage" : "A aurora do Bitcoin foi marcada por seus 1.000 blocos iniciais. Os sats minerados nesse período são denominados “Vintage”."
+        }
+      }
+    }
   }
 }

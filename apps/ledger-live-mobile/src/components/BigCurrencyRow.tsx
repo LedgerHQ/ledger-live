@@ -8,8 +8,6 @@ import styled from "styled-components/native";
 const RowContainer = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
-  padding-left: 16px;
-  padding-right: 16px;
   padding-top: 12px;
   padding-bottom: 12px;
 `;
@@ -35,7 +33,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
           fontWeight="semiBold"
           numberOfLines={1}
           color="neutral.c100"
-          testID={`big-currency-name-${currency.name}`}
+          testID={`big-currency-name-${currency.name.toLowerCase()}`}
         >
           {currency.name}
         </Text>

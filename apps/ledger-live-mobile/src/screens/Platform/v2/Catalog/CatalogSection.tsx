@@ -33,7 +33,7 @@ export function CatalogSection({
               fontWeight="semiBold"
               variant={"subtitle"}
             >
-              {value}
+              {value === "all" ? t("discover.sections.filter.all") : value}
             </Text>
           </Flex>
         ))}

@@ -31,9 +31,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-22.04
+          - macos-14
+          - windows-2022
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -42,11 +42,11 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          skip_turbo_cache: "false"
-          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
+          skip-turbo-cache: "false"
+          upgrade_npm: ${{ matrix.os == 'windows-2022' }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -54,7 +54,7 @@ jobs:
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
-          pnpm add -g node-gyp
+          pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
@@ -68,14 +68,14 @@ jobs:
           pnpm common ci-test-integration $FILTER
           git diff --exit-code libs/ledger-live-common/src
       - name: (On Failure) Upload live-common snapshots and source
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ${{ format('live-common-src-{0}', matrix.os) }}
           path: |
             libs/ledger-live-common/src
       - name: (On Failure) Upload logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: logs.txt

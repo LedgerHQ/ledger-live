@@ -1,11 +1,11 @@
 {
   "entry": [
     "src/account/index.ts",
+    "src/api/index.ts",
     "src/batcher/index.ts",
     "src/bot/specs.ts",
     "src/bot/formatters.ts",
     "src/bridge/jsHelpers.ts",
-    "src/cache.ts",
     "src/currencies/index.ts",
     "src/derivation.ts",
     "src/mocks/helpers.ts",
@@ -13,10 +13,24 @@
     "src/network.ts",
     "src/nft/helpers.ts",
     "src/nft/support.ts",
+    "src/cache.ts",
+    "src/formatters.ts",
+    "src/index.ts",
     "src/operation.ts",
     "src/signer.ts",
     "src/transaction/common.ts"
   ],
-  "ignoreUnimported": ["src/test-helpers/staticTime.ts"],
-  "ignoreUnresolved": ["follow-redirects"]
+  "ignoreUnimported": [
+    "src/config.ts",
+    "src/test-helpers/bridge-integration-suite.ts",
+    "src/test-helpers/staticTime.ts"
+  ],
+  "ignoreUnresolved": [
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
+  ],
+  "ignoreUnused": [
+    "lru-cache"
+  ]
 }

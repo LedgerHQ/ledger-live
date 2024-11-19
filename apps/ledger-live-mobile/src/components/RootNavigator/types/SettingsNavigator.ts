@@ -1,6 +1,7 @@
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -16,6 +17,9 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string;
+  };
+  [ScreenName.EditCurrencyUnits]: {
+    currency: CryptoCurrency;
   };
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
@@ -73,4 +77,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugCustomImageGraphics]: undefined;
   [ScreenName.DebugCameraPermissions]: undefined;
   [ScreenName.DebugQueuedDrawers]: undefined;
+  [ScreenName.DebugQueuedDrawerScreen0]: undefined;
+  [ScreenName.DebugQueuedDrawerScreen1]: undefined;
+  [ScreenName.DebugQueuedDrawerScreen2]: undefined;
 };

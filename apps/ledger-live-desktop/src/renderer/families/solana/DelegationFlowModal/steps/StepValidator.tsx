@@ -86,6 +86,7 @@ export function StepValidatorFooter({
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
+          isLoading={bridgePending}
           primary
           onClick={() => transitionTo("amount")}
         >

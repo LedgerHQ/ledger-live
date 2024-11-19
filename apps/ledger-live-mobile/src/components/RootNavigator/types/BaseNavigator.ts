@@ -1,13 +1,22 @@
-import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  AccountLike,
+  Account,
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+// eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
+import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
@@ -24,7 +33,7 @@ import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
+import type { PtxNavigatorParamList } from "./PtxNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
@@ -35,7 +44,6 @@ import type { MainNavigatorParamList } from "./MainNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
-import type { ClaimNftNavigatorParamList } from "./ClaimNftNavigator";
 import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
@@ -63,6 +71,9 @@ import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
+import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -76,12 +87,10 @@ export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
 
 export type BaseNavigatorStackParamList = {
-  [NavigatorName.Main]:
-    | (NavigatorScreenParams<MainNavigatorParamList> & {
-        hideTabNavigation?: boolean;
-      })
-    | undefined;
-  [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
+  [NavigatorName.Main]?: NavigatorScreenParams<MainNavigatorParamList> & {
+    hideTabNavigation?: boolean;
+  };
+  [NavigatorName.BuyDevice]?: NavigatorScreenParams<BuyDeviceNavigatorParamList>;
   [ScreenName.NoDeviceWallScreen]: undefined;
   [ScreenName.PostBuyDeviceSetupNanoWallScreen]: undefined;
 
@@ -97,7 +106,11 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
     customDappURL?: string;
+    uri?: string;
+    requestId?: string;
+    sessionTopic?: string;
   };
+  [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {
     platform?: string;
     device?: Device;
@@ -140,6 +153,7 @@ export type BaseNavigatorStackParamList = {
     device: Device;
     deviceName: string;
     deviceInfo: DeviceInfo;
+    onNameChange(name: string): void;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
@@ -170,7 +184,10 @@ export type BaseNavigatorStackParamList = {
 
   [ScreenName.CurrencySettings]: {
     currencyId: string;
-    headerTitle?: string | undefined;
+    headerTitle?: string;
+  };
+  [ScreenName.EditCurrencyUnits]: {
+    currency: CryptoCurrency;
   };
   [ScreenName.MarketDetail]: {
     currencyId: string;
@@ -178,51 +195,47 @@ export type BaseNavigatorStackParamList = {
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
-  [NavigatorName.ReceiveFunds]: NavigatorScreenParams<ReceiveFundsStackParamList> | undefined;
+  [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };
-  [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
-  [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
-  [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
+  [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList> & {
+    onError: (err: Error) => void;
+  };
+  [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
+  [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
-  [NavigatorName.AddAccounts]:
-    | (Partial<NavigatorScreenParams<AddAccountsNavigatorParamList>> & {
-        currency?: CryptoCurrency | TokenCurrency | null;
-        token?: TokenCurrency;
-        returnToSwap?: boolean;
-        analyticsPropertyFlow?: string;
-        onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-        onError?: (_: Error) => void;
-      })
-    | undefined;
+  [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<AddAccountsNavigatorParamList>> & {
+    currency?: CryptoCurrency | TokenCurrency | null;
+    token?: TokenCurrency;
+    returnToSwap?: boolean;
+    analyticsPropertyFlow?: string;
+    onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
+    onError?: (_: Error) => void;
+  };
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
     onClose?: () => void;
   };
-  [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
+  [NavigatorName.Card]?: NavigatorScreenParams<PtxNavigatorParamList>;
+  [NavigatorName.Exchange]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";
   };
   [NavigatorName.PlatformExchange]: NavigatorScreenParams<PlatformExchangeNavigatorParamList>;
   [NavigatorName.AccountSettings]: NavigatorScreenParams<AccountSettingsNavigatorParamList>;
-  [NavigatorName.ImportAccounts]:
-    | NavigatorScreenParams<ImportAccountsNavigatorParamList>
-    | undefined;
-  [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList> | undefined;
-  [NavigatorName.PasswordModifyFlow]:
-    | NavigatorScreenParams<PasswordModifyFlowParamList>
-    | undefined;
+  [NavigatorName.ImportAccounts]?: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
+  [NavigatorName.PasswordAddFlow]?: NavigatorScreenParams<PasswordAddFlowParamList>;
+  [NavigatorName.PasswordModifyFlow]?: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
   [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
   [NavigatorName.Accounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
   [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
-  [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
-
+  [NavigatorName.CustomError]: NavigatorScreenParams<CustomErrorNavigatorParamList>;
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;
   [NavigatorName.PolkadotNominateFlow]: NavigatorScreenParams<PolkadotNominateFlowParamList>;
@@ -243,15 +256,13 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CeloLockFlow]: NavigatorScreenParams<CeloLockFlowParamList>;
   [NavigatorName.CeloRegistrationFlow]: NavigatorScreenParams<CeloRegistrationFlowParamList>;
   // This is not a navigator
-  [NavigatorName.CeloManageAssetsNavigator]:
-    | {
-        params?: {
-          account?: AccountLike;
-          accountId?: string | null;
-          parentId?: string | null;
-        };
-      }
-    | undefined;
+  [NavigatorName.CeloManageAssetsNavigator]: {
+    params?: {
+      account?: AccountLike;
+      accountId?: string | null;
+      parentId?: string | null;
+    };
+  };
 
   // Cosmos
   [NavigatorName.CosmosDelegationFlow]: NavigatorScreenParams<CosmosDelegationFlowParamList>;
@@ -287,4 +298,24 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+  [ScreenName.MockedAddAssetButton]: undefined;
+
+  // WALLET SYNC
+  [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
+
+  [ScreenName.FirmwareUpdate]: {
+    deviceInfo?: DeviceInfo | null;
+    firmwareUpdateContext?: FirmwareUpdateContext | null;
+    device?: Device | null;
+    onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
+    isBeforeOnboarding?: boolean;
+  };
+  [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace ReactNavigation {
+    interface RootParamList extends BaseNavigatorStackParamList {}
+  }
+}

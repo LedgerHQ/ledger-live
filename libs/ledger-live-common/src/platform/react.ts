@@ -17,6 +17,7 @@ import {
 } from "./types";
 import { getParentAccount } from "../account";
 import { listCurrencies } from "../currencies";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 /**
  * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
@@ -48,18 +49,24 @@ export function usePlatformUrl(
   }, [manifest.url, manifest.params, inputs]);
 }
 
-export function usePlatformAccounts(accounts: AccountLike[]): PlatformAccount[] {
+export function usePlatformAccounts(
+  walletState: WalletState,
+  accounts: AccountLike[],
+): PlatformAccount[] {
   return useMemo(() => {
     return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToPlatformAccount(account, parentAccount);
+      return accountToPlatformAccount(walletState, account, parentAccount);
     });
-  }, [accounts]);
+  }, [walletState, accounts]);
 }
 
-export function useListPlatformAccounts(accounts: AccountLike[]): ListPlatformAccount {
-  const platformAccounts = usePlatformAccounts(accounts);
+export function useListPlatformAccounts(
+  walletState: WalletState,
+  accounts: AccountLike[],
+): ListPlatformAccount {
+  const platformAccounts = usePlatformAccounts(walletState, accounts);
   return useCallback(
     (filters: AccountFilters = {}) => {
       return filterPlatformAccounts(platformAccounts, filters);

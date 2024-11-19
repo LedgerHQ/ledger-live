@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
-import type { Transaction } from "../types";
+import type { Transaction } from "@ledgerhq/coin-tron/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   scanAccounts,
@@ -49,8 +49,8 @@ const getTransactionStatus = (a, t) => {
   const totalSpent = useAllAmount
     ? account.balance
     : tokenAccount
-    ? new BigNumber(t.amount)
-    : new BigNumber(t.amount).plus(estimatedFees);
+      ? new BigNumber(t.amount)
+      : new BigNumber(t.amount).plus(estimatedFees);
   const amount = useAllAmount
     ? tokenAccount
       ? new BigNumber(t.amount)

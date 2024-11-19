@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
 import { Flex } from "../../../Layout";
 import { Text } from "react-native";
@@ -29,8 +29,7 @@ const labelFinalPositions = {
 const LabelContainer = styled(Animated.View)<{ notched: boolean }>`
   position: absolute;
   padding: ${`0 ${labelPadding}px`};
-  display: inline-block;
-  height: 15;
+  height: 15px;
   z-index: ${(p) => (p.notched ? 3 : 0)};
 `;
 
@@ -41,9 +40,8 @@ type LabelTextProps = {
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const LabelText = styled(AnimatedText)<LabelTextProps>`
-  display: inline-block;
-  height: 15;
-  line-height: 15;
+  height: 15px;
+  line-height: 15px;
   vertical-align: top;
   color: ${(p) =>
     p.status === "default" ? inputTextColor[p.status] : inputStatusColors[p.status]};
@@ -51,24 +49,31 @@ const LabelText = styled(AnimatedText)<LabelTextProps>`
 
 type LineCutoutProps = {
   status: InputStatus;
+  labelWidth: number;
 };
 
 const LineCutout = styled(Flex)<LineCutoutProps>`
   position: absolute;
-  height: 1;
-  top: 7;
-  left: 0;
-  width: 120%;
+  height: 1px;
+  top: 7px;
+  left: 0px;
+  width: ${(p) => p.labelWidth}px;
   background: ${(p) => inputBackgroundColor[p.status]};
 `;
 
 type AnimatedNotchedLabelProps = {
   placeholder: string;
   inputStatus: InputStatus;
+  value: string;
 };
 
-export const AnimatedNotchedLabel = ({ placeholder, inputStatus }: AnimatedNotchedLabelProps) => {
-  const notched = inputStatus !== "default";
+export const AnimatedNotchedLabel = ({
+  placeholder,
+  inputStatus,
+  value,
+}: AnimatedNotchedLabelProps) => {
+  const [labelWidth, setLabelWidth] = useState(0);
+  const notched = inputStatus !== "default" || value.length > 0;
 
   const labelTop = useSharedValue(notched ? labelFinalPositions.top : labelInitialPositions.top);
   const labelLeft = useSharedValue(notched ? labelFinalPositions.left : labelInitialPositions.left);
@@ -112,8 +117,12 @@ export const AnimatedNotchedLabel = ({ placeholder, inputStatus }: AnimatedNotch
   );
 
   return (
-    <LabelContainer style={{ ...labelStyle, elevation: notched ? 3 : 0 }} notched={notched}>
-      {notched && <LineCutout status={inputStatus} />}
+    <LabelContainer
+      onLayout={(event) => setLabelWidth(event.nativeEvent.layout.width)}
+      style={{ ...labelStyle, elevation: notched ? 3 : 0 }}
+      notched={notched}
+    >
+      {notched && <LineCutout status={inputStatus} labelWidth={labelWidth} />}
       <LabelText style={{ ...labelFontSize }} status={inputStatus}>
         {placeholder}
       </LabelText>

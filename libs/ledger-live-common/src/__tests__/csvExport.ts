@@ -19,6 +19,8 @@ test("export CSV", async () => {
       startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
     })),
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   const accounts = currencies.map(currency =>
     genAccount(`${currency.id}_export`, {

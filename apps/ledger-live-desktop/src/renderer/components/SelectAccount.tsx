@@ -1,8 +1,6 @@
 import {
   flattenAccounts,
   getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "i18next";
@@ -10,9 +8,8 @@ import { Trans, withTranslation } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { createFilter, components, MenuListComponentProps } from "react-select";
-import { Option as ReactSelectOption } from "react-select/src/filters";
 import { createStructuredSelector } from "reselect";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
@@ -25,6 +22,9 @@ import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
 import { openModal } from "../actions/modals";
+import { useAccountUnit } from "../hooks/useAccountUnit";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useAccountName, walletSelector } from "../reducers/wallet";
 
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
@@ -48,24 +48,40 @@ const tokenTick = (
 export type Option = {
   matched?: boolean;
   account?: AccountLike;
+  accountName?: string;
 };
+
 const getOptionValue = (option: Option): string => (option.account && option.account.id) || "";
+
+type CustomOption = {
+  label: string;
+  value: string;
+  data: {
+    account: AccountLike;
+    accountName: string;
+  };
+};
+
 const defaultFilter = createFilter({
-  stringify: ({ data: account }) => {
+  stringify: ({ data: { account, accountName } }: CustomOption) => {
     const currency = getAccountCurrency(account);
-    const name = getAccountName(account);
-    return `${currency.ticker}|${currency.name}|${name}`;
+    return `${currency.ticker}|${currency.name}|${accountName}`;
   },
 });
+
 const filterOption =
-  (o: { withSubAccounts?: boolean; enforceHideEmptySubAccounts?: boolean }) =>
-  (candidate: ReactSelectOption, input: string) => {
+  (o: {
+    withSubAccounts?: boolean;
+    enforceHideEmptySubAccounts?: boolean;
+    walletState: WalletState;
+  }) =>
+  (candidate: CustomOption, input: string) => {
     const selfMatches = defaultFilter(candidate, input);
     if (selfMatches) return [selfMatches, true];
-    if (candidate.data.type === "Account" && o.withSubAccounts) {
+    if (candidate.data.account.type === "Account" && o.withSubAccounts) {
       const subAccounts = o.enforceHideEmptySubAccounts
-        ? listSubAccounts(candidate.data)
-        : candidate.data.subAccounts;
+        ? listSubAccounts(candidate.data.account)
+        : candidate.data.account.subAccounts;
       if (subAccounts) {
         for (let i = 0; i < subAccounts.length; i++) {
           const ta = subAccounts[i];
@@ -74,7 +90,10 @@ const filterOption =
               {
                 label: ta.id, // might cause UI regression :dogkek:
                 value: ta.id,
-                data: ta,
+                data: {
+                  account: ta,
+                  accountName: accountNameWithDefaultSelector(o.walletState, ta),
+                },
               },
               input,
             )
@@ -104,13 +123,10 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
   singleLineLayout = true,
 }: AccountOptionProps) {
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
-  const name = getAccountName(account);
-  const nested = ["TokenAccount", "ChildAccount"].includes(account.type);
-  const balance =
-    account.type !== "ChildAccount" && account.spendableBalance
-      ? account.spendableBalance
-      : account.balance;
+  const unit = useAccountUnit(account);
+  const name = useAccountName(account);
+  const nested = "TokenAccount" === account.type;
+  const balance = account.spendableBalance || account.balance;
   const textContents = singleLineLayout ? (
     <>
       <Box flex="1" horizontal alignItems="center">
@@ -245,6 +261,8 @@ export const RawSelectAccount = ({
 }: Props & {
   t: TFunction;
 }) => {
+  const walletState = useSelector(walletSelector);
+
   const [searchInputValue, setSearchInputValue] = useState("");
   const filtered: Account[] = filter ? accounts.filter(filter) : accounts;
   const all = withSubAccounts
@@ -275,14 +293,19 @@ export const RawSelectAccount = ({
   const manualFilter = useCallback(
     () =>
       all.reduce((result, option) => {
+        const accountName = accountNameWithDefaultSelector(walletState, option);
         const [display, match] = filterOption({
           withSubAccounts,
           enforceHideEmptySubAccounts,
+          walletState,
         })(
           {
-            data: option,
             value: option.id,
             label: option.id,
+            data: {
+              accountName,
+              account: option,
+            },
           },
           searchInputValue,
         );
@@ -290,11 +313,12 @@ export const RawSelectAccount = ({
           result.push({
             matched: match && !isDisabledOption(option as { disabled?: boolean }),
             account: option,
+            accountName,
           });
         }
         return result;
       }, [] as Option[]),
-    [searchInputValue, all, withSubAccounts, enforceHideEmptySubAccounts],
+    [searchInputValue, all, withSubAccounts, enforceHideEmptySubAccounts, walletState],
   );
   const extraRenderers = useMemo(() => {
     let extraProps = {};

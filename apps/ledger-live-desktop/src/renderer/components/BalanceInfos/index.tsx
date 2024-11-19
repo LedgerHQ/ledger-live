@@ -1,18 +1,24 @@
-import React, { useCallback } from "react";
-import styled from "styled-components";
-import { useTranslation } from "react-i18next";
-import { AccountLike, ValueChange } from "@ledgerhq/types-live";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Text } from "@ledgerhq/react-ui";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { AccountLike, ValueChange } from "@ledgerhq/types-live";
+import React, { useCallback, useMemo, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/ButtonV3";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
+import { useResize } from "~/renderer/hooks/useResize";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
+import PilldDaysSelect from "../PillsDaysSelect";
 import { PlaceholderLine } from "./Placeholder";
-import Button from "~/renderer/components/ButtonV3";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useHistory } from "react-router-dom";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -33,6 +39,7 @@ type BalanceTotalProps = {
 };
 type Props = {
   unit: Unit;
+  counterValueId?: string;
 } & BalanceSinceProps;
 export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
   if (!isAvailable) return null;
@@ -55,17 +62,21 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
             withIcon
           />
         )}
-        <FormattedVal
-          unit={unit}
-          val={valueChange.value}
-          prefix={valueChange.percentage ? " (" : undefined}
-          suffix={valueChange.percentage ? ")" : undefined}
-          withIcon={!valueChange.percentage}
-          alwaysShowSign={!!valueChange.percentage}
-          showCode
-          animateTicker
-          inline
-        />
+        {valueChange.value === 0 ? (
+          <Text color={"palette.text.shade100"}>{"-"}</Text>
+        ) : (
+          <FormattedVal
+            unit={unit}
+            val={valueChange.value}
+            prefix={valueChange.percentage ? " (" : undefined}
+            suffix={valueChange.percentage ? ")" : undefined}
+            withIcon={!valueChange.percentage}
+            alwaysShowSign={!!valueChange.percentage}
+            showCode
+            animateTicker
+            inline
+          />
+        )}
       </Box>
     </Box>
   );
@@ -97,7 +108,7 @@ export function BalanceTotal({
               showCode
               val={totalBalance}
               dynamicSignificantDigits={dynamicSignificantDigits}
-              data-test-id="total-balance"
+              data-testid="total-balance"
             />
           )}
           {withTransactionsPendingConfirmationWarning ? (
@@ -109,10 +120,34 @@ export function BalanceTotal({
     </Box>
   );
 }
-export default function BalanceInfos({ totalBalance, valueChange, isAvailable, unit }: Props) {
+export default function BalanceInfos({
+  totalBalance,
+  valueChange,
+  isAvailable,
+  unit,
+  counterValueId,
+}: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
   const history = useHistory();
+
+  const allAccounts = useSelector(accountsSelector);
+  const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
+
+  const defaultAccount = useMemo(
+    () =>
+      counterValueId
+        ? getAvailableAccountsById(counterValueId, flattenedAccounts).find(Boolean)
+        : undefined,
+    [counterValueId, flattenedAccounts],
+  );
+
+  const parentAccount = useMemo(() => {
+    if (defaultAccount?.type === "TokenAccount") {
+      const parentId = defaultAccount.parentId;
+      return flattenedAccounts.find(a => a.id === parentId);
+    }
+  }, [defaultAccount, flattenedAccounts]);
 
   // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
@@ -129,28 +164,43 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
     setTrackingSource("Page Portfolio");
     history.push({
       pathname: "/swap",
+      state: {
+        from: history.location.pathname,
+        defaultAccount,
+        defaultParentAccount: parentAccount,
+      },
     });
-  }, [history]);
+  }, [history, defaultAccount, parentAccount]);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { width } = useResize(ref);
+
   return (
-    <Box flow={5}>
+    <Box flow={5} ref={ref}>
+      <Box horizontal alignItems="center" justifyContent="space-between">
+        <Text variant="h3Inter" fontWeight="semiBold">
+          {t("dashboard.header")}
+        </Text>
+
+        {width <= 500 ? <PilldDaysSelect /> : <PillsDaysCount />}
+      </Box>
       <Box horizontal>
         <BalanceTotal
           withTransactionsPendingConfirmationWarning
           unit={unit}
           isAvailable={isAvailable}
           totalBalance={totalBalance}
-        >
-          <Sub>{t("dashboard.totalBalance")}</Sub>
-        </BalanceTotal>
+        />
+
         {!portfolioExchangeBanner?.enabled && (
           <>
-            <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+            <Button data-testid="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
               {t("accounts.contextMenu.buy")}
             </Button>
             <Button
-              data-test-id="portfolio-swap-button"
+              data-testid="portfolio-swap-button"
               variant="color"
-              event="button_clicked"
+              event="button_clicked2"
               eventProperties={{
                 button: "swap",
                 page: "Page Portfolio",
@@ -163,21 +213,13 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
           </>
         )}
       </Box>
-      <Box horizontal alignItems="center" justifyContent="space-between">
-        <BalanceDiff
-          totalBalance={totalBalance}
-          valueChange={valueChange}
-          unit={unit}
-          isAvailable={isAvailable}
-        />
-        <PillsDaysCount />
-      </Box>
+
+      <BalanceDiff
+        totalBalance={totalBalance}
+        valueChange={valueChange}
+        unit={unit}
+        isAvailable={isAvailable}
+      />
     </Box>
   );
 }
-const Sub = styled(Box).attrs(() => ({
-  ff: "Inter",
-  fontSize: 4,
-}))`
-  text-transform: lowercase;
-`;

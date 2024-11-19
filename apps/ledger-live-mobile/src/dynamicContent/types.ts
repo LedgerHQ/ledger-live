@@ -1,6 +1,6 @@
 import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { Size } from "~/contentCards/cards/vertical/types";
-import { WidthFactor } from "~/contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 enum ContentCardsType {
   smallSquare = "small_square",
@@ -8,12 +8,31 @@ enum ContentCardsType {
   bigSquare = "big_square",
   action = "action",
   category = "category",
+  hero = "hero",
 }
 
 enum ContentCardsLayout {
   unique = "unique",
   carousel = "carousel",
   grid = "grid",
+}
+
+enum LandingPageUseCase {
+  LP_Recover = "LP_Recover",
+  LP_Buy = "LP_Buy",
+  LP_Receive = "LP_Receive",
+  LP_Swap = "LP_Swap",
+  LP_Stake = "LP_Stake",
+  LP_Earn = "LP_Earn",
+  LP_Referral = "LP_Referral",
+  LP_Shop = "LP_Shop",
+  LP_Website_Promo = "LP_Website_Promo",
+  LP_Discover_1 = "LP_Discover_1",
+  LP_Discover_2 = "LP_Discover_2",
+  LP_Discover_3 = "LP_Discover_3",
+  LP_Wallet_Connect = "LP_Wallet_Connect",
+  LP_Security_Key = "LP_Security_Key",
+  LP_Generic = "LP_Generic",
 }
 
 enum ContentCardLocation {
@@ -25,6 +44,8 @@ enum ContentCardLocation {
   NotificationCenter = "notification_center",
 }
 
+type AllLocations = ContentCardLocation | LandingPageUseCase;
+
 enum Background {
   purple = "purple",
   red = "red",
@@ -33,11 +54,13 @@ enum Background {
 type ContentCardCommonProperties = {
   id: string;
   categoryId?: string;
-  location?: ContentCardLocation;
+  location?: AllLocations;
   createdAt: number;
   viewed: boolean;
   order?: number;
   carouselWidthFactor?: WidthFactor;
+  gridWidthFactor?: WidthFactor;
+  type?: ContentCardsType;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {
@@ -49,6 +72,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   cta?: string;
   link?: string;
   isDismissable?: boolean;
+  hasPagination?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {
@@ -90,6 +114,15 @@ type HorizontalContentCard = ContentCardCommonProperties & {
   link?: string;
   description?: string;
   image?: string;
+  gridWidthFactor?: WidthFactor;
+};
+
+type HeroContentCard = ContentCardCommonProperties & {
+  title?: string;
+  image?: string;
+  tag?: string;
+  cta: string;
+  link?: string;
 };
 
 type VerticalContentCard = ContentCardCommonProperties & {
@@ -99,7 +132,9 @@ type VerticalContentCard = ContentCardCommonProperties & {
   description?: string;
   image?: string;
   price?: string;
+  cta?: string;
   size: Size;
+  filledImage?: boolean;
 };
 
 type AnyContentCard =
@@ -108,6 +143,7 @@ type AnyContentCard =
   | AssetContentCard
   | LearnContentCard
   | NotificationContentCard
+  | HeroContentCard
   | HorizontalContentCard
   | VerticalContentCard;
 
@@ -119,8 +155,16 @@ export type {
   LearnContentCard,
   CategoryContentCard,
   HorizontalContentCard,
+  HeroContentCard,
   VerticalContentCard,
   BrazeContentCard,
   AnyContentCard,
+  AllLocations,
 };
-export { ContentCardLocation, Background, ContentCardsLayout, ContentCardsType };
+export {
+  ContentCardLocation,
+  LandingPageUseCase,
+  Background,
+  ContentCardsLayout,
+  ContentCardsType,
+};

@@ -12,6 +12,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -53,7 +54,9 @@ type Props = {
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (account.type !== "Account") return null;
+
+  const unit = useMaybeAccountUnit(account);
+  if (account.type !== "Account" || !unit) return null;
   const { tronResources } = account;
   const formatConfig = {
     disableRounding: true,
@@ -80,9 +83,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = tronResources.bandwidth;
 
-  const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
+  const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
   const frozenAmount = formatCurrencyUnit(
-    account.unit,
+    unit,
     BigNumber(frozenBandwidthAmount || 0)
       .plus(BigNumber(frozenEnergyAmount || 0))
       .plus(BigNumber(delegatedFrozenBandwidthAmount || 0))

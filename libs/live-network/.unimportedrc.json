@@ -1,5 +1,11 @@
 {
-  "entry": ["src/network.ts", "src/cache.ts"],
+  "entry": [
+    "src/batcher/index.ts",
+    "src/batcher/types.ts",
+    "src/cache.ts",
+    "src/index.ts",
+    "src/network.ts"
+  ],
   "ignoreUnimported": [],
   "ignoreUnresolved": []
 }

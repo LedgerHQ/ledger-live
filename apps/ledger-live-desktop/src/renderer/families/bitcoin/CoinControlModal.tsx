@@ -19,6 +19,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   isOpened?: boolean;
@@ -45,6 +46,8 @@ const CoinControlModal = ({
   updateTransaction,
 }: Props) => {
   const onClickLink = useCallback(() => openURL(urls.coinControl), []);
+
+  const unit = useAccountUnit(account);
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
   const { utxoStrategy } = transaction;
@@ -85,7 +88,7 @@ const CoinControlModal = ({
                   <FormattedVal
                     disableRounding
                     val={status.totalSpent}
-                    unit={account.unit}
+                    unit={unit}
                     showCode
                     fontSize={4}
                     color="palette.text.shade100"
@@ -135,7 +138,7 @@ const CoinControlModal = ({
                     <FormattedVal
                       disableRounding
                       val={status.totalSpent}
-                      unit={account.unit}
+                      unit={unit}
                       showCode
                       fontSize={4}
                       ff="Inter|SemiBold"
@@ -155,7 +158,7 @@ const CoinControlModal = ({
                     <FormattedVal
                       disableRounding
                       val={returning ? returning.value : 0}
-                      unit={account.unit}
+                      unit={unit}
                       showCode
                       fontSize={4}
                       ff="Inter|SemiBold"

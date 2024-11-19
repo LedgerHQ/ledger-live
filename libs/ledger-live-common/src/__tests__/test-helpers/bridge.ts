@@ -17,7 +17,6 @@ import { getOperationAmountNumber } from "../../operation";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
-import { implicitMigration } from "../../migrations/accounts";
 import type {
   Account,
   AccountBridge,
@@ -32,6 +31,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -50,15 +50,17 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
-export function syncAccount<T extends TransactionCommon>(
-  bridge: AccountBridge<T>,
-  account: Account,
+export function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+>(
+  bridge: AccountBridge<T, A, U>,
+  account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
-): Promise<Account> {
+): Promise<A> {
   return firstValueFrom(
-    bridge
-      .sync(account, syncConfig)
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    bridge.sync(account, syncConfig).pipe(reduce((a, f: (arg0: A) => A) => f(a), account)),
   );
 }
 
@@ -128,7 +130,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               reduce((all, a) => all.concat(a), [] as Account[]),
             ),
         );
-        return implicitMigration(accounts);
+        return accounts;
       } catch (e: any) {
         console.error(e.message);
         throw e;
@@ -154,28 +156,30 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         expect(typeof bridge.preload).toBe("function");
         expect(typeof bridge.hydrate).toBe("function");
       });
-      test("preload and rehydrate", async () => {
-        const data1 = await bridge.preload(currency);
-        const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
+      if (FIXME_ignorePreloadFields !== true) {
+        test("preload and rehydrate", async () => {
+          const data1 = (await bridge.preload(currency)) || {};
+          const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
 
-        bridge.hydrate(data1filtered, currency);
+          bridge.hydrate(data1filtered, currency);
 
-        if (data1filtered) {
-          const serialized1 = JSON.parse(JSON.stringify(data1filtered));
-          bridge.hydrate(serialized1, currency);
-          expect(serialized1).toBeDefined();
-          const data2 = await bridge.preload(currency);
-          const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
+          if (data1filtered) {
+            const serialized1 = JSON.parse(JSON.stringify(data1filtered));
+            bridge.hydrate(serialized1, currency);
+            expect(serialized1).toBeDefined();
+            const data2 = (await bridge.preload(currency)) || {};
+            const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
 
-          if (data2filtered) {
-            bridge.hydrate(data2filtered, currency);
-            expect(data1filtered).toMatchObject(data2filtered);
-            const serialized2 = JSON.parse(JSON.stringify(data2filtered));
-            expect(serialized1).toMatchObject(serialized2);
-            bridge.hydrate(serialized2, currency);
+            if (data2filtered) {
+              bridge.hydrate(data2filtered, currency);
+              expect(data1filtered).toMatchObject(data2filtered);
+              const serialized2 = JSON.parse(JSON.stringify(data2filtered));
+              expect(serialized1).toMatchObject(serialized2);
+              bridge.hydrate(serialized2, currency);
+            }
           }
-        }
-      });
+        });
+      }
 
       if (scanAccounts) {
         if (FIXME_ignoreOperationFields && FIXME_ignoreOperationFields.length) {
@@ -352,19 +356,20 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
       const makeTest = (name, fn) => {
         if (accountData.FIXME_tests && accountData.FIXME_tests.some(r => name.match(r))) {
-          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.name);
+          warnDev(
+            "FIXME test was skipped. " + name + " for " + getDefaultAccountName(initialAccount),
+          );
           return;
         }
 
         test(name, fn);
       };
 
-      describe(impl + " bridge on account " + initialAccount.name, () => {
+      describe(impl + " bridge on account " + getDefaultAccountName(initialAccount), () => {
         describe("sync", () => {
           makeTest("succeed", async () => {
             const account = await getSynced();
-            const [account2] = implicitMigration([account]);
-            expect(fromAccountRaw(toAccountRaw(account2))).toBeDefined();
+            expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
           });
 
           if (impl !== "mock") {

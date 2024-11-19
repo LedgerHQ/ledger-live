@@ -20,7 +20,6 @@ export const commands = (
 ) => {
   const matcher = /^\/([\w-]+)\b *(.*)?$/m;
 
-  // @ts-expect-error complicated typings
   app.on(["issue_comment.created" /*, "issues.opened" */], async context => {
     if (context.isBot) return;
 
@@ -32,9 +31,43 @@ export const commands = (
     const issue = payload.issue;
     const comment = payload.comment;
     const command = comment.body.match(matcher);
+    const login = payload.sender.login;
 
     if (!isPR(issue)) return;
     if (!command || (command && command[1] !== name)) return;
+
+    try {
+      const res = await octokit.orgs.checkMembershipForUser({
+        org: "LedgerHQ",
+        username: login,
+      });
+
+      if (res.status >= 300) {
+        await octokit.issues.createComment({
+          ...context.repo(),
+          issue_number: issue.number,
+          body: `@${login} you are not part of the organization, please contact a maintainer if you need to run this command.`,
+        });
+        await octokit.rest.reactions.createForIssueComment({
+          ...context.repo(),
+          comment_id: comment.id,
+          content: "-1",
+        });
+        return;
+      }
+    } catch (error) {
+      await octokit.issues.createComment({
+        ...context.repo(),
+        issue_number: issue.number,
+        body: `@${login} you are not part of the organization, please contact a maintainer if you need to run this command.`,
+      });
+      await octokit.rest.reactions.createForIssueComment({
+        ...context.repo(),
+        comment_id: comment.id,
+        content: "-1",
+      });
+      return;
+    }
 
     await octokit.rest.reactions.createForIssueComment({
       ...context.repo(),

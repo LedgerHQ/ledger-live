@@ -34,8 +34,12 @@ export const openExchangeDrawer = createAction(
     | {
         type: "EXCHANGE_START";
         exchangeType: ExchangeType;
-        onResult: (nonce: string) => void;
-        onCancel: (error: Error) => void;
+        provider?: string;
+        fromAccountId?: string;
+        toAccountId?: string;
+        tokenCurrency?: string;
+        onResult: (result: { nonce: string; device: Device }) => void;
+        onCancel: (cancelResult: { error: Error; device: Device }) => void;
       }
     | ({
         type: "EXCHANGE_COMPLETE";

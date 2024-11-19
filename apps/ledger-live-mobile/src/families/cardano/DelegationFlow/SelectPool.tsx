@@ -3,7 +3,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";

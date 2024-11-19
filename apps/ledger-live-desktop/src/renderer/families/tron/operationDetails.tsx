@@ -24,17 +24,20 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { OperationDetailsExtraProps } from "../types";
-const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { urls } from "~/config/urls";
+
+const infoURL = urls.feesTron;
 
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.fee.gt(200000)) {
-    return helpURL;
+    return infoURL;
   }
 }
 
 function getURLWhatIsThis({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return helpURL;
+    return infoURL;
   }
 }
 
@@ -106,6 +109,7 @@ const OperationDetailsExtra = ({
   type,
   account,
 }: OperationDetailsExtraProps<TronAccount, TronOperation>) => {
+  const unit = useAccountUnit(account);
   const frozenAmount = operation.extra?.frozenAmount
     ? (operation.extra.frozenAmount as BigNumber)
     : new BigNumber(0);
@@ -144,7 +148,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={frozenAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"
@@ -163,7 +167,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={unfreezeAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"
@@ -183,7 +187,7 @@ const OperationDetailsExtra = ({
               <Box>
                 <FormattedVal
                   val={unDelegatedAmount}
-                  unit={account.unit}
+                  unit={unit}
                   showCode
                   fontSize={4}
                   color="palette.text.shade60"
@@ -215,7 +219,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={unfreezeAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"

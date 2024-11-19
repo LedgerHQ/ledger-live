@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,6 +16,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -31,8 +31,8 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const unit = account && getAccountUnit(account);
     const validator = transaction && transaction.validators ? transaction.validators[0] : null;
     const v =
       validator &&

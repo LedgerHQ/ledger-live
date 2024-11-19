@@ -1,137 +1,190 @@
-import {
-  test as base,
-  Page,
-  ElectronApplication,
-  _electron as electron,
-  ChromiumBrowserContext,
-} from "@playwright/test";
-import * as fs from "fs";
+import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import fsPromises from "fs/promises";
+import merge from "lodash/merge";
 import * as path from "path";
-import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { responseLogfilePath } from "../utils/networkResponseLogger";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 
-export function generateUUID(): string {
-  return crypto.randomBytes(16).toString("hex");
-}
+import { Application } from "tests/page";
+import { safeAppendFile } from "tests/utils/fileUtils";
+import { launchApp } from "tests/utils/electronUtils";
+import { captureArtifacts } from "tests/utils/allureUtils";
+import { randomUUID } from "crypto";
+import { AppInfos } from "tests/enum/AppInfos";
+import { lastValueFrom, Observable } from "rxjs";
+import { commandCLI } from "tests/utils/cliUtils";
+import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
 
-function appendFileErrorHandler(e: Error | null) {
-  if (e) console.error("couldn't append file", e);
-}
+type Command<T extends (...args: any) => Observable<any> | Promise<any> | string> = {
+  command: T;
+  args: Parameters<T>[0]; // Infer the first argument type
+};
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  userdata: string;
+  speculosApp: AppInfos;
+  userdata?: string;
+  settings: Record<string, unknown>;
   userdataDestinationPath: string;
-  userdataOriginalFile: string;
+  userdataOriginalFile?: string;
   userdataFile: string;
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
   featureFlags: OptionalFeatureMap;
-  recordTestNamesForApiResponseLogging: void;
   simulateCamera: string;
+  app: Application;
+  cliCommands: Command<(typeof commandCLI)[keyof typeof commandCLI]>[];
 };
 
+const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+const BASE_PORT = 30000;
+const MAX_PORT = 65535;
+let portCounter = BASE_PORT; // Counter for generating unique ports
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
+  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
+  speculosApp: undefined,
+  cliCommands: [],
+
+  app: async ({ page }, use) => {
+    const app = new Application(page);
+    await use(app);
+  },
+
   userdataDestinationPath: async ({}, use) => {
-    use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
+    await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    use(path.join(__dirname, "../userdata/", `${userdata}.json`));
+    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
-    use(fullFilePath);
+    await use(fullFilePath);
   },
+
   electronApp: async (
     {
       lang,
       theme,
-      userdata,
       userdataDestinationPath,
       userdataOriginalFile,
+      settings,
       env,
       featureFlags,
       simulateCamera,
+      speculosApp,
+      cliCommands,
     },
     use,
+    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
-    if (userdata) {
-      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
+    const fileUserData = userdataOriginalFile
+      ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
+      : {};
+
+    const userData = merge({ data: { settings } }, fileUserData);
+    await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+
+    let device: any | undefined;
+
+    try {
+      if (IS_NOT_MOCK && speculosApp) {
+        // Ensure the portCounter stays within the valid port range
+        if (portCounter > MAX_PORT) {
+          portCounter = BASE_PORT;
+        }
+        const speculosPort = portCounter++;
+        setEnv(
+          "SPECULOS_PID_OFFSET",
+          (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        );
+        device = await startSpeculos(
+          testInfo.title.replace(/ /g, "_"),
+          specs[speculosApp.name.replace(/ /g, "_")],
+        );
+        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+        setEnv("MOCK", "");
+
+        if (cliCommands) {
+          registerSpeculosTransport(device?.ports.apiPort);
+          for (const command of cliCommands) {
+            if (command.args && "appjson" in command.args) {
+              command.args.appjson = `${userdataDestinationPath}/app.json`;
+            }
+            const result = await handleResult(command.command(command.args as any));
+            console.log("CLI result: ", result);
+          }
+        }
+      }
+      async function handleResult(result: Promise<any> | Observable<any> | string): Promise<any> {
+        if (result instanceof Observable) {
+          return lastValueFrom(result); // Converts Observable to Promise
+        }
+        return result; // Return Promise directly
+      }
+
+      // default environment variables
+      env = Object.assign(
+        {
+          ...process.env,
+          VERBOSE: true,
+          MOCK: IS_NOT_MOCK ? undefined : true,
+          MOCK_COUNTERVALUES: true,
+          HIDE_DEBUG_MOCK: true,
+          CI: process.env.CI || undefined,
+          PLAYWRIGHT_RUN: true,
+          CRASH_ON_INTERNAL_CRASH: true,
+          LEDGER_MIN_HEIGHT: 768,
+          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
+          SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          DISABLE_TRANSACTION_BROADCAST:
+            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
+        },
+        env,
+      );
+
+      // launch app
+      const windowSize = { width: 1024, height: 768 };
+
+      const electronApp: ElectronApplication = await launchApp({
+        env,
+        lang,
+        theme,
+        userdataDestinationPath,
+        simulateCamera,
+        windowSize,
+      });
+
+      await use(electronApp);
+
+      // close app
+      await electronApp.close();
+    } finally {
+      if (device) {
+        await stopSpeculos(device);
+      }
     }
-
-    // default environment variables
-    env = Object.assign(
-      {
-        ...process.env,
-        VERBOSE: true,
-        MOCK: true,
-        MOCK_COUNTERVALUES: true,
-        HIDE_DEBUG_MOCK: true,
-        CI: process.env.CI || undefined,
-        PLAYWRIGHT_RUN: true,
-        CRASH_ON_INTERNAL_CRASH: true,
-        LEDGER_MIN_HEIGHT: 768,
-        FEATURE_FLAGS: JSON.stringify(featureFlags),
-      },
-      env,
-    );
-
-    // launch app
-    const windowSize = { width: 1024, height: 768 };
-
-    const electronApp: ElectronApplication = await electron.launch({
-      args: [
-        `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
-        `--user-data-dir=${userdataDestinationPath}`,
-        // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
-        "--force-device-scale-factor=1",
-        "--disable-dev-shm-usage",
-        // "--use-gl=swiftshader"
-        "--no-sandbox",
-        "--enable-logging",
-        ...(simulateCamera
-          ? [
-              "--use-fake-device-for-media-stream",
-              `--use-file-for-fake-video-capture=${simulateCamera}`,
-            ]
-          : []),
-      ],
-      recordVideo: {
-        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-        size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
-      },
-      env,
-      colorScheme: theme,
-      locale: lang,
-      executablePath: require("electron/index.js"),
-      timeout: 120000,
-    });
-
-    await use(electronApp);
-
-    // close app
-    await electronApp.close();
   },
   page: async ({ electronApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
-    page.setDefaultTimeout(99000);
+    page.setDefaultTimeout(120000);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
@@ -151,29 +204,7 @@ export const test = base.extend<TestFixtures>({
         // Direct Electron console to Node terminal.
         console.log(txt);
       }
-      fs.appendFile(logFile, `${txt}\n`, appendFileErrorHandler);
-    });
-
-    // start recording all network responses in artifacts/networkResponse.log
-    page.on("response", async data => {
-      const now = Date.now();
-      const timestamp = new Date(now).toISOString();
-
-      const headers = await data.allHeaders();
-
-      if (headers.teststatus && headers.teststatus === "mocked") {
-        fs.appendFile(
-          responseLogfilePath,
-          `[${timestamp}] MOCKED RESPONSE: ${data.request().url()}\n`,
-          appendFileErrorHandler,
-        );
-      } else {
-        fs.appendFile(
-          responseLogfilePath,
-          `[${timestamp}] REAL RESPONSE: ${data.request().url()}\n`,
-          appendFileErrorHandler,
-        );
-      }
+      safeAppendFile(logFile, `${txt}\n`);
     });
 
     // app is loaded
@@ -183,24 +214,17 @@ export const test = base.extend<TestFixtures>({
     // use page in the test
     await use(page);
 
-    console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
+    // Take screenshot and video only on failure
+    if (testInfo.status !== "passed") {
+      await captureArtifacts(page, testInfo);
+    }
+
+    //Remove video if test passed
+    if (testInfo.status === "passed") {
+      await electronApp.close();
+      await page.video()?.delete();
+    }
   },
-
-  // below is used for the logging file at `artifacts/networkResponses.log`
-  recordTestNamesForApiResponseLogging: [
-    async ({}, use, testInfo) => {
-      fs.appendFile(
-        responseLogfilePath,
-        `Network call responses for test: '${testInfo.title}':\n`,
-        appendFileErrorHandler,
-      );
-
-      await use();
-
-      fs.appendFile(responseLogfilePath, `\n`, appendFileErrorHandler);
-    },
-    { auto: true },
-  ],
 });
 
 export default test;

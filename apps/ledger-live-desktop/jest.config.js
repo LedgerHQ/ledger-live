@@ -11,10 +11,25 @@ const testPathIgnorePatterns = [
   ".yalc",
   "cli/",
   "test-helpers/",
+  "src/.*/shared\\.(ts|tsx)$",
 ];
 
-const defaultConfig = {
-  preset: "ts-jest",
+const moduleNameMapper = {
+  ...pathsToModuleNameMapper(compilerOptions.paths),
+  "~/(.*)": "<rootDir>/src/$1",
+  "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+    "<rootDir>/fileMock.js",
+  "styled-components": require.resolve("styled-components"),
+  electron: "<rootDir>/tests/mocks/electron.ts",
+  uuid: require.resolve("uuid"),
+  "react-spring": require.resolve("react-spring"),
+  "@braze/web-sdk": require.resolve("@braze/web-sdk"),
+  "@polkadot/x-fetch": "<rootDir>/__mocks__/x-fetch.js",
+  "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
+};
+
+const commonConfig = {
+  testEnvironment: "jsdom",
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",
@@ -22,52 +37,62 @@ const defaultConfig = {
     __SENTRY_URL__: null,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
-    "ts-jest": {
-      isolatedModules: true,
-      diagnostics: "warnOnly",
-    },
   },
-  testEnvironment: "node",
+  moduleNameMapper,
   testPathIgnorePatterns,
+  setupFiles: ["jest-canvas-mock", "./jest.polyfills.js"],
+  setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
+  extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+      "<rootDir>/tests/fileTransformer.js",
+  },
   globalSetup: "<rootDir>/tests/setup.ts",
-  moduleDirectories: ["node_modules"],
+  moduleDirectories: ["node_modules", "./tests"],
   modulePaths: [compilerOptions.baseUrl],
-  setupFiles: ["jest-canvas-mock", "<rootDir>/tests/jestSetup.ts"],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  resolver: "<rootDir>/scripts/resolver.js",
+  testEnvironmentOptions: {
+    customExportConditions: [""],
+  },
 };
 
 module.exports = {
-  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/**/__integration__/**",
+    "!src/**/__tests__/**",
+  ],
   coverageReporters: ["json", "lcov", "json-summary"],
+  reporters: [
+    "default",
+    ["jest-sonar", { outputName: "sonar-test-execution-report.xml", reportedFilePath: "absolute" }],
+  ],
+  silent: false,
+  verbose: true,
   projects: [
     {
-      ...defaultConfig,
+      ...commonConfig,
+      displayName: "default",
       testPathIgnorePatterns: [
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
+      testMatch: ["**/src/**/*.test.(ts|tsx)"],
     },
     {
-      ...defaultConfig,
-      setupFiles: [...defaultConfig.setupFiles, "<rootDir>/tests/jestJSDOMSetup.ts"],
+      ...commonConfig,
       displayName: "dom",
-      testEnvironment: "jsdom",
-      transform: {
-        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-          "<rootDir>/tests/fileTransformer.js",
-      },
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
-      testPathIgnorePatterns,
-      moduleNameMapper: {
-        ...defaultConfig.moduleNameMapper,
-        "~/(.*)": "<rootDir>/src/$1",
-        "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-          "<rootDir>/fileMock.js",
-        electron: "<rootDir>/tests/mocks/electron.ts",
-        "react-spring": require.resolve("react-spring"),
-        uuid: require.resolve("uuid"),
-        "@braze/web-sdk": require.resolve("@braze/web-sdk"),
-      },
     },
   ],
 };

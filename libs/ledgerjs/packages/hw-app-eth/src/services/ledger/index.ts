@@ -1,20 +1,22 @@
-// This implements the resolution of a Transaction using Ledger's own API
+import { utils } from "ethers";
 import { log } from "@ledgerhq/logs";
-import { Interface } from "@ethersproject/abi";
 import {
   signDomainResolution,
   signAddressResolution,
 } from "@ledgerhq/domain-service/signers/index";
 import { LedgerEthTransactionResolution, LedgerEthTransactionService, LoadConfig } from "../types";
+import { decodeTxInfo, tokenSelectors, nftSelectors, mergeResolutions } from "../../utils";
+import { UNISWAP_UNIVERSAL_ROUTER_ADDRESS } from "../../modules/Uniswap/constants";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
+import { loadInfosForUniswap } from "../../modules/Uniswap";
 import { loadInfosForContractMethod } from "./contracts";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
-import { decodeTxInfo, tokenSelectors, nftSelectors, mergeResolutions } from "../../utils";
 
 type PotentialResolutions = {
   token: boolean | undefined;
   nft: boolean | undefined;
   externalPlugins: boolean | undefined;
+  uniswapV3: boolean | undefined;
 };
 
 /**
@@ -112,7 +114,9 @@ const loadNanoAppPlugins = async (
     }
   }
 
-  if (shouldResolve.externalPlugins) {
+  // Uniswap has its own way of working, so we need to handle it separately
+  // This will prevent an error if we add Uniswap to the CAL service
+  if (shouldResolve.externalPlugins && contractAddress !== UNISWAP_UNIVERSAL_ROUTER_ADDRESS) {
     const contractMethodInfos = await loadInfosForContractMethod(
       contractAddress,
       selector,
@@ -129,7 +133,7 @@ const loadNanoAppPlugins = async (
       }
 
       if (erc20OfInterest && erc20OfInterest.length && abi) {
-        const contract = new Interface(abi);
+        const contract = new utils.Interface(abi);
         const args = contract.parseTransaction(decodedTx).args;
 
         for (const path of erc20OfInterest) {
@@ -148,6 +152,7 @@ const loadNanoAppPlugins = async (
               nft: false,
               externalPlugins: false,
               token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
+              uniswapV3: false,
             },
           );
           resolution = mergeResolutions([resolution, externalPluginResolution]);
@@ -155,6 +160,17 @@ const loadNanoAppPlugins = async (
       }
     } else {
       log("ethereum", "no infos for selector " + selector);
+    }
+  }
+
+  if (shouldResolve.uniswapV3) {
+    const { pluginData, tokenDescriptors } = await loadInfosForUniswap(decodedTx, chainIdTruncated);
+    if (pluginData && tokenDescriptors) {
+      resolution.externalPlugin.push({
+        payload: pluginData.toString("hex"),
+        signature: "",
+      });
+      resolution.erc20Tokens.push(...tokenDescriptors.map(d => d.toString("hex")));
     }
   }
 
@@ -185,6 +201,7 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
       token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
       nft: resolutionConfig.nft && nftSelectors.includes(selector),
       externalPlugins: resolutionConfig.externalPlugins,
+      uniswapV3: resolutionConfig.uniswapV3,
     };
 
     const pluginsResolution = await loadNanoAppPlugins(

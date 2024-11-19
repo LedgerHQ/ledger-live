@@ -4,7 +4,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -23,6 +23,7 @@ import type { CeloRevokeFlowFlowParamList } from "./RevokeFlow/types";
 import type { CeloUnlockFlowParamList } from "./UnlockFlow/types";
 import type { CeloVoteFlowParamList } from "./VoteFlow/types";
 import type { CeloWithdrawFlowParamList } from "./WithdrawFlow/types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -47,7 +48,7 @@ export default function CeloFeeRow({ account, transaction }: Props) {
   }, []);
 
   const fees = (transaction as CeloTransaction).fees;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (

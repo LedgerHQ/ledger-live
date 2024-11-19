@@ -7,12 +7,15 @@ import SyncOnboardingDeviceConnection, {
 } from "./DeviceConnection";
 import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;
 export type ManualRouteProps = RouteComponentProps<SyncOnboardingScreenProps>;
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
+  useKeepScreenAwake(true);
+
   return (
     <Flex width="100%" height="100%" position="relative">
       <Switch>

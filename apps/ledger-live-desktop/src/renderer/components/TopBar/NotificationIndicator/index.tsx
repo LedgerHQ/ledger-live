@@ -24,7 +24,7 @@ export function NotificationIndicator() {
   const history = useHistory();
 
   const onClickNotificationCenter = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Notification Center",
       page: history.location.pathname,
     });
@@ -39,7 +39,7 @@ export function NotificationIndicator() {
       />
       <Tooltip content={t("informationCenter.tooltip")} placement="bottom">
         <ItemContainer
-          data-test-id="topbar-notification-button"
+          data-testid="topbar-notification-button"
           isInteractive
           onClick={onClickNotificationCenter}
         >

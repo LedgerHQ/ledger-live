@@ -1,9 +1,9 @@
 import semver from "semver";
 import type { AppAndVersion } from "./hw/connectApp";
 export const req = {
-  method: "POST",
-  url: "https://appstore.aws.prd.ldg-tech.com/api/get_apps",
-  data: {
+  method: "GET",
+  url: "https://manager.api.live.ledger.com/api/get_apps",
+  query: {
     current_se_firmware_final_version: 118,
     device_version: 10,
     provider: 1,
@@ -107,9 +107,7 @@ export const minAppVersion = {
   POA: "1.4.0",
   Particl: "1.2.12",
   Passwords: "0.1.0",
-  Peercoin: "1.5.0",
   Pirl: "1.4.0",
-  PivX: "1.5.0",
   Polkadot: "5.23.0",
   Polkadot_sec: "0.0.0",
   QRL: "1.1.3",
@@ -125,7 +123,6 @@ export const minAppVersion = {
   Sia: "0.4.2",
   Solana: "1.0.1",
   Stacks: "0.0.0",
-  Stealth: "1.5.0",
   Stellar: "3.2.2",
   Stratis: "1.5.0",
   Symbol: "0.0.0",
@@ -137,8 +134,6 @@ export const minAppVersion = {
   Tron: "0.3.2",
   Ubiq: "1.4.0",
   VeChain: "1.0.7",
-  Vertcoin: "1.5.0",
-  Viacoin: "1.5.0",
   Volta: "1.4.0",
   Wanchain: "1.4.0",
   Waves: "1.1.0",

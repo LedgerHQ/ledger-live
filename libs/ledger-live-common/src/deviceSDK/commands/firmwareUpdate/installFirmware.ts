@@ -100,15 +100,15 @@ export function installFirmwareCommand(
               type: "firmwareInstallPermissionRequested",
             }
           : e.index === e.total
-          ? {
-              // the last APDU of the bulk part of the instalation means that the user validated
-              // the installation of the OSU firmware
-              type: "firmwareInstallPermissionGranted",
-            }
-          : {
-              type: "progress",
-              progress: e.progress,
-            };
+            ? {
+                // the last APDU of the bulk part of the instalation means that the user validated
+                // the installation of the OSU firmware
+                type: "firmwareInstallPermissionGranted",
+              }
+            : {
+                type: "progress",
+                progress: e.progress,
+              };
       }
       // then type is "device-permission-requested"
       return { type: "allowSecureChannelRequested" };

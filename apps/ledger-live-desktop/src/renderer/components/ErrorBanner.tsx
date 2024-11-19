@@ -14,14 +14,21 @@ type Props = {
 
 const ErrorBanner = ({ error, warning, fallback }: Props) => {
   const maybeUrl = error ? urls.errors[String(error?.name)] : null;
+  const secondLink = !!maybeUrl;
+
   return (
     <Alert
       type={warning ? "warning" : "error"}
-      title={<TranslatedError error={error} field="title" fallback={fallback?.title} />}
+      title={<TranslatedError error={error} field="title" fallback={fallback?.title} noLink />}
       learnMoreUrl={maybeUrl}
       mb={4}
     >
-      <TranslatedError error={error} field="description" fallback={fallback?.description} />
+      <TranslatedError
+        error={error}
+        field="description"
+        fallback={fallback?.description}
+        noLink={secondLink}
+      />
     </Alert>
   );
 };

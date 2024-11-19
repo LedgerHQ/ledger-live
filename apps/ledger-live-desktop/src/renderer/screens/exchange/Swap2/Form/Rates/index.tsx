@@ -1,36 +1,35 @@
-import React, { useCallback, useState, useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Trans } from "react-i18next";
-import { track } from "~/renderer/analytics/segment";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import NoQuoteSwapRate from "./NoQuoteSwapRate";
-import SwapRate from "./SwapRate";
-import Countdown from "./Countdown";
-import LoadingState from "./LoadingState";
-import Filter from "./Filter";
-import {
-  SwapSelectorStateType,
-  RatesReducerState,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { useGetSwapTrackingProperties } from "../../utils/index";
-import styled from "styled-components";
-import Tooltip from "~/renderer/components/Tooltip";
-import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import { filterRates } from "./filterRates";
 import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import {
+  ExchangeRate,
+  RatesReducerState,
+  SwapSelectorStateType,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { isRegistrationRequired } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Trans } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
+import { track } from "~/renderer/analytics/segment";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import Box from "~/renderer/components/Box";
+import Text from "~/renderer/components/Text";
+import Tooltip from "~/renderer/components/Tooltip";
+import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import { useGetSwapTrackingProperties } from "../../utils/index";
+import Countdown from "./Countdown";
+import { filterRates } from "./filterRates";
+import LoadingState from "./LoadingState";
+import NoQuoteSwapRate from "./NoQuoteSwapRate";
+import SwapRate from "./SwapRate";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
   toCurrency: SwapSelectorStateType["currency"];
   rates: RatesReducerState["value"];
   provider: string | undefined | null;
-  refreshTime: number;
-  countdown: boolean;
+  countdownSecondsToRefresh: number | undefined;
 };
 
 const TableHeader = styled(Box).attrs({
@@ -54,20 +53,39 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  refreshTime,
-  countdown,
+  countdownSecondsToRefresh,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
-  const [filter, setFilter] = useState<string[]>([]);
+  const [filter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
+  const [isRegistrationRequiredMap, setIsRegistrationRequiredMap] = useState<{
+    [x: string]: boolean;
+  }>({});
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-  const providers = [...new Set(rates?.map(rate => rate.provider) ?? [])];
-  const exchangeRates =
-    toCurrency && rates
+  const providers = useMemo(() => [...new Set(rates?.map(rate => rate.provider) ?? [])], [rates]);
+  const exchangeRates = useMemo(() => {
+    return toCurrency && rates
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
+  }, [toCurrency, rates]);
+  useEffect(() => {
+    if (providers) {
+      const fetchlol = async () => {
+        const results = await Promise.all(
+          providers.map(async provider => {
+            const isRequired = await isRegistrationRequired(provider);
+            return { [provider]: isRequired };
+          }),
+        );
+
+        const resultsMap = results.reduce((acc, result) => ({ ...acc, ...result }), {});
+        setIsRegistrationRequiredMap(resultsMap);
+      };
+      fetchlol();
+    }
+  }, [providers]);
   const updateRate = useCallback(
     (rate: ExchangeRate) => {
       const value = rate.rate ?? rate.provider;
@@ -112,19 +130,6 @@ export default function ProviderRate({
     }
   }, [filteredRates, selectedRate, dispatch]);
 
-  const updateFilter = useCallback(
-    (newFilter: string[]) => {
-      track("button_clicked", {
-        button: "Filter selected",
-        page: "Page Swap Form",
-        ...swapDefaultTrack,
-        value: newFilter,
-      });
-      setFilter(newFilter);
-    },
-    [swapDefaultTrack],
-  );
-
   return (
     <Box height="100%" width="100%">
       <TrackPage
@@ -147,13 +152,12 @@ export default function ProviderRate({
         >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
-        {countdown && (
+        {countdownSecondsToRefresh && (
           <Box horizontal fontSize={3}>
-            <Countdown refreshTime={refreshTime} rates={rates} />
+            <Countdown countdown={countdownSecondsToRefresh} />
           </Box>
         )}
       </Box>
-      <Filter onClick={updateFilter} />
       <TableHeader>
         <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text mr={1}>
@@ -243,6 +247,7 @@ export default function ProviderRate({
               onSelect={updateRate}
               fromCurrency={fromCurrency}
               toCurrency={toCurrency}
+              isRegistrationRequired={isRegistrationRequiredMap[rate.provider]}
             />
           );
         })}

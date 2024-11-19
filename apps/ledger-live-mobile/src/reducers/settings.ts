@@ -9,14 +9,13 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
-  SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
@@ -27,7 +26,6 @@ import type {
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
-  SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
@@ -40,8 +38,6 @@ import type {
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetCustomImageBackupPayload,
   SettingsSetLastSeenCustomImagePayload,
-  SettingsSetMarketFilterByStarredAccountsPayload,
-  SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
   SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
@@ -78,6 +74,12 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
+  SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDismissedContentCardsPayload,
+  SettingsClearDismissedContentCardsPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsRemoveStarredMarketcoinsPayload,
+  SettingsSetFromLedgerSyncOnboardingPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -98,8 +100,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: false,
-  personalizedRecommendationsEnabled: false,
+  analyticsEnabled: true,
+  personalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -120,8 +122,8 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
-  customImageType: null,
-  customImageBackup: undefined,
+  customLockScreenType: null,
+  customLockScreenBackup: null,
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -143,26 +145,16 @@ export const INITIAL_STATE: SettingsState = {
     nanoSP: false,
     nanoX: false,
     stax: false,
+    europa: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
-  starredMarketCoins: [],
   lastConnectedDevice: null,
-  marketRequestParams: {
-    range: "24h",
-    orderBy: "market_cap",
-    order: "desc",
-    liveCompatible: false,
-    sparkline: false,
-    top100: false,
-  },
   marketCounterCurrency: null,
-  marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
   onboardingHasDevice: null,
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
-    recommendationsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
   },
@@ -180,6 +172,10 @@ export const INITIAL_STATE: SettingsState = {
   },
   userNps: null,
   supportedCounterValues: [],
+  hasSeenAnalyticsOptInPrompt: false,
+  dismissedContentCards: {},
+  starredMarketCoins: [],
+  fromLedgerSyncOnboarding: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -467,7 +463,8 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
     ...state,
-    customImageType: (action as Action<SettingsSetCustomImageTypePayload>).payload.customImageType,
+    customLockScreenType: (action as Action<SettingsSetCustomImageTypePayload>).payload
+      .customLockScreenType,
   }),
 
   [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
@@ -490,24 +487,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: [
-      ...state.starredMarketCoins,
-      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload,
-    ],
-  }),
-
-  [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(
-      id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
-    ),
-  }),
-
   [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
     ...state,
-    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
+    customLockScreenBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
@@ -524,24 +506,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
-    ...state,
-    marketRequestParams: {
-      ...state.marketRequestParams,
-      ...(action as Action<SettingsSetMarketRequestParamsPayload>).payload,
-    },
-  }),
-
   [SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY]: (state, action) => ({
     ...state,
     marketCounterCurrency: (action as Action<SettingsSetMarketCounterCurrencyPayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (state, action) => ({
-    ...state,
-    marketFilterByStarredAccounts: (
-      action as Action<SettingsSetMarketFilterByStarredAccountsPayload>
-    ).payload,
   }),
 
   [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (state, action) => ({
@@ -646,26 +613,73 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
   }),
+  [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
+    ...state,
+    hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
+  }),
+  [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
+    ...state,
+    dismissedContentCards: {
+      ...state.dismissedContentCards,
+      ...(action as Action<SettingsSetDismissedContentCardsPayload>).payload,
+    },
+  }),
+  [SettingsActionTypes.CLEAR_DISMISSED_CONTENT_CARDS]: (state, action) => {
+    const { payload } = action as Action<SettingsClearDismissedContentCardsPayload>;
+    const currentDismissedContentCards = state.dismissedContentCards || {};
+    const entries = Object.entries(currentDismissedContentCards);
+    const filteredEntries = entries.filter(([key]) => !payload?.includes(key));
+    const dismissedContentCards = filteredEntries.reduce(
+      (obj, [key, value]) => ({ ...obj, [key]: value }),
+      {},
+    );
+
+    return {
+      ...state,
+      dismissedContentCards,
+    };
+  },
+
+  [SettingsActionTypes.SET_LEDGER_SYNC_ONBOARDING]: (state, action) => ({
+    ...state,
+    fromLedgerSyncOnboarding: (action as Action<SettingsSetFromLedgerSyncOnboardingPayload>)
+      .payload,
+  }),
+
+  [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
+    ...state,
+    starredMarketCoins: [
+      ...state.starredMarketCoins,
+      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload,
+    ],
+  }),
+
+  [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
+    ...state,
+    starredMarketCoins: state.starredMarketCoins.filter(
+      id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
+    ),
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
 
-const storeSelector = (state: State): SettingsState => state.settings;
+export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
-export const exportSelector = storeSelector;
+export const exportSelector = settingsStoreSelector;
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   counterValueCurrencyLocalSelector,
 );
 
 const counterValueExchangeLocalSelector = (s: SettingsState) => s.counterValueExchange;
 
 export const counterValueExchangeSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   counterValueExchangeLocalSelector,
 );
 
@@ -673,40 +687,72 @@ const defaultCurrencySettingsForCurrency: (_: Currency) => CurrencySettings = cr
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
-    exchange: null,
+    unit: defaults.unit,
   };
 };
 export const currencySettingsSelector = (
-  state: State,
+  state: SettingsState,
   {
     currency,
   }: {
     currency: Currency;
   },
-) => ({
-  ...defaultCurrencySettingsForCurrency(currency),
-  ...state.settings.currenciesSettings[currency.ticker],
-});
-export const privacySelector = createSelector(storeSelector, s => s.privacy);
+) => {
+  const currencySettings = Object.keys(state.currenciesSettings)?.includes(currency.ticker)
+    ? state.currenciesSettings[currency.ticker]
+    : {};
+
+  return {
+    ...defaultCurrencySettingsForCurrency(currency),
+    ...currencySettings,
+  };
+};
+
+export const unitForCurrencySelector = (
+  state: State,
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
+): Unit => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj?.unit) return obj.unit;
+  const defs = currencySettingsDefaults(currency);
+  return defs.unit;
+};
+
+export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
+  if (account.type === "Account") {
+    return unitForCurrencySelector(state, account);
+  } else {
+    return account.token.units[0];
+  }
+};
+
+export const privacySelector = createSelector(settingsStoreSelector, s => s.privacy);
 export const reportErrorsEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.reportErrorsEnabled,
 );
-export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
+export const analyticsEnabledSelector = createSelector(
+  settingsStoreSelector,
+  s => s.analyticsEnabled,
+);
 export const personalizedRecommendationsEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.personalizedRecommendationsEnabled,
 );
 export const trackingEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
-  s: State,
+  s: SettingsState,
   {
     account,
   }: {
@@ -786,41 +832,28 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const lastSeenDeviceSelector = (state: State) => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
-    return { ...state.settings.lastSeenDevice, modelId: DeviceModelId.stax };
-  }
-  return state.settings.lastSeenDevice;
-};
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
-export const customImageTypeSelector = (state: State) => state.settings.customImageType;
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
-export const lastConnectedDeviceSelector = (state: State) => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (state.settings.lastConnectedDevice?.modelId === "nanoFTS") {
-    return {
-      ...state.settings.lastConnectedDevice,
-      modelId: DeviceModelId.stax,
-    };
-  }
+export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
-  return state.settings.lastConnectedDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  const { lastSeenDevice } = state.settings;
+  if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice?.modelId))
+    return null;
+  return lastSeenDevice;
 };
+
+export const lastConnectedDeviceSelector = (state: State) => {
+  const { lastConnectedDevice } = state.settings;
+  if (!lastConnectedDevice || !Object.values(DeviceModelId).includes(lastConnectedDevice?.modelId))
+    return null;
+  return lastConnectedDevice;
+};
+
 export const hasOrderedNanoSelector = (state: State) => state.settings.hasOrderedNano;
-export const marketRequestParamsSelector = (state: State) => state.settings.marketRequestParams;
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
-export const marketFilterByStarredAccountsSelector = (state: State) =>
-  state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
+export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
@@ -844,4 +877,12 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
-export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = (state: State) =>
+  state.settings.supportedCounterValues;
+export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
+  state.settings.hasSeenAnalyticsOptInPrompt;
+export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+export const isFromLedgerSyncOnboardingSelector = (state: State) =>
+  state.settings.fromLedgerSyncOnboarding;
+
+export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

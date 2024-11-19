@@ -1,9 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 function formatAccountSpecifics(account: Account): string {
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

@@ -1,5 +1,5 @@
 {
-  "entry": ["src/useDebounce.ts"],
+  "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"],
   "ignoreUnimported": [],
   "ignoreUnresolved": []
 }

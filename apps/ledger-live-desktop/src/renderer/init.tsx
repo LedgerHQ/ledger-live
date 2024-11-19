@@ -2,8 +2,8 @@ import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
+import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
@@ -12,7 +12,6 @@ import { webFrame, ipcRenderer } from "electron";
 // https://github.com/reduxjs/react-redux/issues/1977
 // eslint-disable-next-line react/no-deprecated
 import { render } from "react-dom";
-import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
@@ -32,14 +31,13 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
-import { setAccounts } from "~/renderer/actions/accounts";
+import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
   languageSelector,
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
-  localeSelector,
   filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -49,7 +47,10 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
-import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
+import { importMarketState } from "./actions/market";
+import { fetchWallet } from "./actions/wallet";
+import { fetchTrustchain } from "./actions/trustchain";
+import { registerTransportModules } from "~/renderer/live-common-setup";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -88,12 +89,6 @@ async function init() {
     Transport,
   });
 
-  LiveConfig.init({
-    appVersion: __APP_VERSION__,
-    platform: "desktop",
-    environment: process.env.NODE_ENV || "development",
-  });
-
   expectOperatingSystemSupportStatus();
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
@@ -102,12 +97,14 @@ async function init() {
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const timemachine = require("timemachine");
-    timemachine.config({
+    if (getEnv("MOCK")) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      dateString: require("../../tests/time").default,
-    });
+      const timemachine = require("timemachine");
+      timemachine.config({
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        dateString: require("../../tests/time").default,
+      });
+    }
   }
   if (window.localStorage.getItem("hard-reset")) {
     await hardReset();
@@ -145,15 +142,7 @@ async function init() {
   )(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
-  const locale = localeSelector(state);
 
-  // Moment.JS config
-  moment.locale(locale);
-  moment.relativeTimeThreshold("s", 45);
-  moment.relativeTimeThreshold("m", 55);
-  moment.relativeTimeThreshold("h", 24);
-  moment.relativeTimeThreshold("d", 31);
-  moment.relativeTimeThreshold("M", 12);
   i18n.changeLanguage(language);
   await loadLSS(); // Set env handled inside
 
@@ -169,20 +158,22 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  let accounts = await getKey("app", "accounts", []);
-  if (accounts) {
-    accounts = implicitMigration(accounts);
-    store.dispatch(setAccounts(accounts));
+  const accountData = await getKey("app", "accounts", []);
+  if (accountData) {
+    const e = initAccounts(accountData);
+    store.dispatch(e);
 
     // preload currency that's not in accounts list
-    if (accounts.some(a => a.currency.id !== "ethereum")) {
+    if (e.payload.accounts.some(a => a.currency.id !== "ethereum")) {
       prepareCurrency(getCryptoCurrencyById("ethereum"));
     }
   } else {
+    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -191,6 +182,15 @@ async function init() {
       }),
     );
   }
+
+  await fetchTrustchain()(store.dispatch);
+  await fetchWallet()(store.dispatch);
+
+  const marketState = await getKey("app", "market");
+  if (marketState) {
+    store.dispatch(importMarketState(marketState));
+  }
+
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
@@ -242,6 +242,8 @@ async function init() {
       }, 500);
     });
   }
+
+  registerTransportModules(store);
 
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {

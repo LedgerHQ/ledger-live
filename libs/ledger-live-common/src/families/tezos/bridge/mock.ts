@@ -13,8 +13,8 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import type { TezosAccount, Transaction } from "../types";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
@@ -24,12 +24,9 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import {
-  // fetchAllBakers,
-  // hydrateBakers,
-  // asBaker,
-  isAccountDelegating,
-} from "../bakers";
+import { isAccountDelegating } from "../staking";
+
+const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 
 const receive = makeAccountBridgeReceive();
 
@@ -106,8 +103,8 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
   let totalSpent = useAllAmount
     ? account.balance
     : subAcc
-    ? new BigNumber(t.amount)
-    : new BigNumber(t.amount).plus(estimatedFees);
+      ? new BigNumber(t.amount)
+      : new BigNumber(t.amount).plus(estimatedFees);
   amount = useAllAmount
     ? subAcc
       ? new BigNumber(t.amount)

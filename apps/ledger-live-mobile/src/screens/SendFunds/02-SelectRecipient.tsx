@@ -7,17 +7,18 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isNftTransaction } from "@ledgerhq/live-nft";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
+import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/FontAwesome";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
 import Alert from "~/components/Alert";
@@ -35,6 +36,8 @@ import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
+import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
+import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 
@@ -48,13 +51,12 @@ type Props = BaseComposite<
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s, {
+    currencySettingsForAccountSelector(s.settings, {
       account: mainAccount,
     }),
   );
@@ -69,6 +71,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     }),
   );
 
+  const debouncedBridgePending = useDebounce(bridgePending, 200);
   invariant(transaction, `couldn't get transaction from ${mainAccount.currency.name} bridge`);
 
   const [value, setValue] = useState<string>("");
@@ -125,7 +128,18 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       );
       setValue(recipient);
     },
-    [account, parentAccount, setTransaction, transaction, setValue],
+    [account, parentAccount, setTransaction, transaction],
+  );
+
+  const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
   );
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
@@ -145,7 +159,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
-  const onPressContinue = useCallback(async () => {
+  const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
+    MemoTagDrawerState.INITIAL,
+  );
+
+  const onPressContinue = useCallback(() => {
+    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+      return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
+    }
+
+    track("SendRecipientContinue");
+
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
@@ -179,6 +203,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     navigation,
     parentAccount?.id,
     route.params,
+    memoTag?.isEmpty,
+    memoTagDrawerState,
   ]);
 
   if (!account || !transaction) return null;
@@ -192,10 +218,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
-
   return (
     <>
       <SafeAreaView
+        isFlex
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {
@@ -228,6 +255,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               styles.container,
               {
                 flex: 1,
+                paddingVertical: 32,
               },
             ]}
             keyboardShouldPersistTaps="handled"
@@ -236,8 +264,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               event="SendRecipientQR"
               type="tertiary"
               title={<Trans i18nKey="send.recipient.scan" />}
-              IconLeft={IconQRCode}
+              IconLeft={() => <QrCode />}
               onPress={onPressScan}
+              outline
             />
             <View style={styles.separatorContainer}>
               <View
@@ -279,13 +308,22 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+
+            {memoTag?.Input && (
+              <View style={styles.memoTagInputContainer}>
+                <memoTag.Input
+                  testID="memo-tag-input"
+                  placeholder={t("send.summary.memo.title")}
+                  onChange={memoTag.handleChange}
+                />
+              </View>
+            )}
+
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-          </NavigationScrollView>
-          <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
@@ -293,18 +331,25 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
             ) : null}
+          </NavigationScrollView>
+          <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
-              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={bridgePending || !!status.errors.recipient}
-              pending={bridgePending}
+              disabled={debouncedBridgePending || !!status.errors.recipient}
+              pending={debouncedBridgePending}
               onPress={onPressContinue}
             />
           </View>
         </KeyboardView>
       </SafeAreaView>
+
+      <MemoTagDrawer
+        open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
+        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
+        onNext={onPressContinue}
+      />
 
       <GenericErrorBottomModal
         error={bridgeErr}
@@ -323,26 +368,22 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({ size = 16, color }: { size?: number; color?: string }) => (
-  <Icon name="qrcode" size={size} color={color} />
-);
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  a: {},
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingBottom: 24,
     backgroundColor: "transparent",
   },
+  memoTagInputContainer: { marginTop: 32 },
   infoBox: {
-    marginBottom: 24,
+    marginTop: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
-    marginTop: 8,
+    marginTop: 24,
   },
   separatorContainer: {
     marginTop: 32,
@@ -362,3 +403,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+enum MemoTagDrawerState {
+  INITIAL,
+  SHOWING,
+  SHOWN,
+}

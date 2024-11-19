@@ -38,6 +38,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
   const deviceInfo = route.params?.deviceInfo;
+  const onNameChange = route.params?.onNameChange;
 
   const textInputRef = useRef<NativeTextInput | null>(null);
 
@@ -87,6 +88,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     setCompleted(true);
     setRunning(false);
     saveBleDeviceName({ deviceId: device.deviceId, name });
+    onNameChange(name);
 
     pushToast({
       id: "rename-device-success",
@@ -96,7 +98,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     });
 
     navigation.goBack();
-  }, [device.deviceId, name, navigation, pushToast, saveBleDeviceName, t]);
+  }, [device.deviceId, name, navigation, onNameChange, pushToast, saveBleDeviceName, t]);
 
   const onClose = useCallback(() => {
     if (completed) {

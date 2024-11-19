@@ -37,8 +37,8 @@ export const Overview = () => {
               isHeader(variant) && !isHeaderInter(variant)
                 ? ["medium"]
                 : isSubtitle(variant)
-                ? ["semiBold"]
-                : fontWeightTypes;
+                  ? ["semiBold"]
+                  : fontWeightTypes;
             const decorationsToShow: ("none" | "underline")[] =
               isHeader(variant) || isSubtitle(variant) ? ["none"] : ["none", "underline"];
             return (

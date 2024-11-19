@@ -4,7 +4,7 @@ import type {
   BalanceHistoryDataCache,
   AccountLike,
   Account,
-  SubAccount,
+  TokenAccount,
 } from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
 
@@ -129,7 +129,10 @@ export function getAccountHistoryBalances(account: AccountLike, g: GranularityId
 /**
  * utility used at the end of an account synchronisation to recalculate the balance history if necessary
  */
-export function recalculateAccountBalanceHistories(res: Account, prev: Account): Account {
+export function recalculateAccountBalanceHistories<A extends Account = Account>(
+  res: A,
+  prev: A,
+): A {
   // recalculate balance history cache
   if (prev.balanceHistoryCache === res.balanceHistoryCache) {
     // we only regenerate if it was not overriden by the implemenetation.
@@ -141,7 +144,7 @@ export function recalculateAccountBalanceHistories(res: Account, prev: Account):
 
   if (nextSubAccounts && prevSubAccounts && prevSubAccounts !== nextSubAccounts) {
     // when sub accounts changes, we need to recalculate
-    res.subAccounts = nextSubAccounts.map((subAccount: SubAccount): SubAccount => {
+    res.subAccounts = nextSubAccounts.map((subAccount: TokenAccount): TokenAccount => {
       const old = prevSubAccounts.find(a => a.id === subAccount.id);
 
       if (!old || old.balanceHistoryCache === subAccount.balanceHistoryCache) {

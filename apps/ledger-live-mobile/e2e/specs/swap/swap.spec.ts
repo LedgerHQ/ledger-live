@@ -1,52 +1,47 @@
-import { expect } from "detox";
-import { loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import SwapFormPage from "../../models/trade/swapFormPage";
+import { Application } from "../../page";
 
-let portfolioPage: PortfolioPage;
-let swapPage: SwapFormPage;
+let app: Application;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-
-    portfolioPage = new PortfolioPage();
-    swapPage = new SwapFormPage();
-
-    await portfolioPage.waitForPortfolioPageToLoad();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it("should load the Swap page from the Transfer menu", async () => {
-    await swapPage.openViaDeeplink();
-    await expect(swapPage.swapFormTab()).toBeVisible();
+    await app.swap.openViaDeeplink();
+    await app.swap.expectSwapPage();
   });
 
   it("should be able to select a different source account", async () => {
-    await swapPage.openSourceAccountSelector();
-    await swapPage.selectAccount("Bitcoin 1 (legacy)");
+    await app.swap.openSourceAccountSelector();
+    await app.swap.selectAccount("Bitcoin 1 (legacy)");
   });
 
   it("should show an error for too low an amount", async () => {
-    await swapPage.enterSourceAmount("0.00001");
+    await app.swap.enterSourceAmount("0.00001");
     // unfortunately there's no way to check if a button that is disabled in the JS is actually disabled on the native side (which is what Detox checks)
     // we tap the `Exchange` button to see if the next step fails as a way of checking if the exchange button disabled. If it proceeds then the button was incorrectly available and the next test will fail
-    await swapPage.startExchange();
+    await app.swap.startExchange();
   });
 
+  $TmsLink("B2CQA-545");
   it("should show an error for not enough funds", async () => {
-    await swapPage.enterSourceAmount("10");
-    await swapPage.startExchange();
+    await app.swap.enterSourceAmount("10");
+    await app.swap.startExchange();
   });
 
   it("should be able to select a different destination account", async () => {
-    await swapPage.openDestinationAccountSelector();
-    await swapPage.selectAccount("Ethereum");
+    await app.swap.openDestinationAccountSelector();
+    await app.swap.selectAccount("Ethereum");
   });
 
-  it("should be able to send the maximum available amount", async () => {
-    await swapPage.sendMax();
-    await swapPage.startExchange();
-    await expect(swapPage.termsAcceptButton()).toBeVisible();
-    await expect(swapPage.termsCloseButton()).toBeVisible();
+  it("should have the send max toggle switch removed", async () => {
+    await app.swap.expectNoMaxToggle();
+    await app.swap.openSourceAccountSelector();
+    await app.swap.selectAccount("Bitcoin 1 (legacy)");
+    await app.swap.enterSourceAmount("0.1");
+    await app.swap.startExchange();
+    await app.swap.expectTerms();
   });
 });

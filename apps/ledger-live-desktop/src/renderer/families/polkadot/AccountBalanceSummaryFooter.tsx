@@ -3,7 +3,6 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
@@ -16,6 +15,7 @@ import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -66,6 +66,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const preloaded = usePolkadotPreloadData();
+  const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, polkadotResources } = account;
   const {
@@ -75,7 +76,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   } = polkadotResources;
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
   const hasMinBondBalance = hasMinimumBondBalance(account);
-  const unit = getAccountUnit(account);
+
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

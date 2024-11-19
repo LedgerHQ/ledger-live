@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -12,6 +12,8 @@ import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
+import { useMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 export type Props = CardProps & {
   account?: AccountLike | null;
@@ -21,6 +23,7 @@ export type Props = CardProps & {
   useFullBalance?: boolean;
   AccountSubTitle?: ReactNode;
   iconSize?: number;
+  overridesName?: string;
 };
 
 const AccountCard = ({
@@ -31,13 +34,17 @@ const AccountCard = ({
   disabled,
   useFullBalance,
   AccountSubTitle,
+  overridesName,
   iconSize = 48,
   ...props
 }: Props) => {
   const { colors } = useTheme();
-  if (!account) return null;
+  const accountNameFromStore = useMaybeAccountName(account);
+  const accountName = overridesName || accountNameFromStore;
+  const parentName = useMaybeAccountName(parentAccount);
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !unit) return null;
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
   const tag =
     account.type === "Account" &&
     account?.derivationMode !== undefined &&
@@ -47,9 +54,9 @@ const AccountCard = ({
   const name =
     account.type === "TokenAccount"
       ? parentAccount
-        ? `${parentAccount!.name} (${currency.ticker})`
+        ? `${parentName} (${currency.ticker})`
         : currency.ticker
-      : account.name;
+      : accountName;
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress} testID={"account-card-" + account.id}>
       <Card
@@ -83,7 +90,9 @@ const AccountCard = ({
 
             {tag && (
               <Flex flexDirection="row">
-                <Tag mt={2}>{tag}</Tag>
+                <Tag mt={2} numberOfLines={1}>
+                  {tag}
+                </Tag>
               </Flex>
             )}
           </Flex>

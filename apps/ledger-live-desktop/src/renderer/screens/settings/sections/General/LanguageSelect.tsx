@@ -1,6 +1,6 @@
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -20,9 +20,7 @@ import {
   lastSeenDeviceSelector,
   useSystemLanguageSelector,
 } from "~/renderer/reducers/settings";
-import ChangeDeviceLanguagePromptDrawer, {
-  Props as ChangeDeviceLanguagePromptDrawerProps,
-} from "./ChangeDeviceLanguagePromptDrawer";
+import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
 
 type ChangeLangArgs = { value: Language | null; label: string };
 
@@ -80,7 +78,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
 
   const openDrawer = useCallback(
     (language?: Language | null) => {
-      setDrawer<ChangeDeviceLanguagePromptDrawerProps>(
+      setDrawer(
         ChangeDeviceLanguagePromptDrawer,
         {
           deviceModelInfo: lastSeenDevice ?? undefined,

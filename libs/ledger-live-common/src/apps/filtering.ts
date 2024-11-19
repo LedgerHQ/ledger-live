@@ -1,7 +1,8 @@
+import camelCase from "lodash/fp/camelCase";
 import type { InstalledItem } from "./types";
 import { getCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
-import type { App } from "@ledgerhq/types-live";
+import type { App, Feature, FeatureId } from "@ledgerhq/types-live";
 
 export type SortOptions = {
   type?: "name" | "marketcap" | "default";
@@ -21,6 +22,8 @@ export type FilterOptions = {
   installQueue?: string[];
   installedApps: InstalledItem[];
   type: AppType[];
+  isFeature: (key: string) => boolean;
+  getFeature: (key: FeatureId) => Feature | null;
 };
 
 type UpdateAwareInstalledApps = Record<string, boolean>;
@@ -39,34 +42,56 @@ const searchFilter =
     return queries.some(query => terms.toLowerCase().includes(query));
   };
 
-const typeFilter =
-  (
-    filters: AppType[] = ["all"],
-    updateAwareInstalledApps: UpdateAwareInstalledApps,
-    installQueue: string[] = [],
-  ) =>
-  app =>
+/**
+ * Checks if the app's associated currency is supported in Ledger Live.
+ *
+ * It boils down to: if the app has a currencyId, check if the currency is supported.
+ * The currency can be unsupported if there is a feature flag that disables it.
+ */
+export function isAppAssociatedCurrencySupported({
+  app,
+  isFeature,
+  getFeature,
+}: {
+  app: App;
+  isFeature: (key: string) => boolean;
+  getFeature: (key: FeatureId) => Feature | null;
+}): boolean {
+  if (["swap", "plugin"].includes(app.type)) return true;
+  if (!app.currencyId) return false;
+  if (!isCurrencySupported(getCryptoCurrencyById(app.currencyId))) return false;
+
+  const currencyFeatureKey = camelCase(`currency_${app.currencyId}`) as FeatureId;
+  if (!isFeature(currencyFeatureKey)) return true; // no associated feature flag, the currency is supported
+  if (getFeature(currencyFeatureKey)?.enabled === false) return false;
+  return true;
+}
+
+function typeFilter(
+  filters: AppType[] = ["all"],
+  updateAwareInstalledApps: UpdateAwareInstalledApps,
+  installQueue: string[] = [],
+  isFeature: (key: string) => boolean,
+  getFeature: (key: FeatureId) => Feature | null,
+) {
+  return (app: App): boolean =>
     filters.every(filter => {
       switch (filter) {
         case "installed":
           return installQueue.includes(app.name) || app.name in updateAwareInstalledApps;
-
         case "not_installed":
           return !(app.name in updateAwareInstalledApps);
-
         case "updatable":
           return app.name in updateAwareInstalledApps && !updateAwareInstalledApps[app.name];
-
         case "supported":
-          return app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId));
-
+          return isAppAssociatedCurrencySupported({ app, isFeature, getFeature });
         case "not_supported":
-          return !(app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId)));
-
+          return !isAppAssociatedCurrencySupported({ app, isFeature, getFeature });
         default:
           return true;
       }
     });
+}
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {
   const { type, order } = _options;
@@ -94,7 +119,15 @@ export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
 
   return apps
     .filter(searchFilter(query))
-    .filter(typeFilter(type, updateAwareInstalledApps, installQueue));
+    .filter(
+      typeFilter(
+        type,
+        updateAwareInstalledApps,
+        installQueue,
+        _options.isFeature,
+        _options.getFeature,
+      ),
+    );
 };
 
 export const sortFilterApps = (
@@ -110,23 +143,8 @@ export const useSortedFilteredApps = (
   _filterOptions: FilterOptions,
   _sortOptions: SortOptions,
 ): App[] => {
-  const { query, installedApps, type: filterType, installQueue } = _filterOptions;
-  const { type: sortType, order } = _sortOptions;
   return useMemo(
-    () =>
-      sortFilterApps(
-        apps,
-        {
-          query,
-          installedApps,
-          type: filterType,
-          installQueue,
-        },
-        {
-          type: sortType,
-          order,
-        },
-      ),
-    [apps, query, installedApps, filterType, installQueue, sortType, order],
+    () => sortFilterApps(apps, _filterOptions, _sortOptions),
+    [apps, _filterOptions, _sortOptions],
   );
 };

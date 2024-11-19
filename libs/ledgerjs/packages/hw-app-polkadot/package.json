@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-polkadot",
-  "version": "6.28.2",
+  "version": "6.32.0",
   "description": "Ledger Hardware Wallet Polkadot Application API",
   "keywords": [
     "Ledger",
@@ -29,6 +29,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
+    "@zondax/ledger-substrate": "^0.44.2",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-config",
-  "version": "1.0.1",
+  "version": "3.1.0",
   "description": "Ledger Live configuration tools",
   "license": "Apache-2.0",
   "keywords": [
@@ -27,24 +27,14 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@testing-library/react": "12",
-    "@testing-library/react-hooks": "^8.0.0",
-    "@types/invariant": "^2.2.35",
     "@types/jest": "^29.5.4",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.202",
     "@types/node": "^20.2.5",
     "jest": "^28.1.1",
     "jest-environment-jsdom": "28",
-    "react": "^18.2.0",
-    "react-dom": "18.2.0",
     "semver": "^7.3.5",
     "ts-jest": "^28.0.5"
   },

@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
-import { Flex, Switch, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
+import Switch from "~/components/Switch";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
 import Status from "./Status";
@@ -74,8 +75,8 @@ const AnalyticsConsole = () => {
           visibility === Visibility.opaque
             ? 1
             : visibility === Visibility.transparent || previewTransparent
-            ? 0.7
-            : 0
+              ? 0.7
+              : 0
         }
         pointerEvents={visibility === Visibility.opaque ? "auto" : "none"}
         zIndex={1}
@@ -90,18 +91,14 @@ const AnalyticsConsole = () => {
             {visibility === Visibility.opaque ? (
               <AnimatedFlex entering={FadeIn} exiting={FadeOut} p={4}>
                 <Flex flexDirection="row" alignItems="center" justifyContent="space-between" mb={3}>
-                  <Switch
-                    checked={showExtraProps}
-                    onChange={setShowExtraProps}
-                    label="Extra props"
-                  />
+                  <Switch value={showExtraProps} onChange={setShowExtraProps} label="Extra props" />
                   <Pressable onPress={handleClose}>
                     <IconsLegacy.CloseMedium size={25} color="black" />
                   </Pressable>
                 </Flex>
                 <Flex>
                   <Switch
-                    checked={hideSyncEvents}
+                    value={hideSyncEvents}
                     onChange={setHideSyncEvents}
                     label="Hide Sync* events"
                   />

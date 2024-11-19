@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -11,6 +10,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CardanoFamily } from "./types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -50,9 +50,8 @@ const AmountValue = styled(Text).attrs(() => ({
 const AccountBalanceSummaryFooter: CardanoFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (account.type === "ChildAccount") return null;
   const _spendableBalance = account.spendableBalance;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

@@ -31,8 +31,8 @@ export function getNavigationVitalsStatusStyle(
     timeToRenderMillis > navigationVitalsPoorThreshold
       ? { bgColor: colors.error.c50, statusText: "Poor" }
       : timeToRenderMillis > navigationVitalsWarningThreshold
-      ? { bgColor: colors.warning.c50, statusText: "Needs improvement" }
-      : { bgColor: colors.success.c50, statusText: "Good" };
+        ? { bgColor: colors.warning.c50, statusText: "Needs improvement" }
+        : { bgColor: colors.success.c50, statusText: "Good" };
   const textColor = colors.neutral.c100;
 
   return {

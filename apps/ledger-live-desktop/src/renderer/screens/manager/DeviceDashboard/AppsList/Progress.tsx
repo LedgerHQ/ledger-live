@@ -6,6 +6,7 @@ import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressBar from "~/renderer/components/Progress";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 const Holder = styled.div`
   width: 100px;
   height: 5px;
@@ -23,6 +24,8 @@ type Props = {
 }; // we can forward appOp from state.currentAppOp if it matches the contextual app
 const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }: Props) => {
   const progress = useAppInstallProgress(state, name);
+  useKeepScreenAwake(true);
+
   return (
     <Box flex="1" horizontal justifyContent="flex-end" overflow="hidden">
       <Box flex="0 0 auto" alignItems="flex-end" justifyContent="center">
@@ -33,7 +36,7 @@ const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }
           justifyContent="center"
           py={1}
           maxWidth="100%"
-          data-test-id={`manager-${name}-app-progress-bar`}
+          data-testid={`manager-${name}-app-progress-bar`}
         >
           <Text ff="Inter|SemiBold" fontSize={3} color="palette.primary.main">
             <Trans
@@ -41,10 +44,10 @@ const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }
                 updating
                   ? "manager.applist.item.updating"
                   : uninstalling
-                  ? "manager.applist.item.uninstalling"
-                  : installing && isCurrent && progress !== 1
-                  ? "manager.applist.item.installing"
-                  : "manager.applist.item.scheduled"
+                    ? "manager.applist.item.uninstalling"
+                    : installing && isCurrent && progress !== 1
+                      ? "manager.applist.item.installing"
+                      : "manager.applist.item.scheduled"
               }
             />
           </Text>

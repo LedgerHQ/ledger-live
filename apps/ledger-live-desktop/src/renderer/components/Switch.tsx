@@ -50,12 +50,12 @@ const Ball = styled.div<BallProps>`
           ? "14px"
           : "2px"
         : p.medium
-        ? p.isChecked
-          ? "21px"
-          : "2px"
-        : p.isChecked
-        ? "18px"
-        : "2px"},
+          ? p.isChecked
+            ? "21px"
+            : "2px"
+          : p.isChecked
+            ? "18px"
+            : "2px"},
     0,
     0
   );

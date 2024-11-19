@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import path from "path";
 import test from "../../fixtures/common";
-import { Layout } from "../../models/Layout";
-import { SendModal } from "../../models/SendModal";
+import { Layout } from "../../component/layout.component";
+import { SendModal } from "../../page/modal/send.modal";
 
 test.use({
   userdata: "1AccountBTC1AccountETHStarred",
@@ -22,7 +22,7 @@ test("Send flow", async ({ page }) => {
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
-      .locator("data-test-id=loading-spinner");
+      .getByTestId("loading-spinner");
     await sendButtonLoader.waitFor({ state: "detached" });
 
     await sendModal.selectAccount("Bitcoin 1");

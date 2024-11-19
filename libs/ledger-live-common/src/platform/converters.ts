@@ -1,9 +1,10 @@
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { isSubAccount, isTokenAccount } from "../account";
+import { isTokenAccount } from "../account";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
 import {
+  FAMILIES_MAPPING_LL_TO_PLATFORM,
+  FAMILIES_MAPPING_PLATFORM_TO_LL,
   PlatformAccount,
   PlatformCurrency,
   PlatformCurrencyType,
@@ -11,15 +12,19 @@ import {
   PlatformTokenStandard,
   PlatformTransaction,
 } from "./types";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export function accountToPlatformAccount(
+  walletState: WalletState,
   account: AccountLike,
   parentAccount?: Account,
 ): PlatformAccount {
-  if (isSubAccount(account)) {
+  if (isTokenAccount(account)) {
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }
+
+    const parentName = accountNameWithDefaultSelector(walletState, parentAccount);
 
     return {
       id: account.id,
@@ -27,23 +32,17 @@ export function accountToPlatformAccount(
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      ...(isTokenAccount(account)
-        ? {
-            name: `${parentAccount.name} (${account.token.ticker})`,
-            currency: account.token.id,
-            spendableBalance: account.spendableBalance,
-          }
-        : {
-            name: account.name,
-            currency: account.currency.id,
-            spendableBalance: parentAccount.spendableBalance,
-          }),
+      name: `${parentName} (${account.token.ticker})`,
+      currency: account.token.id,
+      spendableBalance: account.spendableBalance,
     };
   }
 
+  const name = accountNameWithDefaultSelector(walletState, account);
+
   return {
     id: account.id,
-    name: account.name,
+    name,
     address: account.freshAddress,
     currency: account.currency.id,
     balance: account.balance,
@@ -77,7 +76,7 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family,
+    family: FAMILIES_MAPPING_LL_TO_PLATFORM[currency.family] ?? currency.family,
     color: currency.color,
     units: currency.units.map(unit => ({
       name: unit.name,
@@ -94,9 +93,7 @@ export const getPlatformTransactionSignFlowInfos = (
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 } => {
-  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
-  const isEthereumFamily = platformTx.family === FAMILIES.ETHEREUM;
-  const liveFamily = isEthereumFamily ? "evm" : platformTx.family;
+  const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
 
   const familyModule = byFamily[liveFamily];
 

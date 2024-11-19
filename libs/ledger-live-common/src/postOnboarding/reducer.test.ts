@@ -30,6 +30,7 @@ const initializationParamsA: Parameters<typeof initPostOnboarding> = [
 const stateA0: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -48,6 +49,7 @@ const stateA0: PostOnboardingState = {
 const stateA1: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -66,6 +68,7 @@ const stateA1: PostOnboardingState = {
 const stateA2: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -84,6 +87,7 @@ const stateA2: PostOnboardingState = {
 const stateA3: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -102,6 +106,7 @@ const stateA3: PostOnboardingState = {
 const stateA4: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: true, // stateA3 -> hidePostOnboardingWalletEntryPoint()
+  entryPointFirstDisplayedDate: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -127,6 +132,7 @@ const initializationParamsB: Parameters<typeof initPostOnboarding> = [
 const stateB0 = {
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: false },
   lastActionCompleted: null,
@@ -137,6 +143,7 @@ const stateB0 = {
 const stateB1 = {
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: true },
   lastActionCompleted: PostOnboardingActionId.claimMock,
@@ -154,6 +161,7 @@ const initializationParamsC: Parameters<typeof initPostOnboarding> = [
 const stateC0 = {
   deviceModelId: DeviceModelId.nanoSP,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
@@ -161,6 +169,15 @@ const stateC0 = {
 };
 
 describe("postOnboarding reducer (& action creators)", () => {
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date("2020-01-20"));
+  });
+
+  afterAll(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
   let state;
   beforeEach(() => {
     // reset state to initial state;
@@ -261,6 +278,7 @@ describe("postOnboarding selectors", () => {
     const stateValidDeviceId = {
       deviceModelId: DeviceModelId.nanoX,
       walletEntryPointDismissed: false,
+      entryPointFirstDisplayedDate: new Date("2020-01-20"),
       actionsToComplete: [],
       actionsCompleted: {},
       lastActionCompleted: null,
@@ -288,6 +306,7 @@ describe("postOnboarding selectors", () => {
     const stateValidDeviceId = {
       deviceModelId: "nanoFTS",
       walletEntryPointDismissed: false,
+      entryPointFirstDisplayedDate: new Date("2020-01-20"),
       actionsToComplete: [],
       actionsCompleted: {},
       lastActionCompleted: null,

@@ -2,8 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { BoxedIcon, Button, Divider, Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
-import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
+import removeImage from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -18,9 +18,9 @@ const TextEllipsis = styled.div`
   text-overflow: ellipsis;
 `;
 
-type Props = { onClose?: () => void };
+type Props = { onClose: () => void; onRemoved?: () => void };
 
-const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
+const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
   const request = useMemo(() => ({}), []);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -40,7 +40,8 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
     setCompleted(true);
     setRunning(false);
     dispatch(clearLastSeenCustomImage());
-  }, [dispatch]);
+    onRemoved && onRemoved();
+  }, [dispatch, onRemoved]);
 
   const onError = useCallback(
     (error: Error) => {
@@ -62,7 +63,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-remove-image-container"
+      data-testid="device-remove-image-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={3}>
         {t("removeCustomLockscreen.title")}
@@ -80,7 +81,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            data-test-id="custom-image-removed"
+            data-testid="custom-image-removed"
           >
             <BoxedIcon
               Icon={IconsLegacy.CheckAloneMedium}
@@ -117,7 +118,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
           >
             {showRetry ? (
               <Button
-                data-test-id="retry-device-custom-image-removal-button"
+                data-testid="retry-device-custom-image-removal-button"
                 variant="main"
                 outline
                 onClick={onRetry}
@@ -130,7 +131,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
             )}
             <Button
               variant="main"
-              data-test-id="close-device-custom-image-removal-button"
+              data-testid="close-device-custom-image-removal-button"
               onClick={onClose}
               disabled={running && !error}
             >

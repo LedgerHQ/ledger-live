@@ -30,14 +30,13 @@ export async function getTrustedInput(
   transaction: Transaction,
   additionals: Array<string> = [],
 ): Promise<string> {
-  const { version, inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
+  const { inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
 
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");
   }
 
   const isDecred = additionals.includes("decred");
-  const isXST = additionals.includes("stealthcoin");
 
   const processScriptBlocks = async (script, sequence?: Buffer) => {
     const seq = sequence || Buffer.alloc(0);
@@ -86,22 +85,14 @@ export async function getTrustedInput(
   );
 
   for (const input of inputs) {
-    const isXSTV2 = isXST && Buffer.compare(version, Buffer.from([0x02, 0x00, 0x00, 0x00])) === 0;
     const treeField = isDecred ? input.tree || Buffer.from([0x00]) : Buffer.alloc(0);
-    const data = Buffer.concat([
-      input.prevout,
-      treeField,
-      isXSTV2 ? Buffer.from([0x00]) : createVarint(input.script.length),
-    ]);
+    const data = Buffer.concat([input.prevout, treeField, createVarint(input.script.length)]);
     await getTrustedInputRaw(transport, data);
     // iteration (eachSeries) ended
     // TODO notify progress
     // deferred.notify("input");
-    // Reference: https://github.com/StealthSend/Stealth/commit/5be35d6c2c500b32ed82e5d6913d66d18a4b0a7f#diff-e8db9b851adc2422aadfffca88f14c91R566
     await (isDecred
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
-      : isXSTV2
-      ? processWholeScriptBlock(input.sequence)
       : processScriptBlocks(input.script, input.sequence));
   }
 

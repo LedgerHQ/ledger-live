@@ -14,6 +14,8 @@ export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
 
   if (error instanceof BleError) {
     if (
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       error.iosErrorCode === BleATTErrorCode.UnlikelyError ||
       error.reason === "Peer removed pairing information"
     ) {

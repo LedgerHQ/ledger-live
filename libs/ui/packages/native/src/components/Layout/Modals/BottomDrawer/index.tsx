@@ -15,10 +15,10 @@ const modalStyleOverrides = StyleSheet.create({
   },
   container: {
     minHeight: 0,
-    paddingLeft: 24,
-    paddingRight: 24,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
     maxHeight: "100%",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -34,7 +34,7 @@ export default function BottomDrawer({
       {...restProps}
       modalStyle={modalStyleOverrides.modal}
       safeContainerStyle={modalStyleOverrides.safeContainer}
-      containerStyle={modalStyleOverrides.container}
+      containerStyle={[modalStyleOverrides.container, restProps.containerStyle]}
       propagateSwipe={true}
     >
       {children}

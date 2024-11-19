@@ -45,14 +45,14 @@ runs:
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.14.1
-    - uses: actions/setup-node@v3
+        version: 9.11.0
+    - uses: actions/setup-node@v4
       with:
         node-version: 20.11.0
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
-      run: docker pull ghcr.io/ledgerhq/speculos
+      run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
       shell: bash
     - name: install and build
       run: |
@@ -91,7 +91,7 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: ./tools/actions/submit-bot-report
+      uses: LedgerHQ/ledger-live/tools/actions/submit-bot-report@develop
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}
@@ -108,12 +108,12 @@ runs:
       shell: bash
     - name: upload logs to github artifacts
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: details
         path: libs/ledger-live-common/botreport/
     - name: upload report.json
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: report
         path: libs/ledger-live-common/report.json

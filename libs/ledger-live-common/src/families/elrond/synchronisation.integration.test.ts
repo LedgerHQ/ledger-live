@@ -1,7 +1,6 @@
 import "../../__tests__/test-helpers/setup";
 import { reduce } from "rxjs/operators";
-import { fromAccountRaw } from "../../account";
-import { getAccountCurrency } from "../../account/helpers";
+import { fromAccountRaw, getAccountCurrency } from "../../account";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
@@ -21,10 +20,12 @@ describe("ESDT tokens sync functionality", () => {
       return Promise.resolve(localCache[c.id]);
     },
   });
+
   test("initial raw account contains no token accounts", async () => {
     await cache.prepareCurrency(account.currency);
     expect(elrond1.subAccounts?.length).toBeFalsy();
   });
+
   test("sync finds tokens", async () => {
     const bridge = getAccountBridge(account);
     const synced = await firstValueFrom(

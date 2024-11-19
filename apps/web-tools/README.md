@@ -11,8 +11,9 @@ Today we have:
 - **REPL**: this allows developers to test the connectivity on the web through various web implementation of HW Transports against our different hardware wallets. (U2F, WebHID, WebUSB, Web Bluetooth,...). This is a low level technical tool for developers where you can execute arbitrary APDUs.
 - **Synchronisation**: this allows developers to test the coin implementations on the web. The page allows to take a Account ID and do a full synchronisation with the implementations. This helps revealing web specific issues like CORS or libraries that wouldn't be web compatible.
 - **Network Troubleshooting**: allows to run basic HTTP check on some important API endpoints Ledger Live uses. This typically allows us to ask if a user can access our network from there location (e.g. through VPN / behind firewall / etc...)
-- **Domain TLV Parser**: allows to test Ethereum domain TLV parsing. This is useful to test the parsing of the domain TLV in the Ethereum app.
+- **Domain TLV Parser**: allows to parse a domain APDU (TLV) returned by the Ledger NFT Metadata service. This is useful to test the parsing done in the Ethereum app.
 - **SVG Icons**: helper to facilitate the creation of currency SVG icons for the Ledger Live application. This will validate icons correctly matches Ledger Live expectations and will prefill a PR creation.
+- **Derivation Paths**: Get a simple list of supported derivation paths for a given currency
 
 ---
 

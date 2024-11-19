@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -13,6 +12,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -55,7 +55,10 @@ type Props = {
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
+
   if (account.type !== "Account") return null;
+
   const { spendableBalance: _spendableBalance, solanaResources } = account;
   const { stakes } = solanaResources;
   const _delegatedBalance = new BigNumber(
@@ -64,7 +67,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const _delegatedWithdrawableBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + s.withdrawable, 0),
   );
-  const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

@@ -18,6 +18,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { openURL } from "~/renderer/linking";
 import { OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
@@ -30,6 +31,8 @@ const OperationDetailsExtra = ({
   account,
 }: OperationDetailsExtraProps<CeloAccount, CeloOperation>) => {
   const { currency } = account;
+
+  const unit = useAccountUnit(account);
   const { validatorGroups } = useCeloPreloadData();
   switch (type) {
     case "ACTIVATE":
@@ -52,7 +55,7 @@ const OperationDetailsExtra = ({
                 <Box>
                   <FormattedVal
                     val={operation.extra.celoOperationValue}
-                    unit={account.unit}
+                    unit={unit}
                     showCode
                     fontSize={4}
                     color="palette.text.shade60"
@@ -96,7 +99,7 @@ const OperationDetailsExtra = ({
                 <Box>
                   <FormattedVal
                     val={operation.extra.celoOperationValue}
-                    unit={account.unit}
+                    unit={unit}
                     showCode
                     fontSize={4}
                     color="palette.text.shade60"

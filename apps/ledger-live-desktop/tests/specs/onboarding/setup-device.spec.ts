@@ -1,6 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { OnboardingPage } from "../../models/OnboardingPage";
+import { OnboardingPage } from "../../page/onboarding.page";
+
+test.use({
+  settings: { hasSeenAnalyticsOptInPrompt: false },
+});
 
 enum Nano {
   nanoX = "nanoX",
@@ -24,7 +28,8 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
-        await expect(page).toHaveScreenshot("v3-device-selection.png");
+        await onboardingPage.hoverDevice(Nano.nanoS);
+        await expect(page).toHaveScreenshot("v3-device-selection.png", { animations: "disabled" });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
@@ -38,7 +43,7 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Pedagogy", async () => {
         await onboardingPage.pedagogyModal.waitFor({ state: "visible" });
-        await onboardingPage.page.waitForSelector("data-test-id=v3-onboarding-pedagogy-modal");
+        await onboardingPage.waitForPedagogyModal();
         await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "v3-pedagogy",
           "access-your-crypto.png",
@@ -76,7 +81,7 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-setup-new-device", `get-started-2-${nano}.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 
@@ -89,7 +94,7 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-setup-new-device", `pin-code-${nano}-3.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 

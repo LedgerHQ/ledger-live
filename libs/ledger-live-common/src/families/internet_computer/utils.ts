@@ -31,8 +31,8 @@ export const getBufferFromString = (message: string): Buffer =>
   isValidHex(message)
     ? Buffer.from(message, "hex")
     : isValidBase64(message)
-    ? Buffer.from(message, "base64")
-    : Buffer.from(message);
+      ? Buffer.from(message, "base64")
+      : Buffer.from(message);
 
 export const normalizeEpochTimestamp = (timestamp: string): number => {
   return parseInt(timestamp.slice(0, 13));

@@ -28,22 +28,29 @@ export type StructDefData = Required<
     }
 >;
 
-export type MessageFilters = {
-  contractName: {
-    label: string;
-    signature: string;
-  };
-  fields: {
-    label: string;
-    path: string;
-    signature: string;
-  }[];
-};
-
 export type FilteringInfoShowField = {
   displayName: string;
   sig: string;
   filtersCount?: never;
+  chainId: number;
+  erc20SignaturesBlob: string | null | undefined;
+  format: "raw" | "token" | "amount" | "datetime" | undefined;
+  coinRef: number | undefined;
+  shouldUseV1Filters: boolean | undefined;
+  coinRefsTokensMap: Record<
+    number,
+    {
+      token: string;
+      // Index of the token in the nano app memory
+      // returned as a prefix by the APDU of
+      // provideErc20TokenInformation
+      deviceTokenIndex?: number;
+    }
+  >;
+  isDiscarded: boolean;
+};
+export type FilteringInfoDiscardField = {
+  path: string;
 };
 
 export type FilteringInfoContractName = {

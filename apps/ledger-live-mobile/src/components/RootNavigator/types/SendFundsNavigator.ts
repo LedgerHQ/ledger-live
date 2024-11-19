@@ -31,11 +31,12 @@ import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import BigNumber from "bignumber.js";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "~/const";
@@ -214,7 +215,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditFee]: {
+  [ScreenName.XrpEditFee]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
@@ -282,7 +283,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditTag]: {
+  [ScreenName.XrpEditTag]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
@@ -351,6 +352,20 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.TonEditComment]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: TonTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

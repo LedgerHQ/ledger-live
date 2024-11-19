@@ -1,6 +1,7 @@
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import type { SwapHistorySection, MappedSwapOperation } from "./types";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 type Field = {
   title: string;
   cell: (arg0: MappedSwapOperation) => string;
@@ -50,7 +51,7 @@ const fields: Field[] = [
   {
     title: "From account",
     cell: ({ fromAccount, fromParentAccount }) =>
-      getMainAccount(fromAccount, fromParentAccount).name,
+      getDefaultAccountName(getMainAccount(fromAccount, fromParentAccount)),
   },
   {
     title: "From account address",
@@ -61,7 +62,8 @@ const fields: Field[] = [
   },
   {
     title: "To account",
-    cell: ({ toAccount, toParentAccount }) => getMainAccount(toAccount, toParentAccount).name,
+    cell: ({ toAccount, toParentAccount }) =>
+      getDefaultAccountName(getMainAccount(toAccount, toParentAccount)),
   },
   {
     title: "To account address",

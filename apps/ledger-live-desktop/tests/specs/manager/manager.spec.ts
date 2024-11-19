@@ -1,8 +1,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
+import { ManagerPage } from "../../page/manager.page";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 

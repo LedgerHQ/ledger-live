@@ -54,6 +54,7 @@ export function Cta({ text }: PropsCta) {
         p={0}
         style={{
           color: "white",
+          marginHorizontal: 10,
         }}
       >
         {text}

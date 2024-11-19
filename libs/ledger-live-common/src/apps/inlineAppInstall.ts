@@ -2,12 +2,14 @@ import Transport from "@ledgerhq/hw-transport";
 import { Observable, concat, of, from, EMPTY, defer } from "rxjs";
 import { ConnectAppEvent } from "../hw/connectApp";
 import getDeviceInfo from "../hw/getDeviceInfo";
-import { listApps, execWithTransport } from "./hw";
+import { listAppsUseCase } from "../device/use-cases/listAppsUseCase";
+import { execWithTransport } from "../device/use-cases/execWithTransport";
 import { reducer, initState, isOutOfMemoryState, predictOptimisticState } from "./logic";
 import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
 import { mergeMap, map, throttleTime } from "rxjs/operators";
 import { LocalTracer } from "@ledgerhq/logs";
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
 /**
  * Tries to install a list of apps
@@ -24,11 +26,13 @@ const inlineAppInstall = ({
   appNames,
   onSuccessObs,
   allowPartialDependencies = false,
+  storage,
 }: {
   transport: Transport;
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
   allowPartialDependencies?: boolean;
+  storage?: StorageProvider<AppStorageType>;
 }): Observable<InlineAppInstallEvent | ConnectAppEvent> => {
   const tracer = new LocalTracer("hw", {
     ...transport.getTraceContext(),
@@ -43,7 +47,7 @@ const inlineAppInstall = ({
     from(getDeviceInfo(transport)).pipe(
       mergeMap(deviceInfo => {
         tracer.trace("Got device info", { deviceInfo });
-        return listApps(transport, deviceInfo);
+        return listAppsUseCase(transport, deviceInfo);
       }),
       mergeMap(e => {
         // Bubble up events
@@ -101,7 +105,7 @@ const inlineAppInstall = ({
               installQueue: state.installQueue,
             }),
             maybeSkippedEvent,
-            runAllWithProgress(state, exec).pipe(
+            runAllWithProgress(state, exec, storage).pipe(
               throttleTime(100),
               map(({ globalProgress, itemProgress, installQueue, currentAppOp }) => ({
                 type: "inline-install",

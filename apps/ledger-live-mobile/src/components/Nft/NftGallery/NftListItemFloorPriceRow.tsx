@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { getFloorPrice } from "@ledgerhq/live-common/nft/index";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
 import { FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import CurrencyIcon from "../../CurrencyIcon";
 import Skeleton from "../../Skeleton";

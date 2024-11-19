@@ -1,29 +1,38 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-polkadot/bridge/js";
-import makeCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
-import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
-import Polkadot from "@ledgerhq/hw-app-polkadot";
+import {
+  PolkadotAccount,
+  TransactionStatus,
+  createBridges,
+  type Transaction,
+} from "@ledgerhq/coin-polkadot";
 import Transport from "@ledgerhq/hw-transport";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import { Bridge } from "@ledgerhq/types-live";
+import Polkadot from "@ledgerhq/hw-app-polkadot";
+import type { Bridge } from "@ledgerhq/types-live";
+import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
+import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
+import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(
+const polkadot = getCryptoCurrencyById("polkadot");
+const getCurrencyConfig = (): PolkadotCoinConfig => {
+  return getCurrencyConfiguration(polkadot);
+};
+
+const bridge: Bridge<Transaction, PolkadotAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
-  network,
-  makeLRUCache,
+  getCurrencyConfig,
 );
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 
-const cliTools = makeCliTools(network, makeLRUCache);
+const cliTools: CliTools = makeCliTools();
 
 export { bridge, cliTools, resolver };

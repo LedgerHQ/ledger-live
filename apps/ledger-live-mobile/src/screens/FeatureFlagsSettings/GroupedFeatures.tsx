@@ -1,5 +1,8 @@
-import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
+import {
+  groupedFeatures,
+  GroupedFeature,
+} from "@ledgerhq/live-common/featureFlags/groupedFeatures";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
@@ -8,9 +11,9 @@ import { Pressable } from "react-native";
 import FeatureFlagDetails, { TagEnabled } from "./FeatureFlagDetails";
 
 type Props = {
-  groupName: string;
+  groupName: GroupedFeature;
   focused: boolean;
-  setFocusedGroupName: (name: string | undefined) => void;
+  setFocusedGroupName: (name: GroupedFeature | undefined) => void;
   isLast: boolean;
 };
 

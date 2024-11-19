@@ -1,4 +1,4 @@
-import { Result as ImportAccountsResult } from "@ledgerhq/live-common/cross";
+import { Result as ImportAccountsResult } from "@ledgerhq/live-wallet/liveqr/cross";
 import { ScreenName } from "~/const";
 
 export type ImportAccountsNavigatorParamList = {

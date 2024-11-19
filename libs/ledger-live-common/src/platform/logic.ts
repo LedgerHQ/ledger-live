@@ -11,7 +11,8 @@ import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { Exchange } from "../exchange/platform/types";
+import { Exchange } from "../exchange/types";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -31,6 +32,7 @@ function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Ac
 }
 
 export function receiveOnAccountLogic(
+  walletState: WalletState,
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   uiNavigation: (
@@ -49,7 +51,7 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-  const accountAddress = accountToPlatformAccount(account, parentAccount).address;
+  const accountAddress = accountToPlatformAccount(walletState, account, parentAccount).address;
 
   return uiNavigation(account, parentAccount, accountAddress);
 }
@@ -154,7 +156,7 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
-  rate?: number;
+  amountExpectedTo?: number;
 };
 export function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,

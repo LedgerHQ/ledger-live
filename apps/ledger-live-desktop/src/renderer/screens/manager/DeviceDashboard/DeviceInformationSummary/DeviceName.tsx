@@ -2,8 +2,9 @@ import React, { useState, useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
+import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -36,7 +37,8 @@ const DeviceName: React.FC<Props> = ({
   setPreventResetOnDeviceChange,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
-  const editSupported = model?.id && [DeviceModelId.stax, DeviceModelId.nanoX].includes(model.id);
+  const editSupported = model?.id && isEditDeviceNameSupported(model.id);
+  const editEnabled = !disabled && editSupported;
 
   const [name, setName] = useState(editSupported ? deviceName : model?.productName);
 
@@ -57,7 +59,6 @@ const DeviceName: React.FC<Props> = ({
       setDrawer(
         EditDeviceName,
         {
-          key: name,
           device,
           onSetName: onSuccess,
           deviceName: name,
@@ -77,7 +78,7 @@ const DeviceName: React.FC<Props> = ({
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={!disabled ? openDeviceRename : undefined}>
+      <Flex onClick={editEnabled ? openDeviceRename : undefined}>
         <Flex mb={2} alignItems="center">
           <Text variant="large" fontWeight="semiBold" mr={3}>
             {name || deviceInfo.version}

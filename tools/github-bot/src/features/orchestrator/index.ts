@@ -29,7 +29,6 @@ export function orchestrator(app: Probot) {
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
-  // @ts-expect-error ts pls
   app.on("workflow_run.requested", async context => {
     const { payload, octokit } = context;
 
@@ -62,10 +61,10 @@ export function orchestrator(app: Probot) {
         head_sha: checkSuite.head_sha,
         status: "queued",
         started_at: new Date().toISOString(),
+        details_url: workflowUrl,
         output: {
           title: "⏱️ Queued",
           summary: summaryPrefix + `The **[workflow](${workflowUrl})** is currently queued.`,
-          details_url: workflowUrl,
         },
       });
       context.log.info(
@@ -82,7 +81,6 @@ export function orchestrator(app: Probot) {
   app.on("workflow_run", async context => {
     const { payload, octokit } = context;
 
-    // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
     if (context.payload.action !== "in_progress") return;
 
     const { owner, repo } = context.repo();
@@ -388,8 +386,9 @@ export function orchestrator(app: Probot) {
           payload.workflow_run.id,
         );
 
-        const artifactId = artifacts.find(artifact => artifact.name === matchedWorkflow.summaryFile)
-          ?.id;
+        const artifactId = artifacts.find(
+          artifact => artifact.name === matchedWorkflow.summaryFile,
+        )?.id;
 
         if (artifactId) {
           try {
@@ -635,8 +634,9 @@ export function orchestrator(app: Probot) {
 
         const artifacts = await listWorkflowRunArtifacts(octokit, owner, repo, workflowRun.id);
 
-        const artifactId = artifacts.find(artifact => artifact.name === workflowMeta[1].summaryFile)
-          ?.id;
+        const artifactId = artifacts.find(
+          artifact => artifact.name === workflowMeta[1].summaryFile,
+        )?.id;
 
         if (artifactId) {
           try {
@@ -677,7 +677,7 @@ export function orchestrator(app: Probot) {
         repo,
         check_run_id: payload.check_run.id,
         status: "completed",
-        conclusion: workflowRun.conclusion,
+        conclusion: workflowRun.conclusion ?? "neutral",
         output: {
           ...output,
           text: tips,

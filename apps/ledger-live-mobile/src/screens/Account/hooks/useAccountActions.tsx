@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -93,7 +93,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         },
       },
     ],
-    label: t("transfer.swap.main.header", { currency: currency.name }),
+    label: t("account.swap", { currency: currency.name }),
     Icon: iconSwap,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {

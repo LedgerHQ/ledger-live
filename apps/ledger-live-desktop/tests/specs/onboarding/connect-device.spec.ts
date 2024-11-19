@@ -1,6 +1,10 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { OnboardingPage } from "../../models/OnboardingPage";
+import { OnboardingPage } from "../../page/onboarding.page";
+
+test.use({
+  settings: { hasSeenAnalyticsOptInPrompt: false },
+});
 
 enum Nano {
   nanoX = "nanoX",
@@ -24,7 +28,8 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
-        await expect(page).toHaveScreenshot("v3-device-selection.png");
+        await onboardingPage.hoverDevice(Nano.nanoS);
+        await expect(page).toHaveScreenshot("v3-device-selection.png", { animations: "disabled" });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {

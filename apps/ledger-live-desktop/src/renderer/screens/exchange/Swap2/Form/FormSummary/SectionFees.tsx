@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { context } from "~/renderer/drawers/Provider";
 import SummaryLabel from "./SummaryLabel";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
@@ -21,7 +21,8 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 
@@ -74,13 +75,12 @@ const SectionFees = ({
   const { setDrawer } = React.useContext(context);
   const exchangeRate = useSelector(rateSelector);
   const mainFromAccount = account && getMainAccount(account, parentAccount);
-  const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
+  const mainAccountUnit = useMaybeAccountUnit(mainFromAccount);
   const estimatedFees = status?.estimatedFees;
   const showSummaryValue = mainFromAccount && estimatedFees && estimatedFees.gt(0);
   const family = mainFromAccount?.currency.family;
-  const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
-    hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
+    hasRates && showSummaryValue && transaction && family && EDITABLE_FEE_FAMILIES.includes(family);
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const StrategyIcon = useMemo(
@@ -109,7 +109,7 @@ const SectionFees = ({
     () =>
       (canEdit &&
         (() => {
-          track("button_clicked", {
+          track("button_clicked2", {
             button: "change network fees",
             page: "Page Swap Form",
             ...swapDefaultTrack,
@@ -164,6 +164,7 @@ const SectionFees = ({
         ff="Inter|SemiBold"
         showCode
         alwaysShowValue
+        data-testid="fees-value"
       />
     </>
   ) : estimatedFees ? (
@@ -175,6 +176,7 @@ const SectionFees = ({
       ff="Inter|SemiBold"
       showCode
       alwaysShowValue
+      data-testid="fees-value"
     />
   ) : (
     <NoValuePlaceholder />

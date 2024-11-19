@@ -64,7 +64,6 @@ export function upToDate(app: Probot) {
     },
   );
 
-  /** @ts-expect-error it seems TypeScript have issues inferring the types here... */
   app.on("push", async context => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();

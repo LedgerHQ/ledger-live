@@ -4,38 +4,29 @@ import sample from "lodash/sample";
 import invariant from "invariant";
 import path from "path";
 import semver from "semver";
-import { spawn, exec } from "child_process";
 import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
-import { delay } from "../promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 
-export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+import {
+  closeAllSpeculosDevices,
+  releaseSpeculosDevice,
+  createSpeculosDevice,
+  getMemorySpeculosDeviceInternal,
+  modelMap,
+} from "@ledgerhq/speculos-transport";
+import type { SpeculosTransport } from "@ledgerhq/speculos-transport";
 
-let idCounter = getEnv("SPECULOS_PID_OFFSET");
-const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
+export { closeAllSpeculosDevices, releaseSpeculosDevice, createSpeculosDevice };
+export type { SpeculosTransport };
 
-const data = {};
-
-const modelMap: Record<string, DeviceModelId> = {
-  nanos: <DeviceModelId>"nanoS",
-  "nanos+": <DeviceModelId>"nanoSP",
-  nanox: <DeviceModelId>"nanoX",
-  blue: <DeviceModelId>"blue",
-};
-const reverseModelMap = {};
-for (const k in modelMap) {
-  reverseModelMap[modelMap[k]] = k;
-}
 const modelMapPriority: Record<string, number> = {
   nanos: 4,
   "nanos+": 3,
@@ -43,252 +34,6 @@ const modelMapPriority: Record<string, number> = {
   blue: 1,
 };
 const defaultFirmware: Record<string, string> = {};
-
-export async function releaseSpeculosDevice(id: string) {
-  log("speculos", "release " + id);
-  const obj = data[id];
-
-  if (obj) {
-    await obj.destroy();
-  }
-}
-
-export function closeAllSpeculosDevices() {
-  return Promise.all(Object.keys(data).map(releaseSpeculosDevice));
-}
-
-// to keep in sync from https://github.com/LedgerHQ/speculos/tree/master/speculos/cxlib
-const existingSdks = [
-  "nanos-cx-2.0.elf",
-  "nanos-cx-2.1.elf",
-  "nanosp-cx-1.0.3.elf",
-  "nanosp-cx-1.0.elf",
-  "nanox-cx-2.0.2.elf",
-  "nanox-cx-2.0.elf",
-];
-
-function inferSDK(firmware: string, model: string): string | undefined {
-  const begin = `${model.toLowerCase()}-cx-`;
-  if (existingSdks.includes(begin + firmware + ".elf")) return firmware;
-  const shortVersion = firmware.slice(0, 3);
-  if (existingSdks.includes(begin + shortVersion + ".elf")) return shortVersion;
-}
-
-const getPorts = (idCounter: number, isSpeculosWebsocket?: boolean) => {
-  if (isSpeculosWebsocket) {
-    const apduPort = 30000 + idCounter;
-    const vncPort = 35000 + idCounter;
-    const buttonPort = 40000 + idCounter;
-    const automationPort = 45000 + idCounter;
-
-    return { apduPort, vncPort, buttonPort, automationPort };
-  } else {
-    const apiPort = 30000 + idCounter;
-    const vncPort = 35000 + idCounter;
-
-    return { apiPort, vncPort };
-  }
-};
-
-export async function createSpeculosDevice(
-  arg: {
-    model: DeviceModelId;
-    firmware: string;
-    appName: string;
-    appVersion: string;
-    dependency?: string;
-    seed: string;
-    // Folder where we have app binaries
-    coinapps: string;
-    onSpeculosDeviceCreated?: (device: {
-      transport: SpeculosTransport;
-      id: string;
-      appPath: string;
-    }) => Promise<void>;
-  },
-  maxRetry = 3,
-): Promise<{
-  transport: SpeculosTransport;
-  id: string;
-  appPath: string;
-}> {
-  const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
-  const speculosID = `speculosID-${++idCounter}`;
-  const ports = getPorts(idCounter, isSpeculosWebsocket);
-
-  const sdk = inferSDK(firmware, model);
-
-  const appPath = `./apps/${reverseModelMap[model]}/${firmware}/${appName.replace(
-    / /g,
-    "",
-  )}/app_${appVersion}.elf`;
-
-  const params = [
-    "run",
-    "-v",
-    `${coinapps}:/speculos/apps`,
-    ...(isSpeculosWebsocket
-      ? [
-          "-p",
-          `${ports.apduPort}:40000`,
-          "-p",
-          `${ports.vncPort}:41000`,
-          "-p",
-          `${ports.buttonPort}:42000`,
-          "-p",
-          `${ports.automationPort}:43000`,
-        ]
-      : ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`]),
-    "-e",
-    `SPECULOS_APPNAME=${appName}:${appVersion}`,
-    "--name",
-    `${speculosID}`,
-    "ghcr.io/ledgerhq/speculos",
-    "--model",
-    model.toLowerCase(),
-    appPath,
-    ...(dependency
-      ? [
-          "-l",
-          `${dependency}:${`./apps/${reverseModelMap[model]}/${firmware}/${dependency.replace(
-            / /g,
-            "",
-          )}/app_${appVersion}.elf`}`,
-        ]
-      : []),
-    ...(sdk ? ["--sdk", sdk] : []),
-    "--display",
-    "headless",
-    "--vnc-password",
-    "live",
-    ...(isSpeculosWebsocket
-      ? [
-          "--apdu-port",
-          "40000",
-          "--vnc-port",
-          "41000",
-          "--button-port",
-          "42000",
-          "--automation-port",
-          "43000",
-        ]
-      : ["--api-port", "40000", "--vnc-port", "41000"]),
-  ];
-
-  log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
-
-  const p = spawn("docker", [...params, "--seed", `${seed}`]);
-
-  let resolveReady;
-  let rejectReady;
-  const ready = new Promise((resolve, reject) => {
-    resolveReady = resolve;
-    rejectReady = reject;
-  });
-  let destroyed = false;
-
-  const destroy = () => {
-    if (destroyed) return;
-    destroyed = true;
-    new Promise((resolve, reject) => {
-      if (!data[speculosID]) return;
-      delete data[speculosID];
-      exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
-        if (error) {
-          log("speculos-error", `${speculosID} not destroyed ${error} ${stderr}`);
-          reject(error);
-        } else {
-          log("speculos", `destroyed ${speculosID}`);
-          resolve(undefined);
-        }
-      });
-    });
-  };
-
-  p.stdout.on("data", data => {
-    if (data) {
-      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
-    }
-  });
-  let latestStderr;
-  p.stderr.on("data", data => {
-    if (!data) return;
-    latestStderr = data;
-
-    if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
-    }
-
-    if (data.includes("using SDK")) {
-      setTimeout(() => resolveReady(true), 500);
-    } else if (data.includes("is already in use by container")) {
-      rejectReady(
-        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
-      );
-    } else if (data.includes("address already in use")) {
-      if (maxRetry > 0) {
-        log("speculos", "retrying speculos connection");
-        destroy();
-        resolveReady(false);
-      }
-    }
-  });
-  p.on("close", () => {
-    log("speculos", `${speculosID} closed`);
-
-    if (!destroyed) {
-      destroy();
-      rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
-    }
-  });
-  const hasSucceed = await ready;
-
-  if (!hasSucceed) {
-    await delay(1000);
-    return createSpeculosDevice(arg, maxRetry - 1);
-  }
-
-  let transport: SpeculosTransport;
-  if (isSpeculosWebsocket) {
-    transport = await SpeculosTransportWebsocket.open({
-      apduPort: ports?.apduPort as number,
-      buttonPort: ports?.buttonPort as number,
-      automationPort: ports?.automationPort as number,
-    });
-
-    data[speculosID] = {
-      process: p,
-      apduPort: ports.apduPort as number,
-      buttonPort: ports.buttonPort as number,
-      automationPort: ports.automationPort as number,
-      transport,
-      destroy,
-    };
-  } else {
-    transport = await SpeculosTransportHttp.open({
-      apiPort: ports.apiPort?.toString(),
-    });
-
-    data[speculosID] = {
-      process: p,
-      apiPort: ports.apiPort?.toString(),
-      transport,
-      destroy,
-    };
-  }
-
-  const device = {
-    id: speculosID,
-    transport,
-    appPath,
-  };
-
-  if (arg.onSpeculosDeviceCreated != null) {
-    await arg.onSpeculosDeviceCreated(device);
-  }
-
-  return device;
-}
 
 function hackBadSemver(str) {
   const split = str.split(".");
@@ -378,6 +123,20 @@ export function appCandidatesMatches(appCandidate: AppCandidate, search: AppSear
       (search.appVersion && semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
 }
+
+export const findLatestAppCandidate = (
+  appCandidates: AppCandidate[],
+  search: AppSearch,
+): AppCandidate | null => {
+  let apps = appCandidates.filter(c => appCandidatesMatches(c, search));
+  if (apps.length === 0) {
+    return null;
+  }
+
+  apps = apps.sort((a, b) => semver.rcompare(a.appVersion, b.appVersion));
+  return apps[0];
+};
+
 export const findAppCandidate = (
   appCandidates: AppCandidate[],
   search: AppSearch,
@@ -520,7 +279,7 @@ registerTransportModule({
     if (!id) return;
 
     if (id.startsWith("speculosID")) {
-      const obj = data[id];
+      const obj = getMemorySpeculosDeviceInternal(id);
 
       if (!obj) {
         throw new Error("speculos transport was destroyed");

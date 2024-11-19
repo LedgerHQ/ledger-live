@@ -2,8 +2,11 @@ import { CustomModule, Transaction, serializeTransaction } from "@ledgerhq/walle
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
-  ExchangeStartParams,
+  ExchangeStartFundParams,
   ExchangeStartResult,
+  ExchangeStartSellParams,
+  ExchangeStartSwapParams,
+  SwapLiveError,
 } from "./types";
 
 export * from "./types";
@@ -16,15 +19,63 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
-    const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
+  async startFund() {
+    const result = await this.request<ExchangeStartFundParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
-        exchangeType,
+        exchangeType: "FUND",
       },
     );
 
     return result.transactionId;
+  }
+
+  /**
+   * Start the exchange process by generating a nonce on Ledger device
+   * @param provider - provider's id
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+    const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType: "SELL",
+        provider,
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the swap process by generating a nonce on Ledger device
+   * @param exchangeType - used by the exchange transport to discern between swap/sell/fund
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSwap({
+    exchangeType,
+    provider,
+    fromAccountId,
+    toAccountId,
+    tokenCurrency,
+  }: ExchangeStartSwapParams) {
+    const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType,
+        provider,
+        fromAccountId,
+        toAccountId,
+        tokenCurrency,
+      },
+    );
+
+    return {
+      transactionId: result.transactionId,
+      device: result.device,
+    };
   }
 
   /**
@@ -35,7 +86,6 @@ export class ExchangeModule extends CustomModule {
    * @param fromAccountId - Identifier of the account used as a source for the tx or parent account (for "new token")
    * @param toAccountId - Identifier of the account or parent account (for "new token") used as a destination
    * @param swapId - Identifier of the swap used by backend
-   * @param rate - Swap rate in the transaction
    * @param tokenCurrency - "new token" used in the transaction, not listed yet in wallet-api list
    * @param transaction - Transaction containing the recipient and amount
    * @param binaryPayload - Blueprint of the data that we'll allow signing
@@ -49,7 +99,6 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     swapId,
-    rate,
     transaction,
     binaryPayload,
     signature,
@@ -60,10 +109,9 @@ export class ExchangeModule extends CustomModule {
     fromAccountId: string;
     toAccountId: string;
     swapId: string;
-    rate: number;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: string;
+    signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
   }) {
@@ -75,10 +123,9 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         swapId,
-        rate,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        hexBinaryPayload: binaryPayload,
+        hexSignature: signature,
         feeStrategy,
         tokenCurrency,
       },
@@ -111,8 +158,8 @@ export class ExchangeModule extends CustomModule {
     provider: string;
     fromAccountId: string;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: string | Buffer; // Support Coinify Buffer legacy
+    signature: string | Buffer; // Support Coinify Buffer legacy
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
   }): Promise<string> {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
@@ -122,13 +169,28 @@ export class ExchangeModule extends CustomModule {
         provider,
         fromAccountId,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        hexBinaryPayload:
+          typeof binaryPayload === "string" ? binaryPayload : binaryPayload.toString("hex"),
+        hexSignature: typeof signature === "string" ? signature : signature.toString("hex"),
         feeStrategy,
       },
     );
 
     return result.transactionHash;
+  }
+
+  /**
+   * open a drawer to display errors that Ledger live can't display itself
+   * @param error, the error to display
+   * @returns nothing
+   */
+  async throwExchangeErrorToLedgerLive({
+    error,
+  }: {
+    error: SwapLiveError | undefined;
+  }): Promise<void> {
+    await this.request<SwapLiveError | undefined, void>("custom.exchange.error", error);
+    return;
   }
 
   /**

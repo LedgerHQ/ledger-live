@@ -1,10 +1,11 @@
 import { expect } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
-import { MarketPage } from "../../models/MarketPage";
-import { Layout } from "../../models/Layout";
-import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { MarketPage } from "../../page/market.page";
+import { Layout } from "../../component/layout.component";
+import { MarketCoinPage } from "../../page/market.coin.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -14,7 +15,7 @@ test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
-    id: "multibuy-v2",
+    id: BUY_SELL_UI_APP_ID,
     permissions: ["account.request"],
   });
 
@@ -36,109 +37,122 @@ test("Market", async ({ page }) => {
   const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);
 
+  const maskItems = {
+    mask: [
+      page.getByTestId("market-small-graph"),
+      page.getByTestId("market-coin-price"),
+      page.getByTestId("market-cap"),
+      page.getByTestId("market-price-change"),
+      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+      //Fix for Test App (external) workflow
+      page.getByRole("row").nth(6),
+      page.getByRole("row").nth(7),
+    ],
+  };
+
   await test.step("go to market", async () => {
     await layout.goToMarket();
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png", maskItems);
   });
 
-  await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, async route => {
+  await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`, async route => {
     route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([
-        "aed",
-        "ars",
-        "aud",
-        "bch",
-        "bdt",
-        "bhd",
-        "bits",
-        "bmd",
-        "bnb",
-        "brl",
-        "btc",
-        "cad",
-        "chf",
-        "clp",
-        "cny",
-        "czk",
-        "dkk",
-        "dot",
-        "eos",
-        "eth",
-        "eur",
-        "gbp",
-        "hkd",
-        "huf",
-        "idr",
-        "ils",
-        "inr",
-        "jpy",
-        "krw",
-        "kwd",
-        "link",
-        "lkr",
-        "ltc",
-        "mmk",
-        "mxn",
-        "myr",
-        "ngn",
-        "nok",
-        "nzd",
-        "php",
-        "pkr",
-        "pln",
-        "rub",
-        "sar",
-        "sats",
-        "sek",
-        "sgd",
-        "thb",
-        "try",
-        "twd",
-        "uah",
-        "usd",
-        "vef",
-        "vnd",
-        "xag",
-        "xau",
-        "xdr",
-        "xlm",
-        "xrp",
-        "yfi",
-        "zar",
+        "AED",
+        "ARS",
+        "AUD",
+        "BCH",
+        "BDT",
+        "BHD",
+        "BITS",
+        "BMD",
+        "BNB",
+        "BRL",
+        "BTC",
+        "CAD",
+        "CHF",
+        "CLP",
+        "CNY",
+        "CZK",
+        "DKK",
+        "DOT",
+        "EOS",
+        "ETH",
+        "EUR",
+        "GBP",
+        "HKD",
+        "HUF",
+        "IDR",
+        "ILS",
+        "INR",
+        "JPY",
+        "KRW",
+        "KWD",
+        "LINK",
+        "LKR",
+        "LTC",
+        "MMK",
+        "MXN",
+        "MYR",
+        "NGN",
+        "NOK",
+        "NZD",
+        "PHP",
+        "PKR",
+        "PLN",
+        "RUB",
+        "SAR",
+        "SATS",
+        "SEK",
+        "SGD",
+        "THB",
+        "TRY",
+        "TWD",
+        "UAH",
+        "USD",
+        "VEF",
+        "VND",
+        "XAG",
+        "XAU",
+        "XDR",
+        "XLM",
+        "XRP",
+        "YFI",
+        "ZAR",
       ]),
     });
   });
 
   await test.step("change countervalue", async () => {
     await marketPage.switchCountervalue("THB");
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png", maskItems);
   });
 
   await test.step("change market range", async () => {
     await marketPage.switchMarketRange("7d");
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png", maskItems);
   });
 
   await test.step("star bitcoin", async () => {
     await marketPage.starCoin("btc");
-    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png");
+    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png", maskItems);
   });
 
-  await test.step("search bi", async () => {
-    await marketPage.search("bi");
+  await test.step("search bitcoin", async () => {
+    await marketPage.search("bitcoin");
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-search-bi.png");
+    await expect.soft(page).toHaveScreenshot("market-page-search-bitcoin.png", maskItems);
   });
 
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
-    await marketPage.waitForLoading();
-    await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
-    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    // await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
+    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png", maskItems);
   });
 
   await test.step("swap available to bitcoin", async () => {
@@ -160,7 +174,16 @@ test("Market", async ({ page }) => {
 
   await test.step("go to bitcoin page", async () => {
     await marketPage.openCoinPage("btc");
-    await expect.soft(page).toHaveScreenshot("market-btc-page.png");
+    await expect.soft(page).toHaveScreenshot("market-btc-page.png", {
+      mask: [
+        page.getByTestId("chart-container"),
+        page.getByTestId("market-price-delta"),
+        page.getByTestId("market-price"),
+        page.getByTestId("market-price-stats-price"),
+        page.getByTestId("market-price-stats-variation"),
+        page.getByTestId("market-cap"),
+      ],
+    });
   });
 
   await test.step("buy bitcoin from coin page", async () => {

@@ -13,6 +13,7 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
+import Discreet from "~/renderer/components/Discreet";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -87,7 +88,6 @@ export function Row({
     validatorId,
     staked,
     formattedAmount,
-    formattedRewards,
     formattedPending,
     formattedAvailable,
     validator,
@@ -146,16 +146,19 @@ export function Row({
         )}
       </Column>
       <Column>
-        <Ellipsis>{formattedAmount}</Ellipsis>
+        <Ellipsis>
+          <Discreet>{formattedAmount}</Discreet>
+        </Ellipsis>
       </Column>
       <Column>
-        <Ellipsis>{formattedRewards}</Ellipsis>
+        <Ellipsis>
+          <Discreet>{formattedPending}</Discreet>
+        </Ellipsis>
       </Column>
       <Column>
-        <Ellipsis>{formattedPending}</Ellipsis>
-      </Column>
-      <Column>
-        <Ellipsis>{formattedAvailable}</Ellipsis>
+        <Ellipsis>
+          <Discreet>{formattedAvailable}</Discreet>
+        </Ellipsis>
       </Column>
       <Column>
         <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>

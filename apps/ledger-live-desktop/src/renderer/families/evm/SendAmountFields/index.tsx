@@ -12,36 +12,10 @@ import GasPriceField from "./GasPriceField";
 import MaxFeeField from "./MaxFeeField";
 import PriorityFeeField from "./PriorityFeeField";
 import SelectFeeStrategy from "./SelectFeeStrategy";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import Alert from "~/renderer/components/Alert";
-import { Flex } from "@ledgerhq/react-ui";
-import { closeAllModal } from "~/renderer/actions/modals";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
 
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
-
-  const { errors } = props.status;
-  const { gasPrice: messageGas } = errors;
-
-  const dispatch = useDispatch();
-  const history = useHistory();
-
-  const onBuyClick = useCallback(() => {
-    dispatch(closeAllModal());
-    setTrackingSource("send flow");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        currency: account.currency.id,
-        account: account.id,
-        mode: "buy", // buy or sell
-      },
-    });
-  }, [account.currency.id, account.id, dispatch, history]);
 
   const [gasOptions, error, loading] = useGasOptions({
     currency: account.currency,
@@ -87,7 +61,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
    * If no gasOptions available, this means this currency does not have a
    * gasTracker. Hence, we do not display the fee fields.
    */
-  if (!gasOptions) {
+  if (!gasOptions || !transaction.gasOptions) {
     return null;
   }
 
@@ -111,13 +85,6 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
         <>
           <SelectFeeStrategy gasOptions={gasOptions} onClick={onFeeStrategyClick} {...props} />
         </>
-      )}
-      {messageGas && (
-        <Flex onClick={onBuyClick}>
-          <Alert type="warning">
-            <TranslatedError error={messageGas} noLink />
-          </Alert>
-        </Flex>
       )}
     </>
   );

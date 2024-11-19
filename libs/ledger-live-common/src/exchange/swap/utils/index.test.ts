@@ -7,9 +7,9 @@ import { genAccount } from "../../../mock/account";
 import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,
-  isRegistrationRequired,
-  getProviderName,
   getNoticeType,
+  getProviderName,
+  isRegistrationRequired,
 } from "./index";
 
 /* TODO: Refacto these two function and move them to mock/account.ts if needed */
@@ -176,10 +176,10 @@ describe("swap/utils/getAvailableAccountsById", () => {
 });
 
 describe("swap/utils/isRegistrationRequired", () => {
-  test("should return registration is not required for changelly", () => {
+  test("should return registration is not required for changelly", async () => {
     const expectedResult = false;
 
-    const result = isRegistrationRequired("changelly");
+    const result = await isRegistrationRequired("changelly");
 
     expect(result).toBe(expectedResult);
   });
@@ -190,6 +190,22 @@ describe("swap/utils/getProviderName", () => {
     const expectedResult = "1inch";
 
     const result = getProviderName("oneinch");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return CIC provider name for cic", () => {
+    const expectedResult = "CIC";
+
+    const result = getProviderName("cic");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return MoonPay provider name for moonpay", () => {
+    const expectedResult = "MoonPay";
+
+    const result = getProviderName("moonpay");
 
     expect(result).toBe(expectedResult);
   });

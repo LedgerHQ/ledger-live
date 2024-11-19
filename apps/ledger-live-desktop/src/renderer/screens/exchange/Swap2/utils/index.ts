@@ -1,22 +1,19 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalanceSwap } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import BigNumber from "bignumber.js";
 
 export const SWAP_VERSION = "2.35";
 
+const SWAP_TRACKING_PROPERTIES = {
+  swapVersion: SWAP_VERSION,
+  flow: "swap",
+};
+
 export const useGetSwapTrackingProperties = () => {
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  return useMemo(
-    () => ({
-      swapVersion: SWAP_VERSION,
-      flow: "swap",
-      ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-    }),
-    [ptxSwapMoonpayProviderFlag?.enabled],
-  );
+  return SWAP_TRACKING_PROPERTIES;
 };
 
 export const useRedirectToSwapHistory = () => {
@@ -46,10 +43,43 @@ export const trackSwapError = (error: Error, properties: Record<string, unknown>
       message: "min_amount",
     });
   }
-  if (error instanceof NotEnoughBalance) {
+  if (error instanceof NotEnoughBalanceSwap) {
     track("error_message", {
       ...properties,
       message: "no_funds",
     });
   }
 };
+
+type TransformableObject = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+};
+
+/**
+ * Recursively transforms all number strings in an object into BigNumber instances.
+ * @param {TransformableObject} obj - The object to transform.
+ * @returns {TransformableObject} - The transformed object with BigNumber instances.
+ */
+export function transformToBigNumbers(obj: TransformableObject): TransformableObject {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+
+  const transformedObj: TransformableObject = Array.isArray(obj) ? [] : {};
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (typeof value === "string" && !isNaN(value as unknown as number)) {
+        transformedObj[key] = new BigNumber(value);
+      } else if (typeof value === "object") {
+        transformedObj[key] = transformToBigNumbers(value);
+      } else {
+        transformedObj[key] = value;
+      }
+    }
+  }
+
+  return transformedObj;
+}

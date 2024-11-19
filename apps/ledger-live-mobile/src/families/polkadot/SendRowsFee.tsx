@@ -4,7 +4,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { Trans } from "react-i18next";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -19,6 +19,7 @@ import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { PolkadotBondFlowParamList } from "./BondFlow/types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Navigation = CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -44,7 +45,7 @@ export default function PolkadotFeeRow({ account, transaction }: Props) {
   const fees = (transaction as PolkadotTransaction).fees
     ? (transaction as PolkadotTransaction).fees
     : null;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   return (
     <SummaryRow

@@ -8,7 +8,9 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getNFT, getNftCapabilities, decodeNftId } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, NFT, NFTStandard, Operation } from "@ledgerhq/types-live";
@@ -31,6 +33,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -177,7 +180,12 @@ const Body = ({
     const nft = getNFT(contract, tokenId, mainAccount.nfts);
     const nftCapabilities = getNftCapabilities(nft);
 
-    return !currency.ethereumLikeInfo?.gasTracker && !nftCapabilities.hasQuantity;
+    try {
+      const config = getCurrencyConfiguration(currency);
+      return !config?.gasTracker && !nftCapabilities.hasQuantity;
+    } catch (err) {
+      console.warn(err);
+    }
   }, [isNFTSend, params?.parentAccount, params?.account, accounts, maybeNFTId]);
 
   const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));
@@ -305,8 +313,8 @@ const Body = ({
       stepId === "warning"
         ? t("common.information")
         : isNFTSend
-        ? t("send.titleNft")
-        : t("send.title"),
+          ? t("send.titleNft")
+          : t("send.title"),
     stepId,
     steps,
     errorSteps,

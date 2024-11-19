@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
@@ -45,7 +45,7 @@ const renderItem = (item: { data: OptionType }) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {balance} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
+        {balance} {"EGLD"}
       </Text>
     </Box>
   );

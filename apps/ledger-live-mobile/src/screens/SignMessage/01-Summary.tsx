@@ -1,5 +1,5 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
-import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -17,6 +17,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountName } from "~/reducers/wallet";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -82,6 +83,7 @@ function SignSummary({
   invariant(account, "account not found");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const maybeAccountName = useAccountName(mainAccount);
 
   const { nextNavigation, message: messageData } = route.params;
   const navigateToNext = useCallback(() => {
@@ -135,7 +137,7 @@ function SignSummary({
                 <ParentCurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
-                {getAccountName(mainAccount)}
+                {maybeAccountName}
               </LText>
             </View>
           </View>

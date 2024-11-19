@@ -1,4 +1,7 @@
 // TODO should drop this file!,
+
+import { Unit } from "@ledgerhq/types-cryptoassets";
+
 // FIXME then drop it, i'm not here for that.
 export type T = (
   arg0: string | null | undefined,
@@ -14,4 +17,8 @@ export type ConfirmationDefaults = {
       }
     | null
     | undefined;
+};
+
+export type UnitDefaults = {
+  unit: Unit;
 };

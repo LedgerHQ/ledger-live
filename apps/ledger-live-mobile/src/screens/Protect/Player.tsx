@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -18,6 +18,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>
@@ -34,6 +35,8 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
+  const devModeEnabled = useEnv("MANAGER_DEV_MODE").toString();
+
   const currencySettings = useSelector(counterValueCurrencySelector);
   const currency = currencySettings.ticker;
   const manifest = localManifest || remoteManifest;
@@ -82,10 +85,12 @@ export function RecoverPlayer({ navigation, route }: Props) {
       <WebRecoverPlayer
         manifest={manifest}
         inputs={{
+          devModeEnabled,
           theme,
           lang: locale,
           currency,
           deviceId: device?.deviceId,
+          deviceModelId: device?.modelId,
           ...params,
         }}
       />

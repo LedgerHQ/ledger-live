@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonV2 from "~/renderer/components/Button";
 import Button from "~/renderer/components/ButtonV3";
@@ -10,7 +10,7 @@ import {
   useFeature,
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-config/featureFlags/index";
+} from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
@@ -23,12 +23,13 @@ import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
 import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
 import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
+import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
   const featureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
   const dispatch = useDispatch();
-  const { getFeature, overrideFeature, isFeature, resetFeatures } = useFeatureFlags();
+  const { isFeature, resetFeatures } = useFeatureFlags();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState("");
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -56,7 +57,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
-    return Object.keys(groupedFeatures)
+    return objectKeysType(groupedFeatures)
       .sort()
       .filter(
         groupName =>
@@ -67,35 +68,6 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
           ),
       );
   }, [searchInput]);
-
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pressCount = useRef(0);
-
-  const [cheatActivated, setCheatActivated] = useState(false);
-  const ruleThemAll = useCallback(() => {
-    groupedFeatures.stax.featureIds.forEach(featureId =>
-      overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
-    );
-    setCheatActivated(true);
-  }, [overrideFeature, getFeature]);
-
-  const onDescriptionClick = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    pressCount.current += 1;
-    const timeout = setTimeout(() => {
-      pressCount.current = 0;
-    }, 300);
-    if (pressCount.current > 6) {
-      ruleThemAll();
-      pressCount.current = 0;
-    }
-    timeoutRef.current = timeout;
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [ruleThemAll]);
 
   const flagsList = useMemo(
     () =>
@@ -142,10 +114,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
 
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
-      <div onClick={onDescriptionClick}>
-        {t("settings.developer.featureFlagsDesc")}
-        {cheatActivated ? " With great power comes great responsibility." : null}
-      </div>
+      <div>{t("settings.developer.featureFlagsDesc")}</div>
       {!props.expanded ? null : (
         <>
           <Flex flexDirection="row" alignItems="center" columnGap={3}>

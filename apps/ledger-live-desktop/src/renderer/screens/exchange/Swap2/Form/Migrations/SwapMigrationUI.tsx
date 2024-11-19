@@ -1,13 +1,16 @@
 import React from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
-import { Box } from "@ledgerhq/react-ui";
 import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { Box } from "@ledgerhq/react-ui";
 import ButtonBase from "~/renderer/components/Button";
 import SwapFormRates from "../FormRates";
+import SwapFormSummary from "../FormSummary";
+import LoadingState from "../Rates/LoadingState";
 import { SwapWebManifestIDs } from "../SwapWebView";
+import { useIsSwapLiveFlagEnabled } from "../../hooks/useIsSwapLiveFlagEnabled";
 
 const Button = styled(ButtonBase)`
   width: 100%;
@@ -17,13 +20,11 @@ const Button = styled(ButtonBase)`
 type SwapMigrationUIProps = {
   liveAppEnabled: boolean;
   liveApp: React.ReactNode;
-  manifestID: string | null;
+  manifestID: string | undefined;
   // Demo 1 props
   pageState: ReturnType<typeof usePageState>;
   swapTransaction: SwapTransactionType;
   provider?: string;
-  refreshTime: number;
-  countdown: boolean;
   // Demo 0 props
   disabled: boolean;
   onClick: () => void;
@@ -37,26 +38,30 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     pageState,
     swapTransaction,
     provider,
-    refreshTime,
-    countdown,
     disabled,
     onClick,
   } = props;
   const { t } = useTranslation();
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
+
+  const nativeLoadingUI = pageState === "loading" ? <LoadingState /> : null;
+  const nativeNetworkFeesUI =
+    pageState === "loaded" || isDemo1Enabled ? (
+      <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+    ) : null;
 
   const nativeQuotesUI =
-    pageState === "loaded" ? (
+    pageState === "loaded" && !isDemo1Enabled ? (
       <SwapFormRates
         swap={swapTransaction.swap}
         provider={provider}
-        refreshTime={refreshTime}
-        countdown={countdown}
+        countdownSecondsToRefresh={swapTransaction.swap.countdown}
       />
     ) : null;
 
   const nativeExchangeButtonUI = (
     <Box width="100%">
-      <Button primary disabled={disabled} onClick={onClick} data-test-id="exchange-button">
+      <Button primary disabled={disabled} onClick={onClick} data-testid="exchange-button">
         {t("common.exchange")}
       </Button>
     </Box>
@@ -67,6 +72,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
    */
   const allNativeUI = (
     <>
+      {nativeLoadingUI}
+      {nativeNetworkFeesUI}
       {nativeQuotesUI}
       {nativeExchangeButtonUI}
     </>
@@ -79,25 +86,34 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     return allNativeUI;
   }
 
-  switch (manifestID) {
-    /**
-     * Demo 0 live app should only contain Exchange Button
-     * Rest should be in native UI (e.g quotes)
-     */
-    case SwapWebManifestIDs.Demo0:
+  switch (true) {
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo0):
+      /**
+       * Demo 0 live app should only contain Exchange Button
+       * Rest should be in native UI (e.g quotes)
+       */
       return (
         <>
+          {nativeLoadingUI}
+          {nativeNetworkFeesUI}
           {nativeQuotesUI}
           {liveApp}
         </>
       );
-    case SwapWebManifestIDs.Demo1:
+
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo1):
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo3):
       /**
        * Demo 1 live app should contain:
        *  - Exchange Button
        *  - Quotes UI
        */
-      return <>{liveApp}</>;
+      return (
+        <>
+          {nativeNetworkFeesUI}
+          {liveApp}
+        </>
+      );
 
     /**
      * Fall back to show all native UI

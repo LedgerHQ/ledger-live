@@ -14,7 +14,7 @@ import { fromTransactionRaw } from "./transaction";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
-const DUMMY_PUBKEY = "022d82baea2d041ac281bebafab11571f45db4f163a9e3f8640b1c804a4ac6f662";
+const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
 const stacks: CurrenciesData<Transaction> = {
@@ -30,25 +30,30 @@ const stacks: CurrenciesData<Transaction> = {
       <= 03a2d4bbb54c2f44c3a205b15ca7d2049a2bb66e50e100304f932b3b99ed3a99cb5350324136463652374632395a3338533259434a4d37484a44564532345332564757543542545a50419000
       => 09010016142c0000807d160080010000800000000000000000
       <= 034bbb21911e9d4502ac170162c5c05cbba65cbb79e5b46adf95152af2d0e78a4553503244563252565a503141363951365641473550484551365a4851485a5043563834544d594e474e9000
+      => 09010016142c0000807d160080020000800000000000000000
+      <= 020637c4d824458f6a11551f51df9e5be9e96c2e3a2e5bdb25d2916cc1dd5ba2d753504e5a4e434333433244525450574a4a384e534d484d575744304643415459413843565a3834459000
+      => 09010016142c0000807d160080030000800000000000000000
+      <= 02e57bb8c28c4c768cf65f8e28935482e40afbb33168d26810199f39a719cc05f0535031564d30584546574251345a543838384654333447333047474635324459395951575a434151309000
+      => 09010016142c0000807d160080040000800000000000000000
+      <= 0264b6d44f720fa50055dc294276bf15ce22e4f3dec48510b317ab8c07419c1b7753503248574a58594e4747594354535952545036323636424a483858565a4759504d455248514538529000
       `,
     },
   ],
   accounts: [
     {
       raw: {
-        id: `js:2:stacks:${DUMMY_PUBKEY}:`,
+        id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
         seedIdentifier: SEED_IDENTIFIER,
         name: "Stacks 1",
         derivationMode: "",
         index: 0,
         freshAddress: SEED_IDENTIFIER,
-        freshAddressPath: "44'/5757'/0'/0/0",
-        freshAddresses: [],
+        freshAddressPath: "",
         blockHeight: 0,
         operations: [],
+        xpub: SEED_IDENTIFIER_PUBKEY,
         pendingOperations: [],
         currencyId: "stacks",
-        unitMagnitude: 6,
         lastSyncDate: "",
         balance: "1000",
       },

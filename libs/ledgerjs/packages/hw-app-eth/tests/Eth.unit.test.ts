@@ -1,3 +1,4 @@
+import nock from "nock";
 import axios from "axios";
 import { fail } from "assert";
 import { ethers } from "ethers";
@@ -11,10 +12,11 @@ import ERC1155_ABI from "./fixtures/ABI/ERC1155.json";
 import PARASWAP_ABI from "./fixtures/ABI/PARASWAP.json";
 import { ResolutionConfig } from "../src/services/types";
 import ParaswapJSON from "./fixtures/REST/Paraswap-Plugin.json";
+import { transactionContracts, transactionData } from "./fixtures/utils";
 import { byContractAddressAndChainId } from "../src/services/ledger/erc20";
 import { ERC1155_CLEAR_SIGNED_SELECTORS, ERC721_CLEAR_SIGNED_SELECTORS } from "../src/utils";
 
-jest.mock("axios");
+nock.disableNetConnect();
 
 describe("Eth app biding", () => {
   describe("clearSignTransaction", () => {
@@ -293,7 +295,7 @@ describe("Eth app biding", () => {
         "44'/60'/0'/0/0",
         ethers.utils
           .serializeTransaction({
-            to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            to: transactionContracts.paraswap,
             value: ethers.BigNumber.from("0"),
             gasLimit: ethers.BigNumber.from("298891"),
             maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
@@ -322,7 +324,7 @@ describe("Eth app biding", () => {
             type: 2,
           })
           .substring(2),
-        { erc20: true, externalPlugins: true, nft: true },
+        { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
         true,
       );
       expect(result).toEqual({
@@ -331,6 +333,66 @@ describe("Eth app biding", () => {
         v: "00",
       });
       expect(spy).toHaveBeenCalledTimes(3); // 1 time plugin json file + 2 times CAL signatures <-- FIXME 1 time should be enough
+    });
+
+    it("should clear sign the Uniswap Universal Router transaction", async () => {
+      const spy = jest.spyOn(axios, "get");
+      spy.mockImplementation(async url => {
+        if (url?.includes("erc20-signatures")) {
+          return { data: CAL_ETH } as any;
+        }
+        return Promise.reject({ response: { status: 404 } }) as any;
+      });
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e01200006607556e69737761703fc91a3afd70395cd496c647d5a6cc9d4b2b7fad3593564c3044022014391e8f355867a57fe88f6a5a4dbcb8bf8f888a9db3ff3449caf72d120396bd02200c13d9c3f79400fe0aa0434ac54d59b79503c9964a4abc3e8cd22763e0242935
+        <= 9000
+        => e00a0000680457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe
+        <= 009000
+        => e00a0000680457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe
+        <= 019000
+        => e004000096058000002c8000003c80000000000000000000000002f9044f018084448b9b8085143fc44a5883048f8b943fc91a3afd70395cd496c647d5a6cc9d4b2b7fad80b904243593564c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000
+        <= 9000
+        => e00480009600000000000000000000000000669ba25a00000000000000000000000000000000000000000000000000000000000000030a010c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000600000000000
+        <= 9000
+        => e0048000960000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000016000000000000000000000000055747be9f9f5beb232ad59fe7af013b81d95fd5e000000000000000000000000ffffffffffffffffffffffffffffff
+        <= 9000
+        => e004800096ffffffffff0000000000000000000000000000000000000000000000000000000066c32ea60000000000000000000000000000000000000000000000000000000000000006000000000000000000000000ef1c6e67703c7bd7107eed8303fbe6ec2554bf6b00000000000000000000000000000000000000000000000000000000669ba25a0000000000000000000000000000000000
+        <= 9000
+        => e0048000960000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000413cbf00ab90b6d1b17401cbf49e00c40f98bcb3f39461ca65e26009f9e9f77029279a4587efa2d792ea61ede56e0fbd7c1305007bc59d09bc60eaba46efa23edd1c0000000000000000000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e0048000960000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000233a3559d9da00000000000000000000000000000000000000000000000062e76d8ff4b926e80000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e0048000960000a00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002bc02aaa39b223fe8d0a0e5c4f27ead9083c756cc200271055747be9f9f5beb232ad59fe7af013b81d95fd5e00000000000000000000000000000000000000000000000000000000000000000000000000000000
+        <= 9000
+        => e00480004e0000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000233a3559d9da000c0
+        <= 00a42d6ead5539eb1ac552b65b46df4e8fd87c37da54a280d33dc7a78992b56bb02244776870b31cfb50ea71c0ea31a30e6e513bd9766f74d61dc52b523ac256879000
+        `),
+      );
+      const eth = new Eth(transport);
+      const result = await eth.clearSignTransaction(
+        "44'/60'/0'/0/0",
+        ethers.utils
+          .serializeTransaction({
+            to: transactionContracts.uniswapUniversaRouter,
+            value: ethers.BigNumber.from("0"),
+            gasLimit: ethers.BigNumber.from("298891"),
+            maxPriorityFeePerGas: ethers.BigNumber.from("1150000000"),
+            maxFeePerGas: ethers.BigNumber.from("86969174616"),
+            data: transactionData.uniswap["permit2>swap-out-v3>unwrap"],
+            chainId: 1,
+            nonce: 0,
+            type: 2,
+          })
+          .substring(2),
+        { erc20: true, externalPlugins: true, nft: true, uniswapV3: true },
+        true,
+      );
+      expect(result).toEqual({
+        v: "00",
+        r: "a42d6ead5539eb1ac552b65b46df4e8fd87c37da54a280d33dc7a78992b56bb0",
+        s: "2244776870b31cfb50ea71c0ea31a30e6e513bd9766f74d61dc52b523ac25687",
+      });
     });
 
     it("should throw in case of error with strict mode", async () => {
@@ -466,6 +528,50 @@ describe("Eth app biding", () => {
       });
     });
 
+    test("getAddress with chain ID", async () => {
+      const transportHolesky = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000004268
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethHolesky = new Eth(transportHolesky);
+      const resultHolesky = await ethHolesky.getAddress("44'/60'/0'/0/0", true, false, "17000");
+      expect(resultHolesky).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+
+      const transportPolygon = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000000089
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethPolygon = new Eth(transportPolygon);
+      const resultPolygon = await ethPolygon.getAddress("44'/60'/0'/0/0", true, false, "137");
+      expect(resultPolygon).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+
+      const transportGoerli = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000000005
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethGoerli = new Eth(transportGoerli);
+      const resultGoerli = await ethGoerli.getAddress("44'/60'/0'/0/0", true, false, "5");
+      expect(resultGoerli).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+    });
+
     test("signTransaction", async () => {
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
@@ -551,10 +657,14 @@ describe("Eth app biding", () => {
       });
     });
 
+    /*
+     * if 1inch token is popular again
+    might need to put this back, starting at line 2
+      => e00a0000680531494e4348111111111117dc0aa78b770fa6a738034120c3020000001200000001304402204623e5f1375c54a446157ae8a739204284cf053634b7abd083dc5f5d2675c4e702206ff94b4c84ba9e93f44065c38d7c92506621fa69ba04f767aa58221de8afbf17
+      <= 9000
+    */
     const paraswapAPDUs =
       `=> e0120000670850617261737761701bd435f3c054b6e901b7b108a0ab7617c808677bcfc0afeb304402201c0cbe69aac517825b3a6eb5e7251e8fd57ff93a43bd3df52c7a841818eda81b022001a10cc326efaee2463fc96e7c29739c308fb8179bd2ac37303662bae4f7705c
-  <= 9000
-  => e00a0000680531494e4348111111111117dc0aa78b770fa6a738034120c3020000001200000001304402204623e5f1375c54a446157ae8a739204284cf053634b7abd083dc5f5d2675c4e702206ff94b4c84ba9e93f44065c38d7c92506621fa69ba04f767aa58221de8afbf17
   <= 9000
   => e004000096058000002c8000003c800000000000000000000000f903cd82043d8509c765240083042e73941bd435f3c054b6e901b7b108a0ab7617c808677b80b903a4cfc0afeb000000000000000000000000111111111117dc0aa78b770fa6a738034120c302000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000000000000000000000
   <= 9000

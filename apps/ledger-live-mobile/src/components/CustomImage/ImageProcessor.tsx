@@ -1,9 +1,8 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
-import { WebView } from "react-native-webview";
-import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
+import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { injectedCode } from "./injectedCode/imageBase64ToHexProcessing";
+import { injectedCode, htmlPage } from "./injectedCode/imageBase64ToHexProcessing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
 import { ImageBase64Data, ImageDimensions } from "./types";
 
@@ -135,9 +134,8 @@ export default class ImageProcessor extends React.Component<Props> {
     this.webViewRef?.reload();
   };
 
-  handleWebViewError = ({ nativeEvent }: WebViewErrorEvent) => {
+  handleWebViewError = () => {
     const { onError } = this.props;
-    console.error(nativeEvent);
     onError(new ImageProcessingError());
   };
 
@@ -153,12 +151,13 @@ export default class ImageProcessor extends React.Component<Props> {
         <Flex flex={0}>
           <WebView
             ref={c => (this.webViewRef = c)}
-            injectedJavaScript={injectedCode}
             androidLayerType="software"
-            androidHardwareAccelerationDisabled
             onError={this.handleWebViewError}
             onLoadEnd={this.handleWebViewLoaded}
             onMessage={this.handleWebViewMessage}
+            originWhitelist={["*"]}
+            source={{ html: htmlPage }}
+            webviewDebuggingEnabled={__DEV__}
           />
         </Flex>
       </>

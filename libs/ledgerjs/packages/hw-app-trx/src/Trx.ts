@@ -17,6 +17,7 @@
 // FIXME drop:
 import { splitPath, foreach, decodeVarint } from "./utils";
 import type Transport from "@ledgerhq/hw-transport";
+import { signTIP712HashedMessage } from "./TIP712";
 
 const remapTransactionRelatedErrors = e => {
   if (e && e.statusCode === 0x6a80) {
@@ -57,6 +58,7 @@ export default class Trx {
         "signTransaction",
         "signTransactionHash",
         "signPersonalMessage",
+        "signTIP712HashedMessage",
         "getAppConfiguration",
       ],
       scrambleKey,
@@ -317,6 +319,15 @@ export default class Trx {
     }).then(() => {
       return response.slice(0, 65).toString("hex");
     });
+  }
+
+  /**
+   * Sign a typed data. The host computes the domain separator and hashStruct(message)
+   * @example
+     const signature = await tronApp.signTIP712HashedMessage("44'/195'/0'/0/0",Buffer.from( "0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex"));
+   */
+  signTIP712HashedMessage(path: string, domainSeparatorHex: string, hashStructMessageHex: string) {
+    return signTIP712HashedMessage(this.transport, path, domainSeparatorHex, hashStructMessageHex);
   }
 
   /**

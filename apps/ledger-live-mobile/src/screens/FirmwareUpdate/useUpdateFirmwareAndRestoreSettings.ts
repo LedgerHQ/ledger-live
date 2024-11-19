@@ -56,18 +56,20 @@ export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportSta
     ImageCommitRefusedOnDevice,
     ImageLoadRefusedOnDevice,
     WebsocketConnectionFailed,
+    DisconnectedDeviceDuringOperation,
   ];
 
 export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
-  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  updateFirmwareAction?(args: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState>;
   isBeforeOnboarding?: boolean;
 };
 
 export type UpdateStep =
   | "start"
   | "appsBackup"
+  // | "appsDataBackup"
   | "imageBackup"
   | "firmwareUpdate"
   | "languageRestore"
@@ -112,15 +114,16 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       // In the LLM fwm update flow, the error thrown because there is no image is caught and part of the normal flow
       // So we want it to throw the error.
       allowedEmpty: false,
+      deviceModelId: device.modelId,
     }),
-    [],
+    [device.modelId],
   );
   const staxFetchImageState = staxFetchImageAction.useHook(
     updateStep === "imageBackup" ? device : null,
     staxFetchImageRequest,
   );
 
-  const { triggerUpdate, updateState: updateActionState } = useUpdateFirmware({
+  const { updateState: updateActionState, triggerUpdate } = useUpdateFirmware({
     deviceId: device?.deviceId ?? "",
     updateFirmwareAction,
   });
@@ -137,9 +140,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   const staxLoadImageRequest = useMemo(
     () => ({
       hexImage: staxFetchImageState.hexImage ?? "",
-      padImage: false,
+      padImage: false, // this is because the picture we fetch from the device already has the padding
+      deviceModelId: device.modelId,
     }),
-    [staxFetchImageState.hexImage],
+    [staxFetchImageState.hexImage, device.modelId],
   );
   const staxLoadImageState = staxLoadImageAction.useHook(
     updateStep === "imageRestore" && staxFetchImageState.hexImage ? device : null,
@@ -231,6 +235,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
 
+      // TODO: Implement apps data backup
+      // case "appsDataBackup":
+      //   break;
+
       case "imageBackup":
         hasUnrecoverableError =
           staxFetchImageState.error &&
@@ -245,9 +253,21 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         break;
 
       case "firmwareUpdate":
+        hasUnrecoverableError =
+          updateActionState.error &&
+          !userSolvableErrorClasses.some(
+            err =>
+              updateActionState.error instanceof err ||
+              updateActionState.error?.name === "TimeoutError",
+          );
+
         if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
           triggerUpdate();
-        } else if (updateActionState.step === "firmwareUpdateCompleted") {
+        } else if (updateActionState.step === "firmwareUpdateCompleted" || hasUnrecoverableError) {
+          if (hasUnrecoverableError) {
+            log("FirmwareUpdate", "error while updating firmware", updateActionState.error);
+          }
+
           proceedToLanguageRestore();
         }
         break;
@@ -322,6 +342,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxLoadImageState.imageLoaded,
     triggerUpdate,
     updateActionState.step,
+    updateActionState.error,
     updateActionState.lockedDevice,
     updateStep,
     restoreAppsState.error,

@@ -1,29 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useReducer, useEffect, useCallback, useState, useContext } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
 
+type ExtractProps<TComponent> =
+  TComponent extends React.ComponentType<infer TProps> ? TProps : undefined;
+
 export type State<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  C extends React.ComponentType<P> | undefined | null = React.ComponentType<any> | undefined | null,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  P = any,
+  C extends React.ComponentType<any> | undefined = React.ComponentType<any> | undefined,
 > = {
   Component: C;
-  props?: P;
+  props: ExtractProps<C> & {
+    onRequestBack?: (a: React.MouseEvent<Element, MouseEvent> | KeyboardEvent) => void;
+  };
   open: boolean;
   options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack">;
 }; // actions
 
 // it makes them available and current from connector events handlers
-export let setDrawer: <
-  P,
-  C extends React.ComponentType<P> | undefined | null = P extends null
-    ? null
-    : React.ComponentType<P>,
->(
+export let setDrawer: <C extends React.ComponentType<any> | undefined = undefined>(
   Component?: C,
-  props?: State<C, P>["props"],
-  options?: State<C, P>["options"],
-) => void = () => null;
+  props?: State<C>["props"],
+  options?: State<C>["options"],
+) => void = () => {};
 
 // reducer
 const reducer = (state: State, update: Partial<State>) => {
@@ -33,7 +31,7 @@ const reducer = (state: State, update: Partial<State>) => {
   };
 };
 const initialState: State = {
-  Component: null,
+  Component: undefined,
   props: null,
   open: false,
   options: {},
@@ -44,7 +42,7 @@ export type ContextValue = {
 };
 export const context: React.Context<ContextValue> = React.createContext<ContextValue>({
   state: initialState,
-  setDrawer: () => null,
+  setDrawer: () => {},
 });
 
 type AnalyticsContextValue = {
@@ -53,7 +51,7 @@ type AnalyticsContextValue = {
 };
 export const analyticsDrawerContext = React.createContext<AnalyticsContextValue>({
   analyticsDrawerName: undefined,
-  setAnalyticsDrawerName: () => null,
+  setAnalyticsDrawerName: () => {},
 });
 
 const DrawerProvider = ({ children }: { children: React.ReactNode }) => {

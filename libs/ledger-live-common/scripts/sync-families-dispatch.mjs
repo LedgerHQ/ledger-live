@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
-import "zx/globals";
 import rimraf from "rimraf";
+import "zx/globals";
 
 const targets = [
   "hw-getAddress.ts",
@@ -13,6 +13,7 @@ const targets = [
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",
+  "formatters.ts",
   "exchange.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
@@ -20,7 +21,23 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["algorand", "evm", "polkadot"];
+const familiesWPackage = [
+  "algorand",
+  "bitcoin",
+  "cardano",
+  "cosmos",
+  "elrond",
+  "evm",
+  "icon",
+  "near",
+  "polkadot",
+  "solana",
+  "stellar",
+  "tezos",
+  "ton",
+  "tron",
+  "xrp",
+];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -82,26 +99,40 @@ function genCoinFrameworkTarget(targetFile) {
     switch (targetFile) {
       case "bridge/js.ts":
         imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "cli-transaction.ts":
         imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "hw-getAddress.ts":
         imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "hw-signMessage.ts":
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+        if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile))) {
           imports += `import { messageSigner as ${family} } from "../families/${family}/setup";\n`;
+          exprts += `\n  ${family},`;
+        }
+        break;
+      case "specs.ts":
+        if (
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/test/bot-specs.ts`))
+        ) {
+          imports += `import ${family} from "@ledgerhq/coin-${family}/${targetName}";\n`;
+          exprts += `\n  ${family},`;
         }
         break;
       // We still use bridge/js file inside "families" directory
       default:
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+        if (
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, targetFile))
+        ) {
           imports += `import ${family} from "${targetImportPath}";\n`;
+          exprts += `\n  ${family},`;
         }
-    }
-    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
-      exprts += `\n  ${family},`;
     }
   }
 
@@ -130,11 +161,12 @@ async function getDeviceTransactionConfig(families) {
   }
 
   const libsDir = path.join(__dirname, "../..");
-  const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
-  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";\n`;
-    exprts += `\n  | ExtraDeviceTransactionField_${family}`;
+  for (const family of ["polkadot", "tron"]) {
+    if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
+      imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
+      exprts += `\n  | ExtraDeviceTransactionField_${family}`;
+    }
   }
 
   const str = `${imports}
@@ -159,14 +191,17 @@ async function genTypesFile(families) {
         return "";
       }
 
-      if (fs.existsSync(path.join(libsDir, `coin-${family}/src/types/index.ts`))) return "/index";
+      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`)))
+        return "/index";
 
       return "";
     })();
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
+    imprts += `import type {
+  Transaction as ${family}Transaction,
+  TransactionRaw as ${family}TransactionRaw,
+  TransactionStatus as ${family}TransactionStatus,
+  TransactionStatusRaw as ${family}TransactionStatusRaw,
+} from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

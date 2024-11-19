@@ -8,8 +8,10 @@ import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/erro
 import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 import { InvalidMemoICP } from "./errors";
 
-// const SEED_IDENTIFIER =
-// "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
+const SEED_IDENTIFIER =
+  "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf";
+
+// const SEED_IDENTIFIER_ADDRESS = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
 const ACCOUNT_2 = "fdb7db0d3ae67368cb5010b7de7d98566c072f0a4eda871f45cd6582bf08aeb4";
 
 const internet_computer: CurrenciesData<Transaction> = {
@@ -32,18 +34,12 @@ const internet_computer: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
+        id: `js:2:internet_computer:${SEED_IDENTIFIER}:`,
         balance: "1000000",
         currencyId: "internet_computer",
         derivationMode: "internet_computer",
-        freshAddress: "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+        freshAddress: "",
         freshAddressPath: "44'/223'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
-            derivationPath: "44'/223'/0'/0/0",
-          },
-        ],
-        id: "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:",
         index: 0,
         name: "Internet Computer 1",
         nfts: undefined,
@@ -52,15 +48,12 @@ const internet_computer: CurrenciesData<Transaction> = {
         pendingOperations: [],
         operations: [],
         lastSyncDate: "",
-        seedIdentifier:
-          "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
+        seedIdentifier: SEED_IDENTIFIER,
         spendableBalance: "1000000",
-        starred: false,
         swapHistory: [],
         syncHash: undefined,
-        unitMagnitude: 8,
         used: true,
-        xpub: "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
+        xpub: SEED_IDENTIFIER,
       },
       transactions: [
         {

@@ -1,10 +1,10 @@
+import * as preloadedData from "@ledgerhq/coin-solana/preload-data";
+import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "@ledgerhq/coin-solana/types";
+import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { getAccountBannerState } from "./banner";
-import * as preloadedData from "./js-preload-data";
 import * as helpers from "../../account/helpers";
-import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "./types";
 
 import { BigNumber } from "bignumber.js";
-import { ValidatorsAppValidator } from "./validator-app";
 
 const ledgerValidator: ValidatorsAppValidator = {
   activeStake: 2030500428402855,
@@ -42,15 +42,12 @@ const cheapValidator: ValidatorsAppValidator = {
 const account: SolanaAccount = {
   type: "Account",
   id: "js:2:solana:8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN:solanaSub",
-  starred: false,
   used: false,
   seedIdentifier: "5gaQapKG9MpAWMLtZFoDqzmKfxMN2FXDVNAKiGFaMXGg",
   derivationMode: "solanaSub",
   index: 0,
   freshAddress: "8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN",
   freshAddressPath: "44'/501'/0'",
-  freshAddresses: [],
-  name: "Solana 1",
   blockHeight: 177035578,
   creationDate: new Date("2023-02-08T12:57:45.000Z"),
   balance: new BigNumber("606150870"),
@@ -58,7 +55,6 @@ const account: SolanaAccount = {
   operations: [],
   operationsCount: 2,
   pendingOperations: [],
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
   currency: {
     type: "CryptoCurrency",
     id: "solana",

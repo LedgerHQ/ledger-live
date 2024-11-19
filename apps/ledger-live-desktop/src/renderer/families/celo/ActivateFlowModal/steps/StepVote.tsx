@@ -12,9 +12,9 @@ import Button from "~/renderer/components/Button";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import ActivateValidatorGroupRow from "~/renderer/families/celo/ActivateFlowModal/components/ActivateValidatorGroupRow";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export const StepVoteFooter = ({
   transitionTo,
   account,
@@ -58,6 +58,8 @@ const StepVote = ({
     "account with votes and transaction required",
   );
   const bridge = getAccountBridge(account, parentAccount);
+  const unit = useAccountUnit(account);
+
   const onChange = useCallback(
     (recipient: string) => {
       onChangeTransaction(
@@ -81,7 +83,7 @@ const StepVote = ({
       })) || [],
     [votes, validatorGroups],
   );
-  const unit = getAccountUnit(account);
+
   return (
     <Box flow={1}>
       <TrackPage

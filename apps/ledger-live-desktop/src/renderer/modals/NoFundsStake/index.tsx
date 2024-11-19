@@ -60,7 +60,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const modalName = "MODAL_NO_FUNDS_STAKE";
 
   const onBuy = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "buy",
       page: history.location.pathname,
       ...stakeDefaultTrack,
@@ -78,7 +78,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   }, [currency, history, dispatch]);
 
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       page: history.location.pathname,
       ...stakeDefaultTrack,
@@ -92,12 +92,13 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
         defaultCurrency: currency,
         defaultAccount: account,
         defaultParentAccount: parentAccount,
+        from: history.location.pathname,
       },
     });
   }, [currency, account, parentAccount, history, dispatch]);
 
   const onReceive = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "receive",
       page: history.location.pathname,
       ...stakeDefaultTrack,
@@ -170,7 +171,6 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
               <EntryButton
                 Icon={() => <Icon name="BuyCrypto" />}
                 title={t("stake.noFundsModal.options.swap.title")}
-                label={t("stake.noFundsModal.options.swap.label")}
                 body={t("stake.noFundsModal.options.swap.body")}
                 onClick={onSwap}
                 showChevron

@@ -22,11 +22,18 @@ export const IICCID = 0x08;
 export const IIWebUSB = 0x10;
 
 export enum DeviceModelId {
+  /** Ledger Blue */
   blue = "blue",
+  /** Ledger Nano S */
   nanoS = "nanoS",
+  /** Ledger Nano S Plus */
   nanoSP = "nanoSP",
+  /** Ledger Nano X */
   nanoX = "nanoX",
+  /** Ledger Stax */
   stax = "stax",
+  /** Ledger Flex ("europa" is the internal name) */
+  europa = "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -51,16 +58,6 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     getBlockSize: (firmwareVersion: string): number =>
       semver.lt(semver.coerce(firmwareVersion) ?? "", "2.0.0") ? 4 * 1024 : 2 * 1024,
   },
-  [DeviceModelId.nanoSP]: {
-    id: DeviceModelId.nanoSP,
-    productName: "Ledger Nano S Plus",
-    productIdMM: 0x50,
-    legacyUsbProductId: 0x0005,
-    usbOnly: true,
-    memorySize: 1533 * 1024,
-    masks: [0x33100000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
-  },
   [DeviceModelId.nanoX]: {
     id: DeviceModelId.nanoX,
     productName: "Ledger Nano X",
@@ -78,6 +75,16 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
         writeCmdUuid: "13d63400-2c97-0004-0003-4c6564676572",
       },
     ],
+  },
+  [DeviceModelId.nanoSP]: {
+    id: DeviceModelId.nanoSP,
+    productName: "Ledger Nano S Plus",
+    productIdMM: 0x50,
+    legacyUsbProductId: 0x0005,
+    usbOnly: true,
+    memorySize: 1533 * 1024,
+    masks: [0x33100000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
   },
   [DeviceModelId.stax]: {
     id: DeviceModelId.stax,
@@ -97,6 +104,24 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
+  [DeviceModelId.europa]: {
+    id: DeviceModelId.europa,
+    productName: "Ledger Flex",
+    productIdMM: 0x70,
+    legacyUsbProductId: 0x0007,
+    usbOnly: false,
+    memorySize: 1533 * 1024,
+    masks: [0x33300000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
+    bluetoothSpec: [
+      {
+        serviceUuid: "13d63400-2c97-3004-0000-4c6564676572",
+        notifyUuid: "13d63400-2c97-3004-0001-4c6564676572",
+        writeUuid: "13d63400-2c97-3004-0002-4c6564676572",
+        writeCmdUuid: "13d63400-2c97-3004-0003-4c6564676572",
+      },
+    ],
+  },
 };
 
 const productMap = {
@@ -105,6 +130,7 @@ const productMap = {
   "Nano S Plus": DeviceModelId.nanoSP,
   "Nano X": DeviceModelId.nanoX,
   Stax: DeviceModelId.stax,
+  Europa: DeviceModelId.europa,
 };
 
 const devicesList: DeviceModel[] = Object.values(devices);

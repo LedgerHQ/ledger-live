@@ -14,8 +14,8 @@ function merkleOf(count: number): Merkle {
 }
 function rootOfLeaves(...leaves: number[]): Buffer {
   return new Merkle(
-    leaves.map((v) => leaf(v)),
-    testHasher
+    leaves.map(v => leaf(v)),
+    testHasher,
   ).getRoot();
 }
 function rootOf(count: number): Buffer {
@@ -55,43 +55,15 @@ test("Merkle proof of three", () => {
 });
 
 test("Merkle proof of four", () => {
-  expect(merkleOf(4).getProof(0)).toEqual([
-    rootOfLeaves(1),
-    rootOfLeaves(2, 3),
-  ]);
-  expect(merkleOf(4).getProof(1)).toEqual([
-    rootOfLeaves(0),
-    rootOfLeaves(2, 3),
-  ]);
-  expect(merkleOf(4).getProof(2)).toEqual([
-    rootOfLeaves(3),
-    rootOfLeaves(0, 1),
-  ]);
-  expect(merkleOf(4).getProof(3)).toEqual([
-    rootOfLeaves(2),
-    rootOfLeaves(0, 1),
-  ]);
+  expect(merkleOf(4).getProof(0)).toEqual([rootOfLeaves(1), rootOfLeaves(2, 3)]);
+  expect(merkleOf(4).getProof(1)).toEqual([rootOfLeaves(0), rootOfLeaves(2, 3)]);
+  expect(merkleOf(4).getProof(2)).toEqual([rootOfLeaves(3), rootOfLeaves(0, 1)]);
+  expect(merkleOf(4).getProof(3)).toEqual([rootOfLeaves(2), rootOfLeaves(0, 1)]);
 });
 test("Merkle proof of five", () => {
-  expect(merkleOf(5).getProof(0)).toEqual([
-    rootOfLeaves(1),
-    rootOfLeaves(2, 3),
-    rootOfLeaves(4),
-  ]);
-  expect(merkleOf(5).getProof(1)).toEqual([
-    rootOfLeaves(0),
-    rootOfLeaves(2, 3),
-    rootOfLeaves(4),
-  ]);
-  expect(merkleOf(5).getProof(2)).toEqual([
-    rootOfLeaves(3),
-    rootOfLeaves(0, 1),
-    rootOfLeaves(4),
-  ]);
-  expect(merkleOf(5).getProof(3)).toEqual([
-    rootOfLeaves(2),
-    rootOfLeaves(0, 1),
-    rootOfLeaves(4),
-  ]);
+  expect(merkleOf(5).getProof(0)).toEqual([rootOfLeaves(1), rootOfLeaves(2, 3), rootOfLeaves(4)]);
+  expect(merkleOf(5).getProof(1)).toEqual([rootOfLeaves(0), rootOfLeaves(2, 3), rootOfLeaves(4)]);
+  expect(merkleOf(5).getProof(2)).toEqual([rootOfLeaves(3), rootOfLeaves(0, 1), rootOfLeaves(4)]);
+  expect(merkleOf(5).getProof(3)).toEqual([rootOfLeaves(2), rootOfLeaves(0, 1), rootOfLeaves(4)]);
   expect(merkleOf(5).getProof(4)).toEqual([rootOfLeaves(0, 1, 2, 3)]);
 });

@@ -1,6 +1,4 @@
 export * from "./asorted";
-export * from "./cards";
-export { default as Chart } from "./Chart";
 export * from "./cta";
 export * from "./form";
 export * from "./layout";

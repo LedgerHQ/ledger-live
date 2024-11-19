@@ -8,8 +8,10 @@ const api: CounterValuesAPI = {
     getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchHistorical(granularity, pair)
       : prodAPI.fetchHistorical(granularity, pair),
-  fetchLatest: pairs =>
-    getEnv("MOCK_COUNTERVALUES") ? mockAPI.fetchLatest(pairs) : prodAPI.fetchLatest(pairs),
+  fetchLatest: (pairs, batchStrategySolver) =>
+    getEnv("MOCK_COUNTERVALUES")
+      ? mockAPI.fetchLatest(pairs, batchStrategySolver)
+      : prodAPI.fetchLatest(pairs, batchStrategySolver),
   fetchIdsSortedByMarketcap: () =>
     getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchIdsSortedByMarketcap()

@@ -25,7 +25,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { defaultVoteAccAddrByCurrencyId } from "@ledgerhq/live-common/families/solana/utils";
+import { defaultVoteAccAddrByCurrencyId } from "@ledgerhq/live-common/families/solana/staking";
 export type Data = {
   account: SolanaAccount;
   source?: string;

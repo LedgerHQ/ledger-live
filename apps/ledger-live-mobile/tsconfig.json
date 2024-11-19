@@ -5,7 +5,11 @@
     "checkJs": false,
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
-    "types": ["jest", "@testing-library/jest-native/extend-expect"],
+    "types": [
+      "jest",
+      "@testing-library/jest-native/extend-expect",
+      "jest-allure2-reporter/globals"
+    ],
     "noEmit": true,
     "target": "esnext",
     "incremental": true,
@@ -13,7 +17,9 @@
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "@tests/*": ["src/__tests__/*"]
+      "LLM/*": ["src/newArch/*"],
+      "@tests/*": ["__tests__/*"],
+      "@mocks/*": ["__mocks__/*"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],

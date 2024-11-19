@@ -1,12 +1,8 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { TokenAccount, AccountLike, DerivationMode } from "@ledgerhq/types-live";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
@@ -15,20 +11,14 @@ import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
 import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
+import { useNavigation } from "@react-navigation/native";
 import { State } from "~/reducers/types";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
-
-type Navigation = BaseComposite<
-  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset | ScreenName.Accounts>
-  | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
->;
+import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
   accountId: string;
-  navigation: Navigation["navigation"];
   isLast?: boolean;
   onSetAccount?: (arg: TokenAccount) => void;
   navigationParams?: [ScreenName, object];
@@ -39,7 +29,6 @@ type Props = {
 };
 
 const AccountRow = ({
-  navigation,
   account,
   accountId,
   navigationParams,
@@ -49,16 +38,16 @@ const AccountRow = ({
   isLast,
   sourceScreenName,
 }: Props) => {
+  const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
-  const parentAccount = useSelector((state: State) =>
-    parentAccountSelector(state, { account: account as ChildAccount }),
-  );
+  const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
 
-  const name = getAccountName(account);
-  const unit = getAccountUnit(account);
+  const name = useAccountName(account);
+  const parentName = useMaybeAccountName(parentAccount);
+  const unit = useAccountUnit(account);
 
   const tag =
     account.type === "Account" &&
@@ -126,7 +115,7 @@ const AccountRow = ({
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
-      parentAccountName={parentAccount && getAccountName(parentAccount)}
+      parentAccountName={parentName}
       isLast={isLast}
     />
   );

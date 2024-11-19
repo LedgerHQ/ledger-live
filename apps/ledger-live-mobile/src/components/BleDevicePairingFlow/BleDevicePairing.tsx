@@ -24,6 +24,7 @@ import { GenericInformationBody } from "../GenericInformationBody";
 import ExternalLink from "../ExternalLink";
 import UnlockDeviceDrawer from "../UnlockDeviceDrawer";
 import { urls } from "~/utils/urls";
+import Config from "react-native-config";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -102,7 +103,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={{ height: 200 }}
           source={getDeviceAnimation({
             device: deviceToPair,
             key: "blePaired",
@@ -168,7 +169,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex width="100%" py={16} alignItems="center">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
-              Icon={<InfiniteLoader color="primary.c80" size={32} />}
+              Icon={<InfiniteLoader color="primary.c80" size={32} mock={Config.MOCK} />}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
@@ -185,7 +186,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={deviceToPair.modelId === "stax" ? { marginTop: -20 } : { height: 200 }}
           source={getDeviceAnimation({
             device: deviceToPair,
             key: "blePairing",

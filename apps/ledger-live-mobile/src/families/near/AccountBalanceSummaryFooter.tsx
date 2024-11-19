@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
@@ -8,6 +7,7 @@ import { TFunction, useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 
@@ -23,7 +23,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const { spendableBalance, nearResources } = account;
   const { storageUsageBalance, stakedBalance, pendingBalance, availableBalance } =
     nearResources || {};
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);

@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import SpendableAmount from "~/renderer/components/SpendableAmount";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
@@ -17,6 +16,7 @@ import {
   TransactionStatus,
   CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   t: TFunction;
@@ -36,7 +36,7 @@ const AmountField = ({
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
       onChangeTransaction(

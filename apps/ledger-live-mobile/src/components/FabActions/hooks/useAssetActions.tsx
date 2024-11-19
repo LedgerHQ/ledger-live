@@ -6,7 +6,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -152,11 +152,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(canBeStaken
               ? [
                   {
-                    label: t("account.stake"),
+                    label: currency.id === "bitcoin" ? t("account.yield") : t("account.stake"),
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
-                      source: "asset screen",
                       button: "stake",
                       currency: currency?.id?.toUpperCase(),
                       flow: "stake",

@@ -1,6 +1,8 @@
 import type { Account, AccountLike, AccountRaw, AccountRawLike } from "@ledgerhq/types-live";
-import type { Transaction } from "../../generated/types";
 import { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
+import type { Transaction } from "../../generated/types";
+import { ExchangeSwap } from "../swap/types";
+import { Device } from "../../hw/actions/types";
 
 export type CompleteExchangeRequestEvent =
   | { type: "complete-exchange" }
@@ -17,20 +19,6 @@ export type CompleteExchangeRequestEvent =
       completeExchangeResult: Transaction;
     };
 
-export type ExchangeSwap = {
-  fromParentAccount: Account | null | undefined;
-  fromAccount: AccountLike;
-  toParentAccount: Account | null | undefined;
-  toAccount: AccountLike;
-};
-
-export type ExchangeSwapRaw = {
-  fromParentAccount: AccountRaw | null | undefined;
-  fromAccount: AccountRawLike;
-  toParentAccount: AccountRaw | null | undefined;
-  toAccount: AccountRawLike;
-};
-
 export type ExchangeSell = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;
@@ -42,9 +30,12 @@ export type ExchangeSellRaw = {
 };
 
 export type StartExchangeInput = {
-  deviceId: string;
+  device: Device;
   exchangeType: number;
   appVersion?: string;
+  provider?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
 };
 
 interface CompleteExchangeInputCommon {
@@ -70,7 +61,3 @@ export interface CompleteExchangeInputSwap extends CompleteExchangeInputCommon {
   readonly exchangeType: ExchangeTypes.Swap;
   exchange: ExchangeSwap;
 }
-
-export type Exchange = ExchangeSwap | ExchangeSell;
-
-export type ExchangeRaw = ExchangeSwapRaw | ExchangeSellRaw;

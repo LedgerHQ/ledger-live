@@ -29,6 +29,7 @@ type Props = {
   noIcon?: boolean;
   onLearnMore?: () => void;
   learnMoreKey?: string;
+  learnMoreTransValues?: object;
   learnMoreUrl?: string;
   learnMoreIsInternal?: boolean;
   learnMoreIcon?: IconType;
@@ -88,6 +89,7 @@ type LearnMoreLinkProps = {
   learnMoreIsInternal?: boolean;
   learnMoreKey?: string;
   Icon?: IconType;
+  transValues?: object;
 };
 
 const LinkTouchable = styled(TouchableOpacity).attrs({
@@ -103,13 +105,14 @@ export const LearnMoreLink = ({
   onPress,
   learnMoreIsInternal,
   learnMoreKey,
+  transValues,
   Icon,
 }: LearnMoreLinkProps) => {
   const IconComponent = Icon || IconsLegacy.ExternalLinkMedium;
   return (
     <LinkTouchable onPress={onPress}>
       <BaseAlert.UnderlinedText mr="5px">
-        <Trans i18nKey={learnMoreKey || "common.learnMore"} />
+        <Trans i18nKey={learnMoreKey || "common.learnMore"} values={transValues} />
       </BaseAlert.UnderlinedText>
       {(Icon || !learnMoreIsInternal) && <IconComponent size={16} />}
     </LinkTouchable>
@@ -135,6 +138,7 @@ export default function Alert(props: Props) {
     learnMoreKey,
     learnMoreIsInternal = false,
     learnMoreIcon,
+    learnMoreTransValues,
   } = props;
 
   const dismissedBanners = useSelector(dismissedBannersSelector);
@@ -173,6 +177,7 @@ export default function Alert(props: Props) {
             learnMoreKey={learnMoreKey}
             learnMoreIsInternal={learnMoreIsInternal}
             Icon={learnMoreIcon}
+            transValues={learnMoreTransValues}
           />
         )}
       </Container>

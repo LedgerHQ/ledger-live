@@ -64,10 +64,12 @@ const AppCard = ({ manifest, onPress }: Props) => {
     () => getBranchStyle(manifest.branch, colors),
     [colors, manifest.branch],
   );
+
   const description = useMemo(
     () => translateContent(manifest.content.shortDescription, locale),
     [locale, manifest.content.shortDescription],
   );
+
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
       <View

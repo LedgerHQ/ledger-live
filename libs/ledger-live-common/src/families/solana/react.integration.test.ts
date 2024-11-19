@@ -1,13 +1,17 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
+import { renderHook } from "@testing-library/react";
+import { setEnv } from "@ledgerhq/live-env";
+import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/coin-solana/types";
+import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
+import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
-import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
-import { getCurrentSolanaPreloadData } from "./js-preload-data";
-import { LEDGER_VALIDATOR } from "./utils";
 import * as hooks from "./react";
 
 jest.setTimeout(2 * 60 * 1000);

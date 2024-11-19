@@ -63,8 +63,8 @@ const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean; error: 
         ? p.theme.colors.palette.warning.c70
         : p.theme.colors.palette.primary.main
       : p.disabled
-      ? p.theme.colors.palette.text.shade20
-      : p.theme.colors.palette.text.shade50};
+        ? p.theme.colors.palette.text.shade20
+        : p.theme.colors.palette.text.shade50};
 `;
 const FeesValue = styled(Box)`
   flex-direction: row;
@@ -146,8 +146,8 @@ const SelectFeeStrategy = ({
                   selected
                     ? "palette.primary.main"
                     : disabled
-                    ? "palette.text.shade40"
-                    : "palette.text.shade100"
+                      ? "palette.text.shade40"
+                      : "palette.text.shade100"
                 }
                 fontSize={3}
                 fontWeight="600"

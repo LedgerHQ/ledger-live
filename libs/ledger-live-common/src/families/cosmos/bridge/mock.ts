@@ -1,28 +1,38 @@
 import { BigNumber } from "bignumber.js";
+import { CosmosValidatorsManager } from "@ledgerhq/coin-cosmos/CosmosValidatorsManager";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import { asSafeCosmosPreloadData, setCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
+import mockPreloadedData from "@ledgerhq/coin-cosmos/preloadedData.mock";
+import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-cosmos/serialization";
+import type {
+  CosmosAccount,
+  CosmosCurrencyConfig,
+  CosmosValidatorItem,
+  StatusErrorMap,
+  Transaction,
+} from "@ledgerhq/coin-cosmos/types/index";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   AmountRequired,
+  FeeTooHigh,
+  InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-  InvalidAddress,
-  FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { CosmosAccount, CosmosValidatorItem, StatusErrorMap, Transaction } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
-  scanAccounts,
-  signOperation,
   broadcast,
-  sync,
   isInvalidRecipient,
   makeAccountBridgeReceive,
+  scanAccounts,
+  signOperation,
+  sync,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { setCosmosPreloadData, asSafeCosmosPreloadData } from "../preloadedData";
-import { getMainAccount } from "../../../account";
-import mockPreloadedData from "../preloadedData.mock";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
-import { getCryptoCurrencyById } from "../../../currencies";
+import { getCurrencyConfiguration } from "../../../config";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => (t.fees || new BigNumber(0)).times(t.gas || new BigNumber(0));
@@ -93,7 +103,7 @@ const prepareTransaction = async (a: CosmosAccount, t: Transaction): Promise<Tra
     return {
       ...t,
       gas: new BigNumber(1),
-      fees: new BigNumber(500),
+      fees: new BigNumber(375),
       networkInfo: {
         family: "cosmos",
         fees: new BigNumber(500),
@@ -119,12 +129,20 @@ const accountBridge: AccountBridge<Transaction> = {
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
-  preload: () => {
+  preload: (currency: CryptoCurrency) => {
+    const config = getCurrencyConfiguration(currency);
     setCosmosPreloadData("cosmos", mockPreloadedData);
-    return Promise.resolve(mockPreloadedData);
+    return Promise.resolve({ validators: mockPreloadedData, config });
   },
-  hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
+  hydrate: (
+    data: { validators?: CosmosValidatorItem[]; config: CosmosCurrencyConfig },
+    currency: CryptoCurrency,
+  ) => {
     if (!data || typeof data !== "object") return;
+    const relatedImpl = cryptoFactory(currency.id);
+    relatedImpl.lcd = data.config.lcd;
+    relatedImpl.minGasPrice = data.config.minGasPrice;
+    relatedImpl.ledgerValidator = data.config.ledgerValidator;
     const { validators } = data;
     if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
     const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));

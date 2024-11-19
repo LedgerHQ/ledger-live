@@ -115,7 +115,7 @@ function Header({
             variant={"large"}
             fontWeight={"semiBold"}
             numberOfLines={1}
-            testID={`accounts-title-${currency.name}`}
+            testID={`accounts-title-${currency.name.toLowerCase()}`}
           >
             {t("asset.title", { assetName: currency.name })}
           </Text>

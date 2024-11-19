@@ -13,7 +13,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
-  size?: "small" | "medium" | "large";
+  size?: "xs" | "small" | "medium" | "large";
   fontSize?: number;
   variant?: ButtonVariants;
   outline?: boolean;
@@ -162,7 +162,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 }))<BaseProps>`
   background-color: transparent;
   border-color: transparent;
-  border-radius: ${p => p.theme.space[13]}px;
+  border-radius: 44px;
   border-style: solid;
   border-width: ${p => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   font-weight: 600;
@@ -288,6 +288,10 @@ export const buttonSizeStyle: {
     height: string;
   };
 } = {
+  xs: {
+    padding: "0 12px",
+    height: "28px",
+  },
   small: {
     padding: "0 20px",
     height: "32px",

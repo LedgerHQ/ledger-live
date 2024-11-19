@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Action, Device } from "./types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
-import { Exchange } from "../../exchange/platform/types";
+import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../generated/types";
 
 type State = {
@@ -54,10 +54,10 @@ const mapResult = ({
         completeExchangeResult,
       }
     : completeExchangeError
-    ? {
-        completeExchangeError,
-      }
-    : null;
+      ? {
+          completeExchangeError,
+        }
+      : null;
 
 const initialState: State = {
   completeExchangeResult: null,

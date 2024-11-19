@@ -5,7 +5,7 @@ import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
-import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
+import { App, AppType, ApplicationV2, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -125,6 +125,7 @@ export function mockListAppsResult(
   installedDesc: string,
   deviceInfo: DeviceInfo,
   deviceModelId?: DeviceModelId,
+  deviceName?: string | null,
 ): ListAppsResult {
   const tickersByMarketCap = Object.keys(getBTCValues());
   const apps = appDesc
@@ -173,7 +174,7 @@ export function mockListAppsResult(
   });
   const installed = parseInstalled(installedDesc);
   return {
-    deviceName: "Mock device name",
+    deviceName: deviceName || "Mock device name",
     appByName,
     appsListNames: apps.map(a => a.name),
     deviceInfo,
@@ -192,7 +193,7 @@ export function mockListAppsResult(
 
 export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]): Exec => {
   let installed = installedInitial.slice(0);
-  return (appOp: AppOp, targetId: string | number, app: App) => {
+  return ({ appOp, app }: { appOp: AppOp; targetId: string | number; app: App }) => {
     if (appOp.name !== app.name) {
       throw new Error("appOp.name must match app.name");
     }
@@ -245,3 +246,32 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
     );
   };
 };
+
+export function makeAppV2Mock(props: Partial<ApplicationV2>): ApplicationV2 {
+  return {
+    versionId: 1,
+    versionName: "Bitcoin",
+    versionDisplayName: "Bitcoin",
+    version: "1.0.0",
+    currencyId: "bitcoin",
+    description: "Bitcoin app",
+    applicationType: AppType.currency,
+    dateModified: "2021-01-01",
+    icon: "icon",
+    authorName: "Ledger",
+    supportURL: "https://support.ledger.com",
+    contactURL: "https://contact.ledger.com",
+    sourceURL: "https://source.ledger.com",
+    hash: "hash",
+    perso: "perso",
+    parentName: null,
+    firmware: "firmware",
+    firmwareKey: "firmwareKey",
+    delete: "delete",
+    deleteKey: "deleteKey",
+    bytes: 100,
+    warning: null,
+    isDevTools: false,
+    ...props,
+  };
+}

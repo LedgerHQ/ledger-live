@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/auth/v1beta1/accounts/stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc","method":"GET"},"response":{"body":{"account":{"@type":"/cosmos.auth.v1beta1.BaseAccount","address":"stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc","pub_key":null,"account_number":"196261","sequence":"0"}}}}

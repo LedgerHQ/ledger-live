@@ -2,12 +2,13 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   amountContainer: {
@@ -30,7 +31,7 @@ type Props = {
 };
 
 const SummaryAmountSection = ({ account, amount, overrideAmountLabel }: Props) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (

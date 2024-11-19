@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 
 import invariant from "invariant";
-import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
 import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";
@@ -83,6 +83,8 @@ const SendAmountNFT = ({ route }: Props) => {
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
   const error = useMemo(() => {
+    if (bridgePending) return <LText style={styles.error} numberOfLines={2} />;
+
     if (quantity?.isFinite()) {
       if (status?.warnings?.amount) {
         return (
@@ -102,7 +104,7 @@ const SendAmountNFT = ({ route }: Props) => {
     }
 
     return <LText style={styles.error} numberOfLines={2} />;
-  }, [quantity, status?.errors?.amount, status?.warnings?.amount]);
+  }, [quantity, status?.errors?.amount, status?.warnings?.amount, bridgePending]);
 
   return (
     <>

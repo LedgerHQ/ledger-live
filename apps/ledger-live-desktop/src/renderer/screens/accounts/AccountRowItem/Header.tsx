@@ -1,5 +1,5 @@
 import React from "react";
-import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -8,6 +8,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import Tooltip from "~/renderer/components/Tooltip";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import { useAccountName } from "~/renderer/reducers/wallet";
 type Props = {
   account: AccountLike;
   nested?: boolean;
@@ -21,7 +22,7 @@ const NestedIndicator = styled.div`
 const Header = ({ account, nested }: Props) => {
   const theme = useTheme();
   const currency = getAccountCurrency(account);
-  const name = getAccountName(account);
+  const name = useAccountName(account);
   const color =
     currency.type === "CryptoCurrency" ? currency.color : theme.colors.palette.text.shade60;
   const title = currency.type === "CryptoCurrency" ? currency.name : "token";

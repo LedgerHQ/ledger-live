@@ -1,8 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import moment from "moment";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   PolkadotValidator,
@@ -11,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { Account } from "@ledgerhq/types-live";
 import { TableLine } from "./Header";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
+import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ClockIcon from "~/renderer/icons/Clock";
@@ -19,6 +17,8 @@ import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled.div`
   display: flex;
@@ -91,7 +91,7 @@ export function Row({
   const name = validator?.identity || address;
   const total = validator?.totalBonded ?? null;
   const commission = validator?.commission ?? null;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = useMemo(
     () =>
       value && (status === "active" || status === "inactive")
@@ -195,12 +195,13 @@ export function UnlockingRow({
   account,
   unlocking: { amount, completionDate },
 }: UnlockingRowProps) {
-  const date = useMemo(
-    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
+  const date = useDateFromNow(completionDate) || "N/A";
+  const isUnbonded = useMemo(
+    () => new Date(completionDate).getTime() < Date.now(),
     [completionDate],
   );
-  const isUnbonded = useMemo(() => moment(completionDate).isBefore(moment()), [completionDate]);
-  const unit = getAccountUnit(account);
+
+  const unit = useAccountUnit(account);
   const formattedAmount = useMemo(
     () =>
       formatCurrencyUnit(unit, amount, {
@@ -213,7 +214,9 @@ export function UnlockingRow({
 
   return (
     <Wrapper>
-      <Column>{formattedAmount}</Column>
+      <Column>
+        <Discreet>{formattedAmount}</Discreet>
+      </Column>
       <Column>
         {isUnbonded ? (
           <Box color="positiveGreen" pl={2} horizontal={true}>

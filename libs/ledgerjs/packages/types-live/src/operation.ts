@@ -55,10 +55,11 @@ export type OperationType =
   | "UNSTAKE"
   | "WITHDRAW_UNSTAKED";
 
+export type OperationExtra = unknown;
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain
  */
-export type Operation<Extra = unknown> = {
+export type Operation<Extra = OperationExtra> = {
   // unique identifier (usually hash)
   id: string;
   // transaction hash
@@ -82,7 +83,7 @@ export type Operation<Extra = unknown> = {
   // the hash of the block the operation is in
   blockHash: string | null | undefined;
   // if available, this is the sequence number of the transaction in blockchains (aka "nonce" in Ethereum)
-  transactionSequenceNumber?: number;
+  transactionSequenceNumber?: number | undefined;
   // the account id. available for convenient reason
   accountId: string;
   // --------------------------------------------- properties related to NFTs
@@ -112,7 +113,8 @@ export type Operation<Extra = unknown> = {
   extra: Extra;
 };
 
-export type OperationRaw<ExtraRaw = unknown> = {
+export type OperationExtraRaw = unknown;
+export type OperationRaw<ExtraRaw = OperationExtraRaw> = {
   id: string;
   hash: string;
   type: OperationType;

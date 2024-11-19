@@ -39,8 +39,8 @@ const rmDir = dir => {
 
 const cleaningTasks = _args => [
   {
-    title: "Remove `node_modules/.cache` folder",
-    task: () => rmDir("node_modules/.cache"),
+    title: "Remove `.turbo/cache` folder",
+    task: () => rmDir(".turbo/cache"),
   },
   {
     title: "Remove `.webpack` folder",
@@ -76,8 +76,8 @@ const buildTasks = args => [
         env: args.release
           ? { SENTRY_URL: releaseSentryDSN }
           : args.pre
-          ? { SENTRY_URL: prereleaseSentryDSN }
-          : {},
+            ? { SENTRY_URL: prereleaseSentryDSN }
+            : {},
       });
     },
   },
@@ -89,8 +89,8 @@ const buildTasks = args => [
         args.release
           ? "sentry.release.properties"
           : args.pre
-          ? "sentry.prerelease.properties"
-          : null,
+            ? "sentry.prerelease.properties"
+            : null,
         {
           authToken: process.env.SENTRY_AUTH_TOKEN,
         },

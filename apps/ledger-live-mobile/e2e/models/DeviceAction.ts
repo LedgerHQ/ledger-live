@@ -18,8 +18,15 @@ const mockListAppsResult = (
   installedDesc: string,
   deviceInfo: DeviceInfo,
   deviceModelId?: DeviceModelId,
+  deviceName?: string | null,
 ) => {
-  const result = innerMockListAppResult(appDesc, installedDesc, deviceInfo, deviceModelId);
+  const result = innerMockListAppResult(
+    appDesc,
+    installedDesc,
+    deviceInfo,
+    deviceModelId,
+    deviceName,
+  );
   Object.keys(result?.appByName).forEach(key => {
     result.appByName[key] = { ...result.appByName[key], type: AppType.currency };
   });
@@ -34,7 +41,7 @@ export default class DeviceAction {
     if ("id" in input) {
       this.device = this.deviceLikeToDevice(input as DeviceLike);
     } else {
-      this.device = input as Device;
+      this.device = input;
     }
   }
 
@@ -59,7 +66,7 @@ export default class DeviceAction {
 
   async openApp() {
     await this.waitForSpinner();
-    mockDeviceEvent({ type: "opened" });
+    await mockDeviceEvent({ type: "opened" });
   }
 
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
@@ -67,7 +74,7 @@ export default class DeviceAction {
 
     const { device } = this;
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
-    mockDeviceEvent(
+    await mockDeviceEvent(
       {
         type: "deviceChange",
         device,
@@ -85,15 +92,21 @@ export default class DeviceAction {
   }
 
   async accessManager(
-    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,XRP,Stellar",
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     await this.waitForSpinner();
 
     const { device } = this;
 
-    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, device.modelId);
-    mockDeviceEvent(
+    const result = mockListAppsResult(
+      appDesc,
+      installedDesc,
+      deviceInfo,
+      device.modelId,
+      device.deviceName,
+    );
+    await mockDeviceEvent(
       {
         type: "deviceChange",
         device,
@@ -119,7 +132,7 @@ export default class DeviceAction {
     const { device } = this;
 
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
-    mockDeviceEvent(
+    await mockDeviceEvent(
       {
         type: "deviceChange",
         device,
@@ -137,15 +150,15 @@ export default class DeviceAction {
   }
 
   async complete() {
-    mockDeviceEvent({ type: "complete" });
+    await mockDeviceEvent({ type: "complete" });
   }
 
   async initiateLanguageInstallation() {
-    mockDeviceEvent({ type: "devicePermissionRequested" });
+    await mockDeviceEvent({ type: "devicePermissionRequested" });
   }
 
   async add50ProgressToLanguageInstallation() {
-    mockDeviceEvent({ type: "progress", progress: 0.5 });
+    await mockDeviceEvent({ type: "progress", progress: 0.5 });
   }
 
   async installSetOfAppsMocked(
@@ -154,7 +167,7 @@ export default class DeviceAction {
     currentAppOp: AppOp,
     installQueue: string[],
   ) {
-    mockDeviceEvent({
+    await mockDeviceEvent({
       type: "inline-install",
       progress: progress,
       itemProgress: itemProgress,
@@ -164,45 +177,46 @@ export default class DeviceAction {
   }
 
   async resolveDependenciesMocked(installQueue: string[]) {
-    mockDeviceEvent({
+    await mockDeviceEvent({
       type: "listed-apps",
       installQueue: installQueue,
     });
   }
 
   async completeLanguageInstallation() {
-    mockDeviceEvent({ type: "languageInstalled" });
+    await mockDeviceEvent({ type: "languageInstalled" });
   }
 
   async requestImageLoad() {
-    mockDeviceEvent({ type: "loadImagePermissionRequested" });
+    await mockDeviceEvent({ type: "loadImagePermissionRequested" });
   }
 
   async loadImageWithProgress(progress: number) {
-    mockDeviceEvent({ type: "progress", progress });
+    await mockDeviceEvent({ type: "progress", progress });
   }
 
   async requestImageCommit() {
-    mockDeviceEvent({ type: "commitImagePermissionRequested" });
+    await mockDeviceEvent({ type: "commitImagePermissionRequested" });
   }
 
   async confirmImageLoaded(imageSize: number, imageHash: string) {
-    mockDeviceEvent({ type: "imageLoaded", imageSize, imageHash });
+    await mockDeviceEvent({ type: "imageLoaded", imageSize, imageHash });
   }
 
   async initiateSwap(estimatedFees: BigNumber) {
-    mockDeviceEvent({ type: "opened" });
+    await mockDeviceEvent({ type: "opened" });
     await delay(2000); // enough time to allow the UI to switch from one action to another
-    mockDeviceEvent({ type: "init-swap-requested", estimatedFees });
+    await mockDeviceEvent({ type: "init-swap-requested", estimatedFees });
   }
 
   async confirmSwap(transaction: Transaction) {
-    mockDeviceEvent(
+    await mockDeviceEvent(
       {
         type: "init-swap-result",
         initSwapResult: {
           transaction,
           swapId: "12345",
+          magnitudeAwareRate: new BigNumber(50000),
         },
       },
       {
@@ -213,6 +227,6 @@ export default class DeviceAction {
 
   async silentSign() {
     await this.waitForSpinner();
-    mockDeviceEvent({ type: "opened" }, { type: "complete" });
+    await mockDeviceEvent({ type: "opened" }, { type: "complete" });
   }
 }

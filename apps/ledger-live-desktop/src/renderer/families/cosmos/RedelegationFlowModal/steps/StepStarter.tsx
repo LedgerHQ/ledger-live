@@ -11,7 +11,7 @@ import Rewards from "~/renderer/images/rewards.svg";
 import Alert from "~/renderer/components/Alert";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
@@ -76,7 +76,7 @@ export function StepStarterFooter({ transitionTo, account, onClose }: StepProps)
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button
-          data-test-id="modal-continue-button"
+          data-testid="modal-continue-button"
           primary
           onClick={() => transitionTo("validators")}
         >

@@ -1,115 +1,113 @@
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { Flex, Icon, Link, Tag as TagCore, Text } from "@ledgerhq/react-ui";
-import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
-import React, { useCallback, useEffect, useMemo } from "react";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { CryptoIcon, Flex, Icon, Text } from "@ledgerhq/react-ui";
+import { EthStakingProvider } from "@ledgerhq/types-live";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { StakeOnClickProps } from "../EthStakingModalBody";
-import { StakingIcon } from "../StakingIcon";
-import { ListProvider } from "../types";
 
-export const Container: StyledComponent<
-  "div",
-  DefaultTheme,
-  Record<string, unknown>,
-  never
-> = styled(Flex)`
+const IconContainer = styled.div(
+  ({ theme }) => `
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${theme.space[6]}px;
+  height: ${theme.space[6]}px;
+  border-radius: 100%;
+  background-color: ${theme.colors.opacityDefault.c05};
+  margin-top: ${theme.space[3]}px;
+`,
+);
+
+function StakingIcon({ icon }: { icon?: string }) {
+  if (!icon) {
+    return null;
+  }
+
+  const [iconName, iconType] = icon.split(":");
+
+  // if no icon type then treat as "normal" icon.
+  if (!iconType) {
+    return (
+      <IconContainer>
+        <Icon name={iconName} size={14} />
+      </IconContainer>
+    );
+  }
+  if (iconType === "crypto") {
+    return <CryptoIcon name={iconName} size={40} />;
+  }
+  if (iconType === "provider") {
+    return (
+      <Flex>
+        <ProviderIcon name={iconName} size="M" />
+      </Flex>
+    );
+  }
+
+  return null;
+}
+
+const Container: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never> = styled(
+  Flex,
+)`
   cursor: pointer;
-  border-radius: 8px;
+  background-color: ${p => p.theme.colors.opacityDefault.c05};
   :hover {
     background-color: ${p => p.theme.colors.primary.c10};
   }
 `;
 
-export const Tag = styled(TagCore)`
-  padding: 3px 6px;
-  > span {
-    font-size: 11px;
-    text-transform: none;
-    font-weight: bold;
-    line-height: 11.66px;
-  }
-`;
-
-type Props = {
-  provider: ListProvider;
-  infoOnClick(_: ListProvider): void;
+interface Props {
+  provider: EthStakingProvider;
   stakeOnClick(_: StakeOnClickProps): void;
-  redirectIfOnlyProvider(_: StakeOnClickProps): void;
-};
+}
 
-const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvider }: Props) => {
-  const { t, i18n } = useTranslation();
+export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
+  const { t } = useTranslation();
 
   const localManifest = useLocalLiveAppManifest(provider.liveAppId);
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
 
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 
-  const hasTag = i18n.exists(`ethereum.stake.${provider.id}.tag`);
-
-  useEffect(() => {
-    if (manifest) redirectIfOnlyProvider({ provider, manifest });
-  }, [redirectIfOnlyProvider, provider, manifest]);
-
-  const stakeLink = useCallback(() => {
-    if (manifest) stakeOnClick({ provider, manifest });
+  const handleClick = useCallback(() => {
+    if (manifest) {
+      stakeOnClick({ provider, manifest });
+    }
   }, [provider, stakeOnClick, manifest]);
-
-  const infoLink = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      infoOnClick(provider);
-      event.stopPropagation();
-    },
-    [infoOnClick, provider],
-  );
 
   return (
     <Container
-      pl={3}
-      onClick={stakeLink}
-      py={4}
-      data-test-id={`stake-provider-container-${provider.id}`}
+      alignItems="center"
+      borderRadius={2}
+      columnGap={4}
+      data-testid={`stake-provider-container-${provider.id}`}
+      onClick={handleClick}
+      p={3}
     >
       <StakingIcon icon={provider.icon} />
-      <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
-        <Flex alignItems="center">
-          <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
-            {t(`ethereum.stake.${provider.id}.title`)}
-          </Text>
-          {hasTag && (
-            <Tag
-              size="small"
-              active
-              type="plain"
-              style={{ fontFamily: "14px", textTransform: "none" }}
-            >
-              {t(`ethereum.stake.${provider.id}.tag`)}
-            </Tag>
-          )}
-        </Flex>
-
-        <Text variant="paragraph" fontSize={13} color="neutral.c70">
-          {t(`ethereum.stake.${provider.id}.description`)}
+      <Flex alignItems="flex-start" flex={2} flexDirection="column">
+        <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
+          {t(`ethereum.stake.provider.${provider.id}.title`)}
         </Text>
-        <Link
-          iconPosition="right"
-          Icon={ExternalLinkMedium}
-          onClick={infoLink}
-          type="color"
-          color="primary.c80"
-          mt={2}
-          style={{ fontSize: "14px" }}
-        >
-          {t(`ethereum.stake.${provider.id}.supportLink`)}
-        </Link>
+        <Text variant="paragraph" fontSize={13} color="neutral.c70">
+          {provider.lst
+            ? t("ethereum.stake.lst")
+            : provider.min
+              ? t("ethereum.stake.requiredMinimum", {
+                  min: provider.min,
+                })
+              : t("ethereum.stake.noMinimum")}
+        </Text>
       </Flex>
-      <Flex width={40} justifyContent="center" alignItems="center">
-        <Icon name="ChevronRight" size={25} />
+      <Flex flex={1} flexWrap="wrap" justifyContent="right">
+        <Text variant="paragraph" fontSize={13} color="neutral.c70" textAlign="right">
+          {t(`ethereum.stake.rewardsStrategy.${provider.rewardsStrategy}`)}
+        </Text>
       </Flex>
     </Container>
   );
 };
-
-export default ProviderItem;

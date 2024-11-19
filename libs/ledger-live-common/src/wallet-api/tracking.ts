@@ -198,14 +198,60 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     deviceCloseFail: (manifest: AppManifest) => {
       track("WalletAPI device close fail", getEventData(manifest));
     },
-    bitcoinFamillyAccountXpubRequested: (manifest: AppManifest) => {
-      track("WalletAPI bitcoin familly account xpub requested", getEventData(manifest));
+    bitcoinFamilyAccountAddressRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address requested", getEventData(manifest));
     },
-    bitcoinFamillyAccountXpubFail: (manifest: AppManifest) => {
-      track("WalletAPI bitcoin familly account xpub fail", getEventData(manifest));
+    bitcoinFamilyAccountAddressFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address fail", getEventData(manifest));
     },
-    bitcoinFamillyAccountXpubSuccess: (manifest: AppManifest) => {
-      track("WalletAPI bitcoin familly account xpub success", getEventData(manifest));
+    bitcoinFamilyAccountAddressSuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account address success", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeyRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeyFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountPublicKeySuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account publicKey success", getEventData(manifest));
+    },
+    bitcoinFamilyAccountXpubRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account xpub requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountXpubFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account xpub fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountXpubSuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
+    },
+
+    dappSendTransactionRequested: (manifest: AppManifest) => {
+      track("dApp SendTransaction requested", getEventData(manifest));
+    },
+    dappSendTransactionSuccess: (manifest: AppManifest) => {
+      track("dApp SendTransaction success", getEventData(manifest));
+    },
+    dappSendTransactionFail: (manifest: AppManifest) => {
+      track("dApp SendTransaction fail", getEventData(manifest));
+    },
+    dappPersonalSignRequested: (manifest: AppManifest) => {
+      track("dApp PersonalSign requested", getEventData(manifest));
+    },
+    dappPersonalSignSuccess: (manifest: AppManifest) => {
+      track("dApp PersonalSign success", getEventData(manifest));
+    },
+    dappPersonalSignFail: (manifest: AppManifest) => {
+      track("dApp PersonalSign fail", getEventData(manifest));
+    },
+    dappSignTypedDataRequested: (manifest: AppManifest) => {
+      track("dApp SignTypedData requested", getEventData(manifest));
+    },
+    dappSignTypedDataSuccess: (manifest: AppManifest) => {
+      track("dApp SignTypedData success", getEventData(manifest));
+    },
+    dappSignTypedDataFail: (manifest: AppManifest) => {
+      track("dApp SignTypedData fail", getEventData(manifest));
     },
   } as const;
 }

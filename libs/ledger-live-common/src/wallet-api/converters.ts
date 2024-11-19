@@ -1,8 +1,9 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { v5 as uuidv5 } from "uuid";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import byFamily from "../generated/walletApiAdapter";
 import type { Transaction } from "../generated/types";
-import { isTokenAccount, isSubAccount } from "../account";
+import { isTokenAccount } from "../account";
 import {
   WalletAPIAccount,
   WalletAPICurrency,
@@ -10,7 +11,7 @@ import {
   WalletAPISupportedCurrency,
   GetWalletAPITransactionSignFlowInfos,
 } from "./types";
-import { Families } from "@ledgerhq/wallet-api-core";
+import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
@@ -20,40 +21,40 @@ export const getAccountIdFromWalletAccountId = (walletAccountId: string): string
   uuidToAccountId.get(walletAccountId);
 
 export function accountToWalletAPIAccount(
+  walletState: WalletState,
   account: AccountLike,
   parentAccount?: Account,
 ): WalletAPIAccount {
   const walletApiId = uuidv5(account.id, NAMESPACE);
   uuidToAccountId.set(walletApiId, account.id);
 
-  if (isSubAccount(account)) {
+  if (isTokenAccount(account)) {
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
+    const parentWalletApiId = uuidv5(parentAccount.id, NAMESPACE);
+    uuidToAccountId.set(parentWalletApiId, parentAccount.id);
+
+    const parentAccountName = accountNameWithDefaultSelector(walletState, parentAccount);
+
     return {
       id: walletApiId,
+      parentAccountId: parentWalletApiId,
       balance: account.balance,
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      ...(isTokenAccount(account)
-        ? {
-            name: `${parentAccount.name} (${account.token.ticker})`,
-            currency: account.token.id,
-            spendableBalance: account.spendableBalance,
-          }
-        : {
-            name: account.name,
-            currency: account.currency.id,
-            spendableBalance: parentAccount.spendableBalance,
-          }),
+      name: `${parentAccountName} (${account.token.ticker})`,
+      currency: account.token.id,
+      spendableBalance: account.spendableBalance,
     };
   }
+  const name = accountNameWithDefaultSelector(walletState, account);
 
   return {
     id: walletApiId,
-    name: account.name,
+    name,
     address: account.freshAddress,
     currency: account.currency.id,
     balance: account.balance,
@@ -85,7 +86,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family === "evm" ? "ethereum" : (currency.family as Families),
+    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -95,9 +96,8 @@ export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFl
   WalletAPITransaction,
   Transaction
 > = ({ walletApiTransaction, account }) => {
-  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
-  const isEthereumFamily = walletApiTransaction.family === "ethereum";
-  const liveFamily = isEthereumFamily ? "evm" : walletApiTransaction.family;
+  const liveFamily =
+    FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
 
   const familyModule = byFamily[liveFamily];
 

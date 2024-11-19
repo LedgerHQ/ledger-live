@@ -16,6 +16,7 @@ import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -32,6 +33,7 @@ export type RequestAccountParams = {
   includeTokens?: boolean;
 };
 export const requestAccountLogic = async (
+  walletState: WalletState,
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
@@ -47,7 +49,7 @@ export const requestAccountLogic = async (
 
   const { account, parentAccount } = await selectAccountAndCurrency(safeCurrencies, includeTokens);
 
-  return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
+  return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));
 };
 
 export const broadcastTransactionLogic = (
@@ -99,11 +101,7 @@ export const broadcastTransactionLogic = (
         icon: "info",
         callback: () => {
           tracking.platformBroadcastOperationDetailsClick(manifest);
-          setDrawer<{
-            operationId: string;
-            accountId: string;
-            parentId: string | undefined | null;
-          }>(OperationDetails, {
+          setDrawer(OperationDetails, {
             operationId: optimisticOperation.id,
             accountId: account.id,
             parentId: parentAccount?.id,

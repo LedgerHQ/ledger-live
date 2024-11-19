@@ -12,8 +12,8 @@ export type Props = {
   firmwareUpdateStatus: SoftwareCheckStatus;
   availableFirmwareVersion: string;
   modelName: string;
-  updateSkippable?: boolean;
-  loading?: boolean;
+  updateSkippable: boolean;
+  updateInterrupted: boolean;
   onClickStartChecks: () => void;
   onClickWhyPerformSecurityChecks: () => void;
   onClickResumeGenuineCheck: () => void;
@@ -21,6 +21,7 @@ export type Props = {
   onClickSkipUpdate: () => void;
   onClickContinueToSetup: () => void;
   onClickRetryUpdate: () => void;
+  loading?: boolean;
 };
 
 const ConfettiAnimation = styled(Animation)`
@@ -39,6 +40,7 @@ const SoftwareCheckContent = ({
   availableFirmwareVersion,
   modelName,
   updateSkippable,
+  updateInterrupted,
   loading,
   onClickStartChecks,
   onClickWhyPerformSecurityChecks,
@@ -67,23 +69,23 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : genuineCheckStatus === SoftwareCheckStatus.cancelled
-            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.cancelled", {
-                modelName,
-              })
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.active", {
-                modelName,
-              })
+              ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.cancelled", {
+                  modelName,
+                })
+              : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.active", {
+                  modelName,
+                })
         }
         subtitle={
           genuineCheckStatus === SoftwareCheckStatus.completed
             ? undefined
             : genuineCheckStatus === SoftwareCheckStatus.cancelled
-            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.cancelled", {
-                modelName,
-              })
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.active", {
-                modelName,
-              })
+              ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.cancelled", {
+                  modelName,
+                })
+              : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.active", {
+                  modelName,
+                })
         }
       >
         {genuineCheckStatus === SoftwareCheckStatus.cancelled ? (
@@ -107,13 +109,16 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.updateAvailable", {
-                modelName,
-                firmwareVersion: availableFirmwareVersion,
-              })
-            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.active", {
-                modelName,
-              })
+              ? t(
+                  "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.updateAvailable",
+                  {
+                    modelName,
+                    firmwareVersion: availableFirmwareVersion,
+                  },
+                )
+              : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.active", {
+                  modelName,
+                })
         }
         subtitle={
           firmwareUpdateStatus === SoftwareCheckStatus.completed
@@ -121,36 +126,36 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t(
-                "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
-                {
+              ? t(
+                  "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
+                  {
+                    modelName,
+                  },
+                )
+              : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.active", {
                   modelName,
-                },
-              )
-            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.active", {
-                modelName,
-              })
+                })
         }
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
             <Button variant="main" size="medium" outline={false} onClick={onClickViewUpdate}>
-              {updateSkippable
+              {updateInterrupted
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
                     modelName,
                   })}
             </Button>
-            {updateSkippable ? (
-              <Button
-                variant="shade"
+            {updateInterrupted && updateSkippable ? (
+              <Link
+                ml={7}
+                type="shade"
                 size="medium"
-                outline
                 onClick={onClickSkipUpdate}
                 Icon={loading ? InfiniteLoader : undefined}
               >
                 {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdateCTA")}
-              </Button>
+              </Link>
             ) : null}
           </Flex>
         ) : firmwareUpdateStatus === SoftwareCheckStatus.failed ? (

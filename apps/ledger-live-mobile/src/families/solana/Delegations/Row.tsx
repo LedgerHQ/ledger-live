@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import { sweetch } from "@ledgerhq/live-common/families/solana/utils";
+import { sweetch } from "@ledgerhq/live-common/families/solana/staking";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -134,5 +134,6 @@ const styles = StyleSheet.create({
   },
   rightWrapper: {
     alignItems: "flex-end",
+    marginLeft: 12,
   },
 });

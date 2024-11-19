@@ -1,10 +1,13 @@
-import { renderHook } from "@testing-library/react-hooks";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
+/**
+ * @jest-environment jsdom
+ */
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { renderHook } from "@testing-library/react";
+import { useFeature } from "../../../../featureFlags";
+import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 
 // Mock dependencies.
-jest.mock("@ledgerhq/live-config/featureFlags/index");
+jest.mock("../../../../featureFlags");
 
 const useMockFeature = useFeature as jest.Mock;
 
@@ -15,7 +18,15 @@ describe("useIsSwapLiveApp hook", () => {
     jest.clearAllMocks();
   });
   it("returns the enabled flag when currencyFrom is not defined", () => {
-    useMockFeature.mockReturnValue({ enabled: true });
+    // Set up the mock to return different values based on input
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: true };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
+    });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: undefined }));
 
@@ -23,9 +34,13 @@ describe("useIsSwapLiveApp hook", () => {
   });
 
   it("returns the enabled flag when families and currencies are not defined", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: undefined, currencies: undefined },
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: true, params: { families: undefined, currencies: undefined } };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
     });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
@@ -34,9 +49,13 @@ describe("useIsSwapLiveApp hook", () => {
   });
 
   it("returns true when currencyFrom family is in families array and feature is enabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: ["bitcoin"], currencies: [] },
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: true, params: { families: ["bitcoin"], currencies: [] } };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
     });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
@@ -45,9 +64,13 @@ describe("useIsSwapLiveApp hook", () => {
   });
 
   it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: [], currencies: ["bitcoin"] },
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: true, params: { families: [], currencies: ["bitcoin"] } };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
     });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
@@ -56,9 +79,13 @@ describe("useIsSwapLiveApp hook", () => {
   });
 
   it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: false,
-      params: { families: ["ethereum"], currencies: ["ethereum"] },
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: false, params: { families: ["ethereum"], currencies: ["ethereum"] } };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
     });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
@@ -67,9 +94,13 @@ describe("useIsSwapLiveApp hook", () => {
   });
 
   it("returns enabled flag if both families and currencies are empty arrays", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: [], currencies: [] },
+    useMockFeature.mockImplementation(flagName => {
+      if (flagName === "ptxSwapLiveAppDemoZero") {
+        return { enabled: true, params: { families: [], currencies: [] } };
+      }
+      if (flagName === "ptxSwapLiveAppDemoOne") {
+        return { enabled: false };
+      }
     });
 
     const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));

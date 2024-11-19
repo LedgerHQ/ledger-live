@@ -2,11 +2,12 @@ import React, { useEffect, useCallback, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { isEqual } from "lodash/fp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -26,6 +27,9 @@ import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "~/analytics";
 import { FwUpdateForegroundEvent } from "./types";
 import { FwUpdateBackgroundEvent } from "~/reducers/types";
+import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 type Props = {
   device: Device;
@@ -153,6 +157,7 @@ export default function FirmwareUpdate({
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
   const onCloseSilently = useCallback(() => onTryClose(false), [onTryClose]);
+  useKeepScreenAwake(isOpen);
 
   useEffect(() => {
     // reset the state whenever we re-open the modal
@@ -185,6 +190,36 @@ export default function FirmwareUpdate({
   }, [device.deviceId, latestFirmware, t]);
 
   const firmwareVersion = latestFirmware?.final?.name ?? "";
+
+  const { apps, deviceInfo: lastSeenDeviceInfo } = useSelector(lastSeenDeviceSelector) ?? {};
+  useEffect(() => {
+    if (updatedDeviceInfo && !isEqual(lastSeenDeviceInfo, updatedDeviceInfo)) {
+      dispatch(
+        setLastSeenDeviceInfo({
+          deviceInfo: updatedDeviceInfo,
+          apps: apps ?? [],
+          modelId: device.modelId,
+        }),
+      );
+      dispatch(
+        setLastConnectedDevice({
+          deviceId: device.deviceId,
+          deviceName: device.deviceName,
+          wired: device.wired,
+          modelId: device.modelId,
+        }),
+      );
+    }
+  }, [
+    apps,
+    device.deviceId,
+    device.deviceName,
+    device.modelId,
+    device.wired,
+    dispatch,
+    lastSeenDeviceInfo,
+    updatedDeviceInfo,
+  ]);
 
   return (
     <QueuedDrawer

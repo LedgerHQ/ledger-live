@@ -1,12 +1,11 @@
 /* eslint-disable consistent-return */
 
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { ElrondProvider, ElrondOperation } from "@ledgerhq/live-common/families/elrond/types";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -30,6 +29,7 @@ import {
 import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const getURLFeesInfo = ({ op }: { op: Operation; currencyId: string }): string | undefined => {
   if (op.fee.gt(200000)) {
@@ -61,6 +61,8 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const formattedValidator: ElrondProvider | undefined = validators.find(
     v => v.contract === operation.contract,
   );
+
+  const unit = useAccountUnit(account);
   return (
     <OpDetailsSection>
       {!isTransactionField && (
@@ -80,7 +82,7 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
                     votes: `${denominate({
                       input: operation.extra.amount?.toString() ?? "",
                       decimals: 4,
-                    })} ${getAccountUnit(account).code}`,
+                    })} ${unit.code}`,
                     name: formattedValidator?.identity.name || operation.contract,
                   }}
                 >
@@ -101,7 +103,7 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
 
 const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, ElrondOperation>) => {
   const { type, account, operation } = props;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const { validators } = useElrondPreloadData();

@@ -5,12 +5,7 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
-import {
-  getAccountUnit,
-  getAccountName,
-  getFeesCurrency,
-  getFeesUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
@@ -18,8 +13,8 @@ import {
   isEditableOperation,
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
@@ -47,6 +42,8 @@ import type {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type HelpLinkProps = {
   event: string;
@@ -108,13 +105,14 @@ export default function Content({
   }, []);
 
   const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s, {
+    currencySettingsForAccountSelector(s.settings, {
       account: mainAccount,
     }),
   );
 
   const isToken = currency.type === "TokenCurrency";
-  const unit = getAccountUnit(account);
+  const accountName = useAccountName(account);
+  const unit = useAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
   const amount = getOperationAmountNumber(operation);
@@ -215,8 +213,8 @@ export default function Content({
                 backgroundColor: hasFailed
                   ? colors.alert
                   : isConfirmed
-                  ? colors.green
-                  : colors.grey,
+                    ? colors.green
+                    : colors.grey,
               },
             ]}
           />
@@ -338,7 +336,7 @@ export default function Content({
       {!disableAllLinks ? (
         <Section
           title={t("operationDetails.account")}
-          value={getAccountName(account)}
+          value={accountName}
           onPress={onPress}
           testID="operationDetails-account"
         />

@@ -3,7 +3,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { LEDGER_VALIDATOR } from "@ledgerhq/live-common/families/solana/utils";
+import { LEDGER_VALIDATOR } from "@ledgerhq/live-common/families/solana/staking";
 import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 type Props = {
   transaction: Transaction;

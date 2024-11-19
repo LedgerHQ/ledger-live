@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   stakeActions as solanaStakeActions,
@@ -22,6 +21,8 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
 import { DelegateModalName } from "../modals";
+import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -94,7 +95,7 @@ type Props = {
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake, meta } = stakeWithMeta;
   const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
-
+  const unit = useAccountUnit(account);
   const onSelect = useCallback(
     (action: (typeof stakeActions)[number]) => {
       onManageAction(stakeWithMeta, action.key);
@@ -105,7 +106,6 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
   const validatorName = meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
   const formatAmount = (amount: number) => {
-    const unit = getAccountUnit(account);
     return formatCurrencyUnit(unit, new BigNumber(amount), {
       disableRounding: true,
       alwaysShowSign: false,
@@ -145,11 +145,17 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
             </ToolTip>
           </Box>
         )}
-        <Box ml={1}>{stake.activation.state}</Box>
+        <Box ml={1}>
+          <Trans i18nKey={`solana.delegation.states.${stake.activation.state}`} />
+        </Box>
       </Column>
-      <Column>{formatAmount(stake.delegation?.stake ?? 0)}</Column>
+      <Column>
+        <Discreet>{formatAmount(stake.delegation?.stake ?? 0)}</Discreet>
+      </Column>
       <Column>{stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %</Column>
-      <Column>{formatAmount(stake.withdrawable)}</Column>
+      <Column>
+        <Discreet>{formatAmount(stake.withdrawable)}</Discreet>
+      </Column>
       <Column>
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => {

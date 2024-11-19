@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useValidators,
   useSolanaStakesWithMeta,
@@ -14,9 +13,11 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import ValidatorRow from "../../shared/components/ValidatorRow";
 import { StepProps } from "../types";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export default function StepValidator({ account, transaction, status, error, t: _t }: StepProps) {
-  if (account === null || transaction === null || account?.solanaResources === undefined) {
+  const unit = useMaybeAccountUnit(account);
+  if (account === null || transaction === null || account?.solanaResources === undefined || !unit) {
     throw new Error("account, transaction and solana resouces required");
   }
   const { solanaResources } = account;
@@ -30,7 +31,6 @@ export default function StepValidator({ account, transaction, status, error, t: 
     throw new Error(`stake with account address <${stakeAccAddr}> not found`);
   }
   const { stake } = stakeWithMeta;
-  const unit = getAccountUnit(account);
   const validators = useValidators(account.currency);
   const validator = validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
   if (validator === undefined) {
@@ -52,7 +52,7 @@ export default function StepValidator({ account, transaction, status, error, t: 
         currency={account.currency}
         validator={validator}
         unit={unit}
-      ></ValidatorRow>
+      />
       {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
     </Box>
   );
@@ -79,6 +79,7 @@ export function StepValidatorFooter({
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
+          isLoading={bridgePending}
           primary
           onClick={() => transitionTo("connectDevice")}
         >

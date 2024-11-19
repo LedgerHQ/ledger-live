@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -8,8 +8,15 @@ import AccountList from "./AccountList";
 import FilteredSearchBar from "./FilteredSearchBar";
 import { formatSearchResults } from "~/helpers/formatAccountSearchResults";
 import { accountsSelector } from "~/reducers/accounts";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
-const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
+const SEARCH_KEYS = [
+  "name",
+  "account.currency.units[0].code",
+  "account.token.name",
+  "account.token.ticker",
+];
 
 type Props = {
   list: AccountLike[];
@@ -28,6 +35,14 @@ const AccountSelector = ({
 }: Props) => {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
+  const walletState = useSelector(walletSelector);
+
+  const items = useMemo(() => {
+    return list.map(account => ({
+      account,
+      name: accountNameWithDefaultSelector(walletState, account),
+    }));
+  }, [list, walletState]);
 
   const renderEmptySearch = useCallback(
     () => (
@@ -47,9 +62,11 @@ const AccountSelector = ({
   );
 
   const renderList = useCallback(
-    (items: AccountLike[]) => {
-      const formatedList = formatSearchResults(items, accounts);
-
+    (items: { account: AccountLike }[]) => {
+      const formatedList = formatSearchResults(
+        items.map(a => a.account),
+        accounts,
+      );
       return (
         <AccountList
           list={formatedList}
@@ -65,7 +82,7 @@ const AccountSelector = ({
   return (
     <FilteredSearchBar
       keys={SEARCH_KEYS}
-      list={list}
+      list={items}
       renderList={renderList}
       initialQuery={initialCurrencySelected}
       renderEmptySearch={renderEmptySearch}

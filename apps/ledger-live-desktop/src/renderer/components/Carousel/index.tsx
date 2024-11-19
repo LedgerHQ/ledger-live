@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useTransition, animated } from "react-spring";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
@@ -154,17 +154,23 @@ const Carousel = ({
   const [paused, setPaused] = useState(false);
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
+  const [hasLoggedFirstImpression, setHasLoggedFirstImpression] = useState(false);
 
   useEffect(() => {
-    logSlideImpression(0);
-  }, [logSlideImpression]);
+    if (!hasLoggedFirstImpression) {
+      setHasLoggedFirstImpression(true);
+      logSlideImpression(0);
+    }
+  }, [hasLoggedFirstImpression, logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
-    (index: number) => {
-      setIndex(index);
-      logSlideImpression(index);
+    (newIndex: number) => {
+      if (index !== newIndex) {
+        setIndex(newIndex);
+        logSlideImpression(newIndex);
+      }
     },
-    [logSlideImpression],
+    [index, logSlideImpression],
   );
 
   const onChooseSlide = useCallback(
@@ -179,9 +185,10 @@ const Carousel = ({
     track("contentcard_dismissed", {
       card: slides[index].id,
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
     dismissCard(index);
-    changeVisibleSlide((index + 1) % slides.length);
+    changeVisibleSlide(0);
   }, [index, slides, dismissCard, changeVisibleSlide]);
 
   const onNext = useCallback(() => {
@@ -190,6 +197,7 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "next",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
 
@@ -199,8 +207,11 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "previous",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
+
+  const canceled = useMemo(() => slides.length === 1, [slides.length]);
 
   if (!slides.length) {
     // No slides or dismissed, no problem
@@ -211,19 +222,16 @@ const Carousel = ({
 
   return (
     <CarouselWrapper
-      data-test-id="carousel"
+      data-testid="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {slides.length > 1 ? (
-        <ProgressBarWrapper>
-          <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused} />
-        </ProgressBarWrapper>
-      ) : null}
+      <ProgressBarWrapper>
+        <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused || canceled} />
+      </ProgressBarWrapper>
       <Slides>
         {transitions.map(({ item, props, key }) => {
           if (!slides?.[item]) return null;
-
           const { Component } = slides[item];
           return (
             <animated.div key={key} style={{ ...props }}>
@@ -232,7 +240,7 @@ const Carousel = ({
           );
         })}
       </Slides>
-      <Close data-test-id="carousel-close-button" onClick={onDismiss}>
+      <Close data-testid="carousel-close-button" onClick={onDismiss}>
         <IconCross size={16} />
       </Close>
       {showControls ? (

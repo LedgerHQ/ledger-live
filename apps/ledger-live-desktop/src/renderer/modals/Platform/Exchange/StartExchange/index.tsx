@@ -6,11 +6,15 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import {
+  StartExchangeErrorResult,
+  StartExchangeSuccessResult,
+} from "@ledgerhq/live-common/hw/actions/startExchange";
 
 export type Data = {
-  onCancel?: (error: Error) => void;
+  onCancel?: (error: StartExchangeErrorResult) => void;
   exchangeType: ExchangeType;
-  onResult: (startExchangeResult: string) => void;
+  onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
 };
 export function isStartExchangeData(data: unknown): data is Data {
   if (data === null || typeof data !== "object") {
@@ -31,7 +35,9 @@ const StartExchange = () => {
         <ModalBody
           onClose={() => {
             if (data.onCancel) {
-              data.onCancel(new Error("Interrupted by user"));
+              data.onCancel({
+                error: new Error("Interrupted by user"),
+              });
             }
             onClose?.();
           }}
@@ -44,10 +50,10 @@ const StartExchange = () => {
                 }}
                 onResult={result => {
                   if ("startExchangeResult" in result) {
-                    data.onResult(result.startExchangeResult as string);
+                    data.onResult(result.startExchangeResult);
                   }
                   if ("startExchangeError" in result) {
-                    data.onCancel?.(result.startExchangeError as Error);
+                    data.onCancel?.(result.startExchangeError);
                   }
                   onClose?.();
                 }}

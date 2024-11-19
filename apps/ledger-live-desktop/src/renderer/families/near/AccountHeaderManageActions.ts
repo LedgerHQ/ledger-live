@@ -53,10 +53,11 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

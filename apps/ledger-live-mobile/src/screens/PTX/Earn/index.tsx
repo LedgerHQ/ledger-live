@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -17,6 +17,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { useSelector } from "react-redux";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSettings } from "~/hooks";
+import { Platform } from "react-native";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -58,6 +59,7 @@ function Earn({ route }: Props) {
           locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
+          OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}

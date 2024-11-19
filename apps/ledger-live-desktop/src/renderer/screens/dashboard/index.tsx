@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
@@ -15,7 +15,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
-import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
@@ -25,11 +24,18 @@ import { useSelector } from "react-redux";
 import uniq from "lodash/uniq";
 import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInstalledApps";
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
-import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
+import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
+import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
+import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
+import { Grid } from "@ledgerhq/react-ui";
+import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
+import Carousel from "~/renderer/components/Carousel";
+import useActionCards from "~/renderer/hooks/useActionCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -49,6 +55,7 @@ export default function DashboardPage() {
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
+  const lldActionCarousel = useFeature("lldActionCarousel");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
@@ -56,10 +63,6 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const showCarousel = hasInstalledApps && totalAccounts >= 0;
-  useRefreshAccountsOrderingEffect({
-    onMount: true,
-  });
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -75,15 +78,33 @@ export default function DashboardPage() {
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
+  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
+    useMarketPerformanceFeatureFlag();
+  const isActionCardsCampainRunning = useActionCards().length > 0;
+
+  const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
+    useDisplayOnPortfolioAnalytics();
+
   return (
     <>
       <TopBannerContainer>
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      {showCarousel ? <Carousel /> : null}
-      <RecoverBanner />
-      {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
+      <Box>
+        {isPostOnboardingBannerVisible ? (
+          <PostOnboardingHubBanner />
+        ) : (
+          <RecoverBanner>
+            {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
+              <ActionContentCards variant={ABTestingVariants.variantA} />
+            ) : (
+              <Carousel />
+            )}
+          </RecoverBanner>
+        )}
+      </Box>
       <FeaturedButtons />
       <TrackPage
         category="Portfolio"
@@ -92,16 +113,31 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
-      <Box flow={7} id="portfolio-container" data-test-id="portfolio-container">
+      <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <BalanceSummary
-              counterValue={counterValue}
-              chartColor={colors.wallet}
-              range={selectedTimeRange}
-            />
+            {marketPerformanceEnabled ? (
+              <PortfolioGrid>
+                <BalanceSummary
+                  counterValue={counterValue}
+                  chartColor={colors.wallet}
+                  range={selectedTimeRange}
+                />
+
+                <Box ml={2} minWidth={275}>
+                  <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                </Box>
+              </PortfolioGrid>
+            ) : (
+              <BalanceSummary
+                counterValue={counterValue}
+                chartColor={colors.wallet}
+                range={selectedTimeRange}
+              />
+            )}
+
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
@@ -118,6 +154,16 @@ export default function DashboardPage() {
           <EmptyStateAccounts />
         )}
       </Box>
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
+      )}
     </>
   );
 }
+
+const PortfolioGrid = styled(Grid).attrs(() => ({
+  columnGap: 2,
+  columns: 2,
+}))`
+  grid-template-columns: 2fr 1fr;
+`;

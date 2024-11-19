@@ -5,7 +5,6 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import Accounts from "~/screens/Accounts";
 import AccountSettingsMain from "~/screens/AccountSettings";
-import EditAccountUnits from "~/screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "~/screens/AccountSettings/EditAccountName";
 import AdvancedLogs from "~/screens/AccountSettings/AdvancedLogs";
 import AccountOrder from "~/screens/Accounts/AccountOrder";
@@ -13,6 +12,7 @@ import AddAccount from "~/screens/Accounts/AddAccount";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { AccountSettingsNavigatorParamList } from "./types/AccountSettingsNavigator";
+import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 
 const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
 
@@ -31,13 +31,6 @@ export default function AccountSettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.EditAccountUnits}
-        component={EditAccountUnits}
-        options={{
-          title: t("account.settings.accountUnits.title"),
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.EditAccountName}
         component={EditAccountName}
         options={{
@@ -52,6 +45,7 @@ export default function AccountSettingsNavigator() {
         }}
       />
       <Stack.Screen name={ScreenName.CurrencySettings} component={CurrencySettings} />
+      <Stack.Screen name={ScreenName.EditCurrencyUnits} component={EditCurrencyUnits} />
       <Stack.Screen
         name={ScreenName.Accounts}
         component={Accounts}

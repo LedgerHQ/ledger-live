@@ -11,7 +11,9 @@ import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
-import type { BleState, ProtectState, SettingsState } from "./reducers/types";
+import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -45,6 +47,7 @@ export async function getSettings(): Promise<Partial<SettingsState>> {
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
 }
+
 export async function getWCSession(): Promise<unknown> {
   const wcsession = await store.get("wcsession");
   return wcsession;
@@ -263,6 +266,31 @@ export function getPostOnboardingState(): Promise<PostOnboardingState> {
 
 export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
   await store.save("postOnboarding", obj);
+}
+
+export function getMarketState(): Promise<MarketState> {
+  return store.get("market") as Promise<MarketState>;
+}
+
+export async function saveMarketState(obj: MarketState): Promise<void> {
+  await store.save("market", obj);
+}
+
+export function getTrustchainState(): Promise<TrustchainStore> {
+  return store.get("trustchain") as Promise<TrustchainStore>;
+}
+
+export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
+  await store.save("trustchain", obj);
+}
+
+export async function getWalletExportState(): Promise<ExportedWalletState> {
+  const wallet = (await store.get("wallet")) as ExportedWalletState;
+  return wallet;
+}
+
+export async function saveWalletExportState(obj: ExportedWalletState): Promise<void> {
+  await store.save("wallet", obj);
 }
 
 export async function getProtect(): Promise<ProtectState> {

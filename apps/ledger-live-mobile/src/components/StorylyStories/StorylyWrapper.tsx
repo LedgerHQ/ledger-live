@@ -1,7 +1,7 @@
 import React, { ForwardedRef, forwardRef, useCallback, useMemo, useState } from "react";
 import { Storyly } from "storyly-react-native";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSettings } from "~/hooks";
 
 export type Props = {
@@ -57,6 +57,7 @@ const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Stor
       {...props}
       storylyId={storylyInstanceId}
       storylySegments={segments}
+      storylyLocale={language}
       onLoad={handleLoad}
       storylyTestMode={storyConfig.testingEnabled}
       style={{ flex: 1 }} // necessary for touches to work

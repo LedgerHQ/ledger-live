@@ -9,40 +9,19 @@
  */
 import { DeviceInfo } from "@ledgerhq/types-live";
 import semver from "semver";
-import { getProviderId } from "../manager/provider";
-import ManagerAPI from "../manager/api";
 import { AppAndVersion } from "./connectApp";
 import { mustUpgrade } from "../apps";
+import { getAppsCatalogForDevice } from "../device/use-cases/getAppsCatalogForDevice";
 
 const isUpdateAvailable = async (
   deviceInfo: DeviceInfo,
   appAndVersion: AppAndVersion,
   checkMustUpdate = true,
 ): Promise<boolean> => {
-  const deviceVersionP = ManagerAPI.getDeviceVersion(
-    deviceInfo.targetId,
-    getProviderId(deviceInfo),
-  );
-
-  const firmwareDataP = deviceVersionP.then(deviceVersion =>
-    ManagerAPI.getCurrentFirmware({
-      deviceId: deviceVersion.id,
-      version: deviceInfo.version,
-      provider: getProviderId(deviceInfo),
-    }),
-  );
-
-  const applicationsByDevice = await Promise.all([deviceVersionP, firmwareDataP]).then(
-    ([deviceVersion, firmwareData]) =>
-      ManagerAPI.applicationsByDevice({
-        provider: getProviderId(deviceInfo),
-        current_se_firmware_final_version: firmwareData.id,
-        device_version: deviceVersion.id,
-      }),
-  );
+  const applicationsByDevice = await getAppsCatalogForDevice(deviceInfo);
 
   const appAvailableInProvider = applicationsByDevice.find(
-    ({ name }) => appAndVersion.name === name,
+    ({ versionName: name }) => appAndVersion.name === name,
   );
 
   if (!appAvailableInProvider) return false;
@@ -53,7 +32,7 @@ const isUpdateAvailable = async (
 
   return (
     !!appAvailableInProvider &&
-    !mustUpgrade(appAvailableInProvider.name, appAvailableInProvider.version)
+    !mustUpgrade(appAvailableInProvider.versionName, appAvailableInProvider.version)
   );
 };
 

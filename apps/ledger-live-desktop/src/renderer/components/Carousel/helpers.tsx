@@ -4,8 +4,10 @@ import Slide from "./Slide";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useDispatch, useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
-import { ContentCard } from "~/types/dynamicContent";
+import { PortfolioContentCard } from "~/types/dynamicContent";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { setDismissedContentCards } from "~/renderer/actions/settings";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -55,6 +57,7 @@ export const useDefaultSlides = (): {
 } => {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -68,14 +71,13 @@ export const useDefaultSlides = (): {
         const slide = portfolioCards[index];
         if (slide?.id) {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
-
           if (currentCard) {
-            braze.logContentCardImpressions([currentCard]);
+            isTrackedUser && braze.logContentCardImpressions([currentCard]);
           }
         }
       }
     },
-    [portfolioCards, cachedContentCards],
+    [portfolioCards, cachedContentCards, isTrackedUser],
   );
 
   const dismissCard = useCallback(
@@ -84,18 +86,19 @@ export const useDefaultSlides = (): {
         const slide = portfolioCards[index];
         if (slide?.id) {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
-
           if (currentCard) {
-            braze.logCardDismissal(currentCard);
+            isTrackedUser
+              ? braze.logCardDismissal(currentCard)
+              : currentCard.id &&
+                dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
             setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-            dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
           }
+          dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
         }
       }
     },
-    [portfolioCards, cachedContentCards, dispatch],
+    [portfolioCards, cachedContentCards, isTrackedUser, dispatch],
   );
-
   const logSlideClick = useCallback(
     (cardId: string) => {
       const currentCard = cachedContentCards.find(card => card.id === cardId);
@@ -104,16 +107,16 @@ export const useDefaultSlides = (): {
         // For some reason braze won't log the click event if the card url is empty
         // Setting it as the card id just to have a dummy non empty value
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         currentCard.url = currentCard.id;
-        braze.logContentCardClick(currentCard);
+        isTrackedUser && braze.logContentCardClick(currentCard as braze.ClassicCard);
       }
     },
-    [cachedContentCards],
+    [cachedContentCards, isTrackedUser],
   );
   const slides = useMemo(
     () =>
-      map<ContentCard, SlideRes>(
+      map<PortfolioContentCard, SlideRes>(
         portfolioCards,
         (slide): SlideRes => ({
           id: slide.id,

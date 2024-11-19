@@ -1,8 +1,11 @@
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+/**
+ * @jest-environment jsdom
+ */
+import { useFeatureFlags } from "../../featureFlags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
@@ -10,7 +13,7 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("react-redux", () => ({
   useSelector: val => val(),
 }));
-jest.mock("@ledgerhq/live-config/featureFlags/index");
+jest.mock("../../featureFlags");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 

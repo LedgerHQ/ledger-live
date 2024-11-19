@@ -9,15 +9,23 @@ import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
-import CustomLockScreen from "./CustomLockScreen";
+import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
+import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import WalletSyncTester from "./WalletSync/WalletSyncTester";
+import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
+import MockAppUpdate from "./MockAppUpdate";
+import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
+import BrazeTools from "./BrazeTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -44,6 +52,13 @@ const Default = () => {
         <AllowExperimentalAppsToggle />
       </Row>
 
+      <Row
+        title={t("settings.developer.mockAppUpdate")}
+        desc={t("settings.developer.mockAppUpdateDesc")}
+      >
+        <MockAppUpdate />
+      </Row>
+
       <Row title={t("settings.developer.catalogUrl")} desc={t("settings.developer.catalogUrlDesc")}>
         <CatalogProviderInput />
       </Row>
@@ -53,6 +68,12 @@ const Default = () => {
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
       >
         <EnablePlatformDevToolsToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.analyticsConsole.title")}
+        desc={t("settings.developer.analyticsConsole.desc")}
+      >
+        <EnableAnalyticsConsole />
       </Row>
       <RunLocalAppButton />
       <CustomLockScreenToggle />
@@ -77,7 +98,26 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <StorylyTester />
+      <FeatureToggle featureId="storyly">
+        <StorylyTester />
+      </FeatureToggle>
+      <ExchangeDeveloperMode />
+
+      <FeatureToggle featureId="lldWalletSync">
+        <WalletSyncTester />
+      </FeatureToggle>
+
+      <SimpleHashTools />
+      <BrazeTools />
+
+      {__DEV__ && (
+        <Row
+          title={t("settings.developer.debugReactQuery")}
+          desc={t("settings.developer.debugReactQueryDesc")}
+        >
+          <AllowDebugReactQueryToggle />
+        </Row>
+      )}
     </Body>
   );
 };
@@ -85,7 +125,10 @@ const SectionDeveloper = () => (
   <>
     <TrackPage category="Settings" name="Developer" />
     <Switch>
-      <Route path="/settings/developer/custom-locksscreen-assets" component={CustomLockScreen} />
+      <Route
+        path="/settings/developer/custom-locksscreen-assets"
+        component={CustomLockScreenAssets}
+      />
       <Route component={Default} />
     </Switch>
   </>

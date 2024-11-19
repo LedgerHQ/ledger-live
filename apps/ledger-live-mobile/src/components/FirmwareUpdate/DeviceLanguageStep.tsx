@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceInfo, idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 
 import { FwUpdateForegroundEvent } from "./types";
 

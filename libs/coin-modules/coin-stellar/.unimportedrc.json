@@ -1,0 +1,19 @@
+{
+  "entry": [
+    "src/api/index.ts",
+    "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/signer/index.ts",
+    "src/test/index.ts",
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnused": [
+    "rxjs"
+  ]
+}

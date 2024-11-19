@@ -1,15 +1,15 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
-import { ipcMain } from "electron";
+import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
+import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
  * Sets env variables for the main process.
@@ -37,36 +37,37 @@ ipcMain.handle(
   async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
     if (!path.canceled && path.filePath) {
       const inMemoryLogger = InMemoryLogger.getLogger();
-      const internalLogs = inMemoryLogger.getLogs();
+      const internalLogsChronological = inMemoryLogger.getLogs().reverse(); // The logs are in reverse order.
 
       // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
       // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogs: unknown[] = [];
+      let rendererLogsChronological: Array<{ timestamp: string }> = [];
       try {
-        rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
+        rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
       } catch (error) {
         console.error("Error while parsing logs from the renderer process", error);
         return;
       }
 
-      console.log(
-        `Saving ${rendererLogs.length} logs from the renderer process and ${internalLogs.length} logs from the internal process`,
+      fs.writeFile(
+        path.filePath,
+        mergeAllLogsJSON(
+          rendererLogsChronological,
+          internalLogsChronological,
+          getEnv("EXPORT_MAX_LOGS"),
+        ),
       );
-
-      // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
-      // Simply pushes all the internal logs after the renderer logs.
-      // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
-      rendererLogs.push(
-        { type: "logs-separator", message: "Logs coming from the internal process" },
-        ...internalLogs,
-      );
-
-      fs.writeFile(path.filePath, JSON.stringify(rendererLogs, null, 2));
     } else {
       console.warn("No path given to save logs");
     }
   },
 );
+
+ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+
+ipcMain.handle("getPathUserData", () => app.getPath("userData"));
+
+ipcMain.handle("getPathHome", () => app.getPath("home"));
 
 ipcMain.handle(
   "export-operations",
@@ -92,7 +93,7 @@ ipcMain.handle(
 
 const lssFileName = "lss.json";
 ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     if (filePath && data) {
@@ -105,7 +106,7 @@ ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boole
 });
 
 ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     await fs.unlink(filePath);
@@ -117,7 +118,7 @@ ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
 
 ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
   try {
-    const userDataDirectory = resolveUserDataDirectory();
+    const userDataDirectory = app.getPath("userData");
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
       const contents = await fs.readFile(filePath, "utf8");
@@ -130,7 +131,26 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
   return undefined;
 });
 
+ipcMain.handle("activate-keep-screen-awake", () => {
+  return powerSaveBlocker.start("prevent-display-sleep");
+});
+
+ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
+  if (id !== undefined && !Number.isNaN(id)) {
+    powerSaveBlocker.stop(id as number);
+  }
+});
+
 process.setMaxListeners(0);
+
+// In production mode, we do not want Electron's default GUI to show the error. Instead we will output to the console.
+if (!__DEV__) {
+  process.on("uncaughtException", function (error) {
+    const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
+    const message = "Uncaught Exception:\n" + stack;
+    console.error(message);
+  });
+}
 
 // eslint-disable-next-line no-console
 console.log(`Ledger Live ${__APP_VERSION__}`);

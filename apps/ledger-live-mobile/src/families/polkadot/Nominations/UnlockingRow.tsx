@@ -3,13 +3,14 @@ import isBefore from "date-fns/isBefore";
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
 import DateFromNow from "~/components/DateFromNow";
 import { WithdrawAction } from "./Actions";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   amount: BigNumber;
@@ -28,7 +29,7 @@ export default function UnlockingRow({
   isLast = false,
 }: Props) {
   const { colors } = useTheme();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const isUnlocked = useMemo(
     () => completionDate && isBefore(completionDate, new Date(Date.now())),

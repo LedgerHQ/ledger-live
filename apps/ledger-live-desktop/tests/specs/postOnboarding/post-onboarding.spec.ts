@@ -1,15 +1,14 @@
 /* eslint-disable jest/expect-expect */
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SettingsPage } from "../../models/SettingsPage";
-import { Layout } from "../../models/Layout";
-import { PostOnboarding } from "../../models/PostOnboarding";
+import { SettingsPage } from "../../page/settings.page";
+import { Layout } from "../../component/layout.component";
+import { PostOnboarding } from "../../page/post.onboarding.page";
 import padStart from "lodash/padStart";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner
   env: { DEBUG_POSTONBOARDINGHUB: "1" },
-  featureFlags: { customImage: { enabled: true } },
 });
 
 let screenshotIndex = 0;
@@ -57,7 +56,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas")],
+        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
       },
     );
   });
@@ -94,7 +93,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-done-no-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas")],
+        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
       },
     );
   });

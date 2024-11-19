@@ -8,14 +8,14 @@ module.exports = {
   ...common,
   entryPoints: ["./src/index.ts"],
   entryNames: "main.bundle",
-  target: ["node18"],
+  target: ["node20"],
   platform: "node",
   format: "cjs",
   // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)
   // Picking the the main field first is safer.
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
-  external: [...electronMainExternals, "@ledgerhq/react-devtools/package.json"],
+  external: [...electronMainExternals],
   plugins: [
     ...common.plugins,
     CopyPlugin({

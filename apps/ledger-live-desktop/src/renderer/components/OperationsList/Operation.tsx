@@ -1,17 +1,11 @@
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import { createStructuredSelector } from "reselect";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
@@ -19,12 +13,10 @@ import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-const mapStateToProps = createStructuredSelector({
-  confirmationsNb: (state, { account, parentAccount }) =>
-    confirmationsNbForCurrencySelector(state, {
-      currency: getMainAccount(account, parentAccount).currency,
-    }),
-});
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { State } from "~/renderer/reducers";
+import { useAccountName } from "../../reducers/wallet";
+
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -49,69 +41,59 @@ type OwnProps = {
   text?: string;
   editable?: boolean;
 };
-type Props = {
-  confirmationsNb: number;
-} & OwnProps;
-class OperationComponent extends PureComponent<Props> {
-  static defaultProps = {
-    withAccount: false,
-    withAddress: true,
-  };
+type Props = OwnProps;
 
-  onOperationClick = () => {
-    const { account, parentAccount, onOperationClick, operation } = this.props;
+function OperationComponent({
+  operation,
+  account,
+  parentAccount,
+  onOperationClick,
+  t,
+  text,
+  editable,
+  withAddress = true,
+  withAccount = false,
+}: Props) {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const confirmationsNb = useSelector((state: State) =>
+    confirmationsNbForCurrencySelector(state, mainAccount),
+  );
+  const unit = useAccountUnit(account);
+  const accountName = useAccountName(account);
+
+  const onClickOnOperation = () => {
     onOperationClick(operation, account, parentAccount);
   };
 
-  render() {
-    const {
-      account,
-      parentAccount,
-      t,
-      operation,
-      withAccount,
-      text,
-      withAddress,
-      confirmationsNb,
-      editable,
-    } = this.props;
-    const isOptimistic = operation.blockHeight === null;
-    const currency = getAccountCurrency(account);
-    const unit = getAccountUnit(account);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-    return (
-      <OperationRow
-        className="operation-row"
-        isOptimistic={isOptimistic}
-        onClick={this.onOperationClick}
-      >
-        <ConfirmationCell
-          operation={operation}
-          parentAccount={parentAccount}
-          account={account}
-          t={t}
-          isConfirmed={isConfirmed}
-        />
-        <DateCell
-          family={mainAccount.currency.family}
-          text={text}
-          operation={operation}
-          editable={editable}
-          t={t}
-        />
-        {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
-        {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
-        <AmountCell
-          operation={operation}
-          currency={currency}
-          unit={unit}
-          isConfirmed={isConfirmed}
-        />
-      </OperationRow>
-    );
-  }
+  const isOptimistic = operation.blockHeight === null;
+  const currency = getAccountCurrency(account);
+
+  const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
+  return (
+    <OperationRow
+      className="operation-row"
+      isOptimistic={isOptimistic}
+      onClick={onClickOnOperation}
+      data-testid={`operation-row-${operation.id}`}
+    >
+      <ConfirmationCell
+        operation={operation}
+        parentAccount={parentAccount}
+        account={account}
+        t={t}
+        isConfirmed={isConfirmed}
+      />
+      <DateCell
+        family={mainAccount.currency.family}
+        text={text}
+        operation={operation}
+        editable={editable}
+        t={t}
+      />
+      {withAccount && <AccountCell accountName={accountName} currency={currency} />}
+      {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
+      <AmountCell operation={operation} currency={currency} unit={unit} isConfirmed={isConfirmed} />
+    </OperationRow>
+  );
 }
-const ConnectedOperationComponent: React.ComponentType<OwnProps> =
-  connect(mapStateToProps)(OperationComponent);
-export default ConnectedOperationComponent;
+export default React.memo(OperationComponent);

@@ -4,9 +4,8 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
-
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";

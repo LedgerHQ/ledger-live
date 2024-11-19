@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { supportedDeviceModelIds as customLockScreenSupportedDeviceModelIds } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import ExternalLinkIcon from "~/icons/ExternalLink";
@@ -72,7 +73,6 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const customImage = useFeature("customImage");
   const [bottomHideCollectionOpen, setBottomHideCollectionOpen] = useState(false);
   const areRaribleOpenseaDisabled =
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
@@ -80,8 +80,13 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const customImageUri = extractImageUrlFromNftMetadata(nftMetadata);
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
-  const showCustomImageButton =
-    knownDeviceModelIds.stax && customImage?.enabled && !!customImageUri;
+  const customImageDeviceModelIds = customLockScreenSupportedDeviceModelIds.filter(
+    deviceModelId => knownDeviceModelIds[deviceModelId],
+  );
+  // if user previously connected e.g. a Stax and a Europa we don't pre-select a device model
+  const customImageDeviceModelId =
+    customImageDeviceModelIds.length === 1 ? customImageDeviceModelIds[0] : null;
+  const showCustomImageButton = Boolean(customImageUri) && customImageDeviceModelIds.length > 0;
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
@@ -124,16 +129,20 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       button: "Set as device lockscreen picture",
       drawer: "NFT settings",
     });
+    const customImageParams = {
+      imageUrl: customImageUri,
+      isStaxEnabled: !!nftMetadata?.staxImage,
+      device: null,
+    };
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImagePreviewPreEdit,
       params: {
-        imageUrl: customImageUri,
-        isStaxEnabled: !!nftMetadata?.staxImage,
-        device: null,
+        ...customImageParams,
+        deviceModelId: customImageDeviceModelId,
       },
     });
     onClose && onClose();
-  }, [navigation, onClose, customImageUri, nftMetadata?.staxImage]);
+  }, [customImageUri, navigation, customImageDeviceModelId, nftMetadata?.staxImage, onClose]);
 
   const content = useMemo(() => {
     const topSection = [

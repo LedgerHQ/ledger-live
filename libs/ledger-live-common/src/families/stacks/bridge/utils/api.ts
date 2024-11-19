@@ -88,15 +88,20 @@ export const fetchEstimatedFees = async (
 };
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
-  const data = await fetch<NetworkStatusResponse>("/extended/v1/status");
+  const data = await fetch<NetworkStatusResponse>("/extended");
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
 export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsResponse> => {
-  const response = await fetch<TransactionsResponse>(
-    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}&limit=50`,
-  );
-  return response; // TODO Validate if the response fits this interface
+  const limit = 50;
+  try {
+    const response = await fetch<TransactionsResponse>(
+      `/extended/v2/addresses/${addr}/transactions?offset=${offset}&limit=${limit}`,
+    );
+    return response; // TODO Validate if the response fits this interface
+  } catch (e) {
+    return { limit, offset, total: 0, results: [] };
+  }
 };
 
 export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]> => {
@@ -106,7 +111,22 @@ export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]>
 
   do {
     const { results, total, limit } = await fetchTxs(addr, offset);
-    txs = txs.concat(results.filter(t => t.tx?.tx_type == "token_transfer"));
+    txs = txs.concat(
+      results.filter(t => {
+        if (t.tx?.tx_type === "token_transfer") {
+          return true;
+        }
+
+        if (
+          t.tx?.tx_type === "contract_call" &&
+          t.tx?.contract_call?.function_name === "send-many"
+        ) {
+          return true;
+        }
+
+        return false;
+      }),
+    );
 
     offset += limit;
     qty = total;

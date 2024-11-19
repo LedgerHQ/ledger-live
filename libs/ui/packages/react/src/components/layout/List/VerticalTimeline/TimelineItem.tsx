@@ -71,8 +71,8 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
               item.status !== "inactive" && isLastItem
                 ? "success.c70"
                 : item.status === "active"
-                ? "primary.c80"
-                : "neutral.c70"
+                  ? "primary.c80"
+                  : "neutral.c70"
             }
           >
             {item.title}

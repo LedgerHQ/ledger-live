@@ -1,8 +1,7 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/staking";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -18,32 +17,33 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CancelButton from "~/components/CancelButton";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import ExternalLink from "~/components/ExternalLink";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import KeyboardView from "~/components/KeyboardView";
 import RetryButton from "~/components/RetryButton";
 import Touchable from "~/components/Touchable";
-import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
 import InfoIcon from "~/icons/Info";
-import InfoModal, { ModalInfo } from "~/modals/Info";
 import { accountScreenSelector } from "~/reducers/accounts";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
-
-type ModalInfoName = "maxSpendable";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
+import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
+import { urls } from "~/utils/urls";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 
 export default function DelegationSelectAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const { t } = useTranslation();
 
   invariant(account?.type === "Account", "must be account");
 
@@ -82,7 +82,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
     };
   }, [transaction, setMaxSpendable, bridge, account]);
 
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } = useModalInfo();
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -122,8 +122,9 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
+  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
 
   return (
     <>
@@ -157,7 +158,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                   <Touchable
                     style={styles.availableLeft}
                     event={"MaxSpendableInfo"}
-                    onPress={() => openInfoModal("maxSpendable")}
+                    onPress={() => setInfoModalOpen(true)}
                   >
                     <View>
                       <Text color="grey">
@@ -212,11 +213,29 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!modalInfoName}
-        onClose={closeInfoModal}
-        data={modalInfoName ? modalInfos[modalInfoName] : []}
-      />
+      <QueuedDrawer
+        isRequestingToBeOpened={!!infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+      >
+        <Flex>
+          <GenericInformationBody
+            Icon={InformationFill}
+            iconColor={"primary.c80"}
+            title={t("send.info.maxSpendable.title")}
+            description={t("send.info.maxSpendable.description")}
+          />
+          <Flex px="6">
+            <Link
+              type="main"
+              size="large"
+              Icon={ExternalLinkMedium}
+              onPress={onMaxSpendableLearnMore}
+            >
+              {t("common.learnMore")}
+            </Link>
+          </Flex>
+        </Flex>
+      </QueuedDrawer>
 
       <GenericErrorBottomModal
         error={bridgeErr}
@@ -233,39 +252,6 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
       />
     </>
   );
-}
-
-function useModalInfo(): {
-  modalInfos: Record<ModalInfoName, ModalInfo[]>;
-  modalInfoName: ModalInfoName | null;
-  openInfoModal: (_: ModalInfoName) => void;
-  closeInfoModal: () => void;
-} {
-  const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(null);
-
-  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
-
-  return {
-    openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),
-    closeInfoModal: () => setModalInfoName(null),
-    modalInfoName,
-    modalInfos: {
-      maxSpendable: [
-        {
-          title: t("send.info.maxSpendable.title"),
-          description: t("send.info.maxSpendable.description"),
-          footer: (
-            <ExternalLink
-              text={t("common.learnMore")}
-              onPress={onMaxSpendableLearnMore}
-              event="maxSpendableLearnMore"
-            />
-          ),
-        },
-      ],
-    },
-  };
 }
 
 const styles = StyleSheet.create({

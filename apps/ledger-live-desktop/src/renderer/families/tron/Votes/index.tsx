@@ -9,7 +9,6 @@ import {
   formatVotes,
   getNextRewardDate,
 } from "@ledgerhq/live-common/families/tron/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
@@ -23,7 +22,6 @@ import Header from "./Header";
 import Row from "./Row";
 import Footer from "./Footer";
 import { BigNumber } from "bignumber.js";
-import moment from "moment";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -32,6 +30,11 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import { useHistory } from "react-router";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { track } from "~/renderer/analytics/segment";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -41,18 +44,22 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: TronAccount }) => {
+  const history = useHistory();
+
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
   const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
-  const duration = useMemo(
-    () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),
-    [lastVoteDate],
-  );
-  const unit = getAccountUnit(account);
+  const duration = useMemo(() => {
+    if (!lastVoteDate) return 0;
+    const diff = new Date().getTime() - lastVoteDate.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }, [lastVoteDate]);
+  const unit = useAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
   const { votes, tronPower, unwithdrawnReward } = tronResources;
+
   const discreet = useDiscreetMode();
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
     disableRounding: true,
@@ -66,10 +73,55 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const hasVotes = formattedVotes.length > 0;
   const hasRewards = unwithdrawnReward.gt(0);
   const nextRewardDate = getNextRewardDate(account);
-  const formattedNextRewardDate = useMemo(
-    () => nextRewardDate && moment(nextRewardDate).fromNow(),
+  const nextRewardD = useMemo(
+    () => (nextRewardDate ? new Date(nextRewardDate) : undefined),
     [nextRewardDate],
   );
+  const formattedNextRewardDate = useDateFromNow(nextRewardD);
+
+  const voteOnClick = () => {
+    const value = "/platform/stakekit";
+
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "manage votes",
+      provider: "Stakekit",
+      currency: "TRX",
+    });
+    history.push({
+      pathname: value,
+      state: {
+        pendingaction: "REVOTE",
+        yieldId: "tron-trx-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  };
+
+  const claimOnClick = () => {
+    const value = "/platform/stakekit";
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "claim rewards",
+      provider: "Stakekit",
+      currency: "TRX",
+    });
+    history.push({
+      pathname: value,
+      state: {
+        pendingaction: "CLAIM_REWARDS",
+        yieldId: "tron-trx-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  };
+
   const canClaimRewards = hasRewards && !formattedNextRewardDate;
   return (
     <TableContainer mb={6}>
@@ -80,7 +132,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
         }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" disabled={true} mr={2}>
+          <Button small color="palette.primary.main" onClick={() => voteOnClick()} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -110,7 +162,12 @@ const Delegation = ({ account }: { account: TronAccount }) => {
               ) : null
             }
           >
-            <Button disabled={true} color="palette.primary.main" small>
+            <Button
+              onClick={() => claimOnClick()}
+              color="palette.primary.main"
+              disabled={!hasRewards || !canClaimRewards}
+              small
+            >
               <Box horizontal flow={1} alignItems="center">
                 <ClaimRewards size={12} />
                 <Box>

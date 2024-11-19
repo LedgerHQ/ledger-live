@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,10 +14,12 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import {
+import type {
   CosmosLikeTransaction,
   CosmosMappedDelegation,
-} from "@ledgerhq/live-common/families/cosmos/types";
+} from "@ledgerhq/coin-cosmos/types/index";
+
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export default function StepClaimRewards({
   account,
@@ -32,7 +33,7 @@ export default function StepClaimRewards({
   const locale = useSelector(localeSelector);
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const updateClaimRewards = useCallback(
     (newTransaction: Partial<CosmosLikeTransaction>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));

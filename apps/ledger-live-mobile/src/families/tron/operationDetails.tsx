@@ -19,8 +19,10 @@ import DelegationInfo from "~/components/DelegationInfo";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { urls } from "~/utils/urls";
 
-const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+const infoURL = urls.feesTron;
 
 function getURLWhatIsThis(
   op: Operation,
@@ -28,7 +30,7 @@ function getURLWhatIsThis(
   currencyId: string,
 ): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return helpURL;
+    return infoURL;
   }
 
   return undefined;
@@ -47,7 +49,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
   const {
     extra: { votes, frozenAmount, unfreezeAmount, unDelegatedAmount, receiverAddress },
   } = operation;
-
+  const unit = useAccountUnit(account);
   switch (type) {
     case "VOTE": {
       if (!votes || !votes.length) return null;
@@ -55,7 +57,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale: locale,
@@ -64,7 +66,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale: locale,
@@ -73,7 +75,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "UNDELEGATE_RESOURCE": {
-      const value = formatCurrencyUnit(account.unit, unDelegatedAmount || new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, unDelegatedAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
@@ -87,7 +89,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "LEGACY_UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import invariant from "invariant";
 import type { CosmosAccount, Transaction } from "../types";
-import transactionTransformer from "../transaction";
+import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
@@ -37,18 +37,11 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
-            derivationPath: "44'/118'/0'/0/0",
-          },
-        ],
         name: "Osmosis 1 - Nano X",
         balance: "500250",
         spendableBalance: "500250",
         blockHeight: 5417468,
         currencyId: "osmo",
-        unitMagnitude: 6,
         operationsCount: 2,
         operations: [],
         pendingOperations: [],
@@ -85,7 +78,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send max",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
             useAllAmount: true,
@@ -113,7 +106,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send with memo",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
             useAllAmount: true,
@@ -361,19 +354,16 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:osmo:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
         seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         name: "Osmosis 2 - Nano X Static Account",
-        starred: true,
         derivationMode: "",
         index: 1,
         freshAddress: "osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89",
         freshAddressPath: "44'/118'/1'/0/0",
-        freshAddresses: [],
         blockHeight: 5417472,
         creationDate: "2022-08-02T16:09:08.906Z",
         operationsCount: 1,
         operations: [],
         pendingOperations: [],
         currencyId: "osmo",
-        unitMagnitude: 6,
         lastSyncDate: "2022-08-02T16:11:47.343Z",
         balance: "200250",
         spendableBalance: "200250",

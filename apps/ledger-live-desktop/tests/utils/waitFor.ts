@@ -13,14 +13,18 @@ export async function waitFor(
     const interval = setInterval(async () => {
       const condition = await predicate();
       if (condition) {
-        clearInterval(interval as any as number);
+        clearInterval(interval as unknown as number);
         resolve(true);
       }
     }, intervalMs);
 
     setTimeout(() => {
-      clearInterval(interval as any as number);
+      clearInterval(interval as unknown as number);
       reject(new Error("waitFor timeout"));
     }, timeout);
   });
+}
+
+export async function waitForTimeOut(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

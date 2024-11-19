@@ -1,0 +1,37 @@
+{
+  "entry": [
+    "src/api/index.ts",
+    "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/bridge/formatters.ts",
+    "src/signer/index.ts",
+    "src/test/index.ts",
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/test/coin-tester/chopsticks-sidecar.ts",
+    "src/test/coin-tester/indexer.ts",
+    "src/test/coin-tester/scenarios/basic.ts",
+    "src/test/coin-tester/scenarios/utils.ts",
+    "src/test/fixtures.ts",
+    "src/network/node/apiPromise.ts",
+    "src/network/node/constants.ts",
+    "src/network/node/identities.ts",
+    "src/network/node/index.ts",
+    "src/network/node/nominations.ts",
+    "src/network/node/stakingInfo.ts",
+    "src/network/node/validators.ts"
+  ],
+  "ignoreUnused": [
+    "@polkadot/api",
+    "@polkadot/api-augment",
+    "@polkadot/api-derive"
+  ]
+}

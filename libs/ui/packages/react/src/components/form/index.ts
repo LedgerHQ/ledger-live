@@ -11,3 +11,4 @@ export { default as SearchInput } from "./SearchInput";
 export { default as SelectInput } from "./SelectInput";
 export { default as SplitInput } from "./SplitInput";
 export { default as Switch } from "./Switch";
+export { default as TabSelector } from "./TabSelector";

@@ -11,6 +11,7 @@ import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
 import BigNumber from "bignumber.js";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const FeeField = ({
   onChange,
@@ -24,6 +25,8 @@ const FeeField = ({
   status: TransactionStatus;
 }) => {
   invariant(transaction.family === "stellar", "FeeField: stellar family expected");
+
+  const unit = useAccountUnit(account);
   const bridge = getAccountBridge(account);
   const onFeeValueChange = useCallback(
     (fees: BigNumber) => {
@@ -64,7 +67,7 @@ const FeeField = ({
           containerProps={{
             grow: true,
           }}
-          defaultUnit={account.unit}
+          defaultUnit={unit}
           value={transaction.fees}
           onChange={onFeeValueChange}
           renderRight={<InputRight>XLM</InputRight>}

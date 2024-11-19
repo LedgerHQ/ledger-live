@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
@@ -18,6 +17,7 @@ import {
 import { DelegationType } from "./types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 interface BalanceType {
   tooltip: string;
@@ -34,7 +34,7 @@ const Summary = (props: { account: ElrondAccount }) => {
   );
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
     setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);

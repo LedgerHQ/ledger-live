@@ -376,6 +376,40 @@ Usage: ledger-live i18n       # Test e2e functionality for device localization s
 Usage: ledger-live listApps   # list all installed apps on the device
  -d, --device <String>        : provide a specific HID path of a device
 
+Usage: ledger-live ledgerKeyRingProtocol # Ledger Key Ring Protocol command
+ -d, --device <String>        : provide a specific HID path of a device
+     --initMemberCredentials  : Init member credentials for Ledger Key Ring Protocol
+     --getKeyRingTree         : Get or create a Ledger Key Ring Protocol Tree
+     --encryptUserData        : Encrypt user data with the current private key secured by the Ledger Key Ring Protocol
+     --decryptUserData        : Encrypt user data with the current private key secured by the Ledger Key Ring Protocol
+     --getMembers             : Get members of the Ledger Key Ring Protocol Tree
+     --restoreKeyRingTree     : Restore a Ledger Key Ring Protocol Tree
+     --destroyKeyRingTree     : Destroy a Ledger Key Ring Protocol Tree
+     --pubKey <String>        : pubkey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --privateKey <String>    : privatekey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --rootId <String>        : The immutable id of the Tree root retrieved from getKeyRingTree result
+     --walletSyncEncryptionKey <String>: The secret used to encrypt/decrypt the wallet sync data retrieved from getKeyRingTree result
+     --applicationPath <String>: privatekey for Ledger Key Ring Protocol Tree from initMemberCredentials result
+     --message <String>       : message to be encrypted/decrypted
+     --applicationId <Number> : application identifier
+     --name <String>          : name of the instance
+     --apiBaseUrl <String>    : api base url for Ledger Key Ring Protocol
+
+Usage: ledger-live ledgerSync # Ledger Sync command
+     --push                   : Init member credentials for Ledger Key Ring Protocol
+     --pull                   : Get or create a Ledger Key Ring Protocol Tree
+     --pubKey <String>        : pubkey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --privateKey <String>    : privatekey for Ledger Key Ring Protocol Tree retrieved from initMemberCredentials result
+     --rootId <String>        : The immutable id of the Tree root retrieved from getKeyRingTree result
+     --walletSyncEncryptionKey <String>: The secret used to encrypt/decrypt the wallet sync data retrieved from getKeyRingTree result
+     --applicationPath <String>: privatekey for Ledger Key Ring Protocol Tree from initMemberCredentials result
+     --data <String>          : data to be pushed to Ledger Sync
+     --version <Number>       : version of the data
+     --applicationId <Number> : application identifier
+     --name <String>          : name of the instance
+     --apiBaseUrl <String>    : api base url for Ledger Key Ring Protocol
+     --cloudSyncApiBaseUrl <String>: api base url for Cloud Sync
+
 Usage: ledger-live liveData   # utility for Ledger Live app.json file
  -d, --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
@@ -430,7 +464,6 @@ Usage: ledger-live receive    # Receive crypto-assets (verify on device)
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
      --qr                     : also display a QR Code
-     --freshAddressIndex <Number>: Change fresh address index
 
 Usage: ledger-live repl       # Low level exchange with the device. Send APDUs from stdin.
  -d, --device <String>        : provide a specific HID path of a device
@@ -523,14 +556,14 @@ Usage: ledger-live staxFetchAndRestoreDemo # Conditionally backup, delete, and r
  -d, --device <String>        : provide a specific HID path of a device
  -i, --fileInput <String>     : Text file containing the hex data of the image to load on Stax
 
-Usage: ledger-live staxFetchImage # Test functionality lock screen customization on Stax for fetching an image
+Usage: ledger-live customLockScreenFetch # Test functionality lock screen customization on Stax for fetching an image
  -d, --device <String>        : provide a specific HID path of a device
  -o, --fileOutput <String>    : Output file path in case you want to save Hex string image
 
-Usage: ledger-live staxFetchImageHash # Fetch the hash of the custom image
+Usage: ledger-live customLockScreenFetchHash # Fetch the hash of the custom image
  -d, --device <String>        : provide a specific HID path of a device
 
-Usage: ledger-live staxLoadImage # Test functionality lock screen customization on Stax for loading an image
+Usage: ledger-live customLockScreenLoad # Test functionality lock screen customization on Stax for loading an image
  -d, --device <String>        : provide a specific HID path of a device
  -i, --fileInput <String>     : Text file containing the hex data of the image to load on Stax
 

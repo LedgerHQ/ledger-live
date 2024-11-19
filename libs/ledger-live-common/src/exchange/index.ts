@@ -1,9 +1,9 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
-import { PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
+import { findExchangeCurrencyData } from "./providers/swap";
+import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -27,38 +27,9 @@ const exchangeSupportAppVersions = {
   zencash: "1.5.0",
 };
 
-const findExchangeCurrencyConfig = (
-  id: string,
-):
-  | {
-      config: string;
-
-      signature: string;
-    }
-  | null
-  | undefined => {
-  return getEnv("MOCK_EXCHANGE_TEST_CONFIG")
-    ? findTestExchangeCurrencyConfig(id)
-    : findProdExchangeCurrencyConfig(id);
-};
-
 type ExchangeCurrencyNameAndSignature = {
   config: Buffer;
   signature: Buffer;
-};
-export type ExchangeProviderNameAndSignature = {
-  name: string;
-  publicKey: {
-    curve: "secp256k1" | "secp256r1";
-    data: Buffer;
-  };
-  version?: number;
-  signature: Buffer;
-};
-
-export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
-  needsKYC: boolean;
-  needsBearerToken: boolean;
 };
 
 export const isExchangeSupportedByApp = (appName: string, appVersion: string): boolean => {
@@ -66,13 +37,25 @@ export const isExchangeSupportedByApp = (appName: string, appVersion: string): b
   return !!(valid(minVersion) && valid(appVersion) && gte(appVersion, minVersion));
 };
 
-export const getCurrencyExchangeConfig = (
+export const getCurrencyExchangeConfig = async (
   currency: CryptoCurrency | TokenCurrency,
-): ExchangeCurrencyNameAndSignature => {
-  const res = findExchangeCurrencyConfig(currency.id);
+): Promise<ExchangeCurrencyNameAndSignature> => {
+  let res;
+  try {
+    res = getEnv("MOCK_EXCHANGE_TEST_CONFIG")
+      ? await findTestExchangeCurrencyConfig(currency.id)
+      : await findExchangeCurrencyData(currency.id);
 
-  if (!res) {
-    throw new Error(`Exchange, missing configuration for ${currency.id}`);
+    if (!res) {
+      throw new Error("Missing primary config");
+    }
+  } catch (error) {
+    // Fallback to old production config if the primary fetch fails, should be removed when we have a HA CAL
+    res = await findProdExchangeCurrencyConfig(currency.id);
+
+    if (!res) {
+      throw new Error(`Exchange, missing configuration for ${currency.id}`);
+    }
   }
 
   return {
@@ -80,17 +63,3 @@ export const getCurrencyExchangeConfig = (
     signature: Buffer.from(res.signature, "hex"),
   };
 };
-
-export const isCurrencyExchangeSupported = (currency: CryptoCurrency | TokenCurrency): boolean => {
-  return !!findExchangeCurrencyConfig(currency.id);
-};
-
-export function convertToAppExchangePartnerKey(
-  provider: ExchangeProviderNameAndSignature,
-): PartnerKeyInfo {
-  return {
-    name: provider.name,
-    curve: provider.publicKey.curve,
-    publicKey: provider.publicKey.data,
-  };
-}

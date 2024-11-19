@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import {
   CosmosDelegationInfo,
@@ -10,6 +9,7 @@ import {
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   amount: BigNumber;
@@ -27,7 +27,7 @@ export default function AmountField({
   status: { errors, warnings },
   label,
 }: Props) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const [currentValidator, setCurrentValidator] = useState(validator);
   const [focused, setFocused] = useState(false);
   const [initialAmount, setInitialAmount] = useState(validator ? validator.amount : BigNumber(0));
@@ -123,14 +123,14 @@ const AmountButton = styled.button.attrs<{
     p.error
       ? p.theme.colors.lightRed
       : p.active
-      ? p.theme.colors.palette.primary.main
-      : p.theme.colors.palette.action.hover};
+        ? p.theme.colors.palette.primary.main
+        : p.theme.colors.palette.action.hover};
   color: ${p =>
     p.error
       ? p.theme.colors.alertRed
       : p.active
-      ? p.theme.colors.palette.primary.contrastText
-      : p.theme.colors.palette.primary.main}!important;
+        ? p.theme.colors.palette.primary.contrastText
+        : p.theme.colors.palette.primary.main}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

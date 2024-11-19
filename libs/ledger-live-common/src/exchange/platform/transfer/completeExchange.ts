@@ -3,20 +3,26 @@ import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
-import ExchangeTransport, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
+import {
+  isExchangeTypeNg,
+  ExchangeTypes,
+  createExchange,
+  PayloadSignatureComputedFormat,
+} from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
-import { getProvider } from ".";
+import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getProviderConfig } from "../../providers";
 
 import type {
   CompleteExchangeInputFund,
   CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
 } from "../types";
+import { CompleteExchangeStep, convertTransportError } from "../../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -41,14 +47,20 @@ const completeExchange = (
   return new Observable(o => {
     let unsubscribed = false;
     let ignoreTransportError = false;
+    let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = getProvider(exchangeType, provider);
+        const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
-        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
+        const exchange = createExchange(
+          transport,
+          exchangeType,
+          rateType,
+          providerNameAndSignature.version,
+        );
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const accountBridge = getAccountBridge(mainAccount);
@@ -70,18 +82,25 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
+        currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
-        await exchange.checkPartner(providerNameAndSignature.signature);
+        currentStep = "CHECK_PARTNER";
+        await exchange.checkPartner(providerNameAndSignature.signature!);
         if (unsubscribed) return;
 
-        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
+        currentStep = "PROCESS_TRANSACTION";
+        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+          isExchangeTypeNg(exchange.transactionType)
+            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+        await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 
-        const bufferSignature = Buffer.from(signature, "hex");
-        const goodSign = convertSignature(bufferSignature, exchangeType);
+        const goodSign = convertSignature(signature, exchange.transactionType);
 
+        currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
@@ -91,30 +110,30 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           o.next({
             type: "complete-exchange-requested",
             estimatedFees: estimatedFees.toString(),
           });
-          await exchange.checkPayoutAddress(
+          currentStep = "CHECK_PAYOUT_ADDRESS";
+          await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
-              accountName: mainAccount.name,
-            });
+            throw new WrongDeviceForAccount();
           }
 
-          throw e;
+          throw convertTransportError(currentStep, e);
         }
 
         if (unsubscribed) return;
         ignoreTransportError = true;
+        currentStep = "SIGN_COIN_TRANSACTION";
         await exchange.signCoinTransaction();
       }).catch(e => {
         if (ignoreTransportError) return;
@@ -123,7 +142,7 @@ const completeExchange = (
           throw new TransactionRefusedOnDevice();
         }
 
-        throw e;
+        throw convertTransportError(currentStep, e);
       });
       await delay(3000);
       o.next({
@@ -162,17 +181,10 @@ const completeExchange = (
  * @param {ExchangeTypes} exchangeType
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
-function convertSignature(bufferSignature: Buffer, exchangeType: ExchangeTypes): Buffer {
-  const goodSign =
-    exchangeType === ExchangeTypes.Sell
-      ? bufferSignature
-      : Buffer.from(secp256k1.signatureExport(bufferSignature));
-
-  if (!goodSign) {
-    throw new Error("Could not check provider signature");
-  }
-
-  return goodSign;
+function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
+  return isExchangeTypeNg(exchangeType)
+    ? Buffer.from(signature, "base64url")
+    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;

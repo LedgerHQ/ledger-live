@@ -28,18 +28,19 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
 
-type ListenersParams = {
-  error?: Error;
-  onError?: (err: Error) => void;
+type SharedParams = {
+  onSuccess: (signedOperation: SignedOperation) => void;
+  onError: (err: Error) => void;
 };
 
 export type SignTransactionNavigatorParamList = {
@@ -52,6 +53,8 @@ export type SignTransactionNavigatorParamList = {
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
+    dependencies?: string[];
+    isACRE?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -60,26 +63,23 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
-    onSuccess: (payload: { signedOperation: SignedOperation; transactionSignError: Error }) => void;
-  } & ListenersParams;
-  [ScreenName.SignTransactionSelectDevice]: ListenersParams;
+  } & SharedParams;
+  [ScreenName.SignTransactionSelectDevice]: {
+    forceSelectDevice?: boolean;
+  } & SharedParams;
   [ScreenName.SignTransactionConnectDevice]: {
     device: Device;
     accountId: string;
     transaction: Transaction;
     status: TransactionStatus;
     appName?: string;
-    onSuccess: (payload: unknown) => void;
-    onError: (_: Error) => void;
+    dependencies?: string[];
+    isACRE?: boolean;
     analyticsPropertyFlow?: string;
-  };
+  } & SharedParams;
   [ScreenName.SignTransactionValidationError]: {
-    accountId: string;
-    parentId: string;
-    deviceId: string;
-    transaction: Transaction;
-    onReject: (_: Error) => void;
-  } & ListenersParams;
+    error?: Error;
+  } & SharedParams;
 
   [ScreenName.AlgorandEditMemo]: {
     accountId?: string;
@@ -171,7 +171,7 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditFee]: {
+  [ScreenName.XrpEditFee]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
@@ -252,7 +252,7 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditTag]: {
+  [ScreenName.XrpEditTag]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
@@ -315,6 +315,20 @@ export type SignTransactionNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.TonEditComment]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: TonTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

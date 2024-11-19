@@ -1,5 +1,5 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -51,10 +51,11 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

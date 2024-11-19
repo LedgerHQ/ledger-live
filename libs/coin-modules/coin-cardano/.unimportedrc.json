@@ -1,0 +1,35 @@
+{
+  "entry": [
+    "src/account.ts",
+    "src/api/getPools.ts",
+    "src/bridge/index.ts",
+    "src/cli-transaction.ts",
+    "src/datasets/rawAccount.1.ts",
+    "src/datasets/scanAccounts.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/specs.ts",
+    "src/speculos-deviceActions.ts",
+    "src/transaction.ts",
+    "src/utils.ts"
+  ],
+  "ignoreUnimported": [
+    "src/api/getDelegationInfo.ts",
+    "src/api/getNetworkInfo.ts",
+    "src/api/getTransactions.ts",
+    "src/api/submitTransaction.ts",
+    "src/hw-getAddress.ts",
+    "src/js-broadcast.ts",
+    "src/js-buildTransaction.ts",
+    "src/js-estimateMaxSpendable.ts",
+    "src/js-getTransactionStatus.ts",
+    "src/js-signOperation.ts",
+    "src/js-synchronisation.ts",
+    "src/js-transaction.ts",
+    "src/postSyncPatch.ts",
+    "src/serialization.ts",
+    "src/signer.ts",
+    "src/getTransactionStatus.unit.test.ts",
+    "src/synchronisation.unit.test.ts"
+  ]
+}

@@ -15,7 +15,7 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -32,6 +32,7 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
@@ -105,10 +106,12 @@ export default function PolkadotRebondAmount({ navigation, route }: NavigationPr
     });
   }, [account, navigation, transaction, status]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
-  if (!account || !transaction) return null;
+
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
+
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);

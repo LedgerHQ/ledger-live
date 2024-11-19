@@ -5,10 +5,10 @@ import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { Linking, StyleProp, ViewStyle } from "react-native";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName } from "~/const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
@@ -19,8 +19,9 @@ import { track, useAnalytics } from "~/analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "~/hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
-
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { EntryOf } from "~/types/helpers";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
 type ButtonItem = {
   title: string;
@@ -37,7 +38,7 @@ type ButtonItem = {
 };
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const {
     quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
   } = useQuickActions();
@@ -61,11 +62,8 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const quickAccessURI = useQuickAccessURI(recoverConfig);
 
   const onNavigate = useCallback(
-    (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
-        name,
-        options,
-      );
+    (route: EntryOf<BaseNavigatorStackParamList>) => {
+      navigation.navigate<keyof BaseNavigatorStackParamList>(...route);
       onClose?.();
     },
     [navigation, onClose],
@@ -78,7 +76,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   }, [onClose, quickAccessURI]);
 
   const buttonsList: ButtonItem[] = [
-    {
+    SEND && {
       eventProperties: {
         button: "transfer_send",
         page,
@@ -86,12 +84,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
-      onPress: () => onNavigate(...SEND.route),
+      onPress: () => onNavigate(SEND.route),
       Icon: SEND.icon,
       disabled: SEND.disabled,
       testID: "transfer-send-button",
     },
-    {
+    RECEIVE && {
       eventProperties: {
         button: "transfer_receive",
         page,
@@ -99,12 +97,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
-      onPress: () => onNavigate(...RECEIVE.route),
+      onPress: () => onNavigate(RECEIVE.route),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
     },
-    {
+    BUY && {
       eventProperties: {
         button: "transfer_buy",
         page,
@@ -113,7 +111,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       Icon: BUY.icon,
-      onPress: () => onNavigate(...BUY.route),
+      onPress: () => onNavigate(BUY.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -129,7 +127,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: BUY.disabled,
       testID: "transfer-buy-button",
     },
-    {
+    SELL && {
       eventProperties: {
         button: "transfer_sell",
         page,
@@ -138,7 +136,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
       Icon: SELL.icon,
-      onPress: () => onNavigate(...SELL.route),
+      onPress: () => onNavigate(SELL.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -154,25 +152,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SELL.disabled,
       testID: "transfer-sell-button",
     },
-
-    ...(STAKE
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_stake",
-              page,
-              drawer: "stake",
-            },
-            title: t("transfer.stake.title"),
-            description: t("transfer.stake.description"),
-            Icon: STAKE.icon,
-            onPress: () => onNavigate(...STAKE.route),
-            disabled: STAKE.disabled,
-            testID: "transfer-stake-button",
-          },
-        ]
-      : []),
-    {
+    STAKE && {
+      eventProperties: {
+        button: "transfer_stake",
+        page,
+        drawer: "stake",
+      },
+      title: t("transfer.stake.title"),
+      description: t("transfer.stake.description"),
+      Icon: STAKE.icon,
+      onPress: () => onNavigate(STAKE.route),
+      disabled: STAKE.disabled,
+      testID: "transfer-stake-button",
+    },
+    SWAP && {
       eventProperties: {
         button: "transfer_swap",
         page,
@@ -181,8 +174,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: SWAP.icon,
-      tag: t("common.popular"),
-      onPress: () => onNavigate(...SWAP.route),
+      onPress: () => onNavigate(SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -198,26 +190,21 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SWAP.disabled,
       testID: "swap-transfer-button",
     },
-
-    ...(RECOVER
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_recover",
-              page,
-              drawer: "trade",
-            },
-            tag: t("transfer.recover.tag"),
-            title: t("transfer.recover.title"),
-            description: t("transfer.recover.description"),
-            Icon: RECOVER.icon,
-            onPress: () => onNavigateRecover(),
-            disabled: RECOVER.disabled,
-            testID: "transfer-recover-button",
-          },
-        ]
-      : []),
-  ];
+    RECOVER && {
+      eventProperties: {
+        button: "transfer_recover",
+        page,
+        drawer: "trade",
+      },
+      tag: t("transfer.recover.tag"),
+      title: t("transfer.recover.title"),
+      description: t("transfer.recover.description"),
+      Icon: RECOVER.icon,
+      onPress: () => onNavigateRecover(),
+      disabled: RECOVER.disabled,
+      testID: "transfer-recover-button",
+    },
+  ].filter(<T extends ButtonItem>(v: T | undefined): v is T => !!v);
 
   const bannerEventProperties = useMemo(
     () => ({

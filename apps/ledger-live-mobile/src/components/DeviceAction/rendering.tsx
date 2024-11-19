@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, StyleSheet } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -27,23 +27,20 @@ import {
 } from "@ledgerhq/native-ui";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
-import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountUnit,
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
-import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -51,7 +48,7 @@ import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "~/const";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "~/const/manager";
@@ -60,15 +57,12 @@ import { TrackScreen, track } from "~/analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import { StaxFramedImageWithContext, transferConfig } from "../CustomImage/StaxFramedImage";
-import {
-  Props as FramedImageWithLottieProps,
-  StaxFramedLottieWithContext,
-} from "../CustomImage/StaxFramedLottie";
 import ModalLock from "../ModalLock";
-import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
-import allowConnection from "~/animations/stax/customimage/allowConnection.json";
 import Config from "react-native-config";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { SettingsState } from "~/reducers/types";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -131,10 +125,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
   mb: 8,
 })``;
 
-const animationStyles = (modelId: DeviceModelId) =>
-  modelId === DeviceModelId.stax ? { height: 210 } : {};
-
-type RawProps = {
+export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
   theme?: "light" | "dark";
@@ -152,7 +143,7 @@ export function renderRequestQuitApp({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "quitApp", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <CenteredText>{t("DeviceAction.quitApp")}</CenteredText>
@@ -184,8 +175,8 @@ export function renderRequiresAppInstallation({
           type="primary"
           title={t("DeviceAction.button.openManager")}
           onPress={() =>
-            navigation.navigate(NavigatorName.Manager, {
-              screen: ScreenName.Manager,
+            navigation.navigate(NavigatorName.MyLedger, {
+              screen: ScreenName.MyLedgerChooseDevice,
               params: { searchQuery: appNamesCSV },
             })
           }
@@ -213,7 +204,7 @@ export function renderVerifyAddress({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "verify", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.verifyAddress.title")}</TitleText>
@@ -248,17 +239,31 @@ export function renderConfirmSwap({
   exchange,
   amountExpectedTo,
   estimatedFees,
+  walletState,
+  settingsState,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
   exchangeRate: ExchangeRate;
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
+  walletState: WalletState;
+  settingsState: SettingsState;
 }) {
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
+  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
+
+  const unitFrom = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.fromAccount,
+  }).unit;
+  const unitTo = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.toAccount,
+  }).unit;
+
   return (
     <ScrollView>
       <Wrapper width="100%">
@@ -270,7 +275,7 @@ export function renderConfirmSwap({
         <AnimationContainer marginTop="16px">
           <Animation
             source={getDeviceAnimation({ device, key: "sign", theme })}
-            style={animationStyles(device.modelId)}
+            style={getDeviceAnimationStyles(device.modelId)}
           />
         </AnimationContainer>
         <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
@@ -280,7 +285,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 value={transaction.amount}
-                unit={getAccountUnit(exchange.fromAccount)}
+                unit={unitFrom}
                 disableRounding
                 showCode
               />
@@ -290,7 +295,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(exchange.toAccount)}
+                unit={unitTo}
                 value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                 disableRounding
                 showCode
@@ -324,14 +329,14 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+              <Text marginLeft={2}>{fromAccountName}</Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+              <Text marginLeft={2}>{toAccountName}</Text>
             </Flex>
           </FieldItem>
         </Flex>
@@ -381,7 +386,7 @@ export function renderAllowManager({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "allowManager", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -420,7 +425,7 @@ export function renderAllowLanguageInstallation({
       <AnimationContainer my={8}>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Flex>
@@ -446,7 +451,7 @@ export const renderAllowRemoveCustomLockscreen = ({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -486,7 +491,7 @@ const AllowOpeningApp = ({
             key: "openApp",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.allowAppPermission", { wording })}</TitleText>
@@ -614,7 +619,7 @@ export function renderError({
   device,
   hasExportLogButton,
 }: RawProps & {
-  navigation?: StackNavigationProp<ParamListBase>;
+  navigation?: StackNavigationProp<RootStackParamList>;
   error: Error;
   onRetry?: (() => void) | null;
   managerAppName?: string;
@@ -625,11 +630,18 @@ export function renderError({
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.Manager, {
-        screen: ScreenName.Manager,
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
         params: {
-          tab: MANAGER_TABS.INSTALLED_APPS,
-          updateModalOpened: true,
+          screen: NavigatorName.MyLedger,
+          params: {
+            screen: ScreenName.MyLedgerChooseDevice,
+            params: {
+              tab: MANAGER_TABS.INSTALLED_APPS,
+              updateModalOpened: true,
+              device,
+            },
+          },
         },
       });
     } else if (onRetry) {
@@ -702,8 +714,8 @@ export function RequiredFirmwareUpdate({
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
-    navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
       params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
     });
   };
@@ -758,7 +770,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (device.modelId === DeviceModelId.stax) {
+    if (isSyncOnboardingSupported(device.modelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
@@ -775,7 +787,7 @@ export function renderDeviceNotOnboarded({
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.Onboarding,
         params: {
-          screen: ScreenName.OnboardingSetNewDevice,
+          screen: ScreenName.OnboardingUseCase,
           params: {
             deviceModelId: device.modelId,
           },
@@ -834,7 +846,7 @@ export function renderConnectYourDevice({
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       {device.deviceName && <ConnectDeviceNameText>{device.deviceName}</ConnectDeviceNameText>}
@@ -843,8 +855,8 @@ export function renderConnectYourDevice({
           isLocked || unresponsive
             ? "DeviceAction.unlockDevice"
             : device.wired
-            ? "DeviceAction.connectAndUnlockDevice"
-            : "DeviceAction.turnOnAndUnlockDevice",
+              ? "DeviceAction.connectAndUnlockDevice"
+              : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </TitleText>
       {onSelectDeviceLink ? (
@@ -920,7 +932,7 @@ export function renderSecureTransferDeviceConfirmation({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "sign", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
@@ -937,15 +949,19 @@ export function LoadingAppInstall({
   ...props
 }: RawProps & {
   analyticsPropertyFlow: string;
+  appName: string | null | undefined;
   description?: string;
   request?: AppRequest;
 }) {
   const currency = request?.currency || request?.account?.currency;
-  const appName = request?.appName || currency?.managerAppName;
+  const appNameToTrack = props.appName ?? request?.appName ?? currency?.managerAppName;
+
   useEffect(() => {
-    const trackingArgs = ["In-line app install", { appName, flow: analyticsPropertyFlow }] as const;
-    track(...trackingArgs);
-  }, [appName, analyticsPropertyFlow]);
+    track(`${appNameToTrack?.replace(/\s/g, "").toLowerCase()}_installed`, {
+      flow: analyticsPropertyFlow,
+      installType: "inline",
+    });
+  }, [analyticsPropertyFlow, appNameToTrack]);
 
   return renderLoading({ ...props, lockModal: true });
 }
@@ -965,7 +981,7 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.Manager);
+    navigation.navigate(NavigatorName.MyLedger);
   }
 
   return (
@@ -1040,7 +1056,7 @@ export const AutoRepair = ({
       },
       complete: () => {
         onDone();
-        navigation.replace(ScreenName.Manager, {});
+        navigation.replace(ScreenName.MyLedgerChooseDevice, {});
         // we re-navigate to the manager to reset the selected device for the action
         // if we don't do that, we get an "Invalid Channel" error once the device is back online
         // since the manager still thinks it's connected to a bootloader device and not a normal one
@@ -1065,100 +1081,5 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
-  );
-};
-
-const ImageLoadingGeneric: React.FC<{
-  title: string;
-  fullScreen?: boolean;
-  children?: React.ReactNode | undefined;
-  progress?: number;
-  lottieSource?: FramedImageWithLottieProps["lottieSource"];
-}> = ({ title, fullScreen = true, children, progress, lottieSource }) => {
-  return (
-    <Flex
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      alignSelf="stretch"
-      flex={fullScreen ? 1 : undefined}
-    >
-      <Flex {...(fullScreen ? StyleSheet.absoluteFillObject : {})}>
-        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
-          {title}
-        </Text>
-      </Flex>
-      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        {lottieSource ? (
-          <StaxFramedLottieWithContext loadingProgress={progress} lottieSource={lottieSource}>
-            {children}
-          </StaxFramedLottieWithContext>
-        ) : (
-          <StaxFramedImageWithContext loadingProgress={progress} frameConfig={transferConfig}>
-            {children}
-          </StaxFramedImageWithContext>
-        )}
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderImageLoadRequested = ({
-  t,
-  device,
-  fullScreen = true,
-  wording,
-}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
-  return (
-    <ImageLoadingGeneric
-      fullScreen={fullScreen}
-      title={
-        wording ??
-        t("customImage.allowPreview", {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        })
-      }
-      lottieSource={allowConnection}
-      progress={0}
-    />
-  );
-};
-
-export const renderLoadingImage = ({
-  t,
-  device,
-  progress,
-}: RawProps & { progress: number; device: Device }) => {
-  return (
-    <ImageLoadingGeneric
-      title={t(
-        progress > 0.9 ? "customImage.loadingPictureAlmostOver" : "customImage.loadingPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      progress={progress}
-    />
-  );
-};
-
-export const renderImageCommitRequested = ({
-  t,
-  device,
-  fullScreen = true,
-  wording,
-}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
-  return (
-    <ImageLoadingGeneric
-      fullScreen={fullScreen}
-      title={
-        wording ??
-        t("customImage.commitRequested", {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        })
-      }
-      lottieSource={confirmLockscreen}
-      progress={0.89} // hardcoded value to not have the image overflowing the "confirm button" in the lottie
-    />
   );
 };

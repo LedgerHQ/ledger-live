@@ -27,10 +27,12 @@
       "title" : "탐색",
       "section" : {
         "recentlyUsed" : "최근 사용된 항목",
+        "locallyLoaded" : "로컬에서 로드된 라이브 앱",
         "browse" : "둘러보기"
       },
       "filter" : {
-        "categories" : "카테고리"
+        "categories" : "카테고리",
+        "all" : "전체"
       },
       "branch" : {
         "soon" : "곧 출시 예정",
@@ -143,7 +145,8 @@
     "add" : "추가",
     "or" : "또는",
     "clearAll" : "모두 지우기",
-    "buyLedger" : "Ledger 구매"
+    "buyLedger" : "Ledger 구매",
+    "quote" : "호가"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -167,9 +170,9 @@
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
       "UNFREEZE" : "동결 해제",
-      "UNDELEGATE_RESOURCE" : "Undelegated",
-      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
-      "LEGACYUNFREEZE" : "Unfrozen",
+      "UNDELEGATE_RESOURCE" : "위임 해제됨",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "출금",
+      "LEGACYUNFREEZE" : "동결 해제",
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
       "OPT_IN" : "참여",
@@ -275,7 +278,6 @@
   },
   "sidebar" : {
     "card" : "카드",
-    "learn" : "알아보기",
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
@@ -302,7 +304,7 @@
   "swap2" : {
     "title" : "스왑",
     "tabs" : {
-      "exchange" : "교환",
+      "exchange" : "스왑",
       "history" : "내역"
     },
     "form" : {
@@ -363,13 +365,20 @@
       }
     },
     "history" : {
-      "disclaimer" : "스왑 데스크탑 트랜잭션이 Ledger Live 모바일 애플리케이션과 동기화되지 않았습니다",
+      "disclaimer" : "스왑 히스토리에 트랜잭션이 보이지 않을 수 있으나 안전하게 처리됩니다. 내 계정의 '최신 활동 상세 정보'에서 모든 트랜잭션을 확인하세요",
       "empty" : {
         "title" : "과거 스왑 내역이 여기에 표시됩니다",
         "description" : "아직 스왑을 하지 않았거나 그동안 Ledger Live가 리셋되었습니다."
       },
       "export" : "거래 내보내기",
-      "exporting" : "내보내기 중..."
+      "exporting" : "내보내기 중...",
+      "status" : {
+        "pending" : "대기 중",
+        "onhold" : "보류 중",
+        "expired" : "만료됨",
+        "finished" : "완료됨",
+        "refunded" : "환불 처리됨"
+      }
     },
     "exchangeDrawer" : {
       "title" : "교환을 확인해 주세요",
@@ -377,6 +386,7 @@
         "title" : "트랜잭션 브로드캐스트 성공",
         "description" : "확인을 위해 귀하의 스왑 거래를 네트워크로 전송했습니다. 귀하의 스왑 작업이 확인을 위해 네트워크로 전송되었습니다. 거래가 확인되고 공급자가 귀하의 {{targetCurrency}}을 처리하고 보낼 때까지 기다려 주세요.",
         "disclaimer" : "<0><0>{{provider}}</0> 지원</0>의 도움이 필요한 경우를 대비하여 스왑 ID 번호를 기록해 두세요.",
+        "tellAboutYourExperience" : "귀하의 경험을 공유해 주세요",
         "seeDetails" : "세부사항 확인"
       }
     },
@@ -522,7 +532,8 @@
         "refunded" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
-        "finished" : "스왑이 성공적으로 완료되었습니다."
+        "finished" : "스왑이 성공적으로 완료되었습니다.",
+        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -729,6 +740,10 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
       }
     },
+    "willBeDeprecatedBanner" : {
+      "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 문의"
+    },
     "lastOperations" : "최신 운영",
     "contractAddress" : "계약:",
     "openInExplorer" : "탐색기에서 열기",
@@ -844,6 +859,9 @@
       "selectAccount" : "계정 선택",
       "continue" : "계속"
     }
+  },
+  "card" : {
+    "backToCard" : "모든 카드"
   },
   "lend" : {
     "title" : "암호화폐를 대출",
@@ -1166,7 +1184,7 @@
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
         "title" : "이 {{deviceName}} 장치는 정품입니다",
-        "description" : "이 Ledger Stax를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+        "description" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
         "continueOnDevice" : "설정을 시작하려면 {{productName}}를 탭하세요."
       },
       "pinContent" : {
@@ -1197,6 +1215,24 @@
         "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업을 복구하세요.",
         "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요."
       },
+      "backup" : {
+        "title" : "비밀 복구 문구 백업",
+        "description" : "디지털 암호화 백업을 사용하면 비밀 복구 문구 없이 지갑에 대한 액세스를 복원할 수 있습니다.\n\n다음에서 원하는 디지털 백업을 선택하세요.",
+        "backupChoice" : {
+          "title" : "디지털 백업을 원합니다",
+          "titleSelected" : "Ledger Recover",
+          "tag" : "인기 있는",
+          "description" : "월 $9.99로 Ledger Recover를 구독하세요. 무료 체험을 시작하고  언제든지 취소하세요!",
+          "tryCta" : "무료로 시작하세요",
+          "redeemCodeCta" : "교환 코드가 있습니다",
+          "howItWorksCta" : "더 알고 싶어요"
+        },
+        "manualBackup" : {
+          "title" : "아니요, 종이도 괜찮아요",
+          "description" : "디지털 백업이 없으면 복구 시트가 지갑 액세스를 복원할 수 있는 유일한 방법이니 잃어버리지 마세요.",
+          "cta" : "이해합니다"
+        }
+      },
       "softwareCheckContent" : {
         "title" : {
           "active" : "정품 확인 및\nOS 업데이트 확인",
@@ -1204,7 +1240,7 @@
         },
         "exitWarningDrawer" : {
           "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
-          "description" : "Ledger Live 앱을 사용해 Ledger Stax 설정을 계속 진행하려면 정품 확인이 필수입니다.",
+          "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
           "cancelCheckCTA" : "확인 취소",
           "resumeCheckCTA" : "확인 재개"
         },
@@ -1295,28 +1331,34 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "다음으로, Ledger Stax를 사용해\n다음을 수행해보세요... ",
-      "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 지갑을 살펴보세요.",
-      "exploreCTA" : "지갑 살펴보기"
+      "title" : "다음으로 {{productName}}를 사용해... ",
+      "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 포트폴리오를 살펴보세요.",
+      "exploreCTA" : "내 포트폴리오 살펴보기"
     },
     "postOnboardingContent" : {
       "skipLink" : "나중에 할게요"
     },
     "postOnboardingBanner" : {
-      "title" : "Ledger Stax의 다음 단계는 무엇인가요?",
-      "description" : "Infinity NFT를 신청하거나 잠금화면을 나만의 취향으로 꾸미거나, \n다른 거래소의 자산을 이체해보세요.",
-      "link" : "다음 단계를 확인하세요"
+      "title" : "{{productName}}의 다음 단계는 무엇인가요?",
+      "description" : "거래소나 지갑에서 자산을 전송하고, 암호화폐를 구매하고, 잠금 화면을 맞춤 설정하거나 Ledger Recover를 구독하세요.",
+      "link" : "다음 단계를 확인하세요",
+      "dismiss" : "다음에 결정하기"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "암호화폐 구매",
-        "description" : "500가지 이상의 코인과 다양한 구매 서비스 제공업체의 견적을 살펴보고 내 선호에 맞게 선택하세요.",
+        "description" : "500가지 이상의 코인과 최고의 견적을 살펴보고 선호에 맞게 선택하세요.",
         "actionCompletedPopupLabel" : "구매한 암호화폐"
       },
       "assetsTransfer" : {
         "title" : "자산을 Ledger로 이체하세요",
-        "description" : "코인베이스나 기타 거래소, 또는 지갑에서 자산을 쉽게 전송하세요.",
+        "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
         "actionCompletedPopupLabel" : "자산 이체 완료"
+      },
+      "recover" : {
+        "title" : "Ledger Recover 구독하기",
+        "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
+        "actionCompletedPopupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
       }
     }
   },
@@ -1409,6 +1451,7 @@
   },
   "dashboard" : {
     "title" : "포트폴리오",
+    "header" : "포트폴리오 잔액",
     "emptyAccountTile" : {
       "desc" : "계정을 추가하여 다른 암호화폐를 관리하세요",
       "createAccount" : "계정 추가"
@@ -1419,16 +1462,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "구매 / 판매",
-        "description" : "신뢰할 수 있는 공급자와 거래"
+        "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
         "title" : "스왑",
-        "description" : "안전하게 암호화폐 교환",
+        "description" : "암호화폐 교환",
         "label" : "인기 있는"
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger와 함께 암호화폐 수익 창출"
+        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
       }
     },
     "recoverBanner" : {
@@ -1450,6 +1493,34 @@
         "primaryCta" : "연결",
         "secondaryCta" : "다음에 결정하기"
       }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "{{time}} 트렌드",
+      "buy" : "구매",
+      "swap" : "스왑",
+      "gainers" : "상승 코인",
+      "losers" : "하락 코인",
+      "error" : {
+        "title" : "죄송합니다. 트렌드를 로드할 수 없습니다.",
+        "description" : "나중에 다시 시도해 주세요"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
+          "description" : "최하위 수익 창출 자산을 확인하거나 나중에 다시 방문하세요."
+        },
+        "losers" : {
+          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
+          "description" : "최상위 수익 창출 자산을 확인하거나 나중에 다시 방문해 보세요."
+        }
+      },
+      "trend" : {
+        "day" : "24시간",
+        "week" : "7일",
+        "month" : "30일",
+        "year" : "년",
+        "all" : "년"
+      }
     }
   },
   "currentAddress" : {
@@ -1459,7 +1530,8 @@
     "messageIfSkipped" : "귀하의 {{name}} 주소가 Ledger 장치에서 확인되지 않았습니다. 보안을 위해 주소를 인증하세요.",
     "showQrCode" : "QR 코드 보기",
     "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
-    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
+    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다",
+    "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1756,7 +1828,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "보안 연결을 허용하세요",
     "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
@@ -1789,7 +1861,8 @@
       "provider" : "공급자",
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다."
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -1800,8 +1873,8 @@
       "targetAccount" : "보내는 계정"
     },
     "sell" : {
-      "notice" : "장치에서 매도 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-      "confirm" : "매도 트랜잭션을 확인하세요"
+      "notice" : "장치에서 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "confirm" : "트랜잭션을 확인하세요"
     },
     "fund" : {
       "notice" : "장치에서 자금 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
@@ -1924,7 +1997,8 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
-        "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
+        "warning" : "OS 업데이트 사용 가능",
+        "version" : "버전 {{latestFirmware}}",
         "cta" : "내 Ledger로 이동",
         "old" : {
           "warning" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
@@ -1982,7 +2056,7 @@
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
       "successTitle" : "사용 중인 {{deviceName}} OS가 최신 상태입니다.",
       "successTitleApps" : "사용 중인 {{deviceName}} OS가\n최신 상태입니다. 마지막으로...",
-      "successSubtitleApps" : "Ledger Stax에서 앱 복구를 시작하려면, 아래\n\"앱 복구\" 버튼을 선택하세요.",
+      "successSubtitleApps" : "{{deviceName}}에서 앱 복구를 시작하려면,\n아래의 “앱 복구” 버튼을 선택하세요.",
       "sucessCTAApps" : "앱 복원",
       "SuccessCTANoApps" : "완료",
       "resetSteps" : {
@@ -2035,7 +2109,7 @@
         "energyDescription" : "스마트 계약을 시행하려면 에너지 포인트가 필요합니다. 스마트 계약을 실행하지 않으면, 에너지 보상을 선택할 필요가 없습니다.",
         "amountLabel" : "동결 금액",
         "available" : "이용 가능: {{amountAvailable}}",
-        "info" : "Frozen assets can be unfrozen immediately and accessible after the 14-day unfreezing period."
+        "info" : "동결된 자산은 즉시 동결 해제될 수 있으며 14일의 동결 해제 기간이 지나면 액세스할 수 있습니다."
       },
       "connectDevice" : {
         "title" : "장치"
@@ -2120,7 +2194,13 @@
   },
   "sell" : {
     "title" : "판매",
-    "titleCrypto" : "{{currency}} 매도"
+    "titleCrypto" : "{{currency}} 매도",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "트랜잭션 브로드캐스트 성공",
+        "description" : "확인을 위해 귀하의 거래를 네트워크로 전송했습니다. 거래가 확인되고 공급자가 이를 처리할 때까지 기다려 주세요."
+      }
+    }
   },
   "receive" : {
     "title" : "수령",
@@ -2207,6 +2287,15 @@
       "summary" : {
         "title" : "요약"
       },
+      "networkFee" : {
+        "title" : "네트워크 수수료를 선택하세요"
+      },
+      "reviewSummary" : {
+        "title" : "요약 내용을 검토하세요"
+      },
+      "connectLedger" : {
+        "title" : "Ledger 장치 연결"
+      },
       "device" : {
         "title" : "장치"
       },
@@ -2264,9 +2353,6 @@
       "estimatedFees" : "네트워크 수수료"
     }
   },
-  "sign" : {
-    "title" : "트랜잭션 서명"
-  },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
     "version" : "Ledger Live {{versionNb}}"
@@ -2293,7 +2379,7 @@
   "removeCustomLockscreen" : {
     "title" : "잠금 화면 이미지 제거",
     "cta" : "제거",
-    "confirmation" : "Ledger Stax에서 이미지 삭제 확인",
+    "confirmation" : "{{productName}}에서 이미지 삭제 확인",
     "success" : "잠금 화면 사진이 삭제됨"
   },
   "changeCustomLockscreen" : {
@@ -2627,7 +2713,7 @@
             "description" : "TRX를 동결하여 리워드를 받으면서 자산에 대한 보안과 권한도 계속 유지할 수 있습니다.",
             "bullet" : {
               "delegate" : "위임된 자산의 소유권은 사용자에게 있습니다.",
-              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
+              "access" : "동결된 자산은 즉시 동결 해제될 수 있으며 14일의 동결 해제 기간이 지나면 액세스가 가능합니다.",
               "ledger" : "Ledger 장치로 자산을 동결하고 안전하게 투표하세요."
             },
             "help" : "투표는 어떤 원리인가요?",
@@ -3518,6 +3604,12 @@
         },
         "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
       },
+      "states" : {
+        "active" : "활성",
+        "inactive" : "비활성",
+        "activating" : "활성화하기",
+        "deactivating" : "비활성화하기"
+      },
       "flow" : {
         "title" : "위임하기",
         "steps" : {
@@ -3593,22 +3685,33 @@
     "stake" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
+      "tagMinimum" : "{{min}} ETH 필요",
+      "kiln_pooling" : {
+        "title" : "Kiln 스테이킹 풀",
+        "description" : "최소 금액 없이 스테이킹하세요. 락업 기간 없이 복리 이자가 자동으로 적립되는 보상을 받으세요.",
+        "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
+      },
       "lido" : {
-        "title" : "Lido로 수익 창출",
-        "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 한도 없음",
+        "title" : "Lido",
+        "description" : "원하는 수량의 ETH를 스테이킹하여 매일 보상을 받고 유동성을 즉각적으로 확보하세요.",
         "supportLink" : "Lido에 대해 더 알아보기"
+      },
+      "stader-eth" : {
+        "title" : "Stade Labs",
+        "description" : "최소 금액 없이 스테이킹하세요. 복리 이자가 자동으로 적립되는 보상을 통해 유동성을 즉각적으로 확보하세요.",
+        "supportLink" : "Stader 풀링에 대해 자세히 알아보기"
       },
       "kiln" : {
         "title" : "Kiln 전용 스테이킹",
         "tag" : "32 ETH 필요",
-        "description" : "전용 검증인을 통해 스테이킹하세요. 32 ETH의 배수가 필요합니다. 보상은 수동으로 청구됩니다. 언제든지 중단할 수도 있습니다.",
+        "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하고 간단히 보상을 받으세요.",
         "supportLink" : "Kiln 검증인에 대해 자세히 알아보기"
       },
-      "kiln_pooling" : {
-        "title" : "Kiln 스테이킹 풀",
-        "tag" : "최소 한도 없음",
-        "description" : "스테이킹 풀에 가입하세요. 최소 ETH가 필요하지 않습니다. 보상은 자동 합산됩니다. 언제든지 중단할 수도 있습니다.",
-        "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "32 ETH 필요",
+        "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
+        "supportLink" : "Figment 검증인에 대해 자세히 알아보기"
       }
     }
   },
@@ -3885,7 +3988,11 @@
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "stock" : "지역 시장 지표",
-      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다."
+      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
+      "walletSync" : "Ledger 동기화",
+      "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
+      "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
+      "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
     "developer" : {
       "search" : "검색",
@@ -3901,8 +4008,115 @@
       "userId" : "사용자 ID",
       "debugApps" : "디버그 앱 허용",
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
+      "debugReactQuery" : "디버그 ReactQuery 허용",
+      "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "desc" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
+      "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash 도구",
+          "description" : "SimpleHash를 사용해 유용한 도구 제공",
+          "cta" : "열기",
+          "tabs" : {
+            "spam" : "스팸 신고",
+            "refresh" : "메타데이터 갱신",
+            "check" : "스팸 점수"
+          }
+        },
+        "debugSpamNft" : {
+          "report" : "신고하기",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "보고된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "보고된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "collectionId" : "컬렉션 ID",
+          "collectionIdDesc" : "보고된 NFT의 SimpleHash 컬렉션 ID",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "보고된 NFT의 token_id",
+          "eventType" : "이벤트 유형",
+          "eventTypeDesc" : "작성하려는 보고서 유형",
+          "success" : "보고서가 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
+          "error" : "보고서를 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "reportType" : {
+            "title" : "무엇을 신고하시겠습니까?",
+            "desc" : "작성하려는 보고서 유형을 선택하세요.",
+            "individual" : "개별 NFT에 대한 스팸 신고",
+            "contract" : "계약에 대한 스팸 신고",
+            "collection" : "컬렉션에 대한 스팸 신고"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "새로고침",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "갱신된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "갱신된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "갱신된 NFT의 token_id",
+          "success" : "갱신 내용이 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
+          "error" : "갱신 내용을 전송하는 중에 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "refreshType" : {
+            "desc" : "무엇을 갱신하시겠습니까?",
+            "nft" : "개별 NFT에 대한 메타데이터 갱신",
+            "contract" : "계약에 대한 메타데이터 갱신"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "점검",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "점검된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "점검된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "점검된 NFT의 token_id",
+          "result" : {
+            "title" : "이 계약의 스팸 점수는 {{score}}입니다.",
+            "desc" : "점수는 0부터 100까지의 숫자 값으로, 0은 스팸이 아님을 뜻하고, 100은 스팸 가능성이 있음을 뜻합니다.\n 응답이 null인 경우, 컬렉션에 점수를 매기기에 충분한 정보가 없거나, 해당 컬렉션 평가가 완료되지 않은 것입니다."
+          },
+          "error" : "요청을 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "refreshType" : {
+            "desc" : "무엇을 점검하시겠습니까?",
+            "nft" : "개별 NFT",
+            "contract" : "계약"
+          }
+        },
+        "back" : "돌아가기"
+      },
+      "debugWalletSync" : {
+        "title" : "Ledger 동기화 디버거",
+        "description" : "특정 LedgerSync 흐름을 시작하거나 LedgerSync의 현재 상태를 확인할 수 있습니다.",
+        "cta" : "열기",
+        "modal" : {
+          "check" : {
+            "title" : "체커",
+            "trustchain" : {
+              "name" : "Trustchain ID : ",
+              "emptyId" : "비어있는 ID",
+              "applicationPath" : "애플리케이션 경로: ",
+              "emptyApplicationPath" : "비어있는 애플리케이션 경로",
+              "cloudSyncVersion" : "클라우드 동기화 버전: ",
+              "lastSyncInfo" : "지난 동기화 정보: ",
+              "uniported" : "가져오지 않은 계정: "
+            },
+            "copied" : "텍스트가 클립보드에 복사되었습니다!",
+            "export" : "내보내기"
+          },
+          "generator" : {
+            "title" : "생성기",
+            "flow" : "플로우 선택",
+            "step" : "단계 선택",
+            "instance" : "멤버 생성",
+            "cta" : "적용"
+          }
+        }
+      },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
+      "mockAppUpdate" : "모의 앱 업데이트",
+      "mockAppUpdateDesc" : "내 Ledger에 이용할 수 있는 앱 업데이트를 표시하세요. 같은 앱 버전이 재설치 됩니다",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
@@ -3929,6 +4143,17 @@
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "로컬 앱 생성하기",
+          "modify" : "로컬 앱 수정하기"
+        },
+        "addNetwork" : "신규 네트워크 추가하기",
+        "removeNetwork" : "마지막 네트워크 삭제하기",
+        "export" : "내보내기",
+        "modify" : "수정하기",
+        "create" : "생성하기"
+      },
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
@@ -3971,6 +4196,7 @@
       "releaseNotesBtn" : "세부 사항",
       "termsBtn" : "읽기",
       "faq" : "Ledger 지원",
+      "chatbot" : "Ledger 챗봇",
       "faqDesc" : "문제가 있다면, 하드웨어 지갑으로 Ledger Live 이용 방법에 관한 도움을 받으세요.",
       "terms" : "이용 약관",
       "termsDesc" : "Ledger Live를 사용함으로써 귀하는 당사 이용 약관에 동의하는 것으로 간주됩니다.",
@@ -4026,9 +4252,13 @@
           "description" : "Ledger Live의 모든 스토리 테스트",
           "longDesc" : "이것은 팀이 앱에서 사용된 Storyly 스토리를 검증할 수 있도록 그대로 제공되는 도구입니다."
         },
-        "testPostonboarding" : {
-          "title" : "Post Onboarding 테스트",
-          "description" : "모든 post onboarding 기능 테스트"
+        "testStaxPostonboarding" : {
+          "title" : "Stax Post Onboarding 테스트",
+          "description" : "모든 stax post onboarding 기능 테스트"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Europa Post Onboarding 테스트",
+          "description" : "모든 europa post onboarding 기능 테스트"
         },
         "1559DeactivateGate" : {
           "title" : "EIP1559 최소 우선 수수료 게이트 비활성화",
@@ -4153,7 +4383,7 @@
     "downloadInProgress" : "업데이트 다운로드 중...",
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
-    "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
+    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Live가 자동으로 설치되고 다시 시작됩니다",
     "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
@@ -4166,6 +4396,17 @@
     "troubleshooting" : "여기를 클릭하여 해결책을 찾아보세요",
     "logs" : "로그 저장",
     "dataFolder" : "사용자 데이터 보기"
+  },
+  "approve" : {
+    "title" : "토큰을 승인하세요",
+    "description" : "Ledger 장치에서 토큰을 승인하세요",
+    "unlimited" : "귀하는 이 공급자가 귀하의 지갑에서 선택한 토큰에 무제한으로 액세스할 수 있도록 승인합니다. 서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "limited" : "귀하는 이 공급자가 귀하의 지갑에서 선택한 토큰에 액세스할 수 있도록 승인합니다. 서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "termsAndConditions" : "본 트랜잭션에 서명함으로써 본인은 <0>{{appName}}의 이용약관</0>을 수락합니다."
+  },
+  "sign" : {
+    "title" : "트랜잭션 서명",
+    "description" : "Ledger 장치에서 트랜잭션에 서명합니다."
   },
   "exportOperationsModal" : {
     "title" : "거래 내역",
@@ -4898,6 +5139,8 @@
     "warning" : "장치에 표시된 주소가 {{recipientWording}}의 주소와 정확히 일치하는지 항상 확인하세요.",
     "secureContract" : "장치의 예치금 세부사항을 확인한 후 전송하세요. 연락처 주소는 안전하게 제공되어 따로 인증할 필요 없습니다.",
     "verifyData" : "언제나 거래 세부사항을 장치에서 확인하세요.",
+    "doubleCheck" : "서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "termsAndConditions" : "본 트랜잭션에 서명함으로써 본인은 <0>{{appName}}의 이용약관</0>을 수락합니다.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -4905,9 +5148,9 @@
       "claimReward" : "거래를 장치에서 확인하고 완료하세요",
       "freeze" : "거래를 장치에서 확인하고 완료하세요",
       "unfreeze" : "거래를 장치에서 확인하고 완료하세요",
-      "withdrawExpireUnfreeze" : "Please confirm on your device to finalize the operation",
-      "unDelegateResource" : "Please confirm on your device to finalize the operation",
-      "legacyUnfreeze" : "Please confirm on your device to finalize the operation",
+      "withdrawExpireUnfreeze" : "거래를 장치에서 확인하고 완료하세요",
+      "unDelegateResource" : "거래를 장치에서 확인하고 완료하세요",
+      "legacyUnfreeze" : "거래를 장치에서 확인하고 완료하세요",
       "vote" : "거래를 장치에서 확인하고 완료하세요",
       "delegate" : "거래를 장치에서 확인하고 완료하세요",
       "undelegate" : "거래를 장치에서 확인하고 완료하세요",
@@ -4985,6 +5228,10 @@
       "memoPlaceholder" : "선택 사항",
       "memo" : "메모",
       "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
+    },
+    "ton" : {
+      "commentPlaceholder" : "선택 사항",
+      "comment" : "코멘트"
     },
     "stellar" : {
       "memo" : "메모",
@@ -5204,7 +5451,7 @@
       "description" : "내 Ledger를 사용하여 모든 앱을 삭제하고 펌웨어 업데이트가 가능한지 확인한 뒤 재설치하세요"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "Nano 펌웨어 업데이트",
+      "title" : "장치 펌웨어 업데이트",
       "description" : "이 기능을 이용하려면 장치 펌웨어를 최신 버전으로 업데이트하세요"
     },
     "FirmwareNotRecognized" : {
@@ -5219,10 +5466,6 @@
     "LanguageInstallRefusedOnDevice" : {
       "title" : "장치에서 언어 복구가\n취소되었습니다",
       "description" : "실수인 경우 지금 다시 시도하세요."
-    },
-    "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 언어 복구가 취소되었습니다.",
-      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
     },
     "LanguageNotFound" : {
       "title" : "언어를 찾을 수 없습니다",
@@ -5331,18 +5574,35 @@
       "title" : "금액 및 수수료 계산이 불가능합니다",
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "토큰 전송에 대한 수신자가 잘못되었습니다. 토큰 전송에 지원되는 계정 유형: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "죄송합니다, 수수료 추정에 실패했습니다",
+      "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "수취인 주소가 비활성화되어 있습니다. 활성화하려면 최소 {{minimalAmount}}를 보내주세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+      "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요."
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다. <link0>자세히 알아보기</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "이 Tron 계정을 활성 상태로 유지하려면 0.1 TRX 이상이 필요하고 수수료로 1.1 TRX가 필요합니다.<link0>자세히 알아보기 </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
@@ -5387,9 +5647,16 @@
       "title" : "풀 노드로 계정을 스캔하지 않았습니다",
       "description" : "이 장치에 연결된 계정을 스캔하도록 풀 노드를 구성하세요. 우선 귀하의 풀 노드로 이 계정을 위한 블록체인을 스캔한 후 포트폴리오에 계정을 추가할 수 있습니다."
     },
+    "SwapRateExpiredError" : {
+      "title" : "요율 만료",
+      "description" : "환율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
+    },
+    "PayinExtraIdError" : {
+      "message" : "스왑에 필요한 추가 ID를 찾을 수 없습니다"
+    },
     "SwapGenericAPIError" : {
       "title" : "문제가 발생했습니다",
-      "description" : "교환 트랜잭션이 완료되지 않았습니다. 다시 시도하거나 지원에 연락하세요."
+      "description" : "트랜잭션을 수행하지 못했습니다. 다시 시도해 주세요."
     },
     "TimeoutError" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다",
@@ -5407,9 +5674,24 @@
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "Ledger 장치에 이미 보류 중인 작업이 있습니다. 거부하거나 다시 연결하세요."
     },
+    "UnresponsiveDeviceError" : {
+      "title" : "문제가 발생했습니다.",
+      "description" : "장치에 액세스할 수 없음.\n작업이 보류 중일 수 있습니다. 거부하거나 다시 연결하세요."
+    },
     "TransportStatusError" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}}"
+    },
+    "TrustchainEjected" : {
+      "title" : "동기화 해제됨"
+    },
+    "TrustchainNotAllowed" : {
+      "title" : "더 이상 동기화 상태가 아닙니다",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
+    },
+    "TrustchainNotFound" : {
+      "title" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
     },
     "DeviceShouldStayInApp" : {
       "title" : "{{appName}} 앱을 실행해주세요",
@@ -5420,7 +5702,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 내 Ledger가 거부됨"
+      "title" : "장치에서 보안 연결이 거부되었습니다"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치에서 OS 업데이트 설치가\n취소되었습니다",
@@ -5461,6 +5743,14 @@
     "WrongDeviceForAccount" : {
       "title" : "문제가 발생했습니다",
       "description" : "선택한 계정에 연결된 복구 문구 또는 패스프레이즈로 하드웨어 지갑을 설정했는지 확인해 주세요."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "귀하의 장치와 연결된 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "귀하의 장치와 연결되어 환불에 사용할 수 있는 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
@@ -5506,6 +5796,13 @@
       "title" : "속도를 높이거나 취소할 수 없음",
       "description" : "이 트랜잭션은 이미 검증되었습니다"
     },
+    "SequenceNumberError" : {
+      "title" : "시퀀스 번호 오류",
+      "description" : "창을 닫고 나중에 다시 시도하세요"
+    },
+    "TonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
+    },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
     },
@@ -5528,7 +5825,7 @@
       "title" : "우선 수수료가 필요 이상으로 높습니다. 초과 금액을 지불할 수 있습니다."
     },
     "MaxFeeTooLow" : {
-      "title" : "최대 수수료가 권장 값보다 낮습니다."
+      "title" : "수수료가 권장 값보다 낮습니다."
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
@@ -5594,8 +5891,8 @@
       "description" : "동결 해제할 에너지와 관련 자산이 없습니다"
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "Unfreeze is not available yet",
-      "description" : "You need to wait 3 days after your last Freeze operation"
+      "title" : "아직 동결 해제할 수 없습니다",
+      "description" : "최종 동결 거래 후 3일을 기다려야 합니다"
     },
     "TronVoteRequired" : {
       "title" : "최소 하나의 득표수가 필요합니다."
@@ -5632,14 +5929,14 @@
       "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "TronNoUnfrozenResource" : {
-      "title" : "No unfrozen resources to withdraw"
+      "title" : "인출할 동결 해제된 자산이 없습니다"
     },
     "TronInvalidUnDelegateResourceAmount" : {
-      "title" : "Not enough delegated resources"
+      "title" : "위임된 자산이 충분하지 않습니다"
     },
     "TronUnfreezeNotExpired" : {
-      "title" : "Resources not unfrozen yet",
-      "description" : "You need to wait until {{time}} to withdraw"
+      "title" : "자산이 아직 동결 해제되지 않았습니다",
+      "description" : "인출하려면 {{time}}까지 기다려야 합니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5654,6 +5951,9 @@
     },
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
+    },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
     },
     "NotEnoughBalanceToDelegate" : {
       "title" : "위임에 필요한 잔금이 부족합니다"
@@ -5687,6 +5987,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "금액은 {{maxAmountFromFormatted}}보다 적어야 합니다"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "이용 불가 금액. 값을 수정하세요."
     },
     "PolkadotElectionClosed" : {
       "title" : "검증인 선출을 종료해야 합니다"
@@ -5757,6 +6060,18 @@
     },
     "CardanoStakeKeyDepositError" : {
       "title" : "예치에 사용할 {{depositAmount}} ADA가 있는지 확인하세요"
+    },
+    "CardanoFeeHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "네트워크 수수료가 비정상적으로 높습니다. 트랜잭션을 다시 확인해 주세요."
+    },
+    "CardanoFeeTooHigh" : {
+      "title" : "비정상적으로 높은 네트워크 수수료",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
+    },
+    "CardanoInvalidProtoParams" : {
+      "title" : "Cardano 유효하지 않은 프로토콜 파라미터",
+      "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
     },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
@@ -5839,24 +6154,16 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진 설치가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진 설치가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Ledger Stax에 제거할 잠금 화면 이미지가 없습니다",
+      "title" : "장치에 제거할 잠금 화면 사진이 없습니다",
       "description" : "사용자 지정 잠금 화면 이미지가 이미 제거된 상태입니다."
-    },
-    "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진 복구가 취소되었습니다",
-      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
-    },
-    "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진 복구가 취소되었습니다",
-      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
     },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
@@ -5905,7 +6212,34 @@
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "TezosUnrevealedAccount" : {
-      "title" : "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
+    },
+    "newAddressTRC20" : {
+      "title" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
+    },
+    "TonExcessFee" : {
+      "title" : "진행할 경우, 토큰이 전송됩니다. 수수료로 0.1 TON을 지불하게 되며, 초과 금액은 반환됩니다."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "메인 계정(TON)에 수수료 계산에 사용할 잔액이 부족합니다. 필요한 최소 잔액은 0.1 TON입니다."
+    },
+    "TonMinimumRequired" : {
+      "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
+    },
+    "BackupAppDataError" : {
+      "title" : "앱 데이터 백업 중 오류가 발생했습니다"
+    },
+    "RestoreAppDataError" : {
+      "title" : "앱 데이터 복원 중 오류가 발생했습니다"
+    },
+    "DeleteAppDataError" : {
+      "title" : "앱 데이터 삭제 중 오류가 발생했습니다"
+    },
+    "PinNotSet" : {
+      "title" : "PIN이 설정되지 않았습니다"
     }
   },
   "cryptoOrg" : {
@@ -5979,7 +6313,7 @@
     },
     "postOnboarding" : {
       "title" : "잠금화면을 취향대로 꾸며보세요",
-      "description" : "Ledger Stax의 잠금화면으로 설정할 NFT나 사진을 선택하세요.",
+      "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
       "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
     "customImageSet" : "잠금화면 꾸미기 완료",
@@ -6031,9 +6365,291 @@
       "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
       "saveLog" : "로그 저장"
+    },
+    "noAccounts" : {
+      "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
+      "add" : "계정 추가"
     }
   },
   "recoverRestore" : {
     "title" : "Ledger를 연결하고 잠금을 해제하세요"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
+      "whatWeTrack" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 추적할 수 있습니다.",
+      "whatWeTrackList" : {
+        "1" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
+        "2" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
+      },
+      "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
+      "whatWeDoNotTrackList" : {
+        "1" : "고객 자산.",
+        "2" : "고객 포트폴리오.",
+        "3" : "고객의 개인 식별 정보."
+      },
+      "managePreferences" : "환경 설정 관리",
+      "refuse" : "모두 거부",
+      "accept" : "모두 수락",
+      "analyticsData" : {
+        "title" : "애널리틱스",
+        "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
+      },
+      "personalizationData" : {
+        "title" : "개인 맞춤화",
+        "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
+      },
+      "share" : "공유"
+    },
+    "variantB" : {
+      "accept" : "수락",
+      "refuse" : "거부",
+      "analytics" : {
+        "description" : "공유해 주신 Ledger Live 분석 데이터는 고객이 어떤 방식으로 Ledger Live를 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
+        "details" : {
+          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
+          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
+          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "맞춤화된 고객 경험을 즐겨보세요",
+        "description" : "공유해 주신 Ledger Live 개인화 데이터는 고객 선호에 맞는 콘텐츠를 제시하는 데 사용됩니다.",
+        "details" : {
+          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
+          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
+        }
+      }
+    },
+    "common" : {
+      "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
+      "revokeInfo" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "learnMore" : "당사 추적 정책 자세히 살펴보기"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "맞춤화된 경험",
+      "analytics" : "애널리틱스",
+      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
+      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger 동기화",
+    "close" : "닫기",
+    "activate" : {
+      "title" : "이 컴퓨터에서 Ledger 동기화를 켜시겠습니까?",
+      "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
+      "cta" : "Ledger 동기화 켜기",
+      "alreadySync" : "장치를 이미 켰습니다",
+      "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+    },
+    "manage" : {
+      "cta" : "관리",
+      "synchronize" : {
+        "label" : "다른 Ledger Live 앱과 동기화",
+        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화"
+      },
+      "backup" : {
+        "label" : "동기화 삭제",
+        "description" : "여러 Ledger Live 앱에서 동기화된 암호화폐 계정의 동기화가 중지됩니다."
+      },
+      "instance" : {
+        "label" : "1개 Ledger Live 앱 동기화",
+        "label_other" : "{{count}} Ledger Live 앱 동기화",
+        "cta" : "관리"
+      }
+    },
+    "loading" : {
+      "title" : "조금만 기다려 주세요...",
+      "activation" : "최대 30초가 소요될 수 있습니다.\n이 화면을 떠나지 마세요."
+    },
+    "error" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "나중에 다시 시도해 주세요.",
+      "cta" : "다시 시도하세요",
+      "fetching" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "ledgerSyncDown" : "당사 측의 기술적 문제로 인해 Ledger 동기화를 일시적으로 사용할 수 없으며, 현재 수정 중에 있습니다."
+    },
+    "unsecuredError" : {
+      "title" : "Ledger 동기화를 활성화하는 데 사용한 것과 동일한 Ledger 장치를 연결합니다.",
+      "description" : "동일한 Ledger 장치가 없으면 대신 \"동기화 삭제\"를 선택합니다.",
+      "cta" : "다른 Ledger 장치 연결하기",
+      "ctaDelete" : "동기화 삭제"
+    },
+    "alreadySecureError" : {
+      "title" : "이 앱은 이미 이 Ledger 장치로 보호되고 있습니다.",
+      "description" : "새로운 백업을 생성하려면, 다른 암호화 키를 생성하는 데 사용한 Ledger 장치를 연결하세요.",
+      "cta" : "이해합니다"
+    },
+    "alreadySecureOtherSeedError" : {
+      "title" : "이 Ledger를 사용하여 동기화할 수 없습니다",
+      "description" : "그래도 두 앱을 동기화하려면 키를 삭제하고 다시 시도하세요.",
+      "cta" : "동기화 삭제"
+    },
+    "autoRemoveError" : {
+      "title" : "현재 사용 중인 컴퓨터는 삭제할 수 없습니다.",
+      "description" : "삭제하려면 Ledger 동기화가 활성화된 다른 휴대전화나 컴퓨터를 사용하세요. 다른 장치가 없으면 대신 '동기화 삭제'를 선택하세요.",
+      "cta" : "이해합니다",
+      "ctaDelete" : "동기화 삭제"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "이 컴퓨터에서 Ledger Live에 대한 Ledger 동기화가 켜짐"
+      },
+      "synch" : {
+        "title" : "동기화 성공",
+        "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대전화와 컴퓨터의 Ledger Live 앱에 자동으로 표시됩니다. "
+      },
+      "synchAnother" : "다른 Ledger Live 앱과 동기화",
+      "close" : "닫기"
+    },
+    "manageBackup" : {
+      "deleteBackup" : {
+        "title" : "정말 동기화를 삭제하시겠습니까?",
+        "description" : "여러 휴대폰 및 컴퓨터에서 Ledger Live 앱을 사용하는 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다. ",
+        "delete" : "네, 삭제하겠습니다",
+        "cancel" : "동기화 유지"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Ledger Live 앱이 더 이상 동기화되지 않습니다",
+        "description" : "언제든지 동기화를 다시 켤 수 있습니다."
+      },
+      "deleteBackupError" : {
+        "title" : "문제가 발생했습니다"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "동기화 방법 선택",
+        "description" : "Ledger 장치로 직접 동기화하거나 Ledger Live에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
+        "scan" : {
+          "title" : "QR 코드 표시",
+          "description" : "QR 코드를 스캔하여 동기화합니다"
+        },
+        "connectDevice" : {
+          "title" : "Ledger 장치를 사용하세요",
+          "description" : "Ledger 장치에 서명하여 동기화합니다"
+        }
+      },
+      "qrCode" : {
+        "title" : "Ledger Live 앱 동기화",
+        "options" : {
+          "mobile" : "휴대전화와 동기화",
+          "desktop" : "컴퓨터와 동기화"
+        },
+        "mobile" : {
+          "description" : "다른 전화기에서 Ledger Live와 동기화",
+          "steps" : {
+            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>QR 표시</0>로 차례로 이동합니다",
+            "step3" : "QR 코드 스캔"
+          }
+        },
+        "desktop" : {
+          "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
+          "steps" : {
+            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>\u001D Ledger 사용하기</0>로 차례로 이동합니다",
+            "step3" : "Ledger 장치에 연결합니다"
+          }
+        }
+      },
+      "unbackedError" : {
+        "title" : "동기화가 감지되지 않음",
+        "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+        "cta" : "Ledger 동기화 켜기"
+      },
+      "pinCode" : {
+        "title" : "Ledger 동기화 코드",
+        "description" : "두 Ledger Live 앱 모두에서 암호화폐 계정을 동기화하려면 휴대폰의 Ledger Live에 이 코드를 입력하세요.",
+        "error" : {
+          "title" : "코드가 일치하지 않습니다.",
+          "description" : "입력한 코드가 다른 Ledger Live 인스턴스에 표시된 코드와 일치하는지 확인해 주세요."
+        }
+      }
+    },
+    "manageInstances" : {
+      "title" : "Ledger Live가 다음에서 동기화됨",
+      "remove" : "제거",
+      "deleteInstanceSuccess" : "{{instanceName}}의 Ledger Live 앱이 더 이상 Ledger 동기화에 연결되어 있지 않습니다.",
+      "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+    }
+  },
+  "ordinals" : {
+    "inscriptions" : {
+      "seeMore" : "더 많은 인스크립션 보기",
+      "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
+      "receive" : "인스크립션 받기",
+      "discoveryDrawer" : {
+        "title" : "Ordinals 살펴보기",
+        "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
+        "learnMore" : "자세히 알아보기",
+        "protectTitle" : "Ordinals 자산 보호",
+        "protectDescription" : "트랜잭션에서 Ordinals 자산을 제외하세요."
+      },
+      "detailsDrawer" : {
+        "description" : "설명",
+        "collectionName" : "컬렉션명",
+        "inscriptionId" : "인스크립션 ID",
+        "inscriptionNumber" : "인스크립션 번호",
+        "mintedTo" : "민팅 대상",
+        "genesisTx" : "제네시스 트랜잭션",
+        "blockNumber" : "블록 번호",
+        "contentType" : "콘텐츠 유형",
+        "createdDate" : "생성 일자",
+        "satribute" : "Sat 희귀성",
+        "satNumber" : "Sat 번호",
+        "satName" : "Sat 이름",
+        "location" : "위치",
+        "outputValue" : "산출값",
+        "storedOnChain" : "온체인에 저장됨",
+        "hide" : "숨기기"
+      }
+    },
+    "rareSats" : {
+      "empty" : "내 Bitcoin 계정으로 전송하여 간편하게 Rare Sats를 추가할 수 있습니다.",
+      "receive" : "Rare Sat 받기",
+      "title" : "Rare Sats",
+      "table" : {
+        "type" : "Sat 유형 / 수량",
+        "year" : "년"
+      },
+      "rareSat" : {
+        "description" : {
+          "alpha" : "Alpha로 각 비트코인의 탄생에 대해 자세히 들여다 보고, 최초 발행된 사토시의 탄생을 기려보세요. 이 라벨은 비트코인 유닛의 시작을 나타냅니다.",
+          "black_epic" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
+          "black_legendary" : "Black Legendary에 대한 설명 없음",
+          "black_mythic" : "Black Mythic에 대한 설명 없음",
+          "black_rare" : "각 채굴 난이도 조정 기간이 끝날 때의 마지막 사토시를 나타냅니다.",
+          "black_uncommon" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
+          "block_9" : "블록 9는 비트코인 역사에서 독특한 특징을 가지고 있습니다. 가장 초기에 채굴된 블록 중 하나로, 여기에는 유통 중인 가장 오래된 SAT 중 일부가 포함되어 있습니다. 이 SAT는 모든 것의 시작, 다시 말해 비트코인의 탄생 직후와 실질적으로 연관이 있습니다.",
+          "block_9_450x" : "블록 9 450x로 시간을 거슬러 올라가 9번째 블록에서 최초의 비트코인에 해당하는 SAT에 주목해 보겠습니다. 비트코인 역사상 중요한 순간 중 하나가 펼쳐질 것입니다.",
+          "block_78" : "블록 78은 비트코인 역사의 연대기에서 매우 의미 있는 위치에 존재합니다. 이 블록은 Hal Finney가 채굴했으며, 이는 사토시 나카모토가 아닌 다른 사람이 블록체인의 성장에 기여한 첫 번째 사례이기 때문입니다.",
+          "block_286" : "사토시 나카모토가 채굴한 두 번째 비트코인 트랜잭션 사토시인 블록 286의 중요성에 대해 알아보세요. 이 사토시이야말로 여전히 수수께끼로 남아 있는 비트코인 창시자와 그 기원에 대한 신비감을 더합니다.",
+          "block_666" : "블록 666에 대한 설명 없음",
+          "common" : "일반 블록에 대한 설명 없음",
+          "epic" : "4년마다 비트코인 네트워크에는 채굴 보상이 절반으로 줄어드는 \"반감기\" 이벤트가 발생합니다. 각각의 반감기 에포크에서 최초로 발행되는 사토시는 \"에픽\"이라는 라벨이 붙어 비트코인 경제 모델에서 중요한 순간을 표시합니다.",
+          "first_tx" : "2009년 1월 12일, 사토시 나카모토가 할 피니(Hal Finney)라는 컴퓨터 과학자에게 10개의 비트코인을 보냈는데,  이는 최초의 비트코인 트랜잭션으로 역사에 기록되었습니다. 이 상징적인 트랜잭션에서 유래한 사토시에는 \"첫 번째 트랜잭션\"이라는 라벨이 붙어 비트코인 P2P 거래의 기원이 되었습니다.",
+          "hitman" : "Hitman에 대한 설명 없음",
+          "jpeg" : "JPEG를 통한 과거로의 여행. 이 사토시는 2010년 2월 24일 이미지에 대한 최초의 비트코인 트랜잭션과 연관이 있을 수 있습니다. 이 라벨은 혁신에 대한 이야기를 담고 있으며, 비트코인이 비전통적인 트랜잭션과 교환에 대한 초기 시도를 보여줍니다.",
+          "legacy" : "Legacy에 대한 설명 없음",
+          "legendary" : "Legendary에 대한 설명 없음",
+          "mythic" : "Mythic에 대한 설명 없음",
+          "nakamoto" : "비트코인의 창시자로 알려진 사토시 나카모토의 정체는 여전히 베일에 쌓여 있습니다. 사토시가 직접 채굴한 SAT는 이 라벨이 붙어 있어 수집가들에게 큰 인기를 끌고 있습니다.",
+          "omega" : "마지막 사토시인, Omega로 모든 비트코인의 시적 끝을 체험해보세요. 비트코인 유닛의 마지막 사토시.",
+          "paliblock" : "PaliBlock Palindrome에 대한 설명 없음",
+          "palindrome" : "앞뒤로 같은 숫자를 읽을 수 있는 모든 SAT를 장난스럽게 \"Palindrome\"이라고 부릅니다. 예를 들어, 12321 또는 45654로 번호가 매겨진 SAT가 이에 해당합니다. 이러한 고유한 숫자 속성은 라벨이 붙은 SAT에 희소성과 호기심을 더합니다.",
+          "palinception" : "각 SAT가 Palindrome의 배열을 형성하는 매혹적인 사토시 세계를 탐구해보세요. 이러한 복잡하게 구성된 SAT는 동일한 숫자로 구성된 매혹적인 태피스트리와 같습니다.",
+          "pizza" : "비트코인 커뮤니티에서 가장 상징적인 이야기 중 하나는 2010년 5월 22일에 파파존스 피자 두 개를 사기 위해 10,000비트코인을 지불한 프로그래머의 사례입니다. 이 사건은 비트코인 가치의 급격한 폭등을 보여주는 데 이용됩니다. 이 전설적인 트랜잭션에 사용된 SAT에는 \"피자\"라는 라벨이 붙어 있습니다.",
+          "rare" : "비트코인 네트워크는 블록이 약 10분마다 추가되도록 채굴 난이도를 주기적으로 조정합니다. 이러한 각 조정 기간의 첫 번째 SAT에는 \"Rare(진귀한)\"라고 표시됩니다. 이는 네트워크의 보안 및 합의 메커니즘이 끊임없이 진화한다는 사실을 잘 보여줍니다. ",
+          "uncommon" : "이 라벨은 모든 블록의 첫 번째 사토시에 붙습니다. 비트코인 블록체인에 약 10분마다 새로운 블록이 추가된다는 점을 감안할 때 이 SAT를 통해 해당 기간의 시작을 알 수 있습니다.",
+          "vintage" : "비트코인은 최초 1,000개의 블록으로 그 시작을 표시했습니다. 이 기간 내에 채굴된 SAT에는 \"Vintage\"라는 표식이 붙습니다."
+        }
+      }
+    }
   }
 }

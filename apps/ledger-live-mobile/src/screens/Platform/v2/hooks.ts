@@ -5,31 +5,36 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
+  Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+
 import {
   INITIAL_PLATFORM_STATE,
   DAPP_DISCLAIMER_ID,
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
+  WC_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useDB } from "../../../db";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
-export function useCatalog() {
-  const db = useDiscoverDB();
+export function useCatalog(initialCategory?: Categories["selected"] | null) {
+  const recentlyUsedDB = useRecentlyUsedDB();
+  const { state: localLiveApps } = useLocalLiveAppContext();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
-  const categories = useCategories(completeManifests);
-  const recentlyUsed = useRecentlyUsed(combinedManifests, db);
+  const categories = useCategories(completeManifests, initialCategory);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
 
   const search = useSearch<AppManifest, TextInput>({
     list: combinedManifests,
@@ -62,8 +67,9 @@ export function useCatalog() {
       recentlyUsed,
       search,
       disclaimer,
+      localLiveApps,
     }),
-    [categories, recentlyUsed, search, disclaimer],
+    [categories, recentlyUsed, search, disclaimer, localLiveApps],
   );
 }
 
@@ -108,6 +114,15 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
 
   const openApp = useCallback(
     (manifest: AppManifest) => {
+      // Navigate to the WalletConnect navigator screen instead of the discover one
+      // In order to avoid issue with deeplinks opening wallet-connect multiple times
+      if (manifest.id === WC_ID) {
+        navigation.navigate(NavigatorName.WalletConnect, {
+          screen: ScreenName.WalletConnectConnect,
+          params: {},
+        });
+        return;
+      }
       navigation.navigate(ScreenName.PlatformApp, {
         ...params,
         platform: manifest.id,
@@ -156,10 +171,18 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
   };
 }
 
-function useDiscoverDB() {
+function useRecentlyUsedDB() {
   return useDB<DiscoverDB, DiscoverDB["recentlyUsed"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
     state => state.recentlyUsed,
+  );
+}
+
+export function useCurrentAccountHistDB() {
+  return useDB<DiscoverDB, DiscoverDB["currentAccountHist"]>(
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.currentAccountHist,
   );
 }

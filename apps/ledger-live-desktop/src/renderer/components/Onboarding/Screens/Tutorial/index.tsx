@@ -1,4 +1,4 @@
-import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,
@@ -52,6 +52,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { UseCase } from "../../index";
 import { urls } from "~/config/urls";
+import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -155,7 +156,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               {backLabel || t("common.back")}
             </Button>
             <Button
-              data-test-id="v3-tutorial-continue"
+              data-testid="v3-tutorial-continue"
               onClick={handleContinue}
               disabled={continueLoading || continueDisabled}
               variant="main"
@@ -700,6 +701,8 @@ export default function Tutorial({ useCase }: Props) {
     [history],
   );
 
+  const { confirmRecoverOnboardingStatus } = useRecoverRestoreOnboarding();
+
   const handleNextPin = useCallback(() => {
     let targetPath: string | object = `${path}/${ScreenId.existingRecoveryPhrase}`;
 
@@ -710,7 +713,8 @@ export default function Tutorial({ useCase }: Props) {
         search: search ? `?${search}` : undefined,
         state: { deviceId: connectedDevice?.deviceId },
       };
-      dispatch(saveSettings({ hasCompletedOnboarding: true }));
+
+      confirmRecoverOnboardingStatus();
     }
 
     if (useCase === UseCase.setupDevice) {
@@ -718,7 +722,14 @@ export default function Tutorial({ useCase }: Props) {
     }
 
     handleNextInDrawer(setHelpPinCode, targetPath);
-  }, [connectedDevice?.deviceId, dispatch, handleNextInDrawer, path, recoverRestorePath, useCase]);
+  }, [
+    confirmRecoverOnboardingStatus,
+    connectedDevice?.deviceId,
+    handleNextInDrawer,
+    path,
+    recoverRestorePath,
+    useCase,
+  ]);
 
   return (
     <>

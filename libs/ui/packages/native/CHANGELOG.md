@@ -1,5 +1,301 @@
 # @ledgerhq/native-ui
 
+## 0.25.1
+
+### Patch Changes
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1
+
+## 0.25.1-next.0
+
+### Patch Changes
+
+- [#8067](https://github.com/LedgerHQ/ledger-live/pull/8067) [`bde70f9`](https://github.com/LedgerHQ/ledger-live/commit/bde70f93227bfb7c421536b4c60392c87d3d2a26) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/crypto-icons-ui@1.5.1-next.0
+
+## 0.25.0
+
+### Minor Changes
+
+- [#7989](https://github.com/LedgerHQ/ledger-live/pull/7989) [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99) Thanks [@thesan](https://github.com/thesan)! - Add the receive flow `NeedMemoTagModal`
+
+### Patch Changes
+
+- [#8077](https://github.com/LedgerHQ/ledger-live/pull/8077) [`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+- Updated dependencies [[`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd)]:
+  - @ledgerhq/icons-ui@0.8.0
+
+## 0.25.0-next.1
+
+### Patch Changes
+
+- [#8077](https://github.com/LedgerHQ/ledger-live/pull/8077) [`1cc9725`](https://github.com/LedgerHQ/ledger-live/commit/1cc9725a45b1bd1ecb40f0b3d0f5a4605caa09a9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - On Earn's Staking Modal, it makes it so that a category filter will only show up if there's at least one provider of that category.
+  Small visual fix to the gap in the options' spacing
+
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#7989](https://github.com/LedgerHQ/ledger-live/pull/7989) [`191b105`](https://github.com/LedgerHQ/ledger-live/commit/191b105e6f1c76e674da6e9e109efe1b01937b99) Thanks [@thesan](https://github.com/thesan)! - Add the receive flow `NeedMemoTagModal`
+
+### Patch Changes
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+- Updated dependencies [[`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd)]:
+  - @ledgerhq/icons-ui@0.8.0-next.0
+
+## 0.24.1
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/crypto-icons-ui@1.5.0
+  - @ledgerhq/ui-shared@0.2.2
+  - @ledgerhq/icons-ui@0.7.4
+
+## 0.24.1-next.0
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892)]:
+  - @ledgerhq/crypto-icons-ui@1.5.0-next.0
+  - @ledgerhq/ui-shared@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.7.4-next.0
+
+## 0.24.0
+
+### Minor Changes
+
+- [#7749](https://github.com/LedgerHQ/ledger-live/pull/7749) [`1825bd3`](https://github.com/LedgerHQ/ledger-live/commit/1825bd36642e34e4b4aaeefb1805b04c87a32a22) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Storybook version + centering text in Button
+
+### Patch Changes
+
+- [#7590](https://github.com/LedgerHQ/ledger-live/pull/7590) [`e9bb8b9`](https://github.com/LedgerHQ/ledger-live/commit/e9bb8b969e3c07cb80a9247b8b5830693f35ef84) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Make llm tab selector component size following the size of the biggest label
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7467](https://github.com/LedgerHQ/ledger-live/pull/7467) [`3de93cc`](https://github.com/LedgerHQ/ledger-live/commit/3de93cc5597e0f87a70b9c728589a2ef363ac65d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the show qr code implementation for WS flow. Create tabSelector in RN UI Lib
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`531bc03`](https://github.com/LedgerHQ/ledger-live/commit/531bc03228d486e4b18f10df83b7b9bfdbd025b8) Thanks [@Justkant](https://github.com/Justkant)! - refactor: merge BottomDrawer containerStyle prop
+
+- Updated dependencies [[`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4), [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1
+  - @ledgerhq/icons-ui@0.7.3
+
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#7749](https://github.com/LedgerHQ/ledger-live/pull/7749) [`1825bd3`](https://github.com/LedgerHQ/ledger-live/commit/1825bd36642e34e4b4aaeefb1805b04c87a32a22) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Storybook version + centering text in Button
+
+### Patch Changes
+
+- [#7590](https://github.com/LedgerHQ/ledger-live/pull/7590) [`e9bb8b9`](https://github.com/LedgerHQ/ledger-live/commit/e9bb8b969e3c07cb80a9247b8b5830693f35ef84) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Make llm tab selector component size following the size of the biggest label
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7467](https://github.com/LedgerHQ/ledger-live/pull/7467) [`3de93cc`](https://github.com/LedgerHQ/ledger-live/commit/3de93cc5597e0f87a70b9c728589a2ef363ac65d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the show qr code implementation for WS flow. Create tabSelector in RN UI Lib
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`531bc03`](https://github.com/LedgerHQ/ledger-live/commit/531bc03228d486e4b18f10df83b7b9bfdbd025b8) Thanks [@Justkant](https://github.com/Justkant)! - refactor: merge BottomDrawer containerStyle prop
+
+- Updated dependencies [[`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4), [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1-next.0
+  - @ledgerhq/icons-ui@0.7.3-next.0
+
+## 0.23.3
+
+### Patch Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
+
+- [#7429](https://github.com/LedgerHQ/ledger-live/pull/7429) [`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - Banner component title now limited to two lines
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0
+  - @ledgerhq/icons-ui@0.7.2
+
+## 0.23.3-next.0
+
+### Patch Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
+
+- [#7429](https://github.com/LedgerHQ/ledger-live/pull/7429) [`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - Banner component title now limited to two lines
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0-next.0
+  - @ledgerhq/icons-ui@0.7.2-next.0
+
+## 0.23.2
+
+### Patch Changes
+
+- Updated dependencies [[`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e)]:
+  - @ledgerhq/icons-ui@0.7.1
+
+## 0.23.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a)]:
+  - @ledgerhq/icons-ui@0.7.1-hotfix.0
+
+## 0.23.1
+
+### Patch Changes
+
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0
+
+## 0.23.1-next.0
+
+### Patch Changes
+
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0-next.0
+
+## 0.23.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - (test): add testID="modal-close-button" in BaseModal
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0
+  - @ledgerhq/icons-ui@0.7.0
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - (test): add testID="modal-close-button" in BaseModal
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0-next.0
+  - @ledgerhq/icons-ui@0.7.0-next.0
+
+## 0.22.9
+
+### Patch Changes
+
+- [#6304](https://github.com/LedgerHQ/ledger-live/pull/6304) [`f333b2f`](https://github.com/LedgerHQ/ledger-live/commit/f333b2f35b09265c3efae7907fb05cd03c4730b8) Thanks [@KVNLS](https://github.com/KVNLS)! - Update LLM send flow
+
+- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
+  - @ledgerhq/icons-ui@0.6.4
+
+## 0.22.9-next.0
+
+### Patch Changes
+
+- [#6304](https://github.com/LedgerHQ/ledger-live/pull/6304) [`f333b2f`](https://github.com/LedgerHQ/ledger-live/commit/f333b2f35b09265c3efae7907fb05cd03c4730b8) Thanks [@KVNLS](https://github.com/KVNLS)! - Update LLM send flow
+
+- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
+  - @ledgerhq/icons-ui@0.6.4-next.0
+
+## 0.22.8
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#6312](https://github.com/LedgerHQ/ledger-live/pull/6312) [`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6017](https://github.com/LedgerHQ/ledger-live/pull/6017) [`0a152fd`](https://github.com/LedgerHQ/ledger-live/commit/0a152fd4f51d189cf3b8d6b82975c252c246f9b8) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0
+  - @ledgerhq/icons-ui@0.6.3
+
+## 0.22.8-next.1
+
+### Patch Changes
+
+- [#6312](https://github.com/LedgerHQ/ledger-live/pull/6312) [`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+## 0.22.8-next.0
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6017](https://github.com/LedgerHQ/ledger-live/pull/6017) [`0a152fd`](https://github.com/LedgerHQ/ledger-live/commit/0a152fd4f51d189cf3b8d6b82975c252c246f9b8) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0-next.0
+  - @ledgerhq/icons-ui@0.6.3-next.0
+
+## 0.22.7
+
+### Patch Changes
+
+- Updated dependencies [[`26f343b`](https://github.com/LedgerHQ/ledger-live/commit/26f343b3c08d06ce6e812947d4c63a6e5bae8a9e), [`f882dde`](https://github.com/LedgerHQ/ledger-live/commit/f882dde22ec194c5cd3dd9413b8c103108eba820)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2
+
+## 0.22.7-next.0
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6017](https://github.com/LedgerHQ/ledger-live/pull/6017) [`0a152fd`](https://github.com/LedgerHQ/ledger-live/commit/0a152fd4f51d189cf3b8d6b82975c252c246f9b8) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2-next.0
+
+## 0.22.6
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6015](https://github.com/LedgerHQ/ledger-live/pull/6015) [`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+## 0.22.6-next.1
+
+### Patch Changes
+
+- [#6015](https://github.com/LedgerHQ/ledger-live/pull/6015) [`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+## 0.22.6-next.0
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
 ## 0.22.5
 
 ### Patch Changes

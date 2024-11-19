@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -36,7 +36,11 @@ import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
-import type { SyncOnboardingScreenProps } from ".";
+import ContinueOnEuropa from "./assets/ContinueOnEuropa";
+import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import BackupStep from "./companionSteps/BackupStep";
+import { useIsFocused } from "@react-navigation/native";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -105,6 +109,7 @@ enum CompanionStepKey {
   EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
+  Backup,
   Apps,
   Ready,
   Exit,
@@ -114,9 +119,15 @@ const ContinueOnDeviceWithAnim: React.FC<{
   deviceModelId: DeviceModelId;
   text: string;
   withTopDivider?: boolean;
-}> = ({ text, withTopDivider }) => {
+}> = ({ text, withTopDivider, deviceModelId }) => {
   // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
-  return <ContinueOnDevice Icon={ContinueOnStax} text={text} withTopDivider={withTopDivider} />;
+  return (
+    <ContinueOnDevice
+      Icon={deviceModelId === DeviceModelId.stax ? ContinueOnStax : ContinueOnEuropa}
+      text={text}
+      withTopDivider={withTopDivider}
+    />
+  );
 };
 
 /**
@@ -156,6 +167,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   >("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesMobile");
+
+  const isFocused = useIsFocused();
+  useKeepScreenAwake(isFocused);
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -345,18 +359,30 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     lastCompanionStepKey.current = companionStepKey;
   }, [companionStepKey, productName]);
 
+  const seededDeviceHandled = useRef(false);
+
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the applications install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
-    ) {
-      setCompanionStepKey(CompanionStepKey.Apps);
-      return;
+
+    if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
+      if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
+        // device was just seeded
+        setCompanionStepKey(CompanionStepKey.Backup);
+        seededDeviceHandled.current = true;
+        return;
+      } else if (
+        deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
+      ) {
+        // switch to the apps step
+        __DEV__
+          ? setCompanionStepKey(CompanionStepKey.Backup) // for ease of testing in dev mode without having to reset the device
+          : setCompanionStepKey(CompanionStepKey.Apps);
+
+        seededDeviceHandled.current = true;
+        return;
+      }
     }
 
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
@@ -435,8 +461,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.Apps) {
-      // Stops the polling once the installation apps step is reached
+    if (companionStepKey >= CompanionStepKey.Backup) {
+      // Stops the polling once the device is seeded
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in
       // the list of known devices
@@ -612,6 +638,17 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
+        {
+          key: CompanionStepKey.Backup,
+          title: t("syncOnboarding.backup.title"),
+          doneTitle: t("syncOnboarding.backup.title"),
+          renderBody: () => (
+            <BackupStep
+              device={device}
+              onPressKeepManualBackup={() => setCompanionStepKey(CompanionStepKey.Apps)}
+            />
+          ),
+        },
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -639,8 +676,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           step.key > companionStepKey
             ? "inactive"
             : step.key < companionStepKey
-            ? "completed"
-            : "active",
+              ? "completed"
+              : "active",
       })),
     [
       t,

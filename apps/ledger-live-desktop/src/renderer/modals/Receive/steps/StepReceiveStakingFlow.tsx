@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
 import { track } from "~/renderer/analytics/segment";
@@ -10,10 +10,10 @@ import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
@@ -55,7 +55,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   }, []);
 
   const openLink = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "learn_more",
       ...getTrackProperties(),
       link: supportLink,
@@ -70,7 +70,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties(),
       value,
@@ -130,13 +130,13 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       currency: account && "currency" in account ? account?.currency?.name : undefined,
       provider: providerName,
       modal: "receive",
-      account: account && getAccountName(account),
+      account: account && getDefaultAccountName(account),
     };
   }, [account]);
 
   const onStake = useCallback(() => {
     if (action && "onClick" in action && action?.onClick) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         ...getTrackProperties(),
       });
@@ -149,7 +149,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   }, [action, closeModal, getTrackProperties]);
 
   const onCloseModal = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "skip",
       ...getTrackProperties(),
     });

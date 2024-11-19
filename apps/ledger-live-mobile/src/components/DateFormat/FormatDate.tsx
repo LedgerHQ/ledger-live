@@ -32,8 +32,8 @@ function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | nu
     dateFormat === Format.default
       ? defaultOptions
       : dateFormat === Format.ddmmyyyy
-      ? ddmmyyyyFormatter
-      : mmddyyyyFormatter;
+        ? ddmmyyyyFormatter
+        : mmddyyyyFormatter;
 
   const jsx =
     date && date.getTime()

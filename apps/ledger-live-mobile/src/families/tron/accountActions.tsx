@@ -1,88 +1,59 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
-import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
-import { ActionButtonEvent } from "~/components/FabActions";
-import { isSubAccount } from "@ledgerhq/live-common/account/index";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { TRX } from "@ledgerhq/native-ui/assets/cryptoIcons";
+import { TokenAccount } from "@ledgerhq/types-live";
 
-const getSecondaryActions = ({
+const getMainActions = ({
   account,
+  parentAccount,
 }: {
-  account: TronAccount;
-  parentAccount: Account;
+  account: TronAccount | TokenAccount;
+  parentAccount: TronAccount | null | undefined;
 }): ActionButtonEvent[] => {
-  const { tronResources } = account;
-  const tronPower = tronResources?.tronPower || 0;
-
-  const accountId = account.id;
-  const canVote = tronPower > 0;
-  const lastVotedDate = getLastVotedDate(account as TronAccount);
-
-  return isSubAccount(account)
-    ? []
-    : [
+  const mainAccount = getMainAccount(account, parentAccount);
+  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
+    ? [
+        NavigatorName.NoFundsFlow,
         {
-          id: "freeze",
-          disabled: true,
-          navigationParams: [
-            NavigatorName.Freeze,
-            {
-              screen: canVote ? ScreenName.FreezeAmount : ScreenName.FreezeInfo,
-              params: {
-                accountId,
-              },
-            },
-          ],
-          label: <Trans i18nKey="tron.manage.freeze.title" />,
-          description: <Trans i18nKey="tron.manage.freeze.description" />,
-          Icon: IconsLegacy.FreezeMedium,
-        },
-        {
-          id: "unfreeze",
-          disabled: true,
-          navigationParams: [
-            NavigatorName.Unfreeze,
-            {
-              screen: ScreenName.UnfreezeAmount,
-              params: {
-                accountId,
-              },
-            },
-          ],
-          label: <Trans i18nKey="tron.manage.unfreeze.title" />,
-          description: <Trans i18nKey="tron.manage.unfreeze.description" />,
-          Icon: IconsLegacy.UnfreezeMedium,
-          buttonProps: {
-            type: "main",
-            outline: false,
+          screen: ScreenName.NoFunds,
+          params: {
+            account,
+            parentAccount,
           },
         },
+      ]
+    : [
+        ScreenName.PlatformApp,
         {
-          id: "vote",
-          disabled: true,
-          navigationParams: [
-            NavigatorName.TronVoteFlow,
-            {
-              screen: lastVotedDate ? "VoteSelectValidator" : "VoteStarted",
-              params: {
-                accountId,
-              },
-            },
-          ],
-          label: <Trans i18nKey="tron.manage.vote.title" />,
-          description: <Trans i18nKey="tron.manage.vote.description" />,
-          Icon: IconsLegacy.VoteMedium,
-          buttonProps: {
-            type: "main",
-            outline: false,
+          params: {
+            platform: "stakekit",
+            name: "StakeKit",
+            accountId: mainAccount.id,
+            yieldId: "tron-trx-native-staking",
           },
         },
       ];
+
+  return [
+    {
+      id: "stake",
+      navigationParams,
+      label: <Trans i18nKey="account.stake" />,
+      Icon: () => <TRX />,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        currency: "TRX",
+        page: "Account Page",
+      },
+    },
+  ];
 };
 
 export default {
-  getSecondaryActions,
+  getMainActions,
 };

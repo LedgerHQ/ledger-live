@@ -11,6 +11,7 @@ import ArrowRight from "~/icons/ArrowRight";
 import LText from "~/components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { formatAmount } from "./utils";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: CeloAccount;
@@ -33,7 +34,7 @@ export default function DelegationRow({
   const { t } = useTranslation();
   const { validatorGroup, amount } = vote;
   const validatorName = getValidatorName(vote) ?? "";
-
+  const unit = useAccountUnit(account);
   return (
     <TouchableOpacity
       style={[
@@ -66,7 +67,7 @@ export default function DelegationRow({
 
       <View style={styles.rightWrapper}>
         <Text variant={"body"} fontWeight={"semiBold"}>
-          {formatAmount(account, vote.amount ?? 0)}
+          {formatAmount(vote.amount ?? 0, unit)}
         </Text>
 
         <LText color="grey">

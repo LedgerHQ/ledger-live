@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
-import type { DeviceVersion, FinalFirmware } from "@ledgerhq/types-live";
+import type { DeviceVersion, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
 import { concatMap, delay, filter, map, mergeMap, throttleTime } from "rxjs/operators";
 import semver from "semver";
 import ManagerAPI from "../manager/api";
@@ -15,6 +15,7 @@ import {
   followDeviceUpdate,
 } from "../deviceWordings";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 const wait2s = of({
   type: "wait",
@@ -43,11 +44,6 @@ export const repairChoices = [
   },
 ];
 
-const filterMCUForDeviceInfo = deviceInfo => {
-  const provider = getProviderId(deviceInfo);
-  return mcu => mcu.providers.includes(provider);
-};
-
 const repair = (
   deviceId: string,
   forceMCU_?: string | null,
@@ -55,7 +51,7 @@ const repair = (
   progress: number;
 }> => {
   log("hw", "firmwareUpdate-repair");
-  const mcusPromise = ManagerAPI.getMcus();
+  const mcusPromise = fetchMcusUseCase();
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
@@ -125,12 +121,19 @@ const repair = (
                       seVersion,
                       seTargetId,
                     });
-                    const validMcusForDeviceInfo = mcus
-                      .filter(filterMCUForDeviceInfo(deviceInfo))
-                      .filter(mcu => mcu.from_bootloader_version !== "none");
+                    const provider = getProviderId(deviceInfo);
 
-                    log("hw", "firmwareUpdate-repair valid mcus for device", {
-                      validMcusForDeviceInfo,
+                    /**
+                     * filter the MCUs that are available on the provider and
+                     * have a "from_bootloader_version" different from "none"
+                     * */
+                    const availableMcus = mcus.filter(
+                      mcu =>
+                        mcu.providers.includes(provider) && mcu.from_bootloader_version !== "none",
+                    );
+
+                    log("hw", `firmwareUpdate-repair available mcus on provider ${provider}`, {
+                      availableMcus,
                     });
 
                     return from(
@@ -151,16 +154,17 @@ const repair = (
                         });
 
                         const mcu = ManagerAPI.findBestMCU(
-                          finalFirmware.mcu_versions
-                            .map(id => validMcusForDeviceInfo.find(mcu => mcu.id === id))
-                            .filter(Boolean),
+                          availableMcus.filter(({ id }: McuVersion) =>
+                            finalFirmware.mcu_versions.includes(id),
+                          ),
                         );
 
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });
 
                         if (!mcu) return EMPTY;
-                        const expectedBootloaderVersion = semver.coerce(mcu.from_bootloader_version)
-                          ?.version;
+                        const expectedBootloaderVersion = semver.coerce(
+                          mcu.from_bootloader_version,
+                        )?.version;
                         const currentBootloaderVersion = semver.coerce(mcuBlVersion)?.version;
 
                         log("hw", "firmwareUpdate-repair bootloader versions", {

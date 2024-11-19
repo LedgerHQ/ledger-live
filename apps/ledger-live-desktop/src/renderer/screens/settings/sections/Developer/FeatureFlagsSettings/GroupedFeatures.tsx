@@ -1,5 +1,8 @@
-import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
+import {
+  groupedFeatures,
+  GroupedFeature,
+} from "@ledgerhq/live-common/featureFlags/groupedFeatures";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
@@ -7,9 +10,9 @@ import { useTranslation } from "react-i18next";
 import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";
 
 type Props = {
-  groupName: string;
+  groupName: GroupedFeature;
   focused: boolean;
-  setFocusedGroupName: (name: string | undefined) => void;
+  setFocusedGroupName: (name: GroupedFeature | undefined) => void;
 };
 
 const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => {

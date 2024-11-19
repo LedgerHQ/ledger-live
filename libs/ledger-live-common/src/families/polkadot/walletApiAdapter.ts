@@ -1,5 +1,5 @@
-import createTransaction from "@ledgerhq/coin-polkadot/js-createTransaction";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import createTransaction from "@ledgerhq/coin-polkadot/bridge/createTransaction";
+import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import { PolkadotTransaction as WalletAPIPolkadotTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,
@@ -14,10 +14,10 @@ const areFeesProvided: AreFeesProvided<WalletAPIPolkadotTransaction> = tx => !!t
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIPolkadotTransaction,
   Transaction
-> = ({ walletApiTransaction }) => {
+> = ({ account, walletApiTransaction }) => {
   const hasFeesProvided = areFeesProvided(walletApiTransaction);
 
-  const liveTx: Transaction = createTransaction();
+  const liveTx: Transaction = createTransaction(account);
 
   if (walletApiTransaction.amount) {
     liveTx.amount = walletApiTransaction.amount;

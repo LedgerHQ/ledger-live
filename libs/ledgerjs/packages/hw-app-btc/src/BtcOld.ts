@@ -11,11 +11,9 @@ import { signMessage } from "./signMessage";
 export type { AddressFormat };
 
 /**
- * Bitcoin API.
+ * @class BtcOld
+ * @description This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0
  *
- * @example
- * import Btc from "@ledgerhq/hw-app-btc";
- * const btc = new Btc({ transport, currency: "zcash" });
  */
 
 export default class BtcOld {
@@ -62,7 +60,7 @@ export default class BtcOld {
    *
    * - verify (boolean) will ask user to confirm the address on the device
    *
-   * - format ("legacy" | "p2sh" | "bech32" | "cashaddr") to use different bitcoin address formatter.
+   * - format ("legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr") to use different bitcoin address formatter.
    *
    * NB The normal usage is to use:
    *
@@ -70,7 +68,9 @@ export default class BtcOld {
    *
    * - p2sh format with 49' paths
    *
-   * - bech32 format with 173' paths
+   * - bech32 format with 84' paths
+   *
+   * - bech32m format with 86' paths
    *
    * - cashaddr in case of Bitcoin Cash
    *
@@ -109,12 +109,13 @@ export default class BtcOld {
    * @param lockTime is the optional lockTime of the transaction to sign, or default (0)
    * @param sigHashType is the hash type of the transaction to sign, or default (all)
    * @param segwit is an optional boolean indicating wether to use segwit or not
-   * @param initialTimestamp is an optional timestamp of the function call to use for coins that necessitate timestamps only, (not the one that the tx will include)
    * @param additionals list of additionnal options
    *
    * - "bech32" for spending native segwit outputs
    * - "abc" for bch
    * - "gold" for btg
+   * - "decred" for decred
+   * - "zcash" for zcash
    * - "bipxxx" for using BIPxxx
    * - "sapling" to indicate a zec transaction is supporting sapling (to be set over block 419200)
    * @param expiryHeight is an optional Buffer for zec overwinter / sapling Txs

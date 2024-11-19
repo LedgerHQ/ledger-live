@@ -19,8 +19,9 @@ import { PublicKey } from "near-api-js/lib/utils";
 import { KeyType } from "near-api-js/lib/utils/key_pair";
 import { bip32PathToBytes } from "./utils";
 
-// 128 - 5 service bytes
-const CHUNK_SIZE = 123;
+// Based on https://github.com/LedgerHQ/ledger-secure-sdk/blob/master/include/os_io.h#L16
+// 255B + CLA + INS + P1 + P2 + Lc
+const CHUNK_SIZE = 255;
 const CLA = 0x80;
 const INS_GET_PUBLIC_KEY = 4;
 const INS_GET_ADDRESS = 5;
@@ -115,10 +116,13 @@ async function createClient(transport) {
     },
     async sign(transactionData, path) {
       transactionData = Buffer.from(transactionData);
-      const allData = Buffer.concat([bip32PathToBytes(path), transactionData]);
-      for (let offset = 0; offset < allData.length; offset += CHUNK_SIZE) {
-        const chunk = Buffer.from(allData.subarray(offset, offset + CHUNK_SIZE));
-        const isLastChunk = offset + CHUNK_SIZE >= allData.length;
+      const concatenatedData = Buffer.concat([bip32PathToBytes(path), transactionData]);
+      const chunks = new Array(Math.ceil(concatenatedData.length / CHUNK_SIZE))
+        .fill("")
+        .map((_, i) => concatenatedData.subarray(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE));
+
+      for (const chunk of chunks) {
+        const isLastChunk = chunks.indexOf(chunk) === chunks.length - 1;
         const response = await this.transport.send(
           CLA,
           INS_SIGN,
@@ -126,6 +130,7 @@ async function createClient(transport) {
           NETWORK_ID,
           chunk,
         );
+
         if (isLastChunk) {
           return Buffer.from(response.subarray(0, -2));
         }

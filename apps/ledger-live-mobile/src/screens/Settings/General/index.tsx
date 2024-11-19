@@ -9,7 +9,8 @@ import LanguageRow from "./LanguageRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
 import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import WalletSyncRow from "./WalletSyncRow";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function GeneralSettings() {
   return (
@@ -18,6 +19,9 @@ export default function GeneralSettings() {
       <CountervalueSettingsRow />
       <LanguageRow />
       <DateFormatRow />
+      <FeatureToggle featureId="llmWalletSync">
+        <WalletSyncRow />
+      </FeatureToggle>
       <ThemeSettingsRow />
       <AuthSecurityToggle />
       <ReportErrorsRow />

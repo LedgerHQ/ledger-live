@@ -1,13 +1,22 @@
-import React, { Fragment, Component, useMemo } from "react";
-import invariant from "invariant";
+import React, { Fragment, Component, useMemo, useState } from "react";
 import { ObjectInspector } from "react-inspector";
 import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
 import { AccountRaw } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 export const getStaticProps = async () => ({ props: {} });
 
+type App = {
+  name: string;
+  updated: boolean;
+  blocks: number;
+  hash: string;
+  version: string;
+  availableVersion: string;
+};
 type Log = {
   type: string;
   level: string;
@@ -16,25 +25,34 @@ type Log = {
   timestamp: string;
   index: number;
   error?: Error;
+  data?: Data;
 };
+
+type Data = {
+  deviceModelId?: string;
+  deviceVersion?: string;
+  modelIdList?: string[];
+  result?: {
+    installed?: App[];
+    deviceModelId: string;
+    firmware: {
+      version: string;
+    }
+  };
+};
+
 type LogMeta = {
   env: { [key: string]: string };
   userAgent: string;
   accountsIds: string[];
 };
 
-function decodeAccountId(accountId: string) {
-  invariant(typeof accountId === "string", "accountId is not a string");
-  const splitted = accountId.split(":");
-  invariant(splitted.length === 5, "invalid size for accountId");
-  const [type, version, currencyId, xpubOrAddress, derivationMode] = splitted;
-  return {
-    type,
-    version,
-    currencyId,
-    xpubOrAddress,
-    derivationMode,
-  };
+//splits mobile acc string
+function decodeMobileAccountId(message: string) {
+  const temp = message.toString()
+  const tempInput = temp.replace('schedule ', '');
+  const accountList = tempInput.split(',').map(account => account.trim()).filter(account => account !== '');
+  return accountList;
 }
 
 const shortAddressPreview = (addr: string, target = 20) => {
@@ -93,6 +111,70 @@ const Header = ({
   logsMeta?: LogMeta;
   onFiles: (files: FileList) => void;
 }) => {
+
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
+
+  const handleCopyClick = (accountId: string, index: number, onlyXpubOrAddress: boolean) => {
+    try {
+      const tempInput = document.createElement("input");
+      document.body.appendChild(tempInput);
+      if (onlyXpubOrAddress) {
+        tempInput.value = decodeAccountId(accountId).xpubOrAddress;
+      } else {
+        const cmdStart = `ledger-live sync --id ${decodeAccountId(accountId).xpubOrAddress} --currency ${decodeAccountId(accountId).currencyId}`;
+        tempInput.value = decodeAccountId(accountId).derivationMode ? `${cmdStart} -s ${decodeAccountId(accountId).derivationMode}` : cmdStart;
+      }
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      setLastClickedButton(onlyXpubOrAddress ? "address" : "xpub");
+      setCopiedIndex(index);
+      setTimeout(() => {
+        setCopiedIndex(null);
+        setLastClickedButton(null);
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const linkToExplorer = (accountId: string) => {
+    try {
+      const {currencyId, xpubOrAddress} = decodeAccountId(accountId);
+      const currency = findCryptoCurrencyById(currencyId);
+      if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
+        const explorerView = currency.explorerViews[0];
+        let url: any = explorerView.address;
+        if (url) {
+          url = url.replace('$address', xpubOrAddress);
+          url = url.replace('validators', 'address') //for mintscan explorers linked as /validator 
+          window.open(url, '_blank');
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const isValid = (accountId: string) => {
+    try {
+      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
+      const currencyInfo = findCryptoCurrencyById(currencyId);
+      if (currencyInfo && currencyInfo.explorerViews && currencyInfo.explorerViews.length > 0) {
+        const explorerView = currencyInfo.explorerViews[0];
+        if (explorerView.address) {
+          const isValidFamily = ["bitcoin", "cardano", "tezos", "stacks"].includes(currencyInfo.family);
+          return !isValidFamily;
+        }
+      }
+      return false;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
   const apdusLogs = useMemo(
     () =>
       logs
@@ -148,7 +230,6 @@ const Header = ({
           index,
           freshAddress: xpubOrAddress,
           freshAddressPath,
-          freshAddresses: [],
           name: currencyId + " " + shortAddressPreview(xpubOrAddress),
           starred: true,
           balance: "0",
@@ -157,7 +238,6 @@ const Header = ({
           operations: [],
           pendingOperations: [],
           swapHistory: [],
-          unitMagnitude: 0,
           lastSyncDate: "0",
         };
         return {
@@ -188,6 +268,31 @@ const Header = ({
     }
   }, [accounts]);
 
+  const installedApps: any = logs.find(log => log.data?.result?.installed);
+  const mobileModel: any = logs.find(log => log.data?.result?.deviceModelId);
+  const mobileVersion: any = logs.find(log => log.data?.result?.firmware.version)
+  let deviceLog: any = logs.find(log => log.data?.deviceModelId && log.data?.deviceVersion && log.data?.modelIdList);
+  let findMobileAccounts: any, decodedMobileAccounts: any ;
+  let deviceModel: any, deviceVersion: any;;
+  let listAccounts: string[] | any = [];
+
+  if(logsMeta?.userAgent) {
+    listAccounts = accountsIds;
+    if(deviceLog != null) {
+    deviceModel = deviceLog.deviceModelId;
+    deviceVersion = deviceLog.deviceVersion;
+    }
+  } else if(logs.find(log => log.message.startsWith("schedule js:2"))){
+    findMobileAccounts = logs.find(log => log.message.startsWith("schedule js:2"));
+    decodedMobileAccounts = decodeMobileAccountId(findMobileAccounts.message);
+    listAccounts = decodedMobileAccounts;
+    if(mobileModel) {
+      deviceModel = mobileModel.data?.result?.deviceModelId;
+      deviceVersion = mobileVersion.data?.result?.firmware.version;
+      deviceLog = 1;
+    }
+  }
+
   return (
     <HeaderWrapper>
       <HeaderRow>
@@ -195,9 +300,9 @@ const Header = ({
 
         {apdusLogs.length ? (
           <Button download="apdus" href={href}>
-            {apdusLogs.length} APDUs
+            {apdusLogs.length} APDUs 
           </Button>
-        ) : null}
+        ) : null} 
 
         <Button download="app.json" href={appJsonHref}>
           app.json with user accounts
@@ -210,17 +315,97 @@ const Header = ({
         </HeaderRow>
       ) : null}
 
-      {accountsIds ? (
+      {logs && installedApps ? (
         <HeaderRow>
           <details>
             <summary>
-              <strong>user have {accountsIds.length} accounts</strong>
+              <strong>user has {installedApps.data?.result?.installed?.length} apps installed</strong>
             </summary>
             <ul>
-              {accountsIds.map((id, i) => (
+              <pre>
+                <code style={{color: 'red'}}>NOTE </code>
+                <code> 
+                  apps could be outdated if firmware is outdated, and might still say &quot;latest version&quot;
+                </code>
+              </pre>
+              {installedApps.data?.result?.installed?.map((app: App, i: number) => {
+                const isLatestVersion = app.updated
+                const versionStatusStyle = {
+                  color: isLatestVersion ? 'green' : 'red'
+                };
+                return (
+                  <li key={i}>
+                    <pre>
+                      <code>
+                        {app.name} | {app.version}
+                        <span style={versionStatusStyle}>
+                          {isLatestVersion ? ' - latest version' : ` - ${app.availableVersion} update available`}
+                        </span>
+                      </code>
+                    </pre>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        </HeaderRow>
+      ) : null}
+
+      {logs && deviceLog ? (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>device information</strong>
+            </summary>
+            <ul>
+              <li>
+                <pre>
+                  <code>
+                    last connected: {deviceModel} | {deviceVersion}
+                  </code>
+                </pre>
+              </li>
+              {deviceLog.modelIdList && deviceLog.modelIdList.length > 0 ? (
+                <li>
+                  <code>all devices:</code>
+                  <ul>
+                    {deviceLog.modelIdList.map((id: string, i: number) => (
+                      <li key={i}>
+                        <pre>
+                          <code>{id}</code>
+                        </pre>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ) : null}
+            </ul>
+          </details>
+        </HeaderRow>
+      ) : null}
+
+      {listAccounts? (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>user have {listAccounts.length} accounts</strong>
+            </summary>
+            <ul>
+              <pre>
+                <code style={{color: 'red'}}>NOTE </code>
+                <code> 
+                  explorer button <b>will not</b> work for UTXO based accounts
+                </code>
+              </pre>
+              {listAccounts.map((id: string, i: number) => (
                 <li key={i}>
                   <pre>
-                    <code>{id}</code>
+                    <button onClick={() => handleCopyClick(id, i, true)} style={{ marginRight: "2px" }}>copy</button>
+                    {copiedIndex === i && lastClickedButton === "address" && <span>Copied!</span>}
+                    <button onClick={() => handleCopyClick(id, i, false)} style={{ margin: "0 2px" }}>copy CLI</button>
+                    {copiedIndex === i && lastClickedButton === "xpub" && <span>Copied!</span>}
+                    {isValid(id) && <button onClick={() => linkToExplorer(id)} style={{ margin: "2px 2px" }}>explorer</button>}
+                  <code>{id}</code>
                   </pre>
                 </li>
               ))}
@@ -423,6 +608,10 @@ class LogsViewer extends Component {
         const logs = (obj as Omit<Log, "index">[]).map((l, index) => ({
           index,
           ...l,
+          deviceModelId: l.data?.deviceModelId,
+          deviceVersion: l.data?.deviceVersion,
+          modelIdList: l.data?.modelIdList,
+          installed: l.data?.result?.installed,
         }));
         console.log({ logs }); // eslint-disable-line no-console
         this.setState({ logs });

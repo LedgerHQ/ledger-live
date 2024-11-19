@@ -61,8 +61,8 @@ export const Overview = (() => {
         const fontWeightsToShow: string[] = isHeader(variant)
           ? ["medium"]
           : isSubtitle(variant)
-          ? ["semiBold"]
-          : mainFontWeights;
+            ? ["semiBold"]
+            : mainFontWeights;
         const decorationsToShow: string[] =
           isHeader(variant) || isSubtitle(variant) ? ["none"] : ["none", "underline"];
         return (

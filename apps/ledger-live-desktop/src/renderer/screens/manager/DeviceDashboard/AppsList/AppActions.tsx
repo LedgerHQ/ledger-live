@@ -61,7 +61,6 @@ type Props = {
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
-  featureFlagActivated: boolean;
 };
 
 // eslint-disable-next-line react/display-name
@@ -80,7 +79,6 @@ const AppActions = React.memo(
     setAppUninstallDep,
     isLiveSupported,
     addAccount,
-    featureFlagActivated,
   }: Props) => {
     const { name, type } = app;
 
@@ -141,7 +139,7 @@ const AppActions = React.memo(
 
     // FIXME: given the heavy use of conditions in the rendering logic below,
     // it would be better to derive this value from the same rendering logic...
-    const hasTwoItems = showLearnMore || (hasSpecificAction && installed && featureFlagActivated);
+    const hasTwoItems = showLearnMore || (hasSpecificAction && installed);
 
     return (
       <AppActionsWrapper right={!hasTwoItems}>
@@ -182,7 +180,7 @@ const AppActions = React.memo(
           />
         ) : showActions ? (
           <>
-            {installed && featureFlagActivated ? (
+            {installed ? (
               isCurrencyApp && isLiveSupported ? (
                 <Tooltip
                   content={
@@ -280,7 +278,7 @@ const AppActions = React.memo(
                     appName: name,
                     appVersion: app.version,
                   }}
-                  data-test-id={`manager-install-${name}-app-button`}
+                  data-testid={`manager-install-${name}-app-button`}
                 >
                   <IconArrowDown size={14} />
                   <Text
@@ -310,7 +308,7 @@ const AppActions = React.memo(
                     padding: 13,
                   }}
                   onClick={onUninstall}
-                  data-test-id={`manager-uninstall-${name}-app-button`}
+                  data-testid={`manager-uninstall-${name}-app-button`}
                   event="Manager Uninstall Click"
                   eventProperties={{
                     appName: name,

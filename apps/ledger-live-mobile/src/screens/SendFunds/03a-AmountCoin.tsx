@@ -1,25 +1,17 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Switch,
-  Keyboard,
-  Linking,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
+import Switch from "~/components/Switch";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
-import { urls } from "~/utils/urls";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -29,23 +21,28 @@ import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
-import ExternalLink from "~/components/ExternalLink";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
-import InfoModal from "~/modals/Info";
-import type { ModalInfo } from "~/modals/Info";
 import InfoIcon from "~/icons/Info";
 import AmountInput from "./AmountInput";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
+import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, Link } from "@ledgerhq/native-ui";
+import { urls } from "~/utils/urls";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
-type ModalInfoName = "maxSpendable";
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountCoin>;
 
 export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } = useModalInfo();
+  const { t } = useTranslation();
+
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
       transaction: route.params.transaction,
@@ -122,16 +119,20 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
-  if (!account || !transaction) return null;
+  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
+
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (
     <>
       <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
       <SafeAreaView
+        isFlex
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {
@@ -139,7 +140,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
           },
         ]}
       >
-        <KeyboardView style={styles.container} behavior="padding">
+        <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
               <AmountInput
@@ -152,8 +153,8 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   status.errors.dustLimit
                     ? status.errors.dustLimit
                     : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                    ? null
-                    : status.errors.amount
+                      ? null
+                      : status.errors.amount
                 }
                 warning={status.warnings.amount}
               />
@@ -163,7 +164,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   <Touchable
                     style={styles.availableLeft}
                     event={"MaxSpendableInfo"}
-                    onPress={() => openInfoModal("maxSpendable")}
+                    onPress={() => setInfoModalOpen(true)}
                   >
                     <View>
                       <LText color="grey">
@@ -210,11 +211,29 @@ export default function SendAmountCoin({ navigation, route }: Props) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!modalInfoName}
-        onClose={closeInfoModal}
-        data={modalInfoName ? modalInfos[modalInfoName] : []}
-      />
+      <QueuedDrawer
+        isRequestingToBeOpened={!!infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+      >
+        <Flex>
+          <GenericInformationBody
+            Icon={InformationFill}
+            iconColor={"primary.c80"}
+            title={t("send.info.maxSpendable.title")}
+            description={t("send.info.maxSpendable.description")}
+          />
+          <Flex py="6">
+            <Link
+              type="main"
+              size="large"
+              Icon={ExternalLinkMedium}
+              onPress={onMaxSpendableLearnMore}
+            >
+              {t("common.learnMore")}
+            </Link>
+          </Flex>
+        </Flex>
+      </QueuedDrawer>
 
       <GenericErrorBottomModal
         error={bridgeErr}
@@ -233,41 +252,8 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   );
 }
 
-function useModalInfo(): {
-  modalInfos: Record<ModalInfoName, ModalInfo[]>;
-  modalInfoName: ModalInfoName | null;
-  openInfoModal: (_: ModalInfoName) => void;
-  closeInfoModal: () => void;
-} {
-  const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(null);
-  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
-  return {
-    openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),
-    closeInfoModal: () => setModalInfoName(null),
-    modalInfoName,
-    modalInfos: {
-      maxSpendable: [
-        {
-          title: t("send.info.maxSpendable.title"),
-          description: t("send.info.maxSpendable.description"),
-          footer: (
-            <ExternalLink
-              text={t("common.learnMore")}
-              onPress={onMaxSpendableLearnMore}
-              event="maxSpendableLearnMore"
-            />
-          ),
-        },
-      ],
-    },
-  };
-}
-
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
+  root: {},
   container: {
     flex: 1,
     paddingHorizontal: 16,
@@ -300,7 +286,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "stretch",
     justifyContent: "flex-end",
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   button: {
     flex: 1,
@@ -311,6 +297,7 @@ const styles = StyleSheet.create({
   },
   amountWrapper: {
     flex: 1,
+    flexGrow: 1,
   },
   switch: {
     opacity: 0.99,

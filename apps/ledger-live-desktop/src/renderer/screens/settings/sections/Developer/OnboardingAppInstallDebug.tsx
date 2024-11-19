@@ -110,11 +110,11 @@ const OnboardingAppInstallDebugScreen = () => {
           variant="main"
           outline={true}
           onClick={handleRemount}
-          data-test-id="reset-button"
+          data-testid="reset-button"
         >
           Reset
         </Button>
-        <Flex flex={1} flexDirection="column" data-test-id="input-option-selector">
+        <Flex flex={1} flexDirection="column" data-testid="input-option-selector">
           <SelectInput
             isMulti={false}
             value={selectedDeviceToRestoreOption}
@@ -136,7 +136,7 @@ const OnboardingAppInstallDebugScreen = () => {
           />
         </Flex>
       )}
-      <Flex py={12} flex={1}>
+      <Flex py={12} flex={1} data-testid="install-set-of-apps-container">
         <VerticalTimeline key={componentKey} flex={1} steps={steps} />
       </Flex>
     </Flex>
@@ -160,7 +160,7 @@ const OnboardingAppInstallDebugButton = () => {
       small
       primary
       onClick={handleOpenDebugScreen}
-      data-test-id="debug-install-set-of-apps-button"
+      data-testid="debug-install-set-of-apps-button"
     >
       {t("settings.developer.open")}
     </ButtonV2>

@@ -1,13 +1,14 @@
-import invariant from "invariant";
-import { Observable, defer, of, range, empty } from "rxjs";
-import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators";
-import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { DerivationMode } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { Observable, defer, empty, of, range } from "rxjs";
+import { catchError, concatMap, map, switchMap, takeWhile } from "rxjs/operators";
 
-export type ModeSpec = {
+type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
   startsAt?: number;
@@ -19,7 +20,6 @@ export type ModeSpec = {
   isUnsplit?: boolean;
   // TODO drop
   skipFirst?: true;
-  overridesCoinType?: number;
   // force a given cointype
   purpose?: number;
   isInvalid?: boolean;
@@ -27,10 +27,6 @@ export type ModeSpec = {
   tag?: string;
   addressFormat?: string;
 };
-
-// FIXME: DerivationMode SHOULD BE IN LIVE-TYPES ?
-// IN LIVE-TYPES DerivationMode = string which does not work
-export type DerivationMode = keyof typeof modes;
 
 export type Result = {
   address: string;
@@ -49,7 +45,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes = Object.freeze({
+const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation
@@ -64,31 +60,6 @@ const modes = Object.freeze({
     skipFirst: true,
     // already included in the normal bip44,
     tag: "metamask",
-  },
-  // Deprecated and should no longer be used.
-  bch_on_bitcoin_segwit: {
-    overridesCoinType: 0,
-    isInvalid: true,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
-  },
-  // many users have wrongly sent BTC on BCH paths
-  legacy_on_bch: {
-    overridesCoinType: 145,
-    isInvalid: true,
-  },
-  // chrome app and LL wrongly used to derivate vertcoin on 128
-  vertcoin_128: {
-    tag: "legacy",
-    overridesCoinType: 128,
-  },
-  vertcoin_128_segwit: {
-    tag: "legacy",
-    overridesCoinType: 128,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
   },
   // MEW legacy derivation for eth
   etcM: {
@@ -136,20 +107,6 @@ const modes = Object.freeze({
     purpose: 49,
     tag: "segwit",
     addressFormat: "p2sh",
-  },
-  segwit_on_legacy: {
-    isSegwit: true,
-    purpose: 44,
-    addressFormat: "p2sh",
-    isInvalid: true,
-  },
-  legacy_on_segwit: {
-    purpose: 49,
-    isInvalid: true,
-  },
-  legacy_on_native_segwit: {
-    purpose: 84,
-    isInvalid: true,
   },
   segwit_unsplit: {
     isSegwit: true,
@@ -205,6 +162,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  icon: {
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
   },
@@ -219,14 +179,15 @@ const modes = Object.freeze({
   aptos: {
     overridesDerivation: "44'/637'/<account>'/0'/0'",
   },
+  ton: {
+    overridesDerivation: "44'/607'/0'/0'/<account>'/0'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  bitcoin: ["legacy_on_bch"],
-  vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
@@ -237,8 +198,11 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  icon: ["icon"],
+  icon_berlin_testnet: ["icon"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
+  ton: ["ton"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
   solana: ["solanaMain", "solanaSub"],
@@ -300,9 +264,6 @@ export const derivationModeSupportsIndex = (
   if ((mode as { skipFirst: boolean }).skipFirst && index === 0) return false;
   return true;
 };
-const currencyForceCoinType = {
-  vertcoin: true,
-};
 
 /**
  * return a ledger-lib-core compatible DerivationScheme format
@@ -315,19 +276,12 @@ export const getDerivationScheme = ({
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
 }): string => {
-  const { overridesDerivation, overridesCoinType } = modes[derivationMode] as {
+  const { overridesDerivation } = modes[derivationMode] as {
     overridesDerivation: string;
-    overridesCoinType: string;
   };
   if (overridesDerivation) return overridesDerivation;
   const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
-  const coinType = splitFrom
-    ? getCryptoCurrencyById(splitFrom).coinType
-    : typeof overridesCoinType === "number"
-    ? overridesCoinType
-    : currencyForceCoinType
-    ? currency.coinType
-    : "<coin_type>";
+  const coinType = splitFrom ? getCryptoCurrencyById(splitFrom).coinType : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -376,10 +330,13 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  icon: true,
+  icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
   casper: true,
   filecoin: true,
+  ton: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -398,6 +355,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
@@ -425,10 +383,6 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     if (currency.supportsSegwit) {
       all.push("segwit_unsplit");
     }
-  }
-
-  if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy", "legacy_on_segwit", "legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Linking } from "react-native";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import {
@@ -16,12 +16,15 @@ import {
   mapAsSmallSquareContentCard,
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
+  mapAsHeroContentCard,
 } from "~/dynamicContent/utils";
-import Carousel, { WidthFactor } from "../../contentCards/layouts/carousel";
+import Carousel from "../../contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
+import HeroCard from "~/contentCards/cards/hero";
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -47,6 +50,10 @@ const contentCardsTypes: {
     contentCardComponent: HorizontalCard,
     mappingFunction: mapAsHorizontalContentCard,
   },
+  [ContentCardsType.hero]: {
+    contentCardComponent: HeroCard,
+    mappingFunction: mapAsHeroContentCard,
+  },
   // TODO : To remove once we extract category from ContentCardsType
   [ContentCardsType.category]: {
     contentCardComponent: () => null,
@@ -60,8 +67,15 @@ type LayoutProps = {
 };
 
 const Layout = ({ category, cards }: LayoutProps) => {
-  // TODO : handle cards impressions with logImpressionCard
-  const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
+  const { logClickCard, dismissCard, trackContentCardEvent, logImpressionCard } =
+    useDynamicContent();
+
+  useEffect(() => {
+    logImpressionCard(category.id);
+    for (const card of cards) {
+      logImpressionCard(card.id);
+    }
+  }, [cards, category.id, logImpressionCard]);
 
   const onCardCick = (card: AnyContentCard) => {
     trackContentCardEvent("contentcard_clicked", {
@@ -100,6 +114,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
   const items = cardsSorted.map(card =>
     contentCardItem(contentCardsType.contentCardComponent, {
       ...card,
+      widthFactor:
+        category.cardsLayout === ContentCardsLayout.carousel
+          ? card.carouselWidthFactor
+          : card.gridWidthFactor,
 
       metadata: {
         id: card.id,
@@ -117,11 +135,15 @@ const Layout = ({ category, cards }: LayoutProps) => {
       return (
         <Carousel
           items={items}
-          styles={{ widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full }}
+          styles={{
+            widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
+            pagination: category.hasPagination,
+            gap: cardsSorted[0].gridWidthFactor === WidthFactor.Full ? 6 : 8,
+          }}
         />
       );
     case ContentCardsLayout.grid:
-      return <Grid items={items} />;
+      return <Grid items={items} styles={{ widthFactor: cardsSorted[0].gridWidthFactor }} />;
     case ContentCardsLayout.unique:
     default:
       return <Flex mx={6}>{items[0].component(items[0].props)}</Flex>;

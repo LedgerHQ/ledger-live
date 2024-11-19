@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "../../models/Drawer";
-import { SendModal } from "../../models/SendModal";
-import { ReceiveModal } from "../../models/ReceiveModal";
-import { SettingsPage } from "../../models/SettingsPage";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../component/drawer.component";
+import { SendModal } from "../../page/modal/send.modal";
+import { ReceiveModal } from "../../page/modal/receive.modal";
+import { SettingsPage } from "../../page/settings.page";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
@@ -20,7 +20,7 @@ test("Layout @smoke", async ({ page }) => {
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
-      .locator("data-test-id=loading-spinner");
+      .getByTestId("loading-spinner");
     await sendButtonLoader.waitFor({ state: "detached" });
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal.png");
     await sendModal.close();
@@ -43,7 +43,7 @@ test("Layout @smoke", async ({ page }) => {
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
     await expect.soft(page).toHaveScreenshot("discover.png", {
-      mask: [page.locator("data-test-id=live-icon-container")],
+      mask: [page.getByTestId("live-icon-container")],
     });
   });
 
@@ -66,16 +66,16 @@ test("Layout @smoke", async ({ page }) => {
   await test.step("can toggle discreet mode", async () => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await layout.toggleDiscreetMode();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("discreet-mode.png", { mask: [page.locator("canvas")] });
+    await expect.soft(page).toHaveScreenshot("discreet-mode.png", {
+      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+    });
   });
 
   await test.step("can collapse the main sidebar", async () => {
     await layout.drawerCollapseButton.click();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("collapse-sidebar.png", { mask: [page.locator("canvas")] });
+    await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", {
+      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+    });
   });
 
   await test.step("can display the help modal", async () => {

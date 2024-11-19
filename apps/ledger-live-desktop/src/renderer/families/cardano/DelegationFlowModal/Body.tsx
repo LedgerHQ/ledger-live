@@ -24,7 +24,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { TFunction } from "i18next";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 
 type OwnProps = {
   stepId: StepId;

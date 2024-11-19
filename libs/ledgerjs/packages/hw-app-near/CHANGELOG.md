@@ -1,5 +1,167 @@
 # @ledgerhq/hw-app-near
 
+## 6.29.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.4
+
+## 6.29.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.4-next.0
+
+## 6.29.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3
+
+## 6.29.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
+## 6.29.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 6.29.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
+## 6.29.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.1
+
+## 6.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.1-next.0
+
+## 6.29.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
+
+## 6.28.8
+
+### Patch Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Increase chunk size in order to prevent a nano app bug from happening too quickly (should be fixed after nano app v1.3.0)
+
+## 6.28.8-next.0
+
+### Patch Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Increase chunk size in order to prevent a nano app bug from happening too quickly (should be fixed after nano app v1.3.0)
+
+## 6.28.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.6
+
+## 6.28.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.6-next.0
+
+## 6.28.6
+
+### Patch Changes
+
+- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.5
+
+## 6.28.6-next.0
+
+### Patch Changes
+
+- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.5-next.0
+
+## 6.28.5
+
+### Patch Changes
+
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 6.28.5-hotfix.0
+
+### Patch Changes
+
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 6.28.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4
+
+## 6.28.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-next.0
+
+## 6.28.3
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3
+
+## 6.28.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-next.0
+
 ## 6.28.2
 
 ### Patch Changes

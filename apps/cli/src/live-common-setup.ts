@@ -5,14 +5,23 @@ import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocke
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { firstValueFrom, Observable } from "rxjs";
-import { map, first, switchMap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
-import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/index";
+import {
+  registerTransportModule,
+  unregisterTransportModule,
+  disconnect,
+} from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 checkLibs({
   NotEnoughBalance,
@@ -21,11 +30,9 @@ checkLibs({
   Transport,
 });
 
-type BluetoothTransport = any;
-
 let idCounter = 0;
-const mockTransports = {};
-const recordStores = {};
+const mockTransports: Record<string, any> = {};
+const recordStores: Record<string, RecordStore> = {};
 
 export function releaseMockDevice(id: string) {
   const store = recordStores[id];
@@ -71,9 +78,11 @@ if (process.env.DEVICE_PROXY_URL) {
   });
 }
 
-const { SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
+const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
-if (SPECULOS_APDU_PORT) {
+if (SPECULOS_API_PORT) {
+  registerSpeculosTransport(parseInt(SPECULOS_API_PORT, 10));
+} else if (SPECULOS_APDU_PORT) {
   const req: Record<string, any> = {
     apduPort: parseInt(SPECULOS_APDU_PORT, 10),
   };
@@ -99,79 +108,6 @@ if (SPECULOS_APDU_PORT) {
 const cacheBle = {};
 
 async function init() {
-  let TransportNodeBle;
-
-  const getTransport = async (): Promise<BluetoothTransport> => {
-    if (!TransportNodeBle) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const { default: mod } = await import("@ledgerhq/hw-transport-node-ble");
-      TransportNodeBle = mod;
-    }
-
-    return TransportNodeBle as BluetoothTransport;
-  };
-
-  const openBleByQuery = async query => {
-    const m = query.match(/^ble:?(.*)/);
-    if (!m) throw new Error("ble regexp should match");
-    const [, q] = m;
-    if (cacheBle[query]) return cacheBle[query];
-    const t = await (!q
-      ? ((await getTransport().constructor) as typeof TransportNodeBle).create()
-      : // NOTE: NOT SURE HERE, CHECK IT BACK DEFORE MERGING
-        await firstValueFrom(
-          new Observable(
-            ((await getTransport().constructor) as typeof TransportNodeBle).listen,
-          ).pipe(
-            first(
-              (e: any) =>
-                (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
-                e.device.id.toLowerCase() === q.toLowerCase(),
-            ),
-            switchMap(e => TransportNodeBle.open(e.descriptor)),
-          ),
-        ));
-    cacheBle[query] = t;
-    (t as Transport).on("disconnect", () => {
-      delete cacheBle[query];
-    });
-    return t;
-  };
-
-  registerTransportModule({
-    id: "ble",
-    open: query => {
-      if (query.startsWith("ble")) {
-        return openBleByQuery(query);
-      }
-    },
-    discovery: new Observable(o => {
-      let s: any;
-
-      getTransport().then(module => {
-        (module.constructor as typeof TransportNodeBle).listen(o);
-        s = module;
-      });
-
-      return () => s && s.unsubscribe();
-    }).pipe(
-      map((e: any) => ({
-        type: e.type,
-        id: "ble:" + e.device.id,
-        name: e.device.name || "",
-      })),
-    ),
-    disconnect: async query =>
-      query.startsWith("ble")
-        ? cacheBle[query]
-          ? ((await getTransport().constructor) as typeof TransportNodeBle).disconnect(
-              cacheBle[query].id,
-            )
-          : Promise.resolve()
-        : undefined,
-  });
-
   const {
     default: TransportNodeHid,
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -188,13 +124,29 @@ async function init() {
         type: e.type,
         id: e.device.path,
         name: e.device.deviceName || "",
+        wired: true,
       })),
     ),
     disconnect: () => Promise.resolve(),
   });
 }
 
-if (!process.env.CI) {
+export function registerSpeculosTransport(apiPort: number) {
+  unregisterTransportModule("hid");
+  const req: Record<string, number> = {
+    apiPort: apiPort,
+  };
+
+  registerTransportModule({
+    id: "speculos-http",
+    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    disconnect: () => Promise.resolve(),
+  });
+}
+
+LiveConfig.setConfig(liveConfig);
+
+if (!process.env.CI && !SPECULOS_API_PORT) {
   init();
 }
 

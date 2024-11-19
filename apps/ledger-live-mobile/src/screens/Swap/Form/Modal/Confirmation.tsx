@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapResult,
   SwapTransaction,
@@ -30,6 +30,7 @@ import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/
 import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
+import { BigNumber } from "bignumber.js";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -66,7 +67,7 @@ export function Confirmation({
     to: { account: toAccount, parentAccount: toParentAccount },
   } = swapTx.current.swap;
 
-  const exchange = useMemo<Exchange>(
+  const exchange = useMemo<ExchangeSwap>(
     () => ({
       fromAccount: fromAccount as AccountLike,
       fromParentAccount,
@@ -88,19 +89,40 @@ export function Confirmation({
   const navigation = useNavigation<NavigationProp>();
 
   const onComplete = useCallback(
-    (result: { operation: Operation; swapId: string }) => {
+    ({
+      magnitudeAwareRate,
+      ...result
+    }: {
+      operation: Operation;
+      swapId: string;
+      magnitudeAwareRate: BigNumber;
+    }) => {
       const { operation, swapId } = result;
       /**
        * If transaction broadcast are disabled, consider the swap as cancelled
        * since the partner will never receive the funds
        */
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        postSwapCancelled({ provider, swapId });
+        postSwapCancelled({
+          provider,
+          swapId,
+          swapStep: "SIGN_COIN_TRANSACTION",
+          statusCode: "DISABLE_TRANSACTION_BROADCAST",
+          errorMessage: "DISABLE_TRANSACTION_BROADCAST",
+          sourceCurrencyId: swapTx.current.swap.from.currency?.id,
+          targetCurrencyId: swapTx.current.swap.to.currency?.id,
+          hardwareWalletType: deviceMeta.device.modelId,
+          swapType: exchangeRate.current.tradeMethod,
+        });
       } else {
         postSwapAccepted({
           provider,
           swapId,
           transactionId: operation.hash,
+          sourceCurrencyId: swapTx.current.swap.from.currency?.id,
+          targetCurrencyId: swapTx.current.swap.to.currency?.id,
+          hardwareWalletType: deviceMeta.device.modelId,
+          swapType: exchangeRate.current.tradeMethod,
         });
       }
 
@@ -118,7 +140,10 @@ export function Confirmation({
                 transaction: swapTx.current.transaction as Transaction,
                 swap: {
                   exchange,
-                  exchangeRate: exchangeRate.current,
+                  exchangeRate: {
+                    ...exchangeRate.current,
+                    magnitudeAwareRate,
+                  },
                 },
                 swapId,
               }),
@@ -145,6 +170,7 @@ export function Confirmation({
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       toAccount,
       fromAccount,
@@ -159,10 +185,10 @@ export function Confirmation({
 
   useEffect(() => {
     if (swapData && signedOperation) {
-      const { swapId } = swapData;
+      const { swapId, magnitudeAwareRate } = swapData;
       broadcast(signedOperation).then(
         operation => {
-          onComplete({ operation, swapId });
+          onComplete({ operation, swapId, magnitudeAwareRate });
         },
         error => {
           onError(error);

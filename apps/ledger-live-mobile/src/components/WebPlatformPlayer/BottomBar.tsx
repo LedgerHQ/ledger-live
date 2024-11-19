@@ -4,13 +4,15 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
+import SelectAccountButton from "./SelectAccountButton";
 
 type BottomBarProps = {
   manifest: AppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb: CurrentAccountHistDB;
 };
 
 function IconButton({
@@ -34,8 +36,14 @@ function IconButton({
   );
 }
 
-export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
+export function BottomBar({
+  manifest,
+  webviewAPIRef,
+  webviewState,
+  currentAccountHistDb,
+}: BottomBarProps) {
   const { colors } = useTheme();
+  const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -56,7 +64,7 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
   }, [webviewAPIRef]);
 
   return (
-    <Flex flexDirection="row" paddingY={4} paddingX={4}>
+    <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
       <Flex flexDirection="row" flex={1}>
         <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
           <ArrowLeftMedium
@@ -72,6 +80,10 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
           />
         </IconButton>
       </Flex>
+
+      {shouldDisplaySelectAccount ? (
+        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
+      ) : null}
 
       <IconButton onPress={handleReload} alignSelf="flex-end">
         <ReverseMedium size={24} color="neutral.c100" />

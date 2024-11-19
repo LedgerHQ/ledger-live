@@ -1,16 +1,17 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Analytics } from "../../models/Analytics";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { Drawer } from "../../component/drawer.component";
+import { Modal } from "../../component/modal.component";
+import { PortfolioPage } from "../../page/portfolio.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import { MarketPage } from "../../models/MarketPage";
-import { Layout } from "../../models/Layout";
-import { MarketCoinPage } from "../../models/MarketCoinPage";
-import { AssetPage } from "../../models/AssetPage";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
+import { MarketPage } from "../../page/market.page";
+import { Layout } from "../../component/layout.component";
+import { MarketCoinPage } from "../../page/market.coin.page";
+import { AssetPage } from "../../page/asset.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
+import { delegateModal } from "../../page/modal/delegate.modal";
 
 test.use({
   env: {
@@ -18,6 +19,8 @@ test.use({
   },
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
+    referralProgramDesktopSidebar: { enabled: false },
+    protectServicesDesktop: { enabled: false },
     stakePrograms: {
       enabled: true,
       params: {
@@ -78,9 +81,26 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
+  const delegate = new delegateModal(page);
+
+  const maskItemsInMarket = {
+    mask: [
+      page.getByTestId("market-small-graph"),
+      page.getByTestId("market-coin-price"),
+      page.getByTestId("market-cap"),
+      page.getByTestId("market-price-change"),
+      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+    ],
+  };
+
+  const maskPartOfItemsInMarket = {
+    mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
+  };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
-    await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
+    await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png", {
+      mask: [layout.marketPerformanceWidget],
+    });
   });
 
   await test.step("start stake flow via Stake entry button", async () => {
@@ -101,7 +121,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
 
   await test.step("choose Kiln", async () => {
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln",
         path: "account/mock:1:ethereum:true_ethereum_1:",
@@ -110,7 +130,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln");
+    await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
@@ -150,13 +170,17 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png");
+    await expect
+      .soft(page)
+      .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
   });
 
   await test.step("start stake flow via Stake entry button", async () => {
     await marketPage.startStakeFlowByTicker("eth");
     await drawer.waitForDrawerToBeVisible();
-    await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-page.png");
+    await expect
+      .soft(page)
+      .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
     await drawer.close();
   });
 
@@ -169,7 +193,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
     await drawer.selectAccount("Ethereum", 1);
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln_pooling",
         path: "account/mock:1:ethereum:true_ethereum_0:",
@@ -178,11 +202,11 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         value: "/platform/kiln",
       },
     });
-    await modal.chooseStakeProvider("kiln_pooling");
+    await delegate.chooseStakeProvider("kiln_pooling");
     await analyticsPromise;
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     expect(dappURL).toContain("?focus=pooled");
-    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
   });
 });

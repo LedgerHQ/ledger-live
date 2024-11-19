@@ -8,7 +8,7 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import type { SyncOnboardingScreenProps } from ".";
+import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 export type Props = {
   /**
@@ -83,8 +83,8 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const screenName = isNotFoundEntity
     ? "Error: Device OS version not recognized"
     : error
-    ? "`Error: ${(error as unknown as Error).name}`"
-    : "Error: unknown error";
+      ? "`Error: ${(error as unknown as Error).name}`"
+      : "Error: unknown error";
 
   const handleRetry = () => {
     track("button_clicked", {

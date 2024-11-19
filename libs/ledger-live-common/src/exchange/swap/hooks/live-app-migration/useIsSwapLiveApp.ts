@@ -1,14 +1,14 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { useIsCurrencySupported } from "./useIsCurrencySupported";
 import { useCallback, useState } from "react";
+import { useIsCurrencySupported } from "./useIsCurrencySupported";
+import { useSwapLiveConfig } from "./useSwapLiveConfig";
 
 type Props = {
   currencyFrom?: CryptoOrTokenCurrency;
 };
 
 export function useIsSwapLiveApp({ currencyFrom }: Props) {
-  const ptxSwapLiveApp = useFeature("ptxSwapLiveAppDemoZero");
+  const ptxSwapLiveApp = useSwapLiveConfig();
   const [crashed, setHasCrashed] = useState(false);
 
   const onLiveAppCrashed = useCallback(() => setHasCrashed(true), []);

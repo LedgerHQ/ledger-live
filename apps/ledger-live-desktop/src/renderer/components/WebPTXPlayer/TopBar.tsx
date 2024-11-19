@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { useHistory, useRouteMatch } from "react-router";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
@@ -16,6 +16,7 @@ import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { track } from "~/renderer/analytics/segment";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
 const Container = styled(Box).attrs(() => ({
@@ -100,13 +101,15 @@ export type Props = {
 };
 
 export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+  const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
   const history = useHistory();
   const match = useRouteMatch();
   const { localStorage } = window;
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const isInternalApp = useMemo(() => {
-    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+    if (!internalAppIds.includes(manifest.id)) {
       return false;
     }
 
@@ -118,7 +121,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.id, manifest.url, webviewState.url]);
+  }, [manifest.id, manifest.url, webviewState.url, internalAppIds]);
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
 
@@ -134,14 +137,15 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
     if (manifestId) {
       const flowName = localStorage.getItem("flow-name") || "";
 
-      track("button_clicked", {
+      track("button_clicked2", {
         button: ["buy", "sell"].includes(flowName) ? "back to quote" : "back to liveapp",
         provider: manifestId,
         flow: flowName,
       });
 
+      const pathname = match.path.replace("/:appId?", "");
       history.replace({
-        pathname: "/exchange",
+        pathname,
         search: `?referrer=isExternal`,
         state: {
           mode: flowName,
@@ -155,7 +159,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       const urlParams = new URLSearchParams(url.searchParams);
       const flowName = urlParams.get("liveAppFlow");
 
-      track("button_clicked", {
+      track("button_clicked2", {
         button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
         provider: currentHostname,
         flow: flowName,
@@ -164,13 +168,20 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       await webview.loadURL(safeUrl);
       webview.clearHistory();
     }
-  }, [localStorage, history, webviewAPIRef, webviewState.url]);
+  }, [localStorage, history, match.path, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    return lastScreen === "compare_providers" ? "Quote" : manifest.name;
-  }, [localStorage, manifest]);
+    const screenMap: {
+      [key: string]: string;
+    } = {
+      compare_providers: t("common.quote"),
+      card: t("card.backToCard"),
+    };
+
+    return screenMap[lastScreen] || manifest.name;
+  }, [localStorage, manifest, t]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -189,7 +200,10 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         if (goToURL) {
           localStorage.setItem("manifest-id", manifestId);
           localStorage.setItem("flow-name", url.searchParams.get("flowName") || "buy");
-          localStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+          localStorage.setItem(
+            "last-screen",
+            url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
+          );
 
           history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
         }
@@ -230,7 +244,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       ) : null}
       <RightContainer>
         <ItemContainer hidden={!isLoading}>
-          <Spinner isRotating size={16} data-test-id="web-ptx-player-topbar-activity-indicator" />
+          <Spinner isRotating size={16} data-testid="web-ptx-player-topbar-activity-indicator" />
         </ItemContainer>
       </RightContainer>
     </Container>

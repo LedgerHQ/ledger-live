@@ -1,6 +1,6 @@
 import React from "react";
 import Lottie from "lottie-react-native";
-import { AnimationObject } from "lottie-react-native/lib/typescript/LottieView.types";
+import { type AnimationObject } from "lottie-react-native";
 import Config from "react-native-config";
 import type { StyleProp, ViewStyle } from "react-native";
 import { StyleSheet, View } from "react-native";

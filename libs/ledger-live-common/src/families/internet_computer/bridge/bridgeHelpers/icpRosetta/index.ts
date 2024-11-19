@@ -12,6 +12,8 @@ import {
   ICPRosettaConstructionPayloadsResponse,
   ICPRosettaConstructionSubmitRequest,
   ICPRosettaConstructionSubmitResponse,
+  ICPRosettaConstructionDeriveRequest,
+  ICPRosettaConstructionDeriveResponse,
 } from "./types";
 import { ingressExpiry, generateOperations, generateSignaturesPayload } from "./utils";
 import { Cbor } from "@dfinity/agent";
@@ -131,4 +133,19 @@ export const broadcastTxn = async (signedTxn: string) => {
     ICPRosettaConstructionSubmitRequest,
     ICPRosettaConstructionSubmitResponse
   >({ ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn }, "submit");
+};
+
+export const deriveAddressFromPubkey = async (pubkey: string) => {
+  const res = await constructionInvoke<
+    ICPRosettaConstructionDeriveRequest,
+    ICPRosettaConstructionDeriveResponse
+  >(
+    {
+      ...getICPRosettaNetworkIdentifier(),
+      public_key: { curve_type: "secp256k1", hex_bytes: pubkey },
+    },
+    "derive",
+  );
+
+  return res.account_identifier.address;
 };

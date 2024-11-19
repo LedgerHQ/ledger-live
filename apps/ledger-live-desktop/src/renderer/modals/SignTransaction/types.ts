@@ -10,6 +10,7 @@ export type StepProps = {
   transitionTo: (a: string) => void;
   openedFromAccount: boolean;
   useApp?: string;
+  dependencies?: string[];
   device: Device | undefined | null;
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
@@ -30,5 +31,8 @@ export type StepProps = {
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
   updateTransaction: (updater: (_: Transaction) => Transaction) => void;
+  manifestId?: string;
+  manifestName?: string;
+  isACRE?: boolean;
 };
 export type St = Step<StepId, StepProps>;

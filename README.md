@@ -58,13 +58,27 @@ pnpm i
 > Note: multiple postinstall steps will be triggered and fail if the applications prerequisites are not met.
 > You can safely ignore the errors if you do not plan to work on those apps.
 
+## Common setup errors
+
+### Out of sync Podfile.lock
+
+You may encounter this error when running `pnpm i`. Try:
+
+```sh
+rm -rf ~/.cocoapods/
+pnpm clean && pnpm store prune && proto use && pnpm i && pnpm build:llm:deps
+pnpm mobile pod
+```
+
+> Note: If prompted to run `bundle install` do this in the [ledger-live-mobile](apps/ledger-live-mobile) directory. Restart terminal if the error persists.
+
 ## Usage
 
 **Important: All the commands should be run at the root of the monorepo.**
 
 ### Tools
 
-We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turborepo.org/docs/features/remote-caching).
+We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turbo.build/repo/docs/core-concepts/remote-caching).
 
 For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
 
@@ -171,7 +185,6 @@ These packages are deployed to the official npm repository under the `@ledgerhq`
 | [**@ledgerhq/hw-transport**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport)                                       | `pnpm ljs:hw-transport`        | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport)                                       |
 | [**@ledgerhq/hw-transport-http**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-http)                             | `pnpm ljs:hw-transport-http`   | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-http.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-http)                             |
 | [**@ledgerhq/hw-transport-mocker**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-mocker)                         | `pnpm ljs:hw-transport-mocker` | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-mocker.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-mocker)                         |
-| [**@ledgerhq/hw-transport-node-ble**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-ble)                     | `pnpm ljs:hw-transport-node`   | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-ble.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-ble)                     |
 | [**@ledgerhq/hw-transport-node-hid**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-hid)                     | `pnpm ljs:hw-transport-node`   | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid)                     |
 | [**@ledgerhq/hw-transport-node-hid-noevents**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-hid-noevents)   | `pnpm ljs:hw-transport-node`   | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-noevents.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-noevents)   |
 | [**@ledgerhq/hw-transport-node-hid-singleton**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-hid-singleton) | `pnpm ljs:hw-transport-node`   | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-singleton.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-singleton) |

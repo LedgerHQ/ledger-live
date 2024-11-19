@@ -8,6 +8,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../types";
 import { BoxedIcon, Button, IconsLegacy } from "@ledgerhq/react-ui";
+import { UpdateStepFooterWrapper } from "../UpdateStepFooterWrapper";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -43,7 +44,7 @@ const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => 
   useEffect(() => () => log("firmware-record-end"), []);
 
   return (
-    <Container data-test-id="firmware-update-done">
+    <Container data-testid="firmware-update-done">
       <TrackPage category="Manager" name="FirmwareConfirmation" />
       <BoxedIcon
         Icon={IconsLegacy.CheckAloneMedium}
@@ -64,7 +65,7 @@ const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => 
   );
 };
 
-export const StepConfirmFooter = ({
+const Footer = ({
   onDrawerClose,
   appsToBeReinstalled,
   finalStepSuccessButtonLabel,
@@ -73,7 +74,7 @@ export const StepConfirmFooter = ({
   const { t } = useTranslation();
 
   return (
-    <>
+    <UpdateStepFooterWrapper>
       <Track event={"FirmwareUpdatedClose"} onUnmount />
       <Button
         variant="main"
@@ -87,11 +88,13 @@ export const StepConfirmFooter = ({
         {finalStepSuccessButtonLabel
           ? finalStepSuccessButtonLabel
           : appsToBeReinstalled
-          ? t("manager.modal.sucessCTAApps")
-          : t("manager.modal.SuccessCTANoApps")}
+            ? t("manager.modal.sucessCTAApps")
+            : t("manager.modal.SuccessCTANoApps")}
       </Button>
-    </>
+    </UpdateStepFooterWrapper>
   );
 };
+
+StepConfirmation.Footer = Footer;
 
 export default StepConfirmation;

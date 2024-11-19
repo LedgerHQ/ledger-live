@@ -1,15 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
+import { Layout } from "../../component/layout.component";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  featureFlags: {
-    ptxEarn: {
-      enabled: true,
-    },
-  },
 });
 
 let testServerIsRunning = false;
@@ -46,15 +41,11 @@ test("Earn @smoke", async ({ page }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await layout.goToEarn();
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBe(
-      true,
-    );
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(
-      true,
-    );
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
     await expect
       .soft(page)
       .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });

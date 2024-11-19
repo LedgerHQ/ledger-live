@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -13,8 +12,9 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/api/Cosmos";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -81,11 +81,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     });
   }, [account]);
 
+  const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
   const { delegatedBalance: _delegatedBalance, unbondingBalance: _unbondingBalance } =
     cosmosResources;
-  const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

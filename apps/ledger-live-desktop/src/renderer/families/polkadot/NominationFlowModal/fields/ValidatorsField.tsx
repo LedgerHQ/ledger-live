@@ -4,7 +4,6 @@ import React, { useCallback, useState, useRef, useEffect } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
@@ -38,6 +37,7 @@ import Alert from "~/renderer/components/Alert";
 
 // Specific Validator Row
 import ValidatorRow from "./ValidatorRow";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const DrawerWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -114,7 +114,7 @@ const ValidatorField = ({
   const [search, setSearch] = useState("");
   const { polkadotResources } = account;
   invariant(polkadotResources && nominations, "polkadot transaction required");
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

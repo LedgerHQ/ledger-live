@@ -85,7 +85,7 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
 
   const isOSU = rawVersion.includes("-osu");
   const version = rawVersion.replace("-osu", "");
-  const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
+  const m = rawVersion.match(/([0-9]+.[0-9]+(.[0-9]+){0,1})?(-(.*))?/);
   const [, majMin, , , postDash] = m || [];
   const providerName = PROVIDERS[postDash] ? postDash : null;
   const flag = flags.length > 0 ? flags[0] : 0;

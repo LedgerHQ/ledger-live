@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
-import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
+import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -30,7 +30,7 @@ import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { CARD_APP_ID } from "~/renderer/screens/card";
+import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
@@ -175,6 +175,21 @@ const SideBarScrollContainer = styled(Box)`
     height: 0;
   }
 `;
+
+const LDMKTransportFlag = styled.div`
+  z-index: 51;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(100%, 0);
+  padding: 5px;
+  background: ${p => p.theme.colors.palette.opacityPurple.c90};
+  color: ${p => p.theme.colors.palette.text.shade100};
+  font-weight: bold;
+  border-radius: 0 0 4px 0;
+  opacity: 0.8;
+`;
+
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
@@ -182,7 +197,7 @@ const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const { t } = useTranslation();
   return isExperimental || hasFullNodeConfigured ? (
     <Tag
-      data-test-id="drawer-experimental-button"
+      data-testid="drawer-experimental-button"
       to={{
         pathname: "/settings/experimental",
       }}
@@ -199,7 +214,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   const { t } = useTranslation();
   return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
-      data-test-id="drawer-feature-flags-button"
+      data-testid="drawer-feature-flags-button"
       to={{
         pathname: "/settings/developer",
         state: {
@@ -223,7 +238,7 @@ const MainSideBar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const manifest = useRemoteLiveAppManifest(CARD_APP_ID);
+  const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
   const isCardDisabled = !manifest;
 
   /** redux navigation locked state */
@@ -232,12 +247,12 @@ const MainSideBar = () => {
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const noAccounts = useSelector(accountsSelector).length === 0;
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
-  const displayBlueDot = useManagerBlueDot(lastSeenDevice);
+  const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
-  const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
+  const ldmkTransportFlag = useFeature("ldmkTransport");
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -266,10 +281,6 @@ const MainSideBar = () => {
   const handleClickCard = useCallback(() => {
     push("/card");
     trackEntry("card");
-  }, [push, trackEntry]);
-  const handleClickLearn = useCallback(() => {
-    push("/learn");
-    trackEntry("learn");
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
@@ -331,7 +342,7 @@ const MainSideBar = () => {
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Protect",
     });
   }, [
@@ -370,11 +381,14 @@ const MainSideBar = () => {
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
-              data-test-id="drawer-collapse-button"
+              data-testid="drawer-collapse-button"
             >
               <IconChevron size={16} />
             </Collapser>
             <SideBarScrollContainer>
+              {ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible && (
+                <LDMKTransportFlag>{t("ldmkFeatureFlagWarning.title")}</LDMKTransportFlag>
+              )}
               <TopGradient />
               <Space of={70} />
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
@@ -385,7 +399,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/"}
+                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
@@ -396,21 +410,9 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
-                  isActive={location.pathname === "/market"}
+                  isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="learn">
-                  <SideBarListItem
-                    id="learn"
-                    label={t("sidebar.learn")}
-                    icon={IconsLegacy.NewsMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    isActive={location.pathname.startsWith("/learn")}
-                    onClick={handleClickLearn}
-                    collapsed={secondAnim}
-                  />
-                </FeatureToggle>
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
@@ -452,25 +454,21 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="ptxEarn">
-                  <SideBarListItem
-                    id={"earn"}
-                    label={t("sidebar.earn")}
-                    icon={IconsLegacy.LendMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    onClick={handleClickEarn}
-                    isActive={location.pathname === "/earn"}
-                    collapsed={secondAnim}
-                    NotifComponent={
-                      ptxEarnConfig?.params?.isNew ? (
-                        <CustomTag active type="plain" size="small">
-                          {t("common.new")}
-                        </CustomTag>
-                      ) : null
-                    }
-                  />
-                </FeatureToggle>
+                <SideBarListItem
+                  id={"earn"}
+                  label={t("sidebar.earn")}
+                  icon={IconsLegacy.LendMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={handleClickEarn}
+                  isActive={location.pathname === "/earn"}
+                  collapsed={secondAnim}
+                  NotifComponent={
+                    <CustomTag active type="plain" size="small">
+                      {t("common.new")}
+                    </CustomTag>
+                  }
+                />
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}

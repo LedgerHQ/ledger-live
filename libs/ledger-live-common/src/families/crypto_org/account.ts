@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { CryptoOrgAccount } from "./types";
 
@@ -8,7 +8,7 @@ function formatAccountSpecifics(account: CryptoOrgAccount): string {
   invariant(cryptoOrgResources, "Cronos POS Chain (formerly Crypto.org) account expected");
   if (!cryptoOrgResources)
     throw new Error("Cronos POS Chain (formerly Crypto.org) account expected");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

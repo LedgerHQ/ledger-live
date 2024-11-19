@@ -1,26 +1,30 @@
 import React, { useCallback } from "react";
 import { Flex, IconsLegacy, Text, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import CustomImage from "~/renderer/screens/customImage";
-import { useSelector } from "react-redux";
-import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 import ToolTip from "~/renderer/components/Tooltip";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
   disabled?: boolean;
+  deviceModelId: CLSSupportedDeviceModelId;
+  hasCustomLockScreen: boolean;
+  setHasCustomLockScreen: (value: boolean) => void;
 };
 
 const CustomImageManagerButton = (props: Props) => {
   const { t } = useTranslation();
-  const { disabled } = props;
-
-  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+  const { disabled, deviceModelId, hasCustomLockScreen, setHasCustomLockScreen } = props;
 
   const onAdd = useCallback(() => {
-    setDrawer(CustomImage, {}, { forceDisableFocusTrap: true });
-  }, []);
+    setDrawer(
+      CustomImage,
+      { deviceModelId, hasCustomLockScreen, setHasCustomLockScreen },
+      { forceDisableFocusTrap: true },
+    );
+  }, [deviceModelId, hasCustomLockScreen, setHasCustomLockScreen]);
 
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
@@ -46,9 +50,9 @@ const CustomImageManagerButton = (props: Props) => {
             : IconsLegacy.ChevronRightMedium
         }
         disabled={disabled}
-        data-test-id="manager-custom-image-button"
+        data-testid="manager-custom-image-button"
       >
-        {lastSeenCustomImage.size ? t("changeCustomLockscreen.cta") : t("common.add")}
+        {hasCustomLockScreen ? t("changeCustomLockscreen.cta") : t("common.add")}
       </Link>
     </Flex>
   );

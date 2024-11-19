@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Account, AccountLike, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -17,11 +17,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };
+
+type AccountLikeEnhanced = SubAccountEnhanced | Account | TokenAccount;
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.ReceiveSelectAccount>
@@ -52,21 +56,22 @@ function ReceiveSelectAccount({
   const aggregatedAccounts = useMemo(
     () =>
       currency && currency.type === "TokenCurrency"
-        ? parentAccounts!.reduce<AccountLike[]>((accs, pa) => {
-            const tokenAccounts = (pa as Account).subAccounts
-              ? (pa as Account).subAccounts?.filter(
-                  acc => acc.type === "TokenAccount" && acc.token.id === currency.id,
-                )
-              : [];
+        ? parentAccounts!.reduce<AccountLikeEnhanced[]>((accs, pa) => {
+            const tokenAccounts =
+              pa.type === "Account" && pa.subAccounts
+                ? pa.subAccounts?.filter(
+                    acc => acc.type === "TokenAccount" && acc.token.id === currency.id,
+                  )
+                : [];
 
             if (tokenAccounts && tokenAccounts.length > 0) {
               accs.push(...tokenAccounts);
-            } else {
-              const tokenAcc = makeEmptyTokenAccount(pa as Account, currency);
+            } else if (pa.type === "Account") {
+              const tokenAcc = makeEmptyTokenAccount(pa, currency);
 
               const tokenA: SubAccountEnhanced = {
                 ...tokenAcc,
-                parentAccount: pa as Account,
+                parentAccount: pa,
                 triggerCreateAccount: true,
               };
 
@@ -80,7 +85,7 @@ function ReceiveSelectAccount({
   );
 
   const selectAccount = useCallback(
-    (account: AccountLike) => {
+    (account: AccountLikeEnhanced) => {
       if (currency) {
         track("account_clicked", {
           asset: currency.name,
@@ -88,37 +93,29 @@ function ReceiveSelectAccount({
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
-          accountId: (account as SubAccountEnhanced)?.parentId || account.id,
-          createTokenAccount: (account as SubAccountEnhanced)?.triggerCreateAccount,
+          accountId: (account.type !== "Account" && account?.parentId) || account.id,
+          createTokenAccount: "triggerCreateAccount" in account && account?.triggerCreateAccount,
         });
       }
     },
     [currency, navigation, route.params],
   );
 
+  const walletState = useSelector(walletSelector);
+
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AccountLike>) => (
+    ({ item }: ListRenderItemInfo<AccountLikeEnhanced>) => (
       <Flex px={6}>
         <AccountCard
           account={item}
           AccountSubTitle={
-            (item as SubAccountEnhanced).parentAccount ||
-            (item as TokenAccount).token?.parentCurrency ? (
-              <Text color="neutral.c80">
-                {
-                  (
-                    ((item as SubAccountEnhanced).parentAccount as Account) ||
-                    (item as TokenAccount).token.parentCurrency
-                  ).name
-                }
-              </Text>
-            ) : null
+            <Text color="neutral.c80">{accountNameWithDefaultSelector(walletState, item)}</Text>
           }
           onPress={() => selectAccount(item)}
         />
       </Flex>
     ),
-    [selectAccount],
+    [walletState, selectAccount],
   );
 
   const createNewAccount = useCallback(() => {
@@ -141,7 +138,7 @@ function ReceiveSelectAccount({
     }
   }, [currency, navigationAccount]);
 
-  const keyExtractor = useCallback((item: AccountLike) => item?.id, []);
+  const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>

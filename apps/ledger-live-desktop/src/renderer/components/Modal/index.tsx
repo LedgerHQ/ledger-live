@@ -12,8 +12,6 @@ import { State } from "~/renderer/reducers";
 import { Dispatch } from "redux";
 export { default as ModalBody } from "./ModalBody";
 
-const domNode = document.getElementById("modals");
-
 const mapStateToProps = <Name extends keyof ModalData>(
   state: State,
   { name, isOpened, onBeforeOpen }: Props<Name>,
@@ -233,6 +231,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   };
 
   render() {
+    const domNode = document.getElementById("modals");
     const { children, render, centered, onClose, data, isOpened, width, backdropColor, bodyStyle } =
       this.props;
     const renderProps = {
@@ -254,7 +253,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
         {state => {
           return (
             <Container
-              data-test-id="modal-backdrop"
+              data-testid="modal-backdrop"
               state={state}
               centered={centered}
               isOpened={isOpened}
@@ -273,7 +272,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
                   this.onIndirectMouseDown();
                   e.stopPropagation();
                 }}
-                data-test-id="modal-container"
+                data-testid="modal-container"
                 style={bodyStyle}
               >
                 {render && render(renderProps)}

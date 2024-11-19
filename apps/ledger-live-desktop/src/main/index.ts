@@ -2,7 +2,6 @@ import "./setup"; // Needs to be imported first
 import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow, dialog } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
-import path from "path";
 import {
   createMainWindow,
   getMainWindow,
@@ -10,17 +9,19 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import { getSentryEnabled, setUserId } from "./internal-lifecycle";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
+import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
 
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
-const userDataDirectory = resolveUserDataDirectory();
+const { LEDGER_CONFIG_DIRECTORY } = process.env;
+const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
 if (!gotLock) {
   app.quit();
 } else {
@@ -98,20 +99,20 @@ app.on("ready", async () => {
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
     return db.setKey(ns, keyPath, value);
   });
-  ipcMain.handle("hasEncryptionKey", (event, { ns, keyPath }) => {
-    return db.hasEncryptionKey(ns, keyPath);
+  ipcMain.handle("hasEncryptionKey", () => {
+    return db.hasEncryptionKey();
   });
-  ipcMain.handle("setEncryptionKey", (event, { ns, keyPath, encryptionKey }) => {
-    return db.setEncryptionKey(ns, keyPath, encryptionKey);
+  ipcMain.handle("setEncryptionKey", (event, { encryptionKey }) => {
+    return db.setEncryptionKey(encryptionKey);
   });
-  ipcMain.handle("removeEncryptionKey", (event, { ns, keyPath }) => {
-    return db.removeEncryptionKey(ns, keyPath);
+  ipcMain.handle("removeEncryptionKey", () => {
+    return db.removeEncryptionKey();
   });
-  ipcMain.handle("isEncryptionKeyCorrect", (event, { ns, keyPath, encryptionKey }) => {
-    return db.isEncryptionKeyCorrect(ns, keyPath, encryptionKey);
+  ipcMain.handle("isEncryptionKeyCorrect", (event, { encryptionKey }) => {
+    return db.isEncryptionKeyCorrect(encryptionKey);
   });
-  ipcMain.handle("hasBeenDecrypted", (event, { ns, keyPath }) => {
-    return db.hasBeenDecrypted(ns, keyPath);
+  ipcMain.handle("hasBeenDecrypted", () => {
+    return db.hasBeenDecrypted();
   });
   ipcMain.handle("resetAll", () => {
     return db.resetAll();
@@ -166,6 +167,20 @@ app.on("ready", async () => {
       });
     }, 300),
   );
+
+  if (__DEV__) {
+    electronAppUniversalProtocolClient.on("request", requestUrl => {
+      // Handle the request
+      const win = getMainWindow();
+      if (win) win.webContents.send("deep-linking", requestUrl);
+    });
+
+    await electronAppUniversalProtocolClient.initialize({
+      protocol: "ledgerlive",
+      mode: "development",
+    });
+  }
+
   await clearSessionCache(window.webContents.session);
 });
 
@@ -194,6 +209,12 @@ ipcMain.on("app-reload", () => {
     w.reload();
   }
 });
+ipcMain.on("show-app", () => {
+  const w = getMainWindow();
+  if (w) {
+    show(w);
+  }
+});
 
 ipcMain.on("ready-to-show", () => {
   const w = getMainWindow();
@@ -216,21 +237,23 @@ async function installExtensions() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const installer = require("electron-devtools-installer");
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
-  const extensions = [/*"REACT_DEVELOPER_TOOLS",*/ "REDUX_DEVTOOLS"];
-  // Temporary solution while Electron doesn't support manifest V3 extensions
-  // https://github.com/electron/electron/issues/36545
-  const reactDevToolsPath = path.dirname(require.resolve("@ledgerhq/react-devtools/package.json"));
-  session.defaultSession.loadExtension(reactDevToolsPath);
-  return Promise.all(
+  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
+  await Promise.all(
     extensions.map(name =>
       installer.default(installer[name], {
+        forceDownload,
         loadExtensionOptions: {
           allowFileAccess: true,
-          forceDownload,
         },
       }),
     ),
   ).catch(console.error);
+  //Hack to load React devtools extension without a reload due to this issue: https://github.com/MarshallOfSound/electron-devtools-installer/issues/244
+  return session.defaultSession.getAllExtensions().map(e => {
+    if (e.name === "React Developer Tools") {
+      session.defaultSession.loadExtension(e.path);
+    }
+  });
 }
 function clearSessionCache(session: Electron.Session): Promise<void> {
   return session.clearCache();

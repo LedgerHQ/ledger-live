@@ -1,13 +1,24 @@
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
-import StepResetDevice, { StepResetFooter } from "../steps/00-step-reset-device";
+import StepResetDevice from "../steps/00-step-reset-device";
 import StepPrepare from "../steps/01-step-prepare";
 import StepFlashMcu from "../steps/02-step-flash-mcu";
 import StepRestore from "../steps/02-step-restore";
 import StepUpdating from "../steps/02-step-updating";
-import StepConfirmation, { StepConfirmFooter } from "../steps/03-step-confirmation";
+import StepConfirmation from "../steps/03-step-confirmation";
 import { Step, StepId, STEPS } from "../types";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+
+export function isRestoreStepEnabled(
+  deviceModelId: DeviceModelId,
+  firmware: FirmwareUpdateContext,
+): boolean {
+  return (
+    isCustomLockScreenSupported(deviceModelId) ||
+    isDeviceLocalizationSupported(firmware.final.name, deviceModelId)
+  );
+}
 
 export const createFirmwareUpdateSteps = ({
   firmware,
@@ -16,14 +27,13 @@ export const createFirmwareUpdateSteps = ({
   deviceModelId,
   stateStepId,
 }: {
-  firmware?: FirmwareUpdateContext;
+  firmware: FirmwareUpdateContext;
   withFinal: boolean;
   withResetStep: boolean;
   deviceModelId: DeviceModelId;
   stateStepId: StepId;
 }) => {
-  const hasRestoreStep =
-    firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
+  const hasRestoreStep = isRestoreStepEnabled(deviceModelId, firmware);
 
   const restoreStepLabel =
     stateStepId === STEPS.FINISH
@@ -39,7 +49,7 @@ export const createFirmwareUpdateSteps = ({
     id: STEPS.RESET_DEVICE,
     label: "manager.modal.steps.reset",
     component: StepResetDevice,
-    footer: StepResetFooter,
+    footer: StepResetDevice.Footer,
   };
 
   const prepareStep: Step = {
@@ -47,8 +57,8 @@ export const createFirmwareUpdateSteps = ({
     label: firmware?.osu?.hash
       ? "manager.modal.identifier"
       : stateStepId === STEPS.RESET_DEVICE || stateStepId === STEPS.ID_CHECK
-      ? "manager.modal.steps.prepare"
-      : "manager.modal.steps.prepareDone",
+        ? "manager.modal.steps.prepare"
+        : "manager.modal.steps.prepareDone",
     component: StepPrepare,
   };
 
@@ -68,13 +78,14 @@ export const createFirmwareUpdateSteps = ({
     id: STEPS.RESTORE,
     label: restoreStepLabel,
     component: StepRestore,
+    footer: StepRestore.Footer,
   };
 
   const finalStep: Step = {
     id: STEPS.FINISH,
     label: hasRestoreStep ? restoreStepLabel : installUpdateLabel,
     component: StepConfirmation,
-    footer: StepConfirmFooter,
+    footer: StepConfirmation.Footer,
   };
 
   const steps: Step[] = [];

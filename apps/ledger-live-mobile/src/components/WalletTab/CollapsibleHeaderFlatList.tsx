@@ -24,6 +24,7 @@ function CollapsibleHeaderFlatList<T>({
   return (
     <SafeAreaView isFlex>
       <Animated.FlatList<T>
+        {...otherProps}
         scrollToOverflowEnabled={true}
         ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
         scrollEventThrottle={16}
@@ -46,7 +47,6 @@ function CollapsibleHeaderFlatList<T>({
         ]}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        {...otherProps}
       >
         {children}
       </Animated.FlatList>

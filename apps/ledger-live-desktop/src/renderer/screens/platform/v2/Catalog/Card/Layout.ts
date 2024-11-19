@@ -48,8 +48,8 @@ export const Container: StyledComponent<
           }
         `
       : p.highlighted
-      ? highlightedTheme[p.theme.colors.palette.type]
-      : css`
+        ? highlightedTheme[p.theme.colors.palette.type]
+        : css`
           &:hover,
           &:focus {
             cursor: pointer;

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatListProps, Platform } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { Stop } from "react-native-svg";
 import styled, { useTheme } from "styled-components/native";
@@ -21,6 +21,7 @@ import FiltersIcon from "~/icons/Filters";
 import { ScreenName } from "~/const";
 import WalletTabSafeAreaView from "../../WalletTab/WalletTabSafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import Config from "react-native-config";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -29,6 +30,11 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListPr
 
 type Props = {
   data: ProtoNFT[];
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isLoading: boolean;
+  error: unknown;
+  refetch: () => void;
 };
 
 // Fake ProtoNFT to be able to display "Add new" button at the end of the list
@@ -45,7 +51,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-const NftList = ({ data }: Props) => {
+const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -75,6 +81,9 @@ const NftList = ({ data }: Props) => {
       <Stop key="50%" offset="50%" stopOpacity={1} stopColor={colors.background.main} />,
     ],
   };
+
+  const Fade_In_Down = Config.MOCK ? undefined : FadeInDown;
+  const Fade_Out_Down = Config.MOCK ? undefined : FadeOutDown;
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -115,13 +124,14 @@ const NftList = ({ data }: Props) => {
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
+
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
         ListHeaderComponent={
           <WalletTabSafeAreaView edges={["left", "right"]}>
             <Animated.View>
               {!multiSelectModeEnabled && (
-                <Animated.View entering={FadeInDown}>
+                <Animated.View entering={Fade_In_Down}>
                   <StyledFilterBar
                     width="100%"
                     flexDirection="row"
@@ -161,16 +171,29 @@ const NftList = ({ data }: Props) => {
         ListHeaderComponentStyle={{
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
+        ListFooterComponent={
+          !isLoading && hasNextPage ? (
+            <Flex paddingBottom={25} paddingTop={25}>
+              <InfiniteLoader />
+            </Flex>
+          ) : null
+        }
         ListEmptyComponent={
-          <EmptyState
-            onPress={() => {
-              track("button_clicked", {
-                button: "Reset Filters",
-                page: ScreenName.WalletNftGallery,
-              });
-              openFilterDrawer();
-            }}
-          />
+          isLoading ? (
+            <Flex flexGrow={1} justifyContent="center" paddingBottom={150}>
+              <InfiniteLoader />
+            </Flex>
+          ) : (
+            <EmptyState
+              onPress={() => {
+                track("button_clicked", {
+                  button: "Reset Filters",
+                  page: ScreenName.WalletNftGallery,
+                });
+                openFilterDrawer();
+              }}
+            />
+          )
         }
         data={data.length > 0 ? dataWithAdd : data}
         renderItem={renderItem}
@@ -180,11 +203,13 @@ const NftList = ({ data }: Props) => {
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.2}
       />
       {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
         {multiSelectModeEnabled && (
-          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+          <Animated.View entering={Fade_In_Down} exiting={Fade_Out_Down}>
             <BackgroundGradient {...gradient} />
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>

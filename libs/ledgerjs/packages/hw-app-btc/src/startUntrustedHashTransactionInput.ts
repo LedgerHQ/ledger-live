@@ -14,12 +14,12 @@ export function startUntrustedHashTransactionInputRaw(
   const p2 = additionals.includes("cashaddr")
     ? 0x03
     : bip143
-    ? additionals.includes("sapling")
-      ? 0x05
-      : overwinter
-      ? 0x04
-      : 0x02
-    : 0x00;
+      ? additionals.includes("sapling")
+        ? 0x05
+        : overwinter
+          ? 0x04
+          : 0x02
+      : 0x00;
   return transport.send(
     0xe0,
     0x44,

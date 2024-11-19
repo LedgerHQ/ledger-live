@@ -8,6 +8,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import KeyboardView from "~/components/KeyboardView";
 
 type PageHeaderContentLayoutProps = {
   title?: React.ReactNode;
@@ -73,28 +74,32 @@ export function Layout({
         </Animated.View>
       </Flex>
       <Flex style={[styles.marginHorizontal]}>{searchContent}</Flex>
-      <ScrollContainer
-        onScroll={scrollHandler}
-        scrollEventThrottle={10}
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={listStickyElement}
-      >
-        {titleHeaderContent && <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>}
-        {middleHeaderContent && (
-          <Flex style={[styles.marginHorizontal]}>{middleHeaderContent}</Flex>
-        )}
-        {bottomHeaderContent && (
-          <Flex style={!disableStyleBottomHeader && styles.marginHorizontal}>
-            {bottomHeaderContent}
-          </Flex>
-        )}
-        {subBottomHeaderContent && (
-          <Flex style={!disableStyleSubBottomHeader && styles.marginHorizontal}>
-            {subBottomHeaderContent}
-          </Flex>
-        )}
-        <Flex style={[styles.marginHorizontal]}>{bodyContent}</Flex>
-      </ScrollContainer>
+      <KeyboardView style={{ flex: 1 }} behavior="padding">
+        <ScrollContainer
+          onScroll={scrollHandler}
+          scrollEventThrottle={10}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderIndices={listStickyElement}
+        >
+          {titleHeaderContent && (
+            <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>
+          )}
+          {middleHeaderContent && (
+            <Flex style={[styles.marginHorizontal]}>{middleHeaderContent}</Flex>
+          )}
+          {bottomHeaderContent && (
+            <Flex style={!disableStyleBottomHeader && styles.marginHorizontal}>
+              {bottomHeaderContent}
+            </Flex>
+          )}
+          {subBottomHeaderContent && (
+            <Flex style={!disableStyleSubBottomHeader && styles.marginHorizontal}>
+              {subBottomHeaderContent}
+            </Flex>
+          )}
+          <Flex style={[styles.marginHorizontal]}>{bodyContent}</Flex>
+        </ScrollContainer>
+      </KeyboardView>
     </>
   );
 }

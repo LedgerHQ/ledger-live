@@ -9,8 +9,8 @@ import { bufferTime, filter, map } from "rxjs/operators";
 const STATE_UPDATE_THROTTLE = 500;
 
 export type UseUpdateFirmwareArgs = {
-  updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
   deviceId: string;
+  updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
 };
 
 /**
@@ -20,13 +20,13 @@ export type UseUpdateFirmwareArgs = {
  * @param Args Object containing the arguments of the hook: a deviceId and an optional device action to used (useful for mocking)
  * @returns An object containing the current state of the update and the trigger update function
  */
-export const useUpdateFirmware = ({
-  updateFirmwareAction = defaultUpdateFirmwareAction,
+export function useUpdateFirmware({
   deviceId,
+  updateFirmwareAction = defaultUpdateFirmwareAction,
 }: UseUpdateFirmwareArgs): {
   updateState: UpdateFirmwareActionState;
   triggerUpdate: () => void;
-} => {
+} {
   const [updateState, setUpdateState] = useState<UpdateFirmwareActionState>(initialState);
   const [nonce, setNonce] = useState(0);
 
@@ -43,7 +43,9 @@ export const useUpdateFirmware = ({
           filter(e => e !== undefined),
         )
         .subscribe({
-          next: state => setUpdateState(state),
+          next: (state: UpdateFirmwareActionState) => {
+            setUpdateState(state);
+          },
         });
 
       return () => {
@@ -58,4 +60,4 @@ export const useUpdateFirmware = ({
   }, []);
 
   return { updateState, triggerUpdate };
-};
+}

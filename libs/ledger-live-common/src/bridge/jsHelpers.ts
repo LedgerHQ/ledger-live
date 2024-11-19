@@ -1,4 +1,4 @@
-import { Observable, firstValueFrom, from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import {
   GetAccountShape,
   IterateResultBuilder,
@@ -27,11 +27,11 @@ function getAddr(deviceId: string, opts: GetAddressOptions): Promise<Result> {
   );
 }
 
-export const makeScanAccounts = ({
+export const makeScanAccounts = <A extends Account = Account>({
   getAccountShape,
   buildIterateResult,
 }: {
-  getAccountShape: GetAccountShape;
+  getAccountShape: GetAccountShape<A>;
   buildIterateResult?: IterateResultBuilder;
 }): CurrencyBridge["scanAccounts"] => {
   return commonMakeScanAccounts({
@@ -45,18 +45,7 @@ export function makeAccountBridgeReceive({
   injectGetAddressParams,
 }: {
   injectGetAddressParams?: (account: Account) => any;
-} = {}): (
-  account: Account,
-  option: {
-    verify?: boolean;
-    deviceId: string;
-    subAccountId?: string;
-    freshAddressIndex?: number;
-  },
-) => Observable<{
-  address: string;
-  path: string;
-}> {
+} = {}) {
   return commonMakeAccountBridgeReceive(getAddr, {
     injectGetAddressParams,
   });

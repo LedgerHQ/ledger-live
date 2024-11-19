@@ -194,10 +194,10 @@ class CurrencyInput extends PureComponent<Props, State> {
                   color: colors.alert,
                 }
               : hasWarning
-              ? {
-                  color: colors.orange,
-                }
-              : null,
+                ? {
+                    color: colors.orange,
+                  }
+                : null,
             editable
               ? {}
               : {

@@ -12,34 +12,30 @@ import {
   derivationModeSupportsIndex,
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
-  DerivationMode,
 } from "../derivation";
+import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
 import {
-  getAccountPlaceholderName,
-  getNewAccountPlaceholderName,
-  shouldRetainPendingOperation,
-  isAccountEmpty,
-  shouldShowNewAccount,
-  clearAccount,
-  emptyHistoryCache,
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
-  encodeAccountId,
-} from "../account";
-import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
+} from "../account/balanceHistoryCache";
+import { shouldRetainPendingOperation } from "../account/pending";
+import { shouldShowNewAccount } from "../account/support";
+import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { Result } from "../derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
-  Address,
+  AccountRaw,
   CurrencyBridge,
+  DerivationMode,
   Operation,
   ProtoNFT,
   ScanAccountEvent,
   SyncConfig,
   TransactionCommon,
+  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
@@ -69,22 +65,22 @@ export type IterateResultBuilder = ({
   derivationScheme: string;
 }) => Promise<IterateResult>;
 
-export type AccountShapeInfo = {
+export type AccountShapeInfo<A extends Account = Account> = {
   currency: CryptoCurrency;
   address: string;
   index: number;
-  initialAccount?: Account;
+  initialAccount?: A | undefined;
   derivationPath: string;
   derivationMode: DerivationMode;
   rest?: any;
   deviceId?: string;
 };
 
-export type GetAccountShape = (
-  accountShape: AccountShapeInfo,
+export type GetAccountShape<A extends Account = Account> = (
+  accountShape: AccountShapeInfo<A>,
   config: SyncConfig,
-) => Promise<Partial<Account>>;
-type AccountUpdater = (account: Account) => Account;
+) => Promise<Partial<A>>;
+type AccountUpdater<A extends Account = Account> = (account: A) => A;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
@@ -179,17 +175,22 @@ export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] 
 };
 
 export const makeSync =
-  ({
+  <
+    T extends TransactionCommon = TransactionCommon,
+    A extends Account = Account,
+    U extends TransactionStatusCommon = TransactionStatusCommon,
+    R extends AccountRaw = AccountRaw,
+  >({
     getAccountShape,
     postSync = (_, a) => a,
     shouldMergeOps = true,
   }: {
-    getAccountShape: GetAccountShape;
-    postSync?: (initial: Account, synced: Account) => Account;
+    getAccountShape: GetAccountShape<A>;
+    postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean;
-  }): AccountBridge<any>["sync"] =>
-  (initial, syncConfig): Observable<AccountUpdater> =>
-    Observable.create((o: Observer<(acc: Account) => Account>) => {
+  }): AccountBridge<T, A, U, R>["sync"] =>
+  (initial, syncConfig): Observable<AccountUpdater<A>> =>
+    new Observable((o: Observer<(acc: A) => A>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -218,7 +219,7 @@ export const makeSync =
             syncConfig,
           );
 
-          const updater = (acc: Account): Account => {
+          const updater = (acc: A): A => {
             let a = acc; // a is a immutable version of Account, based on acc
 
             if (needClear) {
@@ -298,12 +299,12 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
   );
 
 export const makeScanAccounts =
-  ({
+  <A extends Account = Account>({
     getAccountShape,
     buildIterateResult,
     getAddressFn,
   }: {
-    getAccountShape: GetAccountShape;
+    getAccountShape: GetAccountShape<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
   }): CurrencyBridge["scanAccounts"] =>
@@ -360,15 +361,7 @@ export const makeScanAccounts =
           seedIdentifier,
           freshAddress,
           freshAddressPath,
-          freshAddresses: [
-            {
-              address: freshAddress,
-              derivationPath: freshAddressPath,
-            },
-          ],
           derivationMode,
-          name: "",
-          starred: false,
           used: false,
           index,
           currency,
@@ -376,7 +369,6 @@ export const makeScanAccounts =
           operations: [],
           swapHistory: [],
           pendingOperations: [],
-          unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate,
           // overrides
@@ -412,18 +404,6 @@ export const makeScanAccounts =
         );
 
         if (!account) return;
-
-        account.name = !account.used
-          ? getNewAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            })
-          : getAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
@@ -533,51 +513,40 @@ export const makeScanAccounts =
       return unsubscribe;
     });
 
-export function makeAccountBridgeReceive(
+export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
   }: {
-    injectGetAddressParams?: (account: Account) => any;
+    injectGetAddressParams?: (account: A) => any;
   } = {},
-): (
-  account: Account,
-  option: {
-    verify?: boolean;
-    deviceId: string;
-    subAccountId?: string;
-    freshAddressIndex?: number;
-  },
-) => Observable<{
-  address: string;
-  path: string;
-}> {
-  return (account, { verify, deviceId, freshAddressIndex }) => {
-    let freshAddress: Address | undefined;
-
-    if (freshAddressIndex !== undefined && freshAddressIndex !== null) {
-      freshAddress = account.freshAddresses[freshAddressIndex];
-
-      if (freshAddress === undefined) {
-        throw new FreshAddressIndexInvalid();
-      }
-    }
-
+) {
+  return (
+    account: A,
+    {
+      verify,
+      deviceId,
+      path,
+    }: {
+      verify?: boolean;
+      deviceId: string;
+      subAccountId?: string;
+      path?: string;
+    },
+  ) => {
     const arg = {
       verify,
       currency: account.currency,
       derivationMode: account.derivationMode,
-      path: freshAddress ? freshAddress.derivationPath : account.freshAddressPath,
+      path: path || account.freshAddressPath,
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
       getAddressFn(deviceId, arg).then(r => {
-        const accountAddress = freshAddress ? freshAddress.address : account.freshAddress;
+        const accountAddress = account.freshAddress;
 
-        if (r.address !== accountAddress) {
-          throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-            accountName: account.name,
-          });
+        if (verify && r.address !== accountAddress) {
+          throw new WrongDeviceForAccount();
         }
 
         return r;

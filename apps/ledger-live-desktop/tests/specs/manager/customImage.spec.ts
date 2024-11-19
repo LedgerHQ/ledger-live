@@ -1,13 +1,13 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
+import { ManagerPage } from "../../page/manager.page";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
-import { CustomImageDrawer } from "../../models/CustomImageDrawer";
+import { Layout } from "../../component/layout.component";
+import { CustomImageDrawer } from "../../page/drawer/custom.image.drawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import padStart from "lodash/padStart";
 
-test.use({ userdata: "skip-onboarding", featureFlags: { customImage: { enabled: true } } });
+test.use({ userdata: "skip-onboarding" });
 
 test("Custom image", async ({ page }) => {
   const managerPage = new ManagerPage(page);
@@ -51,7 +51,7 @@ test("Custom image", async ({ page }) => {
   });
 
   await test.step("Import image", async () => {
-    await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.webp");
+    await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.jpg");
     await customImageDrawer.importImageInput.waitFor({ state: "detached" });
     await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}image-imported.png`);

@@ -2,18 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/api/Cosmos";
+import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
 import { Account } from "@ledgerhq/types-live";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: CosmosAccount;
@@ -32,7 +32,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const info = useInfo(account);
   const { spendableBalance, cosmosResources } = account;
   const { delegatedBalance, unbondingBalance } = cosmosResources || {};
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);

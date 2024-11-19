@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -11,6 +10,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { NearFamily } from "./types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -50,7 +50,10 @@ const AmountValue = styled(Text).attrs(() => ({
 const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
+
   if (account.type !== "Account") return null;
+
   const {
     spendableBalance: _spendableBalance,
     nearResources: {
@@ -60,7 +63,7 @@ const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = (
       pendingBalance: _pendingBalance,
     },
   } = account;
-  const unit = getAccountUnit(account);
+
   const formatConfig = {
     alwaysShowSign: false,
     showCode: true,

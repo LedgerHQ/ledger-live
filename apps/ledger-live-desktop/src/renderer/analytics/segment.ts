@@ -1,32 +1,37 @@
-import { v4 as uuid } from "uuid";
-import invariant from "invariant";
-import { ReplaySubject } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
-import logger from "~/renderer/logger";
-import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import user from "~/helpers/user";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import {
-  sidebarCollapsedSelector,
-  shareAnalyticsSelector,
-  lastSeenDeviceSelector,
-  localeSelector,
-  languageSelector,
-  devicesModelListSelector,
-} from "~/renderer/reducers/settings";
-import { State } from "~/renderer/reducers";
-import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
-import { accountsSelector } from "../reducers/accounts";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   GENESIS_PASS_COLLECTION_CONTRACT,
   hasNftInAccounts,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
-import createStore from "../createStore";
-import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+} from "@ledgerhq/live-nft";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import invariant from "invariant";
 import { useCallback, useContext } from "react";
+import { ReplaySubject } from "rxjs";
+import { v4 as uuid } from "uuid";
+import { getParsedSystemLocale } from "~/helpers/systemLocale";
+import user from "~/helpers/user";
+import logger from "~/renderer/logger";
+import { State } from "~/renderer/reducers";
+import {
+  developerModeSelector,
+  devicesModelListSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  languageSelector,
+  lastSeenDeviceSelector,
+  localeSelector,
+  shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
+  sidebarCollapsedSelector,
+  trackingEnabledSelector,
+} from "~/renderer/reducers/settings";
+import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
+import { accountsSelector } from "../reducers/accounts";
+import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -55,46 +60,93 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = () => {
-  if (!analyticsFeatureFlagMethod) return {};
-  (async () => {
-    const { id } = await user();
-    const analytics = getAnalytics();
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+const getMarketWidgetAnalytics = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
 
-    const isBatch1Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
-    const isBatch2Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
-    const isBatch3Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-
-    analytics.identify(
-      id,
-      {
-        ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-        isBatch1Enabled,
-        isBatch2Enabled,
-        isBatch3Enabled,
-      },
-      {
-        context: getContext(),
-      },
-    );
-  })();
+  return !!marketWidget?.enabled;
 };
 
-runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
+const getLedgerSyncAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+
+  return {
+    hasLedgerSync: !!walletSync?.enabled,
+    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+  };
+};
+
+const getPtxAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+  const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
+
+  const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
+  const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
+  const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
+  const ptxSwapCoreExperimentFlag = analyticsFeatureFlagMethod("ptxSwapCoreExperiment");
+  const ptxSwapCoreExperiment =
+    ptxSwapCoreExperimentFlag?.enabled && ptxSwapCoreExperimentFlag?.params?.variant;
+
+  const isBatch1Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+  const isBatch2Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+  const isBatch3Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+  const stakingProvidersEnabled: number | string =
+    !!stakingProviders?.enabled &&
+    stakingProviders?.params &&
+    stakingProviders?.params?.listProvider?.length > 0
+      ? stakingProviders?.params?.listProvider.length
+      : "flag not loaded";
+  const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
+  return {
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+    ptxCard,
+    ptxSwapMoonpayProviderEnabled,
+    ptxSwapLiveAppDemoZero,
+    ptxSwapLiveAppDemoOne,
+    ptxSwapLiveAppDemoThree,
+    ptxSwapCoreExperiment,
+    ptxSwapExodusProvider,
+  };
+};
+
+const getMandatoryProperties = (store: ReduxStore) => {
+  const state: State = store.getState();
+  const analyticsEnabled = shareAnalyticsSelector(state);
+  const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
+  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const devModeEnabled = developerModeSelector(state);
+
+  return {
+    devModeEnabled,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    hasSeenAnalyticsOptInPrompt,
+  };
+};
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
+  const mandatoryProperties = getMandatoryProperties(store);
   const language = languageSelector(state);
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const ptxAttributes = getPtxAttributes();
+
+  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
 
   const deviceInfo = device
     ? {
@@ -129,6 +181,7 @@ const extraProperties = (store: ReduxStore) => {
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
 
   return {
+    ...mandatoryProperties,
     appVersion: __APP_VERSION__,
     language,
     appLanguage: language, // Needed for braze
@@ -144,8 +197,11 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
+    ...ptxAttributes,
     ...deviceInfo,
+    ...ledgerSyncAtributes,
   };
 };
 
@@ -164,6 +220,7 @@ export const start = async (store: ReduxStore) => {
   if (!analytics) return;
   const allProperties = {
     ...extraProperties(store),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   logger.analyticsStart(id, allProperties);
@@ -197,13 +254,16 @@ function sendTrack(event: string, properties: object | undefined | null) {
 const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   const { account, parentAccount } = properties || {};
   const filterAccount = account
-    ? { account: typeof account === "object" ? getAccountName(account as AccountLike) : account }
+    ? {
+        account:
+          typeof account === "object" ? getDefaultAccountName(account as AccountLike) : account,
+      }
     : {};
   const filterParentAccount = parentAccount
     ? {
         parentAccount:
           typeof parentAccount === "object"
-            ? getAccountName(parentAccount as AccountLike)
+            ? getDefaultAccountName(parentAccount as AccountLike)
             : parentAccount,
       }
     : {};
@@ -215,36 +275,39 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 };
 
 export const updateIdentify = async () => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
-
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
   const { id } = await user();
 
   const allProperties = {
     ...extraProperties(storeInstance),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {
     context: getContext(),
   });
 };
+/** Ensure PTX flag attributes are set as soon as feature flags load */
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
 
 export const track = (
   eventName: string,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
+  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
     return;
   }
 
   const eventPropertiesWithoutExtra = {
-    ...properties,
     page: currentRouteNameRef.current,
+    ...properties,
   };
+
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...extraProperties(storeInstance),
+    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
     ...confidentialityFilter(properties),
   };
 
@@ -321,7 +384,7 @@ export const trackPage = (
    */
   refreshSource?: boolean,
 ) => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 

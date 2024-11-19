@@ -28,6 +28,7 @@ export type LoadConfig = {
   // object will be merged with the returned value of the Ledger cdn payload
   extraPlugins?: any | null;
   cryptoassetsBaseURL?: string | null;
+  calServiceURL?: string | null;
 };
 
 /**
@@ -43,6 +44,8 @@ export type ResolutionConfig = {
   erc20?: boolean;
   // List of trusted names (ENS for now) to clear sign
   domains?: DomainDescriptor[];
+  // activate uniswap v3 plugin resolution
+  uniswapV3?: boolean;
 };
 
 export type LedgerEthTransactionService = {

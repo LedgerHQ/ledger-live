@@ -8,15 +8,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  INTERNAL_APP_IDS,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
 
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -39,24 +39,25 @@ type BackToInternalDomainProps = {
   manifest: AppManifest;
   webviewURL?: string;
   lastMatchingURL?: string | null;
+  config: {
+    screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
+    navigator: NavigatorName.Exchange | NavigatorName.Card;
+    btnText: string;
+  };
 };
 
 function BackToInternalDomain({
   manifest,
   webviewURL,
   lastMatchingURL,
+  config,
 }: BackToInternalDomainProps) {
   const { t } = useTranslation();
+  const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-  const [buttonText, setButtonText] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
-      setButtonText(lastScreen === "compare_providers" ? "Quote" : manifest.name);
-    })();
-  }, [manifest.id, manifest.name]);
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
@@ -71,13 +72,13 @@ function BackToInternalDomain({
         flow: flowName,
       });
 
-      navigation.navigate(NavigatorName.Exchange, {
-        screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+      navigation.navigate(navigator, {
+        screen,
         params: {
           referrer: "isExternal",
         },
       });
-    } else if (manifest.id === DEFAULT_MULTIBUY_APP_ID && lastMatchingURL && webviewURL) {
+    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -99,7 +100,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: buttonText })}
+            {t("common.backTo", { to: btnText })}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -117,15 +118,36 @@ type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
   disableHeader?: boolean;
+  config?:
+    | {
+        screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell;
+        navigator: NavigatorName.Exchange;
+        btnText: string;
+      }
+    | {
+        screen: ScreenName.Card;
+        navigator: NavigatorName.Card;
+        btnText: string;
+      };
 };
 
-export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
+export const WebPTXPlayer = ({
+  manifest,
+  inputs,
+  disableHeader,
+  config = {
+    screen: ScreenName.ExchangeSell,
+    btnText: manifest.name,
+    navigator: NavigatorName.Exchange,
+  },
+}: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const isInternalApp = useMemo(() => {
-    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+    if (!internalAppIds.includes(manifest.id)) {
       return false;
     }
 
@@ -137,7 +159,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.id, manifest.url, webviewState.url]);
+  }, [internalAppIds, manifest.id, manifest.url, webviewState.url]);
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -152,14 +174,18 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
           const manifestId = url.searchParams.get("goToManifest");
 
           if (manifestId && goToURL) {
-            const flowName = url.searchParams.get("flowName") || "buy";
+            const searchParams = url.searchParams;
+            const flowName = searchParams.get("flowName") || "";
+            const lastScreen = searchParams.get("lastScreen") || flowName;
 
-            await AsyncStorage.setItem("manifest-id", manifestId);
-            await AsyncStorage.setItem("flow-name", flowName);
-            await AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+            await AsyncStorage.multiSet([
+              ["manifest-id", manifestId],
+              ["flow-name", flowName],
+              ["last-screen", lastScreen],
+            ]);
 
-            navigation.navigate(NavigatorName.Exchange, {
-              screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+            navigation.navigate(config.navigator, {
+              screen: config.screen,
               params: {
                 platform: manifestId,
                 goToURL,
@@ -175,7 +201,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
         lastMatchingURL.current = webviewState.url;
       }
     })();
-  }, [isInternalApp, navigation, webviewState.url]);
+  }, [config.navigator, config.screen, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -230,14 +256,16 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
               manifest={manifest}
               webviewURL={webviewState?.url}
               lastMatchingURL={lastMatchingURL?.current}
+              config={config}
             />
           ),
         headerTitle: () => null,
       });
     }
-  }, [manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
+  }, [config, disableHeader, isInternalApp, manifest, navigation, onClose, webviewState?.url]);
 
-  const customHandlers = usePTXCustomHandlers(manifest);
+  const accounts = useSelector(flattenAccountsSelector);
+  const customHandlers = usePTXCustomHandlers(manifest, accounts);
 
   return (
     <SafeAreaView style={[styles.root]}>

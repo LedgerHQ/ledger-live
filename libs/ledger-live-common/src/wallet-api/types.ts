@@ -1,4 +1,4 @@
-import type { Account, SignedOperation } from "@ledgerhq/types-live";
+import type { AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
@@ -46,7 +46,7 @@ export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 export type GetWalletAPITransactionSignFlowInfos<
   T extends WalletAPITransaction,
   U extends Transaction,
-> = ({ walletApiTransaction, account }: { walletApiTransaction: T; account: Account }) => {
+> = ({ walletApiTransaction, account }: { walletApiTransaction: T; account: AccountLike }) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<U>;
@@ -59,14 +59,18 @@ export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends T
   account,
 }: {
   walletApiTransaction: T;
-  account: Account;
+  account: AccountLike;
 }) => Partial<U>;
 
 export type DiscoverDB = {
-  recentlyUsed: RecentlyUsed[];
+  recentlyUsed: RecentlyUsedIdDb[];
+  localLiveApp: LiveAppManifest[];
+  currentAccountHist: CurrentAccountHistIDb;
 };
 
-export type RecentlyUsed = {
+export type RecentlyUsedIdDb = {
   id: string;
   usedAt: string;
 };
+
+export type CurrentAccountHistIDb = Record<string, string>;

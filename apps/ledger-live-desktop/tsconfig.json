@@ -5,16 +5,17 @@
     "composite": true,
     "module": "es2020",
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": ["ES2021", "dom"],
     "target": "esnext",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "tests/*": ["tests/*"]
+      "tests/*": ["tests/*"],
+      "LLD/*": ["src/newArch/*"]
     },
     "outDir": "dist",
-    "typeRoots": ["index-types.d.ts"]
+    "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]
   },
   "exclude": ["**/node_modules/*"],
   "include": [
@@ -26,6 +27,8 @@
     "package.json",
     "release-notes.json",
     "tests",
-    "index-types.d.ts"
+    "tests/handlers/**/*.json",
+    "index-types.d.ts",
+    "tests/jestSetup.ts"
   ]
 }

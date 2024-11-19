@@ -1,16 +1,15 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
 import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
-import { SyncError } from "@ledgerhq/errors";
 import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
-import { validateNameEdition } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
 import perFamilyMock from "../generated/mock";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
+import { Result } from "@ledgerhq/coin-framework/lib/derivation";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
@@ -20,11 +19,6 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
     const accountId = initialAccount.id;
 
     const sync = () => {
-      if (initialAccount.name.includes("crash")) {
-        o.error(new SyncError("mock failure"));
-        return;
-      }
-
       const ops = broadcasted[accountId] || [];
       broadcasted[accountId] = [];
       o.next(acc => {
@@ -139,7 +133,6 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           operationsSize: isLast ? 0 : 100,
           currency,
         });
-        account.unit = currency.units[0];
         account.index = i;
         account.operations = isLast
           ? []
@@ -148,8 +141,6 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
               date: subtractOneYear(operation.date),
             }));
         account.used = isLast ? false : account.used;
-        account.name = "";
-        account.name = validateNameEdition(account);
 
         if (isLast) {
           account.spendableBalance = account.balance = new BigNumber(0);
@@ -184,11 +175,9 @@ export const makeAccountBridgeReceive: () => (
     deviceId: string;
     subAccountId?: string;
   },
-) => Observable<{
-  address: string;
-  path: string;
-}> = () => account =>
+) => Observable<Result> = () => account =>
   of({
     address: account.freshAddress,
     path: account.freshAddressPath,
+    publicKey: "mockPublickKey", // We could probably keep the publicKey in `account.freshPublicKey`
   });

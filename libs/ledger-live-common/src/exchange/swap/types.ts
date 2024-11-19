@@ -3,14 +3,16 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
+import { DeviceModelId } from "@ledgerhq/devices";
+export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
-export type Exchange = {
+export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;
   toParentAccount: Account | null | undefined;
   toAccount: AccountLike;
 };
-export type ExchangeRaw = {
+export type ExchangeSwapRaw = {
   fromParentAccount: AccountRaw | null | undefined;
   fromAccount: AccountRawLike;
   toParentAccount: AccountRaw | null | undefined;
@@ -82,7 +84,7 @@ type ExchangeRateErrorCommon = {
   provider: string;
 };
 
-type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+export type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
   errorCode: number;
   errorMessage: string;
 };
@@ -148,7 +150,7 @@ export type ProvidersResponseV4 = {
 export type AvailableProvider = AvailableProviderV3;
 
 export type ExchangeObject = {
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   transaction: Transaction;
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null;
   providers?: AvailableProviderV3[];
@@ -163,6 +165,7 @@ export type GetExchangeRates = (
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
+  magnitudeAwareRate: BigNumber;
 };
 
 type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
@@ -170,6 +173,7 @@ type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
+  operationId?: string;
 };
 export type SwapStatus = {
   provider: string;
@@ -183,7 +187,15 @@ export type SwapStatus = {
 type SwapStateRequest = {
   provider: string;
   swapId: string;
-};
+} & Partial<{
+  swapStep: string;
+  statusCode: string;
+  errorMessage: string;
+  sourceCurrencyId: string;
+  targetCurrencyId: string;
+  hardwareWalletType: DeviceModelId;
+  swapType: TradeMethod;
+}>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
   transactionId: string;
@@ -233,26 +245,6 @@ export type MappedSwapOperation = {
   fromAmount: BigNumber;
   toAmount: BigNumber;
 };
-export type SwapOperation = {
-  provider: string;
-  swapId: string;
-  status: string;
-  receiverAccountId: string;
-  tokenId?: string;
-  operationId: string;
-  fromAmount: BigNumber;
-  toAmount: BigNumber;
-};
-export type SwapOperationRaw = {
-  provider: string;
-  swapId: string;
-  status: string;
-  receiverAccountId: string;
-  tokenId?: string;
-  operationId: string;
-  fromAmount: string;
-  toAmount: string;
-};
 export type SwapState = {
   // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`
   useAllAmount?: boolean;
@@ -275,14 +267,14 @@ export type SwapTransaction = Transaction & {
 };
 
 export type InitSwapInput = {
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
 };
 
 export type InitSwapInputRaw = {
-  exchange: ExchangeRaw;
+  exchange: ExchangeSwapRaw;
   exchangeRate: ExchangeRateRaw;
   transaction: TransactionRaw;
   deviceId: string;
@@ -322,6 +314,7 @@ export type SwapDataType = {
   refetchRates: () => void;
   updateSelectedRate: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
+  countdown: undefined | number;
 };
 
 export type SwapTransactionType = UseBridgeTransactionResult & {

@@ -11,13 +11,22 @@ import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
+import { LocalLiveApp } from "./LocalLiveApp";
+import { useRoute } from "@react-navigation/native";
 
 const AnimatedView = Animatable.View;
 
 export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
-  const { categories, recentlyUsed, search, disclaimer } = useCatalog();
+
+  const { params } = useRoute();
+
+  const deeplinkInitialCategory =
+    params && "category" in params && typeof params.category === "string" ? params.category : null;
+
+  const { categories, recentlyUsed, search, disclaimer, localLiveApps } =
+    useCatalog(deeplinkInitialCategory);
 
   return (
     <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
@@ -34,7 +43,7 @@ export function Catalog() {
             middleHeaderContent={
               <>
                 <Flex marginBottom={16}>
-                  <Text fontWeight="semiBold" variant="h4">
+                  <Text fontWeight="semiBold" variant="h4" testID="discover-banner">
                     {title}
                   </Text>
                 </Flex>
@@ -43,7 +52,10 @@ export function Catalog() {
             }
             disableStyleBottomHeader
             bottomHeaderContent={
-              <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              <>
+                {localLiveApps.length !== 0 && <LocalLiveApp localLiveApps={localLiveApps} />}
+                <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              </>
             }
             disableStyleSubBottomHeader
             subBottomHeaderContent={<CatalogSection categories={categories} />}

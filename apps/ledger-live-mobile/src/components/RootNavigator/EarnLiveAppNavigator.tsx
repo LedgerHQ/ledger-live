@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
@@ -24,8 +23,6 @@ type NavigationProps = BaseComposite<
 
 const Earn = (props: NavigationProps) => {
   const dispatch = useDispatch();
-  // Earn dashboard feature flag
-  const ptxEarn = useFeature("ptxEarn");
   const paramAction = props.route.params?.action;
   const navigation = props.navigation;
   const accounts = useSelector(shallowAccountsSelector);
@@ -38,9 +35,6 @@ const Earn = (props: NavigationProps) => {
   });
 
   useEffect(() => {
-    if (!ptxEarn?.enabled) {
-      return navigation.pop();
-    }
     if (!paramAction) {
       return;
     }
@@ -112,16 +106,7 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return () => clearDeepLink();
-  }, [
-    paramAction,
-    ptxEarn?.enabled,
-    props.route.params,
-    accounts,
-    navigation,
-    route,
-    openStakingDrawer,
-    dispatch,
-  ]);
+  }, [paramAction, props.route.params, accounts, navigation, route, openStakingDrawer, dispatch]);
 
   return (
     <>
@@ -130,7 +115,7 @@ const Earn = (props: NavigationProps) => {
         route={{
           ...props.route,
           params: {
-            platform: ptxEarn?.params?.liveAppId || "earn",
+            platform: "earn",
           },
         }}
       />

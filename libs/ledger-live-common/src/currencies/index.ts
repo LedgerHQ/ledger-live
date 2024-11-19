@@ -1,4 +1,4 @@
-import {
+export {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
@@ -22,61 +22,23 @@ import {
   getTokenById,
   addTokens,
 } from "@ledgerhq/cryptoassets";
-import {
-  encodeURIScheme,
-  decodeURIScheme,
-  sanitizeValueString,
-  chopCurrencyUnitDecimals,
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-  formatShort,
-  valueFromUnit,
-  findCurrencyByTicker,
-} from "@ledgerhq/coin-framework/currencies/index";
-import { getCurrencyColor, ColorableCurrency } from "./color";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
-
-export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
-export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-export * from "@ledgerhq/coin-framework/currencies/support";
-export * from "./helpers";
-
 export {
-  sortCurrenciesByIds,
-  currenciesByMarketcap,
-  listFiatCurrencies,
-  listCryptoCurrencies,
-  getFiatCurrencyByTicker,
-  findCurrencyByTicker,
-  findCryptoCurrency,
-  findCryptoCurrencyById,
-  findCryptoCurrencyByTicker,
-  findCryptoCurrencyByScheme,
-  findCryptoCurrencyByKeyword,
-  findFiatCurrencyByTicker,
-  hasFiatCurrencyTicker,
-  listTokensForCryptoCurrency,
-  listTokenTypesForCryptoCurrency,
-  findTokenByAddress,
-  findTokenByTicker,
-  findTokenById,
-  hasTokenId,
-  getTokenById,
-  getAbandonSeedAddress,
-  parseCurrencyUnit,
-  chopCurrencyUnitDecimals,
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-  formatShort,
-  getCryptoCurrencyById,
-  hasCryptoCurrencyId,
   encodeURIScheme,
   decodeURIScheme,
-  valueFromUnit,
   sanitizeValueString,
-  getCurrencyColor,
-  ColorableCurrency,
-  listTokens,
-  addTokens,
-};
+  formatCurrencyUnit,
+  type formatCurrencyUnitOptions,
+  findCurrencyByTicker,
+  parseCurrencyUnit,
+  toLocaleString,
+  isCurrencySupported,
+  listSupportedCurrencies,
+  setSupportedCurrencies,
+} from "@ledgerhq/coin-framework/currencies";
+
+export { getCurrencyColor, ColorableCurrency } from "./color";
+export { formatShort } from "./formatShort";
+export * from "./helpers";
+export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
+export { listSupportedFiats } from "./support";
+export { valueFromUnit } from "./valueFromUnit";

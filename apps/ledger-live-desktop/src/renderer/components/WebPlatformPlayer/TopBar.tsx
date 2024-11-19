@@ -13,10 +13,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import Wallet from "~/renderer/icons/Wallet";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -114,6 +119,7 @@ export type TopBarConfig = {
   shouldDisplayInfo?: boolean;
   shouldDisplayClose?: boolean;
   shouldDisplayNavigation?: boolean;
+  shouldDisplaySelectAccount?: boolean;
 };
 
 export type Props = {
@@ -123,16 +129,25 @@ export type Props = {
   config?: TopBarConfig;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb?: CurrentAccountHistDB;
 };
 
-export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
+export const TopBar = ({
+  manifest,
+  currentAccountHistDb,
+  onClose,
+  config = {},
+  webviewAPIRef,
+  webviewState,
+}: Props) => {
   const { name, icon } = manifest;
 
   const {
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
-    shouldDisplayNavigation = false,
+    shouldDisplayNavigation = !!manifest.dapp,
+    shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
@@ -166,6 +181,8 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
     webview.goForward();
   }, [webviewAPIRef]);
 
+  const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+
   const isLoading = useDebounce(webviewState.loading, 100);
 
   return (
@@ -174,7 +191,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         <>
           <TitleContainer>
             <LiveAppIcon name={name} icon={icon || undefined} size={20} />
-            <ItemContent data-test-id="live-app-title">{name}</ItemContent>
+            <ItemContent data-testid="live-app-title">{name}</ItemContent>
           </TitleContainer>
           <Separator />
         </>
@@ -211,9 +228,37 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
           <Spinner
             isRotating
             size={16}
-            data-test-id="web-platform-player-topbar-activity-indicator"
+            data-testid="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
+        {shouldDisplaySelectAccount ? (
+          <>
+            <ItemContainer
+              isInteractive
+              onClick={onSelectAccount}
+              data-testid="web-platform-player-topbar-selected-account"
+            >
+              {!currentAccount ? (
+                <>
+                  <Wallet size={16} />
+                  <ItemContent>
+                    <Trans i18nKey="common.selectAccount" />
+                  </ItemContent>
+                </>
+              ) : (
+                <>
+                  <CryptoCurrencyIcon
+                    circle
+                    currency={getAccountCurrency(currentAccount)}
+                    size={16}
+                  />
+                  <ItemContent>{getDefaultAccountName(currentAccount)}</ItemContent>
+                </>
+              )}
+            </ItemContainer>
+            <Separator />
+          </>
+        ) : null}
         {shouldDisplayInfo && (
           <ItemContainer isInteractive onClick={onClick}>
             <IconInfoCircle size={16} />

@@ -86,7 +86,7 @@ describe("custom errors", () => {
       expect(error.statusCode).toEqual(0x6d02);
     });
 
-    test.only("TransportStatusError should be mapped to a LockedDeviceError on status code 0x5515", () => {
+    test("TransportStatusError should be mapped to a LockedDeviceError on status code 0x5515", () => {
       const error = new TransportStatusError(StatusCodes.LOCKED_DEVICE);
 
       expect(error.name).toEqual("LockedDeviceError");

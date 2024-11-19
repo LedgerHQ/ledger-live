@@ -16,6 +16,7 @@ import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
 import { Language } from "~/config/languages";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 /**
  * the modals data type are all defined by a key value map,
@@ -53,6 +54,12 @@ export type GlobalModalData = {
   };
   MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
+  MODAL_WALLET_SYNC_DEBUGGER: undefined;
+  MODAL_SIMPLEHASH_TOOLS: undefined;
+  MODAL_BRAZE_TOOLS: undefined;
+  MODAL_CREATE_LOCAL_APP: {
+    manifest?: LiveAppManifest;
+  };
   MODAL_EXPORT_ACCOUNTS: undefined;
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
@@ -82,6 +89,11 @@ export type GlobalModalData = {
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
   MODAL_VAULT_SIGNER: undefined;
+  MODAL_HIDE_INSCRIPTION: {
+    inscriptionName: string;
+    inscriptionId: string;
+    onClose?: () => void;
+  };
 };
 
 /**

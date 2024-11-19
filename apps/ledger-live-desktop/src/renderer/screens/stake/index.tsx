@@ -2,14 +2,13 @@ import { useCallback } from "react";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 type Props = {
   currencies?: string[];
@@ -46,14 +45,14 @@ const useStakeFlow = () => {
         SelectAccountAndCurrencyDrawer,
         {
           currencies: cryptoCurrencies,
-          onAccountSelected: (account: AccountLike, parentAccount: Account | null = null) => {
-            track("button_clicked", {
+          onAccountSelected: (account, parentAccount) => {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "asset",
               page: history.location.pathname,
               currency: account.type === "Account" && account?.currency?.family,
-              account: account ? getAccountName(account) : undefined,
-              parentAccount: parentAccount ? getAccountName(parentAccount) : undefined,
+              account: account ? getDefaultAccountName(account) : undefined,
+              parentAccount: parentAccount ? getDefaultAccountName(parentAccount) : undefined,
               drawer: "Select Account And Currency Drawer",
             });
             setDrawer();
@@ -80,7 +79,7 @@ const useStakeFlow = () => {
         {
           onRequestClose: () => {
             setDrawer();
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "close",
               page: history.location.pathname,

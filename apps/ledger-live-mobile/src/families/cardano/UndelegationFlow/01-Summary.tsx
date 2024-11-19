@@ -1,23 +1,20 @@
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
+  TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Box } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -30,6 +27,11 @@ import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
+import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -46,22 +48,31 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 
-  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
+    () => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "undelegate",
-        }),
-      };
-    }
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "undelegate",
+          }),
+        };
+      }
 
-    return { account, transaction: tx };
-  });
+      return { account, transaction: tx };
+    },
+  );
+
+  const displayError = useMemo(() => {
+    return status.errors.amount ? status.errors.amount : "";
+  }, [status]);
+  const displayWarning = useMemo(() => {
+    return status.warnings.feeTooHigh ? status.warnings.feeTooHigh : "";
+  }, [status]);
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
@@ -74,6 +85,21 @@ export default function UndelegationSummary({ navigation, route }: Props) {
       status,
     });
   }, [status, account, parentAccount, navigation, transaction]);
+
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
+  const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
+    const parent = navigation.getParent();
+    if (parent) parent.goBack();
+  }, [navigation]);
+  const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
+    if (!transaction) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    setTransaction(bridge.updateTransaction(transaction, {}));
+  }, [setTransaction, account, parentAccount, transaction]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -88,20 +114,51 @@ export default function UndelegationSummary({ navigation, route }: Props) {
         </View>
 
         <View style={styles.summary}>
-          <SummaryWords currentDelegation={currentDelegation} account={account} />
+          <SummaryWords currentDelegation={currentDelegation} account={account} status={status} />
         </View>
       </View>
       <View style={styles.footer}>
+        {displayError ? (
+          <Box>
+            <Text fontSize={13} color="red">
+              <TranslatedError error={displayError} field="title" />
+            </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
+        {displayWarning ? (
+          <Box>
+            <Text fontSize={13} color="orange">
+              <TranslatedError error={displayWarning} field="title" />
+            </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
         <Button
           event="SummaryContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
-          disabled={bridgePending || !!bridgeError}
+          disabled={bridgePending || !!bridgeError || Object.keys(status.errors).length > 0}
           pending={bridgePending}
         />
       </View>
+      <GenericErrorBottomModal
+        error={bridgeErr}
+        onClose={onBridgeErrorRetry}
+        footerButtons={
+          <>
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
+            <RetryButton
+              containerStyle={[styles.button, styles.buttonRight]}
+              onPress={onBridgeErrorRetry}
+            />
+          </>
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -175,10 +232,24 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 14,
   },
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+  },
 });
 
-function SummaryWords({ account }: { account: AccountLike; currentDelegation: CardanoDelegation }) {
-  const unit = getAccountUnit(account);
+function SummaryWords({
+  account,
+  status,
+}: {
+  account: AccountLike;
+  currentDelegation: CardanoDelegation;
+  status: TransactionStatus;
+}) {
+  const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -208,7 +279,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
           label={t("cardano.delegation.networkFees")}
           Component={
             <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, new BigNumber(170000), formatConfig)}
+              {formatCurrencyUnit(unit, new BigNumber(status.estimatedFees), formatConfig)}
             </LText>
           }
         />
@@ -227,7 +298,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>

@@ -6,23 +6,23 @@ import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Feather";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type {
-  APIGetPoolsDetail,
-  StakePool,
-} from "@ledgerhq/live-common/families/cardano/api/api-types";
+import {
+  LEDGER_POOL_IDS,
+  fetchPoolDetails,
+  type APIGetPoolsDetail,
+  type StakePool,
+} from "@ledgerhq/live-common/families/cardano/staking";
 import type {
   CardanoAccount,
   CardanoDelegation,
+  TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
-import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import Button from "~/components/Button";
 import Skeleton from "~/components/Skeleton";
 import Circle from "~/components/Circle";
@@ -39,6 +39,10 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -99,6 +103,21 @@ export default function DelegationSummary({ navigation, route }: Props) {
       return { account, transaction: tx };
     });
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
+  const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
+    const parent = navigation.getParent();
+    if (parent) parent.goBack();
+  }, [navigation]);
+  const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
+    if (!transaction) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    setTransaction(bridge.updateTransaction(transaction, {}));
+  }, [setTransaction, account, parentAccount, transaction]);
+
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "cardano", "transaction cardano");
 
@@ -140,6 +159,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const displayError = useMemo(() => {
     return status.errors.amount ? status.errors.amount : "";
   }, [status]);
+  const displayWarning = useMemo(() => {
+    return status.warnings.feeTooHigh ? status.warnings.feeTooHigh : "";
+  }, [status]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -180,6 +202,15 @@ export default function DelegationSummary({ navigation, route }: Props) {
         ) : (
           <></>
         )}
+        {displayWarning ? (
+          <Box>
+            <Text fontSize={13} color="orange">
+              <TranslatedError error={displayWarning} field="title" />
+            </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
         <Button
           event="SummaryContinue"
           type="primary"
@@ -187,7 +218,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={
-            !!displayError ||
+            Object.keys(status.errors).length > 0 ||
             bridgePending ||
             !!bridgeError ||
             !chosenPool ||
@@ -196,6 +227,19 @@ export default function DelegationSummary({ navigation, route }: Props) {
           pending={bridgePending}
         />
       </View>
+      <GenericErrorBottomModal
+        error={bridgeErr}
+        onClose={onBridgeErrorRetry}
+        footerButtons={
+          <>
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
+            <RetryButton
+              containerStyle={[styles.button, styles.buttonRight]}
+              onPress={onBridgeErrorRetry}
+            />
+          </>
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -274,6 +318,13 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 14,
   },
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+  },
 });
 
 function SummaryWords({
@@ -291,7 +342,7 @@ function SummaryWords({
   onChangePool: () => void;
   status: TransactionStatus;
 }) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [rotateAnim] = useState(() => new Animated.Value(0));
@@ -529,7 +580,7 @@ function SummaryWords({
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>

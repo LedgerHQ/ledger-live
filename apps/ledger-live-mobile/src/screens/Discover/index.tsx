@@ -3,7 +3,7 @@ import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import Illustration from "~/images/illustration/Illustration";
@@ -41,7 +41,6 @@ function Discover() {
 
   const learn = useFeature("brazeLearn");
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
-  const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
@@ -89,26 +88,26 @@ function Discover() {
               },
             ]
           : Platform.OS !== "ios"
-          ? [
-              {
-                title: t("discover.sections.ledgerApps.title"),
-                subTitle: t("discover.sections.ledgerApps.desc"),
-                onPress: () => {
-                  navigation.navigate(NavigatorName.Discover, {
-                    screen: ScreenName.PlatformCatalog,
-                  });
+            ? [
+                {
+                  title: t("discover.sections.ledgerApps.title"),
+                  subTitle: t("discover.sections.ledgerApps.desc"),
+                  onPress: () => {
+                    navigation.navigate(NavigatorName.Discover, {
+                      screen: ScreenName.PlatformCatalog,
+                    });
+                  },
+                  disabled: false,
+                  Image: (
+                    <Illustration
+                      size={110}
+                      darkSource={images.dark.appsImg}
+                      lightSource={images.light.appsImg}
+                    />
+                  ),
                 },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.appsImg}
-                    lightSource={images.light.appsImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+              ]
+            : []),
         ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
@@ -132,30 +131,30 @@ function Discover() {
               },
             ]
           : learnCards.length > 0 || isNewsfeedAvailable
-          ? [
-              {
-                title: t("discover.sections.news.title"),
-                subTitle: t("discover.sections.news.desc"),
-                onPress: () => {
-                  // Fixme: Can't find a way to make TS happy ...
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  navigation.navigate(NavigatorName.ExploreTab);
-                  track("banner_clicked", {
-                    banner: "News",
-                  });
+            ? [
+                {
+                  title: t("discover.sections.news.title"),
+                  subTitle: t("discover.sections.news.desc"),
+                  onPress: () => {
+                    // Fixme: Can't find a way to make TS happy ...
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    navigation.navigate(NavigatorName.ExploreTab);
+                    track("banner_clicked", {
+                      banner: "News",
+                    });
+                  },
+                  disabled: false,
+                  Image: (
+                    <Illustration
+                      size={110}
+                      darkSource={images.dark.learnImg}
+                      lightSource={images.light.learnImg}
+                    />
+                  ),
                 },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.learnImg}
-                    lightSource={images.light.learnImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+              ]
+            : []),
         {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
@@ -196,38 +195,31 @@ function Discover() {
                 ),
               },
             ]),
-        ...(referralProgramConfig?.enabled && referralProgramConfig?.params?.url
-          ? [
-              {
-                title: t("discover.sections.referralProgram.title"),
-                subTitle: t("discover.sections.referralProgram.desc"),
-                onPress: () => {
-                  readOnlyTrack("referralProgram");
-                  track("Discover - Refer Program - OpenUrl", {
-                    url: referralProgramConfig?.params?.url,
-                  });
-                  // @ts-expect-error TYPINGS
-                  Linking.openURL(referralProgramConfig?.params?.url);
-                },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.referralImg}
-                    lightSource={images.light.referralImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+        {
+          title: t("discover.sections.referralProgram.title"),
+          subTitle: t("discover.sections.referralProgram.desc"),
+          onPress: () => {
+            readOnlyTrack("referralProgram");
+            track("Discover - Refer Program - OpenUrl", {
+              url: urls.referralProgram,
+            });
+            Linking.openURL(urls.referralProgram);
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={110}
+              darkSource={images.dark.referralImg}
+              lightSource={images.light.referralImg}
+            />
+          ),
+        },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [
       t,
       learn?.enabled,
       learnCards,
       isNFTDisabled,
-      referralProgramConfig?.enabled,
-      referralProgramConfig?.params?.url,
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,

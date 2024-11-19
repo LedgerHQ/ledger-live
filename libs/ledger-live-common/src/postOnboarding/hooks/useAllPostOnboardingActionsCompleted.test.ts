@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 import { PostOnboardingHubState } from "@ledgerhq/types-live";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActionsCompleted";
 import { claimTestMock, personalizeTestMock, migrateAssetsTestMock } from "../mock";
 

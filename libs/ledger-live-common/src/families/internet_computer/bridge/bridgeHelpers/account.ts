@@ -1,8 +1,7 @@
 import { GetAccountShape } from "../../../../bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
-import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchBlockHeight, fetchTxns } from "./api";
-import { flatMap } from "lodash";
+import flatMap from "lodash/flatMap";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ICPRosettaGetTxnsHistoryResponse } from "./icpRosetta/types";
@@ -10,6 +9,54 @@ import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "../../../../operation";
 import { normalizeEpochTimestamp } from "../../utils";
 import { InternetComputerOperation } from "../../types";
+import invariant from "invariant";
+import { deriveAddressFromPubkey } from "./icpRosetta";
+
+export const getAccountShape: GetAccountShape = async info => {
+  const { currency, derivationMode, rest = {}, initialAccount } = info;
+  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
+  invariant(publicKey, "publicKey is required");
+
+  // deriving address from public key
+  const address = await deriveAddressFromPubkey(publicKey);
+  invariant(address, "address is required");
+
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: publicKey,
+    derivationMode,
+  });
+
+  // log("debug", `Generation account shape for ${address}`);
+
+  const blockHeight = await fetchBlockHeight();
+  const balanceResp = await fetchBalances(address);
+  const balance = balanceResp.balances[0];
+
+  const txns = await fetchTxns(address);
+  const result: Partial<Account> = {
+    id: accountId,
+    balance: BigNumber(balance.value),
+    spendableBalance: BigNumber(balance.value),
+    operations: flatMap(txns.transactions.reverse(), mapTxToOps(accountId, address)),
+    blockHeight: blockHeight.current_block_identifier.index,
+    operationsCount: txns.transactions.length,
+    xpub: publicKey,
+  };
+
+  return result;
+};
+
+function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): string {
+  if (publicKey) return publicKey;
+  if (initialAccount) {
+    const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+    return xpubOrAddress;
+  }
+  throw new Error("publicKey wasn't properly restored");
+}
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
   return (
@@ -85,44 +132,3 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
     return ops;
   };
 };
-
-export const getAccountShape: GetAccountShape = async info => {
-  const { address, currency, derivationMode, rest = {}, initialAccount } = info;
-  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
-
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: publicKey,
-    derivationMode,
-  });
-
-  log("debug", `Generation account shape for ${address}`);
-
-  const blockHeight = await fetchBlockHeight();
-  const balanceResp = await fetchBalances(address);
-  const balance = balanceResp.balances[0];
-
-  const txns = await fetchTxns(address);
-  const result: Partial<Account> = {
-    id: accountId,
-    balance: BigNumber(balance.value),
-    spendableBalance: BigNumber(balance.value),
-    operations: flatMap(txns.transactions.reverse(), mapTxToOps(accountId, address)),
-    blockHeight: blockHeight.current_block_identifier.index,
-    operationsCount: txns.transactions.length,
-    xpub: publicKey,
-  };
-
-  return result;
-};
-
-function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): string {
-  if (publicKey) return publicKey;
-  if (initialAccount) {
-    const { xpubOrAddress } = decodeAccountId(initialAccount.id);
-    return xpubOrAddress;
-  }
-  throw new Error("publicKey wasn't properly restored");
-}

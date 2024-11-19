@@ -3,14 +3,13 @@ import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import BigNumber from "bignumber.js";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
@@ -32,7 +31,11 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
-import { ReferralProgram } from "./referralProgram";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { View } from "react-native-animatable";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -43,7 +46,6 @@ type NavigationProps = BaseComposite<
 >;
 
 const AssetScreen = ({ route }: NavigationProps) => {
-  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -98,13 +100,22 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+  if (isCryptoCurrency(currency)) {
+    try {
+      currencyConfig = getCurrencyConfiguration(currency);
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
   const data = useMemo(
     () => [
       <Box
         mt={6}
         onLayout={onGraphCardLayout}
         key="AssetGraph"
-        testID={`account-assets-${currency.name}`}
+        testID={`account-assets-${currency.name.toLocaleLowerCase()}`}
       >
         <AssetGraph
           accounts={cryptoAccounts}
@@ -115,11 +126,21 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      featureReferralProgramMobile?.enabled &&
-      featureReferralProgramMobile?.params?.path &&
-      currency.ticker === "BTC" ? (
-        <ReferralProgram key="ReferralProgram" />
-      ) : null,
+      currencyConfig?.status.type === "will_be_deprecated" && (
+        <View style={{ marginTop: 16 }}>
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
+            {t("account.willBedeprecatedBanner.title", {
+              currencyName: currency.name,
+              deprecatedDate: currencyConfig.status.deprecated_date,
+            })}
+          </Alert>
+        </View>
+      ),
       <SectionContainer px={6} isFirst key="AssetDynamicContent">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
@@ -167,8 +188,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       cryptoAccounts,
       defaultAccount,
       onAddAccount,
-      featureReferralProgramMobile?.enabled,
-      featureReferralProgramMobile?.params?.path,
+      currencyConfig,
     ],
   );
 

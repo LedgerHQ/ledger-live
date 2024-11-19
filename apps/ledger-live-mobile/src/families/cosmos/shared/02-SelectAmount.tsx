@@ -15,7 +15,6 @@ import { BigNumber } from "bignumber.js";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -31,6 +30,7 @@ import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
@@ -55,7 +55,7 @@ function DelegationAmount({ navigation, route }: Props) {
   );
 
   const bridge = getAccountBridge(account, undefined);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [route]);
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
@@ -126,6 +126,13 @@ function DelegationAmount({ navigation, route }: Props) {
     behaviorParam = "padding";
   }
 
+  const errorMessageKey =
+    isNotEnoughBalance || isAmountOutOfRange
+      ? "errors.NotEnoughBalance.title"
+      : value.gte(min)
+        ? "cosmos.delegation.flow.steps.amount.minAmount"
+        : "cosmos.delegation.flow.steps.amount.incorrectAmount";
+
   return (
     <View
       style={[
@@ -190,13 +197,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   <Warning size={16} color={colors.error.c50} />
                   <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
                     <Trans
-                      i18nKey={
-                        isNotEnoughBalance
-                          ? "errors.NotEnoughBalance.title"
-                          : value.gte(min)
-                          ? "cosmos.delegation.flow.steps.amount.minAmount"
-                          : "cosmos.delegation.flow.steps.amount.incorrectAmount"
-                      }
+                      i18nKey={errorMessageKey}
                       values={{
                         min: formatCurrencyUnit(unit, min, {
                           showCode: true,

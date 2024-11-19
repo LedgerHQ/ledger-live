@@ -7,11 +7,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Check from "~/renderer/icons/Check";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import Tabbable from "~/renderer/components/Box/Tabbable";
@@ -23,9 +19,17 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { useAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
+
+const NonSelectableAccountWrapper = styled(Box)`
+  column-gap: 8px;
+`;
 
 const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
+  column-gap: 8px;
   &:hover {
     background-color: ${p => p.theme.colors.palette.text.shade10};
   }
@@ -41,6 +45,18 @@ const AddAccountIconContainer = styled(Tabbable)`
   border-radius: 9999px;
   color: ${p => p.theme.colors.palette.primary.main};
   background: ${p => rgba(p.theme.colors.palette.primary.main, 0.2)};
+`;
+
+const AccountBox = styled(Box)`
+  &,
+  ${Text} {
+    flex-shrink: 1;
+  }
+
+  ${Text} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 function AddAccountIcon() {
@@ -66,18 +82,15 @@ const TargetAccount = memo(function TargetAccount({
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
-  const name = getAccountName(account);
+  const unit = useAccountUnit(account);
+  const name = useAccountName(account);
   const parentAccount =
-    account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : null;
-  const parentName = parentAccount ? getAccountName(parentAccount) : undefined;
-  const balance =
-    account.type !== "ChildAccount" && account.spendableBalance
-      ? account.spendableBalance
-      : account.balance;
+    account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : undefined;
+  const parentName = useMaybeAccountName(parentAccount);
+  const balance = account.spendableBalance || account.balance;
 
   const onClick = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       page: "Swap accounts",
       ...swapDefaultTrack,
       button: "account",
@@ -90,7 +103,7 @@ const TargetAccount = memo(function TargetAccount({
 
   const Wrapper: React.ComponentType<
     React.ComponentProps<typeof Box> & React.ComponentProps<typeof AccountWrapper>
-  > = setAccount ? AccountWrapper : Box;
+  > = setAccount ? AccountWrapper : NonSelectableAccountWrapper;
 
   return (
     <Wrapper
@@ -99,9 +112,9 @@ const TargetAccount = memo(function TargetAccount({
       justifyContent="space-between"
       selected={selected}
       onClick={onClick}
-      data-test-id={`target-account-container-${("name" in account && account.name) || ""}`}
+      data-testid={`target-account-container-${getDefaultAccountName(account) || ""}`}
     >
-      <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
+      <AccountBox horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (
           <Box
             pr={3}
@@ -117,7 +130,7 @@ const TargetAccount = memo(function TargetAccount({
         <Text ff="Inter|SemiBold" fontSize={5}>
           {name}
         </Text>
-      </Box>
+      </AccountBox>
       <Box position="relative" pr={5}>
         <FormattedVal
           color="palette.text.shade50"

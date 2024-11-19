@@ -6,12 +6,14 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
+  CurrentAccountHistDB,
+  useManifestCurrencies,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
@@ -31,13 +33,17 @@ import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { walletSelector } from "~/reducers/wallet";
+import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import { Linking } from "react-native";
 
 export function useWebView(
   {
     manifest,
+    currentAccountHistDb,
     inputs,
     customHandlers,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -95,17 +101,21 @@ export function useWebView(
         } catch (error) {
           console.warn(
             "wallet-api-server tried to send a message while the webview was not yet initialized.",
+            message,
           );
         }
       },
     };
   }, [webviewRef]);
 
+  const walletState = useSelector(walletSelector);
+
   const {
     onMessage: onMessageRaw,
     onLoadError,
     server,
   } = useWalletAPIServer({
+    walletState,
     manifest: manifest as AppManifest,
     accounts,
     tracking,
@@ -121,6 +131,15 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  const { onDappMessage, noAccounts } = useDappLogic({
+    manifest,
+    currentAccountHistDb,
+    accounts,
+    uiHook,
+    postMessage: webviewHook.postMessage,
+    tracking,
+  });
+
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
@@ -129,6 +148,8 @@ export function useWebView(
 
           if (Config.MOCK && msg.type === "e2eTest") {
             bridge.sendWalletAPIResponse(msg.payload);
+          } else if (msg.type === "dapp") {
+            onDappMessage(msg);
           } else {
             onMessageRaw(e.nativeEvent.data);
           }
@@ -137,14 +158,23 @@ export function useWebView(
         }
       }
     },
-    [onMessageRaw],
+    [onDappMessage, onMessageRaw],
   );
+
+  const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
+    const { targetUrl } = event.nativeEvent;
+    // Don't use canOpenURL as we cannot check unknown apps on the phone
+    // Without listing everything in plist and android manifest
+    Linking.openURL(targetUrl);
+  }, []);
 
   return {
     onLoadError,
     onMessage,
+    onOpenWindow,
     webviewProps,
     webviewRef,
+    noAccounts,
   };
 }
 
@@ -284,7 +314,7 @@ export function useWebviewState(
   };
 }
 
-function useUiHook(): Partial<UiHook> {
+function useUiHook(): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
@@ -357,43 +387,25 @@ function useUiHook(): Partial<UiHook> {
         onSuccess,
         onError,
       }) => {
-        const tx = prepareSignTransaction(
-          account,
-          parentAccount,
-          liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-        );
+        const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
           params: {
             currentNavigation: ScreenName.SignTransactionSummary,
             nextNavigation: ScreenName.SignTransactionSelectDevice,
-            transaction: tx as Transaction,
+            transaction: tx,
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,
-            onSuccess: ({
-              signedOperation,
-              transactionSignError,
-            }: {
-              signedOperation: SignedOperation;
-              transactionSignError: Error;
-            }) => {
-              if (transactionSignError) {
-                onError(transactionSignError);
-              } else {
-                onSuccess(signedOperation);
-
-                const n =
-                  navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
-                  navigation;
-                n.pop();
-              }
-            },
+            dependencies: options?.dependencies,
+            onSuccess,
             onError,
           },
+          onError,
         });
       },
+      "transaction.broadcast": () => {},
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
@@ -415,18 +427,14 @@ function useUiHook(): Partial<UiHook> {
             request: {
               exchangeType: ExchangeType[exchangeType],
             },
-            onResult: (result: {
-              startExchangeResult?: string;
-              startExchangeError?: Error;
-              device?: Device;
-            }) => {
+            onResult: result => {
               if (result.startExchangeError) {
-                onCancel(result.startExchangeError);
+                onCancel(result.startExchangeError.error);
               }
 
               if (result.startExchangeResult) {
                 setDevice(result.device);
-                onSuccess(result.startExchangeResult);
+                onSuccess(result.startExchangeResult.nonce);
               }
 
               const n =
@@ -491,4 +499,44 @@ function useGetUserId() {
   }, []);
 
   return userId;
+}
+
+export function useSelectAccount({
+  manifest,
+  currentAccountHistDb,
+}: {
+  manifest: AppManifest;
+  currentAccountHistDb?: CurrentAccountHistDB;
+}) {
+  const currencies = useManifestCurrencies(manifest);
+  const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const navigation = useNavigation();
+
+  const onSelectAccount = useCallback(() => {
+    if (currencies.length === 1) {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: currencies[0],
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies,
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    }
+  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+
+  return { onSelectAccount, currentAccount };
 }

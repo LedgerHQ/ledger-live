@@ -13,11 +13,12 @@ import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
-import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { Button } from "@ledgerhq/react-ui";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -42,8 +43,8 @@ export const initialStepId = ({
   deviceInfo.isOSU
     ? "updateMCU"
     : manager.firmwareUpdateNeedsLegacyBlueResetInstructions(deviceInfo, device.modelId)
-    ? "resetDevice"
-    : "idCheck";
+      ? "resetDevice"
+      : "idCheck";
 
 /**
  * Entry point of the firmware update
@@ -71,8 +72,11 @@ const FirmwareUpdate = (props: Props) => {
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
   const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
   const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(false);
+  useKeepScreenAwake(keepScreenAwake);
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
+    setKeepScreenAwake(false);
   }, [installed, onReset]);
 
   const setFirmwareUpdateCompleted = useCallback((completed: boolean) => {
@@ -82,6 +86,7 @@ const FirmwareUpdate = (props: Props) => {
   const onRequestClose = useCallback(() => {
     setPreventResetOnDeviceChange(false);
     setDrawer();
+    setKeepScreenAwake(false);
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
@@ -126,6 +131,7 @@ const FirmwareUpdate = (props: Props) => {
       onRequestClose: undefined,
       withPaddingTop: false,
     });
+    setKeepScreenAwake(true);
   }, [
     device,
     deviceInfo,
@@ -162,9 +168,9 @@ const FirmwareUpdate = (props: Props) => {
       <FirmwareUpdateBanner
         old
         right={
-          <FakeLink onClick={() => openURL(contactSupportUrl)}>
+          <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
             <Trans i18nKey="manager.firmware.banner.old.cta" />
-          </FakeLink>
+          </Button>
         }
       />
     );
@@ -188,8 +194,9 @@ const FirmwareUpdate = (props: Props) => {
               </Text>
             </Box>
           )}
-          <FakeLink
-            data-test-id="manager-update-firmware-button"
+          <Button
+            variant="main"
+            data-testid="manager-update-firmware-button"
             disabled={!!disableFirmwareUpdate}
             onClick={() => {
               track("Manager Firmware Update Click", {
@@ -199,7 +206,7 @@ const FirmwareUpdate = (props: Props) => {
             }}
           >
             <Trans i18nKey="manager.firmware.banner.cta2" />
-          </FakeLink>
+          </Button>
         </Box>
       }
     />

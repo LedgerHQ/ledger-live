@@ -7,7 +7,6 @@ import {
   listSubAccounts,
   getAccountCurrency,
   findSubAccountById,
-  getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -20,6 +19,8 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 type ItemShape = {
   key: string;
@@ -49,8 +50,8 @@ const AccountCrumb = () => {
       tokenAccount
         ? getAccountCurrency(tokenAccount)
         : account
-        ? getAccountCurrency(account)
-        : null,
+          ? getAccountCurrency(account)
+          : null,
     [tokenAccount, account],
   );
 
@@ -59,22 +60,28 @@ const AccountCrumb = () => {
     [parentId, account, accounts],
   );
 
-  const renderItem = useCallback(({ item, isActive }: { item: ItemShape; isActive: boolean }) => {
-    const currency = getAccountCurrency(item.account);
-    return (
-      <Item key={item.key} isActive={isActive}>
-        <CryptoCurrencyIcon size={16} currency={currency} />
-        <Ellipsis ff={`Inter|${isActive ? "SemiBold" : "Regular"}`} fontSize={4}>
-          {getAccountName(item.account)}
-        </Ellipsis>
-        {isActive && (
-          <Check>
-            <IconCheck size={14} />
-          </Check>
-        )}
-      </Item>
-    );
-  }, []);
+  const walletState = useSelector(walletSelector);
+
+  const renderItem = useCallback(
+    ({ item, isActive }: { item: ItemShape; isActive: boolean }) => {
+      const currency = getAccountCurrency(item.account);
+      const name = accountNameWithDefaultSelector(walletState, item.account);
+      return (
+        <Item key={item.key} isActive={isActive}>
+          <CryptoCurrencyIcon size={16} currency={currency} />
+          <Ellipsis ff={`Inter|${isActive ? "SemiBold" : "Regular"}`} fontSize={4}>
+            {name}
+          </Ellipsis>
+          {isActive && (
+            <Check>
+              <IconCheck size={14} />
+            </Check>
+          )}
+        </Item>
+      );
+    },
+    [walletState],
+  );
 
   const onAccountSelected = useCallback(
     (item: ItemShape) => {
@@ -120,10 +127,10 @@ const AccountCrumb = () => {
     (items: (Account | SubAccount)[]) =>
       items.map(item => ({
         key: item.id,
-        label: getAccountName(item),
+        label: accountNameWithDefaultSelector(walletState, item),
         account: item,
       })),
-    [],
+    [walletState],
   );
 
   const processedItems = useMemo(

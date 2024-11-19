@@ -1,14 +1,15 @@
 export type CardanoNativeToken = [
-  string, // parentCurrencyId
+  "cardano", // parentCurrencyId
   string, // policyId
-  string, // assetName
+  string, // token identifier
   string, // name
   string, // ticker
   number, // decimals
   boolean, // delisted
-  boolean // disableCountervalue
 ];
 
 import tokens from "./cardanoNative.json";
+
+export { default as hash } from "./cardanoNative-hash.json";
 
 export default tokens as CardanoNativeToken[];

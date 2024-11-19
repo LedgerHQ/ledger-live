@@ -1,5 +1,189 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/hw-transport@6.31.4
+
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1-next.0
+  - @ledgerhq/hw-transport@6.31.4-next.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#7521](https://github.com/LedgerHQ/ledger-live/pull/7521) [`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds sell utils
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/hw-transport@6.31.3
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#7521](https://github.com/LedgerHQ/ledger-live/pull/7521) [`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds sell utils
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 0.5.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0
+  - @ledgerhq/hw-transport@6.31.1
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0-next.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/hw-transport@6.31.0
+  - @ledgerhq/errors@6.17.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
+  - @ledgerhq/errors@6.17.0-next.0
+
+## 0.4.7
+
+### Patch Changes
+
+- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
+
+- [#6532](https://github.com/LedgerHQ/ledger-live/pull/6532) [`671dfcf`](https://github.com/LedgerHQ/ledger-live/commit/671dfcfb5ea7bd002ece07b9ee451417de1d306d) Thanks [@sarneijim](https://github.com/sarneijim)! - Support base64 in decodePayloadProtobuf
+
+- [#6514](https://github.com/LedgerHQ/ledger-live/pull/6514) [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap in prod to support decodePayloadProtobuf
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.4
+  - @ledgerhq/hw-transport@6.30.6
+
+## 0.4.7-next.0
+
+### Patch Changes
+
+- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
+
+- [#6532](https://github.com/LedgerHQ/ledger-live/pull/6532) [`671dfcf`](https://github.com/LedgerHQ/ledger-live/commit/671dfcfb5ea7bd002ece07b9ee451417de1d306d) Thanks [@sarneijim](https://github.com/sarneijim)! - Support base64 in decodePayloadProtobuf
+
+- [#6514](https://github.com/LedgerHQ/ledger-live/pull/6514) [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap in prod to support decodePayloadProtobuf
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.4-next.0
+  - @ledgerhq/hw-transport@6.30.6-next.0
+
+## 0.4.6
+
+### Patch Changes
+
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3
+  - @ledgerhq/hw-transport@6.30.5
+
+## 0.4.6-next.0
+
+### Patch Changes
+
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3-next.0
+  - @ledgerhq/hw-transport@6.30.5-next.0
+
+## 0.4.5
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`78de209`](https://github.com/LedgerHQ/ledger-live/commit/78de209ccfea14826c854b32838a5d6d5016c123) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - clarify error message for invalid address selected
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`875677b`](https://github.com/LedgerHQ/ledger-live/commit/875677b2615d4f5d14f42acb5cfa9f80cb5875f2) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Support base64 encodng for swap_ng type swaps
+
+- Updated dependencies [[`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a)]:
+  - @ledgerhq/errors@6.16.2
+  - @ledgerhq/hw-transport@6.30.4
+
+## 0.4.5-next.0
+
+### Patch Changes
+
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.2-next.0
+  - @ledgerhq/hw-transport@6.30.4-next.0
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3
+
+## 0.4.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-next.0
+
 ## 0.4.3
 
 ### Patch Changes

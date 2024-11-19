@@ -140,7 +140,7 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
   if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"] && !hashesAreEquals) {
     cd("ios");
     try {
-      await $`bundle exec pod install --deployment --repo-update`;
+      await $`bundle exec pod install --deployment --repo-update --verbose`;
       try {
         runHashChecks(true);
       } catch (error) {
@@ -170,11 +170,6 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
       echo(chalk.red(str));
       await $`exit 1`;
     }
-    cd("..");
-
-    // We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
-    // https://github.com/Polidea/react-native-ble-plx#android-example-setup
-    await $`pnpm jetify`;
   }
 };
 

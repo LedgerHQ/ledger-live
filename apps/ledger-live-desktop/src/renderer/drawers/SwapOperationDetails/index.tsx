@@ -1,27 +1,22 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
+import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Link from "~/renderer/components/Link";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -35,6 +30,8 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconClock from "~/renderer/icons/Clock";
@@ -42,6 +39,8 @@ import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import IconSwap from "~/renderer/icons/Swap";
 import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { useAccountName } from "~/renderer/reducers/wallet";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -110,12 +109,17 @@ const SwapOperationDetails = ({
   mappedSwapOperation: MappedSwapOperation;
   onClose?: () => void;
 }) => {
+  const [providerData, setproviderData] = useState<AdditionalProviderConfig | undefined>(undefined);
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
+  const fromAccountName = useAccountName(fromAccount);
+  const toAccountName = useAccountName(toAccount);
+  const dateFormatted = useDateFormatted(operation.date, dayFormat);
+  const language = useSelector(languageSelector);
   const history = useHistory();
-  const fromUnit = getAccountUnit(fromAccount);
+  const fromUnit = useAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
-  const toUnit = getAccountUnit(toAccount);
+  const toUnit = useAccountUnit(toAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const accounts = useSelector(shallowAccountsSelector);
   const normalisedFromAmount = fromAmount.times(-1);
@@ -125,6 +129,14 @@ const SwapOperationDetails = ({
   const url =
     fromCurrency.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+
+  useEffect(() => {
+    const getProvideData = async () => {
+      const data = await getSwapProvider(provider);
+      setproviderData(data);
+    };
+    getProvideData();
+  }, [provider]);
 
   const openAccount = useCallback(
     (account: Account | SubAccount) => {
@@ -150,6 +162,28 @@ const SwapOperationDetails = ({
       : fromCurrency.name
     : undefined;
 
+  const handleProviderClick = useCallback(() => {
+    if (provider === "moonpay") {
+      const parentAccount =
+        fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
+      const mainAccount = getMainAccount(fromAccount, parentAccount);
+      history.push({
+        pathname: "/platform/moonpay",
+        state: {
+          returnTo: "/swap/history",
+          accountId: mainAccount.id,
+          customDappUrl: undefined,
+          goToURL: `https://buy.moonpay.com/trade_history?ledgerlive&apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&language=${language}&themeId=92be4cb6-a57f-407b-8b1f-bc8055b60c9b`,
+        },
+      });
+    } else {
+      openURL(providerData!.mainUrl);
+    }
+    if (onClose) {
+      onClose();
+    }
+  }, [provider, fromAccount, history, accounts, onClose, language, providerData]);
+
   return (
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
@@ -173,7 +207,7 @@ const SwapOperationDetails = ({
             val={normalisedFromAmount}
             fontSize={6}
             disableRounding
-            data-test-id="swap-amount-from"
+            data-testid="swap-amount-from"
           />
         </Box>
         <Box my={1} color={"palette.text.shade50"}>
@@ -189,7 +223,7 @@ const SwapOperationDetails = ({
             fontSize={6}
             disableRounding
             color={statusColor}
-            data-test-id="swap-amount-to"
+            data-testid="swap-amount-to"
           />
         </Box>
       </Box>
@@ -211,12 +245,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.provider" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <LinkWithExternalIcon
-            fontSize={12}
-            onClick={() =>
-              openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main)
-            }
-          >
+          <LinkWithExternalIcon fontSize={12} onClick={handleProviderClick}>
             {getProviderName(provider)}
           </LinkWithExternalIcon>
         </OpDetailsData>
@@ -228,7 +257,7 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <Box>
             <SelectableTextWrapper selectable>
-              <Value data-test-id="details-swap-id">{swapId}</Value>
+              <Value data-testid="details-swap-id">{swapId}</Value>
               <GradientHover>
                 <CopyWithFeedback text={swapId} />
               </GradientHover>
@@ -272,9 +301,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
-            <FormattedDate date={operation.date} format="L" />
-          </Box>
+          <Box>{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />
@@ -287,9 +314,9 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
+            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-account-from">
               <Ellipsis>
-                <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
+                <Link onClick={() => openAccount(fromAccount)}>{fromAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>
@@ -329,9 +356,9 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
+            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-account-to">
               <Ellipsis>
-                <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
+                <Link onClick={() => openAccount(toAccount)}>{toAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>

@@ -103,7 +103,6 @@ export type DrawerProps = {
   style?: React.CSSProperties;
   withPaddingTop?: boolean;
 };
-const domNode = document.getElementById("modals");
 
 export function SideDrawer({
   children,
@@ -116,6 +115,7 @@ export function SideDrawer({
   forceDisableFocusTrap = false,
   ...props
 }: DrawerProps) {
+  const domNode = document.getElementById("modals");
   const deviceBlocked = useDeviceBlocked();
 
   const onKeyPress = useCallback(
@@ -184,13 +184,13 @@ export function SideDrawer({
               state={state}
               ref={focusTrapElem}
               tabIndex="-1"
-              data-test-id="side-drawer-container"
+              data-testid="side-drawer-container"
             >
               <DrawerContent
                 {...props}
                 state={state}
                 direction={direction}
-                data-test-id="drawer-content"
+                data-testid="drawer-content"
               >
                 <SideDrawerHeader
                   onRequestClose={onRequestClose}
@@ -202,7 +202,7 @@ export function SideDrawer({
               <DrawerBackdrop
                 state={state}
                 onClick={preventBackdropClick || deviceBlocked ? undefined : onRequestClose}
-                data-test-id="drawer-overlay"
+                data-testid="drawer-overlay"
               />
             </DrawerContainer>
           )}

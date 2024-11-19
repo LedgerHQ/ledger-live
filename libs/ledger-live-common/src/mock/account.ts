@@ -11,11 +11,11 @@ import {
 import { getAccountBridge } from "../bridge";
 import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";
-import { BitcoinAccount } from "../families/bitcoin/types";
-import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
-import { TezosAccount } from "../families/tezos/types";
-import { TronAccount } from "../families/tron/types";
-import { CardanoAccount, PaymentChain } from "../families/cardano/types";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
+import { TezosAccount } from "@ledgerhq/coin-tezos/types/index";
+import { TronAccount } from "@ledgerhq/coin-tron/types";
+import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";
 
 /**
@@ -175,6 +175,9 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               collateralPercent: "",
               priceMem: "",
               priceSteps: "",
+              maxTxSize: "",
+              maxValueSize: "",
+              utxoCostPerByte: "",
               languageView: {} as types.LanguageView,
             },
           };

@@ -6,7 +6,3 @@ export type LiveAppRegistry = {
   liveAppFilteredById: { [appId: string]: LiveAppManifest };
   liveAppFiltered: LiveAppManifest[];
 };
-
-export type LiveAppDataAPI = {
-  fetchLiveAppManifests: (url: string) => Promise<LiveAppManifest[]>;
-};

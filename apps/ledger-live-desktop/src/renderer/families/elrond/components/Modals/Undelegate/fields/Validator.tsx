@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -41,7 +41,7 @@ const Item = (item: { data: DelegationType }) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {amount} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
+        {amount} {"EGLD"}
       </Text>
     </Box>
   );

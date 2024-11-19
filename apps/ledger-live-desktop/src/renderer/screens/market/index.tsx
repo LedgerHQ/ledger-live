@@ -1,16 +1,12 @@
-import React, { useMemo, useCallback } from "react";
-import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
-import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
+import React, { useEffect } from "react";
+import { Flex, Button as BaseButton, Text, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import CounterValueSelect from "./CountervalueSelect";
-import MarketList from "./MarketList";
-import SideDrawerFilter from "./SideDrawerFilter";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
+import CounterValueSelect from "./components/CountervalueSelect";
+import SideDrawerFilter from "./components/SideDrawerFilter";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
+import MarketList from "./MarketList";
+import { useMarket } from "./hooks/useMarket";
+import SearchInputComponent from "./components/SearchInputComponent";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -22,15 +18,7 @@ const Container = styled(Flex).attrs({
   mx: -1,
 })``;
 
-const SearchContainer = styled(Flex).attrs({ flexShrink: "1" })`
-  > div {
-    width: 100%;
-  }
-`;
-
 export const Button = styled(BaseButton)<{ big?: boolean }>`
-  border-radius: 44px;
-
   ${p =>
     p.Icon
       ? `
@@ -60,56 +48,44 @@ const SelectBarContainer = styled(Flex)`
 `;
 
 export default function Market() {
-  const { t } = useTranslation();
   const {
-    requestParams,
     refresh,
-    counterCurrency,
     setCounterCurrency,
+    updateSearch,
+    updateTimeRange,
+    toggleFilterByStarredAccounts,
+    toggleLiveCompatible,
+    resetMarketPage,
+    refetchData,
+    marketParams,
     supportedCounterCurrencies,
-  } = useMarketData();
-  const { search = "", range, starred = [], liveCompatible, order } = requestParams;
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const starFilterOn = starred.length > 0;
+    timeRangeValue,
+    starFilterOn,
+    starredMarketCoins,
+    timeRanges,
+    refreshRate,
+    marketCurrentPage,
+    t,
+  } = useMarket();
 
-  useInitSupportedCounterValues();
+  /**
+   * Reset the page to 1 when the component mounts to only refetch first page
+   * */
+  useEffect(() => {
+    resetMarketPage(marketParams.page ?? 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const updateSearch = useCallback(
-    (value: string) => {
-      refresh({ search: value, starred: [], liveCompatible: false });
-    },
-    [refresh],
-  );
+  /**
+   * Try to Refetch data every REFRESH_RATE time
+   */
+  useEffect(() => {
+    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
 
-  const updateTimeRange = useCallback(
-    (e: { value: string; label: string } | null) => {
-      if (!e) return;
-      const { value } = e;
-      refresh({ range: value });
-    },
-    [refresh],
-  );
+    return () => clearInterval(intervalId as unknown as number);
+  }, [marketCurrentPage, refetchData, refreshRate]);
 
-  const toggleFilterByStarredAccounts = useCallback(() => {
-    if (starredMarketCoins.length > 0 || starFilterOn) {
-      const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, search: "" });
-    }
-  }, [refresh, starFilterOn, starredMarketCoins]);
-
-  const toggleLiveCompatible = useCallback(() => {
-    refresh({ liveCompatible: !liveCompatible });
-  }, [liveCompatible, refresh]);
-
-  const timeRanges = useMemo(
-    () =>
-      Object.keys(rangeDataTable)
-        .filter(k => k !== "1h")
-        .map(value => ({ value, label: t(`market.range.${value}`) })),
-    [t],
-  );
-
-  const timeRangeValue = timeRanges.find(({ value }) => value === range);
+  const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 
   return (
     <Container>
@@ -121,24 +97,16 @@ export default function Market() {
       />
       <Title>{t("market.title")}</Title>
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
-        <SearchContainer>
-          <SearchInput
-            data-test-id="market-search-input"
-            value={search}
-            onChange={updateSearch}
-            placeholder={t("common.search")}
-            clearable
-          />
-        </SearchContainer>
+        <SearchInputComponent search={search} updateSearch={updateSearch} />
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
-          <Flex data-test-id="market-countervalue-select" justifyContent="flex-end" mx={4}>
+          <Flex data-testid="market-countervalue-select" justifyContent="flex-end" mx={4}>
             <CounterValueSelect
               counterCurrency={String(counterCurrency)}
               setCounterCurrency={setCounterCurrency}
               supportedCounterCurrencies={supportedCounterCurrencies}
             />
           </Flex>
-          <Flex data-test-id="market-range-select" mx={2}>
+          <Flex data-testid="market-range-select" mx={2}>
             <Dropdown
               label={t("common.range")}
               menuPortalTarget={document.body}
@@ -172,10 +140,7 @@ export default function Market() {
           </Flex>
         </SelectBarContainer>
       </Flex>
-      <MarketList
-        starredMarketCoins={starredMarketCoins}
-        toggleStarredAccounts={toggleFilterByStarredAccounts}
-      />
+      <MarketList {...useMarket()} />
     </Container>
   );
 }

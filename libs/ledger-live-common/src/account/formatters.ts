@@ -1,19 +1,16 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { toAccountRaw } from "./serialization";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import byFamily from "../generated/account";
-import { nftsByCollections } from "../nft";
+import byFamily from "../generated/formatters";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const styling = {
   bold: (str: string) => `\x1b[1m${str}\x1b[22m`,
@@ -23,7 +20,8 @@ const styling = {
   reverse: (str: string) => `\x1b[7m${str}\x1b[27m`,
 };
 
-const isSignificantAccount = acc => acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
+const isSignificantAccount = acc =>
+  acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
 
 const formatOp = (
   unitByAccountId: (arg0: string) => Unit | null | undefined,
@@ -80,7 +78,7 @@ const cliFormat = (account, level?: string) => {
   const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations, nfts } =
     account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
-  const balance = formatCurrencyUnit(account.unit, account.balance, {
+  const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
     showCode: true,
   });
   const opsCount = `${operations.length}ops`;
@@ -90,7 +88,11 @@ const cliFormat = (account, level?: string) => {
     tag ? " [" + tag + "]" : ""
   }: ${balance} (${opsCount}) (${freshInfo}) ${derivationInfo} ${id || ""}`;
   if (level === "head") return str;
-  str += maybeDisplaySumOfOpsIssue(operations, account.balance, getAccountUnit(account));
+  str += maybeDisplaySumOfOpsIssue(
+    operations,
+    account.balance,
+    getAccountCurrency(account).units[0],
+  );
   const family = byFamily[account.currency.family];
 
   if (family && family.formatAccountSpecifics) {
@@ -105,16 +107,16 @@ const cliFormat = (account, level?: string) => {
         "  " +
         ta.type +
         " " +
-        getAccountName(ta) +
+        getDefaultAccountName(ta) +
         ": " +
-        formatCurrencyUnit(getAccountUnit(ta), ta.balance, {
+        formatCurrencyUnit(getAccountCurrency(ta).units[0], ta.balance, {
           showCode: true,
           disableRounding: true,
         }) +
         " (" +
         ta.operations.length +
         " ops)" +
-        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta)),
+        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountCurrency(ta).units[0]),
     )
     .join("\n");
 
@@ -152,9 +154,9 @@ const cliFormat = (account, level?: string) => {
     .map(
       formatOp(
         id => {
-          if (account.id === id) return account.unit;
+          if (account.id === id) return getAccountCurrency(account).units[0];
           const ta = subAccounts.find(a => a.id === id);
-          if (ta) return getAccountUnit(ta);
+          if (ta) return getAccountCurrency(ta).units[0];
           console.error("unexpected missing token account " + id);
         },
         (operation, unit) => {
@@ -176,10 +178,10 @@ const stats = account => {
     (sum: BigNumber, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
     new BigNumber(0),
   );
-  const sumOfAllOps = formatCurrencyUnit(account.unit, sumOfAllOpsNumber, {
+  const sumOfAllOps = formatCurrencyUnit(getAccountCurrency(account).units[0], sumOfAllOpsNumber, {
     showCode: true,
   });
-  const balance = formatCurrencyUnit(account.unit, account.balance, {
+  const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
     showCode: true,
   });
   return {
@@ -244,9 +246,9 @@ export function formatAccount(account: Account, format = "full"): string {
 export function formatOperation(account: Account | null | undefined): (arg0: Operation) => string {
   const unitByAccountId = (id: string) => {
     if (!account) return;
-    if (account.id === id) return account.unit;
+    if (account.id === id) return getAccountCurrency(account).units[0];
     const ta = (account.subAccounts || []).find(a => a.id === id);
-    if (ta) return getAccountUnit(ta);
+    if (ta) return getAccountCurrency(ta).units[0];
   };
 
   const familyExtra = (operation, unit) => {

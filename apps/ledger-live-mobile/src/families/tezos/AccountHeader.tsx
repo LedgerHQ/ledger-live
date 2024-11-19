@@ -5,7 +5,7 @@ import { useNavigation, ParamListBase, RouteProp } from "@react-navigation/nativ
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
+import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { Text } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 import IlluStaking from "./IlluStaking";

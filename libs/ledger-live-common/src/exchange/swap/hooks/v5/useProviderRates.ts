@@ -2,20 +2,25 @@ import BigNumber from "bignumber.js";
 import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
 import { useFetchRates } from "./useFetchRates";
 import { SetExchangeRateCallback } from "../useSwapTransaction";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { useCallback } from "react";
+import { useEffect } from "react";
+import { useCountdown } from "usehooks-ts";
+import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../const/timeout";
 
 type Props = {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
   onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
+  countdown?: number;
+  allowRefresh?: boolean;
+  isEnabled?: boolean;
 };
 
 export type UseProviderRatesResponse = {
   rates: RatesReducerState;
   refetchRates(): void;
   updateSelectedRate(): void;
+  countdown: undefined | number;
 };
 
 export function useProviderRates({
@@ -23,29 +28,37 @@ export function useProviderRates({
   toState,
   onNoRates,
   setExchangeRate,
+  allowRefresh = true,
+  isEnabled = true,
+  ...props
 }: Props): UseProviderRatesResponse {
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const filterMoonpay = useCallback(
-    rates => {
-      if (!rates || ptxSwapMoonpayProviderFlag?.enabled) return rates;
-      return rates.filter(r => r.provider !== "moonpay");
-    },
-    [ptxSwapMoonpayProviderFlag?.enabled],
-  );
+  const [countdown, { startCountdown, resetCountdown, stopCountdown }] = useCountdown({
+    countStart: props.countdown ?? DEFAULT_SWAP_RATES_INTERVAL_MS / 1000,
+    countStop: 0,
+  });
 
   const { data, isLoading, error, refetch } = useFetchRates({
     fromCurrencyAccount: fromState.account,
     toCurrency: toState.currency,
     fromCurrencyAmount: fromState.amount ?? BigNumber(0),
     onSuccess(data) {
-      const rates = filterMoonpay(data);
-      if (rates.length === 0) {
+      resetCountdown();
+      if (data.length === 0) {
+        stopCountdown();
         onNoRates?.({ fromState, toState });
       } else {
-        setExchangeRate?.(rates[0]);
+        startCountdown();
+        setExchangeRate?.(data[0]);
       }
     },
+    isEnabled,
   });
+
+  useEffect(() => {
+    if (countdown <= 0 && allowRefresh) {
+      refetch();
+    }
+  }, [countdown, refetch, allowRefresh]);
 
   if (!fromState.amount || fromState.amount.lte(0)) {
     setExchangeRate?.(undefined);
@@ -57,6 +70,7 @@ export function useProviderRates({
       },
       refetchRates: () => undefined,
       updateSelectedRate: () => undefined,
+      countdown: undefined,
     };
   }
 
@@ -70,6 +84,7 @@ export function useProviderRates({
       },
       refetchRates: () => undefined,
       updateSelectedRate: () => undefined,
+      countdown: undefined,
     };
   }
   if (error) {
@@ -82,6 +97,7 @@ export function useProviderRates({
       },
       refetchRates: () => undefined,
       updateSelectedRate: () => undefined,
+      countdown: undefined,
     };
   }
 
@@ -89,11 +105,12 @@ export function useProviderRates({
     return {
       rates: {
         status: "success",
-        value: filterMoonpay(data),
+        value: data,
         error: undefined,
       },
       refetchRates: refetch,
       updateSelectedRate: () => undefined,
+      countdown,
     };
   }
 
@@ -105,5 +122,6 @@ export function useProviderRates({
     },
     refetchRates: () => undefined,
     updateSelectedRate: () => undefined,
+    countdown: undefined,
   };
 }

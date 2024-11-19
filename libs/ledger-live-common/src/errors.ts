@@ -6,7 +6,6 @@ export const ConnectManagerTimeout = createCustomErrorClass("ConnectManagerTimeo
 export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat",
 );
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
 
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired",
@@ -30,20 +29,9 @@ export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTim
 export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
-export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
-  "InvalidAddressBecauseAlreadyDelegated",
-);
 
-export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
-  "AccountAwaitingSendPendingOperations",
-);
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
-export const CosmosRedelegationInProgress = createCustomErrorClass("CosmosRedelegationInProgress");
-export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
-  "CosmosDelegateAllFundsWarning",
-);
-export const CosmosTooManyValidators = createCustomErrorClass("CosmosTooManyValidators");
-export const NotEnoughDelegationBalance = createCustomErrorClass("NotEnoughDelegationBalance");
+
 export const RPCHostRequired = createCustomErrorClass("RPCHostRequired");
 export const RPCHostInvalid = createCustomErrorClass("RPCHostInvalid");
 export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
@@ -105,6 +93,7 @@ export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
 );
 
 export const SwapGenericAPIError = createCustomErrorClass("SwapGenericAPIError");
+export const SwapRateExpiredError = createCustomErrorClass("SwapRateExpiredError");
 
 export const JSONRPCResponseError = createCustomErrorClass("JSONRPCResponseError");
 export const JSONDecodeError = createCustomErrorClass("JSONDecodeError");
@@ -132,10 +121,13 @@ export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 export * from "@ledgerhq/coin-framework/errors";
-export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-algorand/errors";
-export * from "./families/stellar/errors";
-export * from "./families/solana/errors";
-export * from "./families/cardano/errors";
-export * from "./families/near/errors";
+export * from "@ledgerhq/coin-bitcoin/errors";
+export * from "@ledgerhq/coin-cardano/errors";
+export * from "@ledgerhq/coin-cosmos/errors";
 export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-near/errors";
+export * from "@ledgerhq/coin-polkadot/errors";
+export * from "@ledgerhq/coin-solana/errors";
+export * from "@ledgerhq/coin-stellar/errors";
+export * from "@ledgerhq/coin-tezos/errors";

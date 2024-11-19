@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-medium-linux]
+    runs-on: [ledger-live-medium]
     steps:
       - name: generate token
         id: generate-token
@@ -36,7 +36,7 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - uses: ./tools/actions/composites/bot
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
         id: bot
         timeout-minutes: 120
         with:

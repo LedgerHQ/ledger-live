@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -18,25 +18,53 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import {
   createAction,
-  Result as StartExchangeResult,
+  StartExchangeErrorResult,
+  StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import {
-  Data as StartExchangeData,
-  isStartExchangeData,
-} from "~/renderer/modals/Platform/Exchange/StartExchange/index";
+
 import CompleteExchange, {
   Data as CompleteExchangeData,
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { Exchange } from "@ledgerhq/live-common/exchange/types";
+import { renderLoading } from "./DeviceAction/rendering";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
 
+const ContentWrapper = styled.main`
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 62px);
+  overflow: auto;
+  flex: 1;
+  justify-content: space-between;
+`;
+
+export type StartExchangeData = {
+  onCancel?: (startExchangeError: StartExchangeErrorResult) => void;
+  exchangeType: ExchangeType;
+  provider?: string;
+  exchange?: Exchange;
+  onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
+};
+
+export function isStartExchangeData(data: unknown): data is StartExchangeData {
+  if (data === null || typeof data !== "object") {
+    return false;
+  }
+  return "exchangeType" in data;
+}
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   // @ts-expect-error how to type payload?
   const {
     isOpen,
@@ -53,8 +81,6 @@ export const LiveAppDrawer = () => {
     };
   } = useSelector(platformAppDrawerStateSelector);
 
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
   const onContinue = useCallback(() => {
     if (payload && payload.type === "DAPP_DISCLAIMER") {
       const { manifest, disclaimerId, next } = payload;
@@ -65,11 +91,14 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
-  const drawerContent = useCallback(() => {
+
+  const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
     }
+
     const { type, manifest, data } = payload;
+
     const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
@@ -106,10 +135,7 @@ export const LiveAppDrawer = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <CheckBox
-                    isChecked={dismissDisclaimerChecked}
-                    data-test-id="dismiss-disclaimer"
-                  />
+                  <CheckBox isChecked={dismissDisclaimerChecked} data-testid="dismiss-disclaimer" />
                   <Text
                     ff="Inter|SemiBold"
                     fontSize={4}
@@ -123,7 +149,7 @@ export const LiveAppDrawer = () => {
                   </Text>
                 </Box>
 
-                <Button primary onClick={onContinue} data-test-id="drawer-continue-button">
+                <Button primary onClick={onContinue} data-testid="drawer-continue-button">
                   {t("platform.disclaimer.CTA")}
                 </Button>
               </Box>
@@ -132,23 +158,20 @@ export const LiveAppDrawer = () => {
         );
       case "EXCHANGE_START":
         return data && isStartExchangeData(data) ? (
-          <Box alignItems={"center"} height={"100%"} px={32}>
-            <DeviceAction
-              action={action}
-              request={{
-                exchangeType: data.exchangeType,
-              }}
-              onResult={(result: StartExchangeResult) => {
-                if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult as unknown as string);
-                }
-                if ("startExchangeError" in result) {
-                  data.onCancel?.(result.startExchangeError as unknown as Error);
-                }
+          <DeviceAction
+            action={action}
+            request={data}
+            Result={() => renderLoading()}
+            onResult={result => {
+              if ("startExchangeResult" in result) {
+                data.onResult(result.startExchangeResult);
+              }
+              if ("startExchangeError" in result) {
+                data.onCancel?.(result.startExchangeError);
                 dispatch(closePlatformAppDrawer());
-              }}
-            />
-          </Box>
+              }
+            }}
+          />
         ) : null;
       case "EXCHANGE_COMPLETE":
         return data && isCompleteExchangeData(data) ? (
@@ -173,9 +196,7 @@ export const LiveAppDrawer = () => {
       }}
       direction="left"
     >
-      <Box flex="1" justifyContent="space-between">
-        {drawerContent()}
-      </Box>
+      <ContentWrapper>{drawerContent}</ContentWrapper>
     </SideDrawer>
   );
 };

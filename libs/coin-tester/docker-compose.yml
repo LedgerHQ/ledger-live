@@ -1,0 +1,13 @@
+services:
+  speculos:
+    # Speculos isn't supported for Mac M1 yet. You have to build the image locally as described in the README.
+    # Otherwise you can use the official image
+    # image: ghcr.io/ledgerhq/speculos:latest
+    image: ${SPECULOS_IMAGE:-ghcr.io/ledgerhq/speculos}:latest
+    volumes:
+      - ./lib/signers/tmp:/speculos/apps
+    ports:
+      - "${SPECULOS_API_PORT}:${SPECULOS_API_PORT}"
+    build:
+      context: /speculos
+    command: --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT}

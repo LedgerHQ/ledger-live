@@ -77,7 +77,12 @@ export const InformationDrawer = ({
   const tabIndex = useMemo(() => tabs.findIndex(tab => tab.id === tabId), [tabId, tabs]);
   const CurrentPanel = tabs[tabIndex].Component;
   return (
-    <SideDrawer isOpen={isOpen} onRequestClose={onRequestClose} direction="left">
+    <SideDrawer
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      direction="left"
+      forceDisableFocusTrap
+    >
       <Box height="100%" px="40px">
         <TabBar
           fullWidth

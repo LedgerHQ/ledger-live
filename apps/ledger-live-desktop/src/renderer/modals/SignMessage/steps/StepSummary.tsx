@@ -11,6 +11,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 const Circle = styled.div`
   height: 32px;
@@ -104,6 +105,8 @@ export default function StepSummary({ account, message: messageData }: StepProps
   const mainAccount = getMainAccount(account, null);
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
+  const accountName = useAccountName(account);
+
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
@@ -126,7 +129,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
               <CryptoCurrencyIcon size={16} currency={account.currency} />
             </div>
             <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
-              {account.name}
+              {accountName}
             </Text>
           </Box>
         </Box>

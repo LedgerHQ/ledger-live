@@ -7,10 +7,7 @@ import { BufferWriter } from "../../src/buffertools";
 import { CreateTransactionArg } from "../../src/createTransaction";
 import { AddressFormat } from "../../src/getWalletPublicKey";
 import { AppClient } from "../../src/newops/appClient";
-import {
-  DefaultDescriptorTemplate,
-  WalletPolicy,
-} from "../../src/newops/policy";
+import { DefaultDescriptorTemplate, WalletPolicy } from "../../src/newops/policy";
 import { Transaction } from "../../src/types";
 import { CoreInput, CoreTx, spentTxs } from "./testtx";
 
@@ -18,7 +15,7 @@ export async function runSignTransaction(
   testTx: CoreTx,
   testPaths: { ins: string[]; out?: string },
   client: TestingClient,
-  transport: Transport
+  transport: Transport,
 ): Promise<string> {
   const btcNew = new BtcNew(client);
   // btc is needed to perform some functions like splitTransaction.
@@ -37,13 +34,7 @@ export async function runSignTransaction(
     const path = testPaths.ins[index];
     associatedKeysets.push(path);
     const inputData = createInput(input, btc);
-    const pubkey = getPubkey(
-      index,
-      accountType,
-      testTx,
-      inputData[0],
-      inputData[1]
-    );
+    const pubkey = getPubkey(index, accountType, testTx, inputData[0], inputData[1]);
     const mockXpub = creatDummyXpub(pubkey);
     client.mockGetPubkeyResponse(path, mockXpub);
     yieldSigs.set(index, getSignature(input, accountType));
@@ -57,13 +48,12 @@ export async function runSignTransaction(
   client.mockSignPsbt(yieldSigs);
   const outputWriter = new BufferWriter();
   outputWriter.writeVarInt(testTx.vout.length);
-  testTx.vout.forEach((output) => {
-    outputWriter.writeUInt64(
-      Number.parseFloat((output.value * 100000000).toFixed(8))
-    );
+  testTx.vout.forEach(output => {
+    outputWriter.writeUInt64(Number.parseFloat((output.value * 100000000).toFixed(8)));
     outputWriter.writeVarSlice(Buffer.from(output.scriptPubKey.hex, "hex"));
   });
   const outputScriptHex = outputWriter.buffer().toString("hex");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let callbacks = "";
   function logCallback(message: string) {
     callbacks += new Date().toISOString() + " " + message + "\n";
@@ -78,9 +68,8 @@ export async function runSignTransaction(
     sigHashType,
     segwit: accountType != StandardPurpose.p2pkh,
     onDeviceSignatureGranted: () => logCallback("CALLBACK: signature granted"),
-    onDeviceSignatureRequested: () =>
-      logCallback("CALLBACK: signature requested"),
-    onDeviceStreaming: (arg) => logCallback("CALLBACK: " + JSON.stringify(arg)),
+    onDeviceSignatureRequested: () => logCallback("CALLBACK: signature requested"),
+    onDeviceStreaming: arg => logCallback("CALLBACK: " + JSON.stringify(arg)),
   };
   logCallback("Start createPaymentTransaction");
   const tx = await btcNew.createPaymentTransaction(arg);
@@ -90,7 +79,7 @@ export async function runSignTransaction(
 }
 
 export function addressFormatFromDescriptorTemplate(
-  descTemp: DefaultDescriptorTemplate
+  descTemp: DefaultDescriptorTemplate,
 ): AddressFormat {
   if (descTemp == "tr(@0)") return "bech32m";
   if (descTemp == "pkh(@0)") return "legacy";
@@ -111,7 +100,7 @@ function getPubkey(
   accountType: StandardPurpose,
   testTx: CoreTx,
   spentTx: Transaction,
-  spentOutputIndex: number
+  spentOutputIndex: number,
 ): Buffer {
   const scriptSig = Buffer.from(testTx.vin[inputIndex].scriptSig.hex, "hex");
   if (accountType == StandardPurpose.p2pkh) {
@@ -120,19 +109,13 @@ function getPubkey(
   if (accountType == StandardPurpose.p2tr) {
     return spentTx.outputs![spentOutputIndex].script.slice(2, 34); // 32 bytes x-only pubkey
   }
-  if (
-    accountType == StandardPurpose.p2wpkh ||
-    accountType == StandardPurpose.p2wpkhInP2sh
-  ) {
+  if (accountType == StandardPurpose.p2wpkh || accountType == StandardPurpose.p2wpkhInP2sh) {
     return Buffer.from(testTx.vin[inputIndex].txinwitness![1], "hex");
   }
   throw new Error();
 }
 
-function getSignature(
-  testTxInput: CoreInput,
-  accountType: StandardPurpose
-): Buffer {
+function getSignature(testTxInput: CoreInput, accountType: StandardPurpose): Buffer {
   const scriptSig = Buffer.from(testTxInput.scriptSig.hex, "hex");
   if (accountType == StandardPurpose.p2pkh) {
     return scriptSig.slice(1, scriptSig.length - 34);
@@ -140,10 +123,7 @@ function getSignature(
   if (accountType == StandardPurpose.p2tr) {
     return Buffer.from(testTxInput.txinwitness![0], "hex");
   }
-  if (
-    accountType == StandardPurpose.p2wpkh ||
-    accountType == StandardPurpose.p2wpkhInP2sh
-  ) {
+  if (accountType == StandardPurpose.p2wpkh || accountType == StandardPurpose.p2wpkhInP2sh) {
     return Buffer.from(testTxInput.txinwitness![0], "hex");
   }
   throw new Error();
@@ -171,18 +151,14 @@ function getAccountType(coreInput: CoreInput, btc: Btc): StandardPurpose {
 
 export function creatDummyXpub(pubkey: Buffer): string {
   const xpubDecoded = bs58check.decode(
-    "tpubDHcN44A4UHqdHJZwBxgTbu8Cy87ZrZkN8tQnmJGhcijHqe4rztuvGcD4wo36XSviLmiqL5fUbDnekYaQ7LzAnaqauBb9RsyahsTTFHdeJGd"
+    "tpubDHcN44A4UHqdHJZwBxgTbu8Cy87ZrZkN8tQnmJGhcijHqe4rztuvGcD4wo36XSviLmiqL5fUbDnekYaQ7LzAnaqauBb9RsyahsTTFHdeJGd",
   );
-  const pubkey33 =
-    pubkey.length == 33 ? pubkey : Buffer.concat([Buffer.from([2]), pubkey]);
+  const pubkey33 = pubkey.length == 33 ? pubkey : Buffer.concat([Buffer.from([2]), pubkey]);
   xpubDecoded.fill(pubkey33, xpubDecoded.length - 33);
   return bs58check.encode(xpubDecoded);
 }
 
-function createInput(
-  coreInput: CoreInput,
-  btc: Btc
-): [Transaction, number, string | null, number] {
+function createInput(coreInput: CoreInput, btc: Btc): [Transaction, number, string | null, number] {
   const spentTx = spentTxs[coreInput.txid];
   if (!spentTx) {
     throw new Error("Spent tx " + coreInput.txid + " unavailable.");
@@ -198,7 +174,7 @@ export class TestingClient extends AppClient {
     _walletPolicy: WalletPolicy,
     _change: number,
     _addressIndex: number,
-    _response: string
+    _response: string,
   ): void {}
   mockSignPsbt(_yieldSigs: Map<number, Buffer>): void {}
 }

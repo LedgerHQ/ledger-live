@@ -1,36 +1,46 @@
-import { expect } from "detox";
-import { loadBleState, loadConfig } from "../bridge/server";
-import PortfolioPage from "../models/wallet/portfolioPage";
 import DeviceAction from "../models/DeviceAction";
-import ManagerPage from "../models/manager/managerPage";
-import { knownDevice } from "../models/devices";
-import { getElementByText, waitForElementByText } from "../helpers";
+import { knownDevices } from "../models/devices";
+import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
+import { Application } from "../page";
 
-let portfolioPage: PortfolioPage;
+let app: Application;
 let deviceAction: DeviceAction;
-let managerPage: ManagerPage;
 
-describe("Bitcoin Account", () => {
+const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
+const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
+const knownDevice = knownDevices.nanoX;
+
+describe("Test My Ledger", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
-
-    portfolioPage = new PortfolioPage();
+    app = await Application.init("onboardingcompleted");
     deviceAction = new DeviceAction(knownDevice);
-    managerPage = new ManagerPage();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it("open manager", async () => {
-    await portfolioPage.openMyLedger();
+  $TmsLink("B2CQA-657");
+  it("open My Ledger and add a new device", async () => {
+    await app.portfolio.openMyLedger();
+    await app.manager.expectManagerPage();
+    await app.common.selectAddDevice();
+    await app.manager.selectConnectDevice();
+    await app.common.addDeviceViaBluetooth();
+    await app.manager.waitForDeviceInfoToLoad();
+  });
+
+  $TmsLink("B2CQA-657");
+  it("open My Ledger", async () => {
+    await app.portfolio.openMyLedger();
+    await app.manager.expectManagerPage();
     await deviceAction.selectMockDevice();
-    await deviceAction.accessManager();
-    await managerPage.waitForManagerPageToLoad();
+    await deviceAction.accessManager(appDesc.join(","), installedDesc.join(","));
+    await app.manager.waitForDeviceInfoToLoad();
   });
 
-  it("displays device name", async () => {
-    await waitForElementByText(knownDevice.name);
-    await expect(getElementByText(knownDevice.name)).toExist();
+  $TmsLink("B2CQA-658");
+  it("displays device informations", async () => {
+    await app.manager.checkDeviceName(knownDevice.name);
+    await app.manager.checkDeviceVersion(deviceInfo.version);
+    await app.manager.checkDeviceAppsNStorage(appDesc, installedDesc);
   });
 });

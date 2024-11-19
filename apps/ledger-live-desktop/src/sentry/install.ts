@@ -8,8 +8,7 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 /* eslint-disable no-continue */
 
 // will be overriden by setShouldSendCallback
-// initially we will send errors (anonymized as we don't initially know "userId" neither)
-let shouldSendCallback = () => true;
+let shouldSendCallback = () => false;
 let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
@@ -109,6 +108,7 @@ const ignoreErrors = [
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
   "Bad status on response: 503", // cryptoorg node
+  "Render frame was disposed before WebFrameMain could be accessed", // LIVE-12926
 ];
 
 export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMainOptions>) {
@@ -118,7 +118,6 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
     dsn: __SENTRY_URL__,
     release: __APP_VERSION__,
     environment: __DEV__ ? "development" : "production",
-    debug: __DEV__,
     ignoreErrors,
     sampleRate: __DEV__ ? 1 : productionBuildSampleRate,
     tracesSampleRate: __DEV__ ? 1 : tracesSampleRate,
@@ -138,12 +137,18 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
         console.log("before-send", {
           data,
           hint,
+          shouldSend: shouldSendCallback(),
         });
       if (!shouldSendCallback()) return null;
       if (typeof data !== "object" || !data) return data;
 
       delete data.server_name; // hides the user machine name
-      anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      try {
+        anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      } catch (e) {
+        console.error("can't anonymize", e);
+        throw e;
+      }
       console.log("SENTRY REPORT", data);
       return data;
     },

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { getAccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
@@ -42,7 +42,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

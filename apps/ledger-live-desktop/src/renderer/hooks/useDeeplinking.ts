@@ -15,6 +15,11 @@ import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
+import { useStorylyContext } from "~/storyly/StorylyProvider";
+import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
+import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "../actions/walletSync";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -41,6 +46,14 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
+  const { setUrl } = useStorylyContext();
+  const navigateToHome = () => history.push("/");
+  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
+  const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
+    navigateToHome,
+    navigateToPostOnboardingHub,
+  );
+
   const navigate = useCallback(
     (
       pathname: string,
@@ -303,8 +316,20 @@ export function useDeepLinkHandler() {
           }
           break;
         case "wc": {
+          const wcPathname = `/platform/${WC_ID}`;
+          // Only prevent requests if already on the wallet connect live-app
+          if (location.pathname === wcPathname) {
+            try {
+              // Prevent a request from updating the live-app url and reloading it
+              if (!query.uri || new URL(query.uri).searchParams.get("requestId")) {
+                return;
+              }
+            } catch {
+              // Fall back on navigation to the live-app in case of an invalid URL
+            }
+          }
           setTrackingSource("deeplink");
-          navigate("/platform/ledger-wallet-connect", query);
+          navigate(wcPathname, query);
 
           break;
         }
@@ -317,13 +342,25 @@ export function useDeepLinkHandler() {
         case "recover-restore-flow":
           navigate("/recover-restore");
           break;
+        case "storyly":
+          setUrl(deeplink);
+          break;
+        case "post-onboarding": {
+          postOnboardingDeeplinkHandler(query.device);
+          break;
+        }
+        case "ledgersync": {
+          navigate("/settings/display");
+          dispatch(setLedgerSyncDrawerVisibility(true));
+          break;
+        }
         case "portfolio":
         default:
           navigate("/");
           break;
       }
     },
-    [accounts, dispatch, navigate],
+    [accounts, dispatch, location.pathname, navigate, postOnboardingDeeplinkHandler, setUrl],
   );
   return {
     handler,

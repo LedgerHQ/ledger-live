@@ -229,8 +229,8 @@ function Stepper({ steps, activeIndex, errored }: StepperProps): React.ReactElem
                   ? "ERRORED"
                   : "CURRENT"
                 : i < (activeIndex ?? 0)
-                ? "COMPLETED"
-                : "PENDING"
+                  ? "COMPLETED"
+                  : "PENDING"
             }
             showLeftSeparator={i > 0}
             showRightSeparator={i < steps.length - 1}

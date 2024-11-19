@@ -45,7 +45,6 @@ export type CreateTransactionArg = {
   lockTime?: number;
   sigHashType?: number;
   segwit?: boolean;
-  initialTimestamp?: number;
   additionals: Array<string>;
   expiryHeight?: Buffer;
   useTrustedInputForSegwit?: boolean;
@@ -66,7 +65,6 @@ export async function createTransaction(
     lockTime,
     sigHashType,
     segwit,
-    initialTimestamp,
     additionals,
     expiryHeight,
     onDeviceStreaming,
@@ -108,8 +106,6 @@ export async function createTransaction(
 
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
-  const isXST = additionals.includes("stealthcoin");
-  const startTime = Date.now();
   const sapling = additionals.includes("sapling");
   const bech32 = segwit && additionals.includes("bech32");
   const useBip143 =
@@ -128,8 +124,6 @@ export async function createTransaction(
   const defaultVersion = Buffer.alloc(4);
   !!expiryHeight && !isDecred
     ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
-    : isXST
-    ? defaultVersion.writeUInt32LE(2, 0)
     : defaultVersion.writeUInt32LE(1, 0);
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
@@ -173,12 +167,13 @@ export async function createTransaction(
 
     if (expiryHeight && !isDecred) {
       targetTransaction.nVersionGroupId = Buffer.from(
-        // nVersionGroupId is 0x26A7270A for zcash from https://z.cash/upgrade/nu5/
+        // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
+        // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
         isZcash
           ? [0x0a, 0x27, 0xa7, 0x26]
           : sapling
-          ? [0x85, 0x20, 0x2f, 0x89]
-          : [0x70, 0x82, 0xc4, 0x03],
+            ? [0x85, 0x20, 0x2f, 0x89]
+            : [0x70, 0x82, 0xc4, 0x03],
       );
       targetTransaction.nExpiryHeight = expiryHeight;
       // For sapling : valueBalance (8), nShieldedSpend (1), nShieldedOutput (1), nJoinSplit (1)
@@ -225,14 +220,6 @@ export async function createTransaction(
     }
   }
 
-  if (initialTimestamp !== undefined) {
-    targetTransaction.timestamp = Buffer.alloc(4);
-    targetTransaction.timestamp.writeUInt32LE(
-      Math.floor(initialTimestamp + (Date.now() - startTime) / 1000),
-      0,
-    );
-  }
-
   onDeviceSignatureRequested();
 
   if (useBip143) {
@@ -266,12 +253,12 @@ export async function createTransaction(
       inputs[i].length >= 3 && typeof input[2] === "string"
         ? Buffer.from(input[2], "hex")
         : !segwit
-        ? regularOutputs[i].script
-        : Buffer.concat([
-            Buffer.from([OP_DUP, OP_HASH160, HASH_SIZE]),
-            hashPublicKey(publicKeys[i]),
-            Buffer.from([OP_EQUALVERIFY, OP_CHECKSIG]),
-          ]);
+          ? regularOutputs[i].script
+          : Buffer.concat([
+              Buffer.from([OP_DUP, OP_HASH160, HASH_SIZE]),
+              hashPublicKey(publicKeys[i]),
+              Buffer.from([OP_EQUALVERIFY, OP_CHECKSIG]),
+            ]);
     const pseudoTX = Object.assign({}, targetTransaction);
     const pseudoTrustedInputs = useBip143 ? [trustedInputs[i]] : trustedInputs;
 

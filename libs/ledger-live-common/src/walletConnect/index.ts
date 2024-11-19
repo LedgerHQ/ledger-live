@@ -10,10 +10,10 @@ export const currenciesSupportedOnWalletConnect = [
   "polygon",
   "bsc",
   "optimism",
+  "optimism_sepolia",
   "arbitrum",
+  "arbitrum_sepolia",
   "avalanche_c_chain",
-  "ethereum_goerli",
-  "optimism_goerli",
 ];
 
 export const isWalletConnectSupported = (currency: CryptoOrTokenCurrency) =>

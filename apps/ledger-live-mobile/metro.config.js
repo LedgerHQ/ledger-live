@@ -1,6 +1,6 @@
 /**
  * Metro configuration for React Native
- * https://github.com/facebook/react-native
+ * https://reactnative.dev/docs/metro
  *
  * @format
  */
@@ -8,11 +8,17 @@
 /* eslint-disable no-console */
 
 const path = require("path");
-const extraConfig = require("@ledgerhq/metro-extra-config");
 const tsconfig = require("./tsconfig.json");
+
+const forcedDependencies = [
+  "react-redux",
+  "react-native",
+  "react-native-svg",
+  "styled-components",
+  "react-native-reanimated",
+];
+
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
-// Dependencies that are forcefully resolved from the LLM folder.
-const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
 
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
@@ -25,41 +31,71 @@ const buildTsAlias = (conf = {}) =>
     {},
   );
 
-const specificConfig = {
+const projectRootDir = path.join(__dirname, "..", "..");
+
+function forceDependency(moduleName, filters, nodeModulesPaths) {
+  const matches = filters.some(
+    filter => moduleName === filter || moduleName.startsWith(`${filter}/`),
+  );
+  if (matches) {
+    const resolution = require.resolve(moduleName, {
+      paths: nodeModulesPaths,
+    });
+
+    return {
+      filePath: resolution,
+      type: "sourceFile",
+    };
+  }
+
+  return null;
+}
+
+const nodeModulesPaths = [
+  path.resolve(__dirname, "node_modules"),
+  path.resolve(projectRootDir, "node_modules"),
+  path.resolve(projectRootDir, "node_modules", ".pnpm"),
+];
+
+const metroConfig = {
+  projectRoot: path.resolve(__dirname),
+  watchFolders: [projectRootDir],
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
   resolver: {
     unstable_enableSymlinks: true,
     unstable_enablePackageExports: true,
+    unstable_conditionNames: ["require", "react-native", "browser"],
+    nodeModulesPaths,
+    resolverMainFields: ["react-native", "browser", "main"],
     extraNodeModules: {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
       net: require.resolve("react-native-tcp-socket"),
+      tls: require.resolve("tls"),
       ...buildTsAlias(tsconfig.compilerOptions.paths),
     },
-    // makeMetroConfig adds the "module" field, but we skip it here on purpose
-    // because it makes the "react-native-url-polyfill" package consume the
-    // es6 version of the "punycode" package and crash (it expects a default export).
-    resolverMainFields: ["react-native", "browser", "main"],
+    resolveRequest: (context, moduleName, platform) => {
+      if (["tls", "http2", "dns"].includes(moduleName)) {
+        return { type: "empty" };
+      }
+
+      try {
+        const forcedResolution = forceDependency(moduleName, forcedDependencies, nodeModulesPaths);
+        if (forcedResolution) return forcedResolution;
+      } catch (e) {
+        console.log(e);
+      }
+
+      return context.resolveRequest(context, moduleName, platform);
+    },
   },
 };
 
-const extraConfigOptions = {
-  projectRoot: __dirname,
-  forcedDependencies,
-  remapModule: (context, moduleName, _platform) => {
-    const { originModulePath } = context;
-
-    // "package.js" contains "module.meta" calls that will not work with the react-native env.
-    // To solve this replace with "packageInfo.cjs" which is safe.
-    if (originModulePath.includes("@polkadot") && moduleName.endsWith("packageInfo.js")) {
-      return moduleName.replace("packageInfo.js", "packageInfo.cjs");
-    }
-
-    // For other modules, it seems to be fine :).
-    return moduleName;
-  },
-};
-
-module.exports = module.exports = mergeConfig(
-  getDefaultConfig(__dirname),
-  extraConfig(extraConfigOptions, specificConfig),
-);
+module.exports = mergeConfig(getDefaultConfig(__dirname), metroConfig);

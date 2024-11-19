@@ -1,7 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
-import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
+import { casperAccountHashFromPublicKey, getCLPublicKey } from "./bridge/bridgeHelpers/addresses";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -27,7 +27,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Account",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account }) => account.freshAddress,
+      expectedValue: ({ account }) => getCLPublicKey(account.freshAddress).toHex(true),
     },
     {
       title: "Fee",
@@ -38,7 +38,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Target",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => casperPubKeyToAccountHash(transaction.recipient),
+      expectedValue: ({ transaction }) =>
+        casperAccountHashFromPublicKey(transaction.recipient, true),
     },
     {
       title: "Amount",

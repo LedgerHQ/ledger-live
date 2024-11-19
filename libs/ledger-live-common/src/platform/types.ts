@@ -6,6 +6,15 @@ import {
   Currency as PlatformCurrency,
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
+import { z } from "zod";
+import { reverseRecord } from "../helpers";
+
+export const FAMILIES_MAPPING_PLATFORM_TO_LL = {
+  ethereum: "evm",
+  ripple: "xrp",
+} as const;
+
+export const FAMILIES_MAPPING_LL_TO_PLATFORM = reverseRecord(FAMILIES_MAPPING_PLATFORM_TO_LL);
 
 /**
  * this is a hack to add the "evm" family to the list of supported families of
@@ -14,7 +23,12 @@ import {
  * "ethereum" family, following the "ethereum" / "evm" families merge
  * (and removal of the "ethereum" family)
  */
-export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm"];
+export const PLATFORM_FAMILIES = [
+  ...Object.values(FAMILIES),
+  ...Object.values(FAMILIES_MAPPING_PLATFORM_TO_LL),
+];
+
+export { FAMILIES as PLATFORM_FAMILIES_ENUM };
 
 export type {
   Account as PlatformAccount,
@@ -83,6 +97,15 @@ export type LiveAppManifestParamsNetwork = {
   nodeURL?: string;
 };
 
+export type DappProviders = "evm";
+
+export type LiveAppManifestDapp = {
+  provider: DappProviders;
+  networks: Array<LiveAppManifestParamsNetwork>;
+  nanoApp: string;
+  dependencies?: string[];
+};
+
 export type LiveAppManifest = {
   id: string;
   author?: string;
@@ -90,6 +113,7 @@ export type LiveAppManifest = {
   name: string;
   url: string | URL;
   params?: LiveAppManifestParams;
+  dapp?: LiveAppManifestDapp;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
@@ -103,6 +127,8 @@ export type LiveAppManifest = {
   currencies: string[] | "*";
   visibility: Visibility;
   highlight?: boolean;
+  providerTestBaseUrl?: string;
+  providerTestId?: string;
   content: {
     cta?: TranslatableString;
     subtitle?: TranslatableString;
@@ -110,6 +136,53 @@ export type LiveAppManifest = {
     description: TranslatableString;
   };
 };
+
+export const DappProvidersSchema = z.enum(["evm"]);
+
+export const LiveAppManifestParamsNetworkSchema = z.object({
+  currency: z.string().min(1),
+  chainID: z.number(),
+  nodeURL: z.string().optional(),
+});
+
+export const LiveAppManifestDappSchema = z.object({
+  provider: DappProvidersSchema,
+  networks: z.array(LiveAppManifestParamsNetworkSchema),
+  nanoApp: z.string().min(1),
+  dependencies: z.array(z.string()).optional(),
+});
+
+export const LiveAppManifestSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    author: z.string().optional(),
+    private: z.boolean().optional(),
+    name: z.string().trim().min(1),
+    url: z.string().trim().min(1),
+    dapp: LiveAppManifestDappSchema.optional(),
+    homepageUrl: z.string().trim().min(1),
+    supportUrl: z.string().optional(),
+    icon: z.string().nullable().optional(),
+    platforms: z.array(z.enum(["ios", "android", "desktop"])).min(1),
+    apiVersion: z.string().trim().min(1),
+    manifestVersion: z.string().trim().min(1),
+    branch: z.enum(["stable", "experimental", "soon", "debug"]),
+    permissions: z.array(z.string().trim()).optional(),
+    domains: z.array(z.string().trim()).min(1),
+    categories: z.array(z.string().trim()).min(1),
+    currencies: z.union([z.array(z.string().trim()).min(1), z.literal("*")]),
+    visibility: z.enum(["complete", "searchable", "deep"]),
+    highlight: z.boolean().optional(),
+    content: z.object({
+      cta: z.record(z.string()).optional(),
+      subtitle: z.record(z.string()).optional(),
+      shortDescription: z.record(z.string().trim().min(1)),
+      description: z.record(z.string().trim().min(1)),
+    }),
+  })
+  .strict();
+
+export type LiveAppManifestSchemaType = z.infer<typeof LiveAppManifestSchema>;
 
 export type PlatformApi = {
   fetchManifest: () => Promise<LiveAppManifest[]>;

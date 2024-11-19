@@ -1,36 +1,49 @@
 import { Observable, of, concat } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
-import type { AppState } from "./app";
+import type { AppRequest, AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
+import { getMainAccount } from "../../account";
+import { isExchangeSwap, type Exchange } from "../../exchange/types";
+import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegrationTestEnv";
+
+export type StartExchangeSuccessResult = {
+  nonce: string;
+  device: Device;
+};
+
+export type StartExchangeErrorResult = {
+  error: Error;
+  device?: Device;
+};
 
 type State = {
-  startExchangeResult: string | null | undefined;
-  startExchangeError: Error | null | undefined;
+  startExchangeResult: StartExchangeSuccessResult | null | undefined;
+  startExchangeError: StartExchangeErrorResult | null | undefined;
   freezeReduxDevice: boolean;
   isLoading: boolean;
   error?: Error; //NB connectApp errors
 };
 
 type StartExchangeState = AppState & State;
-type StartExchangeRequest = { exchangeType: ExchangeType };
+type StartExchangeRequest = { exchangeType: ExchangeType; provider?: string; exchange?: Exchange };
 export type Result =
   | {
-      startExchangeResult: string;
+      startExchangeResult: StartExchangeSuccessResult;
     }
   | {
-      startExchangeError: Error;
+      startExchangeError: StartExchangeErrorResult;
     };
 
 type StartExchangeAction = Action<any, StartExchangeState, Result>;
 export type ExchangeRequestEvent =
   | { type: "start-exchange" }
-  | { type: "start-exchange-error"; error: Error }
-  | { type: "start-exchange-result"; nonce: string };
+  | { type: "start-exchange-error"; startExchangeError: StartExchangeErrorResult }
+  | { type: "start-exchange-result"; startExchangeResult: StartExchangeSuccessResult };
 
 const mapResult = ({
   startExchangeResult,
@@ -41,10 +54,10 @@ const mapResult = ({
         startExchangeResult,
       }
     : startExchangeError
-    ? {
-        startExchangeError,
-      }
-    : null;
+      ? {
+          startExchangeError,
+        }
+      : null;
 
 const initialState: State = {
   startExchangeResult: null,
@@ -59,12 +72,15 @@ const reducer = (state: State, e: ExchangeRequestEvent) => {
       return { ...state, freezeReduxDevice: true };
 
     case "start-exchange-error":
-      return { ...state, startExchangeError: e.error, isLoading: false };
+      return { ...state, startExchangeError: e.startExchangeError, isLoading: false };
 
     case "start-exchange-result":
       return {
         ...state,
-        startExchangeResult: e.nonce,
+        startExchangeResult: {
+          nonce: e.startExchangeResult.nonce,
+          device: e.startExchangeResult.device,
+        },
         isLoading: false,
       };
   }
@@ -83,9 +99,10 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
   startExchangeExec: (arg0: {
-    deviceId: string;
+    device: Device;
     exchangeType: ExchangeType;
     appVersion?: string;
+    provider?: string;
   }) => Observable<ExchangeRequestEvent>,
 ): StartExchangeAction => {
   const useHook = (
@@ -95,11 +112,45 @@ export const createAction = (
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
-    const { exchangeType } = startExchangeRequest;
+    const { exchangeType, provider, exchange } = startExchangeRequest;
+    const requireLatestFirmware = true;
 
-    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, {
-      appName: "Exchange",
-    });
+    const mainFromAccount = exchange
+      ? getMainAccount(exchange.fromAccount, exchange.fromParentAccount)
+      : null;
+    const mainToAccount =
+      exchange && isExchangeSwap(exchange)
+        ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
+        : null;
+
+    const request: AppRequest = useMemo(() => {
+      if (isSwapDisableAppsInstall()) {
+        return {
+          appName: "Exchange",
+        };
+      }
+      if (!exchange || !mainFromAccount || !mainToAccount) {
+        return {
+          appName: "Exchange",
+          requireLatestFirmware,
+        };
+      } else {
+        return {
+          appName: "Exchange",
+          dependencies: [
+            {
+              account: mainFromAccount,
+            },
+            {
+              account: mainToAccount,
+            },
+          ],
+          requireLatestFirmware,
+        };
+      }
+    }, [exchange, mainFromAccount, mainToAccount, requireLatestFirmware]);
+
+    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 
     const { device, opened, error, appAndVersion } = appState;
 
@@ -116,8 +167,9 @@ export const createAction = (
           type: "start-exchange",
         }),
         startExchangeExec({
-          deviceId: device.deviceId,
+          device,
           exchangeType,
+          provider,
           appVersion: appAndVersion?.version,
         }),
       )
@@ -131,7 +183,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, opened, exchangeType, hasError, appAndVersion]);
+    }, [exchange, device, opened, exchangeType, hasError, appAndVersion, provider]);
 
     return {
       ...appState,

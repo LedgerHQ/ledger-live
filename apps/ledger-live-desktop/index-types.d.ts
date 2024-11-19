@@ -20,6 +20,9 @@ type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
+type FeatureId = import("@ledgerhq/types-live").FeatureId;
+type Feature = import("@ledgerhq/types-live").Feature;
+type EnvName = import("@ledgerhq/live-env").EnvName;
 
 interface RawEvents {
   [key: string]: unknown;
@@ -40,8 +43,6 @@ interface Window {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
   api: {
-    pathUserdata: string;
-    pathHome: string;
     appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;
@@ -59,6 +60,10 @@ interface Window {
   // used for the analytics, initialized in the index.html
   // eslint-disable-next-line
   analytics: any;
+
+  getAllFeatureFlags: (appLanguage: string) => Partial<{ [key in FeatureId]: Feature }>;
+  getAllEnvs: () => { [key in EnvName]: unknown };
+  saveLogs: (path: string) => void;
 
   // for mocking purposes apparently?
   // eslint-disable-next-line

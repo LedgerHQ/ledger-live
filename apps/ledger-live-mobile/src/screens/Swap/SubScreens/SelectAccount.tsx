@@ -6,7 +6,10 @@ import { Flex, IconsLegacy, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
+import {
+  accountWithMandatoryTokens,
+  getAccountSpendableBalance,
+} from "@ledgerhq/live-common/account/helpers";
 import { TrackScreen, useAnalytics } from "~/analytics";
 import AccountCard from "~/components/AccountCard";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
@@ -16,6 +19,8 @@ import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { sharedSwapTracking } from "../utils";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
@@ -47,6 +52,8 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     return filteredAccounts;
   }, [accounts, selectedCurrency]);
 
+  const walletState = useSelector(walletSelector);
+
   const allAccounts = useMemo(() => {
     const accounts: AccountLike[] = flattenAccounts(enhancedAccounts);
 
@@ -56,22 +63,30 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
           const c = getAccountCurrency(a);
           return c.type === "CryptoCurrency" || c.id === selectedCurrency.id;
         })
-        .map(a => {
-          const c = getAccountCurrency(a);
+        .map(account => {
+          const c = getAccountCurrency(account);
           return {
-            ...a,
-            disabled:
-              (selectedCurrency.type === "TokenCurrency" && c.type === "CryptoCurrency") ||
-              c.id !== selectedCurrency.id,
+            name: accountNameWithDefaultSelector(walletState, account),
+            account: {
+              ...account,
+              // FIXME flatten disabled back in the top object
+              disabled:
+                (selectedCurrency.type === "TokenCurrency" && c.type === "CryptoCurrency") ||
+                c.id !== selectedCurrency.id,
+            },
           };
         });
     }
 
     return accounts.map(a => ({
-      ...a,
-      disabled: !a.balance.gt(0) || !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      name: accountNameWithDefaultSelector(walletState, a),
+      account: {
+        ...a,
+        // FIXME flatten disabled back in the top object
+        disabled: !a.balance.gt(0) || !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      },
     }));
-  }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds]);
+  }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds, walletState]);
 
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -88,6 +103,18 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     [navigation, target, selectedCurrency],
   );
 
+  /**
+   * Show spendable account balance
+   */
+  const getSpendableAccount = useCallback((item: AccountLike) => {
+    const balance = getAccountSpendableBalance(item);
+    const account: AccountLike = {
+      ...item,
+      balance,
+    };
+    return account;
+  }, []);
+
   const renderItem = useCallback(
     ({ item }: { item: SearchResult }) => {
       const styleProps =
@@ -103,14 +130,14 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
         <Flex {...styleProps}>
           <AccountCard
             disabled={item.account.disabled}
-            account={item.account}
+            account={getSpendableAccount(item.account)}
             style={styles.card}
             onPress={() => onSelect(item.account)}
           />
         </Flex>
       );
     },
-    [onSelect],
+    [onSelect, getSpendableAccount],
   );
 
   const onAddAccount = useCallback(() => {
@@ -135,7 +162,10 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
 
   const renderList = useCallback(
     (items: typeof allAccounts) => {
-      const formatedList = formatSearchResults(items, accounts);
+      const formatedList = formatSearchResults(
+        items.map(a => a.account),
+        accounts,
+      );
       return (
         <FlatList
           data={formatedList}
@@ -176,8 +206,13 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     <KeyboardView>
       <TrackScreen category="Swap Form" name="Edit Source Account" provider={provider} />
       <FilteredSearchBar
-        keys={["name", "unit.code", "token.name", "token.ticker"]}
-        inputWrapperStyle={[styles.searchBarContainer]}
+        keys={[
+          "name",
+          "account.currency.name",
+          "account.currency.ticker",
+          "account.token.name",
+          "account.token.ticker",
+        ]}
         list={allAccounts}
         renderList={renderList}
         renderEmptySearch={() => (
@@ -194,9 +229,5 @@ const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 16,
     backgroundColor: "transparent",
-  },
-  searchBarContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
   },
 });

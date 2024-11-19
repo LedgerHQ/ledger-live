@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
@@ -29,6 +30,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
+import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -51,21 +53,18 @@ import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
+import MarketNavigator from "LLM/features/Market/Navigator";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
-import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "~/screens/Market/MarketDetail";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
-import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
@@ -85,6 +84,13 @@ import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
+import LandingPagesNavigator from "./LandingPagesNavigator";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
+import CustomErrorNavigator from "./CustomErrorNavigator";
+import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
+import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -102,6 +108,7 @@ export default function BaseNavigator() {
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
+  const web3hub = useFeature("web3hub");
 
   return (
     <>
@@ -165,6 +172,14 @@ export default function BaseNavigator() {
           })}
           {...noNanoBuyNanoWallScreenOptions}
         />
+
+        <Stack.Screen
+          name={ScreenName.EditCurrencyUnits}
+          component={EditCurrencyUnits}
+          options={{
+            title: t("account.settings.accountUnits.title"),
+          }}
+        />
         <Stack.Screen
           name={NavigatorName.ReceiveFunds}
           component={ReceiveFundsNavigator}
@@ -176,6 +191,13 @@ export default function BaseNavigator() {
           component={SendFundsNavigator}
           options={{ headerShown: false }}
         />
+        {web3hub?.enabled ? (
+          <Stack.Screen
+            name={NavigatorName.Web3Hub}
+            component={Web3HubNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : null}
         <Stack.Screen
           name={ScreenName.PlatformApp}
           component={LiveApp}
@@ -191,11 +213,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.LearnWebView}
-          component={LearnWebView}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ExploreTab}
@@ -225,6 +242,11 @@ export default function BaseNavigator() {
           name={NavigatorName.SignTransaction}
           component={SignTransactionNavigator}
           options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              route.params.onError(new Error("Signature interrupted by user"));
+            },
+          })}
         />
         <Stack.Screen
           name={NavigatorName.Swap}
@@ -284,6 +306,12 @@ export default function BaseNavigator() {
           })}
         />
         <Stack.Screen
+          name={NavigatorName.Card}
+          component={CardLiveAppNavigator}
+          options={{ headerShown: false }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
           name={NavigatorName.Exchange}
           component={ExchangeLiveAppNavigator}
           options={{ headerShown: false }}
@@ -293,6 +321,12 @@ export default function BaseNavigator() {
           name={NavigatorName.PlatformExchange}
           component={PlatformExchangeNavigator}
           options={{ headerShown: false }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
+          name={NavigatorName.CustomError}
+          component={CustomErrorNavigator}
+          options={{ title: "" }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
@@ -391,16 +425,14 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
+
         <Stack.Screen
-          name={ScreenName.MarketCurrencySelect}
-          component={MarketCurrencySelect}
-          options={{
-            title: t("market.filters.currency"),
-            headerLeft: () => null,
-            // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
-            // unmountOnBlur: true,
-          }}
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
         />
+
+        {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
@@ -456,20 +488,8 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={ScreenName.MarketDetail}
-          component={MarketDetail}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
           name={NavigatorName.CustomImage}
           component={CustomImageNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ClaimNft}
-          component={ClaimNftNavigator}
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}
@@ -545,6 +565,21 @@ export default function BaseNavigator() {
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
           component={AnalyticsOptInPromptNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.LandingPages}
+          options={{ headerShown: false }}
+          component={LandingPagesNavigator}
+        />
+        <Stack.Screen
+          name={ScreenName.FirmwareUpdate}
+          component={FirmwareUpdateScreen}
+          options={{
+            gestureEnabled: false,
+            headerTitle: () => null,
+            headerLeft: () => null,
+            headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+          }}
         />
       </Stack.Navigator>
     </>

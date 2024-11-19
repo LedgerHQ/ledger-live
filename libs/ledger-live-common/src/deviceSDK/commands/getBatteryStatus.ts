@@ -64,8 +64,8 @@ export function getBatteryStatus({
                   charging: chargingQi
                     ? ChargingModes.QI
                     : chargingUSB
-                    ? ChargingModes.USB
-                    : ChargingModes.NONE,
+                      ? ChargingModes.USB
+                      : ChargingModes.NONE,
                   issueCharging: !!(flags & FlagMasks.ISSUE_CHARGING),
                   issueTemperature: !!(flags & FlagMasks.ISSUE_TEMPERATURE),
                   issueBattery: !!(flags & FlagMasks.ISSUE_BATTERY),

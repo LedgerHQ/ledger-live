@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import moment from "moment";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -16,6 +15,8 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import * as S from "./StepAmount.styles";
 import { StepProps } from "../types";
+import { fromNow } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export const StepAmountFooter = ({
   transitionTo,
   account,
@@ -65,6 +66,8 @@ const StepAmount = ({
     account && transaction && account.celoResources && account.celoResources.pendingWithdrawals,
     "account with pending withdrawals and transaction required",
   );
+
+  const unit = useAccountUnit(account);
   const bridge = getAccountBridge(account, parentAccount);
   const onChange = useCallback(
     (index: number) => {
@@ -100,12 +103,12 @@ const StepAmount = ({
                 {disabled && (
                   <S.TimerWrapper>
                     <Clock size={12} />
-                    <S.Description isPill>{moment(withdrawalTime).fromNow()}</S.Description>
+                    <S.Description isPill>{fromNow(withdrawalTime)}</S.Description>
                   </S.TimerWrapper>
                 )}
                 <FormattedVal
                   val={value}
-                  unit={account.unit}
+                  unit={unit}
                   style={{
                     textAlign: "right",
                     width: "auto",

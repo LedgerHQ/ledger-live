@@ -118,8 +118,8 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
       const url = !refillAddress
         ? ""
         : explorerView && refillAddress
-        ? getAddressExplorer(explorerView, refillAddress)
-        : "data:text," + refillAddress;
+          ? getAddressExplorer(explorerView, refillAddress)
+          : "data:text," + refillAddress;
       const value = url;
       if (url) {
         return `[🙏](${url})`;

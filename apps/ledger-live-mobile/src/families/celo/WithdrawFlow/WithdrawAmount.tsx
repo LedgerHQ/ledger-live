@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -29,6 +28,7 @@ import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>
@@ -81,7 +81,8 @@ export default function WithdrawAmount({ navigation, route }: Props) {
     });
   };
 
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { pendingWithdrawals } = (account as CeloAccount).celoResources;
 
   if (pendingWithdrawals) {
@@ -89,7 +90,6 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       onChange(pendingWithdrawals[0].index);
     }
   }
-  const unit = getAccountUnit(account);
   const formatAmount = (val: BigNumber) => {
     return formatCurrencyUnit(unit, val, {
       disableRounding: true,

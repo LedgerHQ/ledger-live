@@ -1,10 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans } from "react-i18next";
-import { Text, Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
-
 import Touchable from "../Touchable";
 import RemoveDeviceMenu from "./RemoveDeviceMenu";
 
@@ -33,6 +31,8 @@ const Item = ({ device, onPress }: Props) => {
         return <IconsLegacy.NanoSFoldedMedium size={24} />;
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={24} />;
+      case DeviceModelId.europa:
+        return <Icons.Flex />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={24} />;
@@ -40,7 +40,11 @@ const Item = ({ device, onPress }: Props) => {
   }, [device.modelId]);
 
   return (
-    <Touchable onPress={() => onPress(device)} touchableTestID={"device-item-" + device.deviceId}>
+    <Touchable
+      onPress={() => onPress(device)}
+      touchableTestID={"device-item-" + device.deviceId}
+      accessibilityRole="button"
+    >
       <Flex
         backgroundColor="neutral.c30"
         borderRadius={2}
@@ -63,7 +67,7 @@ const Item = ({ device, onPress }: Props) => {
         {!wired ? (
           <>
             <Touchable event="ItemForget" onPress={onItemContextPress}>
-              <OthersMedium size={24} color={"neutral.c100"} />
+              <IconsLegacy.OthersMedium size={24} color={"neutral.c100"} />
             </Touchable>
             <RemoveDeviceMenu
               open={isRemoveDeviceMenuOpen}

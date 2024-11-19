@@ -15,7 +15,8 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import NftMetadataServiceRow from "./NftMetadataServiceRow";
-import HasStaxRow from "./HasStaxRow";
+import HasStaxEuropaRows from "./HasStaxEuropaRows";
+import SkipOnboardingRow from "./SkipOnboardingRow";
 
 export default function Configuration() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -38,9 +39,10 @@ export default function Configuration() {
         <Alert type={"info"} title={"Quick toggles for common settings."} />
       </Flex>
       <ResetOnboardingStateRow />
+      <SkipOnboardingRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
-      <HasStaxRow />
+      <HasStaxEuropaRows />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <NftMetadataServiceRow />

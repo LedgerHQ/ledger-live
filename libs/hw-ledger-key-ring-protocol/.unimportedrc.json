@@ -1,0 +1,4 @@
+{
+  "entry": ["src/index.ts"],
+  "ignoreUnused": ["@ledgerhq/logs", "@ledgerhq/live-env"]
+}

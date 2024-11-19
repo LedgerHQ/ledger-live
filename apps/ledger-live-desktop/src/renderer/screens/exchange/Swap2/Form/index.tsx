@@ -1,64 +1,70 @@
+import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
-  useSwapTransaction,
-  usePageState,
-  useIsSwapLiveApp,
   SetExchangeRateCallback,
+  useIsSwapLiveApp,
+  usePageState,
+  useSwapLiveConfig,
+  useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import {
+  maybeKeepTronAccountAlive,
+  maybeTezosAccountUnrevealedAccount,
+  maybeTronEmptyAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { rateSelector, updateRateAction, updateTransactionAction } from "~/renderer/actions/swap";
-import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import Box from "~/renderer/components/Box";
+import { track } from "~/renderer/analytics/segment";
 import { context } from "~/renderer/drawers/Provider";
+import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { useIsSwapLiveFlagEnabled } from "../hooks/useIsSwapLiveFlagEnabled";
+import { useSwapLiveAppQuoteState } from "../hooks/useSwapLiveAppQuoteState";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import useRefreshRates from "./hooks/useRefreshRates";
-import LoadingState from "./Rates/LoadingState";
-import EmptyState from "./Rates/EmptyState";
-import { AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SWAP_RATES_TIMEOUT } from "../../config";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
-import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
-import SwapFormSummary from "./FormSummary";
+import EmptyState from "./Rates/EmptyState";
+import SwapWebView, { SwapWebProps } from "./SwapWebView";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
-const Wrapper = styled(Box).attrs({
-  p: 20,
-  mt: 12,
-})`
-  row-gap: 2rem;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   max-width: 37rem;
-`;
-
-const Hide = styled.div`
-  opacity: 0;
+  padding: 0.75rem ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 1rem;
+  @media screen and (min-height: 1200px) {
+    padding-top: 1rem;
+    row-gap: 1.5rem;
+  }
 `;
 
 const idleTime = 60 * 60000; // 1 hour
 
 const SwapForm = () => {
+  const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
@@ -66,6 +72,7 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const ptxSwapReceiveTRC20WithoutTrx = useFeature("ptxSwapReceiveTRC20WithoutTrx");
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
@@ -87,13 +94,16 @@ const SwapForm = () => {
     [swapDefaultTrack],
   );
 
+  const swapLiveEnabledFlag = useSwapLiveConfig();
+  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id;
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
+    isEnabled: !isDemo1Enabled,
     ...(locationState as object),
-    timeout: SWAP_RATES_TIMEOUT,
-    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
@@ -113,10 +123,18 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+  const keepTronAccountAliveError = maybeKeepTronAccountAlive(swapTransaction);
+  const swapError = keepTronAccountAliveError
+    ? keepTronAccountAliveError
+    : swapTransaction.fromAmountError instanceof NotEnoughBalance
+      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError?.message)
+      : swapTransaction.fromAmountError ||
+        exchangeRatesState?.error ||
+        maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+        (ptxSwapReceiveTRC20WithoutTrx?.enabled
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
+
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -125,11 +143,7 @@ const SwapForm = () => {
     undefined,
   );
   const { setDrawer } = React.useContext(context);
-
-  const pauseRefreshing = !!swapError || idleState;
-  const refreshTime = useRefreshRates(swapTransaction.swap, {
-    pause: pauseRefreshing,
-  });
+  const walletState = useSelector(walletSelector);
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -141,10 +155,10 @@ const SwapForm = () => {
 
     const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
     const fromAccountId =
-      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      fromAccount && accountToWalletAPIAccount(walletState, fromAccount, fromParentAccount)?.id;
     const toAccountId = isToAccountValid
-      ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
-      : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+      ? toAccount && accountToWalletAPIAccount(walletState, toAccount, toParentAccount)?.id
+      : toParentAccount && accountToWalletAPIAccount(walletState, toParentAccount, undefined)?.id;
     const toNewTokenId =
       !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
     const fromAmount =
@@ -176,6 +190,7 @@ const SwapForm = () => {
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
     swapTransaction.swap.to.account?.id,
+    swapTransaction.swap.from.amount,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     exchangeRate?.providerURL,
@@ -195,9 +210,14 @@ const SwapForm = () => {
             ...[key, typeof value === "object" ? JSON.stringify(value) : value],
           ),
       );
+      moonpayURL.searchParams.set("language", language);
+
+      // Theme ID is defined by moonpay to tweak styling to more more closely match
+      // the existing theming within ledger live.
+      moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
-    [],
+    [language],
   );
 
   const getProviderRedirectURLSearch = useCallback(() => {
@@ -207,7 +227,7 @@ const SwapForm = () => {
       provider &&
       walletApiPartnerList?.enabled &&
       walletApiPartnerList?.params?.list.includes(provider)
-        ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+        ? accountToWalletAPIAccount(walletState, fromAccount, fromParentAccount)?.id
         : fromAccount?.id;
 
     const providerRedirectURLSearch = new URLSearchParams();
@@ -230,6 +250,7 @@ const SwapForm = () => {
     providerRedirectURLSearch.set("returnTo", "/swap");
     return providerRedirectURLSearch;
   }, [
+    walletState,
     provider,
     swapTransaction.swap.from,
     exchangeRate?.providerURL,
@@ -263,7 +284,7 @@ const SwapForm = () => {
 
       const accountId =
         walletApiPartnerList?.enabled && walletApiPartnerList?.params?.list.includes(provider)
-          ? accountToWalletAPIAccount(account, parentAccount)?.id
+          ? accountToWalletAPIAccount(walletState, account, parentAccount)?.id
           : fromAccountId;
 
       const state: {
@@ -293,6 +314,7 @@ const SwapForm = () => {
       });
     },
     [
+      walletState,
       accounts,
       exchangeRate,
       generateMoonpayUrl,
@@ -351,7 +373,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Request",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -364,7 +386,14 @@ const SwapForm = () => {
       redirectToProviderApp(provider);
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
-      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      // FIX LIVE-11283, Do not do this for polkadot as it is required to have transferAllowDeath set checked
+      swapTransaction.transaction && swapTransaction.transaction.family !== "polkadot"
+        ? (swapTransaction.transaction.useAllAmount = false)
+        : null;
+      // Fix LIVE-11660, remove the margin from thec fees
+      swapTransaction.transaction && swapTransaction.transaction.family === "evm"
+        ? (swapTransaction.transaction.additionalFees = undefined)
+        : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -391,13 +420,21 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
+  const untickMax = () => {
+    swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
+  };
+
   const setFromAccount = (account: AccountLike | undefined) => {
+    untickMax();
     swapTransaction.setFromAccount(account);
   };
 
-  const setFromAmount = (amount: BigNumber) => {
-    swapTransaction.setFromAmount(amount);
-  };
+  const setFromAmount = useCallback(
+    (amount: BigNumber) => {
+      swapTransaction.setFromAmount(amount);
+    },
+    [swapTransaction],
+  );
 
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
@@ -407,8 +444,15 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+  const reverseSwap = () => {
+    untickMax();
+    swapTransaction.reverseSwap();
+  };
 
+  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
+  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
+
+  const manifest = localManifest || remoteManifest;
   useSwapLiveAppHook({
     isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
     manifestID: swapLiveAppManifestID,
@@ -419,6 +463,13 @@ const SwapForm = () => {
     getProviderRedirectURLSearch,
   });
 
+  // used to get the Quotes Status from Demo 1 swap live app
+  const [quoteState, setQuoteState] = useSwapLiveAppQuoteState({
+    amountTo: exchangeRate?.toAmount,
+    swapError,
+    counterValue: undefined,
+  });
+
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -427,42 +478,35 @@ const SwapForm = () => {
         toAccount={swapTransaction.swap.to.account}
         fromAmount={swapTransaction.swap.from.amount}
         toCurrency={targetCurrency}
-        toAmount={exchangeRate?.toAmount}
+        toAmount={!isDemo1Enabled ? exchangeRate?.toAmount : quoteState.amountTo}
         setFromAccount={setFromAccount}
         setFromAmount={setFromAmount}
         setToCurrency={setToCurrency}
         isMaxEnabled={swapTransaction.swap.isMaxEnabled}
         toggleMax={toggleMax}
-        fromAmountError={swapError}
+        fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
+        counterValue={isDemo1Enabled ? quoteState.counterValue : undefined}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={swapTransaction.reverseSwap}
+        reverseSwap={reverseSwap}
         provider={provider}
         loadingRates={swapTransaction.swap.rates.status === "loading"}
         isSendMaxLoading={swapTransaction.swap.isMaxLoading}
         updateSelectedRate={swapTransaction.swap.updateSelectedRate}
       />
       {pageState === "empty" && <EmptyState />}
-      {pageState === "loading" && <LoadingState />}
-      {pageState === "initial" && (
-        <Hide>
-          <LoadingState />
-        </Hide>
-      )}
-
-      {pageState === "loaded" && (
-        <>
-          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-        </>
-      )}
       <SwapMigrationUI
         manifestID={swapLiveAppManifestID}
         liveAppEnabled={isSwapLiveAppEnabled.enabled}
         liveApp={
-          swapLiveAppManifestID ? (
+          swapLiveAppManifestID && manifest ? (
             <SwapWebView
-              manifestID={swapLiveAppManifestID}
+              setQuoteState={setQuoteState}
+              sourceCurrency={sourceCurrency}
+              targetCurrency={targetCurrency}
+              manifest={manifest}
               swapState={swapWebProps}
+              isMaxEnabled={swapTransaction.swap.isMaxEnabled}
               // When live app crash, it should disable live app and fall back to native UI
               liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
             />
@@ -472,8 +516,6 @@ const SwapForm = () => {
         pageState={pageState}
         swapTransaction={swapTransaction}
         provider={provider}
-        refreshTime={refreshTime}
-        countdown={!pauseRefreshing}
         // Demo 0 props
         disabled={!isSwapReady}
         onClick={onSubmit}

@@ -56,7 +56,7 @@ export type ProtoNFT = {
   contract: string;
   standard: NFTStandard;
   currencyId: CryptoCurrencyIds;
-  metadata?: NFTMetadata;
+  metadata?: NFTMetadata | undefined;
 };
 
 /**

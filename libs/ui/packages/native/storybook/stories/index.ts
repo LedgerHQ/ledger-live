@@ -31,6 +31,7 @@ export * as NumberInputStory from "./Form/Input/NumberInput.stories";
 export * as LintStory from "./Link/Link.stories";
 export * as SwitchStory from "./Form/Switch.stories";
 export * as ToggleStory from "./Form/Toggle.stories";
+export * as TabSelector from "./Form/TabSelector.stories";
 export * as ChipTabsStory from "./Tabs/ChipTabs/ChipTabs.stories";
 export * as GraphTabsStory from "./Tabs/GraphTabs/GraphTabs.stories";
 export * as BadgeStory from "./Tag/Badge.stories";
@@ -46,8 +47,6 @@ export * as ScrollListContainerStory from "./Layout/ScrollListContainer.stories"
 export * as TableStory from "./Layout/Table.stories";
 export * as AccordionStory from "./Layout/Collapse/Accordion.stories";
 export * as SliderStory from "./Form/Slider/Slider.stories";
-export * as ChartStory from "./Chart/Chart.stories";
-export * as ChartCardStory from "./ChartCard/ChartCard.stories";
 export * as SelectableListStory from "./Form/SelectableList.stories";
 export * as CarouselStory from "./Carousel/Carousel.stories";
 export * as ProgressBarStory from "./ProgressBar/ProgressBar.stories";

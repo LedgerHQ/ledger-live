@@ -1,21 +1,27 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import {
+  useAllPostOnboardingActionsCompleted,
+  usePostOnboardingHubState,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const PostOnboardingScreen = () => {
   const { t } = useTranslation();
-  const allDone = useAllPostOnboardingActionsCompleted();
+  const areAllPostOnboardingActionsCompleted = useAllPostOnboardingActionsCompleted();
+
+  const { deviceModelId } = usePostOnboardingHubState();
 
   return (
     <Flex
       flexDirection="row"
       width="100%"
       height="100%"
-      data-test-id="post-onboarding-hub-container"
+      data-testid="post-onboarding-hub-container"
     >
       <Flex
         justifyContent="center"
@@ -26,9 +32,12 @@ const PostOnboardingScreen = () => {
       >
         <TrackPage
           category={
-            allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
+            areAllPostOnboardingActionsCompleted
+              ? "User has completed all post-onboarding actions"
+              : "Post-onboarding hub"
           }
           flow={"post-onboarding"}
+          deviceModelId={deviceModelId}
         />
 
         <Text
@@ -39,9 +48,11 @@ const PostOnboardingScreen = () => {
           lineHeight="120%"
           whiteSpace="pre-wrap"
         >
-          {allDone
+          {areAllPostOnboardingActionsCompleted
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
-            : t("postOnboarding.postOnboardingScreen.title")}
+            : t("postOnboarding.postOnboardingScreen.title", {
+                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
+              })}
         </Text>
       </Flex>
       <Flex flex={1} paddingRight={100} paddingLeft={50}>

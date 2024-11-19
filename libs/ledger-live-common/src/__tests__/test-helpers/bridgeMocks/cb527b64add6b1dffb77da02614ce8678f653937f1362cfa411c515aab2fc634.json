@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/auth/v1beta1/accounts/onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat","method":"GET"},"response":{"body":{"code":5,"message":"rpc error: code = NotFound desc = account onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat not found: key not found","details":[]}}}

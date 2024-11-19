@@ -1,9 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useDispatch } from "react-redux";
-import moment from "moment";
 import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
@@ -19,6 +17,8 @@ import {
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 // FIXME spreading UnbondingType is a bad pattern
 const Unbonding = (
@@ -42,23 +42,21 @@ const Unbonding = (
     [amount],
   );
   const dispatch = useDispatch();
+
   const getTime = useCallback(() => {
-    const duration = moment.duration(counter, "seconds");
-    const formatters: Record<string, [number, string | number]> = {
-      d: [duration.asDays(), Math.floor(duration.asDays())],
-      h: [duration.asHours(), "H"],
-      m: [duration.asMinutes(), "m"],
-      s: [duration.asSeconds(), "s"],
-    };
-    const format = Object.keys(formatters).reduce((total, key) => {
-      const [time, label] = formatters[key as keyof typeof formatters];
-      if (Math.floor(time) > 0) {
-        return total === "" ? `${label}[${key}]` : `${total} : ${label}[${key}]`;
-      }
-      return total;
-    }, "");
-    return moment.utc(moment.duration(counter, "seconds").asMilliseconds()).format(format);
+    const durationInSeconds = counter;
+    const days = Math.floor(durationInSeconds / (60 * 60 * 24));
+    const hours = Math.floor((durationInSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((durationInSeconds % (60 * 60)) / 60);
+    const seconds = Math.floor(durationInSeconds % 60);
+    let format = "";
+    if (days > 0) format += `${days}d`;
+    if (hours > 0) format += `${format ? " : " : ""}${hours}h`;
+    if (minutes > 0) format += `${format ? " : " : ""}${minutes}m`;
+    format += `${format ? " : " : ""}${seconds}s`;
+    return format;
   }, [counter]);
+
   const handleCounter = () => {
     const interval = window.setInterval(() => setCounter(timer => timer - 1), 1000);
     return () => {
@@ -77,6 +75,9 @@ const Unbonding = (
       }),
     );
   }, [account, contract, unbondings, amount, validator, dispatch]);
+
+  const unit = useAccountUnit(account);
+
   useEffect(handleCounter, [seconds]);
   return (
     <Wrapper>
@@ -105,7 +106,7 @@ const Unbonding = (
       </Column>
 
       <Column>
-        {balance} {getAccountUnit(account).code}
+        <Discreet>{balance}</Discreet> {unit.code}
       </Column>
 
       <Column>

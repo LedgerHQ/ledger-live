@@ -10,8 +10,10 @@ import {
   Subtitle,
   Tag,
   Title,
+  Button,
 } from "~/contentCards/cards/vertical/elements";
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 type Props = {
   title: string;
@@ -20,25 +22,43 @@ type Props = {
   price: string;
   size: Size;
   tag?: string;
+  cta?: string;
+  filledImage?: boolean;
+  widthFactor: WidthFactor;
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
-  ({ title, description: subtitle, price, image, tag, size, metadata }) => {
+  ({
+    title,
+    description: subtitle,
+    price,
+    image,
+    tag,
+    size,
+    metadata,
+    cta,
+    filledImage,
+    widthFactor,
+  }) => {
     useEffect(() => metadata.actions?.onView?.());
+    const hasCta = cta && size === "L";
+    const hasPrice = !hasCta && price;
+    const isOnlyImage = !title && !subtitle && !price && !cta;
 
     return (
       <TouchableOpacity onPress={metadata.actions?.onClick}>
         {tag && <Tag size={size} label={tag} />}
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
-
-        <Container size={size}>
-          <Image uri={image} />
-
-          <Flex alignItems="center">
-            <Title size={size} label={title} />
-            <Subtitle size={size} label={subtitle} />
-            <Price size={size} label={price} />
-          </Flex>
+        <Container size={size} widthFactor={widthFactor} isOnlyImage={isOnlyImage}>
+          <Image uri={image} size={size} filledImage={filledImage} />
+          {!isOnlyImage ? (
+            <Flex alignItems="center" px={6} pt={4}>
+              {title && <Title size={size} label={title} />}
+              {subtitle && <Subtitle size={size} label={subtitle} />}
+              {hasPrice && <Price size={size} label={price} />}
+              {hasCta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
+            </Flex>
+          ) : null}
         </Container>
       </TouchableOpacity>
     );

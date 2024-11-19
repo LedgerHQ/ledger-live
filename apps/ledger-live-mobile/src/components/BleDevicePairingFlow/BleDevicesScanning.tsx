@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "~/reducers/ble";
@@ -26,7 +25,7 @@ const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
-  filterByDeviceModelId?: FilterByDeviceModelId;
+  filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
 };
@@ -43,24 +42,24 @@ export type BleDevicesScanningProps = {
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
  * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
  */
-const BleDevicesScanning = ({
+export default function BleDevicesScanning({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
   areKnownDevicesPairable,
-}: BleDevicesScanningProps) => {
+}: BleDevicesScanningProps) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
-  const productName = filterByDeviceModelId
-    ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
-    : null;
+  const productName =
+    filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)
+      ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
+      : null;
 
   const [locationDisabledError, setLocationDisabledError] = useState<boolean>(false);
   const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
 
   // Nb Will reset when we regain focus to start scanning again.
-  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(navigation, false);
+  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(false);
 
   const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] = useState<boolean>(false);
   useEffect(() => {
@@ -100,10 +99,15 @@ const BleDevicesScanning = ({
     [areKnownDevicesDisplayed, knownDeviceIds],
   );
 
-  const filterByDeviceModelIds = useMemo(
-    () => (filterByDeviceModelId ? [filterByDeviceModelId] : undefined),
-    [filterByDeviceModelId],
-  );
+  const filterByDeviceModelIds = useMemo(() => {
+    if (Array.isArray(filterByDeviceModelId)) {
+      return filterByDeviceModelId.filter(
+        // This array should not contain `null` value, this is to make the type check pass
+        (v: FilterByDeviceModelId): v is DeviceModelId => v !== null,
+      );
+    }
+    return filterByDeviceModelId ? [filterByDeviceModelId] : undefined;
+  }, [filterByDeviceModelId]);
 
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,
@@ -209,6 +213,4 @@ const BleDevicesScanning = ({
       )}
     </Flex>
   );
-};
-
-export default BleDevicesScanning;
+}

@@ -1,0 +1,43 @@
+{
+  "name": "@ledgerhq/ethereum-provider",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Ledger Live ethereum provider",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ethereum-provider",
+  "main": "lib/ethereum-provider.js",
+  "module": "lib/ethereum-provider.mjs",
+  "browser": "lib/ethereum-provider.umd.json",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "events": "^3.3.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/events": "^3.0.3",
+    "esbuild": "^0.19.0",
+    "rollup": "^4.12.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^6.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported"
+  }
+}

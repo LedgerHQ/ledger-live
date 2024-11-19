@@ -7,8 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import { isCurrencySupported } from "../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { DerivationMode } from "../derivation";
+import type { Account, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
@@ -32,6 +31,7 @@ export const shouldShowNewAccount = (
     return true;
   return false;
 };
+
 export const getReceiveFlowError = (
   account: AccountLike,
   parentAccount: Account | null | undefined,
@@ -49,9 +49,9 @@ export function checkAccountSupported(account: Account): Error | null | undefine
   }
 
   if (!isCurrencySupported(account.currency)) {
-    const currencyName = account.currency.name;
-    return new CurrencyNotSupported("currency not supported: " + currencyName, {
-      currencyName,
+    const currencyId = account.currency.id;
+    return new CurrencyNotSupported("currency not supported: " + currencyId, {
+      currencyName: currencyId,
     });
   }
 }

@@ -5,7 +5,7 @@ import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { firstValueFrom, from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
@@ -16,7 +16,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "~/context/Locale";
 import { languages, supportedLocales, localeIdToDeviceLanguage, Locale } from "../../../languages";
 import { ScreenName } from "~/const";
-import { setLanguage, setLastSeenDevice } from "~/actions/settings";
+import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
@@ -45,7 +45,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
 
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
-  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector) as Device | null;
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   const onActionFinished = useCallback(() => {
     setPreventPromptBackdropClick(false);
@@ -53,7 +53,13 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       firstValueFrom(
         withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport))),
       ).then(deviceInfo => {
-        dispatch(setLastSeenDevice(deviceInfo));
+        dispatch(
+          setLastSeenDeviceInfo({
+            deviceInfo,
+            apps: [],
+            modelId: lastConnectedDevice.modelId,
+          }),
+        );
       });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);

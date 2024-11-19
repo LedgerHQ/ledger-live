@@ -109,30 +109,38 @@ export function Toast({
       precision: 0.1,
     },
   });
+
+  const toastListIds = id.split(",").reverse();
+
   useEffect(() => {
     async function scheduledDismiss(duration: number) {
       await delay(duration);
-      onDismiss(id);
+      toastListIds.forEach(id => {
+        onDismiss(id);
+      });
     }
     if (duration) {
       scheduledDismiss(duration);
     }
-  }, [duration, id, onDismiss]);
+  }, [duration, id, onDismiss, toastListIds]);
+
   const onClick: React.MouseEventHandler<HTMLInputElement> = useCallback(
     event => {
       if (typeof callback === "function") {
         callback();
+        toastListIds.forEach(id => {
+          onDismiss(id);
+        });
       }
-      onDismiss(id);
       event.stopPropagation();
     },
-    [callback, id, onDismiss],
+    [callback, onDismiss, toastListIds],
   );
   return (
     <>
       {transitions.map(({ key, props }) => (
         <Wrapper key={key} style={props} onClick={onClick}>
-          <Content>
+          <Content data-testid="toaster">
             <IconContainer color={defaultIconColor}>
               <Icon size={19} />
             </IconContainer>

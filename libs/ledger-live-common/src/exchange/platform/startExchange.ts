@@ -1,10 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, firstValueFrom, from } from "rxjs";
 import semver from "semver";
-import Exchange, { ExchangeTypes, isExchangeTypeNg } from "@ledgerhq/hw-app-exchange";
+import { ExchangeTypes, createExchange, isExchangeTypeNg } from "@ledgerhq/hw-app-exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 import { StartExchangeInput } from "./types";
+import { getProviderConfig, getSwapProvider } from "../providers";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -12,12 +13,28 @@ const withDevicePromise = (deviceId, fn) =>
 const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEvent> => {
   return new Observable(o => {
     let unsubscribed = false;
-    const { deviceId, exchangeType, appVersion } = input;
-
+    const { device, exchangeType, appVersion, provider } = input;
     const startExchangeAsync = async () => {
-      await withDevicePromise(deviceId, async transport => {
-        log("exchange", `attempt to connect to ${deviceId}`);
+      await withDevicePromise(device.deviceId, async transport => {
+        log("exchange", `attempt to connect to ${device.deviceId}`);
+        let version;
         if (unsubscribed) return;
+        if (provider) {
+          switch (exchangeType) {
+            case ExchangeTypes.Swap: {
+              const providerConfig = await getSwapProvider(provider);
+              if (providerConfig.type !== "CEX") {
+                throw new Error(`Unsupported provider type ${providerConfig.type}`);
+              }
+              version = providerConfig.version;
+              break;
+            }
+            default: {
+              const providerConfig = await getProviderConfig(exchangeType, provider);
+              version = providerConfig.version;
+            }
+          }
+        }
 
         if (!checkNgPrerequisite(exchangeType, appVersion)) {
           throw new Error("Incompatible AppExchange version with NG command");
@@ -27,11 +44,11 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
          * Note: `transactionRate` is not needed at this stage. It is only used
          * at the `completeExchange` step
          */
-        const exchange = new Exchange(transport, exchangeType);
+        const exchange = createExchange(transport, exchangeType, undefined, version);
         const nonce: string = await exchange.startNewTransaction();
         o.next({
           type: "start-exchange-result",
-          nonce,
+          startExchangeResult: { nonce, device },
         });
       });
     };
@@ -44,7 +61,7 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
       error => {
         o.next({
           type: "start-exchange-error",
-          error,
+          startExchangeError: { error, device },
         });
         o.complete();
         unsubscribed = true;

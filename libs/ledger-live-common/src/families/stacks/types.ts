@@ -40,5 +40,5 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type StacksOperation = Operation<StacksOperationExtra>;
 
 export type StacksOperationExtra = {
-  memo?: string;
+  memo?: string | undefined;
 };

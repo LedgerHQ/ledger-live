@@ -63,8 +63,8 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         _hasExternalController
           ? "polkadot.nomination.externalControllerTooltip"
           : _hasExternalStash
-          ? "polkadot.nomination.externalStashTooltip"
-          : "polkadot.nomination.hasPendingBondOperation",
+            ? "polkadot.nomination.externalStashTooltip"
+            : "polkadot.nomination.hasPendingBondOperation",
       )}`;
 
   return [
@@ -75,10 +75,11 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
       disabled: !manageEnabled,
       label: t("account.stake"),
       tooltip: disabledLabel,
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

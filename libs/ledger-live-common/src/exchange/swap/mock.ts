@@ -1,10 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, of } from "rxjs";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
 import type {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   GetMultipleStatus,
   GetProviders,
@@ -16,14 +16,14 @@ import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const mockGetExchangeRates = async (
-  exchange: Exchange,
+  exchange: ExchangeSwap,
   transaction: Transaction,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
 ): Promise<(ExchangeRate & { expirationDate?: Date })[]> => {
   const { fromAccount, toAccount } = exchange;
   const amount = transaction.amount;
-  const unitFrom = getAccountUnit(fromAccount);
-  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(toAccount);
+  const unitFrom = getAccountCurrency(fromAccount).units[0];
+  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountCurrency(toAccount).units[0];
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const amountFrom = amount.div(tenPowMagnitude);
   const minAmountFrom = new BigNumber(0.0001);
@@ -109,7 +109,7 @@ export const mockGetExchangeRates = async (
 };
 
 export const mockInitSwap = (
-  exchange: Exchange,
+  exchange: ExchangeSwap,
   exchangeRate: ExchangeRate,
   transaction: Transaction,
 ): Observable<SwapRequestEvent> => {
@@ -118,6 +118,7 @@ export const mockInitSwap = (
     initSwapResult: {
       transaction,
       swapId: "mockedSwapId",
+      magnitudeAwareRate: new BigNumber(50000),
     },
   });
 };

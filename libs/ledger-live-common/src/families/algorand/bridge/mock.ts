@@ -2,8 +2,12 @@
 
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
-import type { AlgorandTransaction, Transaction } from "@ledgerhq/coin-algorand/types";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  AlgorandAccount,
+  AlgorandTransaction,
+  Transaction,
+} from "@ledgerhq/coin-algorand/types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -40,13 +44,17 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (account: Account, t: Transaction) => {
-  const errors: any = {};
-  const warnings: any = {};
-  const useAllAmount = !!t.useAllAmount;
-  const estimatedFees = defaultGetFees(account, t);
-  const totalSpent = useAllAmount ? account.balance : new BigNumber(t.amount).plus(estimatedFees);
-  const amount = useAllAmount ? account.balance.minus(estimatedFees) : new BigNumber(t.amount);
+const getTransactionStatus = (account: AlgorandAccount, transaction: Transaction) => {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  const useAllAmount = !!transaction.useAllAmount;
+  const estimatedFees = defaultGetFees(account, transaction);
+  const totalSpent = useAllAmount
+    ? account.balance
+    : new BigNumber(transaction.amount).plus(estimatedFees);
+  const amount = useAllAmount
+    ? account.balance.minus(estimatedFees)
+    : new BigNumber(transaction.amount);
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
@@ -58,9 +66,9 @@ const getTransactionStatus = (account: Account, t: Transaction) => {
   }
 
   // Fill up recipient errors...
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
-  } else if (isInvalidRecipient(t.recipient)) {
+  } else if (isInvalidRecipient(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
@@ -83,7 +91,7 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const accountBridge: AccountBridge<AlgorandTransaction> = {
+const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction: defaultUpdateTransaction,

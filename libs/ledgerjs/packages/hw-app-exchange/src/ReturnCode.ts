@@ -21,15 +21,19 @@ export const ErrorStatus = {
   SIGN_VERIFICATION_FAIL: 0x9d1a,
 } as const;
 
-export function getExchangeErrorMessage(errorCode: number): string | undefined {
+export function getExchangeErrorMessage(errorCode: number, step?: string): string | undefined {
   switch (errorCode) {
     case ErrorStatus.INCORRECT_COMMAND_DATA:
       return "Incorrect command data";
     case ErrorStatus.DESERIALIZATION_FAILED:
       return "Payload deserialzation failed";
     case ErrorStatus.WRONG_TRANSACTION_ID:
-      return "Wrond transaction id";
+      return "Wrong transaction id";
     case ErrorStatus.INVALID_ADDRESS:
+      if (step === "CHECK_PAYOUT_ADDRESS")
+        return "This receiving account does not belong to your device. Please change and retry.";
+      else if (step === "CHECK_REFUND_ADDRESS")
+        return "This receiving account does not belong to your device for the refund. Please change and retry.";
       return "Invalid address";
     case ErrorStatus.USER_REFUSED:
       return "User refused";

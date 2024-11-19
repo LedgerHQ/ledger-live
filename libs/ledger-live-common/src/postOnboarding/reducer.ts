@@ -7,6 +7,7 @@ import { createSelector, Selector } from "reselect";
 export const initialState: PostOnboardingState = {
   deviceModelId: null,
   walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: null,
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
@@ -31,6 +32,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     return {
       deviceModelId,
       walletEntryPointDismissed: false,
+      entryPointFirstDisplayedDate: new Date(),
       actionsToComplete: actionsIds,
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
@@ -53,6 +55,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
   POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: state => ({
     ...state,
     walletEntryPointDismissed: true,
+    entryPointFirstDisplayedDate: null,
   }),
 
   POST_ONBOARDING_SET_FINISHED: state => ({
@@ -114,4 +117,9 @@ export const postOnboardingDeviceModelIdSelector = createSelector(
 export const walletPostOnboardingEntryPointDismissedSelector = createSelector(
   postOnboardingSelector,
   postOnboarding => postOnboarding.walletEntryPointDismissed,
+);
+
+export const entryPointFirstDisplayedDateSelector = createSelector(
+  postOnboardingSelector,
+  postOnboarding => postOnboarding.entryPointFirstDisplayedDate,
 );

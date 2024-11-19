@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
+import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
+import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
 import { TrackScreen, track } from "~/analytics";
-import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking } from "react-native";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "~/const";
-import { StackNavigationProp } from "@react-navigation/stack";
 import type { UpdateStep } from "../FirmwareUpdate";
 import { urls } from "~/utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
+import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -47,7 +47,7 @@ type FirmwareUpdateCheckStatus =
 // Defines which drawer should be displayed during the firmware check
 type FirmwareUpdateUiDrawerStatus = "none" | "new-firmware-available";
 
-export type EarlySecurityCheckProps = {
+export type EarlySecurityCheckProps = SyncOnboardingScreenProps & {
   /**
    * A `Device` object
    */
@@ -96,9 +96,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   isAlreadyGenuine = false,
   isPreviousUpdateCancelled = false,
   onCancelOnboarding,
+  navigation,
 }) => {
-  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const deviceModelId = device.modelId;
+  const productName = getDeviceModel(deviceModelId).productName || deviceModelId;
 
   // If the device is genuine, puts the current step to `genuine-check` and it will automatically go to next step
   // as the `genuineCheckStatus` is also set as `completed`.
@@ -203,19 +204,16 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
       // to this screen with a `goBack`.
-      navigation.push(NavigatorName.Base, {
-        screen: NavigatorName.Main,
+      navigation.push(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
         params: {
-          screen: NavigatorName.Manager,
+          screen: ScreenName.FirmwareUpdate,
           params: {
-            screen: ScreenName.FirmwareUpdate,
-            params: {
-              device,
-              deviceInfo,
-              firmwareUpdateContext: latestFirmware,
-              onBackFromUpdate,
-              isBeforeOnboarding: true,
-            },
+            device,
+            deviceInfo,
+            firmwareUpdateContext: latestFirmware,
+            onBackFromUpdate,
+            isBeforeOnboarding: true,
           },
         },
       });
@@ -379,6 +377,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const hasLatestAvailableFirmwareStatus =
     getLatestAvailableFirmwareStatus === "available-firmware" && !!latestAvailableFirmwareVersion;
 
+  const forceFirmwareUpdate =
+    deviceInfo?.version &&
+    shouldForceFirmwareUpdate({ currentVersion: deviceInfo.version, deviceModelId });
+
   return (
     <>
       {firmwareUpdateUiStepStatus === "completed" ? (
@@ -426,6 +428,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         latestAvailableFirmwareVersion={latestAvailableFirmwareVersion}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         onSkipFirmwareUpdate={onSkipFirmwareUpdate}
+        updateSkippable={!forceFirmwareUpdate}
         onUpdateFirmware={onUpdateFirmware}
       />
       <LanguagePrompt device={device} />

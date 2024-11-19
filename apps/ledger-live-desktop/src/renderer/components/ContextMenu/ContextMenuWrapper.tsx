@@ -71,8 +71,8 @@ const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps
   color: p.disabled
     ? "palette.text.shade50"
     : p.isActive
-    ? "palette.text.shade100"
-    : "palette.text.shade60",
+      ? "palette.text.shade100"
+      : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
 }))<ContextMenuItemContainerProps>`
   padding: 8px 16px;
@@ -153,7 +153,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
           if (callback) callback(e);
           this.hideContextMenu();
         }}
-        data-test-id={`accounts-context-menu-${label.split(".").pop()}`}
+        data-testid={`accounts-context-menu-${label.split(".").pop()}`}
       >
         <Box horizontal>
           {Icon && (

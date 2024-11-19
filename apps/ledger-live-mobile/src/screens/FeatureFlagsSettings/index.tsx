@@ -6,7 +6,7 @@ import {
   useFeature,
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-config/featureFlags/index";
+} from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import {
@@ -19,7 +19,9 @@ import {
   Button,
   Switch,
 } from "@ledgerhq/native-ui";
-import { includes, lowerCase, trim } from "lodash";
+import includes from "lodash/includes";
+import lowerCase from "lodash/lowerCase";
+import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +31,7 @@ import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
 import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
 import { setFeatureFlagsBannerVisible } from "~/actions/settings";
+import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \
@@ -70,7 +73,7 @@ export default function DebugFeatureFlags() {
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
-    return Object.keys(groupedFeatures)
+    return objectKeysType(groupedFeatures)
       .sort()
       .filter(
         groupName =>
@@ -143,7 +146,7 @@ export default function DebugFeatureFlags() {
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-      <NavigationScrollView>
+      <NavigationScrollView keyboardShouldPersistTaps="handled">
         <Flex px={16}>
           <Alert type="primary" noIcon>
             {t("settings.debug.featureFlagsTitle")}

@@ -6,7 +6,9 @@ import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
+import customLockScreenFetch, {
+  FetchImageEvent,
+} from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import { getEnv } from "@ledgerhq/live-env";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
@@ -19,13 +21,14 @@ import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { AnimationWrapper, Title } from "~/renderer/components/DeviceAction/rendering";
+import { Title } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "../types";
 import manager from "@ledgerhq/live-common/manager/index";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -69,17 +72,15 @@ const Body = ({
   const { t } = useTranslation();
   const type = useTheme().colors.palette.type;
   const deviceModel = getDeviceModel(deviceModelId);
-  const isBlue = deviceModelId === "blue";
   const from = deviceInfo.version;
   const to = firmware?.final.name;
-  const normalProgress = (progress || 0) * 100;
 
   if (displayedOnDevice) {
     return (
       <>
         <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
         <DeviceBlocker />
-        {isBlue ? (
+        {deviceModelId === DeviceModelId.blue ? (
           <Box mt={4}>
             <Interactions
               wire="wired"
@@ -110,57 +111,31 @@ const Body = ({
             </>
           </Flex>
         )}
-
         <Title>{t("manager.modal.confirmIdentifierText")}</Title>
       </>
     );
   } else {
-    const isStepTransfer = step !== "transfer";
-
+    const onTransferStep = step === "transfer";
     return (
       <Box my={5} alignItems="center">
-        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+        <Flex alignItems="center" justifyContent="center" size={60} mb={5}>
           <ProgressLoader
             stroke={8}
-            infinite={isStepTransfer || !normalProgress}
-            progress={normalProgress}
-            showPercentage={!isStepTransfer && !!normalProgress}
+            infinite={!onTransferStep || !progress}
+            progress={(progress ?? 0) * 100}
+            showPercentage={onTransferStep && !!progress}
           />
         </Flex>
         <Title>
-          {isStepTransfer
-            ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
+          {onTransferStep
+            ? t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })
+            : step === "CLS"
+              ? t("manager.modal.steps.preparingUpdate")
+              : t("manager.modal.steps.prepare")}
         </Title>
       </Box>
     );
   }
-
-  return (
-    <>
-      <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
-      <Box mx={7} mt={5} mb={isBlue ? 0 : 5}>
-        <Text ff="Inter|SemiBold" textAlign="center" color="palette.text.shade100">
-          {t("manager.modal.confirmUpdate")}
-        </Text>
-      </Box>
-      {isBlue ? (
-        <Box mt={4}>
-          <Interactions
-            wire="wired"
-            type={deviceModelId}
-            width={150}
-            screen="validation"
-            action="accept"
-          />
-        </Box>
-      ) : (
-        <AnimationWrapper>
-          <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
-        </AnimationWrapper>
-      )}
-    </>
-  );
 };
 
 const StepPrepare = ({
@@ -173,22 +148,32 @@ const StepPrepare = ({
 }: StepProps) => {
   const device = useSelector(getCurrentDevice);
   const [progress, setProgress] = useState(0);
-  const [step, setStep] = useState("");
+  const [step, setStep] = useState<"initialStep" | "CLS" | "transfer">("initialStep");
   const [displayedOnDevice, setDisplayedOnDevice] = useState(false);
 
   useEffect(() => {
-    if (!firmware) return;
+    if (!firmware) {
+      return;
+    }
     if (!firmware.osu) {
       transitionTo("finish");
       return;
     }
     // This whole flow is still not a device action. The step originally would only send
     // the firmware update payload to the device whereas now we are backing up the CLS too
-    // but only for stax.
-    const deviceId = device ? device.deviceId : "";
+    // but only for stax or europa.
+    const deviceId = device?.deviceId ?? "";
+
+    // Back app data for installed apps before initiating the firmware update.
+    // TODO:
+
+    // This is the backup of the CLS for stax or flex devices.
     const maybeCLSBackup =
-      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
-        ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
+      deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
+        ? customLockScreenFetch({
+            deviceId,
+            request: { allowedEmpty: true, deviceModelId },
+          })
         : EMPTY;
 
     // Allow for multiple preparation flows in this paradigm.
@@ -230,7 +215,7 @@ const StepPrepare = ({
       }: {
         progress: number;
         displayed?: boolean;
-        step: string;
+        step: "initialStep" | "CLS" | "transfer";
       }) => {
         setProgress(progress);
         setDisplayedOnDevice(!!displayed);
@@ -257,7 +242,7 @@ const StepPrepare = ({
   if (!firmware) return null;
 
   return (
-    <Container data-test-id="firmware-update-download-progress">
+    <Container data-testid="firmware-update-download-progress">
       <TrackPage category="Manager" name="InstallFirmware" />
       <Body
         deviceModelId={deviceModelId}

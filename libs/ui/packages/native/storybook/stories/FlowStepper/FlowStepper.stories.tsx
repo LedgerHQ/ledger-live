@@ -433,14 +433,14 @@ const Header = ({ activeIndex }: { activeIndex: number }) => {
     activeIndex === 0
       ? "One"
       : activeIndex === 1
-      ? "Two"
-      : activeIndex === 2
-      ? "Three"
-      : activeIndex === 3
-      ? "Four"
-      : activeIndex === 4
-      ? "Five"
-      : "";
+        ? "Two"
+        : activeIndex === 2
+          ? "Three"
+          : activeIndex === 3
+            ? "Four"
+            : activeIndex === 4
+              ? "Five"
+              : "";
   return (
     <Flex height={100} backgroundColor="primary.c80" justifyContent="center" alignItems="center">
       <Text variant="h2" color="neutral.c00">

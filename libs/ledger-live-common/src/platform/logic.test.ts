@@ -25,8 +25,10 @@ import {
 import { RawPlatformTransaction } from "./rawTypes";
 import * as serializers from "./serializers";
 import { LiveAppManifest } from "./types";
+import { initialState } from "@ledgerhq/live-wallet/store";
 
 describe("receiveOnAccountLogic", () => {
+  const walletState = initialState;
   // Given
   const mockPlatformReceiveRequested = jest.fn();
   const mockPlatformReceiveFail = jest.fn();
@@ -62,7 +64,7 @@ describe("receiveOnAccountLogic", () => {
       jest.spyOn(converters, "accountToPlatformAccount").mockReturnValueOnce(convertedAccount);
 
       // When
-      const result = await receiveOnAccountLogic(context, accountId, uiNavigation);
+      const result = await receiveOnAccountLogic(walletState, context, accountId, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -72,7 +74,7 @@ describe("receiveOnAccountLogic", () => {
 
     it("calls the tracking for success", async () => {
       // When
-      await receiveOnAccountLogic(context, accountId, uiNavigation);
+      await receiveOnAccountLogic(walletState, context, accountId, uiNavigation);
 
       // Then
       expect(mockPlatformReceiveRequested).toBeCalledTimes(1);
@@ -87,7 +89,7 @@ describe("receiveOnAccountLogic", () => {
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, nonFoundAccountId, uiNavigation);
+        await receiveOnAccountLogic(walletState, context, nonFoundAccountId, uiNavigation);
       }).rejects.toThrowError("Account required");
 
       // Then
@@ -97,7 +99,7 @@ describe("receiveOnAccountLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, nonFoundAccountId, uiNavigation);
+        await receiveOnAccountLogic(walletState, context, nonFoundAccountId, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -699,7 +701,6 @@ function createTokenAccount(id = "32"): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       WEEK: { latestDate: null, balances: [] },
       HOUR: { latestDate: null, balances: [] },

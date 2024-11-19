@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import { RectButton, LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { SubAccount, TokenAccount, Account } from "@ledgerhq/types-live";
@@ -17,6 +13,8 @@ import { selectedTimeRangeSelector } from "~/reducers/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
 import { State as RootState } from "~/reducers/types";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: SubAccount;
@@ -39,8 +37,8 @@ function SubAccountRow({
   useCounterValue,
 }: Props) {
   const currency = getAccountCurrency(account);
-  const name = getAccountName(account);
-  const unit = getAccountUnit(account);
+  const name = useAccountName(account);
+  const unit = useAccountUnit(account);
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueChange, cryptoChange } = useBalanceHistoryWithCountervalue({
     account,

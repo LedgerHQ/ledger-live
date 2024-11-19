@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
-import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
-import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { ExecArgs, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
+import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceDashboard from "./DeviceDashboard";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -16,6 +16,8 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { useLocation } from "react-router";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 
 type Props = {
   device: Device;
@@ -35,6 +37,8 @@ const Dashboard = ({
   onRefreshDeviceInfo,
 }: Props) => {
   const { search } = useLocation();
+  const appsBackupEnabled = useFeature("enableAppsBackup");
+  const storage = useAppDataStorageProvider();
 
   const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
@@ -45,7 +49,7 @@ const Dashboard = ({
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
   useEffect(() => {
-    manager.getLatestFirmwareForDevice(deviceInfo).then(setFirmware, setFirmwareError);
+    getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
   }, [deviceInfo]);
 
   // on disconnect, go back to connect
@@ -67,19 +71,31 @@ const Dashboard = ({
     // - If a disconnection happens during a reset prevention period
     //   and the drawer is currently closed
     if (!currentDevice || deviceChangedWhenResetPrevented.current) {
-      onReset([]);
+      onReset(appsToRestore);
     }
-  }, [onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
+  }, [appsToRestore, onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
+
   const exec = useMemo(
     () =>
       getEnv("MOCK")
         ? mockExecWithInstalledContext(result?.installed || [])
-        : (appOp: AppOp, targetId: string | number, app: App) =>
+        : ({ app, appOp, targetId, skipAppDataBackup }: ExecArgs) =>
             withDevice(device.deviceId)(transport =>
-              execWithTransport(transport)(appOp, targetId, app),
+              execWithTransport(
+                transport,
+                appsBackupEnabled?.enabled,
+              )({
+                appOp,
+                targetId,
+                app,
+                modelId: device.modelId,
+                storage,
+                skipAppDataBackup,
+              }),
             ),
-    [device, result],
+    [device, result, appsBackupEnabled, storage],
   );
+
   const appsStoragePercentage = useMemo(() => {
     if (!result) return 0;
     const d = distribute(initState(result));

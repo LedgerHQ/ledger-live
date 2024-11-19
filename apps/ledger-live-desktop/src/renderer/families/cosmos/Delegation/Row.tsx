@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import moment from "moment";
 import {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -22,6 +21,8 @@ import ToolTip from "~/renderer/components/Tooltip";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import { DelegationActionsModalName } from "../modals";
+import Discreet from "~/renderer/components/Discreet";
+import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -119,8 +120,10 @@ export function Row({
   );
   const _canUndelegate = canUndelegate(account);
   const _canRedelegate = canRedelegate(account, delegation);
-  const redelegationDate = !_canRedelegate && getRedelegationCompletionDate(account, delegation);
-  const formattedRedelegationDate = redelegationDate ? moment(redelegationDate).fromNow() : "";
+  const redelegationDate = !_canRedelegate
+    ? getRedelegationCompletionDate(account, delegation)
+    : undefined;
+  const formattedRedelegationDate = useDateFromNow(redelegationDate);
   const dropDownItems = useMemo(
     () => [
       {
@@ -200,8 +203,12 @@ export function Row({
           </Box>
         )}
       </Column>
-      <Column>{formattedAmount}</Column>
-      <Column>{formattedPendingRewards}</Column>
+      <Column>
+        <Discreet>{formattedAmount}</Discreet>
+      </Column>
+      <Column>
+        <Discreet>{formattedPendingRewards}</Discreet>
+      </Column>
       <Column>
         <DropDown
           items={dropDownItems}
@@ -242,10 +249,8 @@ export function UnbondingRow({
   delegation: { validator, formattedAmount, validatorAddress, completionDate },
   onExternalLink,
 }: UnbondingRowProps) {
-  const date = useMemo(
-    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
-    [completionDate],
-  );
+  const date = useDateFromNow(completionDate) || "N/A";
+
   const name = validator?.name ?? validatorAddress;
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
@@ -273,7 +278,9 @@ export function UnbondingRow({
           </ToolTip>
         </Box>
       </Column>
-      <Column>{formattedAmount}</Column>
+      <Column>
+        <Discreet>{formattedAmount} </Discreet>
+      </Column>
       <Column>{date}</Column>
     </Wrapper>
   );

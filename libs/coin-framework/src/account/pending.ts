@@ -1,5 +1,6 @@
-import type { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
+
 export function shouldRetainPendingOperation(account: Account, op: Operation): boolean {
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
@@ -25,23 +26,23 @@ const appendPendingOp = (ops: Operation[], op: Operation) => {
   return filtered;
 };
 
+function addInSubAccount(subaccounts: TokenAccount[], op: Operation) {
+  const acc = subaccounts.find(sub => sub.id === op.accountId);
+
+  if (acc) {
+    const copy: TokenAccount = { ...acc };
+    copy.pendingOperations = appendPendingOp(acc.pendingOperations, op);
+    subaccounts[subaccounts.indexOf(acc)] = copy;
+  }
+}
+
 export const addPendingOperation = (account: Account, operation: Operation): Account => {
   const accountCopy = { ...account };
   const { subOperations } = operation;
   const { subAccounts } = account;
 
-  function addInSubAccount(subaccounts: SubAccount[], op: Operation) {
-    const acc = subaccounts.find(sub => sub.id === op.accountId);
-
-    if (acc) {
-      const copy: SubAccount = { ...acc };
-      copy.pendingOperations = appendPendingOp(acc.pendingOperations, op);
-      subaccounts[subaccounts.indexOf(acc)] = copy;
-    }
-  }
-
   if (subOperations && subAccounts) {
-    const taCopy: SubAccount[] = subAccounts.slice(0);
+    const taCopy: TokenAccount[] = subAccounts.slice(0);
     subOperations.forEach(op => {
       addInSubAccount(taCopy, op);
     });
@@ -51,7 +52,7 @@ export const addPendingOperation = (account: Account, operation: Operation): Acc
   if (accountCopy.id === operation.accountId) {
     accountCopy.pendingOperations = appendPendingOp(accountCopy.pendingOperations, operation);
   } else if (subAccounts) {
-    const taCopy: SubAccount[] = subAccounts.slice(0);
+    const taCopy: TokenAccount[] = subAccounts.slice(0);
     addInSubAccount(taCopy, operation);
     accountCopy.subAccounts = taCopy;
   }

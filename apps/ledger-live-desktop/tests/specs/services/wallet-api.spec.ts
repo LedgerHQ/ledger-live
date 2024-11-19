@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
+import { DiscoverPage } from "../../page/discover.page";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../component/drawer.component";
+import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
@@ -23,6 +23,8 @@ const methods = [
   "device.open",
   "device.exchange",
   "device.close",
+  "bitcoin.getAddress",
+  "bitcoin.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
   "exchange.complete",
@@ -35,6 +37,15 @@ const methods = [
 
 const account_list_mock = {
   rawAccounts: [
+    {
+      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+      balance: "10135465432293584185",
+      blockHeight: 122403,
+      currency: "arbitrum",
+      id: "1612c97a-e3bd-5c33-9618-215fc05f1853",
+      name: "Arbitrum 1",
+      spendableBalance: "10135465432293584185",
+    },
     {
       id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
       name: "Bitcoin 1 (legacy)",
@@ -73,6 +84,7 @@ const account_list_mock = {
     },
     {
       id: "7c99915b-f186-5b44-82cc-fb21fa084292",
+      parentAccountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
       name: "Ethereum 1 (DAI)",
       address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -91,6 +103,7 @@ const account_list_mock = {
     },
     {
       id: "f5a525d7-1ec6-57ca-a26a-d34fc5158e84",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (DAI)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -100,6 +113,7 @@ const account_list_mock = {
     },
     {
       id: "54b2563c-bd90-52c1-aca0-6099c701221f",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (USDT)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/usd_tether__erc20_",
@@ -109,6 +123,7 @@ const account_list_mock = {
     },
     {
       id: "80828eb7-49ca-54e8-8454-79c0e5557aec",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (USDC)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/usd__coin",
@@ -127,6 +142,7 @@ const account_list_mock = {
     },
     {
       id: "e9ee57d1-f29c-55ed-ad85-de9b6426ce45",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (DAI)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -136,6 +152,7 @@ const account_list_mock = {
     },
     {
       id: "753b0907-3616-5350-bccb-2484cefb2bec",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (USDT)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/usd_tether__erc20_",
@@ -145,6 +162,7 @@ const account_list_mock = {
     },
     {
       id: "d53ce93d-61d1-5ae1-8258-85a03e47f096",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (USDC)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/usd__coin",
@@ -155,7 +173,7 @@ const account_list_mock = {
   ],
 };
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountARB" });
 
 let testServerIsRunning = false;
 
@@ -213,12 +231,23 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "account.request",
       params: {
-        currencyIds: ["ethereum", "bitcoin"],
+        currencyIds: ["ethereum", "bitcoin", "ethereum/erc20/usd_tether__erc20_"],
       },
     });
 
+    await drawer.waitForDrawerToBeVisible();
+
+    await drawer.selectCurrency("tether usd");
+    // Test name and balance for tokens
+    await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
+      "Ethereum 3 (USDT)71.8174 USDT",
+    );
+    await drawer.back();
+
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
+
+    await drawer.waitForDrawerToDisappear();
 
     await expect(response).resolves.toMatchObject({
       id,
@@ -275,7 +304,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
       ),
     };
 
-    await expect(responseFiltred).toStrictEqual({
+    expect(responseFiltred).toStrictEqual({
       id,
       ...account_list_mock,
     });
@@ -308,7 +337,12 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "currency.list",
       params: {
-        currencyIds: ["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"],
+        currencyIds: [
+          "bitcoin",
+          "ethereum",
+          "ethereum/erc20/usd_tether__erc20_",
+          // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+        ],
       },
     });
 
@@ -345,9 +379,36 @@ test("Wallet API methods @smoke", async ({ page }) => {
             color: "#0ebdcd",
             decimals: 6,
           },
+          // {
+          //   type: "TokenCurrency",
+          //   standard: "ERC20",
+          //   id: "arbitrum/erc20/arbitrum",
+          //   ticker: "ARB",
+          //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          //   name: "Arbitrum",
+          //   parent: "arbitrum",
+          //   color: "#28a0f0",
+          //   decimals: 18,
+          // },
         ],
       },
     });
+  });
+
+  await test.step("currency.list should stay stable for CryptoCurrency", async () => {
+    const id = randomUUID();
+    const response = await liveAppWebview.send({
+      jsonrpc: "2.0",
+      id,
+      method: "currency.list",
+    });
+
+    // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
+    const currencies = response.result.currencies.filter(
+      (currency: { type: string }) => currency.type === "CryptoCurrency",
+    );
+
+    expect(JSON.stringify(currencies, null, 2)).toMatchSnapshot("wallet-api-currencies.json");
   });
 
   await test.step("storage", async () => {
@@ -452,6 +513,21 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     // Step Device
     await deviceAction.silentSign();
+
+    // Click on notification toaster
+    // NOTE: toaster not visible in output, need to find a better way to handle css animations
+    // await page.waitForSelector('[data-testid="toaster"][style="opacity: 1;"]');
+    const toaster = page.getByTestId("toaster");
+    await toaster.scrollIntoViewIfNeeded();
+    await expect(toaster).toBeVisible();
+    await expect(toaster.getByText("Transaction sent !")).toBeVisible();
+
+    // Display transaction drawer
+    await toaster.click();
+    const drawer = page.getByTestId("drawer-content");
+    await expect(drawer).toBeVisible();
+    await expect(drawer.getByText("View in explorer")).toBeVisible();
+    await expect(drawer.getByText("Confirmed")).toBeVisible();
 
     await expect(response).resolves.toStrictEqual({
       id,

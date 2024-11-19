@@ -1,9 +1,8 @@
 import { ipcRenderer } from "electron";
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import styled from "styled-components";
-import moment from "moment";
 import { createStructuredSelector } from "reselect";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
@@ -23,6 +22,8 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
 import { ModalData } from "../types";
+import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type OwnProps = {};
 type Props = OwnProps & {
@@ -56,10 +57,13 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
+  const getDateTxt = useTechnicalDateFn();
+  const walletState = useSelector(walletSelector);
+
   const exportCsv = useCallback(async () => {
     const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
-      defaultPath: `ledgerlive-operations-${moment().format("YYYY.MM.DD")}.csv`,
+      defaultPath: `ledgerlive-operations-${getDateTxt()}.csv`,
       filters: [
         {
           name: "All Files",
@@ -74,13 +78,14 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
           accounts.filter(account => checkedIds.includes(account.id)),
           countervalueCurrency,
           countervalueState,
+          walletState,
         ),
         () => {
           setSuccess(true);
         },
       );
     }
-  }, [accounts, checkedIds, countervalueCurrency, countervalueState]);
+  }, [accounts, checkedIds, countervalueCurrency, countervalueState, getDateTxt, walletState]);
   const onClose = useCallback(() => closeModal("MODAL_EXPORT_OPERATIONS"), [closeModal]);
   const handleButtonClick = useCallback(() => {
     let exporting = false;
@@ -168,7 +173,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
               disabled={!success && !checkedIds.length}
               onClick={handleButtonClick}
               event={!success ? "Operation history" : undefined}
-              data-test-id="export-operations-save-button"
+              data-testid="export-operations-save-button"
               primary
             >
               {success ? (
@@ -187,7 +192,6 @@ const LabelWrapper = styled(Box)`
   text-align: center;
   font-size: 13px;
   font-family: "Inter";
-  font-weight:;
 `;
 const IconWrapperCircle = styled(Box)<{ green?: boolean }>`
   width: 50px;

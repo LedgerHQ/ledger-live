@@ -9,6 +9,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "./Animation";
 import LText from "./LText";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   device: Device;
@@ -40,6 +41,8 @@ export default function ValidateOnDevice({ device, message: messageData, account
   );
   const mainAccount = getMainAccount(account, null);
 
+  const mainAccountName = useAccountName(mainAccount);
+
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
   useEffect(() => {
@@ -67,7 +70,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
         <LText style={styles.action}>{t("walletconnect.stepVerification.action")}</LText>
         <View style={messageContainerStyle}>
           <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
-          <LText semiBold>{mainAccount.name}</LText>
+          <LText semiBold>{mainAccountName}</LText>
         </View>
         {messageData.standard === "EIP712" ? (
           <>

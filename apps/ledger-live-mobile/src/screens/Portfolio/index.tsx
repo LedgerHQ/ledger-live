@@ -7,7 +7,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import {
   useAlreadyOnboardedURI,
@@ -25,7 +25,7 @@ import {
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
-import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";
@@ -34,13 +34,8 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import { track } from "~/analytics";
-import {
-  BaseComposite,
-  BaseNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -57,6 +52,8 @@ import { UpdateStep } from "../FirmwareUpdate";
 import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -119,6 +116,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     dispatch,
     protectFeature?.enabled,
   ]);
+
+  usePortfolioAnalyticsOptInPrompt();
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {
@@ -222,12 +221,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         }}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
+        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
-      <AddAccountsModal
-        navigation={navigation as unknown as BaseNavigation}
+      <AddAccountDrawer
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
+        doesNotHaveAccount={!showAssets}
       />
     </ReactNavigationPerformanceView>
   );

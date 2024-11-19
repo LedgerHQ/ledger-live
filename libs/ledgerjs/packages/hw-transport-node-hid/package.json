@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid",
-  "version": "6.28.2",
+  "version": "6.29.5",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid",
   "keywords": [
     "Ledger",
@@ -27,13 +27,13 @@
   "types": "lib/TransportNodeHid.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-noevents": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "lodash": "^4.17.21",
-    "node-hid": "^2.1.2",
+    "node-hid": "2.1.2",
     "usb": "2.9.0"
   },
   "scripts": {

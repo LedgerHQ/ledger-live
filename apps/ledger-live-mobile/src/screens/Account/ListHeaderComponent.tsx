@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -8,9 +8,9 @@ import {
   PortfolioRange,
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
-import { isNFTActive } from "@ledgerhq/live-common/nft/index";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -33,10 +33,15 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
+import Alert from "~/components/Alert";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { urls } from "~/utils/urls";
 
 type Props = {
   account?: AccountLike;
   parentAccount?: Account;
+  currency: CryptoCurrency;
+  currencyConfig?: (CurrencyConfig & Record<string, unknown>) | undefined;
   countervalueAvailable: boolean;
   useCounterValue: boolean;
   range: PortfolioRange;
@@ -64,6 +69,8 @@ type MaybeComponent =
 export function getListHeaderComponents({
   account,
   parentAccount,
+  currency,
+  currencyConfig,
   countervalueAvailable,
   useCounterValue,
   range,
@@ -136,6 +143,21 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
+      currencyConfig?.status.type === "will_be_deprecated" && (
+        <View style={{ marginTop: 16 }}>
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
+            {t("account.willBedeprecatedBanner.title", {
+              currencyName: currency.name,
+              deprecatedDate: currencyConfig.status.deprecated_date,
+            })}
+          </Alert>
+        </View>
+      ),
       <Header key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">

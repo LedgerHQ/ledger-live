@@ -14,6 +14,7 @@ import type {
   RateGranularity,
   PairRateMapCache,
   RateMapRaw,
+  BatchStrategySolver,
 } from "./types";
 import {
   pairId,
@@ -28,6 +29,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
@@ -78,27 +80,52 @@ export function importCountervalues(
   };
 }
 
+export function trackingPairForTopCoins(
+  marketcapIds: string[],
+  size: number,
+  countervalue: Currency,
+  startDate: Date,
+) {
+  const pairs = [];
+  for (let i = 0; i < marketcapIds.length && pairs.length < size; i++) {
+    const id = marketcapIds[i];
+    const currency = findCryptoCurrencyById(id);
+    if (currency) {
+      pairs.push({
+        from: currency,
+        to: countervalue,
+        startDate,
+      });
+    }
+  }
+  return pairs;
+}
+
 // infer the tracking pair from user accounts to know which pairs are concerned
-export function inferTrackingPairForAccounts(
+export function inferTrackingPairForAccountsUnresolved(
   accounts: Account[],
   countervalue: Currency,
 ): TrackingPair[] {
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
   yearAgo.setHours(0, 0, 0, 0);
+  return flattenAccounts(accounts)
+    .filter(a => !isAccountEmpty(a))
+    .map(account => {
+      const currency = getAccountCurrency(account);
+      return {
+        from: currency,
+        to: countervalue,
+        startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
+      };
+    });
+}
 
-  return resolveTrackingPairs(
-    flattenAccounts(accounts)
-      .filter(a => !isAccountEmpty(a))
-      .map(account => {
-        const currency = getAccountCurrency(account);
-        return {
-          from: currency,
-          to: countervalue,
-          startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
-        };
-      }),
-  );
+export function inferTrackingPairForAccounts(
+  accounts: Account[],
+  countervalue: Currency,
+): TrackingPair[] {
+  return resolveTrackingPairs(inferTrackingPairForAccountsUnresolved(accounts, countervalue));
 }
 
 /**
@@ -119,6 +146,7 @@ const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
 export async function loadCountervalues(
   state: CounterValuesState,
   settings: CountervaluesSettings,
+  batchStrategySolver?: BatchStrategySolver,
 ): Promise<CounterValuesState> {
   const data = { ...state.data };
   const cache = { ...state.cache };
@@ -138,14 +166,10 @@ export async function loadCountervalues(
   rateGranularities.forEach((granularity: RateGranularity) => {
     const format = formatPerGranularity[granularity];
     const earliestHisto = format(nowDate);
-    log("countervalues", "earliestHisto=" + earliestHisto);
     const limit = datapointLimits[granularity];
 
     settings.trackingPairs.forEach(({ from, to, startDate }) => {
-      const key = pairId({
-        from,
-        to,
-      });
+      const key = pairId({ from, to });
 
       const c: PairRateMapCache | null | undefined = cache[key];
       const stats = c?.stats;
@@ -250,6 +274,11 @@ export async function loadCountervalues(
               failures: (s?.failures || 0) + 1,
               oldestDateRequested: s?.oldestDateRequested,
             };
+            if (e.status === 422) {
+              // unsupported currency, we force a clear cache in this case
+              delete data[key];
+              delete cache[key];
+            }
           }
 
           log(
@@ -262,7 +291,7 @@ export async function loadCountervalues(
         }),
     ),
     api
-      .fetchLatest(latestToFetch)
+      .fetchLatest(latestToFetch, batchStrategySolver)
       .then(rates => {
         const out: Record<string, { latest: number | null | undefined }> = {};
         let hasData = false;
@@ -310,8 +339,9 @@ export async function loadCountervalues(
         data[key] = new Map();
       }
 
+      const map = data[key];
       Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") data[key].set(k, v);
+        if (typeof v === "number") map.set(k, v);
       });
     });
   });

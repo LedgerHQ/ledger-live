@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
   useTronSuperRepresentatives,
   formatVotes,
@@ -26,6 +26,11 @@ import IlluRewards from "~/icons/images/Rewards";
 import ProgressCircle from "~/components/ProgressCircle";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ScreenName } from "../../../const";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: TronAccount;
@@ -42,7 +47,7 @@ const Delegation = ({ account }: Props) => {
   const lastDate = lastVotedDate ? <DateFromNow date={lastVotedDate.valueOf()} /> : null;
 
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
 
   const { spendableBalance, tronResources } = account;
@@ -58,6 +63,29 @@ const Delegation = ({ account }: Props) => {
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
   const percentVotesUsed = totalVotesUsed / tronPower;
+  const localManifest = useLocalLiveAppManifest("stakekit");
+  const remoteManifest = useRemoteLiveAppManifest("stakekit");
+  const manifest = remoteManifest || localManifest;
+
+  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, ScreenName>>();
+
+  const managePosition = useCallback(
+    (type: "CLAIM_REWARDS" | "REVOTE") => {
+      if (!manifest) return;
+
+      navigation.navigate(ScreenName.PlatformApp, {
+        platform: manifest.id,
+        name: manifest.name,
+        accountId: account.id,
+        yieldId: "tron-trx-native-staking",
+        pendingaction: type,
+      });
+    },
+    [account.id, manifest, navigation],
+  );
+
+  const onClaimPress = useCallback(() => managePosition("CLAIM_REWARDS"), [managePosition]);
+  const onManageVotesPress = useCallback(() => managePosition("REVOTE"), [managePosition]);
 
   if (!hasRewards && (!tronPower || !formattedVotes.length) && !canFreeze) {
     return null;
@@ -82,7 +110,7 @@ const Delegation = ({ account }: Props) => {
                 )}
               </Text>
             </View>
-            <Button type="main" disabled={true}>
+            <Button type="main" onPress={onClaimPress}>
               <Trans i18nKey="tron.voting.rewards.button" />
             </Button>
           </View>
@@ -91,7 +119,7 @@ const Delegation = ({ account }: Props) => {
       {tronPower > 0 ? (
         formattedVotes.length > 0 ? (
           <>
-            <Header count={formattedVotes.length} onPress={() => undefined} />
+            <Header count={formattedVotes.length} onPress={onManageVotesPress} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
                 {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (

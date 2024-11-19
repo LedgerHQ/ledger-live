@@ -2,17 +2,15 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import NavigationScrollView from "~/components/NavigationScrollView";
 import GenericErrorView from "~/components/GenericErrorView";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 import VerifyAddress from "./VerifyAddress";
@@ -21,10 +19,13 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
+import Button from "~/components/wrappedUi/Button";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
+
+const edges = ["left", "right"] as const;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const action = useAppDeviceAction();
@@ -32,8 +33,6 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();
   const [skipDevice, setSkipDevice] = useState(false);
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const { account, onSuccess, onError } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -92,6 +91,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   return (
     <SafeAreaView
+      edges={edges}
       style={[
         styles.root,
         {
@@ -100,20 +100,23 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} py={8} flex={1}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        </Flex>
-      ) : (
-        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-          <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
-        </NavigationScrollView>
-      )}
-
+      <Flex px={16} py={8} flex={1}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+        <View>
+          <View style={styles.header}>
+            <Text style={styles.headerText} color="grey">
+              <Trans i18nKey="SelectDevice.withoutDeviceHeader" />
+            </Text>
+          </View>
+          <Button onPress={onSkipDevice} event="WithoutDevice" type={"main"} mt={6} mb={6}>
+            <Trans i18nKey="SelectDevice.withoutDevice" />
+          </Button>
+        </View>
+      </Flex>
       {device ? (
         <DeviceActionModal
           action={action}
@@ -161,5 +164,12 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flexDirection: "row",
+  },
+  header: {
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 14,
+    lineHeight: 21,
   },
 });

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   useFetchCurrencyFrom,
@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { SwapFormParamList } from "../../types";
@@ -20,6 +21,10 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSelector } from "react-redux";
+import { AccountLike } from "@ledgerhq/types-live";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 interface Props {
   provider?: string;
@@ -36,22 +41,30 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const { data: currenciesFrom } = useFetchCurrencyFrom();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
-  const { name, balance, unit } = useMemo(() => {
-    const { currency, account } = swapTx.swap.from;
+  const walletState = useSelector(walletSelector);
 
+  const getAccountBalance = useCallback(
+    (inputs: { account?: AccountLike; currency?: Currency }) => {
+      if (!inputs.account || !inputs.currency) return "";
+      const balance = getAccountSpendableBalance(inputs.account);
+      return formatCurrencyUnit(inputs.currency.units[0], balance, {
+        showCode: true,
+      });
+    },
+    [],
+  );
+
+  const { name, balance, account } = useMemo(() => {
+    const { currency, account } = swapTx.swap.from;
+    const name = account && accountNameWithDefaultSelector(walletState, account);
     return {
       account,
-      name: account && getAccountName(account),
-      balance:
-        (account &&
-          currency &&
-          formatCurrencyUnit(currency.units[0], account.balance, {
-            showCode: true,
-          })) ??
-        "",
-      unit: account && getAccountUnit(account),
+      name,
+      balance: getAccountBalance({ account, currency }),
     };
-  }, [swapTx.swap.from]);
+  }, [swapTx.swap.from, walletState, getAccountBalance]);
+
+  const unit = useMaybeAccountUnit(account);
 
   usePickDefaultAccount(accounts, swapTx.swap.from.account, swapTx.setFromAccount);
 
@@ -119,6 +132,7 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
             <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
             <Text
               marginY={4}
+              marginRight={8}
               color={swapError ? "error.c50" : "orange"}
               textAlign="left"
               fontWeight="medium"

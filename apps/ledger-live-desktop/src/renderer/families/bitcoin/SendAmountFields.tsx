@@ -11,18 +11,12 @@ import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeS
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
-import { context } from "~/renderer/drawers/Provider";
 import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import Alert from "~/renderer/components/Alert";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
-import { closeAllModal } from "~/renderer/actions/modals";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { Flex } from "@ledgerhq/react-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CoinControlModal as NewArchCoinControlModal } from "LLD/features/Collectibles/Ordinals/components/CoinControlModal";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -44,33 +38,17 @@ const Fields: Props = ({
 }) => {
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
-  const { state: drawerState, setDrawer } = React.useContext(context);
+  const isOrdinalsFFEnabled = useFeature("lldnewArchOrdinals")?.enabled;
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
+  const [isAdvanceMode, setAdvanceMode] = useState(
+    !transaction.feesStrategy || transaction.feesStrategy === "custom",
+  );
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
-  const dispatch = useDispatch();
-  const history = useHistory();
-
-  const onBuyClick = useCallback(() => {
-    dispatch(closeAllModal());
-    setTrackingSource("send flow");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        currency: account.currency.id,
-        account: account.id,
-        mode: "buy", // buy or sell
-      },
-    });
-  }, [account.currency.id, account.id, dispatch, history]);
-
-  const { errors } = status;
-  const { gasPrice: messageGas } = errors;
   /* TODO: How do we set default RBF to be true ? (@gre)
    * Meanwhile, using this trick (please don't kill me)
    */
@@ -84,7 +62,7 @@ const Fields: Props = ({
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }: OnClickType) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: feesStrategy,
         feePerByte: amount,
@@ -95,14 +73,13 @@ const Fields: Props = ({
           feesStrategy,
         }),
       );
-      if (drawerState.open) setDrawer(undefined);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],
   );
   const setAdvanceModeAndTrack = useCallback(
     (state: boolean) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: state ? "advanced" : "standard",
       });
@@ -112,7 +89,7 @@ const Fields: Props = ({
   );
   const onChangeAndTrack = useCallback(
     (params: Transaction) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: "fees",
         value: params,
@@ -159,16 +136,29 @@ const Fields: Props = ({
               </Box>
             </Box>
             <Separator />
-            <CoinControlModal
-              transaction={transaction}
-              account={account}
-              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
-              onChange={onChangeAndTrack}
-              status={status}
-              isOpened={coinControlOpened}
-              onClose={onCoinControlClose}
-              updateTransaction={updateTransaction}
-            />
+            {isOrdinalsFFEnabled ? (
+              <NewArchCoinControlModal
+                transaction={transaction}
+                account={account}
+                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
+                onChange={onChangeAndTrack}
+                status={status}
+                isOpened={coinControlOpened}
+                onClose={onCoinControlClose}
+                updateTransaction={updateTransaction}
+              />
+            ) : (
+              <CoinControlModal
+                transaction={transaction}
+                account={account}
+                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
+                onChange={onChangeAndTrack}
+                status={status}
+                isOpened={coinControlOpened}
+                onClose={onCoinControlClose}
+                updateTransaction={updateTransaction}
+              />
+            )}
           </Box>
         </Box>
       ) : (
@@ -183,13 +173,6 @@ const Fields: Props = ({
             mapStrategies={mapStrategies}
             status={status}
           />
-          {messageGas && (
-            <Flex onClick={onBuyClick}>
-              <Alert type="warning">
-                <TranslatedError error={messageGas} noLink />
-              </Alert>
-            </Flex>
-          )}
         </>
       )}
     </>

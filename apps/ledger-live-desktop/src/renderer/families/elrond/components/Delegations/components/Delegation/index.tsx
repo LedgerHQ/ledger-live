@@ -2,8 +2,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ToolTip from "~/renderer/components/Tooltip";
@@ -26,6 +25,8 @@ import {
   ElrondAccount as AccountType,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { ModalsData } from "~/renderer/families/elrond/modals";
+import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 interface RenderDropdownItemType {
   isActive: boolean;
@@ -140,6 +141,8 @@ const Delegation = (props: Props) => {
       }),
     [claimableRewards],
   );
+
+  const unit = useAccountUnit(account);
   return (
     <Wrapper>
       <Column
@@ -167,11 +170,11 @@ const Delegation = (props: Props) => {
       </Column>
 
       <Column>
-        {amount} {getAccountUnit(account).code}
+        <Discreet>{amount}</Discreet> {unit.code}
       </Column>
 
       <Column>
-        {rewards} {getAccountUnit(account).code}
+        <Discreet>{rewards}</Discreet> {unit.code}
       </Column>
 
       <Column>

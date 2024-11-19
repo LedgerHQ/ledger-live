@@ -3,14 +3,10 @@ import { Image, View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -34,6 +30,7 @@ import { rgba } from "../../../../../../../colors";
 import type { SetDelegationPropsType } from "./types";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -48,7 +45,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   const color = getCurrencyColor(currency);
   const bridge = getAccountBridge(account);
   const mainAccount = getMainAccount(account, undefined);
-  const unit = useMemo(() => getAccountUnit(account), [account]);
+  const unit = useAccountUnit(account);
 
   /*
    * Find the validator that'll be picked by default, which is the one from Ledger.

@@ -57,12 +57,6 @@
           "index": 1,
           "freshAddress": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
           "freshAddressPath": "44'/195'/0'/0/0",
-          "freshAddresses": [
-            {
-              "address": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
-              "derivationPath": "44'/195'/0'/0/0"
-            }
-          ],
           "blockHeight": 142575,
           "creationDate": "2023-06-13T02:43:04.148Z",
           "operationsCount": 100,
@@ -91,12 +85,6 @@
           "index": 1,
           "freshAddress": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
           "freshAddressPath": "44'/195'/0'/0/0",
-          "freshAddresses": [
-            {
-              "address": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
-              "derivationPath": "44'/195'/0'/0/0"
-            }
-          ],
           "blockHeight": 142575,
           "creationDate": "2023-06-13T02:43:04.148Z",
           "operationsCount": 100,

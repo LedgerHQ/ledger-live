@@ -1,15 +1,60 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text, Button as SystemButton } from "@ledgerhq/native-ui";
 import React, { PropsWithChildren } from "react";
 import { Image as NativeImage, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
-export const Image = (props: { uri: string }) => (
-  <NativeImage source={props} style={{ resizeMode: "contain", flex: 1, aspectRatio: 1 }} />
-);
+export const ImageStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    flex: 1,
+    width: "100%",
+    maxHeight: 260,
+    marginTop: 24,
+  },
+  M: {
+    flex: 1,
+    aspectRatio: 1,
+    maxHeight: 160,
+    marginTop: 24,
+  },
+  S: {
+    flex: 1,
+    aspectRatio: 1,
+    maxHeight: 90,
+    marginTop: 10,
+  },
+};
 
-const absoluteTopStyle: StyleProp<ViewStyle> = { position: "absolute", padding: 12, zIndex: 1 };
+type ImageProps = {
+  uri: string;
+  size: Size;
+  filledImage?: boolean;
+};
+
+export const Image = ({ uri, size, filledImage }: ImageProps) => {
+  const isBigCardAndFilled = (size === "L" && filledImage) || false;
+  const stylesBigCard = isBigCardAndFilled
+    ? { marginBottom: 0, marginTop: 0, borderTopLeftRadius: 12, borderTopRightRadius: 12 }
+    : { aspectRatio: 1 };
+
+  return (
+    <NativeImage
+      source={{ uri }}
+      style={{ ...ImageStyles[size], ...stylesBigCard }}
+      resizeMode={isBigCardAndFilled ? "cover" : "contain"}
+    />
+  );
+};
+
+const absoluteTopStyle: StyleProp<ViewStyle> = {
+  position: "absolute",
+  padding: 12,
+  zIndex: 1,
+};
 
 export const Close = ({ onPress }: { onPress: ButtonAction }) => {
   return (
@@ -46,20 +91,21 @@ export const TitleStyles: {
   L: {
     variant: "large",
     fontWeight: "medium",
-    numberOfLine: 1,
-    paddingTop: 8,
+    paddingBottom: 2,
+    textAlign: "center",
   },
   M: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 6,
+    paddingBottom: 2,
+    textAlign: "center",
   },
   S: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 3,
+    textAlign: "center",
   },
 };
 
@@ -73,19 +119,15 @@ export const SubtitleStyles: {
   L: {
     variant: "body",
     fontWeight: "medium",
-    numberOfLine: 1,
-    paddingTop: 2,
+    textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
-    paddingTop: 2,
+    numberOfLines: 1,
+    textAlign: "center",
   },
   S: {
-    variant: "paragraph",
-    fontWeight: "medium",
-    numberOfLine: 1,
     display: "none",
   },
 };
@@ -95,7 +137,7 @@ export const Subtitle = ({ label, size }: LabelProps) => {
 
   return (
     <Text {...SubtitleStyles[size]} color={colors.neutral.c70}>
-      {label}
+      {label.replace(/\\n/g, "\n")}
     </Text>
   );
 };
@@ -106,20 +148,23 @@ export const PriceStyles: {
   L: {
     variant: "large",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 12,
+    textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 12,
+    textAlign: "center",
   },
   S: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 4,
+    textAlign: "center",
   },
 };
 
@@ -133,45 +178,103 @@ export const Price = ({ label, size }: LabelProps) => {
   );
 };
 
-export const ContainerStyles: {
+export const ButtonStyles: {
   [key in Size]: object;
 } = {
   L: {
-    height: 306,
-    paddingTop: 24,
-    paddingBottom: 24,
-    borderRadius: 12,
+    paddingX: 10,
+    paddingY: 20,
+    marginTop: 24,
   },
   M: {
-    height: 206,
-    paddingTop: 16,
-    paddingBottom: 8,
-    borderRadius: 16,
+    paddingX: 10,
+    paddingY: 20,
   },
   S: {
-    height: 156,
-    paddingTop: 16,
-    paddingBottom: 8,
-    borderRadius: 16,
+    paddingX: 10,
+    paddingY: 20,
   },
 };
 
-export const Container = ({ size, children }: { size: Size } & PropsWithChildren) => {
-  const { colors } = useTheme();
+export const ButtonlabelStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLines: 1,
+  },
+  M: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLines: 1,
+  },
+  S: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLines: 1,
+  },
+};
 
+export const Button = ({ label, size, action }: LabelProps & { action?: () => void }) => {
   return (
-    <View
+    <SystemButton {...ButtonStyles[size]} type="main" style={ButtonStyles[size]} onPress={action}>
+      <Text color="neutral.c00" {...ButtonlabelStyles[size]}>
+        {label}
+      </Text>
+    </SystemButton>
+  );
+};
+
+export const ContainerStyles = (
+  size: Size,
+  widthFactor: WidthFactor,
+  isOnlyImage?: boolean,
+): object => {
+  const styles = {
+    L: {
+      height: isOnlyImage ? 282 : 406,
+      paddingBottom: isOnlyImage ? 0 : 24,
+      justifyContent: isOnlyImage ? "center" : "space-between",
+      borderRadius: 12,
+    },
+    M: {
+      height: widthFactor === WidthFactor.ThreeQuarters ? 300 : 220,
+      paddingBottom: 24,
+      borderRadius: 16,
+    },
+    S: {
+      height: 156,
+      paddingBottom: 8,
+      borderRadius: 16,
+    },
+  };
+
+  return styles[size];
+};
+
+export const Container = ({
+  size,
+  children,
+  widthFactor,
+  isOnlyImage,
+}: { size: Size; isOnlyImage?: boolean } & PropsWithChildren & { widthFactor: WidthFactor }) => {
+  const { colors } = useTheme();
+  const styles = ContainerStyles(size, widthFactor, isOnlyImage);
+  return (
+    <Flex
+      alignItems="center"
+      width={"100%"}
+      height={"100%"}
       style={{
         position: "relative",
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.opacityDefault.c05,
-        paddingHorizontal: 10,
-
-        ...ContainerStyles[size],
+        ...styles,
       }}
     >
       {children}
-    </View>
+    </Flex>
   );
 };

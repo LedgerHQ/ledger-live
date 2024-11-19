@@ -5,14 +5,14 @@ import {
   isTransactionConfirmed,
 } from "@ledgerhq/coin-evm/editTransaction/index";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { isNftTransaction } from "@ledgerhq/live-nft";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -175,6 +175,7 @@ const Body = ({
   invariant(account, "account required");
   invariant(transactionToUpdate, "transactionToUpdate required");
   invariant(transaction, "original transaction required");
+  invariant(status, "transaction status required");
 
   const currencyName = getAccountCurrency(account).name;
 
@@ -250,8 +251,8 @@ const Body = ({
     isOldestEditableOperation && haveFundToSpeedup
       ? "speedup"
       : haveFundToCancel
-      ? "cancel"
-      : undefined,
+        ? "cancel"
+        : undefined,
   );
   const handleSetEditType: StepProps["setEditType"] = useCallback(
     editType => setEditType(editType),
@@ -288,7 +289,7 @@ const Body = ({
     editType,
     transaction,
     transactionToUpdate,
-    status,
+    status: status as TransactionStatus,
   });
 
   const stepperProps = {

@@ -13,5 +13,5 @@ export const getBufferFromString = (message: string): Buffer =>
   isValidHex(message)
     ? Buffer.from(message, "hex")
     : isValidBase64(message)
-    ? Buffer.from(message, "base64")
-    : Buffer.from(message);
+      ? Buffer.from(message, "base64")
+      : Buffer.from(message);

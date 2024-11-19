@@ -1,20 +1,11 @@
 import * as Sentry from "@sentry/node";
 import { Primitive } from "@sentry/types";
-import "@sentry/tracing";
-import { connectLogsToSentry } from "@ledgerhq/live-common/performance";
 import { init, setShouldSendCallback } from "./install";
 // @ts-expect-error The right type would be typeof SentryMainModule from "@sentry/electron/main"…
 // …but we should avoid importing the whole module here
 const available = init(Sentry, {
-  integrations: [
-    new Sentry.Integrations.Http({
-      tracing: true,
-    }),
-  ],
+  integrations: [Sentry.httpIntegration()],
 });
-if (available) {
-  connectLogsToSentry(Sentry);
-}
 export default (shouldSendCallback: () => boolean, userId: string) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);

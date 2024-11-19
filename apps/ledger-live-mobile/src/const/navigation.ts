@@ -15,8 +15,6 @@ export enum ScreenName {
   Assets = "Assets",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
-  ClaimNftWelcome = "ClaimNftWelcome",
-  ClaimNftQrScan = "ClaimNftQrScan",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError = "ClaimRewardsValidationError",
@@ -26,6 +24,7 @@ export enum ScreenName {
   CryptoAssetsSettings = "CryptoAssetsSettings",
   CurrenciesList = "CurrenciesList",
   CurrencySettings = "CurrencySettings",
+  EditCurrencyUnits = "EditCurrencyUnits",
   DebugBLE = "DebugBLE",
   DebugBLEBenchmark = "DebugBLEBenchmark",
   DebugBLEDevicePairing = "DebugBLEDevicePairing",
@@ -36,6 +35,9 @@ export enum ScreenName {
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
   DebugQueuedDrawers = "DebugQueuedDrawers",
+  DebugQueuedDrawerScreen0 = "DebugQueuedDrawerScreen0",
+  DebugQueuedDrawerScreen1 = "DebugQueuedDrawerScreen1",
+  DebugQueuedDrawerScreen2 = "DebugQueuedDrawerScreen2",
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
@@ -74,8 +76,8 @@ export enum ScreenName {
   DeviceConnect = "DeviceConnect",
   DisplayResult = "DisplayResult",
   EditAccountName = "EditAccountName",
-  EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
+  Card = "Card",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -94,9 +96,8 @@ export enum ScreenName {
   GetDevice = "GetDevice",
   HelpSettings = "HelpSettings",
   HiddenNftCollections = "HiddenNftCollections",
-  Manager = "Manager",
-  ManagerDevice = "ManagerDevice",
-  ManagerMain = "ManagerMain",
+  MyLedgerChooseDevice = "MyLedgerChooseDevice",
+  MyLedgerDevice = "MyLedgerDevice",
   MigrateAccountsConnectDevice = "MigrateAccountsConnectDevice",
   MigrateAccountsOverview = "MigrateAccountsOverview",
   MigrateAccountsProgress = "MigrateAccountsProgress",
@@ -126,8 +127,8 @@ export enum ScreenName {
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
-  RippleEditFee = "RippleEditFee",
-  RippleEditTag = "RippleEditTag",
+  XrpEditFee = "XrpEditFee",
+  XrpEditTag = "XrpEditTag",
   ScanAccounts = "ScanAccounts",
   ScanRecipient = "ScanRecipient",
   SendAmountCoin = "SendAmountCoin",
@@ -311,6 +312,9 @@ export enum ScreenName {
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
 
+  // ton
+  TonEditComment = "TonEditComment",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
 
@@ -433,6 +437,7 @@ export enum ScreenName {
   VerifyAccount = "VerifyAccount",
   AnalyticsAllocation = "AnalyticsAllocation",
   AnalyticsOperations = "AnalyticsOperations",
+  CustomErrorScreen = "CustomErrorScreen",
   // solana
   SolanaEditMemo = "SolanaEditMemo",
   SolanaEditAmount = "SolanaEditAmount",
@@ -489,19 +494,17 @@ export enum ScreenName {
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
-  CustomImageStep2Preview = "CustomImageStep2Preview",
+  CustomImageStep2ChooseContrast = "CustomImageStep2ChooseContrast",
   CustomImageStep3Transfer = "CustomImageStep3Transfer",
   CustomImageErrorScreen = "CustomImageErrorScreen",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
   CustomImageNFTGallery = "CustomImageNFTGallery",
 
-  ClaimNftWelcomeScreen = "ClaimNftWelcomeScreen",
-  ClaimNftQrScanScreen = "ClaimNftQrScanScreen",
-
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
+  PostOnboardingDeeplinkHandler = "PostOnboardingDeeplinkHandler",
   WalletNftGallery = "WalletNftGallery",
   NoFunds = "NoFunds",
   Stake = "Stake",
@@ -510,6 +513,26 @@ export enum ScreenName {
 
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
+
+  WalletSyncActivationInit = "WalletSyncActivationInit",
+  WalletSyncActivationProcess = "WalletSyncActivationProcess",
+  WalletSyncSuccess = "WalletSyncSuccess",
+  WalletSyncLoading = "WalletSyncLoading",
+  WalletSyncActivated = "WalletSyncActivated",
+  WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
+  WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
+  WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
+  WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
+  LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
+
+  MockedAddAssetButton = "MockedAddAssetButton",
+  GenericLandingPage = "GenericLandingPage",
+
+  // Web3Hub
+  Web3HubMain = "Web3HubMain",
+  Web3HubSearch = "Web3HubSearch",
+  Web3HubTabs = "Web3HubTabs",
+  Web3HubApp = "Web3HubApp",
 }
 
 export enum NavigatorName {
@@ -521,6 +544,7 @@ export enum NavigatorName {
   AccountSettings = "AccountSettings",
   AddAccounts = "AddAccounts",
   Analytics = "Analytics",
+  Card = "CardFlow",
   Exchange = "Exchange",
   ExchangeStack = "ExchangeStack",
   Base = "Base",
@@ -543,8 +567,7 @@ export enum NavigatorName {
   ClaimRewards = "ClaimRewards",
   Freeze = "Freeze",
   ImportAccounts = "ImportAccounts",
-  Manager = "ManagerNavigator",
-  ManagerStack = "ManagerStack",
+  MyLedger = "MyLedger",
   NftNavigator = "NftNavigator",
   Onboarding = "Onboarding",
   OnboardingCarefulWarning = "OnboardingCarefulWarning",
@@ -564,6 +587,7 @@ export enum NavigatorName {
   Unfreeze = "Unfreeze",
   NoFundsFlow = "NoFundsFlow",
   StakeFlow = "StakeFlow",
+  CustomError = "CustomError",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
@@ -613,13 +637,18 @@ export enum NavigatorName {
   // Custom Image
   CustomImage = "CustomImage",
 
-  // Claim NFT
-  ClaimNft = "ClaimNft",
-
   WalletConnect = "WalletConnect",
 
   PostOnboarding = "PostOnboarding",
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
+  WalletSyncActivationInit = "WalletSyncActivationInit",
+  LandingPages = "LandingPages",
+
+  // Web3Hub
+  Web3Hub = "Web3Hub",
+  Web3HubTab = "Web3HubTab",
+
+  WalletSync = "WalletSync",
 }

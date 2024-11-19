@@ -1,4 +1,4 @@
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TransactionStatus as SolanaTransactionStatus } from "@ledgerhq/live-common/families/solana/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -18,6 +18,7 @@ import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigato
 import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -39,7 +40,7 @@ export default function SolanaFeeRow({ account, status }: Props) {
 
   const fees = (status as SolanaTransactionStatus).estimatedFees;
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (

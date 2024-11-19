@@ -1,6 +1,15 @@
-import type { CeloAccount, CeloAccountRaw, CeloResources, CeloResourcesRaw } from "./types";
+import {
+  isCeloOperationExtra,
+  isCeloOperationExtraRaw,
+  type CeloAccount,
+  type CeloAccountRaw,
+  type CeloOperationExtra,
+  type CeloOperationExtraRaw,
+  type CeloResources,
+  type CeloResourcesRaw,
+} from "./types";
 import { BigNumber } from "bignumber.js";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
   const {
@@ -70,4 +79,36 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const celoResourcesRaw = (accountRaw as CeloAccountRaw).celoResources;
   if (celoResourcesRaw)
     (account as CeloAccount).celoResources = fromCeloResourcesRaw(celoResourcesRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  if (!isCeloOperationExtraRaw(extraRaw)) {
+    throw new Error("Unsupported OperationExtra");
+  }
+
+  const extra: CeloOperationExtra = {
+    celoOperationValue: new BigNumber(extraRaw.celoOperationValue),
+  };
+
+  if (extraRaw.celoSourceValidator) {
+    extra.celoSourceValidator = extraRaw.celoSourceValidator;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  if (!isCeloOperationExtra(extra)) {
+    throw new Error("Unsupported OperationExtra");
+  }
+
+  const extraRaw: CeloOperationExtraRaw = {
+    celoOperationValue: extra.celoOperationValue.toString(),
+  };
+
+  if (extra.celoSourceValidator) {
+    extraRaw.celoSourceValidator = extra.celoSourceValidator;
+  }
+
+  return extraRaw;
 }

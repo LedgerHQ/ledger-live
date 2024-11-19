@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { ErrorContainer } from "~/renderer/components/Input";
@@ -30,6 +26,8 @@ import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -125,12 +123,14 @@ function FromRow({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
-  const unit = fromAccount && getAccountUnit(fromAccount);
+  const unit = useMaybeAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
 
+  if (!fromAccount) return null;
+
   const trackEditAccount = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Edit source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -139,8 +139,8 @@ function FromRow({
 
   const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
-    const name = account ? getAccountName(account) : undefined;
-    track("button_clicked", {
+    const name = account ? getDefaultAccountName(account) : undefined;
+    track("button_clicked2", {
       button: "New source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -150,7 +150,7 @@ function FromRow({
   };
 
   const setValue = (fromAmount: BigNumber) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Amount input",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -161,7 +161,7 @@ function FromRow({
   };
 
   const toggleMaxAndTrack = (state: unknown) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "max",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -190,12 +190,12 @@ function FromRow({
             isChecked={isMaxEnabled}
             onChange={toggleMaxAndTrack}
             disabled={!fromAccount}
-            data-test-id="swap-max-spendable-toggle"
+            data-testid="swap-max-spendable-toggle"
           />
         </Box>
       </Box>
       <Box horizontal boxShadow="0px 2px 4px rgba(0, 0, 0, 0.05);">
-        <Box width="50%">
+        <Box width="50%" data-testid="origin-currency-dropdown">
           <SelectAccount
             accounts={accounts}
             value={fromAccount}
@@ -209,11 +209,12 @@ function FromRow({
             onMenuOpen={trackEditAccount}
           />
         </Box>
-        <InputSection width="50%">
+        <InputSection width="50%" data-testid="origin-currency-amount">
           <InputCurrency
             loading={isSendMaxLoading}
             value={fromAmount}
             onChange={setValue}
+            data-testid="origin-currency-amount-value"
             disabled={!fromAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"

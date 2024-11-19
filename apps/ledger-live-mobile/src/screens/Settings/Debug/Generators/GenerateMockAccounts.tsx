@@ -8,18 +8,22 @@ import SettingsRow from "~/components/SettingsRow";
 import accountModel from "~/logic/accountModel";
 import { saveAccounts } from "../../../../db";
 import { useReboot } from "~/context/Reboot";
+import {
+  initialState as liveWalletInitialState,
+  accountUserDataExportSelector,
+} from "@ledgerhq/live-wallet/store";
 
 async function injectMockAccountsInDB(count: number) {
   await saveAccounts({
     active: Array(count)
       .fill(null)
-      .map(() =>
-        accountModel.encode(
-          genAccount(String(Math.random()), {
-            currency: sample(listSupportedCurrencies()),
-          }),
-        ),
-      ),
+      .map(() => {
+        const account = genAccount(String(Math.random()), {
+          currency: sample(listSupportedCurrencies()),
+        });
+        const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
+        return accountModel.encode([account, userData]);
+      }),
   });
 }
 

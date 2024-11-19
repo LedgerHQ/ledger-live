@@ -7,7 +7,7 @@ import {
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -16,6 +16,7 @@ import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
 import ArrowRight from "~/icons/ArrowRight";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   nomination: PolkadotNomination;
@@ -34,7 +35,7 @@ export default function NominationRow({ nomination, validator, account, onPress 
   // const total = validator?.totalBonded ?? null;
   // const commission = validator?.commission ?? null;
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (

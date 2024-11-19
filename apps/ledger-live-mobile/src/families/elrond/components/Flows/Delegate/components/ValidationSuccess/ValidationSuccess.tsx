@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen, track } from "~/analytics";

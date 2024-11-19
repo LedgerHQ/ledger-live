@@ -15,10 +15,11 @@ import { currencySettingsDefaults } from "~/helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { ConfirmationDefaults } from "~/types/common";
+import { ConfirmationDefaults, UnitDefaults } from "~/types/common";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
+import CurrencyUnitsRow from "./CurrencyUnitsRow";
 
 type NavigationProps =
   | StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.CurrencySettings>
@@ -28,7 +29,7 @@ type NavigationProps =
 type Props = {
   confirmationsNb: number;
   updateCurrencySettings: typeof updateCurrencySettings;
-  defaults: ConfirmationDefaults;
+  defaults: ConfirmationDefaults & UnitDefaults;
   currency: CryptoCurrency;
 };
 
@@ -102,6 +103,8 @@ function EachCurrencySettings({
           <Trans i18nKey="settings.currencies.placeholder" />
         </Text>
       )}
+
+      {defaults.unit && <CurrencyUnitsRow currency={currency} />}
     </Box>
   );
 }

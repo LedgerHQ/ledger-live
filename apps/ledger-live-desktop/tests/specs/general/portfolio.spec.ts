@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { Layout } from "../../component/layout.component";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
@@ -11,7 +11,9 @@ test("Portfolio @smoke", async ({ page }) => {
 
   await test.step("load portfolio", async () => {
     await layout.totalBalance.waitFor({ state: "visible" });
-    await expect.soft(page).toHaveScreenshot("portfolio.png");
+    await expect.soft(page).toHaveScreenshot("portfolio.png", {
+      mask: [layout.marketPerformanceWidget],
+    });
   });
 
   await test.step(`scroll to operations`, async () => {

@@ -1,18 +1,18 @@
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
+import { getStoreValue } from "~/store";
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
   disabled: false,
   featureFlagId: "postOnboardingAssetsTransfer",
-  Icon: Icons.ArrowDown,
+  Icon: Icons.Lock,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.ReceiveFunds,
     {
       screen: ScreenName.ReceiveSelectCrypto,
@@ -26,13 +26,13 @@ export const assetsTransferAction: PostOnboardingAction = {
 export const buyCryptoAction: PostOnboardingAction = {
   id: PostOnboardingActionId.buyCrypto,
   disabled: false,
-  Icon: Icons.Plus,
+  Icon: Icons.Dollar,
   title: "postOnboarding.actions.buyCrypto.title",
   titleCompleted: "postOnboarding.actions.buyCrypto.titleCompleted",
   description: "postOnboarding.actions.buyCrypto.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
   buttonLabelForAnalyticsEvent: "Buy Crypto",
-  navigationParams: [
+  shouldCompleteOnStart: true,
+  getNavigationParams: () => [
     NavigatorName.Exchange,
     {
       screen: ScreenName.ExchangeBuy,
@@ -46,38 +46,45 @@ export const buyCryptoAction: PostOnboardingAction = {
 export const customImageAction: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: "postOnboarding.actions.customImage.title",
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
-  navigationParams: [
+  actionCompletedPopupLabel: "postOnboarding.actions.customImage.titleCompleted",
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
+  getNavigationParams: ({ deviceModelId }) => [
     NavigatorName.CustomImage,
     {
       screen: ScreenName.CustomImageStep0Welcome,
       params: {
         device: null,
+        deviceModelId,
       },
     },
   ],
-  buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
-export const claimNftAction: PostOnboardingAction = {
-  id: PostOnboardingActionId.claimNft,
-  disabled: false,
-  Icon: Icons.Gift,
-  featureFlagId: "postOnboardingClaimNft",
-  title: "postOnboarding.actions.claimNft.title",
-  titleCompleted: "postOnboarding.actions.claimNft.titleCompleted",
-  description: "postOnboarding.actions.claimNft.description",
-  tagLabel: "postOnboarding.actions.claimNft.tagLabel",
-  actionCompletedPopupLabel: "postOnboarding.actions.claimNft.popupLabel",
-  navigationParams: [
-    NavigatorName.ClaimNft,
+export const recoverAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.recover,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
+  shouldCompleteOnStart: true,
+  getIsAlreadyCompleted: async ({ protectId }) => {
+    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
+
+    return recoverSubscriptionState === "BACKUP_DONE";
+  },
+  getNavigationParams: ({ protectId }) => [
+    NavigatorName.Base,
     {
-      screen: ScreenName.ClaimNftWelcome,
+      screen: ScreenName.Recover,
+      params: {
+        platform: protectId,
+        redirectTo: "upsell",
+        source: "llm-postonboarding-banner",
+      },
     },
   ],
-  buttonLabelForAnalyticsEvent: "Claim Ledger NFT",
 };

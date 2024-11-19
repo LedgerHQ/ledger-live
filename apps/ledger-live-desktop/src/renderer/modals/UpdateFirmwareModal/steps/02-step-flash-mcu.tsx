@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -17,6 +16,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
 import { StepProps } from "../types";
+import { isRestoreStepEnabled } from "../helpers/createFirmwareUpdateSteps";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -30,7 +30,6 @@ type BodyProps = {
   deviceModelId: DeviceModelId;
   firmware?: FirmwareUpdateContext;
   initialDelayPhase: boolean;
-
   current: number;
   total: number;
 };
@@ -99,9 +98,8 @@ const StepFlashMcu = ({
         .subscribe({
           next: setUpdatedDeviceInfo,
           complete: () => {
-            const shouldGoToLanguageStep =
-              firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-            transitionTo(shouldGoToLanguageStep ? "restore" : "finish");
+            const nextStep = isRestoreStepEnabled(deviceModelId, firmware) ? "restore" : "finish";
+            transitionTo(nextStep);
           },
           error: (error: Error) => {
             setError(error);
@@ -133,8 +131,6 @@ const StepFlashMcu = ({
 
   // Updates the MCU
   useEffect(() => {
-    if (!firmware) return;
-
     setTimeout(() => {
       setInitialDelayPhase(false);
     }, DELAY_PHASE);
@@ -194,7 +190,7 @@ const StepFlashMcu = ({
   }
 
   return (
-    <Container data-test-id="firmware-update-flash-mcu-progress">
+    <Container data-testid="firmware-update-flash-mcu-progress">
       <TrackPage category="Manager" name="FlashMCU" />
       <Body
         deviceModelId={deviceModelId}

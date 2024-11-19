@@ -17,6 +17,7 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
@@ -39,6 +40,8 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const mainAccount = getMainAccount(account, parentAccount);
   const { networkCongestionLevel } = transaction?.networkInfo || {};
   const [customFee, setCustomFee] = useState(transaction.fees);
+
+  const unit = useAccountUnit(mainAccount);
 
   const onChange = (fee: BigNumber) => {
     setCustomFee(fee);
@@ -75,11 +78,11 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
                 editable
                 isActive
                 onChange={onChange}
-                unit={mainAccount.unit}
+                unit={unit}
                 value={customFee}
                 renderRight={
                   <LText style={[styles.currency, styles.active]} semiBold color="grey">
-                    {mainAccount.unit.code}
+                    {unit.code}
                   </LText>
                 }
               />

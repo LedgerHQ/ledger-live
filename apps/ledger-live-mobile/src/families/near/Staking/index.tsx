@@ -150,14 +150,6 @@ function StakingPositions({ account }: Props) {
             ),
           },
           {
-            label: t("near.staking.drawer.rewards"),
-            Component: (
-              <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                {stakingPosition.formattedRewards ?? ""}
-              </LText>
-            ),
-          },
-          {
             label: t("near.staking.drawer.pending"),
             Component: (
               <LText numberOfLines={1} semiBold style={[styles.valueText]}>

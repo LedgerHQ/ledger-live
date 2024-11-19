@@ -1,21 +1,24 @@
 import invariant from "invariant";
 import { useEffect, useMemo, useState } from "react";
-import { getCurrentCosmosPreloadData, getCosmosPreloadDataUpdates } from "./preloadedData";
-import type {
-  CosmosMappedDelegation,
-  CosmosValidatorItem,
-  CosmosMappedValidator,
-  CosmosDelegationInfo,
-  CosmosOperationMode,
-  CosmosSearchFilter,
-  Transaction,
-  CosmosPreloadData,
-  CosmosAccount,
-} from "./types";
-import { mapDelegations, searchFilter as defaultSearchFilter } from "./logic";
-import { getAccountUnit } from "../../account";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import {
+  getCosmosPreloadDataUpdates,
+  getCurrentCosmosPreloadData,
+} from "@ledgerhq/coin-cosmos/preloadedData";
+import { getAccountCurrency } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import cryptoFactory from "./chain/chain";
+import { searchFilter as defaultSearchFilter, mapDelegations } from "./logic";
+import type {
+  CosmosAccount,
+  CosmosDelegationInfo,
+  CosmosMappedDelegation,
+  CosmosMappedValidator,
+  CosmosOperationMode,
+  CosmosPreloadData,
+  CosmosSearchFilter,
+  CosmosValidatorItem,
+  Transaction,
+} from "./types";
 
 export function useCosmosFamilyPreloadData(currencyId?: string): CosmosPreloadData {
   const getCurrent = getCurrentCosmosPreloadData;
@@ -44,7 +47,7 @@ export function useCosmosFamilyMappedDelegations(
 
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
     const mappedDelegations = mapDelegations(delegations || [], validators, unit);
     return mode === "claimReward"

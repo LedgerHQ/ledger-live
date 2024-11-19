@@ -1,15 +1,15 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
+import { ManagerPage } from "../../page/manager.page";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
-import { CustomImageDrawer } from "../../models/CustomImageDrawer";
+import { Layout } from "../../component/layout.component";
+import { CustomImageDrawer } from "../../page/drawer/custom.image.drawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import padStart from "lodash/padStart";
 
 test.use({
   userdata: "2_accounts_eth_with_tokens_and_nft",
-  featureFlags: { customImage: { enabled: true } },
+  featureFlags: { nftsFromSimplehash: { enabled: false } },
 });
 
 test("Custom image (with populated NFT gallery)", async ({ page }) => {

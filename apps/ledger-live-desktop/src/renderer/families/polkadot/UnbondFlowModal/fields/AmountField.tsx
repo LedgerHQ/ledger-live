@@ -4,7 +4,6 @@ import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   PolkadotAccount,
   Transaction,
@@ -16,6 +15,7 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",
@@ -40,7 +40,7 @@ type Props = {
 };
 const AmountField = ({ account, onChangeTransaction, transaction, status }: Props) => {
   const bridge = getAccountBridge(account);
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
       onChangeTransaction(

@@ -8,12 +8,12 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import Text from "~/renderer/components/Text";
+import Alert from "~/renderer/components/Alert";
 
 export default function StepDelegation({
   account,
@@ -28,6 +28,9 @@ export default function StepDelegation({
   const { cardanoResources } = account;
   invariant(cardanoResources, "cardanoResources required");
   const delegation = cardanoResources.delegation;
+
+  const { errors } = status;
+  const displayError = errors.amount?.message ? errors.amount : "";
 
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
@@ -55,6 +58,11 @@ export default function StepDelegation({
         onChangeValidator={selectPool}
         selectedPoolId={selectedPoolId as string}
       />
+      {displayError ? (
+        <Alert type="error">
+          <TranslatedError error={displayError} field="title" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }
@@ -62,41 +70,29 @@ export default function StepDelegation({
 export function StepDelegationFooter({
   transitionTo,
   account,
-  onClose,
   status,
   bridgePending,
   transaction,
+  onClose,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const canNext = !bridgePending && !errors.amount && transaction;
-  const displayError = errors.amount?.message ? errors.amount : "";
+  const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;
 
   return (
-    <Box horizontal alignItems="center" flow={2} grow>
-      {displayError ? (
-        <Box grow>
-          <Text fontSize={13} color="alertRed">
-            <TranslatedError error={displayError} field="title" />
-          </Text>
-        </Box>
-      ) : (
-        <AccountFooter account={account} status={status} />
-      )}
-
-      <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
-        <Button
-          id="delegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("summary")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
+    <Box horizontal justifyContent="flex-end" flow={2} grow>
+      <AccountFooter account={account} status={status} />
+      <Button mr={1} secondary onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="delegate-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("summary")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
     </Box>
   );
 }

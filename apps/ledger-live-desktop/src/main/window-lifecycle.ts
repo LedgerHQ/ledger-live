@@ -3,6 +3,7 @@ import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
+import { ledgerUSBVendorId } from "@ledgerhq/devices";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -77,11 +78,57 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
-    fullUrl.searchParams.append("pathUserdata", app.getPath("userData"));
-    fullUrl.searchParams.append("pathHome", app.getPath("home"));
     await mainWindow.loadURL(fullUrl.href);
   }
 };
+
+function restorePosition(
+  previousPosition?: { x: number; y: number },
+  previousDimensions?: { width: number; height: number },
+) {
+  let width = DEFAULT_WINDOW_WIDTH;
+  let height = DEFAULT_WINDOW_HEIGHT;
+  let x, y;
+  if (previousDimensions) {
+    width = previousDimensions.width;
+    height = previousDimensions.height;
+  }
+  if (previousPosition) {
+    x = previousPosition.x;
+    y = previousPosition.y;
+  } else {
+    const windowPosition = getWindowPosition(width, height);
+    x = windowPosition.x;
+    y = windowPosition.y;
+  }
+
+  const bounds = { x, y, width, height };
+
+  const area = screen.getDisplayMatching(bounds).workArea;
+
+  // If the saved position still valid (the window is entirely inside the display area), use it.
+  if (
+    bounds.x >= area.x &&
+    bounds.y >= area.y &&
+    bounds.x + bounds.width <= area.x + area.width &&
+    bounds.y + bounds.height <= area.y + area.height
+  ) {
+    x = bounds.x;
+    y = bounds.y;
+  } else {
+    // If the saved position is not valid, move the window to the primary display.
+    const primaryDisplay = screen.getPrimaryDisplay().workArea;
+    x = primaryDisplay.x;
+    y = primaryDisplay.y;
+  }
+  // If the saved size is still valid, use it.
+  if (bounds.width <= area.width || bounds.height <= area.height) {
+    width = bounds.width;
+    height = bounds.height;
+  }
+
+  return { x, y, width, height };
+}
 
 export async function createMainWindow(
   {
@@ -95,22 +142,15 @@ export async function createMainWindow(
       ? settings.theme
       : "null";
 
-  // TODO renderer should provide the saved window rectangle
-  const width = dimensions ? dimensions.width : DEFAULT_WINDOW_WIDTH;
-  const height = dimensions ? dimensions.height : DEFAULT_WINDOW_HEIGHT;
-  const windowPosition = positions || getWindowPosition(width, height);
   const windowOptions = {
     ...defaultWindowOptions,
-    x: windowPosition.x,
-    y: windowPosition.y,
+    ...restorePosition(positions, dimensions),
     ...(process.platform === "darwin"
       ? {
           frame: false,
           titleBarStyle: "hiddenInset" as const,
         }
       : {}),
-    width,
-    height,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
     show: false,
@@ -120,6 +160,30 @@ export async function createMainWindow(
     },
   };
   mainWindow = new BrowserWindow(windowOptions);
+
+  mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
+    event.preventDefault();
+    const ledgerDevices = details.deviceList.filter(
+      device => device.vendorId === ledgerUSBVendorId,
+    );
+    if (ledgerDevices.length > 0) {
+      callback(ledgerDevices[0].deviceId);
+    } else {
+      console.warn("No Ledger HID devices found.");
+    }
+  });
+
+  mainWindow.webContents.session.setPermissionCheckHandler((_, permission) => {
+    if (permission === "hid") return true;
+    return false;
+  });
+
+  mainWindow.webContents.session.setDevicePermissionHandler(details => {
+    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+      return true;
+    }
+    return false;
+  });
 
   mainWindow.name = "MainWindow";
   loadWindow();

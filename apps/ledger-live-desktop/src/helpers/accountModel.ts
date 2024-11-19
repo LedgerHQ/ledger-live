@@ -3,7 +3,8 @@
  */
 import { createDataModel, DataModel } from "@ledgerhq/live-common/DataModel";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/account/index";
-import { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
+import { Account, AccountRaw, Operation, AccountUserData } from "@ledgerhq/types-live";
+import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 
 /**
  * @memberof models/account
@@ -15,7 +16,7 @@ export const opRetentionStategy =
 
 const opRetentionFilter = opRetentionStategy(366, 500);
 
-const accountModel: DataModel<AccountRaw, Account> = createDataModel({
+const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDataModel({
   migrations: [
     // 2018-10-10: change of the account id format to include the derivationMode and seedIdentifier in Account
     raw => {
@@ -78,11 +79,15 @@ const accountModel: DataModel<AccountRaw, Account> = createDataModel({
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 
-  decode: fromAccountRaw,
-  encode: (account: Account): AccountRaw =>
-    toAccountRaw({
-      ...account,
-      operations: account.operations.filter(opRetentionFilter),
-    }),
+  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
+    toAccountRaw(
+      {
+        ...account,
+        operations: account.operations.filter(opRetentionFilter),
+      },
+      userData,
+    ),
 });
+
 export default accountModel;

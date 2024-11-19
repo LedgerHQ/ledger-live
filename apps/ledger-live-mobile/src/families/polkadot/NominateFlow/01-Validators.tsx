@@ -55,6 +55,7 @@ import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -116,7 +117,9 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { staking, validators: polkadotValidators } = preloaded;
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
   const hasMinBondBalance = hasMinimumBondBalance(mainAccount);
-  const minBondBalance = formatCurrencyUnit(mainAccount.unit, minimumBondBalance, {
+  const unit = useAccountUnit(mainAccount);
+
+  const minBondBalance = formatCurrencyUnit(unit, minimumBondBalance, {
     disableRounding: true,
     alwaysShowSign: false,
     showCode: true,
@@ -218,9 +221,10 @@ function NominateSelectValidator({ navigation, route }: Props) {
             onOpenExplorer,
             maxNominatorRewardedPerValidator,
             validator: drawerValidator,
+            unit,
           })
         : [],
-    [drawerValidator, t, account, maxNominatorRewardedPerValidator, onOpenExplorer],
+    [drawerValidator, t, account, onOpenExplorer, maxNominatorRewardedPerValidator, unit],
   );
   const renderItem: SectionListRenderItem<PolkadotValidator> = useCallback(
     ({ item }) => {

@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -25,6 +25,7 @@ import Illustration from "~/images/illustration/Illustration";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -40,7 +41,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const bridge = getAccountBridge(mainAccount, undefined);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { rewards } = mainAccount.algorandResources;
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const { transaction, status } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {

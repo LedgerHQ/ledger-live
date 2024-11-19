@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import { debounce } from "../utils/debounce";
 import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
 
+export { getAbandonSeedAddress };
 export const useFromState = ({
   accounts,
   defaultCurrency,
@@ -54,10 +55,12 @@ export const useFromState = ({
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction(transaction => ({
-        ...transaction,
-        recipient,
-      }));
+      bridgeTransaction.updateTransaction(transaction => {
+        return {
+          ...transaction,
+          recipient,
+        };
+      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [accounts, bridgeTransaction.updateTransaction],
