@@ -33,15 +33,9 @@ export default function PortfolioContentCard({
 
   return (
     <Wrapper image={image} tag={tag} onClick={onClick}>
-      {tag && (
-        <Tag size="medium" type="plain" active>
-          {tag}
-        </Tag>
-      )}
-      <Text variant="h4Inter">{title}</Text>
-      <Text mb={3} variant="small" color="neutral.c70">
-        {description}
-      </Text>
+      {tag && <StyledTag>{tag}</StyledTag>}
+      <Title>{title}</Title>
+      <Desc>{description}</Desc>
       {cta && (
         <Button variant="main" outline={false} onClick={onClick}>
           {cta}
@@ -51,6 +45,25 @@ export default function PortfolioContentCard({
     </Wrapper>
   );
 }
+
+const StyledTag = styled(Tag).attrs({ size: "medium", type: "plain", active: true })`
+  font-size: 11px;
+  background-color: ${p => p.theme.colors.primary.c80};
+`;
+
+const Title = styled(Text).attrs({ variant: "h4Inter" })`
+  font-family: Inter;
+  font-size: 24px;
+  font-weight: 600;
+`;
+
+const Desc = styled(Text).attrs({ variant: "small", color: "neutral.c70" })`
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  padding-bottom: 8px;
+`;
 
 const Wrapper = styled.div<Pick<PortfolioContentCardProps, "image" | "tag" | "onClick">>`
   background-color: ${p => p.theme.colors.background.card};
