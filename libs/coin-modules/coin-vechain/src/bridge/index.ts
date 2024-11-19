@@ -6,7 +6,7 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { prepareTransaction } from "./prepareTransaction";
