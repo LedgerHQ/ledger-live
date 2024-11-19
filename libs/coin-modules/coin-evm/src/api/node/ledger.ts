@@ -266,13 +266,15 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const mevParam = broadcastConfig?.mevProtected ? "?mevProtected=true" : "";
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send${mevParam}`,
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
+    params: {
+      mevProtected: Boolean(broadcastConfig?.mevProtected),
+    },
   });
   return hash;
 };
