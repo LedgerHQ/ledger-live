@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -56,7 +55,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const locale = useSelector(localeSelector);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, delegatedAmount: _delegatedAmount } = account;
-  const unit = getAccountUnit(account);
+  const unit = account.currency.units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

@@ -1,15 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
-import {
-  formatTransactionStatusCommon as formatTransactionStatus,
-  fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
-  toTransactionCommonRaw,
-  toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+
 import { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
+import {
+  fromTransactionCommonRaw,
+  toTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "@ledgerhq/coin-framework/serialization";
+import { formatTransactionStatus } from "@ledgerhq/coin-bitcoin/transaction";
 
 export const formatTransaction = (
   { mode, amount, fees, recipient, useAllAmount }: Transaction,
@@ -19,15 +19,11 @@ ${mode.toUpperCase()} ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " + formatCurrencyUnit(account.currency.units[0], amount)
 }
 TO ${recipient}
-with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}`;
+with fees=${fees ? formatCurrencyUnit(account.currency.units[0], fees) : "?"}`;
 
 export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(t);

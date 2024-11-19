@@ -51,13 +51,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
-<<<<<<< HEAD
-  "aptos",
-  "aptos_testnet",
-=======
   "icon",
   "icon_berlin_testnet",
->>>>>>> develop
   "optimism",
   "optimism_sepolia",
   "arbitrum",

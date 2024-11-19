@@ -187,6 +187,7 @@
     "@ledgerhq/wallet-api-core": "^1.13.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.6.0",
+    "@noble/hashes": "1.5.0",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
     "@stricahq/typhonjs": "^2.0.0",

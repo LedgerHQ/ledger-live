@@ -15,21 +15,13 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
 
-const createSigner: CreateSigner<CosmosSigner ou CryptoOrgSigner> = (transport: Transport, currencyId) => {
+const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
   const cosmos = new CosmosApp(transport);
-  const cryptoOrg - new Cosmos()
-  return currencyId === "cryptoorg" ? {
-      // Here we rely on hw-app-cosmos, the lib for cryptoorg
-      getAddressAndPubKey: cosmos.getAddressAndPubKey.bind(cosmos),
-      sign: cosmos.sign.bind(cosmos),
-      getAddress: cosmos.getAddressAndPubKey()
-    } :
-    {
-      // here we rely on @zondax/ledger-cosmos-js
-      getAddressAndPubKey: cosmos.getAddressAndPubKey.bind(cosmos),
-      sign: cosmos.sign.bind(cosmos),
-      getAddress: cosmos.getAddressAndPubKey()
-    },
+  const hwCosmos = new Cosmos(transport);
+  return {
+    getAddressAndPubKey: cosmos.getAddressAndPubKey.bind(cosmos),
+    sign: cosmos.sign.bind(cosmos),
+    getAddress: hwCosmos.getAddress.bind(hwCosmos),
   };
 };
 

@@ -88,9 +88,7 @@ export const getFee = async (
   }
 
   try {
-    const { sequence_number } = await aptosClient.getAccount(
-      account.freshAddresses[0]?.address || account.freshAddress,
-    );
+    const { sequence_number } = await aptosClient.getAccount(account.freshAddress);
     sequenceNumber = sequence_number;
   } catch (_) {
     // skip

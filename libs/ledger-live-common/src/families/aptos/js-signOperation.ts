@@ -14,7 +14,7 @@ import type {
 import { AptosAPI } from "./api";
 import LedgerAccount from "./LedgerAccount";
 
-const signOperation: SignOperationFnSignature<Transaction> = ({
+const signOperation: SignOperationFnSignature<Transaction, Account> = ({
   account,
   deviceId,
   transaction,
@@ -31,10 +31,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
           o.next({ type: "device-signature-requested" });
 
-          const ledgerAccount = new LedgerAccount(
-            account.freshAddresses[0]?.derivationPath || account.freshAddressPath,
-            account.xpub as string,
-          );
+          const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub as string);
           await ledgerAccount.init(transport);
 
           const rawTx = await buildTransaction(account, transaction, aptosClient);
