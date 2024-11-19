@@ -15,6 +15,7 @@ import {
   DynamicContentSetNotificationCardsPayload,
   DynamicContentSetCategoriesCardsPayload,
   DynamicContentSetMobileCardsPayload,
+  DynamicContentSetLandingStickyCtaCardsPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -56,6 +57,11 @@ export const setDynamicContentCategoriesCards = (categoriesCards: CategoryConten
 const setDynamicContentNotificationCardsAction =
   createAction<DynamicContentSetNotificationCardsPayload>(
     DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS,
+  );
+
+export const setDynamicContentLandingPageStickyCtaCards =
+  createAction<DynamicContentSetLandingStickyCtaCardsPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS,
   );
 
 export const setDynamicContentNotificationCards = (notificationCards: NotificationContentCard[]) =>
