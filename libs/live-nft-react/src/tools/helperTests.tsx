@@ -25,17 +25,19 @@ export const generateNftsOwned = () => {
 
   NFTs.forEach(nft => {
     for (let i = 1; i <= 20; i++) {
-      nfts.push({
-        id: encodeNftId("foo", nft.collection.contract, String(i), "ethereum"),
-        tokenId: String(i),
-        amount: new BigNumber(0),
-        contract: nft.collection.contract,
-        standard: "ERC721" as const,
-        currencyId: "ethereum",
-        metadata: undefined,
-      });
+      nfts.push(generateNft(nft.collection.contract, String(i)));
     }
   });
 
   return nfts;
 };
+
+export const generateNft = (contract: string, tokenId: string) => ({
+  id: encodeNftId("foo", contract, tokenId, "ethereum"),
+  tokenId: tokenId,
+  amount: new BigNumber(0),
+  contract: contract,
+  standard: "ERC721" as const,
+  currencyId: "ethereum",
+  metadata: undefined,
+});

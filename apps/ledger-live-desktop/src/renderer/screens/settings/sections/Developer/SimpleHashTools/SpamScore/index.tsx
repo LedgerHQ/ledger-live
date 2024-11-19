@@ -72,7 +72,7 @@ export default function SpamScore(props: HookResult) {
       return (error as Error).message;
     };
 
-    const getScore = (data?: SimpleHashResponse) => data?.nfts[0].collection.spam_score;
+    const getScore = (data?: SimpleHashResponse) => data?.nfts[0]?.collection.spam_score || 100;
 
     const text = checkSpamScore.isError
       ? getErrorText(checkSpamScore.error)

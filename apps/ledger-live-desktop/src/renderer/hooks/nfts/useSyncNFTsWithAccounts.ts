@@ -66,12 +66,12 @@ export function useSyncNFTsWithAccounts() {
   const [, setCurrentIndex] = useState(0);
 
   const { refetch } = useCheckNftAccount({
-    addresses: groupToFetch.join(","),
+    addresses: groupToFetch?.join(",") || "",
     nftsOwned,
     chains: SUPPORTED_NFT_CURRENCIES,
     threshold,
     action: hideSpamCollection,
-    enabled,
+    enabled: enabled && groupToFetch.length > 0,
   });
 
   // Refetch with new last group when addressGroups length changes
