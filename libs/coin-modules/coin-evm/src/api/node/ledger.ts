@@ -254,6 +254,7 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
 
 /**
  * Broadcast a serialized transaction and returns its hash
+ * @param broadcastConfig.mevProtected - Optional flag indicating whether the transaction should be protected against MEV attacks.
  */
 export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
   currency,
