@@ -114,7 +114,7 @@ Usage: ledger-live balanceHistory # Get the balance history for accounts
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -137,7 +137,7 @@ Usage: ledger-live broadcast  # Broadcast signed operation(s)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -198,7 +198,7 @@ Usage: ledger-live estimateMaxSpendable # estimate the max spendable of an accou
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -210,7 +210,7 @@ Usage: ledger-live exportAccounts # Export given accounts to Live QR or console 
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -233,7 +233,7 @@ Usage: ledger-live generateTestScanAccounts # Generate a test for scan accounts 
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -246,7 +246,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -271,7 +271,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
@@ -320,7 +320,7 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -345,7 +345,7 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
@@ -417,7 +417,7 @@ Usage: ledger-live liveData   # utility for Ledger Live app.json file
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -435,7 +435,7 @@ Usage: ledger-live portfolio  # Get a portfolio summary for accounts
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -459,7 +459,7 @@ Usage: ledger-live receive    # Receive crypto-assets (verify on device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -493,7 +493,7 @@ Usage: ledger-live send       # Send crypto-assets
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -518,7 +518,7 @@ Usage: ledger-live send       # Send crypto-assets
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
@@ -579,7 +579,7 @@ Usage: ledger-live swap       # Perform an arbitrary swap between two currencies
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -591,7 +591,7 @@ Usage: ledger-live sync       # Synchronize accounts with blockchain
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
@@ -608,7 +608,7 @@ Usage: ledger-live testDetectOpCollision # Detect operation collisions
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
      --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given scheme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
