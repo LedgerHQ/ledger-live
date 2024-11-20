@@ -1,6 +1,7 @@
 import React, { type ReactEventHandler } from "react";
 import styled from "styled-components";
 
+import { StyleProvider } from "../../../../styles";
 import { Icons } from "../../../../assets";
 import { Text } from "../../../asorted";
 import { Button } from "../../../cta";
@@ -41,7 +42,9 @@ export default function PortfolioContentCard({
           {cta}
         </Button>
       )}
-      <CloseButton onClick={handleClose} />
+      <StyleProvider selectedPalette="dark">
+        <CloseButton onClick={handleClose} />
+      </StyleProvider>
     </Wrapper>
   );
 }
