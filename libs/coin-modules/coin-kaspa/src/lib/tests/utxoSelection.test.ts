@@ -2,10 +2,6 @@ import { selectUtxos } from "../utxoSelection";
 import { KaspaUtxo } from "../../types/bridge";
 import { BigNumber } from "bignumber.js";
 
-const DEFAULT_MASS_WITH_ONE_INPUT = 2036;
-const MASS_PER_UTXO_INPUT = 1118;
-const ADDTIONAL_MASS_FOR_ECDSA_OUTPUT = 200; // update with actual value if it differs
-
 const sampleUtxo: KaspaUtxo = {
   address: "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee",
   outpoint: {
