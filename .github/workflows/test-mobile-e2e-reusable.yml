@@ -180,7 +180,7 @@ jobs:
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
       COINAPPS: ${{ github.workspace }}/coin-apps
     outputs:
       status: ${{ steps.detox.outcome }}
