@@ -69,7 +69,7 @@ export default function App() {
 
 ### **_Theme conventions_**
 
-While developping we try to keep the app theme coherent by setting the same colors at the same spots:
+While developing we try to keep the app theme coherent by setting the same colors at the same spots:
 
 - use `colors.background` for background of the pages
 - use `colors.card` for foreground containers
