@@ -7,7 +7,7 @@ export type Props = {
   children: ReactElement[];
   autoPlay?: number;
   variant?: Variant;
-  onChange?: (index: number) => void;
+  onChange?: (current: number, previous?: number) => void;
 };
 
 /**

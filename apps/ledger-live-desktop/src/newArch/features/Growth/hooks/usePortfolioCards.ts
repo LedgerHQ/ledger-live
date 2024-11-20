@@ -2,6 +2,7 @@ import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { track } from "~/renderer/analytics/segment";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
 import { setDismissedContentCards } from "~/renderer/actions/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
@@ -22,11 +23,19 @@ export function usePortfolioCards(): UsePortfolioCards {
     setCachedContentCards(cards);
   }, []);
 
-  const logSlideImpression = useCallback(
-    (index: number) => {
+  const logSlideImpression = useCallback<CarouselActions["logSlideImpression"]>(
+    (current, previous) => {
       if (!isTrackedUser) return;
 
-      const slide = portfolioCards[index];
+      if (previous) {
+        track("contentcards_slide", {
+          button: current > previous ? "next" : "prev",
+          page: "Portfolio",
+          type: "portfolio_carousel",
+        });
+      }
+
+      const slide = portfolioCards[current];
       if (!slide?.id) return;
 
       const currentCard = cachedContentCards.find(card => card.id === slide.id);
@@ -37,10 +46,18 @@ export function usePortfolioCards(): UsePortfolioCards {
     [portfolioCards, cachedContentCards, isTrackedUser],
   );
 
-  const dismissCard = useCallback(
-    (index: number) => {
+  const dismissCard = useCallback<CarouselActions["dismissCard"]>(
+    index => {
       const slide = portfolioCards[index];
       if (!slide?.id) return;
+
+      if (isTrackedUser) {
+        track("contentcard_dismissed", {
+          card: slide.id,
+          page: "Portfolio",
+          type: "portfolio_carousel",
+        });
+      }
 
       const currentCard = cachedContentCards.find(card => card.id === slide.id);
       if (currentCard) {
@@ -56,16 +73,27 @@ export function usePortfolioCards(): UsePortfolioCards {
     [portfolioCards, cachedContentCards, isTrackedUser, dispatch],
   );
 
-  const logSlideClick = useCallback(
-    (cardId: string) => {
+  const logSlideClick = useCallback<CarouselActions["logSlideClick"]>(
+    cardId => {
       if (!isTrackedUser) return;
+
+      const slide = portfolioCards.find(card => card.id === cardId);
+      if (!slide) return;
+
+      track("contentcard_clicked", {
+        contentcard: slide.title,
+        link: slide.path || slide.url,
+        campaign: cardId,
+        page: "Portfolio",
+        type: "portfolio_carousel",
+      });
 
       const currentCard = cachedContentCards.find(card => card.id === cardId);
       if (!currentCard) return;
 
       braze.logContentCardClick(currentCard);
     },
-    [cachedContentCards, isTrackedUser],
+    [portfolioCards, cachedContentCards, isTrackedUser],
   );
 
   return {

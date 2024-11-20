@@ -48,7 +48,8 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onChange }: Pro
     setCurrentIndex(newIndex);
     emblaApi.scrollTo(newIndex);
 
-    onChange?.(newIndex);
+    const prevIndex = emblaApi.previousScrollSnap();
+    onChange?.(newIndex, prevIndex !== newIndex ? prevIndex : undefined);
   }, [emblaApi, onChange]);
 
   useEffect(() => {
