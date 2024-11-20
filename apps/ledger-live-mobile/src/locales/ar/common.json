@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -2871,6 +2877,8 @@
       "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
       "analytics" : "تحليلات",
       "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Live وتحسين كلٍ من التطبيق وتجربتك.",
+      "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
+      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم",
       "personalizedRecommendations" : "تجربة مخصصة",
       "personalizedRecommendationsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
       "analyticsModal" : {
@@ -5904,6 +5912,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع. معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
