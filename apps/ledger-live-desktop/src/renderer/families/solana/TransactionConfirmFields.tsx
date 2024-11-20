@@ -59,8 +59,6 @@ type TransactionConfirmFields = SolanaFamily["transactionConfirmFields"];
 type TitleComponent = NonNullable<NonNullable<TransactionConfirmFields>["title"]>;
 
 const transactionConfirmFields: TransactionConfirmFields = {
-  // footer: Footer, // is not shown without manifestId
-  // fieldComponents,
   title: Title,
 };
 
