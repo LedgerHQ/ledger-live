@@ -1,7 +1,7 @@
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
 import type { SubAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
-import type { SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
+import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
 
 const maybeGetUpdatedSwapHistory = async (
@@ -9,13 +9,14 @@ const maybeGetUpdatedSwapHistory = async (
   operations: Operation[] | null | undefined,
 ): Promise<SwapOperation[] | null | undefined> => {
   const pendingSwapIds: SwapStatusRequest[] = [];
+  const atomicSwapIds: SwapStatus[] = [];
   let accountNeedsUpdating = false;
   let consolidatedSwapHistory: SwapOperation[] = [];
 
   if (swapHistory) {
     for (const swap of swapHistory) {
       const { provider, swapId, status, operationId } = swap;
-      const updatedSwap = { ...swap };
+      const updatedSwap: SwapOperation = { ...swap };
 
       if (isSwapOperationPending(status)) {
         // if swapId is in operationId, then we can get the status from the operation
@@ -32,6 +33,7 @@ const maybeGetUpdatedSwapHistory = async (
             if (newStatus !== swap.status) {
               accountNeedsUpdating = true;
               updatedSwap.status = newStatus;
+              atomicSwapIds.push({ provider, swapId, status: newStatus });
             }
           }
         } else {
@@ -49,20 +51,18 @@ const maybeGetUpdatedSwapHistory = async (
         }
       }
     }
-
-    if (pendingSwapIds.length) {
+    if (pendingSwapIds.length || atomicSwapIds.length) {
       const uniquePendingSwapIdsMap = new Map<string, SwapStatusRequest>();
       for (const item of pendingSwapIds) {
         const existingItem = uniquePendingSwapIdsMap.get(item.swapId);
-
         if (!existingItem) {
           uniquePendingSwapIdsMap.set(item.swapId, item);
         } else if (item.transactionId && !existingItem.transactionId) {
           uniquePendingSwapIdsMap.set(item.swapId, item);
         }
       }
-
       const uniquePendingSwapIds = Array.from(uniquePendingSwapIdsMap.values());
+
       if (uniquePendingSwapIds.length !== pendingSwapIds.length) {
         log(
           "error",
@@ -70,7 +70,11 @@ const maybeGetUpdatedSwapHistory = async (
           pendingSwapIds.length - uniquePendingSwapIds.length,
         );
       }
-      const newStatusList = await getMultipleStatus(uniquePendingSwapIds);
+
+      const newStatusList = pendingSwapIds.length
+        ? await getMultipleStatus(uniquePendingSwapIds)
+        : [];
+      newStatusList.push(...atomicSwapIds);
       consolidatedSwapHistory = swapHistory.map<SwapOperation>((swap: SwapOperation) => {
         const newStatus = newStatusList.find(s => s.swapId === swap.swapId);
 
