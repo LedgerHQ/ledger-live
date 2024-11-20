@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -2871,6 +2877,8 @@
       "developerModeDesc" : "My Ledgerに開発者用アプリを表示し、テストネットアプリを有効化してください。",
       "analytics" : "アナリティクス",
       "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させます。",
+      "mevProtection" : "MEV保護",
+      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
       "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
       "analyticsModal" : {
@@ -5904,6 +5912,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。Solana SPLトークンのトランザクションには独特の特徴があります。詳細については、次のサイトをご覧ください：<0>ledger.com/spl</0>"
     }
   },
   "near" : {
