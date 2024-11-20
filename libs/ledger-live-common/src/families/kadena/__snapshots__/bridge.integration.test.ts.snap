@@ -68,6 +68,7 @@ exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
         "senderChainId": 0,
       },
       "fee": "20000000000000",
+      "hasFailed": false,
       "hash": "8qgaZP0nWHd-O7n2fyDF6LVbQY89kDTO1mO9xSN3fdo",
       "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-8qgaZP0nWHd-O7n2fyDF6LVbQY89kDTO1mO9xSN3fdo-IN",
       "recipients": [
@@ -88,6 +89,7 @@ exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
         "senderChainId": 0,
       },
       "fee": "736000000",
+      "hasFailed": false,
       "hash": "AdiO7TIUc72AVQ9q8ByKgc8A0PNrwULgeqBc6Z5bfpk",
       "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-AdiO7TIUc72AVQ9q8ByKgc8A0PNrwULgeqBc6Z5bfpk-OUT",
       "recipients": [
@@ -108,6 +110,7 @@ exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
         "senderChainId": 0,
       },
       "fee": "618000000",
+      "hasFailed": false,
       "hash": "MzVflgKdiLs3RrEiS_bRHS2Ai0QqKm22PV7PgllLkHY",
       "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-MzVflgKdiLs3RrEiS_bRHS2Ai0QqKm22PV7PgllLkHY-OUT",
       "recipients": [
@@ -128,6 +131,7 @@ exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
         "senderChainId": 0,
       },
       "fee": "736000000",
+      "hasFailed": false,
       "hash": "ukMO2OihPUy6G4ukJjAUcYy-tnf3WgdKIMbsFu8zrvk",
       "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-ukMO2OihPUy6G4ukJjAUcYy-tnf3WgdKIMbsFu8zrvk-OUT",
       "recipients": [
@@ -150,6 +154,7 @@ exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
         "senderChainId": 1,
       },
       "fee": "500000000000",
+      "hasFailed": false,
       "hash": "xw9ANMKb6SRvEoZdPjj4qZwiQT6lsPZlRn3bwxm-hTE",
       "id": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:-xw9ANMKb6SRvEoZdPjj4qZwiQT6lsPZlRn3bwxm-hTE-IN",
       "recipients": [

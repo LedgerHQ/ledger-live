@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { ChainAccount } from "./api/types";
 import { KDA_DECIMALS } from "./constants";
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -28,4 +29,8 @@ export function baseUnitToKda(amount: string | BigNumber | number): BigNumber {
 
 export const isError = (r: { return_code: number; error_message: string }) => {
   if (!isNoErrorReturnCode(r.return_code)) throw new Error(`${r.return_code} - ${r.error_message}`);
+};
+
+export const findChainById = (chainAccounts: ChainAccount[], targetChainId: number) => {
+  return chainAccounts.find(({ chainId }) => chainId === targetChainId.toString());
 };

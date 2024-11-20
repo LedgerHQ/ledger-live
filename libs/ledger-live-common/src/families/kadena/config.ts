@@ -8,7 +8,8 @@ export const kadenaConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       infra: {
-        API_KADENA_ENDPOINT: "https://estats.testnet.chainweb.com",
+        API_KADENA_ENDPOINT: "https://graph.testnet.kadena.network/graphql",
+        API_KADENA_PACT_ENDPOINT: "https://api.testnet.chainweb.com",
       },
     },
   },

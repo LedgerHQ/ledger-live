@@ -1,7 +1,6 @@
-import BigNumber from "bignumber.js";
-import { fetchCoinDetailsForAccount, fetchNetworkInfo, getKadenaPactURL } from "../../api/network";
+import { fetchAccountBalance, getKadenaPactURL } from "../../api/network";
 import { setCoinConfig } from "../../config";
-import { API_KADENA_ENDPOINT } from "../fixtures/common.fixtures";
+import { API_KADENA_ENDPOINT, API_KADENA_PACT_ENDPOINT } from "../fixtures/common.fixtures";
 
 describe("network", () => {
   beforeAll(() => {
@@ -11,30 +10,20 @@ describe("network", () => {
       },
       infra: {
         API_KADENA_ENDPOINT,
+        API_KADENA_PACT_ENDPOINT,
       },
     }));
   });
 
   test("fetch balances", async () => {
-    const address = "k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76";
-    const networkInfo = await fetchNetworkInfo();
-    const balanceResp = await fetchCoinDetailsForAccount(address, networkInfo.nodeChains);
+    const address = "k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375";
+    const totalBalance = await fetchAccountBalance(address);
 
-    let totalBalance = new BigNumber(0);
-    for (const balance of Object.values(balanceResp)) {
-      totalBalance = totalBalance.plus(balance);
-    }
-
-    expect(totalBalance.toNumber()).toBeGreaterThan(0);
-  });
-
-  test("fetch network info", async () => {
-    const info = await fetchNetworkInfo();
-    expect(info).toBeDefined();
+    expect(totalBalance).toBeGreaterThan(0);
   });
 
   test("get kadena pact url", () => {
     const url = getKadenaPactURL("0");
-    expect(url).toBe(`${API_KADENA_ENDPOINT}/chainweb/0.0/testnet04/chain/0/pact`);
+    expect(url).toBe(`${API_KADENA_PACT_ENDPOINT}/chainweb/0.0/testnet04/chain/0/pact`);
   });
 });

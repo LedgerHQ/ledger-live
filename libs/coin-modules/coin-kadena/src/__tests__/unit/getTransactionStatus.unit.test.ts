@@ -6,12 +6,13 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { fetchCoinDetailsForAccount } from "../../api/network";
+import { fetchChainBalances } from "../../api/network";
 import { setCoinConfig } from "../../config";
 import getTransactionStatus from "../../getTransactionStatus";
 import {
   account,
   API_KADENA_ENDPOINT,
+  API_KADENA_PACT_ENDPOINT,
   transaction as baseTransaction,
   mockAddress,
 } from "../fixtures/common.fixtures";
@@ -26,10 +27,13 @@ describe("getTransactionStatus", () => {
       },
       infra: {
         API_KADENA_ENDPOINT,
+        API_KADENA_PACT_ENDPOINT,
       },
     }));
-    const fetchCoinDetailsForAccountMock = jest.mocked(fetchCoinDetailsForAccount);
-    fetchCoinDetailsForAccountMock.mockReturnValue(Promise.resolve({ "0": "0.000916781498" }));
+    const fetchChainBalancesMock = jest.mocked(fetchChainBalances);
+    fetchChainBalancesMock.mockReturnValue(
+      Promise.resolve([{ chainId: "0", balance: 0.000916781498 }]),
+    );
   });
 
   describe("Recipient", () => {

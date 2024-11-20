@@ -8,7 +8,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
-import { fetchCoinDetailsForAccount } from "./api/network";
+import { fetchChainBalances } from "./api/network";
 import { acceptTransaction } from "./speculos-deviceActions";
 import type { Transaction } from "./types";
 
@@ -83,8 +83,8 @@ const kadena: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         botTest("account balance should be null on chain ID 0", async () => {
-          const balance = await fetchCoinDetailsForAccount(account.freshAddress, ["0"]);
-          expect(balance.toString()).toBe("0");
+          const balances = await fetchChainBalances(account.freshAddress);
+          expect(balances.map(({ chainId }) => chainId)).toBe(["0"]);
         });
       },
     },

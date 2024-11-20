@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchCoinDetailsForAccount } from "./api/network";
+import { fetchChainBalances } from "./api/network";
 import { KDA_FEES, KDA_GAS_LIMIT_TRANSFER } from "./constants";
 import { Transaction } from "./types";
-import { baseUnitToKda, validateAddress } from "./utils";
+import { baseUnitToKda, findChainById, validateAddress } from "./utils";
 
 export const createTransaction = (): Transaction => {
   // log("debug", "[createTransaction] creating base tx");
@@ -36,14 +36,14 @@ export const prepareTransaction = async (
       if (transaction.useAllAmount) {
         const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
 
-        const balance = await fetchCoinDetailsForAccount(address, [
-          transaction.senderChainId.toString(),
-        ]);
-        if (balance[transaction.senderChainId] === undefined) {
+        const chains = await fetchChainBalances(address);
+        const senderChain = findChainById(chains, transaction.senderChainId);
+
+        if (senderChain?.balance === undefined) {
           return { ...transaction, amount: new BigNumber(0) };
         }
 
-        amount = baseUnitToKda(balance[transaction.senderChainId]).minus(fees);
+        amount = baseUnitToKda(senderChain.balance).minus(fees);
         return { ...transaction, amount };
       }
     }

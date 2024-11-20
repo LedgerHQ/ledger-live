@@ -7,9 +7,9 @@ import {
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchCoinDetailsForAccount } from "./api/network";
+import { fetchChainBalances } from "./api/network";
 import { Transaction, TransactionStatus } from "./types";
-import { baseUnitToKda, validateAddress } from "./utils";
+import { baseUnitToKda, findChainById, validateAddress } from "./utils";
 
 type ValidatedTransactionFields = "recipient" | "amount";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
@@ -57,10 +57,12 @@ const validateAmount = async (
   if (!transaction.amount || transaction.amount.isZero()) {
     errors.amount = new AmountRequired(); // "Amount required"
   } else {
-    const balance = await fetchCoinDetailsForAccount(account.freshAddress, [
-      transaction.senderChainId.toString(),
-    ]);
-    const accountBalance = baseUnitToKda(balance[transaction.senderChainId]) ?? new BigNumber(0);
+    const chains = await fetchChainBalances(account.freshAddress);
+    const senderChain = findChainById(chains, transaction.senderChainId);
+
+    const accountBalance = senderChain?.balance
+      ? baseUnitToKda(senderChain.balance)
+      : new BigNumber(0);
 
     if (totalSpent.isGreaterThan(accountBalance)) {
       // if not enough to make the transaction

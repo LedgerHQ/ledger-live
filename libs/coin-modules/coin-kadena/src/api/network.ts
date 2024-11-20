@@ -1,115 +1,148 @@
-import { ChainId, ICommandResult, Pact, createClient } from "@kadena/client";
-import network from "@ledgerhq/live-network/network";
-import { log } from "@ledgerhq/logs";
-import { AxiosResponse, Method } from "axios";
+import { createClient } from "@kadena/client";
+import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
 import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
 import { PactCommandObject } from "../hw-app-kda/Kadena";
 import { KadenaOperation } from "../types";
-import { GetCutResponse, GetInfoResponse, GetTxnsResponse } from "./types";
+import {
+  ChainAccount,
+  ErrorResponse,
+  GetAccountBalanceResponse,
+  GetChainAccountResponse,
+  GetTransfers,
+  GraphQLResponse,
+  LastBlockHeight,
+  Transfer,
+} from "./types";
 
-const getKadenaURL = (subpath?: string): string => {
+const getKadenaURL = (): string => {
   const currencyConfig = getCoinConfig();
 
-  return `${currencyConfig.infra.API_KADENA_ENDPOINT}${subpath ?? ""}`;
+  return currencyConfig.infra.API_KADENA_ENDPOINT;
 };
 
 export const getKadenaPactURL = (chainId: string): string => {
-  return `${getKadenaURL()}/chainweb/${KDA_CHAINWEB_VER}/${KDA_NETWORK}/chain/${chainId}/pact`;
+  const currencyConfig = getCoinConfig();
+
+  return `${currencyConfig.infra.API_KADENA_PACT_ENDPOINT}/chainweb/${KDA_CHAINWEB_VER}/${KDA_NETWORK}/chain/${chainId}/pact`;
 };
 
-export const getKadenaCutURL = (): string => {
-  return `${getKadenaURL()}/chainweb/${KDA_CHAINWEB_VER}/${KDA_NETWORK}/cut`;
-};
+const send = async <T>(path: string, data: string) => {
+  const { data: dataResponse } = await network<GraphQLResponse<T>>({
+    method: "POST",
+    url: path,
+    data: { query: data },
+    headers: { "Content-Type": "application/json" },
+  });
 
-const KadenaApiWrapper = async <T>(path: string, body: any, method: Method) => {
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const rawResponse = await network({ url: path, method, data: body });
-  if (rawResponse && rawResponse.data && rawResponse.data.details?.error_message) {
-    log("error", rawResponse.data.details?.error_message);
+  if (dataResponse.errors?.length) {
+    const errorMessage = dataResponse.errors
+      .map((error: ErrorResponse) => error.message)
+      .join(", ");
+    throw Error(`API responded with errors: ${errorMessage}`);
   }
-
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const { data, headers } = rawResponse as AxiosResponse<T>;
-
-  log("http", path);
-  return { data, headers };
+  return dataResponse.data;
 };
 
-export const fetchNetworkInfo = async () => {
-  const res = await KadenaApiWrapper<GetInfoResponse>(getKadenaURL("/info"), undefined, "GET");
+export const fetchAccountBalance = async (address: string) => {
+  const query = `{
+      fungibleAccount(
+        accountName: "${address}"
+      ) {
+        totalBalance
+      }
+  }`;
+  const res = await send<GetAccountBalanceResponse>(getKadenaURL(), query);
+  const balance = res.fungibleAccount?.totalBalance;
 
-  return res.data;
+  return balance ?? 0;
+};
+
+export const fetchChainBalances = async (address: string): Promise<ChainAccount[]> => {
+  const query = `{
+      fungibleAccount(
+        accountName: "${address}"
+      ) {
+        chainAccounts {
+          balance,
+          chainId
+        }
+      }
+  }`;
+  const res = await send<GetChainAccountResponse>(getKadenaURL(), query);
+  const balance = res.fungibleAccount?.chainAccounts;
+
+  return balance ?? [];
 };
 
 export const fetchBlockHeight = async (): Promise<number | undefined> => {
-  const res = await KadenaApiWrapper<GetCutResponse>(getKadenaCutURL(), undefined, "GET");
-
-  const height = res.data.hashes
-    ? Object.values(res.data.hashes).reduce(
-        (lastVal, val) => (lastVal >= val.height ? lastVal : val.height),
-        0,
-      )
-    : undefined;
+  const query = `{
+    lastBlockHeight
+  }`;
+  const res = await send<LastBlockHeight>(getKadenaURL(), query);
+  const height = res.lastBlockHeight;
 
   return height;
 };
 
-export const fetchCoinDetailsForAccount = async (
-  address: string,
-  chains: ChainId[],
-): Promise<{ [K in keyof ChainId]: string }> => {
-  const txn = Pact.builder
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .execution((Pact.modules as any).coin.details(address))
-    .setNonce("local")
-    .setMeta({
-      chainId: "",
-    })
-    .createTransaction();
+export const fetchTransactions = async (address: string): Promise<Transfer[]> => {
+  const result: Transfer[] = [];
+  let isFirstFetch: boolean = true;
+  let hasNext: boolean = false;
+  let cursor: string | undefined;
 
-  const promises: Promise<ICommandResult>[] = [];
-  for (const id of chains.sort()) {
-    const c = createClient(getKadenaPactURL(id));
-    promises.push(c.dirtyRead(txn));
-  }
+  while (isFirstFetch || (hasNext && cursor)) {
+    const query: string = `{
+        transfers(accountName: "${address}"${hasNext ? `, after: "${cursor}"` : ""}){
+          edges {
+            node {
+              amount
+              block {
+                creationTime
+                height
+                hash
+              }
+              chainId
+              creationTime
+              receiverAccount
+              senderAccount
+              requestKey
+              moduleName
+              crossChainTransfer {
+                amount
+                chainId
+                receiverAccount
+                senderAccount
+              }
+              transaction {
+                result {
+                  ...on TransactionResult {
+                    badResult,
+                    goodResult
+                  }
+                }
+              }
+            }
+          }
+          totalCount  
+          pageInfo {
+            hasNextPage,
+            endCursor
+          }
+        }
+      }
+    `;
 
-  const results = await Promise.all(promises);
+    const res = await send<GetTransfers>(getKadenaURL(), query);
 
-  const balances = results.reduce((lastVal, val, idx) => {
-    const r = val.result;
-    if (r.status === "failure") {
-      return lastVal;
+    const transfers = res.transfers.edges.map(({ node }) => node);
+    if (transfers.length !== 0) {
+      result.push(...transfers);
     }
 
-    return { ...lastVal, [idx]: r.data.balance };
-  }, {});
-
-  return balances;
-};
-
-export const fetchTransactions = async (address: string) => {
-  const url = getKadenaURL("/txs/account");
-  const result: GetTxnsResponse[] = [];
-  let next = "";
-
-  for (;;) {
-    let query = "";
-    if (next === "") {
-      query = `${url}/${address}?limit=50&token=coin`;
-    } else {
-      query = `${url}/${address}?next=${next}&limit=50&token=coin`;
-    }
-
-    const res = await KadenaApiWrapper<GetTxnsResponse[]>(query, undefined, "GET");
-
-    result.push(...res.data);
-
-    const headers = res.headers;
-    next = headers["Chainweb-Next"] ?? "";
-    if (next == "") {
-      break;
-    }
+    isFirstFetch = false;
+    hasNext = res.transfers.pageInfo.hasNextPage;
+    cursor = hasNext ? res.transfers.pageInfo.endCursor : undefined;
   }
 
   return result;

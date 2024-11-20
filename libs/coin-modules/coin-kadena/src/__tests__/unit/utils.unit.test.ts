@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
+import { ChainAccount } from "../../api/types";
 import {
   baseUnitToKda,
+  findChainById,
   getPath,
   isError,
   isNoErrorReturnCode,
@@ -76,6 +78,33 @@ describe("Kadena utils", () => {
 
     it("should not throw an error for zero return code", () => {
       expect(() => isError({ return_code: 0x9000, error_message: "" })).not.toThrow();
+    });
+  });
+
+  describe("findChainById", () => {
+    const mockChainAccounts: ChainAccount[] = [
+      { chainId: "0", balance: 100 },
+      { chainId: "1", balance: 200 },
+      { chainId: "2", balance: 300 },
+    ];
+
+    it("should find chain account when chain ID exists", () => {
+      const result = findChainById(mockChainAccounts, 1);
+      expect(result).toBeDefined();
+      expect(result).toEqual({
+        chainId: "1",
+        balance: 200,
+      });
+    });
+
+    it("should return undefined when chain ID does not exist", () => {
+      const result = findChainById(mockChainAccounts, 999);
+      expect(result).toBeUndefined();
+    });
+
+    it("should handle empty chain accounts array", () => {
+      const result = findChainById([], 1);
+      expect(result).toBeUndefined();
     });
   });
 });

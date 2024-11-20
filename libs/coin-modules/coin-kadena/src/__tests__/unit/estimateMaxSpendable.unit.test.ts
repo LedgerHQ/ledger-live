@@ -1,4 +1,4 @@
-import { fetchCoinDetailsForAccount } from "../../api/network";
+import { fetchChainBalances } from "../../api/network";
 import estimateMaxSpendable from "../../estimateMaxSpendable";
 import { Transaction } from "../../types";
 import {
@@ -11,8 +11,8 @@ jest.mock("../../api/network");
 
 describe("estimateMaxSpendable", () => {
   beforeAll(() => {
-    const fetchCoinDetailsForAccountMock = jest.mocked(fetchCoinDetailsForAccount);
-    fetchCoinDetailsForAccountMock.mockReturnValue(Promise.resolve(coinDetailsForAccount));
+    const fetchChainBalancesMock = jest.mocked(fetchChainBalances);
+    fetchChainBalancesMock.mockReturnValue(Promise.resolve(coinDetailsForAccount));
   });
 
   it("should return the max spendable for a Kadena transaction", async () => {
@@ -33,8 +33,8 @@ describe("estimateMaxSpendable", () => {
   });
 
   it("should return the 0 if the balance minus the fee is less than 0", async () => {
-    const fetchCoinDetailsForAccountMock = jest.mocked(fetchCoinDetailsForAccount);
-    fetchCoinDetailsForAccountMock.mockReturnValue(Promise.resolve({ "0": "0" }));
+    const fetchChainBalancesMock = jest.mocked(fetchChainBalances);
+    fetchChainBalancesMock.mockReturnValue(Promise.resolve([{ chainId: "0", balance: 0 }]));
 
     const res = await estimateMaxSpendable({ account, transaction: baseTransaction });
     expect(res.toFixed()).toEqual("0");
