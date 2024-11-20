@@ -308,7 +308,7 @@ export const makeScanAccounts =
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
   }): CurrencyBridge["scanAccounts"] =>
-  ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
+  ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
       if (buildIterateResult === undefined) {
         buildIterateResult = defaultIterateResultBuilder(getAddressFn);
@@ -423,7 +423,12 @@ export const makeScanAccounts =
 
       async function main() {
         try {
-          const derivationModes = getDerivationModesForCurrency(currency);
+          let derivationModes: DerivationMode[] = [];
+          if (scheme === null || scheme === undefined) {
+            derivationModes = getDerivationModesForCurrency(currency);
+          } else {
+            derivationModes = [scheme];
+          }
 
           for (const derivationMode of derivationModes) {
             if (finished) break;
