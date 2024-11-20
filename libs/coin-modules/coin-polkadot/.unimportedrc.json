@@ -18,8 +18,8 @@
   "ignoreUnimported": [
     "src/test/coin-tester/chopsticks-sidecar.ts",
     "src/test/coin-tester/indexer.ts",
-    "src/test/coin-tester/scenarios/basic.ts",
-    "src/test/coin-tester/scenarios/utils.ts",
+    "src/test/coin-tester/scenarii/Polkadot.ts",
+    "src/test/coin-tester/helpers.ts",
     "src/test/fixtures.ts",
     "src/network/node/apiPromise.ts",
     "src/network/node/constants.ts",

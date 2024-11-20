@@ -2334,8 +2334,8 @@ importers:
         specifier: ^4.1.2
         version: 4.1.2
       docker-compose:
-        specifier: ^0.24.2
-        version: 0.24.8
+        specifier: ^1.1.0
+        version: 1.1.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -2717,8 +2717,8 @@ importers:
         specifier: ^4.1.2
         version: 4.1.2
       docker-compose:
-        specifier: ^0.24.2
-        version: 0.24.8
+        specifier: ^1.1.0
+        version: 1.1.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3303,8 +3303,8 @@ importers:
         specifier: ^4.1.2
         version: 4.1.2
       docker-compose:
-        specifier: ^0.24.2
-        version: 0.24.8
+        specifier: ^1.1.0
+        version: 1.1.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -6608,16 +6608,16 @@ importers:
         version: 7.24.1(@babel/core@7.24.3)
       '@pmmmwh/react-refresh-webpack-plugin':
         specifier: ^0.5.1
-        version: 0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2)(webpack@5.94.0)
+        version: 0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.94.0))(webpack@5.94.0(webpack-cli@4.10.0))
       babel-loader:
         specifier: ^8.2.2
-        version: 8.3.0(@babel/core@7.24.3)(webpack@5.94.0)
+        version: 8.3.0(@babel/core@7.24.3)(webpack@5.94.0(webpack-cli@4.10.0))
       file-loader:
         specifier: ^6.2.0
-        version: 6.2.0(webpack@5.94.0)
+        version: 6.2.0(webpack@5.94.0(webpack-cli@4.10.0))
       html-webpack-plugin:
         specifier: ^5.5.0
-        version: 5.6.0(webpack@5.94.0)
+        version: 5.6.0(webpack@5.94.0(webpack-cli@4.10.0))
       http-server:
         specifier: ^14.0.0
         version: 14.1.1
@@ -6801,7 +6801,7 @@ importers:
         version: 0.10.7
       '@expo/webpack-config':
         specifier: ^18.1.2
-        version: 18.1.4(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(metro@0.80.12)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+        version: 18.1.4(ukypqriwp3wsfkgqb7idsk6ayq)
       '@react-native-async-storage/async-storage':
         specifier: 1.17.12
         version: 1.17.12(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))
@@ -6930,13 +6930,13 @@ importers:
         version: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-asset:
         specifier: 8.10.1
-        version: 8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+        version: 8.10.1(etmhewwroojqx4jnugqcfqop2e)
       expo-constants:
         specifier: ^14.4.2
         version: 14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-font:
         specifier: ^11.4.0
-        version: 11.10.3(expo-asset@8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+        version: 11.10.3(ie4jth65phq4eqo2f6mlbrytke)
       expo-modules-core:
         specifier: 1.5.11
         version: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
@@ -18684,8 +18684,8 @@ packages:
     resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
 
-  docker-compose@0.24.8:
-    resolution: {integrity: sha512-plizRs/Vf15H+GCVxq2EUvyPK7ei9b/cVesHvjnX4xaXjM9spHe2Ytq0BitndFgvTJ3E3NljPNUEl7BAN43iZw==}
+  docker-compose@1.1.0:
+    resolution: {integrity: sha512-VrkQJNafPQ5d6bGULW0P6KqcxSkv3ZU5Wn2wQA19oB71o7+55vQ9ogFe2MMeNbK+jc9rrKVy280DnHO5JLMWOQ==}
     engines: {node: '>= 6.0.0'}
 
   doctrine-temporary-fork@2.1.0:
@@ -33872,7 +33872,7 @@ snapshots:
       mv: 2.1.1
       safe-json-stringify: 1.2.0
 
-  '@expo/cli@0.10.17(@expo/metro-config@0.10.7)(expo-modules-autolinking@1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)':
+  '@expo/cli@0.10.17(@expo/metro-config@0.10.7)(expo-modules-autolinking@1.5.1(zuycb6pkld4caqo6yqxhv57xba))(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)':
     dependencies:
       '@babel/runtime': 7.24.1
       '@expo/code-signing-certificates': 0.0.5
@@ -33885,7 +33885,7 @@ snapshots:
       '@expo/osascript': 2.1.0
       '@expo/package-manager': 1.1.2
       '@expo/plist': 0.0.20
-      '@expo/prebuild-config': 6.2.6(expo-modules-autolinking@1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))
+      '@expo/prebuild-config': 6.2.6(expo-modules-autolinking@1.5.1(zuycb6pkld4caqo6yqxhv57xba))
       '@expo/rudder-sdk-node': 1.1.1
       '@expo/spawn-async': 1.5.0
       '@expo/xcpretty': 4.3.1
@@ -34435,7 +34435,7 @@ snapshots:
       base64-js: 1.5.1
       xmlbuilder: 14.0.0
 
-  '@expo/prebuild-config@6.2.6(expo-modules-autolinking@1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))':
+  '@expo/prebuild-config@6.2.6(expo-modules-autolinking@1.5.1(zuycb6pkld4caqo6yqxhv57xba))':
     dependencies:
       '@expo/config': 8.1.2
       '@expo/config-plugins': 7.2.5
@@ -34443,7 +34443,7 @@ snapshots:
       '@expo/image-utils': 0.3.22
       '@expo/json-file': 8.3.0
       debug: 4.3.4
-      expo-modules-autolinking: 1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-modules-autolinking: 1.5.1(zuycb6pkld4caqo6yqxhv57xba)
       fs-extra: 9.1.0
       resolve-from: 5.0.0
       semver: 7.5.3
@@ -34498,7 +34498,7 @@ snapshots:
     dependencies:
       prop-types: 15.8.1
 
-  '@expo/webpack-config@18.1.4(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(metro@0.80.12)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)':
+  '@expo/webpack-config@18.1.4(ukypqriwp3wsfkgqb7idsk6ayq)':
     dependencies:
       '@babel/core': 7.24.3
       babel-loader: 8.3.0(@babel/core@7.24.3)(webpack@5.94.0(metro@0.80.12))
@@ -34508,7 +34508,7 @@ snapshots:
       css-loader: 6.10.0(webpack@5.94.0(metro@0.80.12))
       css-minimizer-webpack-plugin: 3.4.1(metro@0.80.12)(webpack@5.94.0(metro@0.80.12))
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-pwa: 0.0.126(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-pwa: 0.0.126(etmhewwroojqx4jnugqcfqop2e)
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       fs-extra: 10.1.0
@@ -36955,7 +36955,7 @@ snapshots:
     dependencies:
       playwright: 1.45.0
 
-  '@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2)(webpack@5.94.0)':
+  '@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.94.0))(webpack@5.94.0(webpack-cli@4.10.0))':
     dependencies:
       ansi-html-community: 0.0.8
       common-path-prefix: 3.0.0
@@ -41265,30 +41265,30 @@ snapshots:
       '@swc/core': 1.4.11
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
-      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(esbuild@0.19.12))
+      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
       cjs-module-lexer: 1.2.3
       constants-browserify: 1.0.0
-      css-loader: 6.10.0(webpack@5.94.0(esbuild@0.19.12))
+      css-loader: 6.10.0(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       es-module-lexer: 1.5.4
       express: 4.19.2
-      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))
+      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       fs-extra: 11.2.0
-      html-webpack-plugin: 5.6.0(webpack@5.94.0(esbuild@0.19.12))
+      html-webpack-plugin: 5.6.0(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       magic-string: 0.30.8
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.5.4
-      style-loader: 3.3.4(webpack@5.94.0(esbuild@0.19.12))
-      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(esbuild@0.19.12))
-      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12))
+      style-loader: 3.3.4(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
+      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
       util-deprecate: 1.0.2
       webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
-      webpack-dev-middleware: 6.1.2(webpack@5.94.0(esbuild@0.19.12))
+      webpack-dev-middleware: 6.1.2(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       webpack-hot-middleware: 2.26.1
       webpack-virtual-modules: 0.5.0
     optionalDependencies:
@@ -41317,30 +41317,30 @@ snapshots:
       '@swc/core': 1.4.11
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
-      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(metro@0.80.12))
+      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
       cjs-module-lexer: 1.2.3
       constants-browserify: 1.0.0
-      css-loader: 6.10.0(webpack@5.94.0(metro@0.80.12))
+      css-loader: 6.10.0(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       es-module-lexer: 1.5.4
       express: 4.19.2
-      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.4.3)(webpack@5.94.0(metro@0.80.12))
+      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       fs-extra: 11.2.0
-      html-webpack-plugin: 5.6.0(webpack@5.94.0(metro@0.80.12))
+      html-webpack-plugin: 5.6.0(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       magic-string: 0.30.8
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.5.4
-      style-loader: 3.3.4(webpack@5.94.0(metro@0.80.12))
-      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(metro@0.80.12))
-      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(metro@0.80.12))
+      style-loader: 3.3.4(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
+      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
       util-deprecate: 1.0.2
       webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
-      webpack-dev-middleware: 6.1.2(webpack@5.94.0(metro@0.80.12))
+      webpack-dev-middleware: 6.1.2(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       webpack-hot-middleware: 2.26.1
       webpack-virtual-modules: 0.5.0
     optionalDependencies:
@@ -44397,17 +44397,17 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
 
-  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.94.0)':
+  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))(webpack@5.94.0(webpack-cli@4.10.0))':
     dependencies:
       webpack: 5.94.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0)
 
-  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
+  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))':
     dependencies:
       envinfo: 7.11.1
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0)
 
-  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)(webpack-dev-server@4.15.2)':
+  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.94.0))':
     dependencies:
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0)
     optionalDependencies:
@@ -45246,7 +45246,7 @@ snapshots:
       schema-utils: 2.7.1
       webpack: 5.94.0(metro@0.80.12)
 
-  babel-loader@8.3.0(@babel/core@7.24.3)(webpack@5.94.0):
+  babel-loader@8.3.0(@babel/core@7.24.3)(webpack@5.94.0(webpack-cli@4.10.0)):
     dependencies:
       '@babel/core': 7.24.3
       find-cache-dir: 3.3.2
@@ -45255,19 +45255,28 @@ snapshots:
       schema-utils: 2.7.1
       webpack: 5.94.0(webpack-cli@4.10.0)
 
-  babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(esbuild@0.19.12)):
+  babel-loader@8.3.0(@babel/core@7.24.3)(webpack@5.94.0):
     dependencies:
       '@babel/core': 7.24.3
-      find-cache-dir: 4.0.0
-      schema-utils: 4.2.0
-      webpack: 5.94.0(esbuild@0.19.12)
+      find-cache-dir: 3.3.2
+      loader-utils: 2.0.4
+      make-dir: 3.1.0
+      schema-utils: 2.7.1
+      webpack: 5.94.0
 
-  babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(metro@0.80.12)):
+  babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       '@babel/core': 7.24.3
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.94.0(metro@0.80.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
+    dependencies:
+      '@babel/core': 7.24.3
+      find-cache-dir: 4.0.0
+      schema-utils: 4.2.0
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   babel-plugin-add-react-displayname@0.0.5: {}
 
@@ -47278,7 +47287,7 @@ snapshots:
     dependencies:
       hyphenate-style-name: 1.0.4
 
-  css-loader@6.10.0(webpack@5.94.0(esbuild@0.19.12)):
+  css-loader@6.10.0(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.38)
       postcss: 8.4.38
@@ -47289,7 +47298,20 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.5.4
     optionalDependencies:
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  css-loader@6.10.0(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.38)
+      postcss: 8.4.38
+      postcss-modules-extract-imports: 3.0.0(postcss@8.4.38)
+      postcss-modules-local-by-default: 4.0.4(postcss@8.4.38)
+      postcss-modules-scope: 3.1.1(postcss@8.4.38)
+      postcss-modules-values: 4.0.0(postcss@8.4.38)
+      postcss-value-parser: 4.2.0
+      semver: 7.5.4
+    optionalDependencies:
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   css-loader@6.10.0(webpack@5.94.0(metro@0.80.12)):
     dependencies:
@@ -47931,7 +47953,7 @@ snapshots:
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
 
-  docker-compose@0.24.8:
+  docker-compose@1.1.0:
     dependencies:
       yaml: 2.4.1
 
@@ -48661,8 +48683,8 @@ snapshots:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
       eslint-plugin-react: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
@@ -48724,7 +48746,7 @@ snapshots:
       debug: 4.3.4
       enhanced-resolve: 5.17.1
       eslint: 8.57.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -48736,13 +48758,13 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
+  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
     dependencies:
       debug: 4.3.4
       enhanced-resolve: 5.17.1
       eslint: 8.57.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
       is-core-module: 2.13.1
@@ -48758,7 +48780,7 @@ snapshots:
       debug: 4.3.4
       enhanced-resolve: 5.17.1
       eslint: 8.57.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -48770,7 +48792,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -48791,7 +48813,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
+    dependencies:
+      debug: 3.2.7
+    optionalDependencies:
+      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
+      eslint: 8.57.0
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -48812,7 +48845,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -48852,7 +48885,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -48896,6 +48929,33 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
+    dependencies:
+      array-includes: 3.1.8
+      array.prototype.findlastindex: 1.2.5
+      array.prototype.flat: 1.3.2
+      array.prototype.flatmap: 1.3.2
+      debug: 3.2.7
+      doctrine: 2.1.0
+      eslint: 8.57.0
+      eslint-import-resolver-node: 0.3.9
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
+      hasown: 2.0.2
+      is-core-module: 2.13.1
+      is-glob: 4.0.3
+      minimatch: 3.1.2
+      object.fromentries: 2.0.8
+      object.groupby: 1.0.3
+      object.values: 1.2.0
+      semver: 6.3.1
+      tsconfig-paths: 3.15.0
+    optionalDependencies:
+      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
+    transitivePeerDependencies:
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - supports-color
+
   eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
@@ -48906,7 +48966,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -49459,11 +49519,11 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
-  expo-application@5.3.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-application@5.3.1(glda4dnm3gdqskfsgx6n5jmf7q):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49482,32 +49542,32 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-asset@8.10.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-asset@8.10.1(etmhewwroojqx4jnugqcfqop2e):
     dependencies:
       blueimp-md5: 2.19.0
-      expo-file-system: 15.4.5(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      invariant: 2.2.4
-      md5-file: 3.2.3
-      path-browserify: 1.0.1
-      url-parse: 1.5.10
-    optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
-    transitivePeerDependencies:
-      - expo
-
-  expo-asset@8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      blueimp-md5: 2.19.0
-      expo-file-system: 15.4.5(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-file-system: 15.4.5(etmhewwroojqx4jnugqcfqop2e)
       invariant: 2.2.4
       md5-file: 3.2.3
       path-browserify: 1.0.1
       url-parse: 1.5.10
     optionalDependencies:
       expo-constants: 14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
+    transitivePeerDependencies:
+      - expo
+
+  expo-asset@8.10.1(glda4dnm3gdqskfsgx6n5jmf7q):
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-file-system: 15.4.5(glda4dnm3gdqskfsgx6n5jmf7q)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      url-parse: 1.5.10
+    optionalDependencies:
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49532,13 +49592,13 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
 
-  expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-constants@14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@expo/config': 8.1.2
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       uuid: 3.4.0
     optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49582,22 +49642,22 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
 
-  expo-file-system@15.4.5(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      uuid: 3.4.0
-    optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
-
-  expo-file-system@15.4.5(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-file-system@15.4.5(etmhewwroojqx4jnugqcfqop2e):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       uuid: 3.4.0
     optionalDependencies:
       expo-constants: 14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
+
+  expo-file-system@15.4.5(glda4dnm3gdqskfsgx6n5jmf7q):
+    dependencies:
+      expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      uuid: 3.4.0
+    optionalDependencies:
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49610,24 +49670,24 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
 
-  expo-font@11.10.3(expo-asset@8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-font@11.10.3(ie4jth65phq4eqo2f6mlbrytke):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-asset: 8.10.1(etmhewwroojqx4jnugqcfqop2e)
       expo-constants: 14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
 
-  expo-font@11.4.0(expo-asset@8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-font@11.4.0(qxdfnt5gjsvoxyl5bflopa6woa):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-asset: 8.10.1(glda4dnm3gdqskfsgx6n5jmf7q)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49659,11 +49719,11 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
 
-  expo-keep-awake@12.3.0(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-keep-awake@12.3.0(glda4dnm3gdqskfsgx6n5jmf7q):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49690,7 +49750,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)
 
-  expo-modules-autolinking@1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-modules-autolinking@1.5.1(zuycb6pkld4caqo6yqxhv57xba):
     dependencies:
       '@expo/config': 8.1.2
       chalk: 4.1.2
@@ -49699,7 +49759,7 @@ snapshots:
       find-up: 5.0.0
       fs-extra: 9.1.0
     optionalDependencies:
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
@@ -49724,7 +49784,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)
 
-  expo-pwa@0.0.126(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
+  expo-pwa@0.0.126(etmhewwroojqx4jnugqcfqop2e):
     dependencies:
       '@expo/config': 9.0.4
       '@expo/image-utils': 0.3.23
@@ -49748,18 +49808,18 @@ snapshots:
   expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.1
-      '@expo/cli': 0.10.17(@expo/metro-config@0.10.7)(expo-modules-autolinking@1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)
+      '@expo/cli': 0.10.17(@expo/metro-config@0.10.7)(expo-modules-autolinking@1.5.1(zuycb6pkld4caqo6yqxhv57xba))(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)
       '@expo/config': 8.1.2
       '@expo/config-plugins': 7.2.5
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.24.3)
-      expo-application: 5.3.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-asset: 8.10.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-file-system: 15.4.5(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-font: 11.4.0(expo-asset@8.10.1(expo-constants@14.5.1)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-keep-awake: 12.3.0(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
-      expo-modules-autolinking: 1.5.1(expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo-modules-core@1.5.11)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-application: 5.3.1(glda4dnm3gdqskfsgx6n5jmf7q)
+      expo-asset: 8.10.1(glda4dnm3gdqskfsgx6n5jmf7q)
+      expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.12)(metro@0.80.12)(minimatch@5.1.6)(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1))(react-native@0.74.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1))(react@18.3.1)
+      expo-file-system: 15.4.5(glda4dnm3gdqskfsgx6n5jmf7q)
+      expo-font: 11.4.0(qxdfnt5gjsvoxyl5bflopa6woa)
+      expo-keep-awake: 12.3.0(glda4dnm3gdqskfsgx6n5jmf7q)
+      expo-modules-autolinking: 1.5.1(zuycb6pkld4caqo6yqxhv57xba)
       fbemitter: 3.0.0
       invariant: 2.2.4
       md5-file: 3.2.3
@@ -50018,11 +50078,17 @@ snapshots:
     dependencies:
       flat-cache: 3.2.0
 
-  file-loader@6.2.0(webpack@5.94.0):
+  file-loader@6.2.0(webpack@5.94.0(webpack-cli@4.10.0)):
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
       webpack: 5.94.0(webpack-cli@4.10.0)
+
+  file-loader@6.2.0(webpack@5.94.0):
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.3.0
+      webpack: 5.94.0
 
   file-selector@0.6.0:
     dependencies:
@@ -50276,7 +50342,7 @@ snapshots:
     optionalDependencies:
       eslint: 8.57.0
 
-  fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12)):
+  fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       '@babel/code-frame': 7.24.6
       chalk: 4.1.2
@@ -50291,9 +50357,9 @@ snapshots:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.4.3
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
 
-  fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(metro@0.80.12)):
+  fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
     dependencies:
       '@babel/code-frame': 7.24.6
       chalk: 4.1.2
@@ -50308,7 +50374,7 @@ snapshots:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.4.3
-      webpack: 5.94.0(metro@0.80.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   form-data@2.3.3:
     dependencies:
@@ -51044,7 +51110,7 @@ snapshots:
 
   html-void-elements@2.0.1: {}
 
-  html-webpack-plugin@5.6.0(webpack@5.94.0(esbuild@0.19.12)):
+  html-webpack-plugin@5.6.0(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -51052,7 +51118,17 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  html-webpack-plugin@5.6.0(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
+    dependencies:
+      '@types/html-minifier-terser': 6.1.0
+      html-minifier-terser: 6.1.0
+      lodash: 4.17.21
+      pretty-error: 4.0.0
+      tapable: 2.2.1
+    optionalDependencies:
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   html-webpack-plugin@5.6.0(webpack@5.94.0(metro@0.80.12)):
     dependencies:
@@ -51064,7 +51140,7 @@ snapshots:
     optionalDependencies:
       webpack: 5.94.0(metro@0.80.12)
 
-  html-webpack-plugin@5.6.0(webpack@5.94.0):
+  html-webpack-plugin@5.6.0(webpack@5.94.0(webpack-cli@4.10.0)):
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -51073,6 +51149,16 @@ snapshots:
       tapable: 2.2.1
     optionalDependencies:
       webpack: 5.94.0(webpack-cli@4.10.0)
+
+  html-webpack-plugin@5.6.0(webpack@5.94.0):
+    dependencies:
+      '@types/html-minifier-terser': 6.1.0
+      html-minifier-terser: 6.1.0
+      lodash: 4.17.21
+      pretty-error: 4.0.0
+      tapable: 2.2.1
+    optionalDependencies:
+      webpack: 5.94.0
 
   htmlparser2@6.1.0:
     dependencies:
@@ -60816,9 +60902,13 @@ snapshots:
 
   stubborn-fs@1.2.5: {}
 
-  style-loader@3.3.4(webpack@5.94.0(esbuild@0.19.12)):
+  style-loader@3.3.4(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  style-loader@3.3.4(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
+    dependencies:
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   style-loader@3.3.4(webpack@5.94.0(metro@0.80.12)):
     dependencies:
@@ -61171,17 +61261,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  swc-loader@0.2.6(@swc/core@1.4.11)(webpack@5.94.0(esbuild@0.19.12)):
+  swc-loader@0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       '@swc/core': 1.4.11
       '@swc/counter': 0.1.3
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
 
-  swc-loader@0.2.6(@swc/core@1.4.11)(webpack@5.94.0(metro@0.80.12)):
+  swc-loader@0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
     dependencies:
       '@swc/core': 1.4.11
       '@swc/counter': 0.1.3
-      webpack: 5.94.0(metro@0.80.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   swiper@7.4.1:
     dependencies:
@@ -61377,28 +61467,28 @@ snapshots:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.3.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
     optionalDependencies:
       '@swc/core': 1.4.11
       esbuild: 0.19.12
     transitivePeerDependencies:
       - metro
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(metro@0.80.12)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1(metro@0.80.12)
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0(metro@0.80.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
     optionalDependencies:
       '@swc/core': 1.4.11
     transitivePeerDependencies:
@@ -61428,7 +61518,7 @@ snapshots:
     transitivePeerDependencies:
       - metro
 
-  terser-webpack-plugin@5.3.10(webpack@5.94.0):
+  terser-webpack-plugin@5.3.10(webpack@5.94.0(webpack-cli@4.10.0)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -61436,6 +61526,17 @@ snapshots:
       serialize-javascript: 6.0.2
       terser: 5.36.0
       webpack: 5.94.0(webpack-cli@4.10.0)
+    transitivePeerDependencies:
+      - metro
+
+  terser-webpack-plugin@5.3.10(webpack@5.94.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.94.0
     transitivePeerDependencies:
       - metro
 
@@ -63440,9 +63541,9 @@ snapshots:
   webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0)(webpack@5.94.0)
-      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0)
-      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0)(webpack-dev-server@4.15.2)
+      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))(webpack@5.94.0(webpack-cli@4.10.0))
+      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))
+      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0))(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.94.0))
       colorette: 2.0.20
       commander: 7.2.0
       cross-spawn: 7.0.3
@@ -63464,7 +63565,7 @@ snapshots:
       schema-utils: 4.2.0
       webpack: 5.94.0(metro@0.80.12)
 
-  webpack-dev-middleware@5.3.4(webpack@5.94.0):
+  webpack-dev-middleware@5.3.4(webpack@5.94.0(webpack-cli@4.10.0)):
     dependencies:
       colorette: 2.0.20
       memfs: 3.5.3
@@ -63473,17 +63574,16 @@ snapshots:
       schema-utils: 4.2.0
       webpack: 5.94.0(webpack-cli@4.10.0)
 
-  webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
+  webpack-dev-middleware@5.3.4(webpack@5.94.0):
     dependencies:
       colorette: 2.0.20
       memfs: 3.5.3
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-    optionalDependencies:
-      webpack: 5.94.0(esbuild@0.19.12)
+      webpack: 5.94.0
 
-  webpack-dev-middleware@6.1.2(webpack@5.94.0(metro@0.80.12)):
+  webpack-dev-middleware@6.1.2(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
       colorette: 2.0.20
       memfs: 3.5.3
@@ -63491,7 +63591,17 @@ snapshots:
       range-parser: 1.2.1
       schema-utils: 4.2.0
     optionalDependencies:
-      webpack: 5.94.0(metro@0.80.12)
+      webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  webpack-dev-middleware@6.1.2(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12)):
+    dependencies:
+      colorette: 2.0.20
+      memfs: 3.5.3
+      mime-types: 2.1.35
+      range-parser: 1.2.1
+      schema-utils: 4.2.0
+    optionalDependencies:
+      webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
 
   webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.94.0):
     dependencies:
@@ -63523,7 +63633,7 @@ snapshots:
       serve-index: 1.9.1
       sockjs: 0.3.24
       spdy: 4.0.2
-      webpack-dev-middleware: 5.3.4(webpack@5.94.0)
+      webpack-dev-middleware: 5.3.4(webpack@5.94.0(webpack-cli@4.10.0))
       ws: 8.17.1
     optionalDependencies:
       webpack: 5.94.0(webpack-cli@4.10.0)
@@ -63706,7 +63816,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -63737,7 +63847,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(metro@0.80.12))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.12))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -63830,7 +63940,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(webpack@5.94.0)
+      terser-webpack-plugin: 5.3.10(webpack@5.94.0(webpack-cli@4.10.0))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:

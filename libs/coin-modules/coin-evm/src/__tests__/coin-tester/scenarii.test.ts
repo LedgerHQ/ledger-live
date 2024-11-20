@@ -1,10 +1,10 @@
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./anvil";
-import { scenarioEthereum } from "./scenarios/ethereum";
-import { scenarioPolygon } from "./scenarios/polygon";
-import { scenarioScroll } from "./scenarios/scroll";
-import { scenarioBlast } from "./scenarios/blast";
+import { scenarioEthereum } from "./scenarii/ethereum";
+import { scenarioPolygon } from "./scenarii/polygon";
+import { scenarioScroll } from "./scenarii/scroll";
+import { scenarioBlast } from "./scenarii/blast";
 
 global.console = require("console");
 jest.setTimeout(100_000);
