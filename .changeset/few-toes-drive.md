@@ -1,9 +1,9 @@
 ---
-"@ledgerhq/types-live": patch
-"@ledgerhq/coin-evm": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/types-live": minor
+"@ledgerhq/coin-evm": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 add mev protection
