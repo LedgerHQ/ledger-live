@@ -137,6 +137,20 @@ export const createAction = (
       if (mainToAccount) {
         dependencies.push({ appName: mainToAccount?.currency?.managerAppName });
       }
+
+      const shouldAddEthApp =
+        (mainFromAccount?.currency?.family === "evm" ||
+          mainToAccount?.currency?.family === "evm") &&
+        mainFromAccount?.currency?.managerAppName !== "Ethereum" &&
+        mainToAccount?.currency?.managerAppName !== "Ethereum";
+
+      // Check if we should add ETH app, for cases like when we want AVAX to use the ETH app.
+      if (shouldAddEthApp) {
+        dependencies.push({
+          appName: "Ethereum",
+        });
+      }
+
       return {
         appName: "Exchange",
         dependencies,
