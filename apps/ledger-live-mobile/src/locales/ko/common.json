@@ -2871,6 +2871,8 @@
       "developerModeDesc" : "My Ledger에 개발자 앱을 표시하고 Testnet 앱을 활성화합니다.",
       "analytics" : "애널리틱스",
       "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
+      "mevProtection" : "MEV 보호",
+      "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "personalizedRecommendations" : "맞춤화된 경험",
       "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
       "analyticsModal" : {
