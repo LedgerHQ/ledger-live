@@ -224,7 +224,7 @@ export const handlers = ({
 
         const { liveTx } = getWalletAPITransactionSignFlowInfos({
           walletApiTransaction: transaction,
-          account: mainFromAccount,
+          account: fromAccount,
         });
 
         if (liveTx.family !== mainFromAccountFamily) {
@@ -244,7 +244,7 @@ export const handlers = ({
         const subAccountId =
           fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
 
-        const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+        const bridgeTx = accountBridge.createTransaction(fromAccount);
         /**
          * We append the `recipient` to the tx created from `createTransaction`
          * to avoid having userGasLimit reset to null for ETH txs
