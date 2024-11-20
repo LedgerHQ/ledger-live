@@ -60,3 +60,10 @@ const setDynamicContentNotificationCardsAction =
 
 export const setDynamicContentNotificationCards = (notificationCards: NotificationContentCard[]) =>
   setDynamicContentNotificationCardsAction(notificationCards);
+
+const setIsDynamicContentLoadingAction = createAction<boolean>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_IS_LOADING,
+);
+
+export const setIsDynamicContentLoading = (isLoading: boolean) =>
+  setIsDynamicContentLoadingAction(isLoading);

@@ -19,6 +19,7 @@ export const INITIAL_STATE: DynamicContentState = {
   notificationCards: [],
   categoriesCards: [],
   mobileCards: [],
+  isLoading: true,
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -46,6 +47,10 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     mobileCards: (action as Action<DynamicContentSetMobileCardsPayload>).payload,
   }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_IS_LOADING]: (state, action) => ({
+    ...state,
+    isLoading: (action as unknown as Action<boolean>).payload,
+  }),
 };
 
 // Selectors
@@ -60,5 +65,8 @@ export const notificationsCardsSelector = (s: State) => s.dynamicContent.notific
 export const categoriesCardsSelector = (s: State) => s.dynamicContent.categoriesCards;
 
 export const mobileCardsSelector = (s: State) => s.dynamicContent.mobileCards;
+
+export const isDynamicContentLoadingSelector: (s: State) => boolean = (s: State) =>
+  s.dynamicContent.isLoading;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(handlers, INITIAL_STATE);

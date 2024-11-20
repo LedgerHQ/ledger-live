@@ -129,6 +129,8 @@ export type DynamicContentState = {
   categoriesCards: CategoryContentCard[];
   /** Dynamic content cards for Ledger Live Mobile */
   mobileCards: BrazeContentCard[];
+  /** Check if CC are loading */
+  isLoading: boolean;
 };
 
 // === RATINGS STATE ===

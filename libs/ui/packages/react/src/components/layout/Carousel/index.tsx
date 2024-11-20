@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import { Props } from "./types";
+import { ChevronArrow } from "./ChevronArrow";
 
 const Embla = styled.div`
   overflow: hidden;
@@ -15,6 +16,15 @@ const EmblaContainer = styled.div`
 const EmblaSlide = styled.div`
   flex: 0 0 100%;
   min-width: 0;
+`;
+
+const CarouselContainer = styled.div<Pick<Props, "variant">>`
+  position: relative;
+
+  --hover-transition: 0;
+  &:hover {
+    --hover-transition: 1;
+  }
 `;
 
 /**
@@ -45,15 +55,27 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     emblaApi.on("reInit", updateIndex);
   }, [emblaApi, updateIndex]);
 
+  const handleGotoPrevSlide = () => emblaApi?.scrollPrev();
+  const handleGotoNextSlide = () => emblaApi?.scrollNext();
+
   return (
     <div>
-      <Embla ref={emblaRef}>
-        <EmblaContainer>
-          {children.map(child => (
-            <EmblaSlide key={child.key}>{child}</EmblaSlide>
-          ))}
-        </EmblaContainer>
-      </Embla>
+      <CarouselContainer variant={variant}>
+        {variant === "default" && children.length > 1 && (
+          <>
+            <ChevronArrow direction="left" onClick={handleGotoPrevSlide} />
+            <ChevronArrow direction="right" onClick={handleGotoNextSlide} />
+          </>
+        )}
+
+        <Embla ref={emblaRef}>
+          <EmblaContainer>
+            {children.map(child => (
+              <EmblaSlide key={child.key}>{child}</EmblaSlide>
+            ))}
+          </EmblaContainer>
+        </Embla>
+      </CarouselContainer>
 
       <Footer
         children={children}
@@ -64,4 +86,5 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     </div>
   );
 };
+
 export default Carousel;

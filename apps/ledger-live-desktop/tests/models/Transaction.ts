@@ -10,3 +10,15 @@ export class Transaction {
     public memoTag?: string,
   ) {}
 }
+
+export class NFTTransaction extends Transaction {
+  constructor(
+    accountToDebit: Account,
+    accountToCredit: Account,
+    public nftName: string,
+    speed?: Fee,
+    memoTag?: string,
+  ) {
+    super(accountToDebit, accountToCredit, "0", speed, memoTag);
+  }
+}

@@ -155,7 +155,12 @@ const StepSummary = (props: StepProps) => {
                 <Trans i18nKey="send.steps.details.to" />
               </Text>
               {transaction.recipientDomain && (
-                <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                <Text
+                  data-testId="transaction-recipient-ens"
+                  ff="Inter|Bold"
+                  color="palette.text.shade100"
+                  fontSize={4}
+                >
                   {transaction.recipientDomain.domain}
                 </Text>
               )}
