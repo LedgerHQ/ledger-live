@@ -45,6 +45,7 @@
     "watch:ljs": "pnpm turbo run watch --filter=\"./libs/ledgerjs/**\" --concurrency 44",
     "watch:es:ljs": "pnpm turbo run watch:es --filter=\"./libs/ledgerjs/**\" --concurrency 44",
     "watch:common": "pnpm turbo run watch --filter=./libs/ledger-live-common",
+    "watch:es:common": "pnpm turbo run watch:es --filter=./libs/ledger-live-common",
     "dev:cli": "pnpm turbo run watch --filter=@ledgerhq/live-cli",
     "dev:lld": "pnpm turbo start --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --filter=ledger-live-desktop",
