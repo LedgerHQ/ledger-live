@@ -61,6 +61,24 @@ jobs:
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: Determine head branch
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "HEAD_BRANCH=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
+          else
+            echo "HEAD_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
+      - name: Print the head branch
+        run: |
+          echo "Head branch: $HEAD_BRANCH"
+      - name: Move patch updates to minor for release branch
+        run: |
+          # if: ${{ startsWith(github.ref_name, 'release') }}
+          echo "TODO"
+      - name: Move minor/major updates to patch for hotfix branch
+        run: |
+          # if: ${{ startsWith(github.ref_name, 'hotfix') }}
+          echo "TODO"
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') }}
         env:
