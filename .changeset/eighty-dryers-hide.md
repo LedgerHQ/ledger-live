@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-framework": patch
+"@ledgerhq/coin-framework": minor
 ---
 
 feat: scanAccount handle scheme arg
