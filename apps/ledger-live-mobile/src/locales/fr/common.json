@@ -188,7 +188,7 @@
       "description" : "Ce compte n’est pas autorisé à signer cette transaction."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -208,7 +208,7 @@
       "description" : "Merci de vérifier l’adresse et réessayer."
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Merci d’ajouter des fonds à votre compte."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
@@ -1002,10 +1002,10 @@
       "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
     },
     "TonMinimumRequired" : {
-      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -2871,6 +2871,8 @@
       "developerModeDesc" : "Afficher les apps développeur dans My Ledger et autoriser les apps testnet.",
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
+      "mevProtection" : "Protection MEV",
+      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
