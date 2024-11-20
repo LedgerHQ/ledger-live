@@ -37,7 +37,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         account: {} as Account,
       });
 
-      expect(canEditFees).toBe(true);
+      expect(canEditFees).toBe(false);
 
       expect(hasFeesProvided).toBe(false);
 
@@ -85,7 +85,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         account: { id: "subAccountId", type: "TokenAccount" } as TokenAccount,
       });
 
-      expect(canEditFees).toBe(true);
+      expect(canEditFees).toBe(false);
 
       expect(hasFeesProvided).toBe(false);
 
