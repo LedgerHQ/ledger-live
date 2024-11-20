@@ -110,11 +110,6 @@ const prepareTransaction = async (
     model,
   };
 
-  // Add missing subAccountId for wallet-api sign flow
-  if (!tx.subAccountId && "subAccountId" in model.uiState) {
-    patch.subAccountId = model.uiState.subAccountId;
-  }
-
   return updateTransaction(tx, patch);
 };
 
