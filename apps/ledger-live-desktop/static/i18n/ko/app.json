@@ -2390,7 +2390,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "네트워크 문제 해결"
+    "title" : "네트워크 문제 해결",
+    "myLedgerServices" : "My Ledger 서비스(scriptrunner)",
+    "bitcoinExplorers" : "비트코인 탐색기",
+    "ethereumExplorers" : "이더리움 탐색기",
+    "countervaluesApi" : "등가 API",
+    "announcements" : "발표",
+    "status" : "상태",
+    "test" : "테스트",
+    "renderer" : "제공자"
   },
   "systemLanguageAvailable" : {
     "title" : "앱의 언어를 변경하시겠습니까?",
@@ -4084,6 +4092,8 @@
       "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
       "walletSync" : "Ledger 동기화",
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
+      "mevProtection" : "MEV 보호",
+      "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
       "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
@@ -4107,6 +4117,10 @@
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "테스트 파트너 모드에서 교환",
+        "desc" : "파트너 단계 공개 키 사용 활성화"
       },
       "analyticsConsole" : {
         "title" : "분석 콘솔 허용",
