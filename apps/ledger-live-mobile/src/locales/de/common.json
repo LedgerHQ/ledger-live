@@ -2871,6 +2871,8 @@
       "developerModeDesc" : "Zeigen Sie Entwickler-Apps in My Ledger an und aktivieren Sie Testnet-Apps.",
       "analytics" : "Analysen",
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren.",
+      "mevProtection" : "MEV-Schutz",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
       "personalizedRecommendations" : "Personalisierte Nutzung",
       "personalizedRecommendationsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
       "analyticsModal" : {
