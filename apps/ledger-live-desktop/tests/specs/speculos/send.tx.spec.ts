@@ -507,11 +507,24 @@ test.describe("Verify send max user flow", () => {
 for (const transaction of transactionAddressValid) {
   test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
     test.use({
-      userdata: "speculos-checkSendAddress", //todo: Replace by cli when issue with derivation is fix - LIVE-14599
+      userdata: "skip-onboarding",
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            scheme: transaction.transaction.accountToDebit.derivationMode,
+            add: true,
+            appjson: "",
+          },
+        },
+      ],
     });
 
     test(
-      `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
+      `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
       {
         annotation: {
           type: "TMS",

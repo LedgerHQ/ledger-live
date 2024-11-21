@@ -1,11 +1,11 @@
 import path from "path";
-import axios, { AxiosError } from "axios";
+import chalk from "chalk";
 import fs from "fs/promises";
-import { v2 as compose } from "docker-compose";
+import * as compose from "docker-compose";
+import axios, { AxiosError } from "axios";
+import { SignOperationEvent } from "@ledgerhq/types-live";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import { ENV } from "../types";
-import chalk from "chalk";
-import { SignOperationEvent } from "@ledgerhq/types-live";
 
 const { SPECULOS_API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
