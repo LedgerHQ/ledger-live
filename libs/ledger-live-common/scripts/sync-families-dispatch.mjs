@@ -26,6 +26,7 @@ const familiesWPackage = [
   "bitcoin",
   "cardano",
   "evm",
+  "kaspa",
   "near",
   "polkadot",
   "solana",

@@ -15,6 +15,7 @@ import resolver from "../hw-getAddress";
 import { buildSignOperation } from "../bridge/signOperation";
 
 export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {
+  console.log("am i here?");
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({

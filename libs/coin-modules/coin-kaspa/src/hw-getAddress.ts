@@ -5,6 +5,7 @@ import { KaspaSigner } from "./signer";
 
 const resolver = (signerContext: SignerContext<KaspaSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    console.log("fetching address");
     const r = await signerContext(deviceId, signer => signer.getAddress(path, verify || false));
     return {
       address: r.address,

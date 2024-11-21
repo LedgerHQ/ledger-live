@@ -71,6 +71,12 @@ import type {
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "../families/internet_computer/types";
 import type {
+  Transaction as kaspaTransaction,
+  TransactionRaw as kaspaTransactionRaw,
+  TransactionStatus as kaspaTransactionStatus,
+  TransactionStatusRaw as kaspaTransactionStatusRaw,
+} from "@ledgerhq/coin-kaspa/types";
+import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
   TransactionStatus as nearTransactionStatus,
@@ -138,6 +144,7 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | internet_computerTransaction
+  | kaspaTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -161,6 +168,7 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | internet_computerTransactionRaw
+  | kaspaTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -184,6 +192,7 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | internet_computerTransactionStatus
+  | kaspaTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -207,6 +216,7 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | kaspaTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
