@@ -33,6 +33,8 @@ enum LandingPageUseCase {
   LP_Wallet_Connect = "LP_Wallet_Connect",
   LP_Security_Key = "LP_Security_Key",
   LP_Generic = "LP_Generic",
+  LP_Reborn1 = "LP_Reborn1",
+  LP_Reborn2 = "LP_Reborn2",
 }
 
 enum ContentCardLocation {
