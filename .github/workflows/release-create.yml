@@ -46,12 +46,12 @@ jobs:
           git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
-        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases 
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         run: |
           for file in .changeset/*.md; do
             if grep -q ": patch" "$file"; then
-              # target the line after the first "---" and replace ": patch" with ": minor"
-              sed -i '/---/!b;n;s/: patch/: minor/' "$file"
+              # target the lines between the "---" yaml delimiters, replace ": patch" with ": minor"
+              sed -i '/---/,/---/s/: patch/: minor/' "$file"
               echo "Updated $file to minor"
             fi
           done

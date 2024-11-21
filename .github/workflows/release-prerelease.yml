@@ -72,13 +72,32 @@ jobs:
         run: |
           echo "Head branch: $HEAD_BRANCH"
       - name: Move patch updates to minor for release branch
+        # For more info about why we do this, see this doc:
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+        if: ${{ startsWith(github.ref_name, 'release') }}
         run: |
-          # if: ${{ startsWith(github.ref_name, 'release') }}
-          echo "TODO"
+          for file in .changeset/*.md; do
+            if grep -q ": patch" "$file"; then
+              # target the lines between the "---" yaml delimiters, replace ": patch" with ": minor"
+              sed -i '/---/,/---/s/: patch/: minor/' "$file"
+              echo "Updated $file to minor"
+            fi
+          done
       - name: Move minor/major updates to patch for hotfix branch
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
         run: |
-          # if: ${{ startsWith(github.ref_name, 'hotfix') }}
-          echo "TODO"
+          for file in .changeset/*.md; do
+            if grep -q ": minor" "$file"; then
+              # target the lines between the "---" yaml delimiters, replace ": minor" with ": patch"
+              sed -i '/---/,/---/s/: minor/: patch/' "$file"
+              echo "Updated minor update in $file to patch"
+            fi
+            if grep -q ": major" "$file"; then
+              # replace ": major" with ": patch"
+              sed -i '/---/,/---/s/: major/: patch/' "$file"
+              echo "Updated major update in $file to patch"
+            fi
+          done
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') }}
         env:
