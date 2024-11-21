@@ -184,7 +184,7 @@ class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
 type Keys = Record<string, { title: string; description: string }>;
 
 const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
-  sol: {
+  solana: {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
   },
