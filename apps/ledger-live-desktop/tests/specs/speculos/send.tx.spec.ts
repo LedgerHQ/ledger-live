@@ -1,7 +1,7 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
-import { Fee } from "../../enum/Fee";
-import { Transaction } from "../../models/Transaction";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Transaction, NFTTransaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
@@ -20,17 +20,17 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
     expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
     xrayTicket: "B2CQA-2567",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
   },
@@ -53,17 +53,17 @@ const transactionsAddressInvalid = [
     xrayTicket: "B2CQA-2710",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2711",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined, "123456"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2712",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2713",
   },
@@ -81,27 +81,27 @@ const transactionAddressValid = [
     xrayTicket: "B2CQA-2715, B2CQA-2716",
   },
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
     expectedWarningMessage: "Auto-verification not available: carefully verify the address",
     xrayTicket: "B2CQA-2717",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", undefined, "123456"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2718",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2719",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM, "123456"),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "123456"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2720",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", Fee.MEDIUM),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001"),
     expectedWarningMessage: null,
     xrayTicket: "B2CQA-2721",
   },
@@ -143,13 +143,53 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+  /*{
+    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW), //todo: Reactivate when BE issue is fixed - LIVE-14844
     xrayTicket: "B2CQA-2574",
+  },*/
+  {
+    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+    xrayTicket: "B2CQA-2807",
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
+  },
+  {
+    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2808",
+  },
+  {
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
+    xrayTicket: "B2CQA-2809",
+  },
+  {
+    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
+    xrayTicket: "B2CQA-2810",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001"),
+    xrayTicket: "B2CQA-2811",
+  },
+  {
+    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
+    xrayTicket: "B2CQA-2812",
+  },
+  {
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2813",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2814",
+  },
+  {
+    transaction: new Transaction(Account.ADA_1, Account.ADA_1, "1", undefined, "noTag"),
+    xrayTicket: "B2CQA-2815",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
+    xrayTicket: "B2CQA-2816",
   },
 ];
 
@@ -220,7 +260,7 @@ for (const transaction of transactionE2E) {
         await app.send.expectTxInfoValidity(transaction.transaction);
         await app.send.clickContinueToDevice();
 
-        await app.speculos.expectValidTxInfo(transaction.transaction);
+        await app.speculos.signSendTransaction(transaction.transaction);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.sendDrawer.addressValueIsVisible(transaction.transaction.accountToCredit.address);
@@ -366,7 +406,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.account.clickSend();
       await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
       await app.send.checkContinueButtonEnable();
-      await app.layout.checkInputErrorNotVisible();
+      await app.layout.checkInputErrorVisibibility("hidden");
       await app.send.clickContinue();
       await app.send.fillAmount(tokenTransactionValid.amount);
       await app.send.checkContinueButtonEnable();
@@ -459,7 +499,7 @@ test.describe("Verify send max user flow", () => {
       await app.send.clickContinue();
       await app.send.fillAmount(transactionInputValid.amount);
       await app.send.checkContinueButtonEnable();
-      await app.layout.checkInputErrorNotVisible();
+      await app.layout.checkInputErrorVisibibility("hidden");
     },
   );
 });
@@ -467,11 +507,24 @@ test.describe("Verify send max user flow", () => {
 for (const transaction of transactionAddressValid) {
   test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
     test.use({
-      userdata: "speculos-checkSendAddress", //todo: Replace by cli when issue with derivation is fix - LIVE-14599
+      userdata: "skip-onboarding",
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            scheme: transaction.transaction.accountToDebit.derivationMode,
+            add: true,
+            appjson: "",
+          },
+        },
+      ],
     });
 
     test(
-      `Check button enabled (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
+      `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
       {
         annotation: {
           type: "TMS",
@@ -535,3 +588,55 @@ for (const transaction of transactionsAddressInvalid) {
     );
   });
 }
+
+test.describe("send NFT to ENS address", () => {
+  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "NY la muse", Fee.SLOW);
+  test.beforeAll(async () => {
+    process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+  });
+  test.afterAll(async () => {
+    delete process.env.DISABLE_TRANSACTION_BROADCAST;
+  });
+  test.use({
+    userdata: "skip-onboarding",
+    cliCommands: [
+      {
+        command: commandCLI.liveData,
+        args: {
+          currency: transaction.accountToDebit.currency.currencyId,
+          index: transaction.accountToDebit.index,
+          appjson: "",
+          add: true,
+        },
+      },
+    ],
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+  });
+
+  test(
+    "Send NFT to ENS address",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2203",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+      await app.account.navigateToNFTGallery();
+      await app.account.selectNFT(transaction.nftName);
+      await app.nftDrawer.expectNftNameIsVisible(transaction.nftName);
+      await app.nftDrawer.clickSend();
+      await app.send.craftNFTTx(transaction);
+      await app.send.expectNFTTxInfoValidity(transaction);
+      await app.speculos.signSendNFTTransaction(transaction);
+      await app.send.expectTxSent();
+      await app.account.navigateToViewDetails();
+      await app.drawer.close();
+      await app.account.navigateToNFTOperation();
+      await app.sendDrawer.expectNftInfos(transaction);
+    },
+  );
+});

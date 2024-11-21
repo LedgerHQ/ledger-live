@@ -6,7 +6,7 @@ import { StyleProvider } from "../src/styles";
 export const decorators = [
   (Story, { globals }) => {
     const backgrounds = globals?.backgrounds ?? {};
-    const theme = backgrounds?.value === palettes.dark.background.main ? "dark" : "light";
+    const theme = backgrounds?.value === palettes.dark.background.default ? "dark" : "light";
     return (
       <StyleProvider fontsPath="assets/fonts" selectedPalette={theme}>
         <Story />
@@ -29,11 +29,11 @@ export const parameters = {
     values: [
       {
         name: "light",
-        value: palettes.light.background.main,
+        value: palettes.light.background.default,
       },
       {
         name: "dark",
-        value: palettes.dark.background.main,
+        value: palettes.dark.background.default,
       },
     ],
   },

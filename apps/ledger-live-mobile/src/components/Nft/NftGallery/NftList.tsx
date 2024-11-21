@@ -31,7 +31,6 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListPr
 type Props = {
   data: ProtoNFT[];
   fetchNextPage: () => void;
-  hasNextPage: boolean;
   isLoading: boolean;
   error: unknown;
   refetch: () => void;
@@ -51,7 +50,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
+const NftList = ({ data, fetchNextPage, isLoading }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -82,8 +81,8 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
     ],
   };
 
-  const Fade_In_Down = Config.MOCK ? undefined : FadeInDown;
-  const Fade_Out_Down = Config.MOCK ? undefined : FadeOutDown;
+  const Fade_In_Down = Config.DETOX ? undefined : FadeInDown;
+  const Fade_Out_Down = Config.DETOX ? undefined : FadeOutDown;
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -172,14 +171,14 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
         ListFooterComponent={
-          !isLoading && hasNextPage ? (
+          isLoading ? (
             <Flex paddingBottom={25} paddingTop={25}>
               <InfiniteLoader />
             </Flex>
           ) : null
         }
         ListEmptyComponent={
-          isLoading ? (
+          data.length === 0 && isLoading ? (
             <Flex flexGrow={1} justifyContent="center" paddingBottom={150}>
               <InfiniteLoader />
             </Flex>

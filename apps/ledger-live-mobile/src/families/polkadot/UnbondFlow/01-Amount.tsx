@@ -32,6 +32,8 @@ import SendRowsFee from "../SendRowsFee";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 
 type Props = StackNavigatorProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondAmount>;
 
@@ -110,6 +112,8 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
+  const hasErrorDuringUnbonding = error instanceof NotEnoughBalance;
+
   return (
     <>
       <TrackScreen
@@ -168,6 +172,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                 </LText>
               </View>
               <View style={styles.bottomWrapper}>
+                {hasErrorDuringUnbonding && <NotEnoughFundFeesAlert account={account} />}
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>

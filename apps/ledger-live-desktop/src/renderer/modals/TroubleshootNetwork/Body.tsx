@@ -65,19 +65,20 @@ const Status = ({ status }: { status?: TroubleshootStatus }) => {
   }
 };
 const RenderState = ({ state }: { state: TroubleshootStatus[] }) => {
+  const { t } = useTranslation();
   return (
     <Table>
       <thead>
         <tr>
-          <th>TEST</th>
-          <th>RENDERER</th>
+          <th>{t("troubleshootNetwork.test")}</th>
+          <th>{t("troubleshootNetwork.renderer")}</th>
         </tr>
       </thead>
       <tbody>
         {state.map(status => {
           return (
             <tr key={status.title}>
-              <td>{status.title}</td>
+              <td>{t(status.translationKey)}</td>
               <td>
                 <Status status={status} />
               </td>

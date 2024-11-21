@@ -46,6 +46,8 @@ export type UIState = {
     isOpen: boolean;
     payload?: PlatformAppDrawers | null;
   };
+  isMemoTagBoxVisible: boolean;
+  forceAutoFocusOnMemoField: boolean;
 };
 
 const initialState: UIState = {
@@ -57,10 +59,17 @@ const initialState: UIState = {
     isOpen: false,
     payload: undefined,
   },
+  isMemoTagBoxVisible: false,
+  forceAutoFocusOnMemoField: false,
 };
 
 type OpenPayload = {
   tabId?: string;
+};
+
+type ToggleMemoDisplayPayload = {
+  isMemoTagBoxVisible: boolean;
+  forceAutoFocusOnMemoField?: boolean;
 };
 
 type HandlersPayloads = {
@@ -70,6 +79,7 @@ type HandlersPayloads = {
   PLATFORM_APP_DRAWER_OPEN: PlatformAppDrawers;
   PLATFORM_APP_DRAWER_CLOSE: never;
   EXCHANGE_APP_DRAWER_OPEN: ExchangeAppDrawer;
+  TOGGLE_MEMOTAG_DISPLAY: ToggleMemoDisplayPayload;
 };
 type UIHandlers<PreciseKey = true> = Handlers<UIState, HandlersPayloads, PreciseKey>;
 
@@ -131,6 +141,13 @@ const handlers: UIHandlers = {
       },
     };
   },
+  TOGGLE_MEMOTAG_DISPLAY: (state, { payload }) => {
+    return {
+      ...state,
+      isMemoTagBoxVisible: payload.isMemoTagBoxVisible,
+      forceAutoFocusOnMemoField: !!payload?.forceAutoFocusOnMemoField,
+    };
+  },
 };
 
 // Selectors
@@ -140,7 +157,11 @@ export const informationCenterStateSelector = (state: State): UIState["informati
   state.UI.informationCenter;
 export const platformAppDrawerStateSelector = (state: State): UIState["platformAppDrawer"] =>
   state.UI.platformAppDrawer;
-
+export const memoTagBoxVisibilitySelector = (state: State): UIState["isMemoTagBoxVisible"] =>
+  state.UI.isMemoTagBoxVisible;
+export const forceAutoFocusOnMemoFieldSelector = (
+  state: State,
+): UIState["forceAutoFocusOnMemoField"] => state.UI.forceAutoFocusOnMemoField;
 // Exporting reducer
 
 export default handleActions<UIState, HandlersPayloads[keyof HandlersPayloads]>(

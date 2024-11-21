@@ -12,6 +12,8 @@ import {
   memberCredentialsSelector,
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
@@ -74,6 +76,7 @@ export function useQRCodeHost({ currentOption }: Props) {
     onSuccess: newTrustchain => {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
+        if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated);
       }
       queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       navigation.navigate(NavigatorName.WalletSync, {

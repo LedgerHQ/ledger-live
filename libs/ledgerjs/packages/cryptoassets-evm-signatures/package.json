@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets-evm-signatures",
-  "version": "13.5.1",
+  "version": "13.5.2",
   "description": "Ledger crypto-assets list, evm only",
   "keywords": [
     "Ledger"
@@ -24,6 +24,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",

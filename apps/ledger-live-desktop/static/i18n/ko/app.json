@@ -137,7 +137,9 @@
       "outdated" : "일시 중지됨",
       "error" : "동기화 오류",
       "refresh" : "새로고침",
-      "devTools" : "개발자 도구"
+      "devTools" : "개발자 도구",
+      "failingSync_one" : "동기화에 실패한 계정:",
+      "failingSync_other" : "동기화에 실패한 계정:"
     },
     "exchange" : "교환",
     "info" : "정보",
@@ -146,7 +148,10 @@
     "or" : "또는",
     "clearAll" : "모두 지우기",
     "buyLedger" : "Ledger 구매",
-    "quote" : "호가"
+    "quote" : "호가",
+    "memoTag" : {
+      "learnMore" : "태그/메모에 대해 더 알아보기"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -430,6 +435,12 @@
       "title" : "장치에 {{appName}} 앱을 업데이트 하세요",
       "subtitle" : "내 Ledger로 이동하여 {{appName}} 앱을 업데이트하고 자산을 스왑하세요.",
       "cta" : "내 Ledger로 이동"
+    },
+    "wrongDevice" : {
+      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
+      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "cta" : "호환 가능한 장치 탐색",
+      "changeProvider" : "다른 공급자를 통해 스왑"
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -737,7 +748,8 @@
         "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
         "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
         "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
-        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
+        "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1130,8 @@
     "optionsMenu" : {
       "title" : "옵션",
       "exportOperations" : "거래 내역 내보내기",
-      "exportToMobile" : "모바일로 내보내기"
+      "exportToMobile" : "모바일로 내보내기",
+      "ledgerSync" : "동기화 계정"
     },
     "contextMenu" : {
       "star" : "별표 표시",
@@ -1126,6 +1139,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
       "edit" : "계정 편집",
@@ -2252,6 +2266,10 @@
           "description" : "Ledger by Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "태그/메모가 필요하세요?",
+      "description" : "거래소에서 이 자산을 수령하려면 <0>태그/메모</0>가 필요할 수 있습니다. 1234와 같은 숫자 조합을 사용할 수 있습니다."
     }
   },
   "send" : {
@@ -2274,12 +2292,17 @@
           "noResolution" : {
             "title" : "이 도메인과 관련하여 발견된 주소가 없습니다"
           }
+        },
+        "memoTag" : {
+          "question" : "메모 태그를 사용하지 않으시나요?",
+          "learnMore" : "태그/메모에 대해 더 알아보기",
+          "warning" : " 중앙화된 거래소나 수탁 지갑으로 자산을 보낼 때 태그/메모를 추가하지 않으면 자금이 손실됩니다."
         }
       },
       "amount" : {
         "title" : "금액",
         "banner" : "최대 사용 가능 금액은",
-        "fees" : "최대 예상 수수료",
+        "fees" : "수수료 자세히 알아보기",
         "standard" : "스탠다드",
         "advanced" : "고급",
         "nftQuantity" : "수량"
@@ -2351,6 +2374,15 @@
     },
     "footer" : {
       "estimatedFees" : "네트워크 수수료"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "태그/메모를 사용하지 않으시나요?",
+        "description" : "중앙화된 거래소나 수탁 지갑으로 자산을 보낼 때 태그/메모를 추가하지 않으면 자금이 손실됩니다.",
+        "cta.addTag" : "태그 추가",
+        "cta.not.addTag" : "태그 사용 안 함",
+        "checkbox.label" : "다시 보지 않기"
+      }
     }
   },
   "releaseNotes" : {
@@ -2408,8 +2440,12 @@
     "installingLanguage" : "언어 설치 중",
     "languages" : {
       "english" : "영어",
-      "french" : "프랑스어",
-      "spanish" : "스페인어"
+      "french" : "Français",
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2792,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT(대체 불가능 토큰) 컬렉션",
-        "description" : "Ledger Live 내부의 Objkt를 통해 테조스 NFT를 직접 확인할 수 있습니다.",
-        "cta" : "Objkt에서 내 NFT 보기"
       }
     }
   },
@@ -3682,7 +3709,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
@@ -3712,6 +3739,72 @@
         "tag" : "32 ETH 필요",
         "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
         "supportLink" : "Figment 검증인에 대해 자세히 알아보기"
+      }
+    },
+    "stake" : {
+      "title" : "스테이킹 업체 선정",
+      "category" : {
+        "all" : {
+          "name" : "전체",
+          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+        },
+        "liquid" : {
+          "name" : "리퀴드(Liquid)",
+          "description" : "ETH를 스테이킹하고 리퀴드 토큰으로 보상을 받을 수 있으며, 여전히 자산 거래 및 디파이 활동 역시 참여 가능합니다."
+        },
+        "protocol" : {
+          "name" : "프로토콜(Protocol)",
+          "description" : "32 ETH 배치를 스테이킹하고 ETH로 전체 노드 보상을 받을 수 있습니다."
+        },
+        "pooling" : {
+          "name" : "풀링(Pooling)",
+          "description" : "풀에 참여하여 원하는 금액의 ETH를 스테이킹해 보상을 받을 수 있습니다."
+        },
+        "restaking" : {
+          "name" : "리스테이킹(Restaking)",
+          "description" : "리퀴드 토큰을 리스테이킹해 추가 보상을 받을 수 있습니다."
+        }
+      },
+      "howItWorks" : "ETH 스테이킹의 원리",
+      "lst" : "리퀴드 토큰 필요",
+      "noMinimum" : "최소 한도 없음",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀"
+        },
+        "kiln_restaking" : {
+          "title" : "Kiln 리퀴드 스테이킹"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs"
+        }
+      },
+      "readAbout" : "ETH 스테이킹과 다양한 전략 알아보기",
+      "requiredMinimum" : "{{min}} ETH 필요",
+      "rewardsStrategy" : {
+        "auto-compounded" : "자동 복리 보상",
+        "basic" : "보상",
+        "daily" : "일일 보상",
+        "eigenlayer_points" : "Eigenlayer 포인트",
+        "validator" : "검증인 보상"
       }
     }
   },
@@ -4014,6 +4107,35 @@
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
+      "analyticsConsole" : {
+        "title" : "분석 콘솔 허용",
+        "desc" : "분석 콘솔 열기를 표시하고 허용합니다."
+      },
+      "brazeTools" : {
+        "title" : "브레이즈 도구",
+        "description" : "로컬 브레이즈 카드 생성",
+        "open" : "열기",
+        "modal" : {
+          "title" : "로컬 브레이즈 카드 생성",
+          "add" : "추가",
+          "dismiss" : "모든 카드 무시",
+          "fields" : {
+            "notification" : "알림 콘텐츠 카드",
+            "action" : "액션 콘텐츠 카드",
+            "portfolio" : "포트폴리오 콘텐츠 카드",
+            "title" : "제목",
+            "description" : "설명",
+            "order" : "주문",
+            "image" : "이미지 URL",
+            "mainCta" : "메인 CTA",
+            "link" : "링크",
+            "secondaryCta" : "보조 CTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "경로"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4456,20 @@
       "tokenBlacklist" : {
         "title" : "숨겨진 토큰",
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
-        "count" : "({{count}}) 토큰",
-        "count_plural" : "{{count}}개의 토큰"
+        "count" : "1개의 토큰",
+        "count_other" : "{{count}}개의 토큰"
       },
       "hiddenNftCollections" : {
         "title" : "숨겨진 NFT 컬렉션",
         "desc" : "컬렉션 이름을 마우스 오른쪽 버튼으로 클릭하고 'NFT 컬렉션 숨기기'를 선택하여 NFT 컬렉션을 숨길 수 있습니다.",
-        "count" : "{{count}}개의 컬렉션",
-        "count_plural" : "{{count}}개의 컬렉션"
+        "count" : "1개의 컬렉션",
+        "count_other" : "{{count}}개의 컬렉션"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "숨겨진 인스크립션",
+        "desc" : "인스크립션을 마우스 오른쪽 버튼으로 클릭하고 '인스크립션 숨기기'를 선택하여 인스크립션을 숨길 수 있습니다.",
+        "count" : "1개의 인스크립션",
+        "count_other" : "{{count}}개의 인스크립션"
       },
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
@@ -5209,25 +5337,17 @@
     "link" : "이용 약관",
     "cta" : "계속"
   },
+  "MemoTagField" : {
+    "label" : "태그 / 메모",
+    "placeholder" : "태그 / 메모 입력",
+    "information" : "트랜잭션이 계정에 올바르게 예치되었는지 확인하려면 탈중앙화된 거래소 및 때에 따라 수탁 지갑에 태그/메모가 필요합니다.",
+    "instruction" : "거래소 또는 수탁 지갑에서 제공하는 태그/메모를 복사하여 붙여넣으세요."
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "선택 사항",
       "transferId" : "전송 ID(메모)",
       "transferIdWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "선택 사항",
-      "memo" : "메모"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "옵션, 기본값: 0",
-      "memo" : "메모",
-      "memoWarningText" : "메모 값은 0에서 9223372036854775807 사이의 숫자일 수 있습니다"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "선택 사항",
-      "memo" : "메모",
-      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
     },
     "ton" : {
       "commentPlaceholder" : "선택 사항",
@@ -5257,13 +5377,8 @@
       "assetCode" : "자산 코드",
       "assetIssuer" : "자산 발행인"
     },
-    "cosmos" : {
-      "memo" : "메모",
-      "memoPlaceholder" : "선택 사항",
-      "memoWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
-    },
     "solana" : {
-      "memo" : "메모",
+      "memo" : "태그 / 메모",
       "memoPlaceholder" : "선택 사항"
     }
   },
@@ -5273,8 +5388,11 @@
       "description" : "네트워크 수수료가 너무 낮은 것 같습니다. 조금 높여주세요"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
-      "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
+      "title" : "{{appName}}(은)는 {{productName}}(와)과 호환되지 않습니다.",
+      "titleOld" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
+      "description" : "<0>Ledger 장치로 더 많은 기회를 찾아보세요.</0> 이 기능에 액세스하려면 호환 가능한 장치 중 하나를 업그레이드해야 합니다. 각자 니즈에 맞는 최적의 옵션을 선택하여 보안을 강화해보세요.",
+      "exploreCTA" : "호환 가능한 장치 탐색",
+      "learnMoreCTA" : "Ledger Sync에 대해 자세히 알아보기"
     },
     "PendingOperation" : {
       "description" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다."
@@ -6026,7 +6144,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "메인넷 활성화 전에 탭루트(taproot) 주소로 보내는 것은 안전하지 않습니다"
@@ -6240,11 +6358,32 @@
     },
     "PinNotSet" : {
       "title" : "PIN이 설정되지 않았습니다"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "트랜잭션이 브로드캐스트되지 못했습니다",
+      "description" : "트랜잭션 실패. {{networkName}} 네트워크에서 브로드캐스트에 실패하여 이체되지 못한 {{currencyName}}(이)가 계정에 남아 있습니다.",
+      "helpCenterTitle" : "지원 센터: ",
+      "helpCenterDesc" : "도움이 필요하시면 지원 센터를 방문하거나 위젯을 통해 문의하세요.",
+      "needHelp" : "도움이 필요하십니까?",
+      "getHelp" : "도움 받기",
+      "technicalErrorTitle" : "기술적 에러: ",
+      "saveLogs" : "로그 저장"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다.",
+      "oneCta" : "본인 계정에 {{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나",
+      "twoCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나 <cta2>{{cta2Label}}</cta2>, 또는",
+      "threeCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2>, <cta3>{{cta3Label}}</cta3>하세요.",
+      "ctas" : {
+        "buy" : "구매",
+        "swap" : "스왑",
+        "deposit" : "입금"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "메모",
-    "memoPlaceholder" : "선택 사항",
+    "memoPlaceholder" : "태그 / 메모 입력",
     "memoWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
   },
   "hedera" : {
@@ -6276,6 +6415,7 @@
     "cta" : "커스텀 가능한 잠금 화면",
     "managerCTA" : "잠금 화면 사진",
     "managerCTARemove" : "제거",
+    "rotate" : "회전",
     "steps" : {
       "choose" : {
         "stepLabel" : "사진 선택",
@@ -6377,12 +6517,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
-      "whatWeTrack" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 추적할 수 있습니다.",
+      "whatWeTrack" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
       "whatWeTrackList" : {
         "1" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
         "2" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
       },
-      "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
+      "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 수집하지 않습니다.",
       "whatWeDoNotTrackList" : {
         "1" : "고객 자산.",
         "2" : "고객 포트폴리오.",
@@ -6424,13 +6564,13 @@
     "common" : {
       "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
       "revokeInfo" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-      "learnMore" : "당사 추적 정책 자세히 살펴보기"
+      "learnMore" : "Ledger의 고객 데이터 처리 방법에 대해 자세히 알아보세요"
     },
     "profileSettings" : {
       "personalizedExp" : "맞춤화된 경험",
       "analytics" : "애널리틱스",
-      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
-      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
+      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
     }
   },
   "walletSync" : {
@@ -6584,6 +6724,11 @@
       "seeMore" : "더 많은 인스크립션 보기",
       "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
       "receive" : "인스크립션 받기",
+      "hide" : "인스크립션 숨기기",
+      "modal" : {
+        "title" : "인스크립션 숨기기",
+        "desc" : "이 조치는 사용자 개정에서 다음 인스크립션 <0>{{inscriptionName}}</0>(을)를 숨깁니다. 언제든지 설정에서 숨김을 해제할 수 있습니다."
+      },
       "discoveryDrawer" : {
         "title" : "Ordinals 살펴보기",
         "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
@@ -6650,6 +6795,20 @@
           "vintage" : "비트코인은 최초 1,000개의 블록으로 그 시작을 표시했습니다. 이 기간 내에 채굴된 SAT에는 \"Vintage\"라는 표식이 붙습니다."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "전송 금액",
+      "of" : "/",
+      "excludeAssets" : "Ordinals 자산 배제",
+      "selectDesc" : "트랜잭션 시 사용할 UTXO를 선택하세요. 확인되지 않은 UTXO가 사용되지 않습니다.",
+      "utxos" : "UTXO",
+      "learnMore" : "이 설정 자세히 알아보기",
+      "confirm" : "확인",
+      "address" : "주소",
+      "transactionId" : "트랜잭션 ID"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "LDMK 전송 사용"
   }
 }

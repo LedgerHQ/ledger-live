@@ -39,6 +39,7 @@ export const IDS = [
   "axelar",
   "persistence",
   "onomy",
+  "mantra",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -502,6 +503,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/injective/txs/$hash",
         address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "mantra",
+    coinType: 118,
+    name: "Mantra",
+    managerAppName: "Cosmos",
+    ticker: "OM",
+    scheme: "mantra",
+    color: "#ffb386",
+    family: "cosmos",
+    units: [
+      {
+        name: "Mantra",
+        code: "OM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Mantra",
+        code: "uom",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/mantra/txs/$hash",
+        address: "https://www.mintscan.io/mantra/validators/$address",
       },
     ],
   },

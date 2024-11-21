@@ -9,6 +9,7 @@ type Props = {
   transaction: Transaction;
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
+  autoFocus?: boolean;
 };
 
 export const getFields = (account: Account): string[] => {

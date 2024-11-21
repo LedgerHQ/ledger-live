@@ -43,6 +43,7 @@ import {
   renderAllowOpeningApp,
   renderBootloaderStep,
   renderConnectYourDevice,
+  renderHardwareUpdate,
   renderError,
   renderInWrongAppForAccount,
   renderLoading,
@@ -81,6 +82,14 @@ import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+
+type SwapRequest = {
+  transaction: Transaction;
+  exchange: ExchangeSwap;
+  provider: string;
+  rate: number;
+  amountExpectedTo: number;
+};
 
 type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
@@ -329,6 +338,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     } else {
       return renderAllowRemoveCustomLockscreen({ modelId, type });
     }
+  }
+
+  if (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") {
+    return renderHardwareUpdate();
   }
 
   if (listingApps) {

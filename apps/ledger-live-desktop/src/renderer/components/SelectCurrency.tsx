@@ -149,6 +149,26 @@ const SelectCurrency = ({
 const OptionMultilineContainer = styled(Box)`
   line-height: 1.3em;
 `;
+
+const OptionBox = styled(Box)`
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  vertical-align: middle;
+  grid-gap: 10px;
+`;
+
+const OptionTitleBox = styled(Box).attrs(() => ({
+  color: "palette.text.shade100",
+  ff: "Inter|SemiBold",
+  fontSize: 4,
+}))`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+`;
+
 const CurrencyLabel = styled(Text).attrs(() => ({
   color: "palette.text.shade60",
   ff: "Inter|SemiBold",
@@ -179,9 +199,9 @@ export function CurrencyOption({
   const isParentTagDisplayed = !hideParentTag && (currency as TokenCurrency).parentCurrency;
   const textContents = singleLineLayout ? (
     <>
-      <Box grow ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+      <OptionTitleBox title={`${currency.name} (${currency.ticker})`}>
         {`${currency.name} (${currency.ticker})`}
-      </Box>
+      </OptionTitleBox>
       {isParentTagDisplayed ? (
         <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
       ) : null}
@@ -207,10 +227,10 @@ export function CurrencyOption({
     </>
   );
   return (
-    <Box grow horizontal role="option" alignItems="center" flow={2}>
+    <OptionBox role="option">
       <CryptoCurrencyIcon circle currency={currency} size={26} />
       {textContents}
-    </Box>
+    </OptionBox>
   );
 }
 const renderOption = <C extends CurrencyOption>({ data }: { data: C }) => (

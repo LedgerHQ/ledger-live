@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
@@ -86,7 +86,7 @@ for (const token of subAccountReceive) {
         await app.modal.continue();
         await app.receive.expectValidReceiveAddress(token.account.address);
 
-        await app.speculos.expectValidReceiveAddress(token.account);
+        await app.speculos.expectValidAddressDevice(token.account);
         await app.receive.expectApproveLabel();
       },
     );

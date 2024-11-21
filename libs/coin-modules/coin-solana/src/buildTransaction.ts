@@ -23,7 +23,7 @@ export const buildTransactionWithAPI = async (
   transaction: Transaction,
   api: ChainAPI,
 ): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
-  const instructions = buildInstructions(transaction);
+  const instructions = await buildInstructions(api, transaction);
 
   const recentBlockhash = await api.getLatestBlockhash();
 
@@ -46,7 +46,10 @@ export const buildTransactionWithAPI = async (
   ];
 };
 
-function buildInstructions(tx: Transaction): TransactionInstruction[] {
+async function buildInstructions(
+  api: ChainAPI,
+  tx: Transaction,
+): Promise<TransactionInstruction[]> {
   const { commandDescriptor } = tx.model;
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
@@ -54,27 +57,30 @@ function buildInstructions(tx: Transaction): TransactionInstruction[] {
   if (Object.keys(commandDescriptor.errors).length > 0) {
     throw new Error("can not build invalid command");
   }
-  return buildInstructionsForCommand(commandDescriptor.command);
+  return buildInstructionsForCommand(api, commandDescriptor.command);
 }
 
-function buildInstructionsForCommand(command: Command): TransactionInstruction[] {
+async function buildInstructionsForCommand(
+  api: ChainAPI,
+  command: Command,
+): Promise<TransactionInstruction[]> {
   switch (command.kind) {
     case "transfer":
-      return buildTransferInstructions(command);
+      return buildTransferInstructions(api, command);
     case "token.transfer":
-      return buildTokenTransferInstructions(command);
+      return buildTokenTransferInstructions(api, command);
     case "token.createATA":
       return buildCreateAssociatedTokenAccountInstruction(command);
     case "stake.createAccount":
-      return buildStakeCreateAccountInstructions(command);
+      return buildStakeCreateAccountInstructions(api, command);
     case "stake.delegate":
-      return buildStakeDelegateInstructions(command);
+      return buildStakeDelegateInstructions(api, command);
     case "stake.undelegate":
-      return buildStakeUndelegateInstructions(command);
+      return buildStakeUndelegateInstructions(api, command);
     case "stake.withdraw":
-      return buildStakeWithdrawInstructions(command);
+      return buildStakeWithdrawInstructions(api, command);
     case "stake.split":
-      return buildStakeSplitInstructions(command);
+      return buildStakeSplitInstructions(api, command);
     default:
       return assertUnreachable(command);
   }

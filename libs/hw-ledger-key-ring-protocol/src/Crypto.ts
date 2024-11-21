@@ -13,19 +13,19 @@ export interface KeyPairWithChainCode extends KeyPair {
  *
  */
 export interface Crypto {
-  randomKeypair(): Promise<KeyPair>;
-  keypairFromSecretKey(secretKey: Uint8Array): Promise<KeyPair>;
-  sign(message: Uint8Array, keyPair: KeyPair): Promise<Uint8Array>;
-  verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): Promise<boolean>;
-  encrypt(secret: Uint8Array, nonce: Uint8Array, message: Uint8Array): Promise<Uint8Array>;
-  decrypt(secret: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array): Promise<Uint8Array>;
-  randomBytes(size: number): Promise<Uint8Array>;
-  ecdh(keyPair: KeyPair, publicKey: Uint8Array): Promise<Uint8Array>;
-  hash(message: Uint8Array): Promise<Uint8Array>;
-  computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Promise<Uint8Array>;
+  randomKeypair(): KeyPair;
+  keypairFromSecretKey(secretKey: Uint8Array): KeyPair;
+  sign(message: Uint8Array, keyPair: KeyPair): Uint8Array;
+  verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean;
+  encrypt(secret: Uint8Array, nonce: Uint8Array, message: Uint8Array): Uint8Array;
+  decrypt(secret: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array): Uint8Array;
+  randomBytes(size: number): Uint8Array;
+  ecdh(keyPair: KeyPair, publicKey: Uint8Array): Uint8Array;
+  hash(message: Uint8Array): Uint8Array;
+  computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Uint8Array;
   from_hex(hex: string): Uint8Array;
   to_hex(bytes?: Uint8Array): string;
-  derivePrivate(xpriv: Uint8Array, path: number[]): Promise<KeyPairWithChainCode>;
+  derivePrivate(xpriv: Uint8Array, path: number[]): KeyPairWithChainCode;
 }
 
 export class DerivationPath {

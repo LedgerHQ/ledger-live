@@ -32,6 +32,8 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -101,6 +103,8 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
+  const hasNotEnoughtBalanceError = bridgeError instanceof CardanoNotEnoughFunds;
+
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
@@ -136,6 +140,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
         ) : (
           <></>
         )}
+        {hasNotEnoughtBalanceError && <NotEnoughFundFeesAlert account={account} />}
         <Button
           event="SummaryContinue"
           type="primary"
@@ -146,19 +151,21 @@ export default function UndelegationSummary({ navigation, route }: Props) {
           pending={bridgePending}
         />
       </View>
-      <GenericErrorBottomModal
-        error={bridgeErr}
-        onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
-      />
+      {!hasNotEnoughtBalanceError && bridgeErr && (
+        <GenericErrorBottomModal
+          error={bridgeErr}
+          onClose={onBridgeErrorRetry}
+          footerButtons={
+            <>
+              <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
+              <RetryButton
+                containerStyle={[styles.button, styles.buttonRight]}
+                onPress={onBridgeErrorRetry}
+              />
+            </>
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }

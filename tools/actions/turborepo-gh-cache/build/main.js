@@ -18876,9 +18876,9 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
   }
 });
 
-// ../../../node_modules/.pnpm/universalify@2.0.0/node_modules/universalify/index.js
+// ../../../node_modules/.pnpm/universalify@2.0.1/node_modules/universalify/index.js
 var require_universalify = __commonJS({
-  "../../../node_modules/.pnpm/universalify@2.0.0/node_modules/universalify/index.js"(exports2) {
+  "../../../node_modules/.pnpm/universalify@2.0.1/node_modules/universalify/index.js"(exports2) {
     "use strict";
     exports2.fromCallback = function(fn) {
       return Object.defineProperty(function(...args) {
@@ -18886,11 +18886,8 @@ var require_universalify = __commonJS({
           fn.apply(this, args);
         else {
           return new Promise((resolve3, reject) => {
-            fn.call(
-              this,
-              ...args,
-              (err, res) => err != null ? reject(err) : resolve3(res)
-            );
+            args.push((err, res) => err != null ? reject(err) : resolve3(res));
+            fn.apply(this, args);
           });
         }
       }, "name", { value: fn.name });
@@ -18900,8 +18897,10 @@ var require_universalify = __commonJS({
         const cb = args[args.length - 1];
         if (typeof cb !== "function")
           return fn.apply(this, args);
-        else
-          fn.apply(this, args.slice(0, -1)).then((r) => cb(null, r), cb);
+        else {
+          args.pop();
+          fn.apply(this, args).then((r) => cb(null, r), cb);
+        }
       }, "name", { value: fn.name });
     };
   }

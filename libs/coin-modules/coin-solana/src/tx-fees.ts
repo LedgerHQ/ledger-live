@@ -2,9 +2,10 @@ import { ChainAPI } from "./api";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import { Transaction, TransactionModel } from "./types";
-import { assertUnreachable } from "./utils";
+import { LEDGER_VALIDATOR, assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
+import { getStakeAccountAddressWithSeed } from "./api/chain/web3";
 
 const DEFAULT_TX_FEE = 5000;
 
@@ -13,7 +14,7 @@ export async function estimateTxFee(
   address: string,
   kind: TransactionModel["kind"],
 ) {
-  const tx = createDummyTx(address, kind);
+  const tx = await createDummyTx(address, kind);
   const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -76,7 +77,7 @@ const createDummyTransferTx = (address: string): Transaction => {
   };
 };
 
-const createDummyStakeCreateAccountTx = (address: string): Transaction => {
+const createDummyStakeCreateAccountTx = async (address: string): Promise<Transaction> => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -87,12 +88,12 @@ const createDummyStakeCreateAccountTx = (address: string): Transaction => {
           kind: "stake.createAccount",
           amount: 0,
           delegate: {
-            voteAccAddress: randomAddresses[0],
+            voteAccAddress: LEDGER_VALIDATOR.voteAccount,
           },
           fromAccAddress: address,
           seed: "",
-          stakeAccAddress: randomAddresses[1],
-          stakeAccRentExemptAmount: 0,
+          stakeAccAddress: await getStakeAccountAddressWithSeed({ fromAddress: address, seed: "" }),
+          stakeAccRentExemptAmount: 2282880,
         },
         ...commandDescriptorCommons,
       },
@@ -149,7 +150,7 @@ const createDummyStakeWithdrawTx = (address: string): Transaction => {
           amount: 0,
           authorizedAccAddr: address,
           stakeAccAddr: randomAddresses[0],
-          toAccAddr: randomAddresses[1],
+          toAccAddr: address,
         },
         ...commandDescriptorCommons,
       },

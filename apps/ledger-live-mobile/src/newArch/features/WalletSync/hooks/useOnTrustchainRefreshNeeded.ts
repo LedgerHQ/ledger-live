@@ -8,6 +8,8 @@ import {
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { log } from "@ledgerhq/logs";
+import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { track } from "~/analytics";
 
 export function useOnTrustchainRefreshNeeded(
   trustchainSdk: TrustchainSDK,
@@ -24,6 +26,7 @@ export function useOnTrustchainRefreshNeeded(
       } catch (e) {
         if (e instanceof TrustchainEjected) {
           dispatch(resetTrustchainStore());
+          track(AnalyticsEvents.LedgerSyncDeactivated);
         }
       }
     },

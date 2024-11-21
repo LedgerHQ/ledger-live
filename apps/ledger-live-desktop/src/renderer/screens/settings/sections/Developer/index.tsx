@@ -16,6 +16,7 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
+import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
@@ -26,6 +27,7 @@ import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
+import { RecoverUpsellRow } from "./RecoverUpsellRow";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -84,6 +86,7 @@ const Default = () => {
       >
         <EnableLearnPageStagingUrlToggle />
       </Row>
+      <RecoverUpsellRow />
       <Row
         title={t("settings.developer.enableStagingNftMetadataService")}
         desc={t("settings.developer.enableStagingNftMetadataServiceDesc")}
@@ -102,7 +105,7 @@ const Default = () => {
         <StorylyTester />
       </FeatureToggle>
       <ExchangeDeveloperMode />
-
+      <ExchangeTestPartnerMode />
       <FeatureToggle featureId="lldWalletSync">
         <WalletSyncTester />
       </FeatureToggle>

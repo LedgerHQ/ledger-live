@@ -32,7 +32,10 @@ import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import {
+  filterTokenOperationsZeroAmountEnabledSelector,
+  hiddenNftCollectionsSelector,
+} from "~/reducers/settings";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
@@ -53,6 +56,7 @@ export function Operations({ navigation, route }: Props) {
     [accountsFromState, accountsIds],
   );
   const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
+  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
@@ -66,10 +70,15 @@ export function Operations({ navigation, route }: Props) {
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
 
-      return !removeZeroAmountTokenOp;
+      // Remove operations coming from an NFT collection considered spam
+      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
+        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
+      );
+      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
   const { sections, completed } = groupAccountsOperationsByDay(accountsFiltered, {
     count: opCount,
     withSubAccounts: true,

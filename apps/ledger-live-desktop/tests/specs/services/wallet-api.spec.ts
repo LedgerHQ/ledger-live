@@ -465,7 +465,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -504,7 +504,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient

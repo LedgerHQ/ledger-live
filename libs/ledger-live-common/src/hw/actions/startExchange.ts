@@ -123,7 +123,7 @@ export const createAction = (
         ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
         : null;
 
-    const request: AppRequest = useMemo(() => {
+    const request = useMemo<AppRequest>(() => {
       if (isSwapDisableAppsInstall()) {
         return {
           appName: "Exchange",
@@ -135,16 +135,28 @@ export const createAction = (
           requireLatestFirmware,
         };
       } else {
+        const shouldAddEthApp =
+          (mainFromAccount.currency.family === "evm" || mainToAccount.currency.family === "evm") &&
+          mainFromAccount.currency.managerAppName !== "Ethereum" &&
+          mainToAccount.currency.managerAppName !== "Ethereum";
+        const dependencies: AppRequest["dependencies"] = [
+          {
+            account: mainFromAccount,
+          },
+          {
+            account: mainToAccount,
+          },
+        ];
+
+        if (shouldAddEthApp) {
+          dependencies.push({
+            appName: "Ethereum",
+          });
+        }
+
         return {
           appName: "Exchange",
-          dependencies: [
-            {
-              account: mainFromAccount,
-            },
-            {
-              account: mainToAccount,
-            },
-          ],
+          dependencies,
           requireLatestFirmware,
         };
       }

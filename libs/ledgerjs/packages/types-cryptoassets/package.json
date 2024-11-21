@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-cryptoassets",
-  "version": "7.16.0",
+  "version": "7.17.0",
   "description": "Ledger types for crypto assets and tokens",
   "keywords": [
     "Ledger"
@@ -25,6 +25,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",

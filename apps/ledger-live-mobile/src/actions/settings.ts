@@ -70,6 +70,10 @@ import {
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
+  SettingsSetHasBeenRedirectedToPostOnboardingPayload,
+  SettingsWhitelistNftCollectionPayload,
+  SettingsUnwhitelistNftCollectionPayload,
+  SettingsSetMevProtectionPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -146,6 +150,15 @@ export const hideNftCollection = createAction<SettingsHideNftCollectionPayload>(
 export const unhideNftCollection = createAction<SettingsUnhideNftCollectionPayload>(
   SettingsActionTypes.UNHIDE_NFT_COLLECTION,
 );
+
+export const whitelistNftCollection = createAction<SettingsWhitelistNftCollectionPayload>(
+  SettingsActionTypes.WHITELIST_NFT_COLLECTION,
+);
+
+export const unwhitelistNftCollection = createAction<SettingsUnwhitelistNftCollectionPayload>(
+  SettingsActionTypes.UNWHITELIST_NFT_COLLECTION,
+);
+
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
 );
@@ -260,9 +273,15 @@ export const dangerouslyOverrideState = createAction<DangerouslyOverrideStatePay
   SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
 );
 
+/* NB: Protect is the former codename for Ledger Recover */
 export const setHasBeenUpsoldProtect = createAction<SettingsSetHasBeenUpsoldProtectPayload>(
   SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT,
 );
+
+export const setHasBeenRedirectedToPostOnboarding =
+  createAction<SettingsSetHasBeenRedirectedToPostOnboardingPayload>(
+    SettingsActionTypes.SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING,
+  );
 
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
@@ -295,6 +314,10 @@ export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsP
 );
 export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
   SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
+);
+
+export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
+  SettingsActionTypes.SET_MEV_PROTECTION,
 );
 
 type PortfolioRangeOption = {

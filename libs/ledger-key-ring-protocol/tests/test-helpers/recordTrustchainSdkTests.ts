@@ -94,8 +94,8 @@ export async function recordTestTrustchainSdk(
   // Monkey patches the `crypto.randomBytes` method to log generated random bytes in hexadecimal format in order to deterministically replay them in unit tests.
   const randomBytesOutputs: string[] = [];
   const originalRandomBytes = crypto.randomBytes;
-  crypto.randomBytes = async (size: number) => {
-    const bytes = await originalRandomBytes.call(crypto, size);
+  crypto.randomBytes = (size: number) => {
+    const bytes = originalRandomBytes.call(crypto, size);
     randomBytesOutputs.push(crypto.to_hex(bytes));
     return bytes;
   };
@@ -103,8 +103,8 @@ export async function recordTestTrustchainSdk(
   // Monkey patches the `crypto.randomKeypair` method to log generated random keypairs in hexadecimal format in order to deterministically replay them in unit tests.
   const randomKeypairOutputs: string[] = [];
   const originalRandomKeypair = crypto.randomKeypair;
-  crypto.randomKeypair = async () => {
-    const keypair = await originalRandomKeypair.call(crypto);
+  crypto.randomKeypair = () => {
+    const keypair = originalRandomKeypair.call(crypto);
     randomKeypairOutputs.push(crypto.to_hex(keypair.privateKey));
     return keypair;
   };

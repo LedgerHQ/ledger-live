@@ -65,7 +65,6 @@ import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import AdjustSetup from "~/components/AdjustSetup";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -92,6 +91,7 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -144,6 +144,8 @@ function App() {
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
+
+  useSyncNFTsWithAccounts();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -312,7 +314,7 @@ export default class Root extends Component {
   }
 
   onInitFinished = () => {
-    if (Config.MOCK) {
+    if (Config.DETOX) {
       init();
     }
   };
@@ -331,7 +333,6 @@ export default class Root extends Component {
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
-                <AdjustSetup />
                 <SegmentSetup />
                 <HookNotifications />
                 <HookDynamicContentCards />

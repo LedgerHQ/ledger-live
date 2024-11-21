@@ -1,12 +1,16 @@
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
+import type { AccountInfo } from "../types/model";
 import {
+  isErrorResponse,
   isResponseStatus,
   type AccountInfoResponse,
   type AccountTxResponse,
+  type ErrorResponse,
   type LedgerResponse,
   type ServerInfoResponse,
   type SubmitReponse,
+  type XrplOperation,
 } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
@@ -20,10 +24,10 @@ export const submit = async (signature: string): Promise<SubmitReponse> => {
 export const getAccountInfo = async (
   recipient: string,
   current?: boolean,
-): Promise<AccountInfoResponse> => {
+): Promise<AccountInfo> => {
   const {
     data: { result },
-  } = await network<{ result: AccountInfoResponse }>({
+  } = await network<{ result: AccountInfoResponse | ErrorResponse }>({
     method: "POST",
     url: getNodeUrl(),
     data: {
@@ -41,7 +45,21 @@ export const getAccountInfo = async (
     throw new Error(`couldn't fetch account info ${recipient}`);
   }
 
-  return result;
+  if (isErrorResponse(result)) {
+    return {
+      isNewAccount: true,
+      balance: "0",
+      ownerCount: 0,
+      sequence: 0,
+    };
+  } else {
+    return {
+      isNewAccount: false,
+      balance: result.account_data.Balance,
+      ownerCount: result.account_data.OwnerCount,
+      sequence: result.account_data.Sequence,
+    };
+  }
 };
 
 export const getServerInfos = async (): Promise<ServerInfoResponse> => {
@@ -51,7 +69,7 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
 export const getTransactions = async (
   address: string,
   options: { ledger_index_min?: number; ledger_index_max?: number } | undefined,
-): Promise<AccountTxResponse["transactions"]> => {
+): Promise<XrplOperation[]> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
     ledger_index: "validated",

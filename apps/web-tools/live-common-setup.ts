@@ -69,4 +69,5 @@ setSupportedCurrencies([
   "optimism_sepolia",
   "linea",
   "linea_sepolia",
+  "mantra",
 ]);

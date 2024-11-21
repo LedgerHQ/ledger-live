@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Text, IconsLegacy, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { hideNftCollection } from "~/actions/settings";
+import { hideNftCollection, unwhitelistNftCollection } from "~/actions/settings";
 import QueuedDrawer from "../QueuedDrawer";
+import { whitelistedNftCollectionsSelector } from "~/reducers/settings";
 
 type Props = {
   isOpen: boolean;
@@ -18,10 +19,17 @@ const NftCollectionOptionsMenu = ({ isOpen, onClose, collection, account }: Prop
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const whitelistedNftCollections = useSelector(whitelistedNftCollectionsSelector);
+
   const onConfirm = useCallback(() => {
-    dispatch(hideNftCollection(`${account.id}|${collection?.[0]?.contract}`));
+    const collectionId = `${account.id}|${collection?.[0]?.contract}`;
+    if (whitelistedNftCollections.includes(collectionId)) {
+      dispatch(unwhitelistNftCollection(collectionId));
+    }
+
+    dispatch(hideNftCollection(collectionId));
     onClose();
-  }, [dispatch, account.id, collection, onClose]);
+  }, [account.id, collection, whitelistedNftCollections, dispatch, onClose]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>

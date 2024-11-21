@@ -43,10 +43,8 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
       );
 
       if (actions.length === 0) {
-        if (fallbackIfNoAction) {
-          dispatch(postOnboardingSetFinished());
-          fallbackIfNoAction();
-        }
+        dispatch(postOnboardingSetFinished());
+        if (fallbackIfNoAction) fallbackIfNoAction();
         return;
       }
       navigateToPostOnboardingHub(resetNavigationStack);

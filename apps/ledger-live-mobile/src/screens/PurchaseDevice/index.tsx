@@ -7,8 +7,6 @@ import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
-import { Adjust, AdjustEvent } from "react-native-adjust";
-import Config from "react-native-config";
 import Button from "~/components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
@@ -50,32 +48,6 @@ const PurchaseDevice = () => {
     setURLDrawerOpen(true);
   }, [setURLDrawerOpen]);
 
-  const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
-    const ids = {
-      nanoS: Config.ADJUST_BUY_NANOS_EVENT_ID,
-      nanoX: Config.ADJUST_BUY_NANOX_EVENT_ID,
-      nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
-    };
-    const id = data.value?.deviceId
-      ? ids[data.value.deviceId as keyof typeof ids] || Config.ADJUST_BUY_GENERIC_EVENT_ID
-      : Config.ADJUST_BUY_GENERIC_EVENT_ID;
-
-    if (!id) {
-      return;
-    }
-
-    const revenue = data.value?.price;
-    const currency = data.value?.currency;
-
-    const adjustEvent = new AdjustEvent(id);
-
-    if (revenue && currency) {
-      adjustEvent.setRevenue(revenue, currency);
-    }
-
-    Adjust.trackEvent(adjustEvent);
-  }, []);
-
   const handleOnboardingStates = useCallback(
     (data: PurchaseMessage) => {
       if (data.type === "ledgerLiveOrderSuccess") {
@@ -93,14 +65,13 @@ const PurchaseDevice = () => {
           const data: PurchaseMessage = JSON.parse(event.nativeEvent.data);
           setMessage(data);
           setMessageDrawerOpen(true);
-          handleAdjustTracking(data);
           handleOnboardingStates(data);
         } catch (error) {
           logger.critical(error as Error);
         }
       }
     },
-    [handleAdjustTracking, handleOnboardingStates],
+    [handleOnboardingStates],
   );
 
   return (

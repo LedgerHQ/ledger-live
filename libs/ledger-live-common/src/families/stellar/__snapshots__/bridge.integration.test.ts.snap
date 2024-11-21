@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064616",
+    "balance": "341064620",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 59,
+    "operationsCount": 63,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064516",
+    "spendableBalance": "311064520",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -225,6 +225,29 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
+      "blockHeight": 54142073,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "ultracapital.site 602% APY",
+        "pagingToken": "232538432873521232",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "0a67955a1ca916f222988365bce633da59e54f1e926e1b7049fb1a4d15308d2a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0a67955a1ca916f222988365bce633da59e54f1e926e1b7049fb1a4d15308d2a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070057570,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
       "blockHeight": 28194270,
       "extra": {
         "ledgerOpType": "OUT",
@@ -310,6 +333,29 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 116917835954913310,
       "type": "OUT",
       "value": "10000000",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
+      "blockHeight": 54110961,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "ultracapital.site 602% APY",
+        "pagingToken": "232404807850631248",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "264221f7c3bf95d5a116f259486f38f5541adf2caf4f3b35f176f71dbec3176f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-264221f7c3bf95d5a116f259486f38f5541adf2caf4f3b35f176f71dbec3176f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070055680,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
@@ -956,6 +1002,52 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 224182410789521380,
       "type": "IN",
       "value": "10",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
+      "blockHeight": 54272423,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "ultracapital.site 602% APY",
+        "pagingToken": "233098281860362320",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b112972878f7788738536f17dc7fd016ffd5b1239365d3d427d2ca0d3c6ee929",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b112972878f7788738536f17dc7fd016ffd5b1239365d3d427d2ca0d3c6ee929-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070058530,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": null,
+      "blockHeight": 54119932,
+      "extra": {
+        "ledgerOpType": "IN",
+        "memo": "ultracapital.site 602% APY",
+        "pagingToken": "232443338001944656",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b17ade0f6f647f695283d4cb2b87ff1d6bb373f6f78e849680555cdc9104ceee",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b17ade0f6f647f695283d4cb2b87ff1d6bb373f6f78e849680555cdc9104ceee-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070056600,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",

@@ -347,6 +347,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
+  DETOX: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -540,6 +545,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
+  },
+  MOCK_EXCHANGE_TEST_PARTNER: {
+    def: false,
+    parser: boolParser,
+    desc: "change CAL partner context to test",
   },
   MOCK_REMOTE_LIVE_MANIFEST: {
     def: "",
@@ -847,6 +857,11 @@ const envDefinitions = {
     def: 1.1,
     parser: floatParser,
     desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
+  EVM_FORCE_LEGACY_TRANSACTIONS: {
+    def: false,
+    parser: boolParser,
+    desc: "Force transaction type 0 on EVM networks",
   },
   ENABLE_NETWORK_LOGS: {
     def: false,

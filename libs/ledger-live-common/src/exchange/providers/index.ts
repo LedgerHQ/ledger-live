@@ -28,23 +28,29 @@ export function convertToAppExchangePartnerKey(
 
 export const getProviderConfig = async (
   exchangeType: ExchangeTypes,
-  providerName: string,
+  provider: string,
 ): Promise<ExchangeProviderNameAndSignature> => {
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProvider) {
     return testProvider;
   }
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
 
   switch (exchangeType) {
     case ExchangeTypes.Fund:
     case ExchangeTypes.FundNg:
-      return getFundProvider(providerName.toLowerCase());
+      return getFundProvider(provider.toLowerCase());
 
     case ExchangeTypes.Sell:
     case ExchangeTypes.SellNg:
-      return await getSellProvider(providerName.toLowerCase());
+      return await getSellProvider({
+        providerId: provider.toLowerCase(),
+        ledgerSignatureEnv,
+        partnerSignatureEnv,
+      });
 
     default:
-      throw new Error(`Unknown partner ${providerName} type`);
+      throw new Error(`Unknown partner ${provider} type`);
   }
 };
 

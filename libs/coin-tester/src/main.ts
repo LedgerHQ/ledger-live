@@ -225,7 +225,6 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
 
     await scenario.afterAll?.(scenarioAccount);
     console.log("afterAll completed ✓");
-    console.log("Stopping engine...");
     await scenario.teardown?.();
 
     console.log(

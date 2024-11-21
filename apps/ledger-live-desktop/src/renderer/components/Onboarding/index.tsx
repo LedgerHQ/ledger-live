@@ -17,6 +17,7 @@ import { SideDrawer } from "../SideDrawer";
 import Box from "../Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboarding from "../SyncOnboarding";
+import { OnboardingUseCase } from "./OnboardingUseCase";
 
 const OnboardingContainer = styled(Flex).attrs({
   width: "100%",
@@ -41,13 +42,6 @@ const ScreenContainer = styled(Flex).attrs({
   }
 `;
 
-export enum UseCase {
-  setupDevice = "setup-device",
-  connectDevice = "connect-device",
-  recoveryPhrase = "recovery-phrase",
-  recover = "recover",
-}
-
 type NullableDeviceModelId = DeviceModelId | null;
 
 type OnboardingContextTypes = {
@@ -63,9 +57,11 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 
 export function Onboarding() {
   const { path } = useRouteMatch();
-  const matchRecover = useRouteMatch(`${path}/${UseCase.recover}`);
+  const matchRecover = useRouteMatch(`${path}/${OnboardingUseCase.recover}`);
   const [imgsLoaded, setImgsLoaded] = useState(false);
-  const [useCase, setUseCase] = useState<UseCase | null>(matchRecover ? UseCase.recover : null);
+  const [useCase, setUseCase] = useState<OnboardingUseCase | null>(
+    matchRecover ? OnboardingUseCase.recover : null,
+  );
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
@@ -116,10 +112,10 @@ export function Onboarding() {
               />
               <Route
                 path={[
-                  `${path}/${UseCase.setupDevice}`,
-                  `${path}/${UseCase.connectDevice}`,
-                  `${path}/${UseCase.recoveryPhrase}`,
-                  `${path}/${UseCase.recover}`,
+                  `${path}/${OnboardingUseCase.setupDevice}`,
+                  `${path}/${OnboardingUseCase.connectDevice}`,
+                  `${path}/${OnboardingUseCase.recoveryPhrase}`,
+                  `${path}/${OnboardingUseCase.recover}`,
                 ]}
                 render={props =>
                   useCase ? (

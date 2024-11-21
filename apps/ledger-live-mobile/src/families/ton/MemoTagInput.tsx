@@ -5,14 +5,12 @@ import type { Transaction as TonTransaction } from "@ledgerhq/live-common/famili
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => {
+export default (props: MemoTagInputProps<TonTransaction>) => {
   const { t } = useTranslation();
   return (
-    <GenericMemoTagInput<TonTransaction>
+    <GenericMemoTagInput
       {...props}
-      valueToTxPatch={value =>
-        value ? { comment: { isEncrypted: false, text: value } } : { comment: undefined }
-      }
+      valueToTxPatch={value => tx => ({ ...tx, comment: { isEncrypted: false, text: value } })}
       placeholder={t("send.summary.comment")}
     />
   );

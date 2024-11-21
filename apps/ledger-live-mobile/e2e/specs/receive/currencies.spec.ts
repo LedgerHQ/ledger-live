@@ -12,7 +12,10 @@ $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    app = await Application.init({
+      userdata: "onboardingcompleted",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

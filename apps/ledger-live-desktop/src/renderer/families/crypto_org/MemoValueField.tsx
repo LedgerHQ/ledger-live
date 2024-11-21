@@ -1,25 +1,25 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Input from "~/renderer/components/Input";
 import {
   CryptoOrgAccount,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/crypto_org/types";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 const MemoValueField = ({
   onChange,
   account,
   transaction,
   status,
+  autoFocus,
 }: {
   onChange: (t: Transaction) => void;
   account: CryptoOrgAccount;
   transaction: Transaction;
   status: TransactionStatus;
+  autoFocus?: boolean;
 }) => {
-  const { t } = useTranslation();
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
@@ -36,12 +36,12 @@ const MemoValueField = ({
   // It will be usefull to block a memo wrong format
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.memo as string | undefined} // FIXME: Should we change it ?
+      value={transaction.memo ?? ""}
       onChange={onMemoValueChange}
-      placeholder={t("cryptoOrg.memoPlaceholder")}
+      autoFocus={autoFocus}
     />
   );
 };

@@ -3,6 +3,8 @@ import { step } from "tests/misc/reporters/step";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
+  private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
+  private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
@@ -90,5 +92,11 @@ export class SettingsPage extends AppPage {
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
     await this.manageLedgerSyncButton.click();
+  }
+
+  @step("Clear cache")
+  async clearCache() {
+    await this.clearCacheButton.click();
+    await this.confirmButton.click();
   }
 }
