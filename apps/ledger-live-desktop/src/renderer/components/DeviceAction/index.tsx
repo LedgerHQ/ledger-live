@@ -1,25 +1,25 @@
-import React, { useEffect, Component } from "react";
+import React, { Component, useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
-  OutdatedApp,
+  EConnResetError,
+  ImageDoesNotExistOnDevice,
+  LanguageInstallRefusedOnDevice,
   LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
-  EConnResetError,
-  LanguageInstallRefusedOnDevice,
-  ImageDoesNotExistOnDevice,
+  OutdatedApp,
 } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
-  setPreferredDeviceModel,
-  setLastSeenDeviceInfo,
   addNewDeviceModel,
+  setLastSeenDeviceInfo,
+  setPreferredDeviceModel,
 } from "~/renderer/actions/settings";
 import {
-  storeSelector as settingsSelector,
   preferredDeviceModelSelector,
+  storeSelector as settingsSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -28,36 +28,36 @@ import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   ManagerNotEnoughSpaceError,
+  TransportRaceCondition,
+  UnresponsiveDeviceError,
   UpdateYourApp,
   UserRefusedAddress,
   UserRefusedAllowManager,
+  UserRefusedDeviceNameChange,
   UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
-  UserRefusedDeviceNameChange,
-  UnresponsiveDeviceError,
-  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import {
+  DeviceNotOnboardedErrorComponent,
+  HardwareUpdate,
   InstallingApp,
+  renderAllowLanguageInstallation,
   renderAllowManager,
   renderAllowOpeningApp,
+  renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
   renderConnectYourDevice,
-  renderHardwareUpdate,
   renderError,
+  renderInstallingLanguage,
   renderInWrongAppForAccount,
+  renderListingApps,
   renderLoading,
+  renderLockedDeviceError,
   renderRequestQuitApp,
   renderRequiresAppInstallation,
-  renderListingApps,
-  renderWarningOutdated,
-  renderSwapDeviceConfirmation,
   renderSecureTransferDeviceConfirmation,
-  renderAllowLanguageInstallation,
-  renderInstallingLanguage,
-  renderAllowRemoveCustomLockscreen,
-  renderLockedDeviceError,
-  DeviceNotOnboardedErrorComponent,
+  renderSwapDeviceConfirmation,
+  renderWarningOutdated,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -68,8 +68,8 @@ import {
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
 import {
-  ExchangeSwap,
   ExchangeRate,
+  ExchangeSwap,
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -180,6 +180,42 @@ class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
     return null;
   }
 }
+
+type Keys = Record<string, { title: string; description: string }>;
+
+const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
+  sol: {
+    title: "swap.incompatibility.spl_tokens_title",
+    description: "swap.incompatibility.spl_tokens_description",
+  },
+};
+
+const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
+  ton: {
+    title: "swap.incompatibility.ton_title",
+    description: "swap.incompatibility.ton_description",
+  },
+  cardano: {
+    title: "swap.incompatibility.ada_title",
+    description: "swap.incompatibility.ada_description",
+  },
+};
+
+const getIncompatibleCurrencyKeys = (request: SwapRequest) => {
+  const exchange = request?.exchange;
+  const parentFrom = exchange?.fromParentAccount?.currency?.id || "";
+  const parentTo = exchange?.toParentAccount?.currency?.id || "";
+  const from =
+    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
+  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
+
+  return (
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
+  );
+};
 
 export const DeviceActionDefaultRendering = <R, H extends States, P>({
   status: hookState,
@@ -340,8 +376,21 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") {
-    return renderHardwareUpdate();
+  if (device?.modelId === "nanoS") {
+    const requestAsSwapRequest = request as SwapRequest;
+    if (requestAsSwapRequest?.provider === "thorswap") {
+      return (
+        <HardwareUpdate
+          i18nKeyTitle="swap.wrongDevice.title"
+          i18nKeyDescription="swap.wrongDevice.description"
+        />
+      );
+    } else {
+      const keys = getIncompatibleCurrencyKeys(requestAsSwapRequest);
+      if (keys) {
+        return <HardwareUpdate i18nKeyTitle={keys.title} i18nKeyDescription={keys.description} />;
+      }
+    }
   }
 
   if (listingApps) {
