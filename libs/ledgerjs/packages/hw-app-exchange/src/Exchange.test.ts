@@ -27,21 +27,22 @@ describe("Contrustructor", () => {
 
 describe("startNewTransaction", () => {
   const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
 
-  afterEach(() => {
-    recordStore.queue = [];
+  beforeEach(() => {
+    recordStore.clearStore();
   });
 
   it("sends a correct sequence of APDU when Swap", async () => {
     // Given
     const mockNonceResponse = "2ac38f187c"; // Response of length 10
-    const mockTransport = new MockTransport(
+    mockTransport.setNewResponse(
       Buffer.concat([
         Buffer.from(mockNonceResponse),
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
 
     // When
@@ -66,13 +67,12 @@ describe("startNewTransaction", () => {
   ])("returns a base64 nonce when $name", async ({ name, type }) => {
     // Given
     const mockNonceResponse = "2ac38f187c2ac38f187c2ac38f187c7c"; // Response of length 10
-    const mockTransport = new MockTransport(
+    mockTransport.setNewResponse(
       Buffer.concat([
         Buffer.from(mockNonceResponse),
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), type);
 
     // When
@@ -99,13 +99,12 @@ describe("startNewTransaction", () => {
   ])("returns a 32 bytes nonce when $name", async ({ name, type }) => {
     // Given
     const mockNonceResponse = Buffer.from("2ac38f187c2ac38f187c2ac38f187c7c"); // Response of 32 bytes
-    const mockTransport = new MockTransport(
+    mockTransport.setNewResponse(
       Buffer.concat([
         mockNonceResponse,
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.SwapNg);
 
     // When
@@ -123,27 +122,30 @@ describe("startNewTransaction", () => {
     expect(result).toEqual(mockNonceResponse.toString("hex"));
   });
 
-  // TOFIX: TransportError is not recognize as an Error type
-  xit("throws an error if status is not ok", async () => {
+  it("throws an error if status is not ok", async () => {
     // Given
     const mockResponse = "2ac38f187c"; // Response of length 10
-    const mockTransport = new MockTransport(
+    mockTransport.setNewResponse(
       Buffer.concat([Buffer.from(mockResponse), Buffer.from([0x6a, 0x80])]),
     );
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
 
     // When & Then
-    expect(async () => await exchange.startNewTransaction()).toThrowError();
+    await expect(exchange.startNewTransaction()).rejects.toThrowError();
   });
 });
 
 describe("setPartnerKey", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  beforeEach(() => {
+    recordStore.clearStore();
+  });
+
   it("sends legacy info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
     const info = {
       name: "LTX",
@@ -166,9 +168,6 @@ describe("setPartnerKey", () => {
 
   it("sends NG info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
     const info = {
       name: "LTX",
@@ -191,11 +190,16 @@ describe("setPartnerKey", () => {
 });
 
 describe("processTransaction", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  beforeEach(() => {
+    recordStore.clearStore();
+  });
+
   it("sends legacy info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
 
     const tx = Buffer.from("1234567890abcdef", "hex");
@@ -215,9 +219,6 @@ describe("processTransaction", () => {
 
   it("sends NG info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
 
     const tx = Buffer.from("1234567890abcdef", "hex");
@@ -237,9 +238,6 @@ describe("processTransaction", () => {
 
   it("sends NG info of larger than 255 bytes", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
 
     const value = Array(200).fill("abc").join("");
@@ -278,11 +276,16 @@ describe("processTransaction", () => {
 });
 
 describe("checkTransactionSignature", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  beforeEach(() => {
+    recordStore.clearStore();
+  });
+
   it("sends legacy info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
 
     const txSig = Buffer.from("1234567890abcdef", "hex");
@@ -300,9 +303,6 @@ describe("checkTransactionSignature", () => {
 
   it("sends NG info", async () => {
     // Given
-    const recordStore = new RecordStore();
-    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-    const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
 
     const txSig = Buffer.from("1234567890abcdef", "hex");
@@ -316,5 +316,58 @@ describe("checkTransactionSignature", () => {
       "hex",
     );
     expect(recordStore.queue[0][0]).toBe(expectCommand + hexEncodedInfoExpected);
+  });
+});
+
+describe("getChallenge", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  it("returns a new Challenge value", async () => {
+    // Given
+    const mockNonceResponse = Buffer.from([0xff, 0xff, 0xff, 0xff]); // Response of 32 bytes
+    mockTransport.setNewResponse(
+      Buffer.concat([
+        mockNonceResponse,
+        Buffer.from([0x90, 0x00]), // StatusCodes.OK
+      ]),
+    );
+    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+
+    // When
+    const result = await exchange.getChallenge();
+
+    // Then
+    const expectCommand = Buffer.from([
+      0xe0,
+      0x10, // Start Exchance
+      RateTypes.Fixed,
+      ExchangeTypes.SwapNg,
+      0x00, // Data
+    ]).toString("hex");
+    expect(recordStore.queue[0][0]).toBe(expectCommand);
+    expect(result).toEqual(4_294_967_295);
+  });
+});
+
+describe("sendTrustedDescriptor", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  it("sends the expected command", async () => {
+    // Given
+    const descriptor = Buffer.from([0x00, 0x0a, 0xff]).toString("hex");
+    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+
+    // When
+    await exchange.sendTrustedDescriptor(descriptor);
+
+    // Then
+    const expectCommand = Buffer.from([0xe0, 0x11, RateTypes.Fixed, ExchangeTypes.Swap]).toString(
+      "hex",
+    );
+    expect(recordStore.queue[0][0]).toBe(expectCommand + descriptor);
   });
 });
