@@ -25,25 +25,15 @@ export function usePortfolioCards(): UsePortfolioCards {
 
   const logSlideImpression = useCallback<CarouselActions["logSlideImpression"]>(
     (current, previous) => {
-      if (!isTrackedUser) return;
+      if (!isTrackedUser || typeof previous === "undefined") return;
 
-      if (previous) {
-        track("contentcards_slide", {
-          button: current > previous ? "next" : "prev",
-          page: "Portfolio",
-          type: "portfolio_carousel",
-        });
-      }
-
-      const slide = portfolioCards[current];
-      if (!slide?.id) return;
-
-      const currentCard = cachedContentCards.find(card => card.id === slide.id);
-      if (!currentCard) return;
-
-      braze.logContentCardImpressions([currentCard]);
+      track("contentcards_slide", {
+        button: current > previous ? "next" : "prev",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+      });
     },
-    [portfolioCards, cachedContentCards, isTrackedUser],
+    [isTrackedUser],
   );
 
   const dismissCard = useCallback<CarouselActions["dismissCard"]>(

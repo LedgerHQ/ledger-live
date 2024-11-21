@@ -5,6 +5,7 @@ import { PortfolioContentCard as Card } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import type { CarouselActions } from "../../types";
+import LogContentCardWrapper from "~/newArch/components/DynamicContent/LogContentCardWrapper";
 
 export default memo(Slide);
 
@@ -26,14 +27,16 @@ function Slide({ logSlideClick, dismissCard, index, ...card }: Props) {
   };
 
   return (
-    <Card
-      title={card.title}
-      cta={card.cta}
-      description={card.description}
-      tag={card.tag}
-      image={card.image}
-      onClick={handleClick}
-      onClose={handleClose}
-    />
+    <LogContentCardWrapper id={card.id}>
+      <Card
+        title={card.title}
+        cta={card.cta}
+        description={card.description}
+        tag={card.tag}
+        image={card.image}
+        onClick={handleClick}
+        onClose={handleClose}
+      />
+    </LogContentCardWrapper>
   );
 }
