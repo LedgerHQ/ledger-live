@@ -12,6 +12,7 @@ import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
 import { bridge as evm } from "../../families/evm/setup";
+import { bridge as kaspa } from "../../families/kaspa/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
 import { bridge as solana } from "../../families/solana/setup";
@@ -35,6 +36,7 @@ export default {
   bitcoin,
   cardano,
   evm,
+  kaspa,
   near,
   polkadot,
   solana,

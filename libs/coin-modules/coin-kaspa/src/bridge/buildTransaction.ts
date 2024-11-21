@@ -1,19 +1,28 @@
-import type { Account } from "@ledgerhq/types-live";
-
-import { AccountAddresses, scanAddresses, scanUtxos } from "../network";
+import { scanUtxos } from "../network";
 import { addressToScriptPublicKey, parseExtendedPublicKey } from "../lib/kaspa-util";
 import { selectUtxos } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
 
-import { Transaction } from "../types/bridge";
 import { KaspaHwTransaction, TransactionInput, TransactionOutput } from "./kaspaHwTransaction";
+import { KaspaAccount, KaspaTransaction } from "../types/bridge";
 
 /**
+ * Assembles a transaction for the Kaspa network.
  *
- * @param {Account} a
- * @param {Transaction} t
+ * This function prepares a Kaspa transaction for a given account and transaction details.
+ * It performs the necessary steps to construct the transaction inputs and outputs, including
+ * scanning for unspent transaction outputs (UTXOs), selecting the appropriate UTXOs, and calculating
+ * change amounts. It also ensures the account's extended public key is set before proceeding.
+ *
+ * @param {KaspaAccount} a - The account from which the transaction will be initiated, including an extended public key (xpub).
+ * @param {KaspaTransaction} t - The transaction details, which include the recipient's address and the amount to be transferred.
+ * @returns {Promise<KaspaHwTransaction>} A promise that resolves to the prepared hardware transaction object.
+ * @throws Will throw an error if the account's extended public key (xpub) is not set.
  */
-export const buildTransaction = async (a: Account, t: Transaction): Promise<KaspaHwTransaction> => {
+export const buildTransaction = async (
+  a: KaspaAccount,
+  t: KaspaTransaction,
+): Promise<KaspaHwTransaction> => {
   const recipient = t.recipient;
   const amount: BigNumber = t.amount;
 
@@ -23,8 +32,9 @@ export const buildTransaction = async (a: Account, t: Transaction): Promise<Kasp
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(a.xpub, "hex"));
 
-  const utxos = await scanUtxos(compressedPublicKey, chainCode);
-  const selectedUtxos = selectUtxos(utxos, recipient.length > 67, amount, 1);
+  const { utxos, accountAddresses } = await scanUtxos(compressedPublicKey, chainCode);
+  const recipientIsTypeECDSA: boolean = recipient.length > 67;
+  const selectedUtxos = selectUtxos(utxos, recipientIsTypeECDSA, amount, t.feerate || 1);
 
   const txInputs = selectedUtxos.map(utxo => {
     return new TransactionInput({
@@ -36,13 +46,14 @@ export const buildTransaction = async (a: Account, t: Transaction): Promise<Kasp
     });
   });
 
-  // amount to recipient, change to nextChangeAddress
-  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
   const changeAmount: BigNumber = selectedUtxos
-    .reduce((sum, utxo) => {
-      return sum.plus(new BigNumber(utxo.utxoEntry.amount));
-    }, new BigNumber(0))
-    .minus(amount);
+    .reduce((sum, utxo) => sum.plus(new BigNumber(utxo.utxoEntry.amount)), new BigNumber(0))
+    .minus(amount)
+    .minus(
+      BigNumber(
+        (t?.feerate || 1) * selectedUtxos.length * 1118 + 918 + (recipientIsTypeECDSA ? 11 : 0),
+      ),
+    );
 
   const txOutputs = [
     new TransactionOutput({

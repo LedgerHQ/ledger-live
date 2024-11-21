@@ -2,10 +2,10 @@ import KaspaBIP32 from "../lib/bip32";
 import { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 import { BigNumber } from "bignumber.js";
 import { getAddressesActive } from "./indexer-api/getAddressesActive";
-import { KaspaOperation, KaspaUtxo } from "../types/bridge";
+import { KaspaUtxo } from "../types/bridge";
 import { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 import getTransactions from "./indexer-api/getTransactions";
-import { OperationType } from "@ledgerhq/types-live";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
@@ -197,11 +197,14 @@ function getTypeAndIndexFromAccountAddresses(accountAddreses: AccountAddress[], 
   }
 }
 
-export async function scanOperations(addresses: string[]): Promise<KaspaOperation[]> {
-  const operations: KaspaOperation[] = [];
+export async function scanOperations(addresses: string[]): Promise<Operation[]> {
+  const operations: Operation[] = [];
+
+  // console.log(`Timestamp with ms: ${new Date().toISOString()}`);
   const fetchedTxs = await Promise.all(addresses.map(addr => getTransactions(addr))).then(results =>
     results.flat(),
   );
+  // console.log(`Timestamp with ms: ${new Date().toISOString()}`);
 
   for (const tx of fetchedTxs) {
     const myInputAmount: BigNumber = tx.inputs.reduce((acc: BigNumber, v): BigNumber => {
@@ -245,7 +248,7 @@ export async function scanOperations(addresses: string[]): Promise<KaspaOperatio
       accountId: "kaspa?",
       date: new Date(tx.block_time * 1000),
       extra: {},
-    } as KaspaOperation);
+    } as Operation);
   }
 
   return operations;
@@ -254,7 +257,7 @@ export async function scanOperations(addresses: string[]): Promise<KaspaOperatio
 export async function scanUtxos(
   compressedPublicKey: Buffer,
   chainCode: Buffer,
-): Promise<KaspaUtxo[]> {
+): Promise<{ utxos: KaspaUtxo[]; accountAddresses: AccountAddresses }> {
   const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
 
   const allUsedAddresses = [
@@ -271,5 +274,13 @@ export async function scanUtxos(
     };
   });
 
-  return kaspaUtxos as KaspaUtxo[];
+  // Convert utxoEntry.amount to BigNumber
+  kaspaUtxos.forEach(utxo => {
+    utxo.utxoEntry.amount = BigNumber(utxo.utxoEntry.amount);
+  });
+
+  return {
+    utxos: kaspaUtxos as KaspaUtxo[],
+    accountAddresses: accountAddresses,
+  };
 }

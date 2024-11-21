@@ -3,8 +3,64 @@ import { firstValueFrom } from "rxjs";
 import type { Account, SyncConfig } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { makeSync } from "./jsHelpers";
-import { KaspaAccount } from "../types/bridge";
+import { KaspaAccount, KaspaTransaction } from "../types/bridge";
 import { getAccountShape } from "./synchronization";
+import createTransaction from "./createTransaction";
+import prepareTransaction from "./prepareTransaction";
+import { updateTransaction } from "./updateTransaction";
+import getTransactionStatus from "./getTransactionStatus";
+import { buildTransaction } from "./buildTransaction";
+
+// Call once for all tests the currencies. Relies on real implementation to check also consistency.
+const kaspaCurrency = listCryptoCurrencies(true).find(c => c.id === "kaspa")!;
+const emptyHistoryCache = {
+  HOUR: {
+    latestDate: null,
+    balances: [],
+  },
+  DAY: {
+    latestDate: null,
+    balances: [],
+  },
+  WEEK: {
+    latestDate: null,
+    balances: [],
+  },
+};
+
+function createAccount(init: Partial<Account>): KaspaAccount {
+  const currency = kaspaCurrency;
+
+  return {
+    type: "Account",
+    id: init.id ?? "12",
+    seedIdentifier: "",
+    derivationMode: "",
+    index: 0x80000000 + 0,
+    freshAddress: "",
+    freshAddressPath: "",
+    used: true,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    creationDate: init.creationDate ?? new Date(),
+    blockHeight: 0,
+    currency,
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    lastSyncDate: new Date(),
+    // subAccounts: [],
+    balanceHistoryCache: emptyHistoryCache,
+    swapHistory: [],
+    xpub: init.xpub ?? "",
+    nextChangeAddress: "kaspa:qryvp4gkds46gfwjvadaj8z5l63d5lvxjy03h3t9sk0pa3f65rh82dedyej96",
+    nextChangeAddressIndex: 0,
+    nextChangeAddressType: 1,
+    nextReceiveAddress: "kaspa:qrzu7d603all3v3n0x3vfcc056ptj3mm3pn643wercy8u32yvcng5fehwyh0e",
+    nextReceiveAddressIndex: 0,
+    nextReceiveAddressType: 0,
+  };
+}
 
 describe("jsHelpers", () => {
   describe("makeSync", () => {
@@ -90,56 +146,38 @@ describe("jsHelpers", () => {
       expect(newAccount.id).toEqual(expectedAccount.id);
     });
   });
+  describe("create Transaction", () => {
+    it("create a real tx with buildTransaction", async () => {
+      const account = createAccount({
+        id: "kaspa",
+        index: 0x80000000,
+        creationDate: new Date("2024-05-14T17:04:12"),
+        lastSyncDate: new Date("2024-05-14T17:04:12"),
+        xpub: "410404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08203a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563",
+      });
+
+      const t: KaspaTransaction = createTransaction();
+
+      t.amount = BigNumber(1_2345_6789); // 1.23456789 KAS
+      t.recipient = "kaspa:qqt874j85r5ga5av0q6tthj2tu89dfpchjmvjuvx5tyn2vpjjrhk7tcpsx2vu";
+      t.feesStrategy = "slow";
+
+      updateTransaction(t, {});
+      prepareTransaction(account, t);
+      getTransactionStatus(account, t);
+
+      const tx = await buildTransaction(account, t);
+
+      const sumInputs = tx.inputs.reduce((acc, v) => acc.plus(v.value), BigNumber(0));
+      const sumOutputs = tx.outputs.reduce((acc, v) => acc.plus(v.value), BigNumber(0));
+
+      const expectedFee = 918 + tx.inputs.length * 1118;
+
+      expect(sumInputs.minus(sumOutputs).toNumber()).toEqual(expectedFee);
+
+      console.log(JSON.stringify(tx));
+
+
+    });
+  });
 });
-
-const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};
-
-// Call once for all tests the currencies. Relies on real implementation to check also consistency.
-const kaspaCurrency = listCryptoCurrencies(true).find(c => c.id === "kaspa")!;
-
-function createAccount(init: Partial<Account>): KaspaAccount {
-  const currency = kaspaCurrency;
-
-  return {
-    type: "Account",
-    id: init.id ?? "12",
-    seedIdentifier: "",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "",
-    freshAddressPath: "",
-    used: true,
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
-    creationDate: init.creationDate ?? new Date(),
-    blockHeight: 0,
-    currency,
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    // subAccounts: [],
-    balanceHistoryCache: emptyHistoryCache,
-    swapHistory: [],
-    xpub: init.xpub ?? "",
-    nextChangeAddress: "kaspa:qryvp4gkds46gfwjvadaj8z5l63d5lvxjy03h3t9sk0pa3f65rh82dedyej96",
-    nextChangeAddressIndex: 0,
-    nextChangeAddressType: 1,
-    nextReceiveAddress: "kaspa:qrzu7d603all3v3n0x3vfcc056ptj3mm3pn643wercy8u32yvcng5fehwyh0e",
-    nextReceiveAddressIndex: 0,
-    nextReceiveAddressType: 0,
-  };
-}

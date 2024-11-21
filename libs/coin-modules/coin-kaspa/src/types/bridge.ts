@@ -31,7 +31,7 @@ export type KaspaSignedOperation = SignedOperation & {
   signedTxJson: string;
 };
 
-export type KaspaOperation = Operation;
+export type KaspaOperation = Operation & {};
 
 export type KaspaOperationRaw = OperationRaw;
 
@@ -89,12 +89,8 @@ export type KaspaTransactionRaw = TransactionCommonRaw & {
   rbf: boolean;
 };
 
-export type KaspaTransactionStatus = TransactionStatusCommon & {
-  later: "maybe";
-};
-export type KaspaTransactionStatusRaw = TransactionStatusCommonRaw & {
-  later: "maybe";
-};
+export type KaspaTransactionStatus = TransactionStatusCommon;
+export type KaspaTransactionStatusRaw = TransactionStatusCommonRaw;
 
 type KaspaOutpoint = {
   transactionId: string;

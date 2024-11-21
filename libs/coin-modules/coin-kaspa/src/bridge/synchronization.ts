@@ -6,7 +6,8 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { KaspaAccount } from "../types/bridge";
 import { parseExtendedPublicKey } from "../lib/kaspa-util";
-import { AccountAddresses, scanAddresses } from "../network";
+import { AccountAddresses, scanAddresses, scanOperations } from "../network";
+import { Operation } from "@ledgerhq/types-live";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const { initialAccount } = info;
@@ -27,15 +28,17 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   });
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
-  // console.log(compressedPublicKey)
-
   const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
 
   const oldOperations = initialAccount?.operations || [];
   //
   // // Merge new operations with the previously synced ones
-  const newOperations = initialAccount?.operations || [];
-  const operations = mergeOps(oldOperations, newOperations);
+  const usedAddresses: string[] = [
+    ...accountAddresses.usedReceiveAddresses.map(addr => addr.address),
+    ...accountAddresses.usedChangeAddresses.map(addr => addr.address),
+  ];
+  const allOperations: Operation[] = await scanOperations(usedAddresses);
+  const operations = mergeOps(oldOperations, allOperations);
 
   return {
     id: accountId,

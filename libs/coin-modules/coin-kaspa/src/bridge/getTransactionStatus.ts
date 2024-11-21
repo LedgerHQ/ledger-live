@@ -1,15 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import { KaspaAccount, KaspaTransaction } from "../types/bridge";
+import { KaspaAccount, KaspaTransaction, KaspaTransactionStatus } from "../types/bridge";
 
 import { isValidKaspaAddress } from "../lib/kaspa-util";
 
 import { InvalidAddress } from "@ledgerhq/errors";
-import { TransactionStatus } from "../../lib/types";
 
 const getTransactionStatus = async (
   account: KaspaAccount,
   transaction: KaspaTransaction,
-): Promise<TransactionStatus> => {
+): Promise<KaspaTransactionStatus> => {
   const errors: Record<string, Error> = {};
 
   if (!isValidKaspaAddress(transaction.recipient)) {
