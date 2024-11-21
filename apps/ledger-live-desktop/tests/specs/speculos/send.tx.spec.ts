@@ -1,6 +1,6 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
-import { Fee } from "../../enum/Fee";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction, NFTTransaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -216,8 +216,8 @@ test.describe("Send flows", () => {
     process.env.ENABLE_TRANSACTION_BROADCAST =
       new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "true" : "false";
   });
-
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
+
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
@@ -519,11 +519,24 @@ test.describe("Send flows", () => {
   for (const transaction of transactionAddressValid) {
     test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
       test.use({
-        userdata: "speculos-checkSendAddress", //todo: Replace by cli when issue with derivation is fix - LIVE-14599
+        userdata: "skip-onboarding",
+        speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          {
+            command: commandCLI.liveData,
+            args: {
+              currency: transaction.transaction.accountToDebit.currency.currencyId,
+              index: transaction.transaction.accountToDebit.index,
+              scheme: transaction.transaction.accountToDebit.derivationMode,
+              add: true,
+              appjson: "",
+            },
+          },
+        ],
       });
 
       test(
-        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input`,
+        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
         {
           annotation: {
             type: "TMS",
@@ -587,56 +600,56 @@ test.describe("Send flows", () => {
       );
     });
   }
-});
 
-test.describe("send NFT to ENS address", () => {
-  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "NY la muse", Fee.SLOW);
-  test.beforeAll(async () => {
-    process.env.DISABLE_TRANSACTION_BROADCAST = "true";
-  });
-  test.afterAll(async () => {
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
-  });
-  test.use({
-    userdata: "skip-onboarding",
-    cliCommands: [
+  test.describe("send NFT to ENS address", () => {
+    const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "NY la muse", Fee.SLOW);
+    test.beforeAll(async () => {
+      process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+    });
+    test.afterAll(async () => {
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    });
+    test.use({
+      userdata: "skip-onboarding",
+      cliCommands: [
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: transaction.accountToDebit.currency.currencyId,
+            index: transaction.accountToDebit.index,
+            appjson: "",
+            add: true,
+          },
+        },
+      ],
+      speculosApp: transaction.accountToDebit.currency.speculosApp,
+    });
+
+    test(
+      "Send NFT to ENS address",
       {
-        command: commandCLI.liveData,
-        args: {
-          currency: transaction.accountToDebit.currency.currencyId,
-          index: transaction.accountToDebit.index,
-          appjson: "",
-          add: true,
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-2203",
         },
       },
-    ],
-    speculosApp: transaction.accountToDebit.currency.speculosApp,
-  });
-
-  test(
-    "Send NFT to ENS address",
-    {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2203",
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+        await app.account.navigateToNFTGallery();
+        await app.account.selectNFT(transaction.nftName);
+        await app.nftDrawer.expectNftNameIsVisible(transaction.nftName);
+        await app.nftDrawer.clickSend();
+        await app.send.craftNFTTx(transaction);
+        await app.send.expectNFTTxInfoValidity(transaction);
+        await app.speculos.signSendNFTTransaction(transaction);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.drawer.close();
+        await app.account.navigateToNFTOperation();
+        await app.sendDrawer.expectNftInfos(transaction);
       },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
-      await app.account.navigateToNFTGallery();
-      await app.account.selectNFT(transaction.nftName);
-      await app.nftDrawer.expectNftNameIsVisible(transaction.nftName);
-      await app.nftDrawer.clickSend();
-      await app.send.craftNFTTx(transaction);
-      await app.send.expectNFTTxInfoValidity(transaction);
-      await app.speculos.signSendNFTTransaction(transaction);
-      await app.send.expectTxSent();
-      await app.account.navigateToViewDetails();
-      await app.drawer.close();
-      await app.account.navigateToNFTOperation();
-      await app.sendDrawer.expectNftInfos(transaction);
-    },
-  );
+    );
+  });
 });

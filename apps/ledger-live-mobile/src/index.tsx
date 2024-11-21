@@ -314,7 +314,7 @@ export default class Root extends Component {
   }
 
   onInitFinished = () => {
-    if (Config.MOCK) {
+    if (Config.DETOX) {
       init();
     }
   };

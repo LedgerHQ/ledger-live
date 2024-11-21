@@ -16,7 +16,7 @@ import {
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
-import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -107,6 +107,16 @@ const getLedgerSyncAttributes = (state: State) => {
   };
 };
 
+const getRebornAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const reborn = analyticsFeatureFlagMethod("llmRebornLP");
+
+  return {
+    llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
+    llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+  };
+};
+
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -186,6 +196,7 @@ const extraProperties = async (store: AppStore) => {
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
+  const rebornAttributes = getRebornAttributes();
 
   return {
     ...mandatoryProperties,
@@ -222,6 +233,7 @@ const extraProperties = async (store: AppStore) => {
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     ...ledgerSyncAtributes,
+    ...rebornAttributes,
   };
 };
 

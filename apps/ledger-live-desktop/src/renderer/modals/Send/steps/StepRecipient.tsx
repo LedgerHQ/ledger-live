@@ -28,6 +28,7 @@ import CheckBox from "~/renderer/components/CheckBox";
 import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/application";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/application";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
 
 const StepRecipient = ({
   t,
@@ -153,9 +154,10 @@ export const StepRecipientFooter = ({
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
+    const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
       lldMemoTag?.enabled &&
-      !transaction?.memo &&
+      !memoTagValue &&
       MEMO_TAG_COINS.includes(transaction?.family as string) &&
       alwaysShowMemoTagInfo
     ) {

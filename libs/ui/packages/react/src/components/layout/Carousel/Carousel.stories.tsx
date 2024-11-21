@@ -1,14 +1,15 @@
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import Carousel from "./";
 import { Props } from "./types";
 
-const CarouselStory = (args: Props) => {
-  const slides = [...Array(5)].map((_, index) => (
+const CarouselStory = (args: Omit<Props, "children"> & { children: number }) => {
+  const slides = Array.from({ length: args.children }, (_, index) => (
     <div
       key={index}
       style={{
         backgroundColor: "hsl(" + Math.random() * 360 + ", 100%, 75%)",
-        padding: "15px",
+        padding: "16px 24px",
         borderRadius: "5px",
       }}
     >
@@ -24,16 +25,18 @@ export default {
   argTypes: {
     children: {
       description: "The elements to be displayed.",
+      control: { type: "range", min: 1, max: 10, step: 1 },
     },
     variant: {
       description: "Variant for the carousel.",
       options: ["default", "content-card"],
       defaultValue: "default",
-      control: { type: "select" },
+      control: "inline-radio",
     },
   },
   args: {
     variant: "default",
+    children: 5,
   },
   parameters: {
     docs: {
@@ -42,6 +45,7 @@ export default {
       },
     },
   },
-};
+  render: CarouselStory,
+} satisfies Meta;
 
-export const Default = CarouselStory.bind({});
+export const Default: StoryObj = {};

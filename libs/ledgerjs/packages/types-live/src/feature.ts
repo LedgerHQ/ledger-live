@@ -202,6 +202,7 @@ export type Features = CurrencyFeatures & {
   llMevProtection: DefaultFeature;
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
+  llmRebornLP: Feature_LlmRebornLP;
 };
 
 /**
@@ -569,6 +570,9 @@ export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_RecoverUpsellRedirection = DefaultFeature;
 
+export type Feature_LlmRebornLP = Feature<{
+  variant: ABTestingVariants;
+}>;
 /**
  * Utils types.
  */

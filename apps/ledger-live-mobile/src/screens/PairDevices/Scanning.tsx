@@ -102,7 +102,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
           renderItem={renderItem}
           keyExtractor={item => item.id}
           ListHeaderComponent={ScanningHeader}
-          ListEmptyComponent={<InfiniteLoader size={58} mock={Config.MOCK} />}
+          ListEmptyComponent={<InfiniteLoader size={58} mock={Config.DETOX} />}
         />
       </Flex>
     </>
