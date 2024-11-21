@@ -6,12 +6,12 @@ import {
   waitFor,
   containsSubstringInEvent,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "../enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
 import { NFTTransaction, Transaction } from "tests/models/Transaction";
 import { Delegate } from "tests/models/Delegate";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
-import { Currency } from "tests/enum/Currency";
+import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Swap } from "tests/models/Swap";
 import { extractNumberFromString } from "tests/utils/textParserUtils";
 import { sendBTCBasedCoin } from "tests/families/bitcoin";

@@ -53,7 +53,7 @@ export class Currency {
     "bsc",
     AppInfos.BINANCE_SMART_CHAIN,
   );
-  static readonly TON = new Currency("Ton", "TON", "ton", AppInfos.TON);
+  static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON);
   static readonly ETH_USDT = new Currency("Tether USD", "USDT", "ethereum", AppInfos.ETHEREUM);
   static readonly ETH_USDC = new Currency("USD Coin", "USDC", "ethereum", AppInfos.ETHEREUM);
   static readonly ETH_LIDO = new Currency(
