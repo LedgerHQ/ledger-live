@@ -1,4 +1,4 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { Api, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
@@ -33,16 +33,7 @@ type Supplement = {
 function isSupplement(supplement: unknown): supplement is Supplement {
   return typeof supplement === "object";
 }
-async function craft(
-  address: string,
-  transaction: {
-    mode: string;
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-    supplement?: unknown;
-  },
-): Promise<string> {
+async function craft(address: string, transaction: ApiTransaction): Promise<string> {
   const supplement = isSupplement(transaction.supplement)
     ? {
         assetCode: transaction.supplement?.assetCode,
