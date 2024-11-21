@@ -2390,7 +2390,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Résoudre les problèmes réseau"
+    "title" : "Résoudre les problèmes réseau",
+    "myLedgerServices" : "Services My Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Explorateurs Bitcoin",
+    "ethereumExplorers" : "Explorateurs Ethereum",
+    "countervaluesApi" : "API devises de contrepartie",
+    "announcements" : "Annonces",
+    "status" : "Statut",
+    "test" : "TEST",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "Changer la langue de l’application ?",
@@ -4084,6 +4092,8 @@
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs.",
+      "mevProtection" : "Protection MEV",
+      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
       "marketPerformanceWidget" : "Widget de suivi du marché",
       "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
@@ -4107,6 +4117,10 @@
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
         "placeholder" : "Infos prestataire Exchange (CAL)"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Exchange avec prestataire en mode test",
+        "desc" : "Activez l’utilisation de la clé publique d’un prestataire."
       },
       "analyticsConsole" : {
         "title" : "Autoriser la console analytique",
@@ -5454,7 +5468,7 @@
       "description" : "Ce compte n’est pas autorisé à signer cette transaction."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -6342,10 +6356,10 @@
       "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
     },
     "TonMinimumRequired" : {
-      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"

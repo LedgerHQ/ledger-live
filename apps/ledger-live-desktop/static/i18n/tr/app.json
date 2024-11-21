@@ -2390,7 +2390,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Ağ sorunlarını giderin"
+    "title" : "Ağ sorunlarını giderin",
+    "myLedgerServices" : "Ledger hizmetlerim (scriptrunner)",
+    "bitcoinExplorers" : "Bitcoin tarayıcıları",
+    "ethereumExplorers" : "Ethereum tarayıcıları",
+    "countervaluesApi" : "Karşı değerler API'si",
+    "announcements" : "Duyurular",
+    "status" : "Durum",
+    "test" : "Test et",
+    "renderer" : "İŞLEYİCİ"
   },
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
@@ -4084,6 +4092,8 @@
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+      "mevProtection" : "MEV Koruması",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -4107,6 +4117,10 @@
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Sağlayıcı Test Modunda takas",
+        "desc" : "Sağlayıcı aşamasında açık anahtar kullanımını etkinleştirin"
       },
       "analyticsConsole" : {
         "title" : "Analiz Konsoluna İzin Verin",

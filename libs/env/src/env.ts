@@ -521,6 +521,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
+  MOCK_EXCHANGE_TEST_PARTNER: {
+    def: false,
+    parser: boolParser,
+    desc: "change CAL partner context to test",
+  },
   MOCK_REMOTE_LIVE_MANIFEST: {
     def: "",
     parser: stringParser,

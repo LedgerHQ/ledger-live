@@ -355,6 +355,9 @@ async function performSwapUntilQuoteSelectionStep(
   //todo: remove 2 following lines after LIVE-14410
   await app.layout.goToAccounts();
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
+  await app.layout.waitForPageDomContentLoadedState();
+  await app.layout.waitForAccountsSyncToBeDone();
+  await app.swap.waitForPageNetworkIdleState();
   await app.layout.goToSwap();
   await app.swap.waitForPageNetworkIdleState();
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);

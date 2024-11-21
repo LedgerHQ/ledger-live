@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeProviderNameAndSignature } from ".";
 import { getProvidersData } from "../../cal";
 
@@ -18,44 +17,33 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
   version: 2,
 };
 
-let providerDataCache: Record<string, ExchangeProviderNameAndSignature> | null = null;
-
-/**
- * The result is cached after the first successful fetch to avoid redundant network calls.
- * - "fund" providers currently include Mercuryo, which is stored as a fund provider.
- *   If this behavior changes, this logic should be revisited.
- *   Reference: https://github.dev/LedgerHQ/crypto-assets/blob/main/assets/partners/mercuryo/common.json
- */
-export const fetchAndMergeProviderData = async () => {
-  if (providerDataCache) {
-    return providerDataCache;
-  }
+export const fetchAndMergeProviderData = async env => {
   try {
-    const [sellProvidersData, fundProviderData] = await Promise.all([
-      getProvidersData("sell"),
-      getProvidersData("fund"), // Mercuryo is currently treated as a fund provider
-    ]);
-    providerDataCache = { ...sellProvidersData, ...fundProviderData };
-    return providerDataCache;
+    const sellProvidersData = await getProvidersData({
+      type: "sell",
+      ...env,
+    });
+    return { ...sellProvidersData };
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
   }
 };
 
-export const getSellProvider = async (
-  providerName: string,
-): Promise<ExchangeProviderNameAndSignature> => {
-  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
+export const getSellProvider = async ({
+  providerId,
+  ledgerSignatureEnv,
+  partnerSignatureEnv,
+}): Promise<ExchangeProviderNameAndSignature> => {
+  if (ledgerSignatureEnv === "test") {
     return testSellProvider;
   }
-  const res = await fetchAndMergeProviderData();
-
+  const res = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
   if (!res) {
     throw new Error("Failed to fetch provider data");
   }
-  const provider = res[providerName.toLowerCase()];
+  const provider = res[providerId];
   if (!provider) {
-    throw new Error(`Unknown partner ${providerName}`);
+    throw new Error(`Unknown partner ${providerId}`);
   }
 
   return provider;

@@ -1,0 +1,21 @@
+{
+  "ignoreUnresolved": [
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "expect"
+  ],
+  "ignoreUnimported": [
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/bridge/transaction.ts",
+    "src/hw-signMessage.ts",
+    "src/test/bot-specs.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/speculos-deviceActions.ts"
+  ]
+}

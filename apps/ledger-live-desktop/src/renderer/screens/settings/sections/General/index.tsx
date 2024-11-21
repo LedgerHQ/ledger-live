@@ -18,6 +18,7 @@ import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import MarketPerformanceWidgetRow from "./MarketPerformanceWidget";
+import MevProtectionRow from "./MevProtection";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -87,6 +88,18 @@ const SectionGeneral = () => {
             <PasswordAutoLockSelect />
           </Row>
         ) : null}
+
+        <FeatureToggle featureId="llMevProtection">
+          <Row
+            title={t("settings.display.mevProtection")}
+            desc={t("settings.display.mevProtectionDesc")}
+            dataTestId="setting-mevProtection"
+            id="setting-mevProtection"
+          >
+            <MevProtectionRow />
+          </Row>
+        </FeatureToggle>
+
         <Row
           title={t("settings.profile.reportErrors")}
           desc={t("settings.profile.reportErrorsDesc")}

@@ -25,6 +25,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -36,6 +37,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const devMode = useSelector(developerModeSelector);
   const accounts = useSelector(accountsSelector);
+  const discreetMode = useDiscreetMode();
 
   const mockManifest: LiveAppManifest | undefined =
     process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
@@ -99,6 +101,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             locale,
             currencyTicker,
             devMode,
+            discreetMode: discreetMode ? "true" : "false",
             ...(localManifest?.providerTestBaseUrl && {
               providerTestBaseUrl: localManifest?.providerTestBaseUrl,
             }),

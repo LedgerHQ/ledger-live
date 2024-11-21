@@ -37,6 +37,7 @@ export type ProvidersDataResponse = {
   public_key: string;
   public_key_curve: string;
   service_app_version: number;
+  partner_id: string;
   descriptor: {
     data: string;
     signatures: {
@@ -49,11 +50,11 @@ export type ProvidersDataResponse = {
 // Exported for test purpose only
 export function transformData(
   providersData: ProvidersDataResponse,
-  env: "prod" | "test",
+  ledgerSignatureEnv: "prod" | "test" = "prod",
 ): Record<string, ExchangeProvider> {
   const transformed = {};
   providersData.forEach(provider => {
-    const key = provider.name.toLowerCase();
+    const key = provider.partner_id;
     transformed[key] = {
       name: provider.name,
       publicKey: {
@@ -61,24 +62,30 @@ export function transformData(
         data: Buffer.from(provider.public_key, "hex"),
       },
       version: provider.service_app_version,
-      signature: Buffer.from(provider.descriptor.signatures[env], "hex"),
+      signature: Buffer.from(provider.descriptor.signatures[ledgerSignatureEnv], "hex"),
     };
   });
   return transformed;
 }
 
-export async function getProvidersData(
-  type: "swap" | "fund" | "sell",
-  env: "prod" | "test" = "prod",
-): Promise<Record<string, ExchangeProvider>> {
+export async function getProvidersData({
+  type,
+  partnerSignatureEnv = "prod",
+  ledgerSignatureEnv = "prod",
+}: {
+  type: "swap" | "fund" | "sell";
+  partnerSignatureEnv?: "test" | "prod";
+  ledgerSignatureEnv?: "test" | "prod";
+}): Promise<Record<string, ExchangeProvider>> {
   const { data: providersData } = await network<ProvidersDataResponse>({
     method: "GET",
     url: `${CAL_BASE_URL}/v1/partners`,
     params: {
-      output: "name,public_key,public_key_curve,service_app_version,descriptor",
+      output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
       service_name: type,
+      env: partnerSignatureEnv,
     },
   });
 
-  return transformData(providersData, env);
+  return transformData(providersData, ledgerSignatureEnv);
 }

@@ -17,7 +17,7 @@ async function main() {
         maxBuffer: 2048 * 1024,
       },
     );
-    const pnpmOutput = execSync(`npx ${packageManager} list -r --depth=0 --json`, {
+    const pnpmOutput = execSync(`npx ${packageManager} list -r --depth=-1 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
     });

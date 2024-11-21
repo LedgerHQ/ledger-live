@@ -73,6 +73,7 @@ import {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsWhitelistNftCollectionPayload,
   SettingsUnwhitelistNftCollectionPayload,
+  SettingsSetMevProtectionPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -313,6 +314,10 @@ export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsP
 );
 export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
   SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
+);
+
+export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
+  SettingsActionTypes.SET_MEV_PROTECTION,
 );
 
 type PortfolioRangeOption = {

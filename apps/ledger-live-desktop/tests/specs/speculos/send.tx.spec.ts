@@ -143,10 +143,10 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+  /*{
+    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW), //todo: Reactivate when BE issue is fixed - LIVE-14844
     xrayTicket: "B2CQA-2574",
-  },
+  },*/
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
@@ -406,7 +406,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.account.clickSend();
       await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
       await app.send.checkContinueButtonEnable();
-      await app.layout.checkInputErrorNotVisible();
+      await app.layout.checkInputErrorVisibibility("hidden");
       await app.send.clickContinue();
       await app.send.fillAmount(tokenTransactionValid.amount);
       await app.send.checkContinueButtonEnable();
@@ -499,7 +499,7 @@ test.describe("Verify send max user flow", () => {
       await app.send.clickContinue();
       await app.send.fillAmount(transactionInputValid.amount);
       await app.send.checkContinueButtonEnable();
-      await app.layout.checkInputErrorNotVisible();
+      await app.layout.checkInputErrorVisibibility("hidden");
     },
   );
 });

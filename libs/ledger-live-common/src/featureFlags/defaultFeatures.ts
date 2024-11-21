@@ -99,6 +99,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -516,6 +517,15 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   recoverUpsellRedirection: DEFAULT_FEATURE,
+  llMevProtection: DEFAULT_FEATURE,
+  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
+  llCounterValueGranularitiesRates: {
+    ...DEFAULT_FEATURE,
+    params: {
+      daily: 14 * 24 * 60 * 60 * 1000,
+      hourly: 2 * 24 * 60 * 60 * 1000,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

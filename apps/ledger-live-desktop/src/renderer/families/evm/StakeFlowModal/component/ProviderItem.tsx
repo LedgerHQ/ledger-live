@@ -66,7 +66,7 @@ interface Props {
 }
 
 export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const localManifest = useLocalLiveAppManifest(provider.liveAppId);
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
@@ -78,6 +78,10 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
       stakeOnClick({ provider, manifest });
     }
   }, [provider, stakeOnClick, manifest]);
+
+  const displayName = i18n.exists(`stake.ethereum.provider.${provider.id}.title`)
+    ? t(`stake.ethereum.provider.${provider.id}.title`)
+    : provider.name;
 
   return (
     <Container
@@ -91,7 +95,7 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
       <StakingIcon icon={provider.icon} />
       <Flex alignItems="flex-start" flex={2} flexDirection="column">
         <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
-          {t(`ethereum.stake.provider.${provider.id}.title`)}
+          {displayName}
         </Text>
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
           {provider.lst

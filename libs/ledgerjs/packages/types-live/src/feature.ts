@@ -167,6 +167,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
+  ptxSwapLiveAppMobile: DefaultFeature;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
@@ -198,6 +199,9 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
+  llMevProtection: DefaultFeature;
+  llmNetworkBasedAddAccountFlow: DefaultFeature;
+  llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
 };
 
 /**
@@ -532,6 +536,11 @@ export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
   learnMoreLink: string;
+}>;
+
+export type Feature_LlCounterValueGranularitiesRates = Feature<{
+  daily: number;
+  hourly: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

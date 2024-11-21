@@ -158,6 +158,7 @@ export enum ScreenName {
   SwapFormSelectAccount = "SwapFormSelectAccount",
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
+  SwapLiveApp = "SwapLiveApp",
   SwapHistory = "SwapHistory",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",

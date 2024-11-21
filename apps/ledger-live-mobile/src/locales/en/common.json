@@ -2871,6 +2871,8 @@
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
+      "mevProtection": "MEV Protection",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
       "personalizedRecommendations": "Personalized experience",
       "personalizedRecommendationsDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {

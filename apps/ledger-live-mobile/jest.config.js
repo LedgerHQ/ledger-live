@@ -62,6 +62,7 @@ module.exports = {
       { outputName: "llm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
     "^react$": "<rootDir>/node_modules/react",

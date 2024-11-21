@@ -341,7 +341,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               testID="recipient-continue-button"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={debouncedBridgePending || !!status.errors.recipient || memoTag?.error}
+              disabled={debouncedBridgePending || !!status.errors.recipient || !!memoTag?.error}
               pending={debouncedBridgePending}
               onPress={onPressContinue}
             />

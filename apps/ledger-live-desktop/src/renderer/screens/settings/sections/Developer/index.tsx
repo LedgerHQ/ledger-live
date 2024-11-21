@@ -16,6 +16,7 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
+import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
@@ -104,7 +105,7 @@ const Default = () => {
         <StorylyTester />
       </FeatureToggle>
       <ExchangeDeveloperMode />
-
+      <ExchangeTestPartnerMode />
       <FeatureToggle featureId="lldWalletSync">
         <WalletSyncTester />
       </FeatureToggle>
