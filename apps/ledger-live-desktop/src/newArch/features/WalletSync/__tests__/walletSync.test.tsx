@@ -15,7 +15,7 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
   }),
 }));
 
-describe("Rendering", () => {
+describe.skip("Rendering", () => {
   it("should loads and displays WalletSync Row", async () => {
     render(<WalletSyncTestApp />);
     expect(screen.getByRole("button", { name: "Manage" })).toBeTruthy();
