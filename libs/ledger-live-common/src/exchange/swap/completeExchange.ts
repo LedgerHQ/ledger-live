@@ -25,6 +25,7 @@ import { convertToAppExchangePartnerKey } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
+import { CEXProviderConfig } from "../providers/swap";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -49,7 +50,7 @@ const completeExchange = (
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = await getSwapProvider(provider);
-        if (providerConfig.type !== "CEX") {
+        if (providerConfig.useInExchangeApp === false) {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
 
@@ -102,11 +103,13 @@ const completeExchange = (
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
         currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
+        await exchange.setPartnerKey(
+          convertToAppExchangePartnerKey(providerConfig as CEXProviderConfig),
+        );
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerConfig.signature);
+        await exchange.checkPartner((providerConfig as CEXProviderConfig).signature);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
