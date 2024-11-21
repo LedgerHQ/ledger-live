@@ -295,10 +295,5 @@
     "ws": "7",
     "buffer": "6.0.3",
     "undici": "6.19.2"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "buffer@6.0.3": "patches/buffer@6.0.3.patch"
-    }
   }
 }
