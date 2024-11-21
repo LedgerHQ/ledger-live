@@ -61,16 +61,6 @@ jobs:
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      - name: Determine head branch
-        run: |
-          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
-            echo "HEAD_BRANCH=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
-          else
-            echo "HEAD_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          fi
-      - name: Print the head branch
-        run: |
-          echo "Head branch: $HEAD_BRANCH"
       - name: Move patch updates to minor for release branch
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
