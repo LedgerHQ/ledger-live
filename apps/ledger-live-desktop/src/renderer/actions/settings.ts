@@ -25,6 +25,7 @@ import {
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
+import { TOGGLE_MEMOTAG_INFO } from "./constants";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -441,3 +442,10 @@ export const setMevProtection = (payload: boolean) => ({
   type: "SET_MEV_PROTECTION",
   payload,
 });
+
+export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
+  return {
+    type: TOGGLE_MEMOTAG_INFO,
+    payload,
+  };
+};

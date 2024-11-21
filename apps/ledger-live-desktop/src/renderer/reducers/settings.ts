@@ -31,6 +31,7 @@ import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
 import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
+import { TOGGLE_MEMOTAG_INFO } from "../actions/constants";
 
 /* Initial state */
 
@@ -123,6 +124,7 @@ export type SettingsState = {
   hasBeenRedirectedToPostOnboarding: boolean;
   onboardingUseCase: OnboardingUseCase | null;
   lastOnboardedDevice: Device | null;
+  alwaysShowMemoTagInfo: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -225,6 +227,7 @@ export const INITIAL_STATE: SettingsState = {
   hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingUseCase: null,
   lastOnboardedDevice: null,
+  alwaysShowMemoTagInfo: true,
 };
 
 /* Handlers */
@@ -294,6 +297,7 @@ type HandlersPayloads = {
   SET_LAST_ONBOARDED_DEVICE: Device | null;
 
   SET_MEV_PROTECTION: boolean;
+  [TOGGLE_MEMOTAG_INFO]: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -547,6 +551,11 @@ const handlers: SettingsHandlers = {
   SET_MEV_PROTECTION: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
+  }),
+
+  [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
+    ...state,
+    alwaysShowMemoTagInfo: payload,
   }),
 };
 
@@ -902,3 +911,5 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
+
+export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
