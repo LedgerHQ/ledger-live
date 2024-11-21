@@ -15,7 +15,7 @@ import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
-import LogContentCardWrapper from "LLD/components/DynamicContent/LogContentCardWrapper";
+import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;

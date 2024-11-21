@@ -34,7 +34,7 @@ import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperfor
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
-import PortfolioContentCards from "LLD/features/Growth/components/PortfolioContentCards";
+import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 

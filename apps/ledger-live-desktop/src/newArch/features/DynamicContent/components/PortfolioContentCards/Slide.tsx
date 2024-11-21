@@ -5,7 +5,7 @@ import { PortfolioContentCard as Card } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import type { CarouselActions } from "../../types";
-import LogContentCardWrapper from "~/newArch/components/DynamicContent/LogContentCardWrapper";
+import LogContentCardWrapper from "../LogContentCardWrapper";
 
 export default memo(Slide);
 
