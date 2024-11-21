@@ -25,8 +25,6 @@ const excludedErrorName = [
   "EthAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "CantOpenDevice",
-  "DisconnectedDevice",
-  "DisconnectedDeviceDuringOperation",
   "DeviceOnDashboardExpected",
   "PairingFailed",
   "GetAppAndVersionUnsupportedFormat",
