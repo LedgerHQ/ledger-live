@@ -9,6 +9,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import * as API from "../../api/node/rpc.common";
+import LEDGER_API from "../../api/node/ledger";
 import broadcast from "../../broadcast";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
 import { getEstimatedFees } from "../../logic";
@@ -67,6 +68,10 @@ describe("EVM Family", () => {
       jest
         .spyOn(API, "broadcastTransaction")
         .mockImplementation(async () => mockedBroadcastResponse as any);
+
+      jest
+        .spyOn(LEDGER_API, "broadcastTransaction")
+        .mockImplementation(async () => mockedBroadcastResponse as any);
     });
 
     afterAll(() => {
@@ -74,6 +79,59 @@ describe("EVM Family", () => {
     });
 
     describe("broadcast", () => {
+      it("should broadcast with mevProtected true using correct URI for Ledger NodeApi and no action for External NodeApi", async () => {
+        const coinTransaction: EvmTransaction = {
+          amount: new BigNumber(100),
+          useAllAmount: false,
+          subAccountId: "id",
+          recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+          feesStrategy: "custom",
+          family: "evm",
+          mode: "send",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          maxFeePerGas: new BigNumber(100),
+          maxPriorityFeePerGas: new BigNumber(100),
+          type: 2,
+        };
+
+        mockGetConfig.mockImplementationOnce((): any => {
+          return {
+            info: {
+              node: {
+                type: "ledger",
+                explorerId: "eth",
+              },
+              explorer: {
+                type: "etherscan",
+                uri: "https://api.com",
+              },
+            },
+          };
+        });
+
+        const optimisticCoinOperation = buildOptimisticOperation(account, coinTransaction);
+
+        await broadcast({
+          account,
+          signedOperation: {
+            operation: optimisticCoinOperation,
+            signature: "0xS1gn4tUR3",
+          },
+          broadcastConfig: { mevProtected: true },
+        });
+
+        expect(API.broadcastTransaction).not.toHaveBeenCalled();
+        expect(LEDGER_API.broadcastTransaction).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.anything(),
+          expect.objectContaining({
+            mevProtected: true,
+          }),
+        );
+      });
+
       it("should broadcast the coin transaction and fill the blank in the optimistic transaction", async () => {
         const coinTransaction: EvmTransaction = {
           amount: new BigNumber(100),
