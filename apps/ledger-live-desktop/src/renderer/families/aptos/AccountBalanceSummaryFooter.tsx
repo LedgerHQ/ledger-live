@@ -54,7 +54,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance} = account;
+  const { spendableBalance: _spendableBalance } = account;
   const unit = account.currency.units[0];
   const formatConfig = {
     disableRounding: true,
