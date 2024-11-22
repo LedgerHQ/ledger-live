@@ -72,7 +72,7 @@ type ExchangeStartParamsUiRequest =
   | {
       exchangeType: "SELL";
       provider: string;
-      exchange: Partial<Exchange>;
+      exchange: Partial<Exchange> | undefined;
     }
   | {
       exchangeType: "SWAP";
@@ -371,13 +371,20 @@ function extractSellStartParam(
     throw new ExchangeError(createWrongSellParams(params));
   }
 
-  const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+  if (!params.fromAccountId) {
+    return {
+      exchangeType: params.exchangeType,
+      provider: params.provider,
+    } as ExchangeStartParamsUiRequest;
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params?.fromAccountId);
 
   if (!realFromAccountId) {
     throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
   }
 
-  const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+  const fromAccount = accounts?.find(acc => acc.id === realFromAccountId);
 
   if (!fromAccount) {
     throw new ServerError(createAccountNotFound(params.fromAccountId));
