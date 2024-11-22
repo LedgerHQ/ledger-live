@@ -54,7 +54,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
       )}
       {mode === ExchangeModeEnum.Sell && sourceCurrency && (
         <>
-          <Box>
+          <Box justifyContent="center" flex={1}>
             <SellCompleted />
           </Box>
         </>

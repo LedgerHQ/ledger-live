@@ -60,7 +60,7 @@ LLD is using vite and will import in priority the esm libs so we need to watch a
 
 ```bash
 # watch common
-pnpm watch:common
+pnpm watch:es:common
 
 # watch ljs
 pnpm watch:es:ljs

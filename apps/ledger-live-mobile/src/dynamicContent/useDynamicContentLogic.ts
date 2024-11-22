@@ -8,6 +8,7 @@ import {
   setDynamicContentCategoriesCards,
   setDynamicContentMobileCards,
   setIsDynamicContentLoading,
+  setDynamicContentLandingPageStickyCtaCards,
 } from "../actions/dynamicContent";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
@@ -19,6 +20,7 @@ import {
   mapAsNotificationContentCard,
   mapAsLearnContentCard,
   mapAsCategoryContentCard,
+  mapAsLandingPageStickyCtaContentCard,
   getMobileContentCards,
   compareCards,
 } from "./utils";
@@ -73,6 +75,13 @@ export const useDynamicContentLogic = () => {
       .map(card => mapAsCategoryContentCard(card))
       .sort(compareCards);
 
+    const landingPageStickyCtaCards = filterByPage(
+      mobileContentCards,
+      ContentCardLocation.LandingPageStickyCta,
+    )
+      .map(card => mapAsLandingPageStickyCtaContentCard(card))
+      .sort(compareCards);
+
     dispatch(setDynamicContentCategoriesCards(categoriesCards));
     dispatch(setDynamicContentMobileCards(mobileContentCards));
     dispatch(setDynamicContentWalletCards(walletCards));
@@ -80,6 +89,7 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
     dispatch(setIsDynamicContentLoading(false));
+    dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
   }, [Braze, dismissedContentCardsIds, dispatch]);
 
   const clearOldDismissedContentCards = () => {

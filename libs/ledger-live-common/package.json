@@ -64,6 +64,7 @@
   "scripts": {
     "build": "zx ./scripts/build-ts.mjs",
     "watch": "zx ./scripts/watch-ts.mjs",
+    "watch:es": "zx ./scripts/watch-ts-es.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "eslint src --cache",
