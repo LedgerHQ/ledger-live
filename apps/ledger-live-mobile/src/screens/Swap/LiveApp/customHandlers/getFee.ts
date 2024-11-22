@@ -14,6 +14,8 @@ import {
   getCustomFeesPerFamily,
   transformToBigNumbers,
 } from "../utils";
+import { FeeModalState } from "../WebView";
+import { Dispatch, SetStateAction } from "react";
 
 interface FeeParams {
   fromAccountId: string;
@@ -62,7 +64,7 @@ const convertAmount = (params: { amount: BigNumber; account: Account }): BigNumb
 // };
 
 export const getFee =
-  (accounts: AccountLike[]) =>
+  (accounts: AccountLike[], setFeeModalState: Dispatch<SetStateAction<FeeModalState>>) =>
   async ({ params }: { params: FeeParams }): Promise<FeeResult> => {
     // Account validation
     const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
@@ -97,11 +99,12 @@ export const getFee =
 
     // Get initial status
     const initialStatus = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-    const currentStatus = initialStatus;
-    const currentTransaction = preparedTransaction;
-    const customFeeConfig = baseTransaction && getCustomFeesPerFamily(currentTransaction);
+    let currentStatus = initialStatus;
+    let currentTransaction = preparedTransaction;
+    let customFeeConfig = baseTransaction && getCustomFeesPerFamily(currentTransaction);
 
     console.log({ currentTransaction, currentStatus, customFeeConfig });
+    console.log({ params });
 
     // Handle non-drawer case
     if (!params.openDrawer) {
@@ -115,28 +118,41 @@ export const getFee =
 
     // Handle drawer case
     return new Promise<FeeResult>(resolve => {
-      // const handleDrawerClose = async (save: boolean) => {
-      //   trackFeeSelection({
-      //     save,
-      //     swapVersion: params.SWAP_VERSION,
-      //     feeStrategy: currentTransaction.feesStrategy,
-      //   });
-      //   const result = formatFeeResult({
-      //     transaction: save ? currentTransaction : preparedTransaction,
-      //     status: save ? currentStatus : initialStatus,
-      //     mainAccount,
-      //     customFeeConfig,
-      //   });
-      //   // setDrawer(undefined);
-      //   resolve(result);
-      // };
-      // const updateTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-      //   currentStatus = await bridge.getTransactionStatus(mainAccount, newTransaction);
-      //   customFeeConfig = baseTransaction && getCustomFeesPerFamily(newTransaction);
-      //   currentTransaction = newTransaction;
-      //   return newTransaction;
-      // };
-      // setDrawer(
+      const handleDrawerClose = async (save: boolean) => {
+        // trackFeeSelection({
+        //   save,
+        //   swapVersion: params.SWAP_VERSION,
+        //   feeStrategy: currentTransaction.feesStrategy,
+        // });
+        const result = formatFeeResult({
+          transaction: save ? currentTransaction : preparedTransaction,
+          status: save ? currentStatus : initialStatus,
+          mainAccount,
+          customFeeConfig,
+        });
+        // setDrawer(undefined);
+        resolve(result);
+      };
+      const updateTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
+        currentStatus = await bridge.getTransactionStatus(mainAccount, newTransaction);
+        customFeeConfig = baseTransaction && getCustomFeesPerFamily(newTransaction);
+        currentTransaction = newTransaction;
+        return newTransaction;
+      };
+
+      setFeeModalState({
+        opened: true,
+        data: {
+          setTransaction: updateTransaction,
+          account: fromAccount,
+          parentAccount: fromParentAccount,
+          status: currentStatus,
+          provider: undefined,
+          disableSlowStrategy: true,
+          transaction: preparedTransaction,
+          onRequestClose: handleDrawerClose,
+        },
+      });
       //   FeesDrawerLiveApp,
       //   {
       //     setTransaction: updateTransaction,
