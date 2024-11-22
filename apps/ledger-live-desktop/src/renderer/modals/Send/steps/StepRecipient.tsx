@@ -27,6 +27,8 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import CheckBox from "~/renderer/components/CheckBox";
 import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/application";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/application";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
 
 const StepRecipient = ({
   t,
@@ -48,6 +50,7 @@ const StepRecipient = ({
 }: StepProps) => {
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
+  const lldMemoTag = useFeature("lldMemoTag");
 
   if (!status || !account) return null;
 
@@ -63,7 +66,7 @@ const StepRecipient = ({
         currencyName={currencyName}
         isNFTSend={isNFTSend}
       />
-      {isMemoTagBoxVisibile ? (
+      {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (
         <>
@@ -140,6 +143,7 @@ export const StepRecipientFooter = ({
   transaction,
 }: StepProps) => {
   const dispatch = useDispatch();
+  const lldMemoTag = useFeature("lldMemoTag");
   const { errors } = status;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const isTerminated = mainAccount && mainAccount.currency.terminated;
@@ -150,8 +154,10 @@ export const StepRecipientFooter = ({
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
+    const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
-      !transaction?.memo &&
+      lldMemoTag?.enabled &&
+      !memoTagValue &&
       MEMO_TAG_COINS.includes(transaction?.family as string) &&
       alwaysShowMemoTagInfo
     ) {
@@ -187,7 +193,7 @@ export const StepRecipientFooter = ({
     dispatch(toggleShouldDisplayMemoTagInfo(!alwaysShowMemoTagInfo));
   };
 
-  return isMemoTagBoxVisibile ? (
+  return isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
     <Flex justifyContent="space-between" width="100%">
       <Flex alignItems="center">
         <CheckBox isChecked={!alwaysShowMemoTagInfo} onChange={handleOnCheckboxChange} />

@@ -9,9 +9,15 @@ import {
   learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
+  landingPageStickyCtaCardsSelector,
 } from "../reducers/dynamicContent";
 import { dismissedDynamicCardsSelector } from "../reducers/settings";
-import { AssetContentCard, WalletContentCard } from "./types";
+import {
+  AssetContentCard,
+  LandingPageStickyCtaContentCard,
+  LandingPageUseCase,
+  WalletContentCard,
+} from "./types";
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
 import { setDynamicContentMobileCards } from "~/actions/dynamicContent";
@@ -25,6 +31,7 @@ const useDynamicContent = () => {
   const walletCards = useSelector(walletCardsSelector);
   const learnCards = useSelector(learnCardsSelector);
   const categoriesCards = useSelector(categoriesCardsSelector);
+  const landingPageStickyCtaCards = useSelector(landingPageStickyCtaCardsSelector);
   const mobileCards = useSelector(mobileCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
@@ -57,6 +64,11 @@ const useDynamicContent = () => {
     [assetsCardsDisplayed],
   );
 
+  const getStickyCtaCardByLandingPage = (landingPage: LandingPageUseCase) =>
+    landingPageStickyCtaCards.find(
+      (card: LandingPageStickyCtaContentCard) => card.landingPage === landingPage,
+    );
+
   const dismissCard = useCallback(
     (cardId: string) => {
       dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
@@ -78,6 +90,7 @@ const useDynamicContent = () => {
         type?: string;
         layout?: string;
         location?: string;
+        landingPage?: string;
       },
     ) => {
       track(event, params);
@@ -94,6 +107,7 @@ const useDynamicContent = () => {
     categoriesCards,
     mobileCards,
     getAssetCardByIdOrTicker,
+    getStickyCtaCardByLandingPage,
     logClickCard,
     logDismissCard,
     logImpressionCard,

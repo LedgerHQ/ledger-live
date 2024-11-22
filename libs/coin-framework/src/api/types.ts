@@ -20,7 +20,7 @@ export type Operation = {
 };
 
 export type Transaction = {
-  mode: string;
+  type: string;
   recipient: string;
   amount: bigint;
   fee: bigint;

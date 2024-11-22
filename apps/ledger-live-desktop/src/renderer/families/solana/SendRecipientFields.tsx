@@ -8,6 +8,7 @@ import {
   Transaction,
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   onChange: (t: Transaction) => void;
@@ -17,15 +18,19 @@ type Props = {
 };
 
 const Root = (props: Props) => {
+  const lldMemoTag = useFeature("lldMemoTag");
+
   return (
     <Box flow={1}>
-      <Box mb={10}>
-        <Label>
-          <span>
-            <Trans i18nKey="families.solana.memo" />
-          </span>
-        </Label>
-      </Box>
+      {!lldMemoTag?.enabled && (
+        <Box mb={10}>
+          <Label>
+            <span>
+              <Trans i18nKey="families.solana.memo" />
+            </span>
+          </Label>
+        </Box>
+      )}
       <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
         <Box grow={1}>
           <MemoValueField {...props} />

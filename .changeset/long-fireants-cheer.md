@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/types-live": patch
-"ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/types-live": minor
+"ledger-live-desktop": minor
+"@ledgerhq/live-common": minor
 ---
 
 MEV Protection feature

@@ -29,6 +29,8 @@ import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -63,6 +65,7 @@ const StepSummary = (props: StepProps) => {
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
+  const lldMemoTag = useFeature("lldMemoTag");
 
   if (!account || !mainAccount || !transaction) {
     return null;
@@ -82,8 +85,13 @@ const StepSummary = (props: StepProps) => {
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
-  const memo = "memo" in transaction ? transaction.memo : undefined;
-
+  const memo = lldMemoTag?.enabled
+    ? getMemoTagValueByTransactionFamily(transaction)
+    : (
+        transaction as Transaction & {
+          memo: string;
+        }
+      )?.memo;
   const handleOnEditMemo = () => {
     transitionTo("recipient");
   };
@@ -153,7 +161,12 @@ const StepSummary = (props: StepProps) => {
                 <Trans i18nKey="send.steps.details.to" />
               </Text>
               {transaction.recipientDomain && (
-                <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                <Text
+                  data-testId="transaction-recipient-ens"
+                  ff="Inter|Bold"
+                  color="palette.text.shade100"
+                  fontSize={4}
+                >
                   {transaction.recipientDomain.domain}
                 </Text>
               )}
@@ -171,46 +184,59 @@ const StepSummary = (props: StepProps) => {
               </Ellipsis>
             </Box>
           </Box>
-          {memo && (
-            <>
-              <VerticalSeparator />
-              <Flex justifyContent="space-between">
-                <Box horizontal alignItems="center">
-                  <Circle>
-                    <MemoIcon size={14} />
-                  </Circle>
-                  <Box flex={1}>
-                    <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                      <Trans i18nKey="operationDetails.extra.memo" />
+          {lldMemoTag?.enabled
+            ? memo && (
+                <>
+                  <VerticalSeparator />
+                  <Flex justifyContent="space-between">
+                    <Box horizontal alignItems="center">
+                      <Circle>
+                        <MemoIcon size={14} />
+                      </Circle>
+                      <Box flex={1}>
+                        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                          <Trans i18nKey="operationDetails.extra.memo" />
+                        </Text>
+                        <Ellipsis>
+                          <Text
+                            ff="Inter"
+                            color={
+                              transaction.recipientDomain
+                                ? "palette.text.shade70"
+                                : "palette.text.shade100"
+                            }
+                            fontSize={4}
+                            data-testid="recipient-address"
+                          >
+                            {memo}
+                          </Text>
+                        </Ellipsis>
+                      </Box>
+                    </Box>
+                    <Button
+                      lighterPrimary
+                      style={{
+                        backgroundColor: "transparent",
+                      }}
+                      onClick={handleOnEditMemo}
+                    >
+                      Edit
+                    </Button>
+                  </Flex>
+                </>
+              )
+            : memo && (
+                <Box horizontal justifyContent="space-between" alignItems="center" mb={2}>
+                  <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                    <Trans i18nKey="operationDetails.extra.memo" />
+                  </Text>
+                  <Ellipsis ml={2}>
+                    <Text ff="Inter|Medium" fontSize={4}>
+                      {memo}
                     </Text>
-                    <Ellipsis>
-                      <Text
-                        ff="Inter"
-                        color={
-                          transaction.recipientDomain
-                            ? "palette.text.shade70"
-                            : "palette.text.shade100"
-                        }
-                        fontSize={4}
-                        data-testid="recipient-address"
-                      >
-                        {memo}
-                      </Text>
-                    </Ellipsis>
-                  </Box>
+                  </Ellipsis>
                 </Box>
-                <Button
-                  lighterPrimary
-                  style={{
-                    backgroundColor: "transparent",
-                  }}
-                  onClick={handleOnEditMemo}
-                >
-                  Edit
-                </Button>
-              </Flex>
-            </>
-          )}
+              )}
         </Box>
         <Separator />
         {!isNFTSend ? (

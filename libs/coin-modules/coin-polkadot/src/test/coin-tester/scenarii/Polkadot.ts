@@ -1,28 +1,28 @@
+import BigNumber from "bignumber.js";
+import Polkadot from "@ledgerhq/hw-app-polkadot";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import Polkadot from "@ledgerhq/hw-app-polkadot";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
+import { PolkadotCoinConfig } from "../../../config";
+import { ExplorerExtrinsic } from "../../../types";
+import { defaultNanoApp } from "../scenarii.test";
+import { createBridges } from "../../../bridge";
+import { makeAccount } from "../../fixtures";
+import { indexOperation } from "../indexer";
+import { polkadot } from "../helpers";
 import resolver from "../../../signer";
 import {
   PolkadotAccount,
   PolkadotOperationExtra,
   Transaction as PolkadotTransaction,
 } from "../../../types/bridge";
-import { createBridges } from "../../../bridge";
-import { makeAccount } from "../../fixtures";
-import { defaultNanoApp } from "../scenarios.test";
-import { PolkadotCoinConfig } from "../../../config";
-import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
-import { polkadot } from "./utils";
-import { indexOperation } from "../indexer";
-import BigNumber from "bignumber.js";
-import { ExplorerExtrinsic } from "../../../types";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
 
-function getTransactions() {
+const getTransactions = () => {
   const send1DotTransaction: PolkadotScenarioTransaction = {
     name: "Send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
@@ -212,7 +212,7 @@ function getTransactions() {
     withdraw250DotTransaction,
     claimRewardTransaction,
   ];
-}
+};
 
 const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
 const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
@@ -241,8 +241,8 @@ const coinConfig: PolkadotCoinConfig = {
 
 const subscriptions: any[] = [];
 
-export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
-  name: "Polkadot Basic transactions",
+export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
+  name: "Polkadot Ledger Live transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(
@@ -255,14 +255,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
     await cryptoWaitReady();
     await wsProvider.connect();
-    api = await ApiPromise.create({ provider: wsProvider });
-
-    const [chain, nodeName, nodeVersion] = await Promise.all([
-      api.rpc.system.chain(),
-      api.rpc.system.name(),
-      api.rpc.system.version(),
-    ]);
-    console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
+    api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
 
     const keyring = new Keyring({ type: "sr25519" });
     keyring.setSS58Format(0);
@@ -278,46 +271,30 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
       derivationMode: "polkadotbip44",
     });
 
-    const basicScenarioAccountPair = keyring.addFromAddress(address, {
+    const polkadotScenarioAccountPair = keyring.addFromAddress(address, {
       name: "BASIC_SCENARIO_ACCOUNT",
     });
 
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    const unsubGetBasicScenarioBalance = await api.query.system.account(
-      basicScenarioAccountPair.address,
-      ({ nonce, data: balance }: any) => {
-        console.log(
-          `free balance for ${basicScenarioAccountPair.meta.name} account is ${balance.free} with ${balance.reserved} reserved and a nonce of ${nonce}`,
-        );
-      },
-    );
-
-    subscriptions.push(unsubGetBasicScenarioBalance);
-
     const unsub = await api.tx.balances
       .transferAllowDeath(
-        basicScenarioAccountPair.address,
+        polkadotScenarioAccountPair.address,
         parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
       )
       .signAndSend(alice, result => {
-        console.log(`Current status is ${result.status}`);
-
-        if (result.status.isInBlock) {
-          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-        } else if (result.status.isFinalized) {
-          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+        if (result.status.isFinalized) {
           unsub();
         }
       });
 
-    const account = makeAccount(basicScenarioAccountPair.address, polkadot);
+    const account = makeAccount(polkadotScenarioAccountPair.address, polkadot);
 
     return {
       accountBridge,
       currencyBridge,
-      address: basicScenarioAccountPair.address,
+      address: polkadotScenarioAccountPair.address,
       account,
       onSignerConfirmation,
     };
@@ -325,8 +302,6 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   getTransactions,
   mockIndexer: async (account, optimistic) => {
     unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
-      console.log(`Chain is at block: #${header.number}`);
-
       const blockHash = header.hash.toString();
 
       const res = await fetch(`${SIDECAR_BASE_URL}/blocks/${blockHash}`);
@@ -417,6 +392,9 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
       "500000",
     );
+  },
+  beforeSync: async () => {
+    await wsProvider.send("dev_newBlock", [{ count: 1 }]);
   },
   afterEach: async () => {
     unsubscribeNewBlockListener();

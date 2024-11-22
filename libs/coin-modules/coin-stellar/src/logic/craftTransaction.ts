@@ -19,7 +19,7 @@ export async function craftTransaction(
     address: string;
   },
   transaction: {
-    mode: string;
+    type: string;
     recipient: string;
     amount: bigint;
     fee: bigint;
@@ -29,7 +29,7 @@ export async function craftTransaction(
     memoValue?: string | null | undefined;
   },
 ): Promise<{ transaction: StellarSdkTransaction; xdr: string }> {
-  const { amount, recipient, fee, memoType, memoValue, mode, assetCode, assetIssuer } = transaction;
+  const { amount, recipient, fee, memoType, memoValue, type, assetCode, assetIssuer } = transaction;
 
   const source = await loadAccount(account.address);
 
@@ -40,7 +40,7 @@ export async function craftTransaction(
   const transactionBuilder = buildTransactionBuilder(source, fee);
   let operation: xdr.Operation<StellarSdkOperation.ChangeTrust> | null = null;
 
-  if (mode === "changeTrust") {
+  if (type === "changeTrust") {
     if (!assetCode || !assetIssuer) {
       throw new StellarAssetRequired("");
     }

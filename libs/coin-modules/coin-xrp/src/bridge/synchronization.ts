@@ -65,10 +65,9 @@ async function filterOperations(
 ): Promise<Operation[]> {
   const operations = await listOperations(address, startAt);
 
-  return operations
-    .filter(op => op.type === "Payment")
-    .map(op => {
-      return {
+  return operations.map(
+    op =>
+      ({
         id: encodeOperationId(accountId, op.hash, op.simpleType),
         hash: op.hash,
         accountId,
@@ -82,8 +81,8 @@ async function filterOperations(
         date: op.date,
         transactionSequenceNumber: op.transactionSequenceNumber,
         extra: {},
-      } satisfies Operation;
-    });
+      }) satisfies Operation,
+  );
 }
 
 async function calculateSpendableBalance(
