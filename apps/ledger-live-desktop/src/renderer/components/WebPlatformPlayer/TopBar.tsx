@@ -143,7 +143,7 @@ export const TopBar = ({
   webviewState,
 }: Props) => {
   const walletState = useSelector(walletSelector);
-  
+
   const { name, icon } = manifest;
 
   const {
@@ -186,7 +186,10 @@ export const TopBar = ({
   }, [webviewAPIRef]);
 
   const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
-  const currentAccountName = currentAccount && (accountNameSelector(walletState, { accountId: currentAccount.id }) || getDefaultAccountName(currentAccount));
+  const currentAccountName =
+    currentAccount &&
+    (accountNameSelector(walletState, { accountId: currentAccount.id }) ||
+      getDefaultAccountName(currentAccount));
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
