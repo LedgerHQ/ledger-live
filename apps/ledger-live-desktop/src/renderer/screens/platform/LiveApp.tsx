@@ -60,7 +60,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
   const handleClose = useCallback(() => {
-    if (returnTo.indexOf("/swap") > -1) {
+    if (returnTo.startsWith("/swap")) {
       track("button_click", {
         ...swapTrackingProperties,
         button: "close X",
