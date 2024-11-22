@@ -1,8 +1,9 @@
 import { TrustchainLifecycle } from "@ledgerhq/ledger-key-ring-protocol/types";
 import getCloudSyncApi from "../cloudsync/api";
-import { liveSlug } from ".";
 import { WSState } from "../store";
 import { makeCipher } from "../cloudsync/cipher";
+
+export const liveSlug = "live";
 
 /**
  * implements to provide to TrustchainSdk the glue with cloudsync/walletsync

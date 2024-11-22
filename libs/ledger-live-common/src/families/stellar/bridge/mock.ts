@@ -59,10 +59,6 @@ const createTransaction = (): Transaction => ({
 });
 
 const updateTransaction = (t, patch) => {
-  if ("recipient" in patch && patch.recipient !== t.recipient) {
-    return { ...t, ...patch, memoType: null };
-  }
-
   return { ...t, ...patch };
 };
 

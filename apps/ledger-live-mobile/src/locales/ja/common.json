@@ -315,6 +315,20 @@
       "title" : "{{message}}",
       "description" : "問題が発生しました。再試行してください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
+    "TransactionBroadcastError" : {
+      "title" : "トランザクションのブロードキャストに失敗",
+      "description" : "トランザクションは{{network}}ネットワーク上でブロードキャストできませんでした。お客様の{{coin}}は転送されておらず、アカウントに残っています。",
+      "needHelp" : "お困りですか？",
+      "helpCenter" : {
+        "title" : "ヘルプセンター",
+        "desc" : "サポートがご必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
+        "cta" : "ヘルプ"
+      },
+      "technical" : {
+        "title" : "技術的なエラー",
+        "cta" : "ログを保存"
+      }
+    },
     "FeeEstimationFailed" : {
       "title" : "手数料の概算に失敗しました。",
       "description" : "手数料を手動で設定してみてください（ステータス：{{status}}）。"
@@ -494,6 +508,17 @@
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。 ",
+      "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
+      "twoCtas" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>または<cta2>{{cta2Label}}</cta2>してください。",
+      "threeCtas" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>、<cta2>{{cta2Label}}</cta2>、または<cta3>{{cta3Label}}</cta3>してください。",
+      "ctas" : {
+        "buy" : "購入",
+        "swap" : "スワップ",
+        "deposit" : "入金"
+      }
     },
     "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
@@ -2335,7 +2360,8 @@
       "swap" : "スワップ",
       "send" : "送付",
       "deposit" : "受け取る",
-      "stake" : "ステーキング"
+      "stake" : "ステーキング",
+      "yield" : "イールド"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2550,7 +2576,8 @@
         "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
         "description" : "Ledger Liveはオープンソースのプラットフォームです。",
         "description2" : "世界中の開発者がLedger Liveと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました"
+        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
+        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
     },
     "willBedeprecatedBanner" : {
@@ -2591,6 +2618,7 @@
     "buy" : "購入",
     "walletconnect" : "WalletConnect",
     "stake" : "ステーキング",
+    "yield" : "イールド",
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
@@ -2842,9 +2870,9 @@
       "developerMode" : "デベロッパーモード",
       "developerModeDesc" : "My Ledgerに開発者用アプリを表示し、テストネットアプリを有効化してください。",
       "analytics" : "アナリティクス",
-      "analyticsDesc" : "Ledgerがアプリの使用状況データを追跡できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるようにします。",
+      "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させます。",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
-      "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを追跡して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
+      "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
       "analyticsModal" : {
         "title" : "アナリティクスの共有",
         "desc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する",
@@ -3109,6 +3137,14 @@
       "input" : "アドレスを入力",
       "inputEns" : "アドレスまたはENSを入力してください"
     },
+    "memoTag" : {
+      "input" : "タグ/メモを入力",
+      "title" : "タグ/メモを使用しませんか？",
+      "description" : "資金を中央集権型取引所やカストディアルウォレットに送付するときにタグ/メモを追加しないと、資金が失われます。",
+      "cta" : "タグを追加",
+      "ignore" : "タグを追加しない",
+      "learnMore" : "タグ/メモについて詳しく知る"
+    },
     "send" : {
       "title" : "送付",
       "description" : "暗号資産を別のウォレットに送付する。"
@@ -3132,6 +3168,13 @@
       "shareAddress" : "アドレスを共有",
       "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "memoTag" : {
+        "link" : "タグ/メモがご必要ですか？",
+        "title" : "タグ/メモが必要ですか？",
+        "description" : "この資産を取引所から受け取る際に、タグ/メモが必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。",
+        "cta" : "わかりました",
+        "learnMore" : "タグについて詳しく知る"
+      },
       "selectCrypto" : {
         "title" : "受け取りたい暗号資産を選択"
       },
@@ -3180,7 +3223,7 @@
         "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
         "sendWarning" : "トークンの送信は必ず{{network}}から行ってください。他のネットワークから送信した場合、トークンが永久に失われる可能性があります。",
         "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。",
-        "bannerTitle" : "取引所から引き出す方法を学ぶ"
+        "bannerTitle" : "取引所から出金する方法を確認しますか？"
       },
       "securityVerify" : {
         "title" : "このトランザクションを保護するにはアドレス認証が重要です",
@@ -4509,7 +4552,7 @@
       "tr" : "トルコ語",
       "ja" : "日本",
       "ko" : "韓国",
-      "pt" : "ポルトガル語"
+      "pt" : "ポルトガル語（ブラジル）"
     }
   },
   "deviceLocalization" : {
@@ -4529,7 +4572,11 @@
     "languages" : {
       "english" : "英語",
       "french" : "フランス語",
-      "spanish" : "スペイン語"
+      "spanish" : "スペイン語",
+      "german" : "ドイツ語",
+      "brazilian" : "ポルトガル語（ブラジル）",
+      "russian" : "ロシア語",
+      "turkish" : "トルコ語"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5404,6 +5451,9 @@
     "AccountHeader" : {
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
       "btn" : "報酬を獲得する"
+    },
+    "delegation" : {
+      "addCustomValidator" : "+ カスタムバリデーターを追加"
     }
   },
   "tron" : {
@@ -6615,7 +6665,7 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
-    "ethereum" : {
+    "ethereum_deprecated" : {
       "title" : "所有するETHを運用",
       "subTitle" : "ETHをステーキングし、日々の報酬をLedger Liveで直接獲得して資産を増やしましょう。",
       "tagMinimum" : "{{min}}ETHが必要",
@@ -6623,23 +6673,23 @@
       "providers" : {
         "kiln_pooling" : {
           "title" : "Kilnステーキングプール",
-          "description" : "最低数量なしでステーキング。ロック（凍結）期間なしで自動複利報酬を獲得。",
-          "supportLink" : "Kilnプールの詳細を確認"
+          "description" : "ステーキングの最低数量設定なし。ロック（凍結）期間なしで自動複利報酬を獲得。",
+          "supportLink" : "Kilnプールについての詳細を確認"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "最低数量なしでステーキング。流動性を利用して、自動複利報酬を獲得。",
+          "description" : "ステーキングの最低数量設定なし。即時の流動性を利用して、自動複利報酬を獲得。",
           "supportLink" : "Staderについての詳細"
         },
         "lido" : {
           "title" : "Lido",
-          "description" : "即時の流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
-          "supportLink" : "Lidoの詳細を確認"
+          "description" : "流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
+          "supportLink" : "Lidoの詳細について"
         },
         "figment" : {
           "title" : "Figment",
-          "tag" : "必要最低額32ETH",
-          "description" : "専用バリデーターに32ETH超をステーキングして、アカウントに自動的に送信される報酬を獲得。",
+          "tag" : "32ETHが必要",
+          "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
           "supportLink" : "Figmentの詳細"
         },
         "kiln" : {
@@ -6648,6 +6698,72 @@
           "description" : "専用バリデーターに32ETH以上をステーキングして、簡単に報酬を獲得。",
           "supportLink" : "Kilnの詳細"
         }
+      }
+    },
+    "ethereum" : {
+      "title" : "ステーキングプロバイダーの選択",
+      "category" : {
+        "all" : {
+          "name" : "全て",
+          "description" : "Ledger Liveで利用できるすべてのイーサリアムステーキングプロバイダー。"
+        },
+        "liquid" : {
+          "name" : "リキッド",
+          "description" : "ETHをステーキングして、リキッドトークンで報酬を獲得できます。今後も取引やDeFiアクティビティへの参加は可能です。"
+        },
+        "protocol" : {
+          "name" : "プロトコル",
+          "description" : "32ETHのセットをステーキングして、ETHでフルノード報酬を獲得できます。"
+        },
+        "pooling" : {
+          "name" : "プール",
+          "description" : "プールに参加して、任意の量のETHをステーキングして報酬を獲得できます。"
+        },
+        "restaking" : {
+          "name" : "再ステーキング",
+          "description" : "リキッドトークンを再ステーキングして、追加の報酬を獲得できます。"
+        }
+      },
+      "howItWorks" : "ETHステーキングの仕組み",
+      "lst" : "リキッドトークンが必要です",
+      "noMinimum" : "最小数量なし",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール"
+        },
+        "kiln_restaking" : {
+          "title" : "Kilnリキット再ステーキング"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "知っておくべき戦略と戦術",
+      "requiredMinimum" : "{{min}}ETHが必要",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自動複利報酬",
+        "basic" : "報酬",
+        "daily" : "毎日の報酬",
+        "eigenlayer_points" : "Eigenlayerポイント",
+        "validator" : "バリデーター報酬"
       }
     },
     "noFundsModal" : {
@@ -6681,12 +6797,12 @@
         "subtitle" : "お客様のLedger Liveデータを共有いただくことで、お客様の好みを理解し、お客様に関連するコンテンツを表示することができます。",
         "content" : {
           "able" : {
-            "title" : "お客様の同意があると、Ledgerは、お客様によるLedger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを追跡できるようになります。",
+            "title" : "お客様の同意があると、Ledgerは、お客様によるLedger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを収集できるようになります。",
             "diagAndUsage" : "Ledger Liveのパフォーマンスを測定し、アプリとお客様の体験（アナリティクス）の両方を強化可能です。",
             "personnalizationData" : "お客様の好みに合わせてパーソナライズされた推奨事項やコンテンツをご提供でき、当社のマーケティングキャンペーンの効果（パーソナライゼーション）の測定に役立ちます。"
           },
           "unable" : {
-            "title" : "Ledger Liveは、以下に関する情報を決して追跡しません。",
+            "title" : "Ledger Liveは、以下に関する情報を決して収集しません。",
             "adresses" : "お客様の資産。",
             "balance" : "お客様のポートフォリオ。",
             "personnalInfos" : "お客様の個人識別情報（お名前やメールアドレスなど）。"
@@ -6698,7 +6814,7 @@
           },
           "infoText" : {
             "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-            "link" : "当社の追跡ポリシーの詳細についてご覧ください"
+            "link" : "お客様のデータの取り扱いについて"
           }
         }
       },
@@ -6884,7 +7000,8 @@
           "title" : "QRコードが無効です",
           "desc" : "Ledger Liveアプリを同期するには、Ledger Liveに表示されているQRコードのみをスキャンしてください。",
           "info" : "QRコードの場合は、「設定」を開き、「一般」を選択し、「Ledger Sync」、「同期をオンにする」、「QRを表示」を選択します。",
-          "cta" : "わかりました"
+          "cta" : "わかりました",
+          "tryAgain" : "再試行"
         },
         "scannedOldQrCode" : {
           "title" : "Ledger Liveのアップデートが必要です",

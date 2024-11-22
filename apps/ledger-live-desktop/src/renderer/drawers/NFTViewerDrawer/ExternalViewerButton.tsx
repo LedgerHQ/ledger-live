@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import IconExternal from "~/renderer/icons/ExternalLink";
-import useNftLinks from "~/renderer/hooks/useNftLinks";
+import useNftLinks from "~/renderer/hooks/nfts/useNftLinks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui";

@@ -14,6 +14,10 @@ import {
   formatOperation,
   formatAccount,
 } from "@ledgerhq/live-common/account/index";
+import {
+  createTransactionBroadcastError,
+  TransactionBroadcastError,
+} from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
@@ -24,6 +28,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 import { ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
 import type {
   StackNavigatorNavigation,
   StackNavigatorRoute,
@@ -260,7 +265,14 @@ export function useSignedTxHandler({
           throw transactionSignError;
         }
 
-        const operation = await broadcast(signedOperation);
+        const operation = await broadcast(signedOperation).catch((err: Error) => {
+          const currency = mainAccount.currency;
+          throw createTransactionBroadcastError(err, urls, {
+            network: currency.name,
+            coin: currency.ticker,
+          });
+        });
+
         log(
           "transaction-summary",
           `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
@@ -280,6 +292,16 @@ export function useSignedTxHandler({
           !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
         ) {
           logger.critical(error as Error);
+        }
+
+        if (
+          error instanceof TransactionBroadcastError &&
+          route.name === ScreenName.SendConnectDevice
+        ) {
+          return (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+            ScreenName.SendBroadcastError,
+            { ...route.params, error },
+          );
         }
 
         (navigation as StackNavigationProp<{ [key: string]: object }>).replace(

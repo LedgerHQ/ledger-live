@@ -217,7 +217,7 @@ class Select<
       ...props
     } = this.props;
     const Comp = (async ? AsyncReactSelect : ReactSelect) as typeof ReactSelect;
-    let styles =
+    const baseStyles =
       theme &&
       createStyles(theme, {
         width,
@@ -228,12 +228,21 @@ class Select<
         error,
         rowHeight,
       });
+    const baseStylesWithPlaceholder = {
+      ...baseStyles,
+      placeholder: (base: React.CSSProperties) => ({
+        ...base,
+        color: theme?.colors.palette.text.shade40,
+      }),
+    };
+
     // @ts-expect-error This is complicated to get it right
-    styles = stylesMap ? stylesMap(styles) : styles;
+    const styles = stylesMap ? stylesMap(baseStylesWithPlaceholder) : baseStylesWithPlaceholder;
     return (
       // @ts-expect-error This is complicated to get it right
       <Comp
         {...props}
+        // @ts-expect-error This is complicated to get it right
         ref={c => (this.ref = c)}
         autoFocus={autoFocus}
         value={value}

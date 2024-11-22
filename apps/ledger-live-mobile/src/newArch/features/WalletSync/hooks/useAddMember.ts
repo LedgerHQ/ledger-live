@@ -15,6 +15,8 @@ import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-rin
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
+import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { track } from "~/analytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -34,6 +36,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
+      track(AnalyticsEvents.LedgerSyncActivated);
       navigation.navigate(ScreenName.WalletSyncLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });

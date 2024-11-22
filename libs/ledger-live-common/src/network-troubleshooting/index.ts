@@ -11,12 +11,14 @@ export type TroubleshootStatus = {
   technicalDescription: string;
   status: "success" | "error" | "loading";
   error?: string;
+  translationKey: string;
 };
 
 type Troubleshoot = {
   title: string;
   technicalDescription: string;
   job: Promise<unknown>;
+  translationKey: string;
 };
 
 // Run all checks and return. each troubleshoot have a promise that suceed if the underlying job worked.
@@ -25,6 +27,7 @@ export function troubleshoot(): Troubleshoot[] {
   return [
     {
       title: "My Ledger services (scriptrunner)",
+      translationKey: "troubleshootNetwork.myLedgerServices",
       ...websocketConnects(
         `${getEnv(
           "BASE_SOCKET_URL",
@@ -33,23 +36,28 @@ export function troubleshoot(): Troubleshoot[] {
     },
     {
       title: "Bitcoin explorers",
+      translationKey: "troubleshootNetwork.bitcoinExplorers",
       ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/btc/block/current"),
     },
     {
       title: "Ethereum explorers",
+      translationKey: "troubleshootNetwork.ethereumExplorers",
       ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/eth/block/current"),
     },
     {
       title: "Countervalues API",
+      translationKey: "troubleshootNetwork.countervaluesApi",
       ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`),
     },
     {
       title: "Announcements",
+      translationKey: "troubleshootNetwork.announcements",
       technicalDescription: "fetching announcements",
       job: announcementsApi.fetchAnnouncements(),
     },
     {
       title: "Status",
+      translationKey: "troubleshootNetwork.status",
       technicalDescription: "fetching status",
       job: serviceStatusApi.fetchStatusSummary(),
     },
@@ -106,6 +114,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
         type: "init",
         all: all.map(s => ({
           title: s.title,
+          translationKey: s.translationKey,
           technicalDescription: s.technicalDescription,
           status: "loading",
         })),
@@ -120,6 +129,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
                 type: "change",
                 status: {
                   title: s.title,
+                  translationKey: s.translationKey,
                   technicalDescription: s.technicalDescription,
                   status: "success",
                 },
@@ -130,6 +140,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
                 type: "change",
                 status: {
                   title: s.title,
+                  translationKey: s.translationKey,
                   technicalDescription: s.technicalDescription,
                   status: "error",
                   error: String(e?.message || e),

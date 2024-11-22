@@ -32,7 +32,13 @@ export enum NetworkCongestionLevel {
   HIGH = "HIGH",
 }
 
-export const StellarMemoType = ["NO_MEMO", "MEMO_TEXT", "MEMO_ID", "MEMO_HASH", "MEMO_RETURN"];
+export const StellarMemoType = [
+  "NO_MEMO",
+  "MEMO_TEXT",
+  "MEMO_ID",
+  "MEMO_HASH",
+  "MEMO_RETURN",
+] as const;
 
 export type StellarTransactionMode = "send" | "changeTrust";
 

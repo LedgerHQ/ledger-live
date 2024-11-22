@@ -71,6 +71,8 @@ import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reduce
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
+import Image from "~/renderer/components/Image";
+import Nano from "~/renderer/images/nanoS.v4.svg";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -247,6 +249,11 @@ const EllipsesTextStyled = styled(Text)`
   flex-shrink: 1;
   display: inline-block;
   max-width: 100%;
+`;
+
+const ButtonFooter = styled(Footer)`
+  width: 100%;
+  margin-top: 46px;
 `;
 
 // these are not components because we want reconciliation to not remount the sub elements
@@ -919,6 +926,66 @@ export const renderConnectYourDevice = ({
         </TroubleshootingWrapper>
       ) : null}
     </Footer>
+  </Wrapper>
+);
+
+const OpenSwapBtn = () => {
+  const { setDrawer } = useContext(context);
+  const dispatch = useDispatch();
+
+  const onClick = () => {
+    setTrackingSource("device action open swap button");
+    dispatch(closePlatformAppDrawer());
+    setDrawer(undefined);
+  };
+
+  return (
+    <ButtonV3
+      variant="main"
+      outline
+      size="large"
+      width="calc(100% - 80px)"
+      ml="40px"
+      mr="40px"
+      onClick={onClick}
+    >
+      <Trans i18nKey={"swap.wrongDevice.changeProvider"} />
+    </ButtonV3>
+  );
+};
+
+export const renderHardwareUpdate = () => (
+  <Wrapper>
+    <Header>
+      <Image resource={Nano} alt="NanoS" mb="40px"></Image>
+    </Header>
+    <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
+      <Title variant="body" color="palette.text.shade100">
+        <Trans i18nKey="swap.wrongDevice.title" />
+      </Title>
+      <Text variant="body" color="palette.text.shade60" textAlign="center">
+        <Trans i18nKey="swap.wrongDevice.description" />
+      </Text>
+    </Flex>
+    <ButtonFooter>
+      <ButtonContainer width="100%">
+        <ButtonV3
+          variant="main"
+          size="large"
+          width="calc(100% - 80px)"
+          ml="40px"
+          mr="40px"
+          onClick={() => {
+            openURL("https://shop.ledger.com/pages/hardware-wallet");
+          }}
+        >
+          <Trans i18nKey={"swap.wrongDevice.cta"} />
+        </ButtonV3>
+      </ButtonContainer>
+      <ButtonContainer width="100%">
+        <OpenSwapBtn />
+      </ButtonContainer>
+    </ButtonFooter>
   </Wrapper>
 );
 

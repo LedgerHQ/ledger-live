@@ -6,6 +6,8 @@ import {
   memberCredentialsSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useMutation } from "@tanstack/react-query";
+import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { track } from "~/analytics";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
@@ -31,6 +33,7 @@ export function useDestroyTrustchain() {
     mutationKey: [QueryKey.destroyTrustchain, trustchain],
     onSuccess: () => {
       dispatch(resetTrustchainStore());
+      track(AnalyticsEvents.LedgerSyncDeactivated);
       dispatch(walletSyncUpdate(null, 0));
       setCurrentStep(Steps.Activation);
     },

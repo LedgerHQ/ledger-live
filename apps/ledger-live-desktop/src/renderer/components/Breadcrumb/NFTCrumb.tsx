@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { nftsByCollections } from "@ledgerhq/live-nft";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import DropDownSelector, { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
@@ -14,8 +13,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
 
 const LabelWithMeta = ({
   item,
@@ -38,38 +36,29 @@ const LabelWithMeta = ({
 
 const NFTCrumb = () => {
   const history = useHistory();
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
   const { id, collectionAddress } = useParams<{ id?: string; collectionAddress?: string }>();
   const account = useSelector((state: State) =>
     id
       ? accountSelector(state, {
           accountId: id,
         })
-      : null,
+      : undefined,
   );
 
-  const { nfts } = useNftGalleryFilter({
-    nftsOwned: account?.nfts || [],
-    addresses: String(account?.freshAddress),
-    chains: [String(account?.currency.id)],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+  const { collections } = useNftCollections({
+    account,
   });
-
-  const collections = useMemo(
-    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts),
-    [account?.nfts, nfts, nftsFromSimplehashFeature],
-  );
 
   const items: DropDownItemType<ProtoNFT>[] = useMemo(
     () =>
-      Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => ({
+      collections.map(([contract, nfts]: [string, ProtoNFT[]]) => ({
         key: contract,
         label: contract,
         content: nfts[0],
       })),
     [collections],
   );
+
   const activeItem: DropDownItemType<ProtoNFT> | undefined | null = useMemo(
     () => items.find(item => item.key === collectionAddress) || items[0],
     [collectionAddress, items],

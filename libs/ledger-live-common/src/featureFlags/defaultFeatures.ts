@@ -80,6 +80,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
+  currencyZkSync: DEFAULT_FEATURE,
+  currencyZkSyncSepolia: DEFAULT_FEATURE,
+  currencyMantra: DEFAULT_FEATURE,
 };
 
 /**
@@ -96,6 +99,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -512,6 +516,17 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
+  recoverUpsellRedirection: DEFAULT_FEATURE,
+  llMevProtection: DEFAULT_FEATURE,
+  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
+  llCounterValueGranularitiesRates: {
+    ...DEFAULT_FEATURE,
+    params: {
+      daily: 14 * 24 * 60 * 60 * 1000,
+      hourly: 2 * 24 * 60 * 60 * 1000,
+    },
+  },
+  llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
 };
 
 // Firebase SDK treat JSON values as strings

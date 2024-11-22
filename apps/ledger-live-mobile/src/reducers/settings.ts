@@ -80,6 +80,10 @@ import type {
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
+  SettingsSetHasBeenRedirectedToPostOnboardingPayload,
+  SettingsUnwhitelistNftCollectionPayload,
+  SettingsWhitelistNftCollectionPayload,
+  SettingsSetMevProtectionPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -118,6 +122,7 @@ export const INITIAL_STATE: SettingsState = {
   filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
+  whitelistedNftCollections: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
   theme: "system",
@@ -165,6 +170,7 @@ export const INITIAL_STATE: SettingsState = {
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
+  hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingType: null,
   depositFlow: {
     hasClosedNetworkBanner: false,
@@ -176,6 +182,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
+  mevProtection: true,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -357,7 +364,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const ids = state.hiddenNftCollections;
     return {
       ...state,
-      hiddenNftCollections: [...ids, (action as Action<SettingsHideNftCollectionPayload>).payload],
+      hiddenNftCollections: [
+        ...new Set(ids.concat((action as Action<SettingsHideNftCollectionPayload>).payload)),
+      ],
     };
   },
 
@@ -368,6 +377,27 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       hiddenNftCollections: ids.filter(
         id => id !== (action as Action<SettingsUnhideNftCollectionPayload>).payload,
       ),
+    };
+  },
+
+  [SettingsActionTypes.UNWHITELIST_NFT_COLLECTION]: (state, action) => {
+    const ids = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: ids.filter(
+        id => id !== (action as Action<SettingsUnwhitelistNftCollectionPayload>).payload,
+      ),
+    };
+  },
+  [SettingsActionTypes.WHITELIST_NFT_COLLECTION]: (state, action) => {
+    const collections = state.whitelistedNftCollections;
+    return {
+      ...state,
+      whitelistedNftCollections: [
+        ...new Set(
+          collections.concat((action as Action<SettingsWhitelistNftCollectionPayload>).payload),
+        ),
+      ],
     };
   },
 
@@ -601,6 +631,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasBeenUpsoldProtect: (action as Action<SettingsSetHasBeenUpsoldProtectPayload>).payload,
   }),
+  [SettingsActionTypes.SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING]: (state, action) => ({
+    ...state,
+    hasBeenRedirectedToPostOnboarding: (
+      action as Action<SettingsSetHasBeenRedirectedToPostOnboardingPayload>
+    ).payload,
+  }),
   [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
@@ -659,6 +695,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     starredMarketCoins: state.starredMarketCoins.filter(
       id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
     ),
+  }),
+
+  [SettingsActionTypes.SET_MEV_PROTECTION]: (state, action) => ({
+    ...state,
+    mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
 };
 
@@ -796,6 +837,8 @@ export const countervalueFirstSelector = (state: State) => state.settings.graphC
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
+export const whitelistedNftCollectionsSelector = (state: State) =>
+  state.settings.whitelistedNftCollections;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
   () => getEnv("MANAGER_DEV_MODE"),
@@ -873,7 +916,10 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
+/* NB: Protect is the former codename for Ledger Recover */
 export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
+export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
+  state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
@@ -886,3 +932,5 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+
+export const mevProtectionSelector = (state: State) => state.settings.mevProtection;

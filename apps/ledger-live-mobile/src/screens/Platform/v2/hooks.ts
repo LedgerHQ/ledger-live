@@ -186,3 +186,11 @@ export function useCurrentAccountHistDB() {
     state => state.currentAccountHist,
   );
 }
+
+export function useCacheBustedLiveAppsDB() {
+  return useDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>(
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.cacheBustedLiveApps,
+  );
+}

@@ -17,6 +17,7 @@ import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import NftMetadataServiceRow from "./NftMetadataServiceRow";
 import HasStaxEuropaRows from "./HasStaxEuropaRows";
 import SkipOnboardingRow from "./SkipOnboardingRow";
+import { RecoverUpsellRow } from "./RecoverUpsellRow";
 
 export default function Configuration() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -40,6 +41,7 @@ export default function Configuration() {
       </Flex>
       <ResetOnboardingStateRow />
       <SkipOnboardingRow />
+      <RecoverUpsellRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
       <HasStaxEuropaRows />

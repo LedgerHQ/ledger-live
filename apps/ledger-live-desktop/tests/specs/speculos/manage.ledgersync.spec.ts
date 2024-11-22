@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { AppInfos } from "tests/enum/AppInfos";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
@@ -27,10 +27,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectSyncAccountsButtonExist();
 
       await app.ledgerSync.syncAccounts();
-      await app.speculos.clickNextUntilText("Make sure");
-      await app.speculos.confirmOperationOnDevice("Connect with");
-      await app.speculos.clickNextUntilText("Your crypto accounts");
-      await app.speculos.confirmOperationOnDevice("Turn on sync?");
+      await app.speculos.activateLedgerSync();
       await app.ledgerSync.expectSynchronizationSuccess();
       await app.ledgerSync.closeLedgerSync();
 

@@ -173,6 +173,7 @@ type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
+  transactionId?: string;
   operationId?: string;
 };
 export type SwapStatus = {

@@ -62,10 +62,13 @@ export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends T
   account: AccountLike;
 }) => Partial<U>;
 
+export type CacheBustedLiveApps = Record<string, number>;
+
 export type DiscoverDB = {
   recentlyUsed: RecentlyUsedIdDb[];
   localLiveApp: LiveAppManifest[];
   currentAccountHist: CurrentAccountHistIDb;
+  cacheBustedLiveApps: CacheBustedLiveApps;
 };
 
 export type RecentlyUsedIdDb = {

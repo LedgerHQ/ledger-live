@@ -121,6 +121,9 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
 };
 
 /**
@@ -164,6 +167,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
+  ptxSwapLiveAppMobile: DefaultFeature;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
@@ -194,6 +198,11 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
+  recoverUpsellRedirection: Feature_RecoverUpsellRedirection;
+  llMevProtection: DefaultFeature;
+  llmNetworkBasedAddAccountFlow: DefaultFeature;
+  llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
+  llmRebornLP: Feature_LlmRebornLP;
 };
 
 /**
@@ -530,6 +539,11 @@ export type Feature_LlmWalletSync = Feature<{
   learnMoreLink: string;
 }>;
 
+export type Feature_LlCounterValueGranularitiesRates = Feature<{
+  daily: number;
+  hourly: number;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -554,7 +568,11 @@ export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
+export type Feature_RecoverUpsellRedirection = DefaultFeature;
 
+export type Feature_LlmRebornLP = Feature<{
+  variant: ABTestingVariants;
+}>;
 /**
  * Utils types.
  */

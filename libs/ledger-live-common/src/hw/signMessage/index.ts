@@ -36,10 +36,17 @@ const signMessage: SignMessage = (transport, account, opts) => {
   const { currency } = account;
   let signMessage = perFamily[currency.family].signMessage;
   if ("type" in opts) {
-    signMessage =
-      opts.type === AcreMessageType.Withdraw
-        ? ACREMessageSigner.signWithdraw
-        : ACREMessageSigner.signMessage;
+    switch (opts.type) {
+      case AcreMessageType.Withdraw:
+        signMessage = ACREMessageSigner.signWithdraw;
+        break;
+      case AcreMessageType.SignIn:
+        signMessage = ACREMessageSigner.signIn;
+        break;
+      default:
+        signMessage = ACREMessageSigner.signMessage;
+        break;
+    }
   }
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, account, opts)
@@ -101,7 +108,9 @@ export const createAction = (
 ) => {
   const useHook = (reduxDevice: Device | null | undefined, request: Request): State => {
     const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: request.account,
+      appName: request.appName,
+      dependencies: request.dependencies,
+      account: request.appName ? undefined : request.account,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState<BaseState>({

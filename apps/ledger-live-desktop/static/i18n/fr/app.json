@@ -137,7 +137,9 @@
       "outdated" : "En pause",
       "error" : "Erreur de synchronisation",
       "refresh" : "Actualiser",
-      "devTools" : "Outils développeurs"
+      "devTools" : "Outils développeurs",
+      "failingSync_one" : "Échec de synchronisation du compte :",
+      "failingSync_other" : "Échec de synchronisation des comptes :"
     },
     "exchange" : "Échanger",
     "info" : "Informations",
@@ -146,7 +148,10 @@
     "or" : "OU",
     "clearAll" : "Tout effacer",
     "buyLedger" : "Acheter un wallet Ledger",
-    "quote" : "Prix"
+    "quote" : "Prix",
+    "memoTag" : {
+      "learnMore" : "En savoir plus sur les tags/mémos"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -430,6 +435,12 @@
       "title" : "Veuillez mettre à jour l’app {{appName}} sur votre appareil",
       "subtitle" : "Accédez à My Ledger et mettez à jour l’app {{appName}} pour échanger vos actifs.",
       "cta" : "Accéder à My Ledger"
+    },
+    "wrongDevice" : {
+      "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
+      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "cta" : "Voir les appareils compatibles",
+      "changeProvider" : "Choisir un autre prestataire"
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
@@ -737,7 +748,8 @@
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et déployer leurs services sur Ledger Live.",
-        "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger."
+        "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
+        "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1130,8 @@
     "optionsMenu" : {
       "title" : "Options",
       "exportOperations" : "Exporter l’historique des opérations",
-      "exportToMobile" : "Exporter vers l’application mobile"
+      "exportToMobile" : "Exporter vers l’application mobile",
+      "ledgerSync" : "Synchroniser les comptes"
     },
     "contextMenu" : {
       "star" : "Favori",
@@ -1126,6 +1139,7 @@
       "send" : "Envoyer",
       "swap" : "Swap",
       "stake" : "Staker",
+      "yield" : "Rendement",
       "buy" : "Acheter",
       "sell" : "Vendre",
       "edit" : "Modifier le compte",
@@ -2252,6 +2266,10 @@
           "description" : "Stakez vos CELO avec le validateur Ledger by Figment. Vous bénéficiez d’une couverture totale contre le slashing, ainsi que de la sécurité inégalée de Ledger."
         }
       }
+    },
+    "memoTag" : {
+      "title" : "Besoin d’un tag/mémo ?",
+      "description" : "Pour recevoir cet actif d’une plateforme d’échange, un <0>tag/mémo</0> peut être requis. Vous pouvez utiliser n’importe quelle combinaison de chiffres, comme 1234."
     }
   },
   "send" : {
@@ -2274,12 +2292,17 @@
           "noResolution" : {
             "title" : "Aucune adresse trouvée pour ce domaine"
           }
+        },
+        "memoTag" : {
+          "question" : "Vous n’utilisez pas de tag/mémo ?",
+          "learnMore" : "En savoir plus sur les tags/mémos",
+          "warning" : " Vos actifs seront perdus si vous n’ajoutez pas un tag/mémo lorsque vous les envoyez vers une plateforme d’échange centralisée ou un wallet dépositaire."
         }
       },
       "amount" : {
         "title" : "Montant",
         "banner" : "Montant maximal pouvant être envoyé :",
-        "fees" : "Frais maximaux estimés",
+        "fees" : "En savoir plus sur les frais",
         "standard" : "Standard",
         "advanced" : "Avancé",
         "nftQuantity" : "Nombre"
@@ -2351,6 +2374,15 @@
     },
     "footer" : {
       "estimatedFees" : "Frais de réseau"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "Vous n’utilisez pas de tag/mémo ?",
+        "description" : "Vos actifs seront perdus si vous n’ajoutez pas un tag/mémo lorsque vous les envoyez vers une plateforme d’échange centralisée ou un wallet dépositaire.",
+        "cta.addTag" : "Ajouter un tag",
+        "cta.not.addTag" : "Ne pas ajouter de tag",
+        "checkbox.label" : "Ne plus afficher"
+      }
     }
   },
   "releaseNotes" : {
@@ -2409,7 +2441,11 @@
     "languages" : {
       "english" : "English",
       "french" : "Français",
-      "spanish" : "Español"
+      "spanish" : "Español",
+      "german" : "Deutsch",
+      "brazilian" : "Português (Br)",
+      "russian" : "Русский",
+      "turkish" : "Türkçe"
     }
   },
   "distribution" : {
@@ -2756,15 +2792,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "Collection de NFT (tokens non fongibles)",
-        "description" : "Retrouvez vos NFT sur Tezos dans Ledger Live avec Objkt.",
-        "cta" : "Voir mes NFT avec Objkt"
       }
     }
   },
@@ -3682,12 +3709,12 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "Faites fructifier vos ETH",
       "subTitle" : "Stakez vos ETH et recevez des récompenses quotidiennes directement via Ledger Live.",
       "tagMinimum" : "{{min}} ETH minimum",
       "kiln_pooling" : {
-        "title" : "Staker avec un pool sur Kiln",
+        "title" : "Staking en pool sur Kiln",
         "description" : "Stakez sans durée, ni montant minimum. Gagnez des récompenses capitalisées automatiquement.",
         "supportLink" : "En savoir plus sur les pools sur Kiln"
       },
@@ -3702,7 +3729,7 @@
         "supportLink" : "En savoir plus sur les pools sur Stader"
       },
       "kiln" : {
-        "title" : "Staker avec un validateur Kiln",
+        "title" : "Staking avec validateur Kiln",
         "tag" : "32 ETH minimum",
         "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et demandez facilement vos récompenses.",
         "supportLink" : "En savoir plus sur les validateurs Kiln"
@@ -3712,6 +3739,72 @@
         "tag" : "32 ETH minimum",
         "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et recevez automatiquement vos récompenses sur votre compte.",
         "supportLink" : "En savoir plus sur les validateurs Figment"
+      }
+    },
+    "stake" : {
+      "title" : "Choisir un prestataire de staking",
+      "category" : {
+        "all" : {
+          "name" : "Tout",
+          "description" : "Tous les prestataires de staking d’ETH disponibles sur Ledger Live."
+        },
+        "liquid" : {
+          "name" : "Liquide",
+          "description" : "Vous pouvez staker des ETH et gagner des récompenses sous forme de tokens liquides. Vous pourrez continuer à trader et profiter de la DeFi."
+        },
+        "protocol" : {
+          "name" : "Protocole",
+          "description" : "Vous pouvez staker un minimum de 32 ETH et obtenir les récompenses de votre nœud complet en ETH."
+        },
+        "pooling" : {
+          "name" : "Pool",
+          "description" : "Vous pouvez rejoindre un pool pour staker le montant d’ETH de votre choix et obtenir des récompenses."
+        },
+        "restaking" : {
+          "name" : "Restaking",
+          "description" : "Vous pouvez restaker vos tokens liquides pour obtenir des récompenses supplémentaires."
+        }
+      },
+      "howItWorks" : "Fonctionnement du staking d’ETH",
+      "lst" : "Token liquide nécessaire",
+      "noMinimum" : "Pas de minimum",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Staking en pool sur Kiln"
+        },
+        "kiln_restaking" : {
+          "title" : "Restaking liquide avec Kiln"
+        },
+        "kiln" : {
+          "title" : "Staking avec validateur Kiln"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "En savoir plus sur le staking d’ETH et les différentes stratégies",
+      "requiredMinimum" : "{{min}} ETH minimum",
+      "rewardsStrategy" : {
+        "auto-compounded" : "Récompenses capitalisées auto.",
+        "basic" : "Récompenses",
+        "daily" : "Récompenses quotidiennes",
+        "eigenlayer_points" : "Points EigenLayer",
+        "validator" : "Récompenses validateur"
       }
     }
   },
@@ -4014,6 +4107,35 @@
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
         "placeholder" : "Infos prestataire Exchange (CAL)"
+      },
+      "analyticsConsole" : {
+        "title" : "Autoriser la console analytique",
+        "desc" : "Affichez et autorisez l’ouverture de la console analytique."
+      },
+      "brazeTools" : {
+        "title" : "Outils pour Braze",
+        "description" : "Générez des cartes Braze localement.",
+        "open" : "Ouvrir",
+        "modal" : {
+          "title" : "Générer des cartes Braze localement",
+          "add" : "Ajouter",
+          "dismiss" : "Fermer toutes les cartes",
+          "fields" : {
+            "notification" : "Carte Notification",
+            "action" : "Carte Action",
+            "portfolio" : "Carte Portfolio",
+            "title" : "Titre",
+            "description" : "Description",
+            "order" : "Ordre",
+            "image" : "URL de l’image",
+            "mainCta" : "CTA principal",
+            "link" : "Lien",
+            "secondaryCta" : "CTA secondaire",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "Chemin"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4456,20 @@
       "tokenBlacklist" : {
         "title" : "Tokens masqués",
         "desc" : "Vous pouvez masquer les tokens en vous rendant sur le compte parent, en faisant un clic droit sur le token et en sélectionnant Masquer le token.",
-        "count" : "{{count}} token",
-        "count_plural" : "{{count}} tokens"
+        "count" : "1 token",
+        "count_other" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
         "title" : "Collections de NFT masquées",
         "desc" : "Vous pouvez cacher des collections NFT en faisant un clic droit sur le nom de la collection et sélectionnant Masquer la collection de NFT.",
-        "count" : "{{count}} collection",
-        "count_plural" : "{{count}} collections"
+        "count" : "1 collection",
+        "count_other" : "{{count}} collections"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "Inscriptions masquées",
+        "desc" : "Vous pouvez masquer une inscription en faisant un clic droit sur l’inscription en question et en sélectionnant Masquer l’inscription.",
+        "count" : "1 inscription",
+        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Connecter un nœud Bitcoin complet",
@@ -4995,7 +5123,7 @@
     }
   },
   "connectTroubleshooting" : {
-    "desc" : "Des difficultés à connecter votre Ledger ?",
+    "desc" : "Des difficultés à connecter votre appareil Ledger ?",
     "cta" : "Réparer",
     "solution" : "Solution n°{{number}}",
     "applesInstructions" : "les instructions d’Apple",
@@ -5209,25 +5337,17 @@
     "link" : "Conditions d’utilisation",
     "cta" : "Continuer"
   },
+  "MemoTagField" : {
+    "label" : "Tag/mémo",
+    "placeholder" : "Saisissez le tag/mémo",
+    "information" : "Pour que votre transaction soit correctement créditée sur votre compte, les plateformes d’échange centralisées et parfois les wallets dépositaires exigent un tag/mémo.",
+    "instruction" : "Copiez-collez le tag/mémo fourni par la plateforme d’échange ou le wallet dépositaire."
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "Facultatif",
       "transferId" : "Identifiant de transfert (mémo)",
       "transferIdWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
-    },
-    "cardano" : {
-      "memoPlaceholder" : "Facultatif",
-      "memo" : "Mémo"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "Par défaut (facultatif) : 0",
-      "memo" : "Mémo",
-      "memoWarningText" : "Le mémo peut être un nombre compris entre 0 et 9223372036854775807."
-    },
-    "stacks" : {
-      "memoPlaceholder" : "Facultatif",
-      "memo" : "Mémo",
-      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
     },
     "ton" : {
       "commentPlaceholder" : "Facultatif",
@@ -5257,13 +5377,8 @@
       "assetCode" : "Code de l’actif",
       "assetIssuer" : "Émetteur de l’actif"
     },
-    "cosmos" : {
-      "memo" : "Mémo",
-      "memoPlaceholder" : "Facultatif",
-      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
-    },
     "solana" : {
-      "memo" : "Mémo",
+      "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif"
     }
   },
@@ -5273,8 +5388,11 @@
       "description" : "Les frais de réseau peuvent être trop bas. Veuillez les augmenter."
     },
     "NoSuchAppOnProvider" : {
-      "title" : "Échec de la localisation de l’app {{appName}} pour votre appareil.",
-      "description" : "Veuillez essayer de réinstaller l’app depuis My Ledger."
+      "title" : "{{appName}} n’est pas compatible avec le {{productName}}.",
+      "titleOld" : "Échec de la localisation de l’app {{appName}} pour votre appareil.",
+      "description" : "<0>Passez au niveau supérieur.</0> Pour bénéficier de cette fonctionnalité, adoptez l’un de nos appareils compatibles. Choisissez le wallet fait pour vous et profitez d’une sécurité renforcée.",
+      "exploreCTA" : "Voir les appareils compatibles",
+      "learnMoreCTA" : "En savoir plus sur Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées."
@@ -6026,7 +6144,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "L’envoi à une adresse Taproot avant l’activation du réseau présente un risque"
@@ -6240,11 +6358,32 @@
     },
     "PinNotSet" : {
       "title" : "Code PIN non configuré"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "Échec de la diffusion de la transaction",
+      "description" : "Votre transaction n’a pas été diffusée sur le réseau {{networkName}}. Vos {{currencyName}} n’ont pas été transférés et restent sur votre compte.",
+      "helpCenterTitle" : "Centre d’aide : ",
+      "helpCenterDesc" : "accédez à notre centre d’aide ou contactez-nous via le widget.",
+      "needHelp" : "Besoin d’aide ?",
+      "getHelp" : "Obtenir de l’aide",
+      "technicalErrorTitle" : "Erreur technique : ",
+      "saveLogs" : "Enregistrer les logs"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}.",
+      "oneCta" : "<cta1>{{cta1Label}}</cta1> des {{assetName}} pour approvisionner votre compte.",
+      "twoCtas" : "<cta1>{{cta1Label}}</cta1> ou <cta2>{{cta2Label}}</cta2> des {{assetName}} pour approvisionner votre compte.",
+      "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> des{{assetName}} pour approvisionner votre compte.",
+      "ctas" : {
+        "buy" : "Achetez",
+        "swap" : "Échangez",
+        "deposit" : "Déposez"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "Mémo",
-    "memoPlaceholder" : "Facultatif",
+    "memoPlaceholder" : "Saisissez le tag/mémo",
     "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
   },
   "hedera" : {
@@ -6276,6 +6415,7 @@
     "cta" : "Fond d’écran personnalisé",
     "managerCTA" : "Fond d’écran",
     "managerCTARemove" : "Retirer",
+    "rotate" : "Pivoter",
     "steps" : {
       "choose" : {
         "stepLabel" : "Image",
@@ -6377,12 +6517,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "Le partage de vos données Ledger Live nous permet de mieux comprendre vos préférences et vous présenter des contenus pertinents.",
-      "whatWeTrack" : "Avec votre consentement, Ledger pourra suivre des données relatives à la façon dont vous utilisez Ledger Live (y compris les visites de pages et clics) :",
+      "whatWeTrack" : "Avec votre consentement, Ledger pourra collecter des données relatives à la façon dont vous utilisez Ledger Live (y compris les visites de pages et clics) :",
       "whatWeTrackList" : {
         "1" : "Pour mesurer la performance de Ledger Live et améliorer l’application et votre expérience (Statistiques).",
         "2" : "Pour vous proposer des recommandations personnalisées et des contenus adaptés à vos préférences, ainsi que pour analyser l’efficacité de nos campagnes marketing (Personnalisation)."
       },
-      "whatWeDoNotTrack" : "Ledger ne suivra jamais les données concernant :",
+      "whatWeDoNotTrack" : "Ledger ne collectera jamais les données concernant :",
       "whatWeDoNotTrackList" : {
         "1" : "Vos actifs.",
         "2" : "Votre portefeuille.",
@@ -6424,13 +6564,13 @@
     "common" : {
       "title" : "Aidez-nous à améliorer et personnaliser votre expérience",
       "revokeInfo" : "Vous pouvez retirer votre consentement à tout moment dans les Paramètres de l’application.",
-      "learnMore" : "En savoir plus sur notre politique de suivi"
+      "learnMore" : "En savoir plus sur la gestion de vos données"
     },
     "profileSettings" : {
       "personalizedExp" : "Expérience personnalisée",
       "analytics" : "Statistiques",
-      "personalizedExpDesc" : "Autorisez Ledger à suivre les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
-      "analyticsDesc" : "Autorisez Ledger à suivre les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience."
+      "personalizedExpDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
+      "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience."
     }
   },
   "walletSync" : {
@@ -6576,7 +6716,7 @@
     },
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",
-      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
+      "description" : "Suivez les instructions sur l’écran sécurisé de votre appareil Ledger."
     }
   },
   "ordinals" : {
@@ -6584,6 +6724,11 @@
       "seeMore" : "Voir plus d’inscriptions",
       "empty" : "Pour ajouter des inscriptions, il vous suffit de les recevoir sur votre adresse Bitcoin.",
       "receive" : "Recevoir une inscription",
+      "hide" : "Masquer l’inscription",
+      "modal" : {
+        "title" : "Masquer l’inscription",
+        "desc" : "Cela cachera l’inscription <0>{{inscriptionName}}</0> dans votre compte. Vous pouvez restaurer sa visibilité à tout moment à partir des Paramètres."
+      },
       "discoveryDrawer" : {
         "title" : "Découvrez les ordinals",
         "description" : "Savez-vous que vous possédez peut-être des rare sats et des inscriptions de grande valeur ?",
@@ -6650,6 +6795,20 @@
           "vintage" : "L’avènement du bitcoin a été marqué par ses 1 000 premiers blocs. Les sats minés durant cette période portent la mention Vintage."
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "Montant à envoyer :",
+      "of" : "de",
+      "excludeAssets" : "Exclure les ordinals",
+      "selectDesc" : "Sélectionnez les UTXO que vos souhaitez utiliser dans vos transactions. Les UTXO non sélectionnés ne seront pas utilisés.",
+      "utxos" : "UTXO",
+      "learnMore" : "En savoir plus sur ce paramètre",
+      "confirm" : "Confirmer",
+      "address" : "Adresse",
+      "transactionId" : "Identifiant de la transaction"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "Avec transport LDMK"
   }
 }

@@ -2,7 +2,12 @@ import React from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  SharedValue,
+} from "react-native-reanimated";
 
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
@@ -18,7 +23,7 @@ function CurrencyHeaderLayout({
   leftElement,
   currencyColor,
 }: {
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   rightElement?: React.ReactNode;
   centerAfterScrollElement?: React.ReactNode;
@@ -34,7 +39,7 @@ function CurrencyHeaderLayout({
             currentPositionY.value,
             [graphCardEndPosition - 40, graphCardEndPosition],
             [1, 0],
-            Extrapolate.CLAMP,
+            Extrapolation.CLAMP,
           );
 
     return {
@@ -47,7 +52,7 @@ function CurrencyHeaderLayout({
       currentPositionY.value,
       [graphCardEndPosition + 50, graphCardEndPosition + 70],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -60,7 +65,7 @@ function CurrencyHeaderLayout({
       currentPositionY.value,
       [graphCardEndPosition - 40, graphCardEndPosition - 20],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {

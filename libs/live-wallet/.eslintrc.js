@@ -15,6 +15,7 @@ module.exports = {
   extends: ["plugin:import/typescript", "plugin:jsx-a11y/recommended"],
   plugins: ["import", "jsx-a11y"],
   rules: {
+    "import/no-cycle": ["error", { maxDepth: 1 }],
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
     "@typescript-eslint/no-empty-function": "off",

@@ -22,7 +22,7 @@ describe("Portfolio to load with unknown currency data in accounts", () => {
       { data: badAccount2, version: 0 },
     ]);
 
-    app = await Application.init("onboardingcompleted");
+    app = await Application.init({ userdata: "onboardingcompleted" });
   });
 
   it("opens to empty state", async () => {

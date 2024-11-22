@@ -23,6 +23,7 @@ import {
   NotificationContentCard,
   CategoryContentCard,
   BrazeContentCard,
+  LandingPageStickyCtaContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
@@ -127,8 +128,12 @@ export type DynamicContentState = {
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
   categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards displayed in the landing page as sticky CTA */
+  landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
   /** Dynamic content cards for Ledger Live Mobile */
   mobileCards: BrazeContentCard[];
+  /** Check if CC are loading */
+  isLoading: boolean;
 };
 
 // === RATINGS STATE ===
@@ -213,6 +218,7 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  whitelistedNftCollections: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -254,7 +260,9 @@ export type SettingsState = {
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
+  /* NB: Protect is the former codename for Ledger Recover */
   hasBeenUpsoldProtect: boolean;
+  hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
     hasClosedNetworkBanner: boolean;
@@ -266,6 +274,7 @@ export type SettingsState = {
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
+  mevProtection: boolean;
 };
 
 export type NotificationsSettings = {

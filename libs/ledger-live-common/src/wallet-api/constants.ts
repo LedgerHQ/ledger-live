@@ -32,6 +32,7 @@ export const HTTP_REGEX = new RegExp(
 export const INITIAL_PLATFORM_STATE = {
   recentlyUsed: [],
   currentAccountHist: {},
+  cacheBustedLiveApps: { init: 1 },
   localLiveApp: [],
 };
 

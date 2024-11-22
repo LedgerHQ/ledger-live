@@ -6,6 +6,7 @@ import Cropper, { Area, CropperProps } from "react-easy-crop";
 import { createCanvas, getRadianAngle, rotateSize } from "./imageUtils";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
 import { useTrack } from "~/renderer/analytics/segment";
+import { useTranslation } from "react-i18next";
 
 export type CropResult = ImageDimensions & ImageBase64Data;
 
@@ -159,6 +160,8 @@ const ImageCropper: React.FC<Props> = props => {
   const aspect = targetDimensions.width / targetDimensions.height;
   const debouncedCompleteCropPixel = useDebounce(completeCropPixel, 500);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     let dead = false;
     if (!imageRef.current) return;
@@ -267,7 +270,7 @@ const ImageCropper: React.FC<Props> = props => {
           Icon={IconsLegacy.ReverseMedium}
           data-testid="custom-image-crop-rotate-button"
         >
-          Rotate
+          {t("customImage.rotate")}
         </Button>
       </Flex>
     </Flex>

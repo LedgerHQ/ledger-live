@@ -129,7 +129,7 @@ export const createAction = (
     } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: mainAccount,
+      account: appName ? undefined : mainAccount,
       appName,
       dependencies,
       requireLatestFirmware,

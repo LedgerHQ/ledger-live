@@ -137,7 +137,9 @@
       "outdated" : "中断",
       "error" : "同期エラー",
       "refresh" : "更新",
-      "devTools" : "開発ツール"
+      "devTools" : "開発ツール",
+      "failingSync_one" : "同期に失敗したアカウント：",
+      "failingSync_other" : "同期に失敗したアカウント："
     },
     "exchange" : "取引",
     "info" : "情報",
@@ -146,7 +148,10 @@
     "or" : "または",
     "clearAll" : "全消去",
     "buyLedger" : "Ledgerを購入する",
-    "quote" : "見積もり"
+    "quote" : "見積もり",
+    "memoTag" : {
+      "learnMore" : "タグ/メモについて詳しく知る"
+    }
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -430,6 +435,12 @@
       "title" : "デバイス上の{{appName}}アプリをアップデートしてください。",
       "subtitle" : "暗号資産をスワップするには、My Ledgerから{{appName}}アプリをアップデートしてください。",
       "cta" : "My Ledgerに移動"
+    },
+    "wrongDevice" : {
+      "title" : "Ledger Nano S™はTHORChainに対応していません",
+      "description" : "Ledger Nano SはTHORChainに対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger LiveからTHORChainでのクロスチェーンスワップが可能です",
+      "cta" : "対応デバイスを探す",
+      "changeProvider" : "別のプロバイダーでスワップ"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -737,7 +748,8 @@
         "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
         "description" : "Ledger Liveはオープンソースのプラットフォームです。",
         "description2" : "世界中の開発者がLedger Liveと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました"
+        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
+        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
     },
     "willBeDeprecatedBanner" : {
@@ -1118,7 +1130,8 @@
     "optionsMenu" : {
       "title" : "オプション",
       "exportOperations" : "取引履歴をエクスポート",
-      "exportToMobile" : "モバイルへエクスポート"
+      "exportToMobile" : "モバイルへエクスポート",
+      "ledgerSync" : "アカウントを同期"
     },
     "contextMenu" : {
       "star" : "お気に入り",
@@ -1126,6 +1139,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
       "edit" : "アカウントを編集",
@@ -2252,6 +2266,10 @@
           "description" : "Ledger by FigmentバリデーターでCELOをステーキングします。Ledgerの妥協のないセキュリティで保護することで、スラッシング（自己資産が削られる）に対する完全な保証をご提供します。"
         }
       }
+    },
+    "memoTag" : {
+      "title" : "タグ/メモがご必要ですか？",
+      "description" : "この資産を取引所から受け取る際に、<0>タグ/メモ</0>が必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。"
     }
   },
   "send" : {
@@ -2274,12 +2292,17 @@
           "noResolution" : {
             "title" : "このドメインのアドレスが見つかりません"
           }
+        },
+        "memoTag" : {
+          "question" : "メモタグを使用しませんか？",
+          "learnMore" : "タグ/メモについて詳しく知る",
+          "warning" : " 資金を中央集権型取引所やカストディアルウォレットに送付するときにタグ/メモを追加しないと、資金が失われます。"
         }
       },
       "amount" : {
         "title" : "数量",
         "banner" : "最大利用可能額は",
-        "fees" : "最大推定手数料",
+        "fees" : "手数料の詳細はこちら",
         "standard" : "標準",
         "advanced" : "アドバンス",
         "nftQuantity" : "数量"
@@ -2351,6 +2374,15 @@
     },
     "footer" : {
       "estimatedFees" : "ネットワーク手数料"
+    },
+    "info" : {
+      "needMemoTag" : {
+        "title" : "タグ/メモを使用しませんか？",
+        "description" : "資金を中央集権型取引所やカストディアルウォレットに送付するときにタグ/メモを追加しないと、資金が失われます。",
+        "cta.addTag" : "タグを追加",
+        "cta.not.addTag" : "タグを追加しない",
+        "checkbox.label" : "今後は表示しない。"
+      }
     }
   },
   "releaseNotes" : {
@@ -2409,7 +2441,11 @@
     "languages" : {
       "english" : "英語",
       "french" : "フランス語",
-      "spanish" : "スペイン語"
+      "spanish" : "スペイン語",
+      "german" : "ドイツ語",
+      "brazilian" : "ポルトガル語（ブラジル）",
+      "russian" : "ロシア語",
+      "turkish" : "トルコ語"
     }
   },
   "distribution" : {
@@ -2756,15 +2792,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "tezos" : {
-    "objkt" : {
-      "card" : {
-        "title" : "NFT（非代替性トークン）コレクション",
-        "description" : "Ledger Live内のObjktからTezos NFTを直接見ることが可能です。",
-        "cta" : "ObjktでNFTを見る"
       }
     }
   },
@@ -3682,7 +3709,7 @@
     }
   },
   "ethereum" : {
-    "stake" : {
+    "stake_deprecated" : {
       "title" : "所有するETHを運用",
       "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
       "tagMinimum" : "{{min}}ETHが必要",
@@ -3704,7 +3731,7 @@
       "kiln" : {
         "title" : "Kiln専用ステーキング",
         "tag" : "32ETHが必要",
-        "description" : "専用バリデーターに32ETH超をステーキングして、簡単に報酬を獲得。",
+        "description" : "専用バリデーターに32ETH以上をステーキングして、簡単に報酬を獲得。",
         "supportLink" : "Kilnバリデーターの詳細を確認"
       },
       "figment" : {
@@ -3712,6 +3739,72 @@
         "tag" : "32ETHが必要",
         "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
         "supportLink" : "Figmentバリデーターの詳細を見る"
+      }
+    },
+    "stake" : {
+      "title" : "ステーキングプロバイダーの選択",
+      "category" : {
+        "all" : {
+          "name" : "全て",
+          "description" : "Ledger Liveで利用可能な全てのイーサリアムステーキングプロバイダー。"
+        },
+        "liquid" : {
+          "name" : "リキッド",
+          "description" : "ETHをステーキングして、リキッドトークンで報酬を獲得できます。今後も取引やDeFiアクティビティへの参加は可能です。"
+        },
+        "protocol" : {
+          "name" : "プロトコル",
+          "description" : "32ETHのセットをステーキングして、ETHでフルノード報酬を獲得できます。"
+        },
+        "pooling" : {
+          "name" : "プール",
+          "description" : "プールに参加して、任意の量のETHをステーキングして報酬を獲得できます。"
+        },
+        "restaking" : {
+          "name" : "再ステーキング",
+          "description" : "リキッドトークンを再ステーキングして、追加の報酬を獲得できます。"
+        }
+      },
+      "howItWorks" : "ETHステーキングの仕組み",
+      "lst" : "リキッドトークンが必要です",
+      "noMinimum" : "最小数量なし",
+      "provider" : {
+        "figment" : {
+          "title" : "Figment"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール"
+        },
+        "kiln_restaking" : {
+          "title" : "Kilnリキット再ステーキング"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング"
+        },
+        "kelpdao" : {
+          "title" : "Kelp DAO"
+        },
+        "lido" : {
+          "title" : "Lido"
+        },
+        "p2p" : {
+          "title" : "P2P"
+        },
+        "rocket_pool" : {
+          "title" : "Rocket Pool"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs"
+        }
+      },
+      "readAbout" : "ETHステーキングとさまざまな戦略について読む",
+      "requiredMinimum" : "{{min}}ETHが必要",
+      "rewardsStrategy" : {
+        "auto-compounded" : "自動複利報酬",
+        "basic" : "報酬",
+        "daily" : "毎日の報酬",
+        "eigenlayer_points" : "Eigenlayerポイント",
+        "validator" : "バリデーター報酬"
       }
     }
   },
@@ -4014,6 +4107,35 @@
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
+      "analyticsConsole" : {
+        "title" : "アナリティクスコンソールを許可",
+        "desc" : "アナリティクスコンソールを表示し、開くのを許可します。"
+      },
+      "brazeTools" : {
+        "title" : "Brazeツール",
+        "description" : "ローカルBrazeカードを生成",
+        "open" : "開く",
+        "modal" : {
+          "title" : "ローカルBrazeカードを生成",
+          "add" : "追加",
+          "dismiss" : "すべてのカードを破棄",
+          "fields" : {
+            "notification" : "通知コンテンツカード",
+            "action" : "アクションコンテンツカード",
+            "portfolio" : "ポートフォリオコンテンツカード",
+            "title" : "タイトル",
+            "description" : "説明",
+            "order" : "注文",
+            "image" : "画像URL",
+            "mainCta" : "メインCTA",
+            "link" : "リンク",
+            "secondaryCta" : "セカンダリCTA",
+            "cta" : "CTA",
+            "url" : "URL",
+            "path" : "パス"
+          }
+        }
       },
       "debugSimpleHash" : {
         "testSimpleHash" : {
@@ -4334,14 +4456,20 @@
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
         "desc" : "トークンを非表示にするには、親アカウントに移動し、トークンを右クリックして「トークンを非表示」を選択してください。",
-        "count" : "{{count}} トークン",
-        "count_plural" : "{{count}}トークン"
+        "count" : "1トークン",
+        "count_other" : "{{count}}トークン"
       },
       "hiddenNftCollections" : {
         "title" : "NFTコレクションを非表示",
         "desc" : "コレクション名を右クリックして「NFTコレクションを非表示」を選択すると、NFTコレクションが非表示になります。",
-        "count" : "{{count}}コレクション",
-        "count_plural" : "{{count}}コレクション"
+        "count" : "1コレクション",
+        "count_other" : "{{count}}コレクション"
+      },
+      "hiddenOrdinalsAsset" : {
+        "title" : "非表示のインスクリプション",
+        "desc" : "インスクリプションを右クリックして「インスクリプションを隠す」を選択すると、インスクリプションを非表示にできます。",
+        "count" : "1インスクリプション",
+        "count_other" : "{{count}}インスクリプション"
       },
       "fullNode" : {
         "title" : "Bitcoinフルノードを接続",
@@ -5209,25 +5337,17 @@
     "link" : "利用規約",
     "cta" : "続行"
   },
+  "MemoTagField" : {
+    "label" : "タグ/メモ",
+    "placeholder" : "タグ/メモを入力",
+    "information" : "トランザクションがアカウントに正しく入金されることを保証するために、中央集権型取引所や場合によってはカストディアルウォレットにも、タグ/メモが必要です。",
+    "instruction" : "取引所またはカストディアルディアルウォレットから提供されたタグ/メモをコピーして貼り付けます。"
+  },
   "families" : {
     "casper" : {
       "transferIdPlaceholder" : "任意",
       "transferId" : "送金ID（メモ）",
       "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
-    },
-    "cardano" : {
-      "memoPlaceholder" : "任意",
-      "memo" : "メモ"
-    },
-    "internet_computer" : {
-      "memoPlaceholder" : "任意、デフォルト：0",
-      "memo" : "メモ",
-      "memoWarningText" : "メモの値には、0～9223372036854775807の数値を指定できます。"
-    },
-    "stacks" : {
-      "memoPlaceholder" : "任意",
-      "memo" : "メモ",
-      "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
     },
     "ton" : {
       "commentPlaceholder" : "任意",
@@ -5257,13 +5377,8 @@
       "assetCode" : "資産コード",
       "assetIssuer" : "資産発行者"
     },
-    "cosmos" : {
-      "memo" : "メモ",
-      "memoPlaceholder" : "任意",
-      "memoWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
-    },
     "solana" : {
-      "memo" : "Memo",
+      "memo" : "タグ/メモ",
       "memoPlaceholder" : "任意"
     }
   },
@@ -5273,8 +5388,11 @@
       "description" : "ネットワーク手数料が低すぎる可能性があります。増額してください"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
-      "description" : "My Ledgerからアプリの再インストールを試す"
+      "title" : "{{appName}}は{{productName}}に対応していません。",
+      "titleOld" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
+      "description" : "<0>当社のデバイスで、さらに機能をお試しください。</0>この機能を使用する場合は、当社の対応デバイスのいずれかにアップグレードしてください。お客様のニーズに最適なオプションを選択して、強化されたセキュリティをお楽しみください。",
+      "exploreCTA" : "対応デバイスを探す",
+      "learnMoreCTA" : "Ledger Syncの詳細について"
     },
     "PendingOperation" : {
       "description" : "保留中の受信トランザクションがあります。保留中のトランザクションは取り消される可能性がありますので、ご注意ください。"
@@ -6026,7 +6144,7 @@
     },
     "ServiceStatusWarning" : {
       "title" : "{{message}}",
-      "description" : ""
+      "description" : "{{description}}"
     },
     "TaprootNotActivated" : {
       "title" : "メインネットのアクティベート前に、Taprootアドレスへの送付は安全ではありません。"
@@ -6240,11 +6358,32 @@
     },
     "PinNotSet" : {
       "title" : "PINコードが設定されていません"
+    },
+    "TransactionBroadcastError" : {
+      "title" : "トランザクションのブロードキャストに失敗",
+      "description" : "トランザクションは{{networkName}}ネットワーク上でブロードキャストできませんでした。お客様の{{currencyName}}は転送されておらず、アカウントに残っています。",
+      "helpCenterTitle" : "ヘルプセンター： ",
+      "helpCenterDesc" : "サポートがご必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
+      "needHelp" : "お困りですか？",
+      "getHelp" : "ヘルプ",
+      "technicalErrorTitle" : "技術的なエラー： ",
+      "saveLogs" : "ログを保存"
+    },
+    "NotEnoughBalanceForUnstaking" : {
+      "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。",
+      "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
+      "twoCtas" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>または<cta2>{{cta2Label}}</cta2>してください。",
+      "threeCtas" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>、<cta2>{{cta2Label}}</cta2>、または<cta3>{{cta3Label}}</cta3>してください。",
+      "ctas" : {
+        "buy" : "購入",
+        "swap" : "スワップ",
+        "deposit" : "入金"
+      }
     }
   },
   "cryptoOrg" : {
     "memo" : "メモ",
-    "memoPlaceholder" : "任意",
+    "memoPlaceholder" : "タグ/メモを入力",
     "memoWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
   },
   "hedera" : {
@@ -6276,6 +6415,7 @@
     "cta" : "カスタムロック画面",
     "managerCTA" : "画面写真をロック",
     "managerCTARemove" : "削除",
+    "rotate" : "回転",
     "steps" : {
       "choose" : {
         "stepLabel" : "画像を選択",
@@ -6377,12 +6517,12 @@
   "analyticsOptInPrompt" : {
     "variantA" : {
       "description" : "Ledger Liveデータを共有いただくことで、お客様の好みを理解し、お客様に関連するコンテンツを表示することができます。",
-      "whatWeTrack" : "お客様の同意があると、Ledgerは、お客様によるLedger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを追跡できるようになります。",
+      "whatWeTrack" : "お客様の同意のもと、Ledgerは、Ledger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを収集できるようになります。",
       "whatWeTrackList" : {
         "1" : "Ledger Liveのパフォーマンスを測定し、アプリとお客様の体験（アナリティクス）の両方を強化可能です。",
         "2" : "お客様の好みに合わせてパーソナライズされた推奨事項やコンテンツをご提供でき、当社のマーケティングキャンペーンの効果（パーソナライゼーション）の測定に役立ちます。"
       },
-      "whatWeDoNotTrack" : "Ledgerは、以下に関する情報を決して追跡しません。",
+      "whatWeDoNotTrack" : "Ledgerは、以下に関する情報を決して収集しません。",
       "whatWeDoNotTrackList" : {
         "1" : "お客様の資産。",
         "2" : "お客様のポートフォリオ。",
@@ -6424,13 +6564,13 @@
     "common" : {
       "title" : "コンテンツの改善およびパーソナライズへご協力ください",
       "revokeInfo" : "同意はアプリの設定からいつでも取り消すことができます。",
-      "learnMore" : "当社の追跡ポリシーの詳細を確認"
+      "learnMore" : "お客様のデータの取り扱いについて"
     },
     "profileSettings" : {
       "personalizedExp" : "好みに合わせてコンテンツをカスタマイズ",
       "analytics" : "アナリティクス",
-      "personalizedExpDesc" : "Ledgerがアプリの使用状況データを追跡して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
-      "analyticsDesc" : "Ledgerがアプリの使用状況データを追跡できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるようにします。"
+      "personalizedExpDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
+      "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させます。"
     }
   },
   "walletSync" : {
@@ -6584,6 +6724,11 @@
       "seeMore" : "もっとインスクリプションを見る",
       "empty" : "インスクリプションを追加するには、インスクリプションをビットコインアドレスに送信するだけです。",
       "receive" : "インスクリプションを受け取る",
+      "hide" : "インスクリプションを隠す",
+      "modal" : {
+        "title" : "インスクリプションを隠す",
+        "desc" : "この操作により、次のインスクリプション<0> {{inscriptionName}}</0>がアカウントから非表示になります。設定からいつでも再表示できます。"
+      },
       "discoveryDrawer" : {
         "title" : "Ordinalsを知る",
         "description" : "お客様は貴重なレアサトシやインスクリプションを所有している可能性があることをご存知ですか？",
@@ -6650,6 +6795,20 @@
           "vintage" : "ビットコインの夜明けは、最初の1000ブロックによって特徴づけられました。この期間内に採掘されたサトシには「ヴィンテージ（Vintage）」というブランドが付けられています。"
         }
       }
+    },
+    "coinControl" : {
+      "amountToSend" : "送付額：",
+      "of" : "of",
+      "excludeAssets" : "Ordinals資産を除外",
+      "selectDesc" : "トランザクションを実行するときに使用するUTXO（未使用トランザクション出力）を選択します。チェックを外したUTXOは使用されません。",
+      "utxos" : "UTXO",
+      "learnMore" : "この設定の詳細はこちらです",
+      "confirm" : "確認",
+      "address" : "アドレス",
+      "transactionId" : "トランザクションID"
     }
+  },
+  "ldmkFeatureFlagWarning" : {
+    "title" : "LDMKトランスポートを使用"
   }
 }

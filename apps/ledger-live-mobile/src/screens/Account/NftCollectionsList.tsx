@@ -1,23 +1,19 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { useSelector } from "react-redux";
 import { Box, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "~/components/Nft/NftCollectionOptionsMenu";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
 import NftCollectionRow from "~/components/Nft/NftCollectionRow";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "~/components/wrappedUi/Button";
 import Touchable from "~/components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { useNftCollections } from "~/hooks/nfts/useNftCollections";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
 
@@ -27,28 +23,13 @@ type Props = {
 
 export default function NftCollectionsList({ account }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
-  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const { nfts, isLoading } = useNftGalleryFilter({
-    nftsOwned: account.nfts || [],
-    addresses: account.freshAddress,
-    chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+  const { collections, isLoading } = useNftCollections({
+    account,
   });
-
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-  const nftCollections = useMemo(
-    () =>
-      Object.entries(nftsByCollections(nftsFromSimplehashEnabled ? nfts : account.nfts)).filter(
-        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
-      ),
-    [account.id, account.nfts, hiddenNftCollections, nfts, nftsFromSimplehashEnabled],
-  ) as [string, ProtoNFT[]][];
 
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<ProtoNFT[]>();
@@ -62,8 +43,8 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const data = useMemo(
-    () => nftCollections.slice(0, MAX_COLLECTIONS_TO_SHOW).map(([, collection]) => collection),
-    [nftCollections],
+    () => collections.slice(0, MAX_COLLECTIONS_TO_SHOW).map(([, collection]) => collection),
+    [collections],
   );
 
   const navigateToReceive = useCallback(

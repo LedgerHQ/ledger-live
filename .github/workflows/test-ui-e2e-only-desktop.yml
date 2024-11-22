@@ -60,7 +60,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
       ENABLE_BROADCAST_TEST: ${{ inputs.enable_send_test }}
     runs-on: [ledger-live-4xlarge]
     strategy:

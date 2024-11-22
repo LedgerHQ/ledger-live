@@ -13,9 +13,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
+import { useNftCollections } from "~/hooks/nfts/useNftCollections";
 
 const NB_COLUMNS = 2;
 
@@ -33,9 +32,6 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
 
   const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
-  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
   const addresses = useMemo(
@@ -48,15 +44,13 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
     [accounts],
   );
 
-  const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
-    nftsOwned: nftsOrdered || [],
+  const { allNfts, isLoading } = useNftCollections({
+    nftsOwned: nftsOrdered,
     addresses: addresses,
     chains: SUPPORTED_NFT_CURRENCIES,
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
-  const nfts = nftsFromSimplehashEnabled ? filteredNfts : nftsOrdered;
-  const hasNfts = nfts.length > 0;
+  const hasNfts = allNfts.length > 0;
 
   const handlePress = useCallback(
     (nft: ProtoNFT) => {
@@ -74,7 +68,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number }) => {
-      const incompleteLastRowFirstIndex = nfts.length - (nfts.length % NB_COLUMNS) - 1;
+      const incompleteLastRowFirstIndex = allNfts.length - (allNfts.length % NB_COLUMNS) - 1;
       const isOnIncompleteLastRow = index > incompleteLastRowFirstIndex;
       return (
         <Flex
@@ -85,7 +79,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
         </Flex>
       );
     },
-    [handlePress, nfts.length],
+    [handlePress, allNfts.length],
   );
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
@@ -97,7 +91,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
           <FlatList
             key={NB_COLUMNS}
             numColumns={NB_COLUMNS}
-            data={nfts}
+            data={allNfts}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             initialNumToRender={6}
