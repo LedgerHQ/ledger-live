@@ -19,7 +19,7 @@ jobs:
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: support/automatic-ci-changeset-control-patch-in-description-test # TODO: CHANGE BEFORE MERGE
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
