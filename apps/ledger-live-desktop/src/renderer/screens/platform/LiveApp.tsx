@@ -7,6 +7,8 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useTrack } from "~/renderer/analytics/segment";
+import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
 type Props = {
   match: {
@@ -31,6 +33,8 @@ type Props = {
 
 export function LiveApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
+  const track = useTrack();
+  const swapTrackingProperties = useGetSwapTrackingProperties();
   const { params: internalParams, search } = location;
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
     Props["location"] & {
@@ -55,7 +59,17 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
     );
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
-  const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
+  const handleClose = useCallback(() => {
+    if (returnTo.startsWith("/swap")) {
+      track("button_click", {
+        ...swapTrackingProperties,
+        button: "close X",
+        partner: appId,
+        page: "swap",
+      });
+    }
+    history.push(returnTo || `/platform`);
+  }, [history, returnTo, appId, swapTrackingProperties, track]);
   const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
   const params = {

@@ -52,10 +52,15 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
+  COINAPPS: ${{ github.workspace }}/coin-apps
+
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
     runs-on: [m1, ARM64]
+    if: ${{ !inputs.speculos_tests }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -89,7 +94,7 @@ jobs:
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js') }}
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -121,10 +126,21 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
+      - name: Setup Speculos image and Coin Apps
+        if: ${{ inputs.speculos_tests }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm mobile e2e:ci -p ios -t
+        run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
       - name: Delete iOS simulator
         if: ${{ always() && steps.simulator.outputs.id }}
         run: |
@@ -180,8 +196,6 @@ jobs:
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
-      COINAPPS: ${{ github.workspace }}/coin-apps
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:

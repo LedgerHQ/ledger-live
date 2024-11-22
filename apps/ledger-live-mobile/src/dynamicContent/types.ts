@@ -33,6 +33,8 @@ enum LandingPageUseCase {
   LP_Wallet_Connect = "LP_Wallet_Connect",
   LP_Security_Key = "LP_Security_Key",
   LP_Generic = "LP_Generic",
+  LP_Reborn1 = "LP_Reborn1",
+  LP_Reborn2 = "LP_Reborn2",
 }
 
 enum ContentCardLocation {
@@ -42,6 +44,7 @@ enum ContentCardLocation {
   Learn = "learn",
   MyLedger = "my_ledger",
   NotificationCenter = "notification_center",
+  LandingPageStickyCta = "landing_page_sticky_cta",
 }
 
 type AllLocations = ContentCardLocation | LandingPageUseCase;
@@ -108,6 +111,12 @@ type NotificationContentCard = ContentCardCommonProperties & {
   cta?: string;
 };
 
+type LandingPageStickyCtaContentCard = ContentCardCommonProperties & {
+  cta: string;
+  link: string;
+  landingPage: LandingPageUseCase;
+};
+
 type HorizontalContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
@@ -160,6 +169,7 @@ export type {
   BrazeContentCard,
   AnyContentCard,
   AllLocations,
+  LandingPageStickyCtaContentCard,
 };
 export {
   ContentCardLocation,

@@ -37,8 +37,8 @@ const Navbar = () => {
   );
 
   const onWrappedTabChange = (nextIndex: number) => {
-    track("button_clicked2", {
-      button: `${swapRoutes[nextIndex].name} Tab`,
+    track("button_clicked", {
+      button: `${swapRoutes[nextIndex].name}`,
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });

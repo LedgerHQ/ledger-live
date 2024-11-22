@@ -5,7 +5,7 @@ import {
   pressUntilTextFound,
   containsSubstringInEvent,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
+import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
 
 export async function sendAlgorand(tx: Transaction) {
   const events = await pressUntilTextFound(DeviceLabels.CAPS_APPROVE);

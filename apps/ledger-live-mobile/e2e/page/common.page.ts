@@ -27,6 +27,7 @@ export default class CommonPage {
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
 
+  @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text, false);
@@ -83,8 +84,8 @@ export default class CommonPage {
     return proxyPort;
   }
 
-  async removeSpeculos(proxyPort: number) {
+  async removeSpeculos(proxyPort?: number) {
     await deleteSpeculos(proxyPort);
-    await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
   }
 }

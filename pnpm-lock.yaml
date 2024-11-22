@@ -3224,6 +3224,73 @@ importers:
         specifier: ^5.4.5
         version: 5.6.3
 
+  libs/coin-modules/coin-vechain:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      eip55:
+        specifier: ^2.1.1
+        version: 2.1.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      thor-devkit:
+        specifier: ^2.0.6
+        version: 2.0.9
+    devDependencies:
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-xrp:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -3774,6 +3841,9 @@ importers:
       '@ledgerhq/coin-tron':
         specifier: workspace:^
         version: link:../coin-modules/coin-tron
+      '@ledgerhq/coin-vechain':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: workspace:^
         version: link:../coin-modules/coin-xrp
@@ -3978,9 +4048,6 @@ importers:
       date-fns:
         specifier: ^2.23.0
         version: 2.30.0
-      eip55:
-        specifier: ^2.1.1
-        version: 2.1.1
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -4041,9 +4108,6 @@ importers:
       simple-cbor:
         specifier: ^0.4.1
         version: 0.4.1
-      thor-devkit:
-        specifier: ^2.0.6
-        version: 2.0.9
       triple-beam:
         specifier: ^1.3.0
         version: 1.4.1

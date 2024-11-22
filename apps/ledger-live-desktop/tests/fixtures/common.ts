@@ -11,7 +11,7 @@ import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
-import { AppInfos } from "tests/enum/AppInfos";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { commandCLI } from "tests/utils/cliUtils";
 import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
@@ -152,8 +152,7 @@ export const test = base.extend<TestFixtures>({
           FEATURE_FLAGS: JSON.stringify(featureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
-          DISABLE_TRANSACTION_BROADCAST:
-            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
+          DISABLE_TRANSACTION_BROADCAST: !IS_NOT_MOCK ? undefined : 1,
         },
         env,
       );

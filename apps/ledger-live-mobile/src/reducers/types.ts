@@ -23,6 +23,7 @@ import {
   NotificationContentCard,
   CategoryContentCard,
   BrazeContentCard,
+  LandingPageStickyCtaContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
@@ -127,6 +128,8 @@ export type DynamicContentState = {
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
   categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards displayed in the landing page as sticky CTA */
+  landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
   /** Dynamic content cards for Ledger Live Mobile */
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */

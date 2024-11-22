@@ -16,6 +16,8 @@ import {
   VerticalContentCard,
   HeroContentCard,
   AllLocations,
+  LandingPageStickyCtaContentCard,
+  LandingPageUseCase,
 } from "~/dynamicContent/types";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
@@ -217,3 +219,14 @@ export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalCo
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
   mapAsSquareContentCard(card, "L", ContentCardsType.bigSquare, WidthFactor.Full, WidthFactor.Full);
+
+export const mapAsLandingPageStickyCtaContentCard = (
+  card: BrazeContentCard,
+): LandingPageStickyCtaContentCard => ({
+  id: card.id,
+  cta: card.extras.cta,
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  landingPage: card.extras.landingPage as LandingPageUseCase,
+});
