@@ -15,11 +15,11 @@ runs:
       shell: bash
       run: |
         valid_levels=("patch" "minor" "major")
-        if [[ ! " ${valid_levels[@]} " =~ " ${inputs.from_level} " ]]; then
+        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.from_level }} " ]]; then
           echo "Invalid from_level: ${inputs.from_level}. Must be one of ${valid_levels[@]}"
           exit 1
         fi
-        if [[ ! " ${valid_levels[@]} " =~ " ${inputs.to_level} " ]]; then
+        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.to_level }} " ]]; then
           echo "Invalid to_level: ${inputs.to_level}. Must be one of ${valid_levels[@]}"
           exit 1
         fi
