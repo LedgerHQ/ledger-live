@@ -10,8 +10,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
 import ReadOnlyFabActions from "~/components/FabActions/ReadOnlyFabActions";
 import GradientContainer from "~/components/GradientContainer";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
-import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BUY_DEVICE_FLEX,
+} from "LLM/features/Reborn/components/BuyDeviceBanner";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { TrackScreen } from "~/analytics";
 
@@ -86,16 +88,12 @@ function ReadOnlyAccount({ route }: Props) {
         </Flex>
       </GradientContainer>
     </Box>,
-    <Box mt={8} mx={6} key="Banner">
+    <Box mt={8} key="Banner">
       {hasOrderedNano ? (
         <SetupDeviceBanner screen="Assets" />
       ) : (
         <BuyDeviceBanner
-          style={{
-            marginTop: 40,
-            paddingTop: 13.5,
-            paddingBottom: 13.5,
-          }}
+          {...IMAGE_PROPS_BUY_DEVICE_FLEX}
           buttonLabel={t("buyDevice.bannerButtonTitle")}
           buttonSize="small"
           event="button_clicked"
@@ -105,7 +103,6 @@ function ReadOnlyAccount({ route }: Props) {
             currency: currency.name,
           }}
           screen="Account"
-          {...IMAGE_PROPS_BIG_NANO}
         />
       )}
     </Box>,

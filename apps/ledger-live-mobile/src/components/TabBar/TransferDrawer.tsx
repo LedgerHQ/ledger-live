@@ -13,8 +13,10 @@ import { NavigatorName } from "~/const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
-import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
-import SetupDeviceBanner from "../SetupDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BUY_DEVICE_FLEX_BOX,
+} from "LLM/features/Reborn/components/BuyDeviceBanner";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { track, useAnalytics } from "~/analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "~/hooks/useQuickActions";
@@ -241,32 +243,34 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   }
 
   return (
-    <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ width: "100%" }}
-        testID="transfer-scroll-list"
-      >
-        {buttonsList.map((button, index) => (
-          <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
-            <TransferButton {...button} testID={button.testID} />
-          </Box>
-        ))}
-      </ScrollView>
+    <>
+      <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
+        <ScrollView
+          alwaysBounceVertical={false}
+          style={{ width: "100%" }}
+          testID="transfer-scroll-list"
+        >
+          {buttonsList.map((button, index) => (
+            <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
+              <TransferButton {...button} testID={button.testID} />
+            </Box>
+          ))}
+        </ScrollView>
+      </Flex>
       {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner
+          {...IMAGE_PROPS_BUY_DEVICE_FLEX_BOX}
+          image="buyDoubleFlex"
           topLeft={
-            <Text color="primary.c40" uppercase mb={3} fontSize="11px" fontWeight="semiBold">
+            <Text color="neutral.c00" mb={6} minHeight={36} fontSize="14px" fontWeight="semiBold">
               {t("buyDevice.bannerTitle2")}
             </Text>
           }
-          style={{ marginTop: 36, paddingTop: 13.5, paddingBottom: 13.5 }}
           buttonLabel={t("buyDevice.bannerButtonTitle2")}
           buttonSize="small"
           event="button_clicked"
           eventProperties={bannerEventProperties}
           screen={screen}
-          {...IMAGE_PROPS_SMALL_NANO}
         />
       )}
       {readOnlyModeEnabled && hasOrderedNano ? (
@@ -274,6 +278,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
           <SetupDeviceBanner screen={screen} />
         </Box>
       ) : null}
-    </Flex>
+    </>
   );
 }
