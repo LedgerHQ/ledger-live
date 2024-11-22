@@ -6,6 +6,7 @@ import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/in
 import { TokenAccount } from "@ledgerhq/types-live";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -15,6 +16,8 @@ const getMainActions = ({
   parentAccount: BitcoinAccount | null | undefined;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const label = getStakeLabelLocaleBased();
+
   const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
     ? [
         NavigatorName.NoFundsFlow,
@@ -41,7 +44,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.yield" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {

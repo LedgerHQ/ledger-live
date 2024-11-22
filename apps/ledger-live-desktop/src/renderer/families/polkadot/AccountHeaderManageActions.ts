@@ -11,6 +11,7 @@ import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/in
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
   account: PolkadotAccount | SubAccount;
@@ -20,6 +21,7 @@ type Props = {
 
 const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
   const { t } = useTranslation();
+  const label = useGetStakeLabelLocaleBased();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const { polkadotResources } = mainAccount;
@@ -73,7 +75,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
       onClick: onClick,
       icon: IconCoins,
       disabled: !manageEnabled,
-      label: t("account.stake"),
+      label,
       tooltip: disabledLabel,
       event: "button_clicked2",
       eventProperties: {

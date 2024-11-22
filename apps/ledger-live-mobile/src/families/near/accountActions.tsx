@@ -8,6 +8,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -21,6 +22,7 @@ const getMainActions = ({
   const stakingDisabled = !canStake(account);
   const startWithValidator =
     account.nearResources && account.nearResources?.stakingPositions.length > 0;
+  const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = stakingDisabled
     ? [
@@ -49,7 +51,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "NEAR",

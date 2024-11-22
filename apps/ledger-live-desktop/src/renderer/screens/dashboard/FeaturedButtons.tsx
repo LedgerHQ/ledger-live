@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const ButtonGrid = styled(Grid).attrs(() => ({
   columns: 3,
@@ -19,7 +20,7 @@ const ButtonGrid = styled(Grid).attrs(() => ({
 const FeaturedButtons = () => {
   const history = useHistory();
   const { t } = useTranslation();
-
+  const stakeLabel = useGetStakeLabelLocaleBased();
   const bannerFeatureFlag = useFeature("portfolioExchangeBanner");
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
 
@@ -67,7 +68,7 @@ const FeaturedButtons = () => {
       <EntryButton
         Icon={() => <IconsLegacy.LendMedium size={18} />}
         disabled={stakeDisabled}
-        title={t("dashboard.featuredButtons.earn.title")}
+        title={stakeLabel}
         body={t("dashboard.featuredButtons.earn.description")}
         onClick={handleClickStake}
         entryButtonTestId="stake-entry-button"

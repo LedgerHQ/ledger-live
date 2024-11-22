@@ -22,6 +22,7 @@ import NominateIcon from "~/icons/Vote";
 import ChillIcon from "~/icons/VoteNay";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = (args: {
   account: PolkadotAccount;
@@ -36,6 +37,7 @@ const getMainActions = (args: {
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const nominationEnabled = !electionOpen && canNominate(account);
+  const label = getStakeLabelLocaleBased();
 
   const earnRewardsEnabled = !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
 
@@ -85,7 +87,7 @@ const getMainActions = (args: {
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "DOT",
