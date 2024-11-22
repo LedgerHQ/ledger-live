@@ -79,6 +79,7 @@ const Wrapper = styled.div<Pick<PortfolioContentCardProps, "image" | "tag" | "on
   padding: 16px;
   padding-top: ${p => (p.tag ? "16px" : "24px")};
   padding-right: 50%;
+  flex-basis: 100%;
 
   position: relative;
   display: flex;
