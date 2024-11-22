@@ -1,7 +1,5 @@
 name: Adjust Changeset Level
-
 description: This action adjusts the changeset level from one value to another.
-
 inputs:
   from_level:
     description: 'The changeset level to target'

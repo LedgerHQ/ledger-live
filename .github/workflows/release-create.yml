@@ -47,14 +47,10 @@ jobs:
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
-        run: |
-          for file in .changeset/*.md; do
-            if grep -q ": patch" "$file"; then
-              # target the lines between the "---" yaml delimiters, replace ": patch" with ": minor"
-              sed -i '/---/,/---/s/: patch/: minor/' "$file"
-              echo "Updated $file to minor"
-            fi
-          done
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/automatic-ci-changeset-control
+        with:
+          from_level: patch
+          to_level: minor
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: commit
