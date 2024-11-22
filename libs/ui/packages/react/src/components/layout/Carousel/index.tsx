@@ -14,8 +14,12 @@ const EmblaContainer = styled.div`
 `;
 
 const EmblaSlide = styled.div`
+  display: flex;
   flex: 0 0 100%;
   min-width: 0;
+  > * {
+    flex-basis: 100%;
+  }
 `;
 
 const CarouselContainer = styled.div<Pick<Props, "variant">>`
@@ -30,7 +34,7 @@ const CarouselContainer = styled.div<Pick<Props, "variant">>`
 /**
  * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
-const Carousel = ({ children, variant = "default" }: Props) => {
+const Carousel = ({ children, variant = "default", onChange }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
@@ -40,7 +44,9 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     const newIndex = emblaApi.selectedScrollSnap();
     setCurrentIndex(newIndex);
     emblaApi.scrollTo(newIndex);
-  }, [emblaApi]);
+
+    onChange?.(newIndex);
+  }, [emblaApi, onChange]);
 
   useEffect(() => {
     if (!emblaApi) return;
