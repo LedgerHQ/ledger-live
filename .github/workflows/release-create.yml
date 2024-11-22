@@ -44,6 +44,9 @@ jobs:
         run: |
           git add .
           git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
+      - name: TEMP - LIST CHANGESETS BEFORE
+        run: |
+          ls .changeset
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -51,6 +54,9 @@ jobs:
         with:
           from_level: patch
           to_level: minor
+      - name: TEMP - LIST CHANGESETS AFTER
+        run: |
+          ls .changeset
       - name: TEMP - PRINT CHANGESETS
         run: |
           for file in .changeset/*.md; do
