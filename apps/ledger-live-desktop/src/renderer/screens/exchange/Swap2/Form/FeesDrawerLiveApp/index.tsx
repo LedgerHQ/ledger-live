@@ -95,16 +95,16 @@ export default function FeesDrawerLiveApp({
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount],
+    [setTransaction, bridge, mainAccount, swapDefaultTrack, track],
   );
 
   const mapStrategies = useCallback(
     (strategy: FeeStrategy) =>
       strategy.label === "slow" && disableSlowStrategy
         ? {
-            ...strategy,
-            disabled: true,
-          }
+          ...strategy,
+          disabled: true,
+        }
         : strategy,
     [disableSlowStrategy],
   );
