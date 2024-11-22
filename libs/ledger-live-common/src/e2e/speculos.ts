@@ -58,6 +58,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Aptos: {
+    currency: getCryptoCurrencyById("aptos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Aptos",
+    },
+    dependency: "",
+  },
   Exchange: {
     appQuery: {
       model: DeviceModelId.nanoSP,
