@@ -2,7 +2,7 @@ name: "Update Snapshots Ledger Live Desktop"
 description: "Composite job to update playwright snapshots for Ledger Live Desktop"
 inputs:
   os:
-    description: "Name of the operating system (same as runs-on)"
+    description: "name of the os (same as runs-on)"
     required: true
 
 runs:
