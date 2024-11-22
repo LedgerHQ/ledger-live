@@ -9,13 +9,15 @@ runs:
   using: "composite"
   steps:
     - name: Update playwright snapshots [Linux => xvfb-run]
-      if: startsWith(inputs.os, 'ubuntu')
-      run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+      if: ${{ startsWith(inputs.os, 'ubuntu') }}
+      run: |
+        xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
       shell: bash
 
     - name: Update playwright snapshots
       if: ${{ !startsWith(inputs.os, 'ubuntu') }}
-      run: pnpm desktop test:playwright:update-snapshots
+      run: |
+        pnpm desktop test:playwright:update-snapshots
       shell: bash
 
     - name: Status (Linux | macOS)
