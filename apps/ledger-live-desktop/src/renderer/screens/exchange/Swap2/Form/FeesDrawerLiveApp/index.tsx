@@ -102,9 +102,9 @@ export default function FeesDrawerLiveApp({
     (strategy: FeeStrategy) =>
       strategy.label === "slow" && disableSlowStrategy
         ? {
-          ...strategy,
-          disabled: true,
-        }
+            ...strategy,
+            disabled: true,
+          }
         : strategy,
     [disableSlowStrategy],
   );
