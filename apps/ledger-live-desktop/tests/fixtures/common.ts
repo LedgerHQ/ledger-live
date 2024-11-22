@@ -152,8 +152,7 @@ export const test = base.extend<TestFixtures>({
           FEATURE_FLAGS: JSON.stringify(featureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
-          DISABLE_TRANSACTION_BROADCAST:
-            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
+          DISABLE_TRANSACTION_BROADCAST: !IS_NOT_MOCK ? undefined : 1,
         },
         env,
       );

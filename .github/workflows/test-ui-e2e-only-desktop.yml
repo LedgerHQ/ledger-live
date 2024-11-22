@@ -37,11 +37,6 @@ on:
         required: false
         type: string
         default: "B2CQA-2461"
-      enable_send_test:
-        description: Enable broadcast
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -61,7 +56,6 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
-      ENABLE_BROADCAST_TEST: ${{ inputs.enable_send_test }}
     runs-on: [ledger-live-4xlarge]
     strategy:
       fail-fast: false
@@ -72,16 +66,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-
-      - name: Setup broadcast environment variables
-        id: set-env
-        run: |
-          day=$(date +%u)
-          if [ $day -eq 1 ] || "$ENABLE_BROADCAST_TEST" = "1" ; then
-            echo "ENABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
-          else
-            echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
-          fi
 
       - name: Setup caches
         id: caches
