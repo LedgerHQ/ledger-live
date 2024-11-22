@@ -13,20 +13,17 @@ runs:
       run: |
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
       shell: bash
-
     - name: Update playwright snapshots
       if: ${{ !startsWith(inputs.os, 'ubuntu') }}
       run: |
         pnpm desktop test:playwright:update-snapshots
       shell: bash
-
     - name: Status (Linux | macOS)
       if: ${{ !startsWith(inputs.os, 'windows') }}
       id: status
       run: |
         echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       shell: bash
-
     - name: Status (Windows)
       id: status-windows
       if: ${{ startsWith(inputs.os, 'windows') }}
@@ -35,12 +32,10 @@ runs:
         $out = $out.Trim()
         echo "status=$out" >> $env:GITHUB_OUTPUT
       shell: pwsh
-
     - id: changes
       run: |
         echo "changes=$(git status -s)" >> $GITHUB_OUTPUT
       shell: bash
-
     - name: Commit snapshots
       if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
       run: |
@@ -51,7 +46,6 @@ runs:
         git push ||
         echo ""
       shell: bash
-
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v4
       if: ${{ failure() && !cancelled() }}
