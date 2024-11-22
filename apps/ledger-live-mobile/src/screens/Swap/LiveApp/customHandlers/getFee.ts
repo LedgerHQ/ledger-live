@@ -103,9 +103,6 @@ export const getFee =
     let currentTransaction = preparedTransaction;
     let customFeeConfig = baseTransaction && getCustomFeesPerFamily(currentTransaction);
 
-    console.log({ currentTransaction, currentStatus, customFeeConfig });
-    console.log({ params });
-
     // Handle non-drawer case
     if (!params.openDrawer) {
       return formatFeeResult({
@@ -118,7 +115,7 @@ export const getFee =
 
     // Handle drawer case
     return new Promise<FeeResult>(resolve => {
-      const handleDrawerClose = async (save: boolean) => {
+      const onRequestClose = async (save: boolean) => {
         // trackFeeSelection({
         //   save,
         //   swapVersion: params.SWAP_VERSION,
@@ -130,9 +127,9 @@ export const getFee =
           mainAccount,
           customFeeConfig,
         });
-        // setDrawer(undefined);
         resolve(result);
       };
+
       const updateTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
         currentStatus = await bridge.getTransactionStatus(mainAccount, newTransaction);
         customFeeConfig = baseTransaction && getCustomFeesPerFamily(newTransaction);
@@ -150,7 +147,7 @@ export const getFee =
           provider: undefined,
           disableSlowStrategy: true,
           transaction: preparedTransaction,
-          onRequestClose: handleDrawerClose,
+          onRequestClose,
         },
       });
       //   FeesDrawerLiveApp,
@@ -170,15 +167,6 @@ export const getFee =
       //     onRequestClose: () => handleDrawerClose(false),
       //   },
       // );
-
-      return resolve(
-        formatFeeResult({
-          transaction: currentTransaction,
-          status: currentStatus,
-          mainAccount,
-          customFeeConfig,
-        }),
-      );
     });
   };
 

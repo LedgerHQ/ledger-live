@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import NetworkFeeInfo from "~/components/NetworkFeeInfo";
 import { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { EvmFeeStrategy } from "./modals/EvmFeeStrategy";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -41,7 +41,6 @@ export function WebView({ manifest }: Props) {
     setFeeModalState({ opened: false });
   }, [feeModalState]);
 
-  useEffect(() => console.log(feeModalState), [feeModalState]);
   return (
     <>
       <QueuedDrawer
@@ -49,7 +48,13 @@ export function WebView({ manifest }: Props) {
         preventBackdropClick={false}
         onClose={onModalClose}
       >
-        <NetworkFeeInfo />
+        {feeModalState.opened && feeModalState.data.transaction.family === "evm" ? (
+          <EvmFeeStrategy
+            transaction={feeModalState.data.transaction}
+            currency={feeModalState.data.parentAccount.currency}
+            onClose={onModalClose}
+          />
+        ) : null}
       </QueuedDrawer>
       <TabBarSafeAreaView>
         <Web3AppWebview manifest={manifest} customHandlers={customHandlers} />
