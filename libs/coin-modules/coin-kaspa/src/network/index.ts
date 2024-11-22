@@ -236,7 +236,7 @@ export async function scanOperations(addresses: string[]): Promise<Operation[]> 
     const operationType: OperationType = myOutputAmount.gt(myInputAmount) ? "IN" : "OUT";
 
     operations.push({
-      id: "kaspa",
+      id: tx.transaction_id,
       hash: tx.transaction_id,
       type: operationType,
       value: myOutputAmount.minus(myInputAmount).absoluteValue(),
@@ -246,7 +246,7 @@ export async function scanOperations(addresses: string[]): Promise<Operation[]> 
       blockHeight: tx.accepting_block_blue_score,
       blockHash: tx.block_hash[0],
       accountId: "kaspa?",
-      date: new Date(tx.block_time * 1000),
+      date: new Date(tx.block_time),
       extra: {},
     } as Operation);
   }

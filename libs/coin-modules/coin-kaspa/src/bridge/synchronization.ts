@@ -10,7 +10,7 @@ import { KaspaSigner } from "../signer";
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
   async info => {
-    const { initialAccount, rest, deviceId, derivationMode, derivationPath, index } = info;
+    const { initialAccount, deviceId, derivationPath } = info;
 
     let xpub = initialAccount?.xpub;
 
@@ -47,8 +47,6 @@ export const makeGetAccountShape =
     ];
     const allOperations: Operation[] = await scanOperations(usedAddresses);
     const operations = mergeOps(oldOperations, allOperations);
-
-    console.log({ operations, xpub, accountId, accountAddresses });
 
     console.log(`Total balance: ${accountAddresses.totalBalance.toNumber()}`);
     console.log(`Spendable balance: ${accountAddresses.spendableBalance.toNumber()}`);
