@@ -59,7 +59,7 @@ import {
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
 
-import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
+import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
@@ -155,7 +155,6 @@ export default function BaseNavigator() {
           options={{
             title: t("postBuyDevice.headerTitle"),
             headerLeft: () => null,
-            headerRight: () => null,
           }}
         />
         <Stack.Screen
