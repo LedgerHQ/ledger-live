@@ -214,7 +214,7 @@ const tokenTransactionInvalid = [
 test.describe("Send flows", () => {
   test.beforeAll(async () => {
     process.env.ENABLE_TRANSACTION_BROADCAST =
-      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "true" : "false";
+      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "1" : "0";
   });
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 

@@ -51,7 +51,7 @@ const validators = [
 test.describe("Delegate flows", () => {
   test.beforeAll(async () => {
     process.env.ENABLE_TRANSACTION_BROADCAST =
-      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "true" : "false";
+      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "1" : "0";
   });
   for (const account of e2eDelegationAccounts) {
     test.describe("Delegate", () => {
