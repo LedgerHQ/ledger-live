@@ -39,6 +39,7 @@ import {
   userNpsSelector,
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  mevProtectionSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -114,6 +115,17 @@ const getRebornAttributes = () => {
   return {
     llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
     llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+  };
+};
+
+const getMEVAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
+
+  const hasMEVActivated = mevProtectionSelector(state);
+
+  return {
+    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
   };
 };
 
@@ -197,6 +209,7 @@ const extraProperties = async (store: AppStore) => {
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
+  const mevProtectionAtributes = getMEVAttributes(state);
 
   return {
     ...mandatoryProperties,
@@ -234,6 +247,7 @@ const extraProperties = async (store: AppStore) => {
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     ...ledgerSyncAtributes,
     ...rebornAttributes,
+    ...mevProtectionAtributes,
   };
 };
 
