@@ -7145,6 +7145,9 @@ importers:
       framer-motion:
         specifier: ^11.3.28
         version: 11.3.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      lodash:
+        specifier: '4'
+        version: 4.17.21
       react-is:
         specifier: ^17.0.2
         version: 17.0.2
@@ -7209,6 +7212,9 @@ importers:
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
         version: 3.3.5(@types/react@18.2.73)
+      '@types/lodash':
+        specifier: '4'
+        version: 4.17.7
       '@types/react':
         specifier: ~18.2.21
         version: 18.2.73

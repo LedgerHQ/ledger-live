@@ -1,5 +1,7 @@
-import useEmblaCarousel from "embla-carousel-react";
+import type { EmblaCarouselType, EmblaEventType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
+import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
@@ -37,9 +39,10 @@ const CarouselContainer = styled.div<Pick<Props, "variant">>`
  */
 const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    ...(autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : []),
-  ]);
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true },
+    autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : [],
+  );
 
   const updateIndex = useCallback(() => {
     if (!emblaApi) return;
@@ -55,21 +58,53 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev 
     // Initial call to update carousel index
     updateIndex();
 
+    const dragX = watchDragX(emblaApi);
+
     // When the selected scroll snap changes
-    emblaApi.on("select", updateIndex);
+    const handleAnySelect = debounce((mightBeASwipe: boolean) => {
+      updateIndex();
+      if (!mightBeASwipe || variant !== "default") return; // onNext/onPrev events are not supported for content-card variant ATM
+      if (dragX.value > 0) return onPrev?.();
+      if (dragX.value < 0) return onNext?.();
+    }, 0); // all events are fired on the same tick so no need to wait past the next tick
+
+    emblaApi.on("select", handleSelect);
+    emblaApi.on("autoplay:select" as EmblaEventType, handleAutoPlaySelect);
+    emblaApi.on("button:prev" as EmblaEventType, handlePrevButton);
+    emblaApi.on("button:next" as EmblaEventType, handleNextButton);
 
     // When `reInit` is called or when window is resized
     emblaApi.on("reInit", updateIndex);
-  }, [emblaApi, updateIndex]);
 
-  const handleGotoPrevSlide = () => {
+    return () => {
+      dragX.clean();
+      emblaApi.off("select", handleSelect);
+      emblaApi.off("autoplay:select" as EmblaEventType, handleAutoPlaySelect);
+      emblaApi.off("button:prev" as EmblaEventType, handlePrevButton);
+      emblaApi.off("button:next" as EmblaEventType, handleNextButton);
+      emblaApi.off("reInit", updateIndex);
+    };
+
+    function handleSelect() {
+      handleAnySelect(true); // This could be a swipe action. As this runs first the debounce will override the value otherwise
+    }
+    function handleAutoPlaySelect() {
+      handleAnySelect(false);
+    }
+    function handlePrevButton() {
     emblaApi?.scrollPrev();
     onPrev?.();
-  };
-  const handleGotoNextSlide = () => {
+      handleAnySelect(false);
+    }
+    function handleNextButton() {
     emblaApi?.scrollNext();
     onNext?.();
-  };
+      handleAnySelect(false);
+    }
+  }, [emblaApi, updateIndex, variant]);
+
+  const handleGotoPrevSlide = () => emblaApi?.emit("button:prev" as EmblaEventType);
+  const handleGotoNextSlide = () => emblaApi?.emit("button:next" as EmblaEventType);
 
   return (
     <div>
@@ -107,3 +142,35 @@ const AutoplayFlags = {
   stopOnMouseEnter: true,
   stopOnInteraction: false,
 };
+
+function watchDragX(emblaApi: EmblaCarouselType) {
+  emblaApi.on("pointerDown", watch);
+  emblaApi.on("pointerUp", unWatch);
+
+  let start: number | undefined;
+  let end: number | undefined;
+
+  return {
+    get value() {
+      return typeof start === "undefined" || typeof end === "undefined" ? 0 : end - start;
+    },
+    clean: () => {
+      unWatch();
+      emblaApi.off("pointerDown", watch);
+      emblaApi.off("pointerUp", unWatch);
+    },
+  };
+
+  function handleMouseMove(event: MouseEvent) {
+    if (typeof start === "undefined") start = event.clientX;
+    else end = event.clientX;
+  }
+  function watch() {
+    start = undefined;
+    end = undefined;
+    document.addEventListener("mousemove", handleMouseMove);
+  }
+  function unWatch() {
+    document.removeEventListener("mousemove", handleMouseMove);
+  }
+}
