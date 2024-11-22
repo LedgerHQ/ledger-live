@@ -14,6 +14,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
+import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -427,4 +428,15 @@ export async function takeScreenshot() {
 
 export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function activateLedgerSync() {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await pressBoth();
+  await waitFor(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
 }
