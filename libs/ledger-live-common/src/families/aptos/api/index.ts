@@ -111,18 +111,16 @@ export class AptosAPI {
   }
 
   async getAccountInfo(address: string, startAt: string) {
-    const [balance, transactions, blockHeight, delegatedAmount] = await Promise.all([
+    const [balance, transactions, blockHeight] = await Promise.all([
       this.getBalance(address),
       this.fetchTransactions(address, undefined, startAt),
       this.getHeight(),
-      this.getTotalStakedAmount(address),
     ]);
 
     return {
       balance,
       transactions,
       blockHeight,
-      delegatedAmount,
     };
   }
 

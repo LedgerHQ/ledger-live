@@ -45,7 +45,7 @@ const getAccountShape: GetAccountShape = async info => {
   });
 
   const aptosClient = new AptosAPI(currency.id);
-  const { balance, transactions, blockHeight, delegatedAmount } = await aptosClient.getAccountInfo(
+  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(
     address,
     startAt,
   );
@@ -59,7 +59,6 @@ const getAccountShape: GetAccountShape = async info => {
     xpub,
     balance: balance,
     spendableBalance: balance,
-    delegatedAmount,
     operations,
     operationsCount: operations.length,
     blockHeight,

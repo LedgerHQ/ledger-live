@@ -54,7 +54,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance, delegatedAmount: _delegatedAmount } = account;
+  const { spendableBalance: _spendableBalance} = account;
   const unit = account.currency.units[0];
   const formatConfig = {
     disableRounding: true,
@@ -64,7 +64,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
-  const delegatedAmount = formatCurrencyUnit(unit, _delegatedAmount, formatConfig);
 
   return (
     <Wrapper>
@@ -79,19 +78,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         </ToolTip>
         <AmountValue>
           <Discreet>{spendableBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aptos.delegation.delegatedInfoTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.delegatedAssets" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{delegatedAmount}</Discreet>
         </AmountValue>
       </BalanceDetail>
     </Wrapper>
