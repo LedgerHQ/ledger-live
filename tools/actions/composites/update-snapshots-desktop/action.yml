@@ -2,7 +2,7 @@ name: "Update Snapshots Ledger Live Desktop"
 description: "Composite job to update playwright snapshots for Ledger Live Desktop"
 inputs:
   os:
-    description: "name of the os (same as runs-on)"
+    description: "Name of the operating system (same as runs-on)"
     required: true
 
 runs:
@@ -10,20 +10,21 @@ runs:
   steps:
     - name: Update playwright snapshots [Linux => xvfb-run]
       if: "${{ startsWith(inputs.os, 'ubuntu') }}"
-      run: |
-        xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+      run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
       shell: bash
+
     - name: Update playwright snapshots
       if: "${{ !startsWith(inputs.os, 'ubuntu') }}"
-      run: |
-        pnpm desktop test:playwright:update-snapshots
+      run: pnpm desktop test:playwright:update-snapshots
       shell: bash
+
     - name: Status (Linux | macOS)
       if: "${{ !startsWith(inputs.os, 'windows') }}"
       id: status
       run: |
         echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       shell: bash
+
     - name: Status (Windows)
       id: status-windows
       if: "${{ startsWith(inputs.os, 'windows') }}"
@@ -32,12 +33,15 @@ runs:
         $out = $out.Trim()
         echo "status=$out" >> $env:GITHUB_OUTPUT
       shell: pwsh
+
     - id: changes
       run: |
-        echo "changes=$(git status -s)" >> $GITHUB_OUTPUT
+        echo ${{ steps.status.outputs.status }}
+        echo "changes=$(git status -s)"
       shell: bash
+
     - name: Commit snapshots
-      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+      if: "${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}"
       run: |
         git add ./apps/ledger-live-desktop/tests/specs &&
         git commit -m "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot" &&
@@ -46,9 +50,10 @@ runs:
         git push ||
         echo ""
       shell: bash
+
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v4
-      if: ${{ failure() && !cancelled() }}
+      if: failure() && !cancelled()
       with:
         name: ${{ format('playwright-results-{0}', inputs.os) }}
         path: |
