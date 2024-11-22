@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import CommentField from "./CommentField";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Root = (props: {
   account: Account;
@@ -13,18 +14,22 @@ const Root = (props: {
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
   trackProperties?: object;
+  autoFocus?: boolean;
 }) => {
+  const lldMemoTag = useFeature("lldMemoTag");
   return (
     <Box flow={1}>
-      <Box mb={10}>
-        <Label>
-          <LabelInfoTooltip text={<Trans i18nKey="errors.TonCommentInvalid.title" />}>
-            <span>
-              <Trans i18nKey="families.ton.comment" />
-            </span>
-          </LabelInfoTooltip>
-        </Label>
-      </Box>
+      {!lldMemoTag?.enabled && (
+        <Box mb={10}>
+          <Label>
+            <LabelInfoTooltip text={<Trans i18nKey="errors.TonCommentInvalid.title" />}>
+              <span>
+                <Trans i18nKey="families.ton.comment" />
+              </span>
+            </LabelInfoTooltip>
+          </Label>
+        </Box>
+      )}
       <Box
         mb={15}
         horizontal

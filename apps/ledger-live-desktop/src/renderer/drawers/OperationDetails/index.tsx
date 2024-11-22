@@ -370,7 +370,13 @@ const OperationD = (props: Props) => {
       ) : (
         <Box flex={1} mb={2} alignItems="center">
           <Skeleton show={show} width={160} barHeight={16} minHeight={32}>
-            <Text ff="Inter|SemiBold" textAlign="center" fontSize={7} color="palette.text.shade80">
+            <Text
+              data-testId="nft-name-operationDrawer"
+              ff="Inter|SemiBold"
+              textAlign="center"
+              fontSize={7}
+              color="palette.text.shade80"
+            >
               {(metadata as NFTMetadata)?.nftName || "-"}
             </Text>
           </Skeleton>

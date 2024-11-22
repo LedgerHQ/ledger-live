@@ -11,6 +11,9 @@ test("Portfolio @smoke", async ({ page }) => {
 
   await test.step("load portfolio", async () => {
     await layout.totalBalance.waitFor({ state: "visible" });
+    await portfolioPage.checkBuySellButtonVisibility();
+    await portfolioPage.checkSwapButtonVisibility();
+    await portfolioPage.checkStakeButtonVisibility();
     await expect.soft(page).toHaveScreenshot("portfolio.png", {
       mask: [layout.marketPerformanceWidget],
     });

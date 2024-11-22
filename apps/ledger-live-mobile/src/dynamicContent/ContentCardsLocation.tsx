@@ -14,6 +14,7 @@ const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (
 
 type Props = FlexBoxProps & {
   locationId: AllLocations;
+  hasStickyCta?: boolean;
 };
 
 type CategoriesWithCards = {
@@ -21,9 +22,8 @@ type CategoriesWithCards = {
   cards: BrazeContentCard[];
 };
 
-const ContentCardsLocationComponent = ({ locationId, ...containerProps }: Props) => {
+const ContentCardsLocationComponent = ({ locationId, hasStickyCta, ...containerProps }: Props) => {
   const { categoriesCards, mobileCards } = useDynamicContent();
-
   const categoriesToDisplay = filterCategoriesByLocation(categoriesCards, locationId);
   const categoriesFormatted = formatCategories(categoriesToDisplay, mobileCards);
 
@@ -32,10 +32,12 @@ const ContentCardsLocationComponent = ({ locationId, ...containerProps }: Props)
   return (
     <Flex {...containerProps}>
       <FlatList
+        testID="flat-list-container"
         data={categoriesFormatted}
         renderItem={Category}
         keyExtractor={(item: CategoriesWithCards) => item.category.id}
         ItemSeparatorComponent={() => <Flex height={32} />}
+        ListFooterComponent={hasStickyCta ? <Flex height={116} /> : null}
       />
     </Flex>
   );

@@ -6,7 +6,7 @@ import {
   waitFor,
   containsSubstringInEvent,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
+import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
 
 export async function delegateNear(delegatingAccount: Delegate) {
   await waitFor(DeviceLabels.VIEW_HEADER);

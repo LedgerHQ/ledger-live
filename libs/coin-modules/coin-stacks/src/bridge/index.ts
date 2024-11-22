@@ -61,4 +61,3 @@ export function createBridges(signerContext: SignerContext<StacksSigner>) {
     accountBridge: buildAccountBridge(signerContext),
   };
 }
-export { prepareTransaction, estimateMaxSpendable };

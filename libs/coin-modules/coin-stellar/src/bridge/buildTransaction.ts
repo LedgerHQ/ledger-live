@@ -28,7 +28,7 @@ export async function buildTransaction(account: Account, transaction: Transactio
   const { transaction: built } = await craftTransaction(
     { address: account.freshAddress },
     {
-      mode,
+      type: mode,
       recipient,
       amount: BigInt(amount.toString()),
       fee: BigInt(fees.toString()),

@@ -1,5 +1,5 @@
-import { Fee } from "tests/enum/Fee";
-import { Account } from "../enum/Account";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class Transaction {
   constructor(
@@ -9,4 +9,16 @@ export class Transaction {
     public speed?: Fee,
     public memoTag?: string,
   ) {}
+}
+
+export class NFTTransaction extends Transaction {
+  constructor(
+    accountToDebit: Account,
+    accountToCredit: Account,
+    public nftName: string,
+    speed?: Fee,
+    memoTag?: string,
+  ) {
+    super(accountToDebit, accountToCredit, "0", speed, memoTag);
+  }
 }

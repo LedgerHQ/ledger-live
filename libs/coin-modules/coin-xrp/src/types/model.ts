@@ -5,6 +5,11 @@ export type AccountInfo = {
   sequence: number;
 };
 
+export type XrpMemo = {
+  data?: string;
+  format?: string;
+  type?: string;
+};
 export type XrpOperation = {
   hash: string;
   address: string;
@@ -19,10 +24,6 @@ export type XrpOperation = {
   transactionSequenceNumber: number;
   details?: {
     destinationTag?: number;
-    memos?: {
-      data?: string;
-      format?: string;
-      type?: string;
-    };
+    memos?: XrpMemo[];
   };
 };

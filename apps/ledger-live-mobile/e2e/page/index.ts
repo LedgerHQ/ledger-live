@@ -28,6 +28,14 @@ import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
 import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+
+type ApplicationOptions = {
+  speculosApp?: AppInfos;
+  userdata?: string;
+  knownDevices?: DeviceLike[];
+  testAccounts?: Account[];
+};
 
 export class Application {
   public account = new AccountPage();
@@ -57,11 +65,12 @@ export class Application {
   public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
 
-  static async init(userdata?: string, knownDevices?: DeviceLike[], testAccounts?: Account[]) {
+  static async init({ speculosApp, userdata, knownDevices, testAccounts }: ApplicationOptions) {
     const app = new Application();
-    if (userdata) await loadConfig(userdata, true);
-    if (knownDevices) await loadBleState({ knownDevices: knownDevices });
-    if (testAccounts) await loadAccounts(testAccounts);
+    userdata && (await loadConfig(userdata, true));
+    knownDevices && (await loadBleState({ knownDevices }));
+    testAccounts && (await loadAccounts(testAccounts));
+    speculosApp && (await app.common.addSpeculos(speculosApp.name));
 
     return app;
   }

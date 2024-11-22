@@ -15,6 +15,7 @@ import {
   DynamicContentSetNotificationCardsPayload,
   DynamicContentSetCategoriesCardsPayload,
   DynamicContentSetMobileCardsPayload,
+  DynamicContentSetLandingStickyCtaCardsPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -58,5 +59,17 @@ const setDynamicContentNotificationCardsAction =
     DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS,
   );
 
+export const setDynamicContentLandingPageStickyCtaCards =
+  createAction<DynamicContentSetLandingStickyCtaCardsPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS,
+  );
+
 export const setDynamicContentNotificationCards = (notificationCards: NotificationContentCard[]) =>
   setDynamicContentNotificationCardsAction(notificationCards);
+
+const setIsDynamicContentLoadingAction = createAction<boolean>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_IS_LOADING,
+);
+
+export const setIsDynamicContentLoading = (isLoading: boolean) =>
+  setIsDynamicContentLoadingAction(isLoading);

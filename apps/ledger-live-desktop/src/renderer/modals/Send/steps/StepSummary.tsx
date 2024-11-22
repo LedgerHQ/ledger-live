@@ -30,6 +30,7 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -84,8 +85,13 @@ const StepSummary = (props: StepProps) => {
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
-  const memo = "memo" in transaction ? transaction.memo : undefined;
-
+  const memo = lldMemoTag?.enabled
+    ? getMemoTagValueByTransactionFamily(transaction)
+    : (
+        transaction as Transaction & {
+          memo: string;
+        }
+      )?.memo;
   const handleOnEditMemo = () => {
     transitionTo("recipient");
   };
@@ -155,7 +161,12 @@ const StepSummary = (props: StepProps) => {
                 <Trans i18nKey="send.steps.details.to" />
               </Text>
               {transaction.recipientDomain && (
-                <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                <Text
+                  data-testId="transaction-recipient-ens"
+                  ff="Inter|Bold"
+                  color="palette.text.shade100"
+                  fontSize={4}
+                >
                   {transaction.recipientDomain.domain}
                 </Text>
               )}

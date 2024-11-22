@@ -5,7 +5,7 @@ import { findFreePort, close as closeBridge, init as initBridge } from "./bridge
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import invariant from "invariant";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "./bridge/proxy";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
@@ -152,6 +152,7 @@ export async function launchApp() {
       wsPort: port,
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*"\\)',
+      mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
     },
     languageAndLocale: {
       language: "en-US",
@@ -171,11 +172,11 @@ export async function launchSpeculos(appName: string, proxyPort: number) {
   }
   const speculosPort = portCounter++;
   const speculosPidOffset =
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100;
+    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = expect.getState().testPath || "unknown";
-  const speculosDevice = await startSpeculos(testName, specs[appName]);
+  const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
   const speculosApiPort = speculosDevice.ports.apiPort;
