@@ -10,17 +10,11 @@ import { isTestnet } from "../logic";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataQueryVariables,
-  PartitionedDelegatedStakingActivities,
-  DelegatedStakingActivity,
-  GetDelegatedStakingActivitiesQuery,
-  StakePrincipals,
-  StakeDetails,
 } from "./graphql/types";
 import {
   GetAccountTransactionsData,
   GetAccountTransactionsDataGt,
   GetAccountTransactionsDataLt,
-  GetDelegatedStakingActivities,
 } from "./graphql/queries";
 
 import type {
