@@ -23,19 +23,6 @@ export function usePortfolioCards(): UsePortfolioCards {
     setCachedContentCards(cards);
   }, []);
 
-  const logSlideImpression = useCallback<CarouselActions["logSlideImpression"]>(
-    (current, previous) => {
-      if (!isTrackedUser || typeof previous === "undefined") return;
-
-      track("contentcards_slide", {
-        button: current > previous ? "next" : "prev",
-        page: "Portfolio",
-        type: "portfolio_carousel",
-      });
-    },
-    [isTrackedUser],
-  );
-
   const dismissCard = useCallback<CarouselActions["dismissCard"]>(
     index => {
       const slide = portfolioCards[index];
@@ -86,10 +73,5 @@ export function usePortfolioCards(): UsePortfolioCards {
     [portfolioCards, cachedContentCards, isTrackedUser],
   );
 
-  return {
-    portfolioCards,
-    logSlideClick,
-    logSlideImpression,
-    dismissCard,
-  };
+  return { portfolioCards, logSlideClick, dismissCard };
 }

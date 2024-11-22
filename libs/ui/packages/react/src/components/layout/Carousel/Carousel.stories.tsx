@@ -26,8 +26,11 @@ export default {
     autoPlay: {
       description: "The time in milliseconds between automatic slide change (0 for no auto-play).",
     },
-    onChange: {
-      description: "Function called when a new slide is shown.",
+    onNext: {
+      description: "Function called when the user moves to the next slide.",
+    },
+    onPrev: {
+      description: "Function called when the user moves to the previous slide.",
     },
   },
   args: {

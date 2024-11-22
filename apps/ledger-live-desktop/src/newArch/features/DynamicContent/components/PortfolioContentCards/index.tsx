@@ -1,13 +1,16 @@
 import React from "react";
 
 import { Carousel } from "@ledgerhq/react-ui";
+import { track } from "~/renderer/analytics/segment";
 import { usePortfolioCards } from "../../hooks/usePortfolioCards";
 import Slide from "./Slide";
 
-const PortfolioContentCards = () => {
-  const { portfolioCards, logSlideClick, logSlideImpression, dismissCard } = usePortfolioCards();
+export default PortfolioContentCards;
+
+function PortfolioContentCards() {
+  const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCards();
   return (
-    <Carousel autoPlay={6000} onChange={logSlideImpression}>
+    <Carousel autoPlay={6000} onPrev={() => trackSlide("prev")} onNext={() => trackSlide("next")}>
       {portfolioCards.map((card, index) => (
         <Slide
           key={card.id}
@@ -19,6 +22,8 @@ const PortfolioContentCards = () => {
       ))}
     </Carousel>
   );
-};
+}
 
-export default PortfolioContentCards;
+function trackSlide(button: "prev" | "next") {
+  track("contentcards_slide", { button, page: "Portfolio", type: "portfolio_carousel" });
+}

@@ -35,7 +35,7 @@ const CarouselContainer = styled.div<Pick<Props, "variant">>`
 /**
  * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
-const Carousel = ({ children, variant = "default", autoPlay = 0, onChange }: Props) => {
+const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     ...(autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : []),
@@ -47,10 +47,7 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onChange }: Pro
     const newIndex = emblaApi.selectedScrollSnap();
     setCurrentIndex(newIndex);
     emblaApi.scrollTo(newIndex);
-
-    const prevIndex = emblaApi.previousScrollSnap();
-    onChange?.(newIndex, prevIndex !== newIndex ? prevIndex : undefined);
-  }, [emblaApi, onChange]);
+  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -65,8 +62,14 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onChange }: Pro
     emblaApi.on("reInit", updateIndex);
   }, [emblaApi, updateIndex]);
 
-  const handleGotoPrevSlide = () => emblaApi?.scrollPrev();
-  const handleGotoNextSlide = () => emblaApi?.scrollNext();
+  const handleGotoPrevSlide = () => {
+    emblaApi?.scrollPrev();
+    onPrev?.();
+  };
+  const handleGotoNextSlide = () => {
+    emblaApi?.scrollNext();
+    onNext?.();
+  };
 
   return (
     <div>

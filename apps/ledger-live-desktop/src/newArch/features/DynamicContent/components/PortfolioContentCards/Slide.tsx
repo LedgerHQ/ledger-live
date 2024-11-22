@@ -9,8 +9,7 @@ import LogContentCardWrapper from "../LogContentCardWrapper";
 
 export default memo(Slide);
 
-type Props = PortfolioContentCard &
-  Pick<CarouselActions, "logSlideClick" | "dismissCard"> & { index: number };
+type Props = PortfolioContentCard & CarouselActions & { index: number };
 
 function Slide({ logSlideClick, dismissCard, index, ...card }: Props) {
   const history = useHistory();
