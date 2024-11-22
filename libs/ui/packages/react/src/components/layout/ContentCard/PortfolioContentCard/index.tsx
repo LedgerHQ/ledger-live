@@ -43,7 +43,7 @@ export default function PortfolioContentCard({
         </Button>
       )}
       <StyleProvider selectedPalette="dark">
-        <CloseButton onClick={handleClose} />
+        <CloseButton data-testid="portfolio-card-close-button" onClick={handleClose} />
       </StyleProvider>
     </Wrapper>
   );

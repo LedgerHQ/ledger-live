@@ -92,13 +92,13 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev 
       handleAnySelect(false);
     }
     function handlePrevButton() {
-    emblaApi?.scrollPrev();
-    onPrev?.();
+      emblaApi?.scrollPrev();
+      onPrev?.();
       handleAnySelect(false);
     }
     function handleNextButton() {
-    emblaApi?.scrollNext();
-    onNext?.();
+      emblaApi?.scrollNext();
+      onNext?.();
       handleAnySelect(false);
     }
   }, [emblaApi, updateIndex, variant]);
@@ -111,8 +111,16 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev 
       <CarouselContainer variant={variant}>
         {variant === "default" && children.length > 1 && (
           <>
-            <ChevronArrow direction="left" onClick={handleGotoPrevSlide} />
-            <ChevronArrow direction="right" onClick={handleGotoNextSlide} />
+            <ChevronArrow
+              data-testid="carousel-arrow-prev"
+              direction="left"
+              onClick={handleGotoPrevSlide}
+            />
+            <ChevronArrow
+              data-testid="carousel-arrow-next"
+              direction="right"
+              onClick={handleGotoNextSlide}
+            />
           </>
         )}
 
