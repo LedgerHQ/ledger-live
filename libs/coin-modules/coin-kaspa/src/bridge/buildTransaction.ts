@@ -3,7 +3,7 @@ import { addressToScriptPublicKey, parseExtendedPublicKey } from "../lib/kaspa-u
 import { selectUtxos } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
 
-import { KaspaHwTransaction, TransactionInput, TransactionOutput } from "./kaspaHwTransaction";
+import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput } from "./kaspaHwTransaction";
 import { KaspaAccount, KaspaTransaction } from "../types/bridge";
 
 /**
@@ -37,7 +37,7 @@ export const buildTransaction = async (
   const selectedUtxos = selectUtxos(utxos, recipientIsTypeECDSA, amount, t.feerate || 1);
 
   const txInputs = selectedUtxos.map(utxo => {
-    return new TransactionInput({
+    return new KaspaHwTransactionInput({
       prevTxId: utxo.outpoint.transactionId,
       outpointIndex: utxo.outpoint.index,
       addressType: utxo.accountType,
@@ -56,11 +56,11 @@ export const buildTransaction = async (
     );
 
   const txOutputs = [
-    new TransactionOutput({
+    new KaspaHwTransactionOutput({
       value: amount.toNumber(),
       scriptPublicKey: addressToScriptPublicKey(recipient),
     }),
-    new TransactionOutput({
+    new KaspaHwTransactionOutput({
       value: changeAmount.toNumber(),
       scriptPublicKey: addressToScriptPublicKey(accountAddresses.nextChangeAddress.address),
     }),

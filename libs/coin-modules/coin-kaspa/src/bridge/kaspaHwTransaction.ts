@@ -9,16 +9,16 @@ type TransactionApiJSON = {
 };
 
 export class KaspaHwTransaction {
-  inputs: TransactionInput[];
-  outputs: TransactionOutput[];
+  inputs: KaspaHwTransactionInput[];
+  outputs: KaspaHwTransactionOutput[];
   version: number;
   changeAddressType: number;
   changeAddressIndex: number;
   account: number;
 
   constructor(txData: {
-    inputs: TransactionInput[];
-    outputs: TransactionOutput[];
+    inputs: KaspaHwTransactionInput[];
+    outputs: KaspaHwTransactionOutput[];
     version: number;
     changeAddressType?: number;
     changeAddressIndex?: number;
@@ -109,7 +109,7 @@ type TransactionInputApiJSON = {
   sigOpCount: number;
 };
 
-export class TransactionInput {
+export class KaspaHwTransactionInput {
   signature?: string | null;
   sighash?: string | null;
   value: number;
@@ -188,7 +188,7 @@ type TransactionOutputApiJSON = {
   };
 };
 
-export class TransactionOutput {
+export class KaspaHwTransactionOutput {
   value: number;
   scriptPublicKey: string;
 
@@ -222,14 +222,13 @@ export class TransactionOutput {
 
 export function toBigEndianHex(numberToConvert: number) {
   let baseStr = "0000000000000000";
-
   baseStr += numberToConvert.toString(16);
 
   return baseStr.substring(baseStr.length - 16, baseStr.length);
 }
 
 export default {
-  Transaction: KaspaHwTransaction,
-  TransactionInput,
-  TransactionOutput,
+  KaspaHwTransaction,
+  KaspaHwTransactionInput,
+  KaspaHwTransactionOutput,
 };

@@ -1,6 +1,6 @@
 import { selectUtxos } from "../utxoSelection";
-import { KaspaUtxo } from "../../types/bridge";
 import { BigNumber } from "bignumber.js";
+import { KaspaUtxo } from "../../types/kaspaNetwork";
 
 const sampleUtxo: KaspaUtxo = {
   address: "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee",

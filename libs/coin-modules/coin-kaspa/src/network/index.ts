@@ -2,10 +2,10 @@ import KaspaBIP32 from "../lib/bip32";
 import { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
 import { BigNumber } from "bignumber.js";
 import { getAddressesActive } from "./indexer-api/getAddressesActive";
-import { KaspaUtxo } from "../types/bridge";
 import { getUtxosForAddresses } from "./indexer-api/getUtxosForAddresses";
 import getTransactions from "./indexer-api/getTransactions";
 import { Operation, OperationType } from "@ledgerhq/types-live";
+import { KaspaUtxo } from "../types/kaspaNetwork";
 
 export { getFeeEstimate } from "./indexer-api/getFeeEstimate";
 export { getBalancesForAddresses } from "./indexer-api/getBalancesForAddresses";
@@ -19,7 +19,7 @@ const INITIAL_BALANCE = BigNumber(0);
 const GAP_LIMIT = 20;
 const SCAN_BATCH_SIZE = 200;
 
-const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size) ) / 1_118 (per_input))
+const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size with 2 outputs) ) / 1_118 (per_input))
 
 type AccountAddress = {
   type: number;
