@@ -1,6 +1,6 @@
-export * from "./bridge";
-export * from "./errors";
-export * from "./kaspaNetwork";
+export type * from "./bridge";
+export type * from "./errors";
+export type * from "./kaspaNetwork";
 
 // export correct names for ledger-live-common additionally
 export type { KaspaTransaction as Transaction } from "./bridge";
