@@ -7,10 +7,9 @@ import { submitTransaction } from "../network";
  * Broadcast a signed transaction
  * @param {signature: string, operation: string} signedOperation
  */
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  signedOperation,
-}) => {
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
+  console.log("transmitting: ", signature);
   const hash = (await submitTransaction(signature)).txId;
   return patchOperationWithHash(operation, hash);
 };

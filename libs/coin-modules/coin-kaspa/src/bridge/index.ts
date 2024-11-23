@@ -8,7 +8,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
-import type { KaspaAccount, Transaction, TransactionStatus } from "../types/bridge";
+import type { KaspaAccount, Transaction, TransactionStatus } from "../types";
 
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";

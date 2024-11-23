@@ -8,7 +8,7 @@ export const submitTransaction = async (
   transactionJson: string,
 ): Promise<SubmitTransactionResponse> => {
   try {
-    const response = await fetch(`${API_BASE}/transactions/submit`, {
+    const response = await fetch(`${API_BASE}/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -28,6 +28,8 @@ export const buildSignOperation =
 
         const tx = await buildTransaction(account, transaction);
 
+        console.log("here", tx);
+
         // Sign by device
         await signerContext(deviceId, signer => signer.signTransaction(tx));
 
