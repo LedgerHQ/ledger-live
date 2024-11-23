@@ -1,6 +1,6 @@
 import flatMap from "lodash/flatMap";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { KaspaTransaction } from "../types/bridge";
+import { Transaction } from "../types/bridge";
 
 const options = [
   {
@@ -16,9 +16,9 @@ const options = [
 ];
 
 function inferTransactions(
-  transactions: Array<{ account: AccountLike; transaction: KaspaTransaction }>,
+  transactions: Array<{ account: AccountLike; transaction: Transaction }>,
   opts: Record<string, any>,
-): KaspaTransaction[] {
+): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     if (transaction.family !== "kaspa") {
       throw new Error("transaction is not of type Kaspa");

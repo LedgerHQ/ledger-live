@@ -1,4 +1,4 @@
-import { KaspaTransaction } from "../types/bridge";
+import { Transaction } from "../types/bridge";
 
 /**
  * Apply patch to transaction
@@ -6,7 +6,7 @@ import { KaspaTransaction } from "../types/bridge";
  * @param {*} t
  * @param {*} patch
  */
-export const updateTransaction = (t: KaspaTransaction, patch: Partial<KaspaTransaction>) => ({
+export const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
   ...patch,
 });

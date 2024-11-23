@@ -8,7 +8,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
-import type { KaspaAccount, KaspaTransaction, KaspaTransactionStatus } from "../types/bridge";
+import type { KaspaAccount, Transaction, TransactionStatus } from "../types/bridge";
 
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
@@ -38,7 +38,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): 
 
 export function buildAccountBridge(
   signerContext: SignerContext<KaspaSigner>,
-): AccountBridge<KaspaTransaction, KaspaAccount, KaspaTransactionStatus> {
+): AccountBridge<Transaction, KaspaAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const sync = makeSync({

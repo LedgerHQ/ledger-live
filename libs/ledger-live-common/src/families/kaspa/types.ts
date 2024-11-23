@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-kaspa/types";
+export * from "@ledgerhq/coin-kaspa/types/index";

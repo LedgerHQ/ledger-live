@@ -1,5 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { KaspaTransaction, KaspaTransactionStatus } from "./types";
+import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
 function getDeviceTransactionConfig({
@@ -8,8 +8,8 @@ function getDeviceTransactionConfig({
 }: {
   account: AccountLike;
   parentAccount?: Account;
-  transaction: KaspaTransaction;
-  status: KaspaTransactionStatus;
+  transaction: Transaction;
+  status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 

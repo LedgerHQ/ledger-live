@@ -8,8 +8,8 @@ import type { Resolver } from "../../hw/getAddress/types";
 import { KaspaSigner } from "@ledgerhq/coin-kaspa/lib/signer";
 import {
   KaspaAccount,
-  KaspaTransaction,
-  KaspaTransactionStatus,
+  Transaction,
+  TransactionStatus,
 } from "@ledgerhq/coin-kaspa/types/bridge";
 import { createBridges } from "@ledgerhq/coin-kaspa/lib/bridge/index";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -26,7 +26,7 @@ const kaspaCoin = getCryptoCurrencyById("kaspa");
 const resolver: Resolver = createResolver(createSigner, kaspaResolver);
 const getCurrencyConfig = (): KaspaCoinConfig => getCurrencyConfiguration(kaspaCoin);
 
-const bridge: Bridge<KaspaTransaction, KaspaAccount, KaspaTransactionStatus> = createBridges(
+const bridge: Bridge<Transaction, KaspaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
 );
 const cliTools = makeCliTools;

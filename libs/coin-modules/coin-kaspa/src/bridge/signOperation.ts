@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { buildTransaction } from "./buildTransaction";
-import { KaspaAccount, KaspaTransaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types/bridge";
 import { KaspaSigner } from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import buildInitialOperation from "./buildInitialOperation";
@@ -14,7 +14,7 @@ import buildInitialOperation from "./buildInitialOperation";
 export const buildSignOperation =
   (
     signerContext: SignerContext<KaspaSigner>,
-  ): AccountBridge<KaspaTransaction, KaspaAccount>["signOperation"] =>
+  ): AccountBridge<Transaction, KaspaAccount>["signOperation"] =>
   ({ account, deviceId, transaction }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {

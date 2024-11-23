@@ -1,7 +1,7 @@
-import { KaspaTransaction } from "../types/bridge";
+import { Transaction } from "../types/bridge";
 import { BigNumber } from "bignumber.js";
 
-export const createTransaction = (): KaspaTransaction => ({
+export const createTransaction = (): Transaction => ({
   amount: BigNumber(0),
   recipient: "",
   useAllAmount: false,

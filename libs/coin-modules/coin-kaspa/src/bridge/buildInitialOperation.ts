@@ -1,11 +1,11 @@
-import { KaspaAccount, KaspaTransaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types/bridge";
 import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export const buildInitialOperation = (
   account: KaspaAccount,
-  transaction: KaspaTransaction,
+  transaction: Transaction,
 ): Operation => {
   const { id } = account;
 

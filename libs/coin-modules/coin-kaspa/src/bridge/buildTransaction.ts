@@ -4,7 +4,7 @@ import { selectUtxos } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
 
 import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput } from "./kaspaHwTransaction";
-import { KaspaAccount, KaspaTransaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types/bridge";
 
 /**
  * Assembles a transaction for the Kaspa network.
@@ -15,13 +15,13 @@ import { KaspaAccount, KaspaTransaction } from "../types/bridge";
  * change amounts. It also ensures the account's extended public key is set before proceeding.
  *
  * @param {KaspaAccount} a - The account from which the transaction will be initiated, including an extended public key (xpub).
- * @param {KaspaTransaction} t - The transaction details, which include the recipient's address and the amount to be transferred.
+ * @param {Transaction} t - The transaction details, which include the recipient's address and the amount to be transferred.
  * @returns {Promise<KaspaHwTransaction>} A promise that resolves to the prepared hardware transaction object.
  * @throws Will throw an error if the account's extended public key (xpub) is not set.
  */
 export const buildTransaction = async (
   a: KaspaAccount,
-  t: KaspaTransaction,
+  t: Transaction,
 ): Promise<KaspaHwTransaction> => {
   const recipient = t.recipient;
   const amount: BigNumber = t.amount;

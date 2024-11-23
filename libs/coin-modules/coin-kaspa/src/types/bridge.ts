@@ -20,17 +20,17 @@ export type KaspaSignedOperation = SignedOperation & {
   signedTxJson: string;
 };
 
-export type KaspaTransaction = TransactionCommon & {
+export type Transaction = TransactionCommon & {
   family: "kaspa";
   feerate: number | null;
   rbf: boolean;
 };
 
-export type KaspaTransactionRaw = TransactionCommonRaw & {
+export type TransactionRaw = TransactionCommonRaw & {
   family: "kaspa";
   feerate: number | null;
   rbf: boolean;
 };
 
-export type KaspaTransactionStatus = TransactionStatusCommon;
-export type KaspaTransactionStatusRaw = TransactionStatusCommonRaw;
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
