@@ -19,7 +19,6 @@ const ManageKeyDrawer = ({
   onCreateKey,
 }: HookResult) => {
   const getScene = () => {
-    console.log("deleteMutation", deleteMutation.error);
     if (deleteMutation.error) {
       if (isNoTrustchainError(deleteMutation.error)) {
         return <SpecificError error={ErrorReason.NO_TRUSTCHAIN} primaryAction={onCreateKey} />;
