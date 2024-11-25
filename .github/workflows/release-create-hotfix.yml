@@ -44,14 +44,6 @@ jobs:
         with:
           from_level: major
           to_level: patch
-
-      - name: TEMP - PRINT CHANGESETS
-        run: |
-          for file in .changeset/*.md; do
-            echo "Contents of $file:"
-            cat "$file"
-          done
-
       - name: enter prerelease mode
         run: pnpm changeset pre enter hotfix
       - name: commit
