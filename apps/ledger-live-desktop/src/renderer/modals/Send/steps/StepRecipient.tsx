@@ -25,8 +25,8 @@ import {
 import MemoTagSendInfo from "LLD/features/MemoTag/components/MemoTagSendInfo";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import CheckBox from "~/renderer/components/CheckBox";
-import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/application";
-import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/application";
+import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
+import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
 
@@ -209,7 +209,7 @@ export const StepRecipientFooter = ({
           {t("send.info.needMemoTag.checkbox.label")}
         </Text>
       </Flex>
-      <Flex>
+      <Flex columnGap={2}>
         <Button secondary onClick={handleOnRefuseAddTag}>
           {t("send.info.needMemoTag.cta.not.addTag")}
         </Button>
