@@ -6,6 +6,9 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
 import { HookResult } from "./useManageKeyDrawer";
+import { isNoTrustchainError } from "../../utils/errors";
+import { SpecificError } from "../../components/Error/SpecificError";
+import { ErrorReason } from "../../hooks/useSpecificError";
 
 const ManageKeyDrawer = ({
   isDrawerVisible,
@@ -13,9 +16,14 @@ const ManageKeyDrawer = ({
   deleteMutation,
   onClickConfirm,
   handleCancel,
+  onCreateKey,
 }: HookResult) => {
   const getScene = () => {
+    console.log("deleteMutation", deleteMutation.error);
     if (deleteMutation.error) {
+      if (isNoTrustchainError(deleteMutation.error)) {
+        return <SpecificError error={ErrorReason.NO_TRUSTCHAIN} primaryAction={onCreateKey} />;
+      }
       return (
         <GenericErrorView
           error={deleteMutation.error}
