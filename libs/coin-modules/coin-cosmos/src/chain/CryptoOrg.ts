@@ -13,7 +13,7 @@ class CryptoOrg extends CosmosBase {
     this.stakingDocUrl = "";
     this.unbondingPeriod = 28;
     this.prefix = "cro";
-    this.validatorPrefix = `${this.prefix}valoper`;
+    this.validatorPrefix = `${this.prefix}cncl`;
   }
 }
 
