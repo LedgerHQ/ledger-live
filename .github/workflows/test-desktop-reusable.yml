@@ -74,7 +74,7 @@ jobs:
   unit-tests:
     name: "Desktop Unit Tests"
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
