@@ -1,5 +1,11 @@
 # @ledgerhq/ui-shared
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#8371](https://github.com/LedgerHQ/ledger-live/pull/8371) [`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112) Thanks [@thesan](https://github.com/thesan)! - Update the react-ui Carousel based on the portfolio content cards design
+
 ## 0.2.2
 
 ### Patch Changes
