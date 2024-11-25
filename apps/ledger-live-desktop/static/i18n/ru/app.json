@@ -442,6 +442,14 @@
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ не поддерживает обмен TON внутри Ledger Live",
+      "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON внутри Ledger Live. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ не поддерживает токены сети Solana в Ledger Live",
+      "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для взаимодействия с токенами сети Solana через Ledger Live. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ не поддерживает обмен ADA через Ledger Live",
+      "ada_description" : "Используйте другие совместимые устройства Ledger для обмена ADA через Ledger Live. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+    },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
       "learnMore" : "Что такое Swap (обмен криптоактивов)?",
@@ -2390,7 +2398,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Устранение неполадок с сетью"
+    "title" : "Устранение неполадок с сетью",
+    "myLedgerServices" : "Сервисы «Мой Ledger» (скриптраннер)",
+    "bitcoinExplorers" : "Обозреватели Биткойна",
+    "ethereumExplorers" : "Обозреватели Эфириума",
+    "countervaluesApi" : "API эквивалентных сумм",
+    "announcements" : "Новости",
+    "status" : "Состояние",
+    "test" : "ТЕСТ",
+    "renderer" : "СОСТОЯНИЕ"
   },
   "systemLanguageAvailable" : {
     "title" : "Поменять язык в приложении?",
@@ -4084,6 +4100,8 @@
       "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета в Ledger Live между разными смартфонами и компьютерами.",
+      "mevProtection" : "Защита от MEV",
+      "mevProtectionDesc" : "Активируйте защиту от MEV для комфортного проведения транзакций в Эфириуме",
       "marketPerformanceWidget" : "Виджет поведения рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
@@ -4107,6 +4125,10 @@
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
         "placeholder" : "Данные о поставщике обмена в формате CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Биржа в режиме тестового партнёра",
+        "desc" : "Активация использования публичного ключа стейджинга партнёра"
       },
       "analyticsConsole" : {
         "title" : "Активация консоли аналитики",
