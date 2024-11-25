@@ -57,6 +57,6 @@ jobs:
       - name: push
         run: |
           git push origin hotfix-angusbayley-TEST
-          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
+          gh pr create --title ":fire: Hotfix [NOT A REAL HOTFIX - test by @angusbayley] ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
