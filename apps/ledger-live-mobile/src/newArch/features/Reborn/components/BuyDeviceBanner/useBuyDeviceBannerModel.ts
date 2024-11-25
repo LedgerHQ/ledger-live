@@ -11,6 +11,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { WrappedButtonProps } from "~/components/wrappedUi/Button";
 import { Props as ThemeProps } from "~/components/theme/ForceTheme";
+import { useRebornFlow } from "../../hooks/useRebornFlow";
 
 import buyFlexSource from "~/images/illustration/Shared/_FlexTop.png";
 import buyDoubleFlexSource from "~/images/illustration/Shared/_FlexTwoSides.png";
@@ -48,6 +49,7 @@ const useBuyDeviceBannerModel = ({
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const revertTheme: ThemeProps["selectedPalette"] = theme === "light" ? "dark" : "light";
+  const { navigateToRebornFlow } = useRebornFlow();
 
   const imageSource: ImageSourcePropType = (() => {
     switch (image) {
@@ -63,8 +65,8 @@ const useBuyDeviceBannerModel = ({
   })();
 
   const handleOnPress = useCallback(() => {
-    navigate(NavigatorName.BuyDevice);
-  }, [navigate]);
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow]);
 
   const handleSetupCtaOnPress = useCallback(() => {
     navigate(NavigatorName.BaseOnboarding, {

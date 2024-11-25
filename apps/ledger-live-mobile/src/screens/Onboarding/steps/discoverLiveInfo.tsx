@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
-
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
 
@@ -55,6 +55,7 @@ const Item = ({
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
@@ -70,10 +71,8 @@ const Item = ({
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    navigation.navigate(NavigatorName.BuyDevice, {
-      screen: undefined,
-    } as never);
-  }, [navigation, onClick]);
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow, onClick]);
 
   const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
@@ -95,8 +94,7 @@ const Item = ({
 
   const pressBuy = useCallback(() => {
     buyLedger();
-    onClick("Buy a Ledger");
-  }, [buyLedger, onClick]);
+  }, [buyLedger]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`}>
@@ -139,9 +137,11 @@ const Item = ({
           >
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
-          <Button onPress={pressBuy} type={"shade"} outline={true}>
-            {t("onboarding.discoverLive.buyALedgerNow")}
-          </Button>
+          {!rebornFeatureFlagEnabled && (
+            <Button onPress={pressBuy} type={"shade"} outline={true}>
+              {t("onboarding.discoverLive.buyALedgerNow")}
+            </Button>
+          )}
         </Box>
       )}
     </Flex>
