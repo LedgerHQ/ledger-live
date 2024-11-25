@@ -4,9 +4,9 @@ import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
-  isExchangeTypeNg,
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
+  isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
@@ -106,8 +106,8 @@ const completeExchange = (
 
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
-        ].getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
-        if (unsubscribed) return;
+        ]?.getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
+        if (unsubscribed || !payoutAddressParameters) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
