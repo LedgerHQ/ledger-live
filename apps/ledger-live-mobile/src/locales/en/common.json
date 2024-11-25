@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice": {
     "headerTitle": "Purchase successful",
-    "title": "Congratulations",
-    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "title": "Thanks for trusting Ledger",
+    "desc": "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover": {
     "title": "Discover",
