@@ -152,8 +152,7 @@ const AutoplayFlags = {
 };
 
 function watchDragX(emblaApi: EmblaCarouselType) {
-  emblaApi.on("pointerDown", watch);
-  emblaApi.on("pointerUp", unWatch);
+  emblaApi.on("pointerDown", watchMouse);
 
   let start: number | undefined;
   let end: number | undefined;
@@ -163,22 +162,19 @@ function watchDragX(emblaApi: EmblaCarouselType) {
       return typeof start === "undefined" || typeof end === "undefined" ? 0 : end - start;
     },
     clean: () => {
-      unWatch();
-      emblaApi.off("pointerDown", watch);
-      emblaApi.off("pointerUp", unWatch);
+      emblaApi.off("pointerDown", watchMouse);
     },
   };
 
-  function handleMouseMove(event: MouseEvent) {
-    if (typeof start === "undefined") start = event.clientX;
-    else end = event.clientX;
-  }
-  function watch() {
-    start = undefined;
-    end = undefined;
-    document.addEventListener("mousemove", handleMouseMove);
-  }
-  function unWatch() {
-    document.removeEventListener("mousemove", handleMouseMove);
+  function watchMouse() {
+    document.addEventListener("mousemove", function handler(event: MouseEvent) {
+      document.removeEventListener("mousemove", handler);
+      start = event.clientX;
+      end = undefined;
+    });
+    document.addEventListener("mouseup", function handler(event) {
+      document.removeEventListener("mouseup", handler);
+      end = event.clientX;
+    });
   }
 }
