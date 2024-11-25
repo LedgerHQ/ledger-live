@@ -340,8 +340,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") {
-    return renderHardwareUpdate();
+  if (
+    (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") ||
+    (request as SwapRequest)?.provider === "uniswap"
+  ) {
+    return renderHardwareUpdate((request as SwapRequest)?.provider);
   }
 
   if (listingApps) {

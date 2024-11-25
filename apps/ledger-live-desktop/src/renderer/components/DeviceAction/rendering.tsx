@@ -960,17 +960,17 @@ const OpenSwapBtn = () => {
   );
 };
 
-export const renderHardwareUpdate = () => (
+export const renderHardwareUpdate = (provider: string) => (
   <Wrapper>
     <Header>
       <Image resource={Nano} alt="NanoS" mb="40px"></Image>
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
-        <Trans i18nKey="swap.wrongDevice.title" />
+        <Trans i18nKey="swap.wrongDevice.title" values={{ provider: provider }} />
       </Title>
       <Text variant="body" color="palette.text.shade60" textAlign="center">
-        <Trans i18nKey="swap.wrongDevice.description" />
+        <Trans i18nKey="swap.wrongDevice.description" values={{ provider: provider }} />
       </Text>
     </Flex>
     <ButtonFooter>
