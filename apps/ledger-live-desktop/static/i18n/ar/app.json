@@ -442,6 +442,14 @@
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
+    "incompatibility" : {
+      "ton_title" : "™Ledger Nano S ليست متوافقة مع مبادلة Ton على Ledger Live",
+      "ton_description" : "لمبادلة Ton من خلال Ledger Live استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "spl_tokens_title" : "™Ledger Nano S ليست متوافقة مع رموز سولانا (Solana) على Ledger Live",
+      "spl_tokens_description" : "لإجراء معاملات رموز سولانا (Solana) من خلال Ledger Live استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ada_title" : "™Ledger Nano S ليست متوافقة مع مبادلة ADA على Ledger Live",
+      "ada_description" : "لمبادلة ADA من خلال Ledger Live استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+    },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
       "learnMore" : "ما هي المبادلة؟",
@@ -2390,7 +2398,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "استكشاف أخطاء الشبكة وإصلاحها"
+    "title" : "استكشاف أخطاء الشبكة وإصلاحها",
+    "myLedgerServices" : "خدمات My Ledger (جهازي Ledger) (مشغّل النصوص)",
+    "bitcoinExplorers" : "مستكشفات بيتكوين",
+    "ethereumExplorers" : "مستكشفات إيثريوم",
+    "countervaluesApi" : "API القيم المقابلة",
+    "announcements" : "الإعلانات",
+    "status" : "الحالة",
+    "test" : "اختبر",
+    "renderer" : "المؤدي"
   },
   "systemLanguageAvailable" : {
     "title" : "تريد تغير لغة تطبيقك؟",
@@ -4084,6 +4100,8 @@
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
       "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
+      "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
+      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -4107,6 +4125,10 @@
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "منصة التداول في وضع الشريك الاختباري",
+        "desc" : "تمكين استخدام المفتاح العام لمرحلة الشريك"
       },
       "analyticsConsole" : {
         "title" : "السماح بوحدة تحكم التحليلات",
