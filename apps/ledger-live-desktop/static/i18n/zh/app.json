@@ -442,6 +442,14 @@
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ 不支持通过 Ledger Live 互换 TON",
+      "ton_description" : "要通过 Ledger Live 互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "spl_tokens_title" : "Ledger Nano S™ 不支持通过 Ledger Live 交易 Solana 代币",
+      "spl_tokens_description" : "要通过 Ledger Live 交易 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nanos S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ada_title" : "Ledger Nano S™ 不支持通过 Ledger Live 互换 ADA",
+      "ada_description" : "要通过 Ledger Live 互换 ADA，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nanos S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+    },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
       "learnMore" : "什么是互换（Swap）？",
@@ -2390,7 +2398,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "排除网络故障"
+    "title" : "排除网络故障",
+    "myLedgerServices" : "“我的 Ledger”服务（脚本运行器）",
+    "bitcoinExplorers" : "比特币浏览器",
+    "ethereumExplorers" : "以太坊浏览器",
+    "countervaluesApi" : "对价 API",
+    "announcements" : "公告",
+    "status" : "状态",
+    "test" : "测试",
+    "renderer" : "渲染器"
   },
   "systemLanguageAvailable" : {
     "title" : "更改您应用的语言？",
@@ -4084,6 +4100,8 @@
       "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
+      "mevProtection" : "MEV 保护",
+      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4107,6 +4125,10 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "在测试合作伙伴模式下兑换",
+        "desc" : "允许使用合作伙伴阶段公钥"
       },
       "analyticsConsole" : {
         "title" : "允许分析控制台",
