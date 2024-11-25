@@ -103,6 +103,8 @@ const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev 
     }
   }, [emblaApi, updateIndex, variant]);
 
+  if (!children.length) return null;
+
   const handleGotoPrevSlide = () => emblaApi?.emit("button:prev" as EmblaEventType);
   const handleGotoNextSlide = () => emblaApi?.emit("button:next" as EmblaEventType);
 
