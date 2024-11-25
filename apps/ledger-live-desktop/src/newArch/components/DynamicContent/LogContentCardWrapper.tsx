@@ -3,7 +3,7 @@ import * as braze from "@braze/web-sdk";
 import { useSelector } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
-import { Flex } from "@ledgerhq/react-ui";
+import { Box } from "@ledgerhq/react-ui";
 
 interface LogContentCardWrapperProps {
   id: string;
@@ -57,9 +57,9 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   }, [currentCard, isTrackedUser, additionalProps]);
 
   return (
-    <Flex width="100%" ref={ref}>
+    <Box width="100%" ref={ref}>
       {children}
-    </Flex>
+    </Box>
   );
 };
 
