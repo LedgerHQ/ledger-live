@@ -65,7 +65,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'release') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/automatic-ci-changeset-control
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
         with:
           from_level: patch
           to_level: minor
@@ -73,7 +73,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/automatic-ci-changeset-control
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
         with:
           from_level: minor
           to_level: patch
@@ -81,7 +81,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/automatic-ci-changeset-control
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
         with:
           from_level: major
           to_level: patch
