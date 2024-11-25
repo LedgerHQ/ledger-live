@@ -300,7 +300,7 @@ const tooLowAmountForQuoteSwaps = [
     swap: new Swap(
       Account.ETH_1,
       Account.BTC_NATIVE_SEGWIT_1,
-      "0.005",
+      "0.001",
       Fee.MEDIUM,
       Provider.CHANGELLY,
       Rate.FLOAT,
