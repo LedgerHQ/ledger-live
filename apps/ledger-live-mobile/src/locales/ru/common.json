@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
     },
@@ -1287,20 +1293,20 @@
     "title" : "Вам нужен Ledger",
     "desc" : "В целях безопасности Ledger Live работает только при использовании устройства. Для продолжения вам необходимо устройство.",
     "cta" : "Купить Ledger",
-    "footer" : "У меня уже есть устройство, его необходимо настроить",
-    "bannerTitle" : "Храните криптовалюту и NFT в безопасности",
-    "bannerTitle2" : "Для торговли с устройством Ledger",
-    "bannerSubtitle" : "вам потребуется Nano",
-    "bannerButtonTitle" : "Подробнее о Nano",
-    "bannerButtonTitle2" : "Купить устройство",
-    "setupCta" : "У меня уже есть устройство, настроить его"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "Купить Ledger",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Уже получили устройство?",
     "desc" : "Как только получите устройство, можете начать его настройку через Ledger Live.",
     "cta" : "Настройка устройства",
-    "bannerTitle" : "Получили устройство?",
-    "bannerCta" : "Начните настройку",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "Продолжить"
   },
   "purchaseDevice" : {
@@ -2360,8 +2366,7 @@
       "swap" : "Обмен",
       "send" : "Отправить",
       "deposit" : "Получить",
-      "stake" : "Стейкать",
-      "yield" : "Доходность"
+      "stake" : "Стейкать"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2871,6 +2876,8 @@
       "developerModeDesc" : "Показывать приложения от разработчиков и из тестнета во вкладке «Мой Ledger».",
       "analytics" : "Аналитика",
       "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения, чтобы измерять производительность работы Ledger Live, а также улучшать приложение и ваш опыт взаимодействия с ним.",
+      "mevProtection" : "Защита от MEV",
+      "mevProtectionDesc" : "Активируйте защиту от MEV для комфортного проведения транзакций в Эфириуме",
       "personalizedRecommendations" : "Персонализация",
       "personalizedRecommendationsDesc" : "Позволяет Ledger собирать данные об использовании приложения, чтобы предоставлять актуальные советы и контент на основе ваших предпочтений, а также помогать в нашей оценке эффективности проведения различных маркетинговых кампаний.",
       "analyticsModal" : {
@@ -3270,7 +3277,7 @@
     },
     "stake" : {
       "title" : "Стейкинг",
-      "description" : "Стейкайте криптоактивы"
+      "description" : "Получайте вознаграждения с вашей крипты"
     },
     "swap" : {
       "title" : "Обмен",
@@ -5904,6 +5911,10 @@
         "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
       },
       "reserveWarning" : "Убедитесь в наличии как минимум {{amount}} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписать её. SPL-токены в сети Solana отличаются уникальными характеристиками. Подробнее о них: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
