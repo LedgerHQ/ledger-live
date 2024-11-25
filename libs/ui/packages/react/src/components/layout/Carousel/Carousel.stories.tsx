@@ -1,25 +1,15 @@
+import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import React, { FC, ReactElement, useContext } from "react";
+
+import PortfolioContentCard from "../ContentCard/PortfolioContentCard";
 import Carousel from "./";
 import { Props } from "./types";
 
-const CarouselStory = (args: Omit<Props, "children"> & { children: number }) => {
-  const slides = Array.from({ length: args.children }, (_, index) => (
-    <div
-      key={index}
-      style={{
-        backgroundColor: "hsl(" + Math.random() * 360 + ", 100%, 75%)",
-        padding: "16px 24px",
-        borderRadius: "5px",
-      }}
-    >
-      Slide {index}
-    </div>
-  ));
+type Args = Omit<Props, "children"> & { children: number };
+type Parameters = { Slide: FC<{ index: number }> };
 
-  return <Carousel variant={args.variant} children={slides} />;
-};
-
+const SlideContext = React.createContext<ReactElement[]>([]);
 export default {
   title: "Layout/Carousel",
   argTypes: {
@@ -33,6 +23,9 @@ export default {
       defaultValue: "default",
       control: "inline-radio",
     },
+    onChange: {
+      description: "Function called when a new slide is shown.",
+    },
   },
   args: {
     variant: "default",
@@ -45,7 +38,55 @@ export default {
       },
     },
   },
-  render: CarouselStory,
-} satisfies Meta;
+  decorators: [
+    (Story: FC, { args, parameters }: { args: Args; parameters: Parameters }) => (
+      <SlideContext.Provider
+        value={Array.from({ length: args.children }, (_, index) => (
+          <parameters.Slide key={index} index={index} />
+        ))}
+      >
+        <Story />
+      </SlideContext.Provider>
+    ),
+  ],
+  render: ({ children, ...props }: Args) => (
+    <Carousel {...props}>{useContext(SlideContext)}</Carousel>
+  ),
+} satisfies Meta<Args>;
 
-export const Default: StoryObj = {};
+export const Default: StoryObj<Args> = {
+  parameters: {
+    Slide: (({ index }) => (
+      <div
+        style={{
+          backgroundColor: `hsl(${Math.random() * 360}, 100%, 75%)`,
+          padding: "16px 24px",
+          borderRadius: "5px",
+        }}
+      >
+        Slide {index}
+      </div>
+    )) satisfies Parameters["Slide"],
+  },
+};
+
+export const PortfolioContentCards: StoryObj<Args> = {
+  parameters: {
+    Slide: (({ index }) => (
+      <PortfolioContentCard
+        title="Ledger Recover"
+        description="Get peace of mind and start your free trial."
+        cta={index % 2 ? undefined : "Start my free trial"}
+        tag={index % 3 ? undefined : "New"}
+        image={(index + 1) % 4 ? IMAGE_SRC : undefined}
+        onClick={() => onSlideAction(`click on slide ${index}`)}
+        onClose={() => onSlideAction(`close slide ${index}`)}
+      />
+    )) satisfies Parameters["Slide"],
+  },
+};
+
+const onSlideAction = action("onSlideAction");
+
+const IMAGE_SRC =
+  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='526' viewBox='0 0 450 526'><defs><linearGradient id='g' x0='0' y0='0' x1='1' y1='1'><stop stop-color='%23000' offset='0%' /><stop stop-color='%23FFF' offset='100%' /></linearGradient></defs><path d='M0,0 H450 V526 Q0,526 0,0 z' fill='url(%23g)' /></svg>";

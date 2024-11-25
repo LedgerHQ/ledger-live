@@ -16,6 +16,7 @@ import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { PtxToast } from "../../Toast/PtxToast";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -39,6 +40,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
 
   const { t } = useTranslation();
+  const stakeLabel = getStakeLabelLocaleBased();
+
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
   const areAccountsBalanceEmpty = useMemo(
@@ -152,7 +155,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(canBeStaken
               ? [
                   {
-                    label: currency.id === "bitcoin" ? t("account.yield") : t("account.stake"),
+                    label: t(stakeLabel),
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
@@ -248,6 +251,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     hasAccounts,
     parentAccount,
     readOnlyModeEnabled,
+    stakeLabel,
     t,
     route,
   ]);

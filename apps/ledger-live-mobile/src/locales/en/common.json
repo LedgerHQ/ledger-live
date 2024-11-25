@@ -1287,20 +1287,20 @@
     "title": "You need a Ledger",
     "desc": "For your security, Ledger Live only works with a device. You need a device in order to continue.",
     "cta": "Buy your Ledger now",
-    "footer": "I already have a device, set it up now",
-    "bannerTitle": "Keep your crypto and NFTs safe",
-    "bannerTitle2": "You'll need a Nano to trade",
-    "bannerSubtitle": "with a Ledger Device",
-    "bannerButtonTitle": "Discover the Nano",
-    "bannerButtonTitle2": "Buy a device",
-    "setupCta": "I already have a device, set it up"
+    "footer": "I already have a Ledger, set it up",
+    "bannerTitle": "Top-notch security for your crypto and NFTs",
+    "bannerTitle2": "You will need a Ledger to be able to trade",
+    "bannerSubtitle": "with a Ledger Flex",
+    "bannerButtonTitle": "Discover the Flex",
+    "bannerButtonTitle2": "Buy a Ledger",
+    "setupCta": "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall": {
     "title": "Have you received your device?",
     "desc": "Once you receive your device, you can start its setup through Ledger Live!",
     "cta": "Setup my device",
-    "bannerTitle": "Received your device?",
-    "bannerCta": "Begin the setup",
+    "bannerTitle": "Received your Ledger?",
+    "bannerCta": "Begin setup",
     "continue": "Continue"
   },
   "purchaseDevice": {
@@ -2360,8 +2360,7 @@
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake",
-      "yield": "Yield"
+      "stake": "Stake"
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -3272,7 +3271,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Stake your crypto holdings."
+      "description": "Get rewards on your crypto."
     },
     "swap": {
       "title": "Swap",
