@@ -560,8 +560,8 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     ],
     explorerViews: [
       {
-        tx: "https://cronos-pos.org/explorer/tx/$hash",
-        address: "https://cronos-pos.org/explorer/account/$address",
+        tx: "https://www.mintscan.io/crypto-org/tx/$hash",
+        address: "https://www.mintscan.io/crypto-org/validators/$address",
       },
     ],
   },
