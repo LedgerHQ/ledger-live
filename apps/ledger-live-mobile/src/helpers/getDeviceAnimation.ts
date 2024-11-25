@@ -20,6 +20,8 @@ import NanoXContinueDark from "../animations/device/nanoX/dark/continue.json";
 import NanoXContinueLight from "../animations/device/nanoX/light/continue.json";
 import NanoXPairingDark from "../animations/device/nanoX/dark/pairing.json";
 import NanoXPairingLight from "../animations/device/nanoX/light/pairing.json";
+import NanoXPairedDark from "../animations/device/nanoX/dark/paired.json";
+import NanoXPairedLight from "../animations/device/nanoX/light/paired.json";
 
 import StaxPinDark from "../animations/device/stax/dark/pin.json";
 import StaxPinLight from "../animations/device/stax/light/pin.json";
@@ -249,8 +251,8 @@ const animations: AnimationsCollection = {
       dark: NanoXPairingDark,
     },
     blePaired: {
-      light: NanoXPairingLight,
-      dark: NanoXPairingDark,
+      light: NanoXPairedLight,
+      dark: NanoXPairedDark,
     },
   },
   stax: {
