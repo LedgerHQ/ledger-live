@@ -169,7 +169,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2810",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001"),
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
     xrayTicket: "B2CQA-2811",
   },
   {
@@ -189,7 +189,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2815",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
   },
 ];
