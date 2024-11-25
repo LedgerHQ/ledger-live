@@ -36,7 +36,7 @@ import { getEnv } from "@ledgerhq/live-env";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
-  cliCommands?: (Observable<unknown> | Promise<unknown> | string)[];
+  cliCommands?: (() => Observable<unknown> | Promise<unknown> | string)[];
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
@@ -102,13 +102,12 @@ export class Application {
     }
 
     if (cliCommands?.length) {
-      await Promise.all(
-        cliCommands.map(async cmd => {
-          const result = cmd instanceof Observable ? await lastValueFrom(cmd) : await cmd;
-          // eslint-disable-next-line no-console
-          console.log("CLI result: ", result);
-        }),
-      );
+      for (const cmd of cliCommands) {
+        const promise = await cmd();
+        const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+        // eslint-disable-next-line no-console
+        console.log("CLI result: ", result);
+      }
     }
 
     if (this.userdataSpeculos) await loadConfig(this.userdataSpeculos, true);

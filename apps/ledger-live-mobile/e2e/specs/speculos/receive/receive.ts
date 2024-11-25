@@ -10,12 +10,14 @@ export async function runReceiveTest(account: Account, tmsLink: string) {
       await app.init({
         speculosApp: account.currency.speculosApp,
         cliCommands: [
-          CLI.liveData({
-            currency: account.currency.currencyId,
-            index: account.index,
-            appjson: app.userdataPath,
-            add: true,
-          }),
+          () => {
+            return CLI.liveData({
+              currency: account.currency.currencyId,
+              index: account.index,
+              appjson: app.userdataPath,
+              add: true,
+            });
+          },
         ],
       });
       await app.portfolio.waitForPortfolioPageToLoad();
