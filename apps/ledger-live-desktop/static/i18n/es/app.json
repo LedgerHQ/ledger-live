@@ -442,6 +442,14 @@
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
+    "incompatibility" : {
+      "ton_title" : "No es posible realizar permutas de Ton con el Ledger Nano S™ en Ledger Live",
+      "ton_description" : "Para permutar Ton desde Ledger Live, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ con tokens de Solana en Ledger Live",
+      "spl_tokens_description" : "Para realizar transacciones con tokens de Solana desde Ledger Live, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ada_title" : "No es posible realizar permutas de ADA con el Ledger Nano S™ en Ledger Live",
+      "ada_description" : "Para permutar ADA desde Ledger Live, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ o Ledger Stax™."
+    },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
       "learnMore" : "¿Qué es la permuta?",
@@ -2390,7 +2398,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Diagnosticar problemas de red"
+    "title" : "Diagnosticar problemas de red",
+    "myLedgerServices" : "Servicios de Mi Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Exploradores de Bitcoin",
+    "ethereumExplorers" : "Exploradores de Ethereum",
+    "countervaluesApi" : "API de contravalores",
+    "announcements" : "Anuncios",
+    "status" : "Estado",
+    "test" : "Prueba",
+    "renderer" : "RENDERIZADOR"
   },
   "systemLanguageAvailable" : {
     "title" : "¿Deseas cambiar el idioma de tu aplicación?",
@@ -4084,6 +4100,8 @@
       "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
+      "mevProtection" : "Protección contra MEV",
+      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -4107,6 +4125,10 @@
         "title" : "Modo de desarrollador del exchange",
         "desc" : "Añadir información del proveedor del exchange",
         "placeholder" : "Información del proveedor del exchange en formato CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Exchange en modo de prueba para socios",
+        "desc" : "Permitir uso de la clave pública provisional del socio"
       },
       "analyticsConsole" : {
         "title" : "Permitir consola de análisis",
