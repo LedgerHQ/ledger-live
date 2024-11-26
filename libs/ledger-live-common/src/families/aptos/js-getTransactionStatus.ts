@@ -6,6 +6,7 @@ import {
   FeeNotLoaded,
   GasLessThanEstimate,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
@@ -28,6 +29,10 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   }
 
   const estimatedFees = t.fees || BigNumber(0);
+
+  if (t.amount.eq(0)) {
+    errors.amount = new AmountRequired();
+  }
 
   const amount = t.amount;
 
