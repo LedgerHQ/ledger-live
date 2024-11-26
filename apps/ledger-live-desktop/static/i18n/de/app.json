@@ -2390,7 +2390,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Fehlersuche im Netzwerk"
+    "title" : "Fehlersuche im Netzwerk",
+    "myLedgerServices" : "Meine Ledger-Services (Scriptrunner)",
+    "bitcoinExplorers" : "Bitcoin-Explorer",
+    "ethereumExplorers" : "Ethereum-Explorer",
+    "countervaluesApi" : "Gegenwerte-API",
+    "announcements" : "Ankündigungen",
+    "status" : "Status",
+    "test" : "TEST",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "App-Sprache ändern?",
@@ -4084,6 +4092,8 @@
       "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern.",
+      "mevProtection" : "MEV-Schutz",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
       "marketPerformanceWidget" : "Marktperformance-Widget",
       "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
     },
@@ -4107,6 +4117,10 @@
         "title" : "Entwicklermodus für Börsen",
         "desc" : "Info des Börsenanbieters hinzufügen",
         "placeholder" : "Info des Börsenanbieters im CAL-Format"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Börse im Testpartnermodus",
+        "desc" : "Nutzung des öffentlichen Schlüssels der Partnerstufe aktivieren"
       },
       "analyticsConsole" : {
         "title" : "Analysekonsole zulassen",
