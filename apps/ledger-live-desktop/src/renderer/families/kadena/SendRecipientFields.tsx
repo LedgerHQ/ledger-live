@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import WarnBox from "~/renderer/components/WarnBox";
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
   status: TransactionStatus;
 };
 
-const Root = ({ onChange, account, transaction }: Props) => {
+const Root = ({ onChange, account, transaction, status }: Props) => {
   const bridge = getAccountBridge(account);
 
   const onSenderChainIdValueChange = useCallback(
@@ -35,6 +36,8 @@ const Root = ({ onChange, account, transaction }: Props) => {
     },
     [onChange, transaction, bridge],
   );
+
+  const chainIdsWarning = status.warnings.chainIds;
 
   return (
     <Box flow={1}>
@@ -69,9 +72,9 @@ const Root = ({ onChange, account, transaction }: Props) => {
           />
         </Box>
       </Box>
-      {transaction.receiverChainId !== transaction.senderChainId ? (
+      {chainIdsWarning ? (
         <WarnBox>
-          <Trans i18nKey="send.steps.details.transferCrossChainWarning" />
+          <TranslatedError error={chainIdsWarning} />
         </WarnBox>
       ) : null}
     </Box>

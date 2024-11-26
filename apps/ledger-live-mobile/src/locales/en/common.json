@@ -1076,6 +1076,9 @@
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
+    },
+    "KadenaCrossChainTransfer": {
+      "title": "Completion is required for this transaction involving an account in a different chain."
     }
   },
   "crash": {
@@ -2635,7 +2638,8 @@
       "stakedAmount": "Staked amount",
       "accountCreationFee": "Account Creation Fee",
       "senderChainId": "Sender Chain ID",
-      "receiverChainId": "Receiver Chain ID"
+      "receiverChainId": "Receiver Chain ID",
+      "completeCrossChainTransfer": "Complete transaction"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",

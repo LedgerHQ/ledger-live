@@ -1,3 +1,4 @@
+import { KADENA_CROSS_CHAIN_TRANSFER_FINISHER_URL } from "@ledgerhq/live-common/families/kadena/constants";
 import { KadenaOperation } from "@ledgerhq/live-common/families/kadena/types";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
@@ -38,9 +39,7 @@ const OperationDetailsExtra = ({
             <LinkWithExternalIcon
               fontSize={4}
               onClick={() =>
-                openURL(
-                  `https://tools.kadena.io/transactions/cross-chain-transfer-finisher?reqKey=${operation.hash}`,
-                )
+                openURL(`${KADENA_CROSS_CHAIN_TRANSFER_FINISHER_URL}?reqKey=${operation.hash}`)
               }
               label={<Trans i18nKey={"operationDetails.extra.finishCrossChainTransfer"} />}
             />

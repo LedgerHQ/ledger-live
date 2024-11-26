@@ -8,3 +8,6 @@ export const KDA_GAS_LIMIT_TRANSFER = BigNumber(2300); // '2300' is the GasLimit
 
 export const KDA_NETWORK = "testnet04";
 export const KDA_CHAINWEB_VER = "0.0";
+
+export const KADENA_CROSS_CHAIN_TRANSFER_FINISHER_URL =
+  "https://tools.kadena.io/transactions/cross-chain-transfer-finisher";

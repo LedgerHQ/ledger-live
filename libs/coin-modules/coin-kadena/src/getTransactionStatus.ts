@@ -8,10 +8,11 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchChainBalances } from "./api/network";
+import { KadenaCrossChainTransfer } from "./errors";
 import { Transaction, TransactionStatus } from "./types";
 import { baseUnitToKda, findChainById, validateAddress } from "./utils";
 
-type ValidatedTransactionFields = "recipient" | "amount";
+type ValidatedTransactionFields = "recipient" | "amount" | "chainIds";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 /**
@@ -72,6 +73,19 @@ const validateAmount = async (
   return [errors];
 };
 
+/**
+ * Validate chain ids for a transaction
+ */
+export const validateChainIds = (tx: Transaction): Array<ValidationIssues> => {
+  const warnings: ValidationIssues = {};
+
+  if (tx.receiverChainId !== tx.senderChainId) {
+    warnings.chainIds = new KadenaCrossChainTransfer();
+  }
+
+  return [warnings];
+};
+
 export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
@@ -80,10 +94,16 @@ export const getTransactionStatus = async (
   const [recipientErr] = validateRecipient(account, transaction);
   // Amount related errors and warnings
   const [amountErr] = await validateAmount(account, transaction);
+  // Receiver and sender chain IDs related errors and warnings
+  const [chainIdsWar] = validateChainIds(transaction);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...amountErr,
+  };
+
+  const warnings: ValidationIssues = {
+    ...chainIdsWar,
   };
 
   const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
@@ -91,7 +111,7 @@ export const getTransactionStatus = async (
   return {
     amount: transaction.amount,
     errors,
-    warnings: {},
+    warnings,
     estimatedFees: fees,
     totalSpent: transaction.amount.plus(fees),
   };

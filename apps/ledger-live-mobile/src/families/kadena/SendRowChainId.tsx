@@ -1,15 +1,20 @@
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction as KadenaTransaction } from "@ledgerhq/live-common/families/kadena/types";
 import type { Account } from "@ledgerhq/types-live";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+import Alert from "~/components/Alert";
 import LText from "~/components/LText";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
+import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 
 type Navigation = BaseComposite<
@@ -20,32 +25,41 @@ type Navigation = BaseComposite<
 
 type Props = {
   account: Account;
-  transaction: KadenaTransaction;
 } & Navigation;
-export default function SendRowChainID({ account, transaction }: Props) {
+export default function SendRowChainID({ account, navigation, route }: Props) {
   const { colors } = useTheme();
-  const navigation = useNavigation<Navigation["navigation"]>();
-  const route = useRoute<Navigation["route"]>();
+
+  const { transaction, setTransaction, status } = useBridgeTransaction(() => ({
+    transaction: route.params.transaction,
+    account,
+  }));
+  const kdaTransaction = transaction as KadenaTransaction;
+  invariant(transaction, "transaction is missing");
+
+  // handle any edit screen changes like fees changes
+  useTransactionChangeFromNavigation(setTransaction);
+
   const editSenderId = useCallback(() => {
     navigation.navigate(ScreenName.KadenaEditSenderChainId, {
       ...route.params,
       accountId: account.id,
       parentId: undefined,
       account,
-      transaction,
+      transaction: kdaTransaction,
     });
-  }, [navigation, route.params, account, transaction]);
+  }, [navigation, route.params, account, kdaTransaction]);
   const editReceiverId = useCallback(() => {
     navigation.navigate(ScreenName.KadenaEditReceiverChainId, {
       ...route.params,
       accountId: account.id,
       parentId: undefined,
       account,
-      transaction,
+      transaction: kdaTransaction,
     });
-  }, [navigation, route.params, account, transaction]);
-  const senderId = transaction.senderChainId;
-  const receiverId = transaction.receiverChainId;
+  }, [navigation, route.params, account, kdaTransaction]);
+  const senderId = kdaTransaction.senderChainId;
+  const receiverId = kdaTransaction.receiverChainId;
+  const chainIdsWarning = status?.warnings?.chainIds;
 
   return (
     <View>
@@ -95,6 +109,11 @@ export default function SendRowChainID({ account, transaction }: Props) {
           </LText>
         )}
       </SummaryRow>
+      {chainIdsWarning ? (
+        <Alert type="warning">
+          <TranslatedError error={chainIdsWarning} />
+        </Alert>
+      ) : null}
     </View>
   );
 }

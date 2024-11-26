@@ -1,5 +1,3 @@
-import { Transaction as KadenaTransaction } from "@ledgerhq/live-common/families/kadena/types";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -16,10 +14,8 @@ type Navigation = BaseComposite<
 >;
 
 type Props = {
-  transaction: Transaction;
   account: Account;
 } & Navigation;
 export default function KadenaSendRowsCustom(props: Props) {
-  const { transaction, ...rest } = props;
-  return <SendRowChainId {...rest} transaction={transaction as KadenaTransaction} />;
+  return <SendRowChainId {...props} />;
 }
