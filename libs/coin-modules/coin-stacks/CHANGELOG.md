@@ -1,5 +1,17 @@
 # @ledgerhq/coin-stacks
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#8391](https://github.com/LedgerHQ/ledger-live/pull/8391) [`2747ffb`](https://github.com/LedgerHQ/ledger-live/commit/2747ffb4cf5a9756eed992015ce9204da232aeab) Thanks [@qperrot](https://github.com/qperrot)! - fix: import from stacks, playwright test selecting 7d timerange
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0-next.0
+  - @ledgerhq/types-live@6.54.0-next.0
+
 ## 0.1.1
 
 ### Patch Changes

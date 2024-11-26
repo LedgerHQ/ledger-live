@@ -1,5 +1,59 @@
 # ledger-live-desktop
 
+## 2.93.0-next.0
+
+### Minor Changes
+
+- [#8434](https://github.com/LedgerHQ/ledger-live/pull/8434) [`3eee976`](https://github.com/LedgerHQ/ledger-live/commit/3eee97630e774b2ad38b8427f0328d0c77226fcb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improve MEV analytics
+
+- [#8378](https://github.com/LedgerHQ/ledger-live/pull/8378) [`adff5ed`](https://github.com/LedgerHQ/ledger-live/commit/adff5ed938549bd31a2ced20f3f924e63c76af45) Thanks [@VicAlbr](https://github.com/VicAlbr)! - tests: adding new e2e test
+
+- [#8402](https://github.com/LedgerHQ/ledger-live/pull/8402) [`d7f58b6`](https://github.com/LedgerHQ/ledger-live/commit/d7f58b6b22dfa5120a9038d2ef3459450bae70d8) Thanks [@sergiubreban](https://github.com/sergiubreban)! - fix style for a completed sell tx
+
+- [#8428](https://github.com/LedgerHQ/ledger-live/pull/8428) [`ed57628`](https://github.com/LedgerHQ/ledger-live/commit/ed5762814f5f2212982a462843043f9bac35e20d) Thanks [@thesan](https://github.com/thesan)! - Fix flaky portfolio e2e test
+
+- [#8385](https://github.com/LedgerHQ/ledger-live/pull/8385) [`12ffbd5`](https://github.com/LedgerHQ/ledger-live/commit/12ffbd55fdf52c0a8e3200527a918dbc58b8ca05) Thanks [@bharamboure-ledger](https://github.com/bharamboure-ledger)! - broadcasting on e2e tests only on scheduled workflows on Monday
+
+- [#8419](https://github.com/LedgerHQ/ledger-live/pull/8419) [`24e2ef9`](https://github.com/LedgerHQ/ledger-live/commit/24e2ef9f146d14a7a9bfbaca42b1e03d7e09f98f) Thanks [@themooneer](https://github.com/themooneer)! - Fix casper issues with new memo tag flow (using an intermediary screen) - feature flagged
+
+- [#8358](https://github.com/LedgerHQ/ledger-live/pull/8358) [`064828d`](https://github.com/LedgerHQ/ledger-live/commit/064828dc0e8b1759e55e425a5f4ac48ec02451a6) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - change label stake for UK to Yield, to Earn for others
+
+- [#8469](https://github.com/LedgerHQ/ledger-live/pull/8469) [`bce5744`](https://github.com/LedgerHQ/ledger-live/commit/bce574419278336d241cf2c063ad82ef7b2acc8c) Thanks [@VicAlbr](https://github.com/VicAlbr)! - updating test due to new modal (TAG)
+
+- [#8452](https://github.com/LedgerHQ/ledger-live/pull/8452) [`7a610a3`](https://github.com/LedgerHQ/ledger-live/commit/7a610a3d957cd1de82bbd820a51c8fbd633ed0cf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix notification center and action card layout
+
+- [#8392](https://github.com/LedgerHQ/ledger-live/pull/8392) [`72245a5`](https://github.com/LedgerHQ/ledger-live/commit/72245a510420fa8e02166a006c8d82a88da11a7f) Thanks [@themooneer](https://github.com/themooneer)! - use common MemoTagField for sol/xrp and extract memo related value from transaction coin/by/coin
+
+- [#8448](https://github.com/LedgerHQ/ledger-live/pull/8448) [`b135797`](https://github.com/LedgerHQ/ledger-live/commit/b1357973bd5c633c9483b634d1d8583a03dadbc5) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Adding E2E test for Ledger Sync
+
+- [#8445](https://github.com/LedgerHQ/ledger-live/pull/8445) [`5532e7f`](https://github.com/LedgerHQ/ledger-live/commit/5532e7f63c75ab3f91f0791740c34c9dff4d4dbf) Thanks [@ComradeAERGO](https://github.com/ComradeAERGO)! - Fixing the account names in webviews account selection
+
+- [#8416](https://github.com/LedgerHQ/ledger-live/pull/8416) [`a541e82`](https://github.com/LedgerHQ/ledger-live/commit/a541e82c076c1bbab360122c54b7054e16aa4737) Thanks [@Couto](https://github.com/Couto)! - Add swap related analytic events
+
+- [#8439](https://github.com/LedgerHQ/ledger-live/pull/8439) [`038cae0`](https://github.com/LedgerHQ/ledger-live/commit/038cae0b010991e94f812d334a1a09f2a6f747c2) Thanks [@themooneer](https://github.com/themooneer)! - add margin between MemoTag info prompt ctas / make sure that alwaysShowMemoTagInfo is persisted in settings instead of applicattion store
+
+- [#8391](https://github.com/LedgerHQ/ledger-live/pull/8391) [`2747ffb`](https://github.com/LedgerHQ/ledger-live/commit/2747ffb4cf5a9756eed992015ce9204da232aeab) Thanks [@qperrot](https://github.com/qperrot)! - fix: import from stacks, playwright test selecting 7d timerange
+
+- [#8401](https://github.com/LedgerHQ/ledger-live/pull/8401) [`5c4455f`](https://github.com/LedgerHQ/ledger-live/commit/5c4455f80b03991843e16c80c5af5a019db25227) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes app install and refactors logic
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb), [`cd565e3`](https://github.com/LedgerHQ/ledger-live/commit/cd565e3b6e0735f4f00a67f26279e22b17cef846), [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a), [`b9cffce`](https://github.com/LedgerHQ/ledger-live/commit/b9cffcebd1ecc4b24da730ffd17addf9a980cf3d), [`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a), [`2747ffb`](https://github.com/LedgerHQ/ledger-live/commit/2747ffb4cf5a9756eed992015ce9204da232aeab), [`517fa44`](https://github.com/LedgerHQ/ledger-live/commit/517fa44bbc40425995bf840ecab60773d022a30d), [`5c4455f`](https://github.com/LedgerHQ/ledger-live/commit/5c4455f80b03991843e16c80c5af5a019db25227)]:
+  - @ledgerhq/coin-framework@0.20.0-next.0
+  - @ledgerhq/types-live@6.54.0-next.0
+  - @ledgerhq/live-common@34.15.0-next.0
+  - @ledgerhq/coin-evm@2.6.0-next.0
+  - @ledgerhq/react-ui@0.17.0-next.0
+  - @ledgerhq/coin-bitcoin@0.8.9-next.0
+  - @ledgerhq/coin-cosmos@0.2.2-next.0
+  - @ledgerhq/coin-filecoin@1.3.4-next.0
+  - @ledgerhq/live-countervalues@0.2.14-next.0
+  - @ledgerhq/live-countervalues-react@0.2.14-next.0
+  - @ledgerhq/live-nft@0.4.14-next.0
+  - @ledgerhq/live-nft-react@0.4.14-next.0
+  - @ledgerhq/live-wallet@0.7.6-next.0
+  - @ledgerhq/domain-service@1.2.13-next.0
+
 ## 2.92.1
 
 ### Patch Changes
