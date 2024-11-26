@@ -4184,9 +4184,6 @@ importers:
       benchmark:
         specifier: ^2.1.4
         version: 2.1.4
-      buffer:
-        specifier: 6.0.3
-        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       camelcase:
         specifier: ^6.2.1
         version: 6.3.0
