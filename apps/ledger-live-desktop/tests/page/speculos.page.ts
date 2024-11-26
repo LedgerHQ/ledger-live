@@ -5,6 +5,7 @@ import {
   pressUntilTextFound,
   waitFor,
   containsSubstringInEvent,
+  activateLedgerSync,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
@@ -52,12 +53,7 @@ export class SpeculosPage extends AppPage {
 
   @step("Activate Ledger Sync")
   async activateLedgerSync() {
-    await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
-    await pressBoth();
-    await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await pressBoth();
+    await activateLedgerSync();
   }
 
   @step("Sign Send NFT Transaction")
