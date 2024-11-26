@@ -107,7 +107,10 @@ const completeExchange = (
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
         ]?.getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
-        if (unsubscribed || !payoutAddressParameters) return;
+        if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);

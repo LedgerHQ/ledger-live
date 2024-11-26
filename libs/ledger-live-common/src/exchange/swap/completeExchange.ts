@@ -130,7 +130,10 @@ const completeExchange = (
           payoutAccount.derivationMode,
           mainPayoutCurrency.id,
         );
-        if (unsubscribed || !payoutAddressParameters) return;
+        if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
@@ -169,7 +172,10 @@ const completeExchange = (
           refundAccount.derivationMode,
           mainRefundCurrency.id,
         );
-        if (unsubscribed || !refundAddressParameters) return;
+        if (unsubscribed) return;
+        if (!refundAddressParameters) {
+          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+        }
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
           await getCurrencyExchangeConfig(refundCurrency);
