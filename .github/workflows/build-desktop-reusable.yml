@@ -58,7 +58,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: ${{ matrix.config.name == 'mac' }}
+          install-proto: ${{ matrix.config.name != 'linux' }} # ledger-live-4xlarge has proto pre-installed
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
