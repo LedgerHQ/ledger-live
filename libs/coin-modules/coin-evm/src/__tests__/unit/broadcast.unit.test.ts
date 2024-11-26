@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
@@ -8,6 +9,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import axios from "axios";
 import * as API from "../../api/node/rpc.common";
 import LEDGER_API from "../../api/node/ledger";
 import broadcast from "../../broadcast";
@@ -26,6 +28,12 @@ jest.useFakeTimers();
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
+
+jest.mock("ethers");
+const mockEthers = jest.mocked(ethers);
+
+jest.mock("axios");
+const mockAxios = jest.mocked(axios);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -79,7 +87,114 @@ describe("EVM Family", () => {
     });
 
     describe("broadcast", () => {
-      it("should broadcast with mevProtected true using correct URI for Ledger NodeApi and no action for External NodeApi", async () => {
+      describe("MEV Protection", () => {
+        beforeAll(() => {
+          jest.spyOn(LEDGER_API, "broadcastTransaction").mockRestore();
+          jest.spyOn(API, "broadcastTransaction").mockRestore();
+        });
+
+        afterEach(() => {
+          jest.clearAllMocks();
+        });
+
+        const coinTransaction: EvmTransaction = {
+          amount: new BigNumber(100),
+          useAllAmount: false,
+          subAccountId: "id",
+          recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+          feesStrategy: "custom",
+          family: "evm",
+          mode: "send",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          maxFeePerGas: new BigNumber(100),
+          maxPriorityFeePerGas: new BigNumber(100),
+          type: 2,
+        };
+        const optimisticCoinOperation = buildOptimisticOperation(account, coinTransaction);
+        const broadcastArgs = {
+          account,
+          signedOperation: {
+            operation: optimisticCoinOperation,
+            signature: "0xS1gn4tUR3",
+          },
+        };
+
+        it("Ledger node MEV ON/OFF", async () => {
+          mockGetConfig.mockImplementation((): any => ({
+            info: {
+              node: {
+                type: "ledger",
+              },
+            },
+          }));
+
+          mockAxios.request.mockResolvedValue({ data: mockedBroadcastResponse });
+          const axiosSpy = jest.spyOn(mockAxios, "request");
+
+          // MEV OFF
+          await broadcast({
+            ...broadcastArgs,
+            broadcastConfig: { mevProtected: false },
+          });
+
+          expect(axiosSpy).toHaveBeenCalled();
+
+          const requestConfigOff = axiosSpy.mock.calls[0][0] as { params: any };
+          const urlParamsOff = new URLSearchParams(requestConfigOff.params).toString();
+
+          // MEV ON
+          await broadcast({
+            ...broadcastArgs,
+            broadcastConfig: { mevProtected: true },
+          });
+
+          expect(axiosSpy).toHaveBeenCalledTimes(2);
+
+          const requestConfigOn = axiosSpy.mock.calls[1][0] as { params: any };
+          const urlParamsOn = new URLSearchParams(requestConfigOn.params).toString();
+
+          expect(urlParamsOff).toContain("mevProtected=false");
+          expect(urlParamsOn).toContain("mevProtected=true");
+        });
+
+        it("External node MEV ON/OFF", async () => {
+          mockGetConfig.mockImplementationOnce((): any => ({
+            info: {
+              node: {
+                type: "external",
+                uri: "https://my-rpc.com",
+              },
+            },
+          }));
+
+          jest
+            .spyOn(mockEthers.providers.StaticJsonRpcProvider.prototype, "sendTransaction")
+            .mockResolvedValue(Promise.resolve({ hash: mockedBroadcastResponse }));
+
+          const providerSpy = jest.spyOn(mockEthers.providers, "StaticJsonRpcProvider");
+
+          // MEV OFF
+          await broadcast({
+            ...broadcastArgs,
+            broadcastConfig: { mevProtected: false },
+          });
+          const urlOff = providerSpy.mock.calls[0][0];
+
+          // MEV ON
+          await broadcast({
+            ...broadcastArgs,
+            broadcastConfig: { mevProtected: true },
+          });
+          const urlOn = providerSpy.mock.calls[1][0];
+
+          expect(providerSpy).toHaveBeenCalledTimes(2);
+          expect(urlOff).toEqual(urlOn);
+        });
+      });
+
+      it.skip("should broadcast with mevProtected true using correct URI for Ledger NodeApi and no action for External NodeApi", async () => {
         const coinTransaction: EvmTransaction = {
           amount: new BigNumber(100),
           useAllAmount: false,
