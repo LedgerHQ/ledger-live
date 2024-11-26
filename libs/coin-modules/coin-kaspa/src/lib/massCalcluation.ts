@@ -39,3 +39,10 @@ export function calcStorageMass(inputs: number[], outputs: number[]): number {
   const P = outputs.reduce((acc, o) => acc + Math.floor(C / o), 0);
   return Math.max(P - N, 0);
 }
+
+export function calcTotalMass(inputs: number[], outputs: number[]): number {
+  return Math.max(
+    calcStorageMass(inputs, outputs),
+    calcComputeMass(inputs.length, outputs.length === 2, false), // TODO: implement ECDSA
+  );
+}
