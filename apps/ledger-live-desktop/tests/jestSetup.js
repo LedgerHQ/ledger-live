@@ -100,9 +100,13 @@ if (!globalThis.Buffer) {
   // subarray logic. It's the same as in ledger-live-mobile
   // Furthermore, importing 'buffer' gets translated to 'node:buffer' so we're
   // using a relative path here
+  console.log("polyfilling Buffer");
+  console.log({ Buffer });
   const { Buffer } = require("../node_modules/buffer");
   Object.defineProperty(globalThis, "Buffer", { value: Buffer });
 } else {
+  console.log("Buffer already defined");
+  console.log({ Buffer });
   // jsdom defines a global Buffer
   if (!(globalThis.Buffer.prototype instanceof Uint8Array)) {
     // jsdom does not define Buffer as an instance of Uint8Array, so we need to set it
