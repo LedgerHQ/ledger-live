@@ -1296,9 +1296,9 @@
     "setupCta": "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall": {
-    "title": "Have you received your device?",
-    "desc": "Once you receive your device, you can start its setup through Ledger Live!",
-    "cta": "Setup my device",
+    "title": "Did you get your Ledger yet?",
+    "desc": "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta": "Setup my Ledger",
     "bannerTitle": "Received your Ledger?",
     "bannerCta": "Begin setup",
     "continue": "Continue"
