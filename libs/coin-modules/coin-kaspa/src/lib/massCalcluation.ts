@@ -10,9 +10,18 @@ const C = 10 ** 12;
 
 // note: this is an easy version of computeMass for Ledger only.
 // it has usualy inputs with regular Script and one or two outputs
-export function calcComputeMass(inputCount: number, isChangeAddress: boolean): number {
+export function calcComputeMass(
+  inputCount: number,
+  isChangeAddress: boolean,
+  recipientIsECDSA: boolean = false,
+): number {
   let mass: number = isChangeAddress ? 918 : 506; // 506 for one output, 918 for two outputs
   mass += inputCount * 1118; // per used utxo mass increases by 1118
+
+  // is output address is ECDSA, the mass is 11g higher
+  if (recipientIsECDSA) {
+    mass += 11;
+  }
 
   return mass;
 }
