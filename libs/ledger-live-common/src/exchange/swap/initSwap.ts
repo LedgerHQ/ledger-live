@@ -30,7 +30,6 @@ import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { CEXProviderConfig } from "../providers/swap";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -168,17 +167,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           throw errors[errorsKeys[0]]; // throw the first error
         }
 
-        if (swapProviderConfig.useInExchangeApp === false) {
+        if (swapProviderConfig.type !== "CEX") {
           throw new Error(`Unsupported provider type ${swapProviderConfig.type}`);
         }
 
         // Prepare swap app to receive the tx to forward.
-        await swap.setPartnerKey(
-          convertToAppExchangePartnerKey(swapProviderConfig as CEXProviderConfig),
-        );
+        await swap.setPartnerKey(convertToAppExchangePartnerKey(swapProviderConfig));
         if (unsubscribed) return;
 
-        await swap.checkPartner((swapProviderConfig as CEXProviderConfig).signature!);
+        await swap.checkPartner(swapProviderConfig.signature!);
         if (unsubscribed) return;
 
         await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
