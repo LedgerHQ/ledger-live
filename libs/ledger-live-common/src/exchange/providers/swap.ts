@@ -8,38 +8,35 @@ export type SwapProviderConfig = {
   needsBearerToken?: boolean;
 };
 
-export type CEXProviderConfig = ExchangeProviderNameAndSignature &
-  SwapProviderConfig & { type: "CEX" };
-export type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
+type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
 export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
-  useInExchangeApp: boolean;
   displayName: string;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
-  exodus: {
-    type: "CEX",
-    useInExchangeApp: true,
-    displayName: "Exodus",
-    termsOfUseUrl: "https://www.exodus.com/terms/",
-    supportUrl: "mailto:support@xopay.com",
-    mainUrl: "https://www.exodus.com/",
-    needsKYC: false,
-    version: 2,
-  },
   changelly: {
+    needsKYC: false,
+    needsBearerToken: false,
     type: "CEX",
-    useInExchangeApp: true,
     displayName: "Changelly",
     termsOfUseUrl: "https://changelly.com/terms-of-use",
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
+  },
+  exodus: {
+    type: "CEX",
+    displayName: "Exodus",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
+    supportUrl: "https://www.exodus.com/contact-support/",
+    mainUrl: "https://www.exodus.com/",
     needsKYC: false,
     version: 2,
   },
@@ -48,7 +45,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsBearerToken: false,
     displayName: "CIC",
     type: "CEX",
-    useInExchangeApp: true,
     termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
     supportUrl: "https://criptointercambio.com/en/about",
     mainUrl: "https://criptointercambio.com/",
@@ -58,7 +54,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsBearerToken: false,
     displayName: "MoonPay",
     type: "CEX",
-    useInExchangeApp: true,
+    version: 2,
     termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
     supportUrl: "https://support.moonpay.com/",
     mainUrl: "https://www.moonpay.com/",
@@ -66,7 +62,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   oneinch: {
     type: "DEX",
     needsKYC: false,
-    useInExchangeApp: false,
     displayName: "1inch",
     needsBearerToken: false,
     termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
@@ -76,7 +71,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   paraswap: {
     type: "DEX",
     needsKYC: false,
-    useInExchangeApp: false,
     displayName: "Paraswap",
     needsBearerToken: false,
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
@@ -84,19 +78,17 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.paraswap.io/",
   },
   thorswap: {
-    type: "DEX",
+    type: "CEX",
     needsBearerToken: false,
-    useInExchangeApp: true,
     displayName: "THORChain",
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    supportUrl: "mailto:support@thorswap.finance",
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
   uniswap: {
     type: "DEX",
     needsBearerToken: false,
-    useInExchangeApp: false,
     displayName: "Uniswap",
     termsOfUseUrl:
       "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
@@ -245,7 +237,6 @@ export const getSwapProvider = async (
   if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
-      useInExchangeApp: false,
       needsBearerToken: false,
       type: "CEX",
       termsOfUseUrl: "https://example.com",
