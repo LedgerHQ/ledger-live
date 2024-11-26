@@ -21,7 +21,7 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
   },
@@ -263,6 +263,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.craftTx(transaction.transaction);
+          await app.send.countinueSendAmount();
           await app.send.expectTxInfoValidity(transaction.transaction);
           await app.send.clickContinueToDevice();
 
@@ -455,11 +456,9 @@ test.describe("Send flows", () => {
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
-
           await app.account.clickSend();
-          await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
-          await app.send.clickContinue();
-          await app.send.fillAmount(transaction.transaction.amount);
+
+          await app.send.craftTx(transaction.transaction);
           await app.send.checkContinueButtonDisabled();
           await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
         },

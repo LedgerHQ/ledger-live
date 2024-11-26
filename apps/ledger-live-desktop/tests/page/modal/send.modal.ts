@@ -81,8 +81,6 @@ export class SendModal extends Modal {
     if (tx.speed !== undefined) {
       await this.chooseFeeStrategy(tx.speed);
     }
-
-    await this.countinueSendAmount();
   }
 
   @step("Verify tx information before confirming")
