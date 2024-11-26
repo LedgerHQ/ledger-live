@@ -120,6 +120,7 @@
     "https": false
   },
   "dependencies": {
+    "@apollo/client": "^3.8.7",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^3.0.1",
@@ -191,6 +192,7 @@
     "@ledgerhq/wallet-api-core": "^1.13.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.6.0",
+    "@noble/hashes": "1.5.0",
     "@stricahq/typhonjs": "^2.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
@@ -206,6 +208,7 @@
     "@zondax/ledger-filecoin": "^0.11.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
+    "aptos": "^1.21.0",
     "async": "^3.2.3",
     "axios": "1.7.7",
     "bech32": "^1.1.3",
@@ -220,6 +223,7 @@
     "date-fns": "^2.23.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
+    "graphql": "^16.8.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "jotai": "^2.10.1",

@@ -1,3 +1,4 @@
+import aptos from "../families/aptos/transaction";
 import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import crypto_org from "../families/crypto_org/transaction";
@@ -23,6 +24,7 @@ import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 
 export default {
+  aptos,
   casper,
   celo,
   crypto_org,

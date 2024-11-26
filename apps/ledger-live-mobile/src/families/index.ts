@@ -17,4 +17,5 @@ export * from "./casper";
 export * from "./stellar";
 export * from "./tezos";
 export * from "./tron";
+export * from "./aptos";
 export * from "./ton";

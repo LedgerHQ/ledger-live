@@ -1,3 +1,4 @@
+import aptos from "../families/aptos/hw-getAddress";
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import crypto_org from "../families/crypto_org/hw-getAddress";
@@ -23,6 +24,7 @@ import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
+  aptos,
   casper,
   celo,
   crypto_org,
