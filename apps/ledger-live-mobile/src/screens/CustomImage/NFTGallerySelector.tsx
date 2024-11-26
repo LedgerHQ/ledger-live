@@ -15,6 +15,8 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import { getEnv } from "@ledgerhq/live-env";
 import { useNftCollections } from "~/hooks/nfts/useNftCollections";
+import { State } from "~/reducers/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const NB_COLUMNS = 2;
 
@@ -27,10 +29,14 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device, deviceModelId } = params;
-
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const accounts = useSelector(accountsSelector);
 

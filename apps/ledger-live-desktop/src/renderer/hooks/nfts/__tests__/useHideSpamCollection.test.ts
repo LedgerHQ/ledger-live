@@ -47,7 +47,6 @@ describe("useHideSpamCollection", () => {
               collectionB: NftStatus.spam,
             },
           },
-          whitelistedNftCollections: ["collectionA", "collectionB"],
         },
       },
     });

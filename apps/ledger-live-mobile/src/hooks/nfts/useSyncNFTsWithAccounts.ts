@@ -6,6 +6,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getThreshold, useCheckNftAccount } from "@ledgerhq/live-nft-react";
 import { accountsSelector, orderedVisibleNftsSelector } from "~/reducers/accounts";
+import { State } from "~/reducers/types";
 
 /**
  * Represents the size of groups for batching address fetching.
@@ -43,7 +44,12 @@ export function useSyncNFTsWithAccounts() {
   const { enabled, hideSpamCollection } = useHideSpamCollection();
 
   const accounts = useSelector(accountsSelector);
-  const nftsOwned = useSelector(orderedVisibleNftsSelector, isEqual);
+
+  const nftsOwned = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addressGroups = useMemo(() => {
     const uniqueAddresses = [

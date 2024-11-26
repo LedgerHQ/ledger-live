@@ -32,10 +32,8 @@ import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import {
-  filterTokenOperationsZeroAmountEnabledSelector,
-  hiddenNftCollectionsSelector,
-} from "~/reducers/settings";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
@@ -56,7 +54,7 @@ export function Operations({ navigation, route }: Props) {
     [accountsFromState, accountsIds],
   );
   const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

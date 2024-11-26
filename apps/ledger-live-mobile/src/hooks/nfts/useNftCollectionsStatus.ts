@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/settings";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 
 export const nftCollectionParser = (
   nftCollection: Record<BlockchainEVM, Record<string, NftStatus>>,
@@ -19,13 +19,13 @@ export function useNftCollectionsStatus() {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
-  const hideSpams = Boolean(nftsFromSimplehashFeature?.enabled);
+  const hideSpam = Boolean(nftsFromSimplehashFeature?.enabled);
 
   const list = useMemo(() => {
     return nftCollectionParser(nftCollectionsStatusByNetwork, ([_, status]) =>
-      hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+      hideSpam ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
     );
-  }, [nftCollectionsStatusByNetwork, hideSpams]);
+  }, [nftCollectionsStatusByNetwork, hideSpam]);
 
   const whitelisted = useMemo(() => {
     return nftCollectionParser(

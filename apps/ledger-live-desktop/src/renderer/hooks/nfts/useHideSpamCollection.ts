@@ -16,9 +16,8 @@ export function useHideSpamCollection() {
 
   const hideSpamCollection = useCallback(
     (collection: string, blockchain: BlockchainsType) => {
-      const elem = Object.entries(nftCollectionsStatusByNetwork).find(
-        ([key]) => key === blockchain,
-      )?.[1];
+      const blockchainToCheck = nftCollectionsStatusByNetwork[blockchain] || {};
+      const elem = Object.entries(blockchainToCheck).find(([key, _]) => key === collection);
 
       if (!elem) {
         dispatch(updateNftStatus(blockchain, collection, NftStatus.spam));
