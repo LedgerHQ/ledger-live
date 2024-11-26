@@ -153,7 +153,7 @@ export const test = base.extend<TestFixtures>({
           ...process.env,
           VERBOSE: true,
           MOCK: IS_NOT_MOCK ? undefined : true,
-          MOCK_COUNTERVALUES: true,
+          MOCK_COUNTERVALUES: IS_NOT_MOCK ? undefined : true,
           HIDE_DEBUG_MOCK: true,
           CI: process.env.CI || undefined,
           PLAYWRIGHT_RUN: true,
