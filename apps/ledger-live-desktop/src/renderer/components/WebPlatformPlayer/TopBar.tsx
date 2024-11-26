@@ -22,6 +22,8 @@ import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wal
 import Wallet from "~/renderer/icons/Wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -140,6 +142,8 @@ export const TopBar = ({
   webviewAPIRef,
   webviewState,
 }: Props) => {
+  const walletState = useSelector(walletSelector);
+
   const { name, icon } = manifest;
 
   const {
@@ -182,6 +186,10 @@ export const TopBar = ({
   }, [webviewAPIRef]);
 
   const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const currentAccountName =
+    currentAccount &&
+    (accountNameSelector(walletState, { accountId: currentAccount.id }) ||
+      getDefaultAccountName(currentAccount));
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
@@ -252,7 +260,7 @@ export const TopBar = ({
                     currency={getAccountCurrency(currentAccount)}
                     size={16}
                   />
-                  <ItemContent>{getDefaultAccountName(currentAccount)}</ItemContent>
+                  <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}
             </ItemContainer>
