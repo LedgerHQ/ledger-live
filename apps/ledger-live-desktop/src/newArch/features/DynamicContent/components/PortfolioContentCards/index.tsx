@@ -9,8 +9,11 @@ export default PortfolioContentCards;
 
 function PortfolioContentCards() {
   const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCards();
+  const handlePrevButton = () => trackSlide("prev");
+  const handleNextButton = () => trackSlide("next");
+
   return (
-    <Carousel autoPlay={6000} onPrev={() => trackSlide("prev")} onNext={() => trackSlide("next")}>
+    <Carousel autoPlay={6000} onPrev={handlePrevButton} onNext={handleNextButton}>
       {portfolioCards.map((card, index) => (
         <Slide
           key={card.id}

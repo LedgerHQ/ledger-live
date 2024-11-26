@@ -11,28 +11,40 @@ export default memo(Slide);
 
 type Props = PortfolioContentCard & CarouselActions & { index: number };
 
-function Slide({ logSlideClick, dismissCard, index, ...card }: Props) {
+function Slide({
+  id,
+  path,
+  url,
+  title,
+  cta,
+  description,
+  tag,
+  image,
+  index,
+  logSlideClick,
+  dismissCard,
+}: Props) {
   const history = useHistory();
 
   const handleClose = () => dismissCard(index);
   const handleClick = () => {
-    logSlideClick(card.id);
+    logSlideClick(id);
 
-    if (card.path) {
-      history.push({ pathname: card.path, state: { source: "banner" } });
-    } else if (card.url) {
-      openURL(card.url);
+    if (path) {
+      history.push({ pathname: path, state: { source: "banner" } });
+    } else if (url) {
+      openURL(url);
     }
   };
 
   return (
-    <LogContentCardWrapper id={card.id}>
+    <LogContentCardWrapper id={id}>
       <Card
-        title={card.title}
-        cta={card.cta}
-        description={card.description}
-        tag={card.tag}
-        image={card.image}
+        title={title}
+        cta={cta}
+        description={description}
+        tag={tag}
+        image={image}
         onClick={handleClick}
         onClose={handleClose}
       />

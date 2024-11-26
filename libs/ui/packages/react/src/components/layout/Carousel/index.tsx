@@ -165,18 +165,21 @@ function watchDragX(emblaApi: EmblaCarouselType) {
     },
     clean: () => {
       emblaApi.off("pointerDown", watchMouse);
+      document.removeEventListener("mouseup", handleMouseUp);
     },
   };
 
   function watchMouse() {
-    document.addEventListener("mousemove", function handler(event: MouseEvent) {
-      document.removeEventListener("mousemove", handler);
-      start = event.clientX;
-      end = undefined;
-    });
-    document.addEventListener("mouseup", function handler(event) {
-      document.removeEventListener("mouseup", handler);
-      end = event.clientX;
-    });
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }
+  function handleMouseMove(event: MouseEvent) {
+    document.removeEventListener("mousemove", handleMouseMove);
+    start = event.clientX;
+    end = undefined;
+  }
+  function handleMouseUp(event: MouseEvent) {
+    document.removeEventListener("mouseup", handleMouseUp);
+    end = event.clientX;
   }
 }
