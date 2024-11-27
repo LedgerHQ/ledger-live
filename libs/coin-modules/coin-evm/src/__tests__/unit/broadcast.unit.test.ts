@@ -193,7 +193,7 @@ describe("EVM Family", () => {
           });
 
           expect(providerSpy).toHaveBeenCalledTimes(1);
-          expect(providerSpy).toHaveBeenCalledWith(1, "https://my-rpc.com");
+          expect(providerSpy).toHaveBeenNthCalledWith(1, "https://my-rpc.com");
         });
       });
 
