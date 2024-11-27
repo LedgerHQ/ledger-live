@@ -30,7 +30,7 @@ jobs:
         run: |
           git merge origin/develop -X theirs
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/fix-release-nightly-caches-optional
         id: setup-caches
         with:
           install-proto: true
