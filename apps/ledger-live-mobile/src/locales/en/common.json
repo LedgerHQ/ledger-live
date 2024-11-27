@@ -7072,6 +7072,9 @@
       },
       "label": {
         "clearSigning": "clear signing"
+      },
+      "tabs": {
+        "newTab": "New tab"
       }
     },
     "main": {
