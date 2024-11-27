@@ -34,6 +34,12 @@ export class ReceiveModal extends Modal {
     await this.skipDeviceButton.click();
   }
 
+  @step("Retrieve fees amount value")
+  async getAddressDisplayed() {
+    const text = await this.addressDisplayedValue.textContent();
+    return text ? text?.split(" ")[0] : "";
+  }
+
   @step("Verify receive address correctness $0")
   async expectValidReceiveAddress(address: string) {
     await expect(this.verifyAddressOnDeviceLabel).toBeVisible();

@@ -601,7 +601,7 @@ test.describe("Send flows", () => {
   }
 
   test.describe("send NFT to ENS address", () => {
-    const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "NY la muse", Fee.SLOW);
+    const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "Podium", Fee.SLOW);
     test.beforeAll(async () => {
       process.env.DISABLE_TRANSACTION_BROADCAST = "true";
     });
