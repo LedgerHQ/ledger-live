@@ -66,12 +66,12 @@ export function useSyncNFTsWithAccounts() {
   const [, setCurrentIndex] = useState(0);
 
   const { refetch } = useCheckNftAccount({
-    addresses: groupToFetch.join(","),
+    addresses: groupToFetch?.join(",") || "",
     nftsOwned,
     chains: SUPPORTED_NFT_CURRENCIES,
     threshold,
     action: hideSpamCollection,
-    enabled,
+    enabled: enabled && groupToFetch.length > 0,
   });
 
   // Refetch with new last group when addressGroups length changes
@@ -91,7 +91,7 @@ export function useSyncNFTsWithAccounts() {
     const interval = setInterval(() => {
       setCurrentIndex(prevIndex => {
         const nextIndex = (prevIndex + 1) % addressGroups.length;
-        setGroupToFetch(addressGroups[nextIndex]);
+        setGroupToFetch(addressGroups[nextIndex] || []);
         return nextIndex;
       });
     }, TIMER);

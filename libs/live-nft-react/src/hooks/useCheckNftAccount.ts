@@ -65,7 +65,7 @@ export function useCheckNftAccount({
 
     const processingNFTs = queryResult.data?.pages.flatMap(page => page.nfts);
 
-    if (!queryResult.hasNextPage && processingNFTs) {
+    if (!queryResult.hasNextPage && processingNFTs?.length) {
       for (const nft of processingNFTs) {
         const hash = hashProtoNFT(nft.contract_address, nft.token_id, nft.chain);
         const existing = nftsWithProperties.get(hash);
@@ -76,14 +76,15 @@ export function useCheckNftAccount({
 
       if (action) {
         const spams = nftsOwned.filter(nft => !nfts.some(ownedNft => ownedNft.id === nft.id));
-
         const collections = nftsByCollections(spams);
 
-        Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => {
-          const { accountId } = decodeNftId(nfts[0].id);
-          const collection = `${accountId}|${contract}`;
-          action(collection);
-        });
+        if (spams.length > 0) {
+          Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => {
+            const { accountId } = decodeNftId(nfts[0].id);
+            const collection = `${accountId}|${contract}`;
+            action(collection);
+          });
+        }
       }
     }
     return { ...queryResult, nfts };
