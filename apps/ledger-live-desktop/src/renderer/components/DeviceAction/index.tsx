@@ -77,7 +77,7 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isDeviceNotOnboardedError } from "./utils";
+import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
@@ -483,6 +483,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         withOpenManager: true,
         withExportLogs: true,
         ...(device && { device }),
+        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
       });
     }
 
