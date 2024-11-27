@@ -27,7 +27,7 @@ import {
 } from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
-import { getSystemLocale } from "~/helpers/systemLocale";
+import { getAppLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
 import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
@@ -128,7 +128,7 @@ export type SettingsState = {
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
-  const systemLocal = getSystemLocale();
+  const systemLocal = getAppLocale();
 
   // Find language from system locale (i.e., en, fr, es ...)
   const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
