@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { PropsBody, PropsBodyElem } from "../types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
@@ -9,6 +9,8 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { useSelector } from "react-redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerformanceWidget/utils";
+import { useHistory } from "react-router-dom";
+import { track } from "~/renderer/analytics/segment";
 
 export function WidgetList({ data, order, range, top }: PropsBody) {
   const noData = data.length === 0;
@@ -26,12 +28,24 @@ export function WidgetList({ data, order, range, top }: PropsBody) {
   );
 }
 
-function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
+function WidgetRow({ data, index, range }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
+  const history = useHistory();
+
+  const onCurrencyClick = useCallback(() => {
+    track("widget_asset_clicked", {
+      asset: data.name,
+      page: "Portfolio",
+    });
+
+    history.push({
+      pathname: `/market/${data.id}`,
+    });
+  }, [data, history]);
 
   return (
-    <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
+    <MainContainer justifyContent="space-between" py="6px" onClick={onCurrencyClick}>
       <Flex alignItems="center" flex={1}>
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
@@ -98,9 +112,21 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
               })}
         </EllipsisText>
       </Flex>
-    </Flex>
+    </MainContainer>
   );
 }
+
+const MainContainer = styled(Flex)`
+  &:hover {
+    background-color: ${p => p.theme.colors.opacityDefault.c05};
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition:
+      background-color 0.35s ease,
+      padding 0.35s ease;
+    cursor: pointer;
+  }
+`;
 
 const CryptoCurrencyIconWrapper = styled(Flex)<{
   hasImage?: boolean;

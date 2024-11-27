@@ -25,7 +25,7 @@ import {
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
-import { TOGGLE_MEMOTAG_INFO } from "./constants";
+import { TOGGLE_MARKET_WIDGET, TOGGLE_MEMOTAG_INFO, TOGGLE_MEV } from "./constants";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -439,7 +439,12 @@ export const setLastOnboardedDevice = (payload: Device | null) => ({
   payload,
 });
 export const setMevProtection = (payload: boolean) => ({
-  type: "SET_MEV_PROTECTION",
+  type: TOGGLE_MEV,
+  payload,
+});
+
+export const setMarketWidget = (payload: boolean) => ({
+  type: TOGGLE_MARKET_WIDGET,
   payload,
 });
 
