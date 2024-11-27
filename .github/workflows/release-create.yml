@@ -31,11 +31,6 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
         run: pnpm i
       - name: Build libs
