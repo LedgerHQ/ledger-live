@@ -24,8 +24,11 @@ jobs:
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: Move minor updates to patch for hotfix branch
