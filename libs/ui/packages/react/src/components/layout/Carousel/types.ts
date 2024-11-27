@@ -5,8 +5,10 @@ export type Variant = "content-card" | "default";
 
 export type Props = {
   children: ReactElement[];
+  autoPlay?: number;
   variant?: Variant;
-  onChange?: (index: number) => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 };
 
 /**

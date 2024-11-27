@@ -7136,12 +7136,18 @@ importers:
       color:
         specifier: ^4.0.0
         version: 4.2.3
+      embla-carousel-autoplay:
+        specifier: 8.4.0
+        version: 8.4.0(embla-carousel@8.0.0-rc17)
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@18.3.1)
       framer-motion:
         specifier: ^11.3.28
         version: 11.3.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      lodash:
+        specifier: '4'
+        version: 4.17.21
       react-is:
         specifier: ^17.0.2
         version: 17.0.2
@@ -7206,6 +7212,9 @@ importers:
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
         version: 3.3.5(@types/react@18.2.73)
+      '@types/lodash':
+        specifier: '4'
+        version: 4.17.7
       '@types/react':
         specifier: ~18.2.21
         version: 18.2.73
@@ -19056,6 +19065,11 @@ packages:
 
   elliptic@6.5.5:
     resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
+
+  embla-carousel-autoplay@8.4.0:
+    resolution: {integrity: sha512-AJHXrnaY+Tf4tb/+oItmJSpz4P0WvS62GrW5Z4iFY3zsH0mkKcijzd04LIkj0P4DkTazIBEuXple+nUVmuMsrQ==}
+    peerDependencies:
+      embla-carousel: 8.4.0
 
   embla-carousel-react@8.0.0-rc17:
     resolution: {integrity: sha512-x4aFprwFB+PQO9EsHHZsrDxARb0uYNBYn9mr5oDFdBdPez4M8G1r5yidWbUcT9pNUc8AQXC9sGzlfauBfBxVOw==}
@@ -48506,6 +48520,10 @@ snapshots:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
+
+  embla-carousel-autoplay@8.4.0(embla-carousel@8.0.0-rc17):
+    dependencies:
+      embla-carousel: 8.0.0-rc17
 
   embla-carousel-react@8.0.0-rc17(react@18.3.1):
     dependencies:

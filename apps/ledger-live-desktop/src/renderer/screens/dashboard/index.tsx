@@ -34,7 +34,7 @@ import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperfor
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
-import Carousel from "~/renderer/components/Carousel";
+import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
             {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
               <ActionContentCards variant={ABTestingVariants.variantA} />
             ) : (
-              <Carousel />
+              <PortfolioContentCards />
             )}
           </RecoverBanner>
         )}
