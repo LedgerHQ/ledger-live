@@ -7,7 +7,7 @@ import {
 import Exchange, { createExchange, ExchangeTypes, RateTypes } from "./Exchange";
 import BigNumber from "bignumber.js";
 
-describe("Contrustructor", () => {
+describe("Constructor", () => {
   [ExchangeTypes.Fund, ExchangeTypes.Sell, ExchangeTypes.Swap].forEach(exchangeType => {
     it(`Exchange (value of ${exchangeType}) init with default rate types of fixed`, async () => {
       const transport = await openTransportReplayer(RecordStore.fromString(""));
@@ -319,6 +319,39 @@ describe("checkTransactionSignature", () => {
   });
 });
 
+describe("sendPKICertificate", () => {
+  const recordStore = new RecordStore();
+  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+  const transport = createTransportRecorder(mockTransport, recordStore);
+
+  beforeEach(() => {
+    recordStore.clearStore();
+  });
+
+  it("returns a new Challenge value", async () => {
+    // Given
+    const descriptor = "010203";
+    const signature = "0a0b0c0d0e0f1a1b1c1d1e1f";
+    const signatureLengthInHex = "0c";
+    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+
+    // When
+    await exchange.sendPKICertificate(
+      Buffer.from(descriptor, "hex"),
+      Buffer.from(signature, "hex"),
+    );
+
+    // Then
+    const expectCommand = Buffer.from([0xe0, 0x0e, RateTypes.Fixed, ExchangeTypes.SwapNg]).toString(
+      "hex",
+    );
+    const certSeparator = "15";
+    const data = descriptor + certSeparator + signatureLengthInHex + signature;
+    const dataLengthInHex = "11";
+    expect(recordStore.queue[0][0]).toBe(expectCommand + dataLengthInHex + data);
+  });
+});
+
 describe("getChallenge", () => {
   const recordStore = new RecordStore();
   const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
@@ -341,7 +374,7 @@ describe("getChallenge", () => {
     // Then
     const expectCommand = Buffer.from([
       0xe0,
-      0x10, // Start Exchance
+      0x10,
       RateTypes.Fixed,
       ExchangeTypes.SwapNg,
       0x00, // Data
@@ -356,9 +389,14 @@ describe("sendTrustedDescriptor", () => {
   const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
   const transport = createTransportRecorder(mockTransport, recordStore);
 
+  beforeEach(() => {
+    recordStore.clearStore();
+  });
+
   it("sends the expected command", async () => {
     // Given
-    const descriptor = Buffer.from([0x00, 0x0a, 0xff]).toString("hex");
+    const descriptor = Buffer.from([0x00, 0x0a, 0xff]);
+    const descriptorLengthInHex = "03";
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
 
     // When
@@ -368,6 +406,8 @@ describe("sendTrustedDescriptor", () => {
     const expectCommand = Buffer.from([0xe0, 0x11, RateTypes.Fixed, ExchangeTypes.Swap]).toString(
       "hex",
     );
-    expect(recordStore.queue[0][0]).toBe(expectCommand + descriptor);
+    expect(recordStore.queue[0][0]).toBe(
+      expectCommand + descriptorLengthInHex + descriptor.toString("hex"),
+    );
   });
 });

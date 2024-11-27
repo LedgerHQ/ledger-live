@@ -337,6 +337,23 @@ export default class Exchange {
     maybeThrowProtocolError(result);
   }
 
+  async sendPKICertificate(descriptor: Buffer, signature: Buffer): Promise<void> {
+    const result: Buffer = await this.transport.send(
+      0xe0,
+      SEND_PKI_CERTIFICATE,
+      this.transactionRate,
+      this.transactionType,
+      Buffer.concat([
+        descriptor,
+        Buffer.from("15", "hex"),
+        Buffer.from([signature.length]),
+        signature,
+      ]),
+      this.allowedStatuses,
+    );
+    maybeThrowProtocolError(result);
+  }
+
   async getChallenge(): Promise<number> {
     const result: Buffer = await this.transport.send(
       0xe0,
@@ -350,8 +367,7 @@ export default class Exchange {
     return result.slice(0, 4).readUInt32BE();
   }
 
-  async sendTrustedDescriptor(data: string): Promise<void> {
-    const buffer = Buffer.from(data, "hex");
+  async sendTrustedDescriptor(buffer: Buffer): Promise<void> {
     const result: Buffer = await this.transport.send(
       0xe0,
       SEND_TRUSTED_NAME_DESCRIPTOR,
