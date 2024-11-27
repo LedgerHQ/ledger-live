@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Transport from "@ledgerhq/hw-transport";
 import {
-  DeviceSdkBuilder,
+  DeviceManagementKitBuilder,
   ConsoleLogger,
-  type DeviceSdk,
+  type DeviceManagementKit,
   type DeviceSessionState,
   DeviceStatus,
   LogLevel,
@@ -11,9 +11,11 @@ import {
 import { BehaviorSubject, firstValueFrom } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
 
-const deviceSdk = new DeviceSdkBuilder().addLogger(new ConsoleLogger(LogLevel.Debug)).build();
+const deviceSdk = new DeviceManagementKitBuilder()
+  .addLogger(new ConsoleLogger(LogLevel.Debug))
+  .build();
 
-export const DeviceSdkContext = createContext<DeviceSdk>(deviceSdk);
+export const DeviceSdkContext = createContext<DeviceManagementKit>(deviceSdk);
 
 type Props = {
   children: React.ReactNode;
@@ -23,7 +25,7 @@ export const DeviceSdkProvider: React.FC<Props> = ({ children }) => (
   <DeviceSdkContext.Provider value={deviceSdk}>{children}</DeviceSdkContext.Provider>
 );
 
-export const useDeviceSdk = (): DeviceSdk => useContext(DeviceSdkContext);
+export const useDeviceSdk = (): DeviceManagementKit => useContext(DeviceSdkContext);
 
 export const useDeviceSessionState = (): DeviceSessionState | undefined => {
   const sdk = useDeviceSdk();
@@ -66,9 +68,9 @@ const activeDeviceSessionSubject: BehaviorSubject<{
 
 export class DeviceManagementKitTransport extends Transport {
   readonly sessionId: string;
-  readonly sdk: DeviceSdk;
+  readonly sdk: DeviceManagementKit;
 
-  constructor(sdk: DeviceSdk, sessionId: string) {
+  constructor(sdk: DeviceManagementKit, sessionId: string) {
     super();
     this.sessionId = sessionId;
     this.sdk = sdk;
@@ -117,10 +119,8 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     this.tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice]: [{ id: string }] = await firstValueFrom(
-      deviceSdk.listenToKnownDevices(),
-    );
-    const connectedSessionId = await deviceSdk.connect({ deviceId: discoveredDevice.id });
+    const [discoveredDevice] = await firstValueFrom(deviceSdk.listenToKnownDevices());
+    const connectedSessionId = await deviceSdk.connect({ device: discoveredDevice });
 
     this.tracer.trace("[open] Connected");
     const transport = new DeviceManagementKitTransport(deviceSdk, connectedSessionId);

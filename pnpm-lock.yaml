@@ -6311,8 +6311,8 @@ importers:
   libs/live-dmk:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.5.1
+        version: 0.5.1
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -11042,8 +11042,11 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
-  '@ledgerhq/device-management-kit@0.4.0':
-    resolution: {integrity: sha512-RTv0obGFbReYCYK0Ucd25B/T8lUELbfyHicdcjYLdjeSaoOKAGgW5Nh+Mxo3g0uH1zI01qU6A/tgaWP2M+pgnA==}
+  '@ledgerhq/device-management-kit@0.5.1':
+    resolution: {integrity: sha512-oh0ME54DyuMIVDjOrekz5Dm8LThSBqMw/wmkqPdLHxRd4HCq6efGHLjkwryRPRpI3RjU8IE2jHoFCC8dZ+x9Mw==}
+
+  '@ledgerhq/device-transport-kit-mock-client@1.1.0':
+    resolution: {integrity: sha512-gHY+g6y69iI+2axBPgINPNwQ45vMg+5QYy82aUPiyF6P2et5NIabIURsOzzXtfhAYopkCeanmgzg/DNDtf4IZw==}
 
   '@ledgerhq/domain-service@1.2.12':
     resolution: {integrity: sha512-w33g7EqBtquzNPnvD2tmQq049eL4d8qYZH5vCwJ9Rfe6Vc/bYQvwlHFZ4N/cQPLmWQdsIMWDu+4fYo61p+Ub5A==}
@@ -36426,8 +36429,9 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
-  '@ledgerhq/device-management-kit@0.4.0':
+  '@ledgerhq/device-management-kit@0.5.1':
     dependencies:
+      '@ledgerhq/device-transport-kit-mock-client': 1.1.0
       '@sentry/minimal': 6.19.7
       '@statelyai/inspect': 0.4.0(xstate@5.19.0)
       axios: 1.7.7
@@ -36441,6 +36445,8 @@ snapshots:
       xstate: 5.19.0
     transitivePeerDependencies:
       - ws
+
+  '@ledgerhq/device-transport-kit-mock-client@1.1.0': {}
 
   '@ledgerhq/domain-service@1.2.12':
     dependencies:

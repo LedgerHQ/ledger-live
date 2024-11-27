@@ -6,7 +6,7 @@ import { DeviceSdkProvider, useDeviceSessionState, useDeviceSdk } from "./index"
 import { DeviceStatus } from "@ledgerhq/device-management-kit";
 
 jest.mock("@ledgerhq/device-management-kit", () => ({
-  DeviceSdkBuilder: jest.fn(() => ({
+  DeviceManagementKitBuilder: jest.fn(() => ({
     addLogger: jest.fn().mockReturnThis(),
     build: jest.fn().mockReturnValue({
       getDeviceSessionState: jest.fn(),
