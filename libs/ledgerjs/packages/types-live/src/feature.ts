@@ -89,6 +89,7 @@ export type CurrencyFeatures = {
   currencyMoonriver: DefaultFeature;
   currencyVelasEvm: DefaultFeature;
   currencySyscoin: DefaultFeature;
+  currencyAptos: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
   currencySeiNetwork: DefaultFeature;

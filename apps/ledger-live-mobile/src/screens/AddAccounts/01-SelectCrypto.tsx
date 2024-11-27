@@ -57,6 +57,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const mock = useEnv("MOCK");
 
+  const aptos = useFeature("currencyAptos");
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -110,6 +111,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aptos,
       axelar,
       stargaze,
       umee,
@@ -162,6 +164,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       mantra,
     }),
     [
+      aptos,
       axelar,
       stargaze,
       umee,
