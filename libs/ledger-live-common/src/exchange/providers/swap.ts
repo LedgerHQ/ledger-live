@@ -8,53 +8,54 @@ export type SwapProviderConfig = {
   needsBearerToken?: boolean;
 };
 
-type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
-type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+export type CEXProviderConfig = ExchangeProviderNameAndSignature &
+  SwapProviderConfig & { type: "CEX" };
+export type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
 export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
+  useInExchangeApp: boolean;
   displayName: string;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
-  changelly: {
-    needsKYC: false,
-    needsBearerToken: false,
-    type: "CEX",
-    displayName: "Changelly",
-    termsOfUseUrl: "https://changelly.com/terms-of-use",
-    supportUrl: "https://support.changelly.com/en/support/home",
-    mainUrl: "https://changelly.com/",
-  },
   exodus: {
     type: "CEX",
+    useInExchangeApp: true,
     displayName: "Exodus",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
-    supportUrl: "https://www.exodus.com/contact-support/",
+    termsOfUseUrl: "https://www.exodus.com/terms/",
+    supportUrl: "mailto:support@xopay.com",
     mainUrl: "https://www.exodus.com/",
     needsKYC: false,
     version: 2,
   },
+  changelly: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "Changelly",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+    needsKYC: false,
+  },
   cic: {
     needsKYC: false,
-    needsBearerToken: false,
     displayName: "CIC",
     type: "CEX",
+    useInExchangeApp: true,
     termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
     supportUrl: "https://criptointercambio.com/en/about",
     mainUrl: "https://criptointercambio.com/",
   },
   moonpay: {
     needsKYC: true,
-    needsBearerToken: false,
     displayName: "MoonPay",
     type: "CEX",
-    version: 2,
+    useInExchangeApp: true,
     termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
     supportUrl: "https://support.moonpay.com/",
     mainUrl: "https://www.moonpay.com/",
@@ -62,8 +63,8 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   oneinch: {
     type: "DEX",
     needsKYC: false,
+    useInExchangeApp: false,
     displayName: "1inch",
-    needsBearerToken: false,
     termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
     supportUrl: "https://help.1inch.io/en/",
     mainUrl: "https://1inch.io/",
@@ -71,24 +72,24 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   paraswap: {
     type: "DEX",
     needsKYC: false,
+    useInExchangeApp: false,
     displayName: "Paraswap",
-    needsBearerToken: false,
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
   },
   thorswap: {
-    type: "CEX",
-    needsBearerToken: false,
+    type: "DEX",
+    useInExchangeApp: true,
     displayName: "THORChain",
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-    supportUrl: "mailto:support@thorswap.finance",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
   uniswap: {
     type: "DEX",
-    needsBearerToken: false,
+    useInExchangeApp: false,
     displayName: "Uniswap",
     termsOfUseUrl:
       "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
@@ -237,6 +238,7 @@ export const getSwapProvider = async (
   if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
+      useInExchangeApp: true,
       needsBearerToken: false,
       type: "CEX",
       termsOfUseUrl: "https://example.com",

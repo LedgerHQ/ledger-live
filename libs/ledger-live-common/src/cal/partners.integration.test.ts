@@ -9,7 +9,7 @@ describe("getProvidersCDNData", () => {
 
     // Then
     expect(partners["changelly"]).toEqual({
-      continuesInProviderLiveApp: false,
+      useInExchangeApp: true,
       displayName: "Changelly",
       mainUrl: "https://changelly.com/",
       needsKYC: false,
@@ -27,8 +27,8 @@ describe("getProvidersCDNData", () => {
 
     // Then
     expect(partners["paraswap"]).toEqual({
-      continuesInProviderLiveApp: true,
       displayName: "Paraswap",
+      useInExchangeApp: false,
       mainUrl: "https://www.paraswap.io/",
       needsKYC: false,
       supportUrl: "https://help.paraswap.io/en/",
