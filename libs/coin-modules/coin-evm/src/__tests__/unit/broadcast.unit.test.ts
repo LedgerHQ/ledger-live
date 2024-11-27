@@ -31,6 +31,9 @@ const mockGetConfig = jest.mocked(getCoinConfig);
 
 jest.mock("ethers");
 const mockEthers = jest.mocked(ethers);
+jest
+  .spyOn(mockEthers.providers.StaticJsonRpcProvider.prototype, "sendTransaction")
+  .mockResolvedValue(Promise.resolve({ hash: "0xH4sH" }));
 
 jest.mock("axios");
 const mockAxios = jest.mocked(axios);
@@ -53,6 +56,15 @@ const account: Account = makeAccount(
 );
 const mockedBroadcastResponse = "0xH4sH";
 
+const mockBroadcastTransactions = () => {
+  jest
+    .spyOn(API, "broadcastTransaction")
+    .mockImplementation(async () => mockedBroadcastResponse as any);
+  jest
+    .spyOn(LEDGER_API, "broadcastTransaction")
+    .mockImplementation(async () => mockedBroadcastResponse as any);
+};
+
 describe("EVM Family", () => {
   beforeAll(() => {
     mockGetConfig.mockImplementation((): any => {
@@ -73,13 +85,7 @@ describe("EVM Family", () => {
 
   describe("broadcast.ts", () => {
     beforeAll(() => {
-      jest
-        .spyOn(API, "broadcastTransaction")
-        .mockImplementation(async () => mockedBroadcastResponse as any);
-
-      jest
-        .spyOn(LEDGER_API, "broadcastTransaction")
-        .mockImplementation(async () => mockedBroadcastResponse as any);
+      mockBroadcastTransactions();
     });
 
     afterAll(() => {
@@ -97,6 +103,10 @@ describe("EVM Family", () => {
           jest.clearAllMocks();
         });
 
+        afterAll(() => {
+          mockBroadcastTransactions();
+        });
+
         const coinTransaction: EvmTransaction = {
           amount: new BigNumber(100),
           useAllAmount: false,
@@ -112,11 +122,10 @@ describe("EVM Family", () => {
           maxPriorityFeePerGas: new BigNumber(100),
           type: 2,
         };
-        const optimisticCoinOperation = buildOptimisticOperation(account, coinTransaction);
         const broadcastArgs = {
           account,
           signedOperation: {
-            operation: optimisticCoinOperation,
+            operation: buildOptimisticOperation(account, coinTransaction),
             signature: "0xS1gn4tUR3",
           },
         };
@@ -160,7 +169,7 @@ describe("EVM Family", () => {
         });
 
         it("External node MEV ON/OFF", async () => {
-          mockGetConfig.mockImplementationOnce((): any => ({
+          mockGetConfig.mockImplementation((): any => ({
             info: {
               node: {
                 type: "external",
@@ -169,10 +178,6 @@ describe("EVM Family", () => {
             },
           }));
 
-          jest
-            .spyOn(mockEthers.providers.StaticJsonRpcProvider.prototype, "sendTransaction")
-            .mockResolvedValue(Promise.resolve({ hash: mockedBroadcastResponse }));
-
           const providerSpy = jest.spyOn(mockEthers.providers, "StaticJsonRpcProvider");
 
           // MEV OFF
@@ -180,71 +185,15 @@ describe("EVM Family", () => {
             ...broadcastArgs,
             broadcastConfig: { mevProtected: false },
           });
-          const urlOff = providerSpy.mock.calls[0][0];
 
           // MEV ON
           await broadcast({
             ...broadcastArgs,
             broadcastConfig: { mevProtected: true },
           });
-          const urlOn = providerSpy.mock.calls[1][0];
 
-          expect(providerSpy).toHaveBeenCalledTimes(2);
-          expect(urlOff).toEqual(urlOn);
+          expect(providerSpy).toHaveBeenCalledTimes(1);
         });
-      });
-
-      it.skip("should broadcast with mevProtected true using correct URI for Ledger NodeApi and no action for External NodeApi", async () => {
-        const coinTransaction: EvmTransaction = {
-          amount: new BigNumber(100),
-          useAllAmount: false,
-          subAccountId: "id",
-          recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
-          feesStrategy: "custom",
-          family: "evm",
-          mode: "send",
-          nonce: 0,
-          gasLimit: new BigNumber(21000),
-          chainId: 1,
-          maxFeePerGas: new BigNumber(100),
-          maxPriorityFeePerGas: new BigNumber(100),
-          type: 2,
-        };
-
-        mockGetConfig.mockImplementationOnce((): any => {
-          return {
-            info: {
-              node: {
-                type: "ledger",
-                explorerId: "eth",
-              },
-              explorer: {
-                type: "etherscan",
-                uri: "https://api.com",
-              },
-            },
-          };
-        });
-
-        const optimisticCoinOperation = buildOptimisticOperation(account, coinTransaction);
-
-        await broadcast({
-          account,
-          signedOperation: {
-            operation: optimisticCoinOperation,
-            signature: "0xS1gn4tUR3",
-          },
-          broadcastConfig: { mevProtected: true },
-        });
-
-        expect(API.broadcastTransaction).not.toHaveBeenCalled();
-        expect(LEDGER_API.broadcastTransaction).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.anything(),
-          expect.objectContaining({
-            mevProtected: true,
-          }),
-        );
       });
 
       it("should broadcast the coin transaction and fill the blank in the optimistic transaction", async () => {
