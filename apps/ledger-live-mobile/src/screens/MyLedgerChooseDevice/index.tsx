@@ -132,7 +132,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           </Text>
         </Flex>
       ) : null}
-      <Flex flex={1} mb={8}>
+      <Flex flex={1}>
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
