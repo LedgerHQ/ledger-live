@@ -10,6 +10,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getSerializedAddressParameters } from "../exchange";
 import { prepareTransaction } from "../prepareTransaction";
 import { updateTransaction } from "../updateTransaction";
 import { createTransaction } from "../createTransaction";
@@ -76,6 +77,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
+    getSerializedAddressParameters,
   };
 }
 

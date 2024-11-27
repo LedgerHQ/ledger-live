@@ -14,7 +14,6 @@ const targets = [
   "mock.ts",
   "account.ts",
   "formatters.ts",
-  "exchange.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
   "operation.ts",

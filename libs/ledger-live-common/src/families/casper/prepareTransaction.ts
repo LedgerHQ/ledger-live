@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 import { Transaction } from "./types";
 
@@ -15,5 +15,5 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     : transaction.amount;
 
   // log("debug", "[prepareTransaction] finish fn");
-  return defaultUpdateTransaction(transaction, { fees, amount });
+  return updateTransaction(transaction, { fees, amount });
 };

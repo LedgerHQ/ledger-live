@@ -1,5 +1,8 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import type { CasperAccount, Transaction, TransactionStatus } from "../types";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -16,13 +19,14 @@ const sync = makeSync({ getAccountShape });
 const accountBridge: AccountBridge<Transaction, CasperAccount, TransactionStatus> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 export { accountBridge };
