@@ -41,7 +41,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
     needsKYC: false,
-    version: 2,
   },
   cic: {
     needsKYC: false,
