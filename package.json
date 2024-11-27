@@ -109,6 +109,7 @@
     "countervalues-react": "pnpm --filter live-countervalues-react",
     "nft": "pnpm --filter live-nft",
     "nft-react": "pnpm --filter live-nft-react",
+    "live-dmk": "pnpm --filter live-dmk",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
