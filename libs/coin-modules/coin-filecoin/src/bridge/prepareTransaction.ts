@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "../network";
 import { BroadcastBlockIncl, Transaction } from "../types";
 import { Methods, calculateEstimatedFees } from "./utils";
@@ -74,7 +74,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
           tokenAccountTxn && params ? generateTokenTxnParams(recipient, patch.amount) : undefined;
       }
 
-      return defaultUpdateTransaction(transaction, patch);
+      return updateTransaction(transaction, patch);
     }
   }
 

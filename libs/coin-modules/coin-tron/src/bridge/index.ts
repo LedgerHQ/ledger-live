@@ -1,6 +1,7 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -51,7 +52,7 @@ function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
@@ -62,6 +63,7 @@ function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    getSerializedAddressParameters,
   };
 }
 
