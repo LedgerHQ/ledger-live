@@ -40,18 +40,28 @@ export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.
 
 // This is an estimation, there is no endpoint to calculate the real size of a block before broadcasting it.
 export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => {
-  switch (t.mode) {
-    case "send": {
-      const subAccount =
-        t.subAccountId && a.subAccounts ? a.subAccounts.find(sa => sa.id === t.subAccountId) : null;
+  const subAccount =
+    t.subAccountId && a.subAccounts ? a.subAccounts.find(sa => sa.id === t.subAccountId) : null;
+  const coinType = (subAccount?.token.tokenType ?? "trx") as "trx" | "trc10" | "trc20";
+  const size = estimatedBlockSize(t.mode, coinType, t.votes.length);
+  return BigNumber(size);
+};
 
-      if (subAccount && subAccount.type === "TokenAccount") {
-        if (subAccount.token.tokenType === "trc10") return new BigNumber(285);
-        if (subAccount.token.tokenType === "trc20") return new BigNumber(350);
+export const estimatedBlockSize = (
+  txMode: TronOperationMode,
+  coinType: "trx" | "trc10" | "trc20" = "trx",
+  voteLength: number = 0,
+): number => {
+  switch (txMode) {
+    case "send":
+      switch (coinType) {
+        case "trc10":
+          return 285;
+        case "trc20":
+          return 350;
+        default:
+          return 270;
       }
-
-      return new BigNumber(270);
-    }
 
     case "freeze":
     case "unfreeze":
@@ -59,13 +69,10 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
     case "withdrawExpireUnfreeze":
     case "unDelegateResource":
     case "legacyUnfreeze":
-      return new BigNumber(260);
+      return 260;
 
     case "vote":
-      return new BigNumber(290 + t.votes.length * 19);
-
-    default:
-      return new BigNumber(0);
+      return 290 + voteLength * 19;
   }
 };
 

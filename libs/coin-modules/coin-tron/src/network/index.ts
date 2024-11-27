@@ -44,6 +44,7 @@ import {
   formatTrongridTxResponse,
 } from "./format";
 import {
+  AccountTronAPI,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -270,10 +271,12 @@ export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) 
   return result;
 };
 
-export async function fetchTronAccount(addr: string) {
+export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> {
   try {
-    const data = await fetch(`/v1/accounts/${addr}`);
-    return data.data;
+    const { data } = await fetch<TransactionResponseTronAPI<AccountTronAPI>>(
+      `/v1/accounts/${addr}`,
+    );
+    return data;
   } catch (e) {
     return [];
   }

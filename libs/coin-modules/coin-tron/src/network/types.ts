@@ -6,10 +6,110 @@ export type TransactionResponseTronAPI<T> = {
   meta: {
     at: number;
     page_size: number;
+    fingerprint?: string;
     links?: {
       next: string;
     };
   };
+};
+
+//-- ACCOUNT
+export type AccountTronAPI = {
+  account_name?: string;
+  owner_permission: {
+    keys: [
+      {
+        address: string;
+        weight: number;
+      },
+    ];
+    threshold: number;
+    permission_name: string;
+  };
+  account_resource: {
+    energy_window_optimized: boolean;
+    frozen_balance_for_energy: {
+      frozen_balance: number;
+      expire_time: number;
+    };
+    latest_consume_time_for_energy: number;
+    energy_window_size: number;
+  };
+  active_permission: [
+    {
+      operations: string;
+      keys: [
+        {
+          address: string;
+          weight: number;
+        },
+      ];
+      threshold: number;
+      id: number;
+      type: string; //"Active";
+      permission_name: string; //"active";
+    },
+  ];
+  address: string;
+  create_time: number;
+  frozen: [
+    {
+      frozen_balance: number;
+      expire_time: number;
+    },
+  ];
+  latest_opration_time: number;
+  free_asset_net_usageV2: [
+    {
+      value: number;
+      key: string;
+    },
+    {
+      value: number;
+      key: string;
+    },
+  ];
+  assetV2: [
+    {
+      value: number;
+      key: string;
+    },
+    {
+      value: number;
+      key: string;
+    },
+  ];
+  frozenV2: [
+    {
+      amount: number;
+      type: string; //"ENERGY";
+    },
+    {
+      type: string; //"UNKNOWN_ENUM_VALUE_ResourceCode_2";
+    },
+  ];
+  balance: number;
+  trc20: Array<Record<string, string>>;
+  /*[
+    {
+      TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7: "1000000";
+    },
+    {
+      TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9: "1234000000000000000";
+    },
+    {
+      TXL6rJbvmjD46zeN1JssfgxvSo99qC8MRT: "13409316000000000000";
+    },
+    {
+      TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t: "178000";
+    },
+  ];
+  */
+  latest_consume_free_time: number;
+  votes: Vote[];
+  latest_withdraw_time: number;
+  net_window_size: number;
+  net_window_optimized: boolean;
 };
 
 //-- TRANSACTION
