@@ -44,7 +44,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   },
   cic: {
     needsKYC: false,
-    needsBearerToken: false,
     displayName: "CIC",
     type: "CEX",
     useInExchangeApp: true,
@@ -54,7 +53,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   },
   moonpay: {
     needsKYC: true,
-    needsBearerToken: false,
     displayName: "MoonPay",
     type: "CEX",
     useInExchangeApp: true,
@@ -67,7 +65,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsKYC: false,
     useInExchangeApp: false,
     displayName: "1inch",
-    needsBearerToken: false,
     termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
     supportUrl: "https://help.1inch.io/en/",
     mainUrl: "https://1inch.io/",
@@ -77,14 +74,12 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsKYC: false,
     useInExchangeApp: false,
     displayName: "Paraswap",
-    needsBearerToken: false,
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.paraswap.io/",
   },
   thorswap: {
     type: "DEX",
-    needsBearerToken: false,
     useInExchangeApp: true,
     displayName: "THORChain",
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
@@ -94,7 +89,6 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   },
   uniswap: {
     type: "DEX",
-    needsBearerToken: false,
     useInExchangeApp: false,
     displayName: "Uniswap",
     termsOfUseUrl:
@@ -244,7 +238,7 @@ export const getSwapProvider = async (
   if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
-      useInExchangeApp: false,
+      useInExchangeApp: true,
       needsBearerToken: false,
       type: "CEX",
       termsOfUseUrl: "https://example.com",
