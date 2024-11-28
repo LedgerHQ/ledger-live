@@ -200,7 +200,8 @@
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Quemado"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -1139,6 +1140,7 @@
       "send" : "Enviar",
       "swap" : "Permutar",
       "stake" : "Poner en participación",
+      "earn" : "Earn",
       "yield" : "Rendimiento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "Poner en participación",
-        "description" : "Pon en participación tus cripto con Ledger"
+        "description" : "Obtén recompensas por tus cripto"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Las transacciones de tokens SPL de Solana presentan características singulares. Para obtener más información, visita <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "Enlace",
             "secondaryCta" : "CTA secundario",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Ruta"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "El Memo es demasiado largo. La longitud máxima es {{maxLength}}"
