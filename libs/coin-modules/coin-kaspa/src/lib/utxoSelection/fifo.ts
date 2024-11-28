@@ -72,8 +72,6 @@ function checkMaxSpendableAmountValidity(
     maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));
   }
   if (amount.isGreaterThan(maxSpendableAmount)) {
-    console.log("amount:", amount);
-    console.log("maxSpendableAmount", maxSpendableAmount);
     // you want to send more than it's possible
     throw new Error("Insufficient UTXOs to meet the required amount");
   }
