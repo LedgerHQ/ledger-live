@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
-import { findCurrencyData, getProvidersCDNData, getProvidersData } from "../../cal";
+import { findCurrencyData, getProvidersCDNData, getProvidersData } from "../../services/cal";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 
 export type SwapProviderConfig = {

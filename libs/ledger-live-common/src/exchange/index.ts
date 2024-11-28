@@ -2,7 +2,7 @@ import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
-import { findCurrencyData } from "../cal";
+import { findCurrencyData } from "../services/cal";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {

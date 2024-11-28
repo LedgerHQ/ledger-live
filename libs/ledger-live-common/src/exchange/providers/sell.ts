@@ -1,5 +1,5 @@
 import { ExchangeProviderNameAndSignature } from ".";
-import { getProvidersData } from "../../cal";
+import { getProvidersData } from "../../services/cal";
 
 const testSellProvider: ExchangeProviderNameAndSignature = {
   name: "SELL_TEST",
