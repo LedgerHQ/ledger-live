@@ -200,7 +200,8 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "SENDING" : "Gönderiliyor"
+      "SENDING" : "Gönderiliyor",
+      "BURN" : "Yakıldı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1139,6 +1140,7 @@
       "send" : "Gönder",
       "swap" : "Takas et",
       "stake" : "Stake et",
+      "earn" : "Kazan",
       "yield" : "Getiri",
       "buy" : "Satın Al",
       "sell" : "Sat",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kriptolarınızı stake edin"
+        "description" : "Kriptolarınızla ödüller kazanın"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Solana SPL token'ı işlemlerinin benzersiz özellikleri vardır. Daha fazla bilgi edinmek için şu adresi ziyaret edin: <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "Bağlantı",
             "secondaryCta" : "İkincil Eylem Çağrısı",
             "cta" : "Eylem Çağrısı",
+            "tag" : "Etiket",
             "url" : "URL",
             "path" : "Yol"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
