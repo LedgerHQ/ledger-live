@@ -156,6 +156,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         errors: object;
         warnings: object;
         customFeeConfig: object;
+        gasLimit?: string;
       }> => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -214,6 +215,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             errors: status.errors,
             warnings: status.warnings,
             customFeeConfig: config,
+            gasLimit: transaction.gasLimit,
           };
         }
 
@@ -223,6 +225,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           errors: object;
           warnings: object;
           customFeeConfig: object;
+          gasLimit?: string;
         }>(resolve => {
           const performClose = (save: boolean) => {
             track("button_clicked2", {
@@ -243,6 +246,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 errors: statusInit.errors,
                 warnings: statusInit.warnings,
                 customFeeConfig,
+                gasLimit: transaction.gasLimit,
               });
             }
             resolve({
@@ -255,6 +259,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               errors: status.errors,
               warnings: status.warnings,
               customFeeConfig,
+              gasLimit: transaction.gasLimit,
             });
           };
 
