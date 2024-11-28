@@ -3,6 +3,8 @@ import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-nativ
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
+import { IsInViewContextProvider } from "LLM/contexts/IsInViewContext";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 
 const WIDTH = width * 0.85;
 
@@ -38,25 +40,29 @@ const Carousel = () => {
   }
 
   return (
-    <ScrollView
-      horizontal
-      ref={scrollViewRef}
-      onMomentumScrollEnd={onScrollEnd}
-      onContentSizeChange={onScrollViewContentChange}
-      showsHorizontalScrollIndicator={false}
-      snapToInterval={WIDTH + 16}
-      decelerationRate={"fast"}
-    >
-      {walletCardsDisplayed.map((cardProps, index) => (
-        <CarouselCard
-          key={cardProps.id + index}
-          id={cardProps.id}
-          cardProps={cardProps}
-          index={index}
-          width={cardsWidth}
-        />
-      ))}
-    </ScrollView>
+    <IsInViewContextProvider>
+      <ScrollView
+        horizontal
+        ref={scrollViewRef}
+        onMomentumScrollEnd={onScrollEnd}
+        onContentSizeChange={onScrollViewContentChange}
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={WIDTH + 16}
+        decelerationRate={"fast"}
+      >
+        {walletCardsDisplayed.map((cardProps, index) => (
+          <LogContentCardWrapper key={cardProps.id + index} id={cardProps.id}>
+            <CarouselCard
+              key={cardProps.id + index}
+              id={cardProps.id}
+              cardProps={cardProps}
+              index={index}
+              width={cardsWidth}
+            />
+          </LogContentCardWrapper>
+        ))}
+      </ScrollView>
+    </IsInViewContextProvider>
   );
 };
 
