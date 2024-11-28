@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   FlatList,
   ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
   View,
+  ViewToken,
   useWindowDimensions,
 } from "react-native";
 import Animated, { Layout, SlideInRight } from "react-native-reanimated";
@@ -13,6 +14,8 @@ import { ContentLayoutBuilder } from "~/contentCards/layouts/utils";
 import Pagination from "./pagination";
 import { ContentCardItem } from "~/contentCards/cards/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { useIsInViewContext } from "LLM/contexts/IsInViewContext";
 
 type Props = {
   styles?: {
@@ -52,8 +55,26 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
 
+  const viewRef = useRef<View>(null);
+  const isInViewRef = useRef(false);
+  const visibleCardsRef = useRef<string[]>([]);
+  const { logImpressionCard } = useDynamicContent();
+  useIsInViewContext(viewRef, ({ isInView }) => {
+    isInViewRef.current = isInView;
+    if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
+  });
+  const handleViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken<ContentCardItem>[] }) => {
+      const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
+      const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
+      visibleCardsRef.current = visibleCards;
+      if (isInViewRef.current) newlyVisibleCards.forEach(logImpressionCard);
+    },
+    [logImpressionCard],
+  );
+
   return (
-    <View style={{ flex: 1, gap: 8 }}>
+    <View ref={viewRef} style={{ flex: 1, gap: 8 }}>
       <FlatList
         horizontal
         ref={carouselRef}
@@ -67,6 +88,8 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
         contentContainerStyle={{
           paddingHorizontal: isFullWidth ? separatorWidth : separatorWidth / 2,
         }}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        onViewableItemsChanged={handleViewableItemsChanged}
         data={items}
         ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
         renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (

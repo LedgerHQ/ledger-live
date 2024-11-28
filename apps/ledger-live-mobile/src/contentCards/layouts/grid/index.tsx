@@ -5,6 +5,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import { useItemStyle as getItemStyle } from "./utils";
 import { ContentCardsType } from "~/dynamicContent/types";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 
 type Props = {
   styles?: {
@@ -43,9 +44,11 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
     >
       {items.map((item, index) => {
         return (
-          <Flex key={item.props.metadata.id} style={{ width: cardWidth }}>
-            <item.component {...item.props} itemStyle={getItemStyle(index, items.length)} />
-          </Flex>
+          <LogContentCardWrapper key={item.props.metadata.id} id={item.props.metadata.id}>
+            <Flex style={{ width: cardWidth }}>
+              <item.component {...item.props} itemStyle={getItemStyle(index, items.length)} />
+            </Flex>
+          </LogContentCardWrapper>
         );
       })}
     </Flex>
