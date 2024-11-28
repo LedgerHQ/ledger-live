@@ -60,7 +60,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
   const handleClose = useCallback(() => {
-    if (returnTo.startsWith("/swap")) {
+    if (typeof returnTo === "string" && returnTo.startsWith("/swap")) {
       track("button_click", {
         ...swapTrackingProperties,
         button: "close X",
@@ -68,6 +68,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
         page: "swap",
       });
     }
+
     history.push(returnTo || `/platform`);
   }, [history, returnTo, appId, swapTrackingProperties, track]);
   const themeType = useTheme().colors.palette.type;
