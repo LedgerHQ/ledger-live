@@ -200,7 +200,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -1139,6 +1140,7 @@
       "send" : "Enviar",
       "swap" : "Trocar",
       "stake" : "Aplicar",
+      "earn" : "Ganhar",
       "yield" : "Rendimento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Faça staking de suas criptos com a Ledger"
+        "description" : "Receba recompensas com sua cripto"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "As transações de tokens SPL Solana têm características exclusivas. Para saber mais, visite: <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4119,8 +4125,8 @@
         "placeholder" : "Info. do provedor de Exchange em formato CAL"
       },
       "exchangeTestPartnerMode" : {
-        "title" : "Exchange in Test Partner Mode",
-        "desc" : "Enable use of the partner stage public key"
+        "title" : "Negociar em Test Partner Mode",
+        "desc" : "Habilita o uso da chave pública do partner stage"
       },
       "analyticsConsole" : {
         "title" : "Permitir o Analytics Console",
@@ -4146,6 +4152,7 @@
             "link" : "Link",
             "secondaryCta" : "CTA secundário",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Path"
           }
@@ -4266,7 +4273,7 @@
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
       "featureFlagsRestoreAll" : "Restaurar valores de todos os marcadores",
-      "flagHint" : "Se um marcador de função (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o \nnome do marcador em camelCase sem o prefixo “feature”.",
+      "flagHint" : "Se um marcador de recurso (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o \nnome do marcador em camelCase sem o prefixo “feature”.",
       "showButtonDesc" : "Sempre exibir o botão Incluir Marcadores na barra lateral",
       "buttonTitle" : "Marcadores desativados localmente",
       "overridden" : {
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
