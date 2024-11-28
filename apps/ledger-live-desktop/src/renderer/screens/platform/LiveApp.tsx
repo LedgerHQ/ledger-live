@@ -45,7 +45,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
       };
     };
   const appId = propsAppId || match.params?.appId;
-  const returnTo = useMemo(() => {
+  const returnTo = useMemo<string | undefined>(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
@@ -60,7 +60,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
   const handleClose = useCallback(() => {
-    if (typeof returnTo === "string" && returnTo.startsWith("/swap")) {
+    if (returnTo?.startsWith("/swap")) {
       track("button_click", {
         ...swapTrackingProperties,
         button: "close X",
