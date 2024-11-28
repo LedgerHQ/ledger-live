@@ -255,9 +255,9 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.txid" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
+          <Box width="100%">
             <SelectableTextWrapper selectable>
-              <Value data-testid="details-swap-id">{swapId}</Value>
+              <DataList data-testid="details-swap-id" lines={[swapId]} t={t} />
               <GradientHover>
                 <CopyWithFeedback text={swapId} />
               </GradientHover>
