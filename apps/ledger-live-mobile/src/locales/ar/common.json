@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -1287,20 +1293,20 @@
     "title" : "أنت بحاجة إلى جهاز Ledger",
     "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
     "cta" : "اشترِ محفظتك Ledger الآن",
-    "footer" : "أنا أمتلك جهاز بالفعل، لنعده الآن",
-    "bannerTitle" : "حافظ على أصولك المشفرة وNFTs آمنة",
-    "bannerTitle2" : "ستحتاج إلى Nano للتداول",
-    "bannerSubtitle" : "بجهاز Ledger",
-    "bannerButtonTitle" : "اكتشف Nano",
-    "bannerButtonTitle2" : "اشترِ جهاز",
-    "setupCta" : "أنا أمتلك جهاز بالفعل، لنعده الآن"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "Buy a Ledger",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "هل استلمت جهازك؟",
-    "desc" : "بمجرد أن تستلم جهازك، يُمكنك البدء في إعداده من خلال Ledger Live!",
-    "cta" : "إعداد جهازي",
-    "bannerTitle" : "هل استلمت جهازك؟",
-    "bannerCta" : "ابدأ الإعداد",
+    "title" : "Did you get your Ledger yet?",
+    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta" : "Setup my Ledger",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "متابعة"
   },
   "purchaseDevice" : {
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "تم الشراء بنجاح",
-    "title" : "تهانينا",
-    "desc" : "طلبك قيد المعالجة.\nستستلم Ledger خاصتك قريباً. يرجى أن تتحقق من تأكيد طلبك في بريدك الإلكتروني."
+    "title" : "Thanks for trusting Ledger",
+    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover" : {
     "title" : "اكتشف",
@@ -2360,8 +2366,7 @@
       "swap" : "مبادلة",
       "send" : "إرسال",
       "deposit" : "تلقي",
-      "stake" : "تكديس",
-      "yield" : "العائد"
+      "stake" : "تكديس"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3277,7 @@
     },
     "stake" : {
       "title" : "تكديس",
-      "description" : "كدّس ممتلكاتك من الأصول المشفرة."
+      "description" : "Get rewards on your crypto."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -5906,6 +5911,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع. معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
