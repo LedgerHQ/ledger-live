@@ -1,195 +1,123 @@
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
-import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import BigNumber from "bignumber.js";
-
-import { SEG_WIT_ABANDON_SEED_ADDRESS } from "../consts";
-
+import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { SEG_WIT_ABANDON_SEED_ADDRESS } from "../consts";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
   transformToBigNumbers,
 } from "../utils";
-import { FeeModalState } from "../WebView";
-import { Dispatch, SetStateAction } from "react";
 
 interface FeeParams {
   fromAccountId: string;
   fromAmount: string;
-  feeStrategy: string;
+  feeStrategy: Strategy;
   openDrawer: boolean;
   customFeeConfig: Record<string, unknown>;
   SWAP_VERSION: string;
 }
 
-interface FeeResult {
-  feesStrategy: string;
+interface FeeData {
+  feesStrategy: Strategy;
   estimatedFees: BigNumber | undefined;
-  errors: Record<string, unknown>;
-  warnings: Record<string, unknown>;
+  errors: TransactionStatus["errors"];
+  warnings: TransactionStatus["warnings"];
   customFeeConfig: Record<string, unknown>;
 }
 
-// Constants
-const SUPPORTED_CUSTOM_FEE_FAMILIES: Transaction["family"][] = ["bitcoin", "evm"];
-const DEFAULT_FEE_STRATEGY = "medium";
+interface GenerateFeeDataParams {
+  account: AccountLike;
+  feePayingAccount: Account;
+  feesStrategy: Strategy;
+  fromAmount: BigNumber | undefined;
+  customFeeConfig: Record<string, unknown>;
+}
 
-// Helper functions
-const getRecipientAddress = (currencyId: string): string => {
-  return currencyId === "bitcoin"
-    ? SEG_WIT_ABANDON_SEED_ADDRESS
-    : getAbandonSeedAddress(currencyId);
+const getRecipientAddress = (
+  transactionFamily: Transaction["family"],
+  currencyId: string,
+): string => {
+  switch (transactionFamily) {
+    case "evm":
+      return getAbandonSeedAddress(currencyId);
+    case "bitcoin":
+      return SEG_WIT_ABANDON_SEED_ADDRESS;
+    default:
+      throw new Error(`Unsupported transaction family: ${transactionFamily}`);
+  }
 };
 
-const convertAmount = (params: { amount: BigNumber; account: Account }): BigNumber | undefined => {
-  return convertToAtomicUnit(params);
-};
+const generateFeeData = async ({
+  account,
+  feePayingAccount,
+  feesStrategy = "medium",
+  fromAmount,
+  customFeeConfig,
+}: GenerateFeeDataParams): Promise<FeeData> => {
+  const bridge = getAccountBridge(account, feePayingAccount);
+  const baseTransaction = bridge.createTransaction(feePayingAccount);
 
-// const trackFeeSelection = (params: {
-//   save: boolean;
-//   swapVersion: string;
-//   feeStrategy: string;
-// }): void => {
-//   track("button_clicked2", {
-//     button: params.save ? "continueNetworkFees" : "closeNetworkFees",
-//     page: "quoteSwap",
-//     ...SWAP_TRACKING_PROPERTIES,
-//     swapVersion: params.swapVersion,
-//     value: params.feeStrategy || "custom",
-//   });
-// };
+  const recipient = getRecipientAddress(baseTransaction.family, feePayingAccount.currency.id);
 
-export const getFee =
-  (accounts: AccountLike[], setFeeModalState: Dispatch<SetStateAction<FeeModalState>>) =>
-  async ({ params }: { params: FeeParams }): Promise<FeeResult> => {
-    // Account validation
-    const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-    if (!realFromAccountId) {
-      throw new Error(`accountId ${params.fromAccountId} unknown`);
-    }
-
-    const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-    if (!fromAccount) {
-      throw new Error(`accountId ${params.fromAccountId} unknown`);
-    }
-
-    // Account setup
-    const fromParentAccount = getParentAccount(fromAccount, accounts);
-    const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-    const bridge = getAccountBridge(fromAccount, fromParentAccount);
-    const subAccountId = fromAccount.type !== "Account" ? fromAccount.id : undefined;
-
-    // Initialize transaction
-    const baseTransaction = bridge.createTransaction(mainAccount);
-    const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
-      ...baseTransaction,
-      subAccountId,
-      recipient: getRecipientAddress(mainAccount.currency.id),
-      amount: convertAmount({
-        amount: new BigNumber(params.fromAmount),
-        account: fromParentAccount,
-      }),
-      feesStrategy: params.feeStrategy || DEFAULT_FEE_STRATEGY,
-      ...transformToBigNumbers(params.customFeeConfig),
-    });
-
-    // Get initial status
-    const initialStatus = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-    let currentStatus = initialStatus;
-    let currentTransaction = preparedTransaction;
-    let customFeeConfig = baseTransaction && getCustomFeesPerFamily(currentTransaction);
-
-    // Handle non-drawer case
-    if (!params.openDrawer) {
-      return formatFeeResult({
-        transaction: currentTransaction,
-        status: currentStatus,
-        mainAccount,
-        customFeeConfig,
-      });
-    }
-
-    // Handle drawer case
-    return new Promise<FeeResult>(resolve => {
-      const onRequestClose = async (save: boolean) => {
-        // trackFeeSelection({
-        //   save,
-        //   swapVersion: params.SWAP_VERSION,
-        //   feeStrategy: currentTransaction.feesStrategy,
-        // });
-        const result = formatFeeResult({
-          transaction: save ? currentTransaction : preparedTransaction,
-          status: save ? currentStatus : initialStatus,
-          mainAccount,
-          customFeeConfig,
-        });
-        resolve(result);
-      };
-
-      const updateTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-        currentStatus = await bridge.getTransactionStatus(mainAccount, newTransaction);
-        customFeeConfig = baseTransaction && getCustomFeesPerFamily(newTransaction);
-        currentTransaction = newTransaction;
-        return newTransaction;
-      };
-
-      setFeeModalState({
-        opened: true,
-        data: {
-          setTransaction: updateTransaction,
-          account: fromAccount,
-          parentAccount: fromParentAccount,
-          status: currentStatus,
-          provider: undefined,
-          disableSlowStrategy: true,
-          transaction: preparedTransaction,
-          onRequestClose,
-        },
-      });
-      //   FeesDrawerLiveApp,
-      //   {
-      //     setTransaction: updateTransaction,
-      //     account: fromAccount,
-      //     parentAccount: fromParentAccount,
-      //     status: currentStatus,
-      //     provider: undefined,
-      //     disableSlowStrategy: true,
-      //     transaction: preparedTransaction,
-      //     onRequestClose: handleDrawerClose,
-      //   },
-      //   {
-      //     title: t("swap2.form.details.label.fees"),
-      //     forceDisableFocusTrap: true,
-      //     onRequestClose: () => handleDrawerClose(false),
-      //   },
-      // );
-    });
+  const transactionConfig: Transaction = {
+    ...baseTransaction,
+    subAccountId: account.type !== "Account" ? account.id : undefined,
+    recipient,
+    amount: fromAmount ?? new BigNumber(0),
+    feesStrategy,
+    ...transformToBigNumbers(customFeeConfig),
   };
 
-// Helper function to format the final result
-const formatFeeResult = ({
-  transaction,
-  status,
-  mainAccount,
-  customFeeConfig,
-}: {
-  transaction: Transaction;
-  status: TransactionStatus;
-  mainAccount: Account;
-  customFeeConfig: Record<string, unknown>;
-}): FeeResult => ({
-  feesStrategy: transaction.feesStrategy || "custom",
-  estimatedFees: convertToNonAtomicUnit({
-    amount: status.estimatedFees,
-    account: mainAccount,
-  }),
-  errors: status.errors,
-  warnings: status.warnings,
-  customFeeConfig: SUPPORTED_CUSTOM_FEE_FAMILIES.includes(transaction.family)
-    ? { hasDrawer: true, ...customFeeConfig }
-    : {},
-});
+  const preparedTransaction = await bridge.updateTransaction(feePayingAccount, transactionConfig);
+  const transactionStatus = await bridge.getTransactionStatus(
+    feePayingAccount,
+    preparedTransaction,
+  );
+
+  return {
+    feesStrategy,
+    estimatedFees: convertToNonAtomicUnit({
+      amount: transactionStatus.estimatedFees,
+      account: feePayingAccount,
+    }),
+    errors: transactionStatus.errors,
+    warnings: transactionStatus.warnings,
+    customFeeConfig: getCustomFeesPerFamily(preparedTransaction),
+  };
+};
+
+export const getFee =
+  (accounts: AccountLike[]) =>
+  async ({ params }: { params: FeeParams }): Promise<FeeData> => {
+    const accountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+    if (!accountId) {
+      throw new Error(`Invalid wallet account ID: ${params.fromAccountId}`);
+    }
+
+    const account = accounts.find(acc => acc.id === accountId);
+    if (!account) {
+      throw new Error(`Account not found: ${accountId}`);
+    }
+
+    const parentAccount =
+      account.type === "TokenAccount" ? getParentAccount(account, accounts) : undefined;
+
+    const feePayingAccount = getMainAccount(account, parentAccount);
+
+    const amount = new BigNumber(params.fromAmount);
+    const atomicAmount = convertToAtomicUnit({ amount, account });
+
+    return generateFeeData({
+      account,
+      feePayingAccount,
+      feesStrategy: params.feeStrategy,
+      fromAmount: atomicAmount,
+      customFeeConfig: params.customFeeConfig,
+    });
+  };

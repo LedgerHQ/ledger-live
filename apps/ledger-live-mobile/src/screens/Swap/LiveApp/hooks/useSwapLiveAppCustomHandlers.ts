@@ -5,12 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { accountsSelector } from "~/reducers/accounts";
 import { swapCustomHandlers } from "../customHandlers";
-import { FeeModalState } from "../WebView";
 
-export function useSwapLiveAppCustomHandlers(
-  manifest: LiveAppManifest,
-  setFeeModalState: React.Dispatch<React.SetStateAction<FeeModalState>>,
-) {
+export function useSwapLiveAppCustomHandlers(manifest: LiveAppManifest) {
   const accounts = useSelector(accountsSelector);
   const ptxCustomHandlers = usePTXCustomHandlers(manifest, accounts);
   const dispatch = useDispatch();
@@ -22,9 +18,8 @@ export function useSwapLiveAppCustomHandlers(
         ...swapCustomHandlers({
           accounts,
           dispatch,
-          setFeeModalState,
         }),
       }) as WalletAPICustomHandlers,
-    [ptxCustomHandlers, accounts, dispatch, setFeeModalState],
+    [ptxCustomHandlers, accounts, dispatch],
   );
 }
