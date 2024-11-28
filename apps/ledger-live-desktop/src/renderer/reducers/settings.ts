@@ -31,7 +31,7 @@ import { getAppLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
 import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
-import { TOGGLE_MEMOTAG_INFO } from "../actions/constants";
+import { TOGGLE_MEMOTAG_INFO, TOGGLE_MARKET_WIDGET, TOGGLE_MEV } from "../actions/constants";
 
 /* Initial state */
 
@@ -78,6 +78,7 @@ export type SettingsState = {
   collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
+  marketPerformanceWidget: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
@@ -182,6 +183,7 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   lastSeenDevice: null,
   mevProtection: true,
+  marketPerformanceWidget: true,
   hasSeenOrdinalsDiscoveryDrawer: false,
   hasProtectedOrdinalsAssets: false,
   devicesModelList: [],
@@ -296,8 +298,9 @@ type HandlersPayloads = {
   SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
   SET_LAST_ONBOARDED_DEVICE: Device | null;
 
-  SET_MEV_PROTECTION: boolean;
+  [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
+  [TOGGLE_MARKET_WIDGET]: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -548,11 +551,14 @@ const handlers: SettingsHandlers = {
     ...state,
     lastOnboardedDevice: payload,
   }),
-  SET_MEV_PROTECTION: (state: SettingsState, { payload }) => ({
+  [TOGGLE_MEV]: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
   }),
-
+  [TOGGLE_MARKET_WIDGET]: (state: SettingsState, { payload }) => ({
+    ...state,
+    marketPerformanceWidget: payload,
+  }),
   [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
     ...state,
     alwaysShowMemoTagInfo: payload,
@@ -911,5 +917,6 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-
+export const marketPerformanceWidgetSelector = (state: State) =>
+  state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
