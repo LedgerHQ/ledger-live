@@ -4,7 +4,7 @@
 [Ledger Devs Discord](https://developers.ledger.com/discord-pro),
 [Developer Portal](https://developers.ledger.com/)
 
-## @ledgerhq/hw-app-algorand
+## @ledgerhq/hw-app-aptos
 
 Ledger Hardware Wallet Aptos JavaScript bindings.
 
@@ -46,12 +46,12 @@ Aptos API
 
 ```javascript
 import Aptos from "@ledgerhq/hw-app-aptos";
-const algo = new Aptos(transport);
+const aptos = new Aptos(transport);
 ```
 
 #### getAddress
 
-get Algorant address for a given BIP 32 path.
+get Aptos address for a given BIP 32 path.
 
 ##### Parameters
 
