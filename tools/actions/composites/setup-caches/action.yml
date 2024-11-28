@@ -57,6 +57,11 @@ runs:
       shell: bash
       run: proto use
 
+    - uses: pnpm/action-setup@v4
+      if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
+      with:
+        version: 9.12.3
+
     - name: Get pnpm store directory
       shell: bash
       run: |
