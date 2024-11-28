@@ -3,7 +3,7 @@ import {
   getProvidersData,
   type ProvidersDataResponse,
   type ExchangeProvider,
-} from "./partners";
+} from "./index";
 import network from "@ledgerhq/live-network";
 
 jest.mock("@ledgerhq/live-network");
