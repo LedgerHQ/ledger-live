@@ -1,7 +1,5 @@
-// https://nft.api.live.ledger.com/v2/solana/owner/:address?challenge=
-
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import { getTrustedDomain } from "./common";
 
 type OwnerAddressResponse = {
   descriptorType: "TrustedName";
@@ -19,10 +17,14 @@ export type OwnerInfo = {
   signedDescriptor: string;
 };
 
-export async function getOwnerAddress(tokenAddress: string, challenge: string): Promise<OwnerInfo> {
+export async function getOwnerAddress(
+  tokenAddress: string,
+  challenge: string,
+  env: "prod" | "test" = "prod",
+): Promise<OwnerInfo> {
   const { data } = await network<OwnerAddressResponse>({
     method: "GET",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v2/solana/owner/${tokenAddress}?challenge=${challenge}`,
+    url: `${getTrustedDomain(env)}/v2/solana/owner/${tokenAddress}?challenge=${challenge}`,
   });
 
   return {
@@ -37,10 +39,11 @@ export async function computedTokenAddress(
   address: string,
   mintAddress: string,
   challenge: string,
+  env: "prod" | "test" = "prod",
 ): Promise<OwnerInfo> {
   const { data } = await network<OwnerAddressResponse>({
     method: "GET",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v2/solana/computed-token-account/${address}/${mintAddress}/?challenge=${challenge}`,
+    url: `${getTrustedDomain(env)}/v2/solana/computed-token-account/${address}/${mintAddress}/?challenge=${challenge}`,
   });
 
   return {

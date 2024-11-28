@@ -41,7 +41,7 @@ describe("getCertificate", () => {
     "returns all data in expected format for $device",
     async ({ device, descriptor, signature }) => {
       // When
-      const result = await getCertificate(device, "1.3.0", "test");
+      const result = await getCertificate(device, "1.3.0", "test", "test");
 
       // Then
       expect(result).toEqual({

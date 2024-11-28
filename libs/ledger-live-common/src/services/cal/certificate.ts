@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import { getCALDomain } from "./common";
 
 type CertificateResponse = {
   id: string;
@@ -37,10 +37,11 @@ export async function getCertificate(
   device: DeviceModelId,
   version: string,
   env: "prod" | "test" = "prod",
+  signatureKind: "prod" | "test" = "prod",
 ): Promise<CertificateInfo> {
   const { data } = await network<CertificateResponse[]>({
     method: "GET",
-    url: `${getEnv("CAL_SERVICE_URL")}/v1/certificates`,
+    url: `${getCALDomain(env)}/v1/certificates`,
     params: {
       output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
       target_device: device.toLowerCase(),
@@ -55,6 +56,6 @@ export async function getCertificate(
 
   return {
     descriptor: data[0].descriptor.data,
-    signature: data[0].descriptor.signatures[env],
+    signature: data[0].descriptor.signatures[signatureKind],
   };
 }
