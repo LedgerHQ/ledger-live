@@ -9,6 +9,7 @@ import CustomLockscreenPage from "./stax/customLockscreen.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
+import LedgerSyncPage from "./settings/ledgerSync.page";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import NftGalleryPage from "./wallet/nftGallery.page";
@@ -61,6 +62,7 @@ export class Application {
   public discover = new DiscoverPage();
   public dummyWalletApp = new DummyWalletApp();
   public walletAPIReceive = new WalletAPIReceivePage();
+  public ledgerSync = new LedgerSyncPage();
   public manager = new ManagerPage();
   public market = new MarketPage();
   public nftGallery = new NftGalleryPage();
