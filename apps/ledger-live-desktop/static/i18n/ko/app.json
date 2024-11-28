@@ -1139,6 +1139,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "earn" : "수익 창출",
       "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
+        "description" : "암호화폐로 더 큰 혜택을 누려보세요"
       }
     },
     "recoverBanner" : {

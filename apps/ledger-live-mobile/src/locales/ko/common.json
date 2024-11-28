@@ -1287,20 +1287,20 @@
     "title" : "Ledger 장치가 필요하시군요",
     "desc" : "보안을 위해 Ledger Live는 오직 Ledger 장치에서만 작동합니다. 계속하려면 장치가 필요합니다.",
     "cta" : "지금 여러분의 Ledger를 구매하세요",
-    "footer" : "이미 장치가 있습니다. 지금 설정하세요.",
-    "bannerTitle" : "암호화폐와 NFT를 안전하게 보호하세요",
-    "bannerTitle2" : "Ledger 장치로 거래하려면",
-    "bannerSubtitle" : "Nano가 필요합니다",
-    "bannerButtonTitle" : "Nano 살펴보기",
-    "bannerButtonTitle2" : "장치 구매",
-    "setupCta" : "이미 장치가 있습니다. 설정을 진행합니다"
+    "footer" : "이미 Ledger가 있습니다. 설정을 진행합니다",
+    "bannerTitle" : "암호화폐 및 NFT를 위한 최고 수준의 보안",
+    "bannerTitle2" : "Ledger Flex로 거래하려면",
+    "bannerSubtitle" : "Ledger 장치가 필요합니다",
+    "bannerButtonTitle" : "Ledger Flex 살펴보기",
+    "bannerButtonTitle2" : "Ledger 구매",
+    "setupCta" : "이미 Ledger가 있습니다. 설정을 진행합니다"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "장치를 셨나요?",
-    "desc" : "장치를 수령했다면 Ledger Live를 통해 장치 설정을 시작할 수 있습니다.",
-    "cta" : "내 장치 설정",
-    "bannerTitle" : "장치를 받으셨나요?",
-    "bannerCta" : "설정 시작하기",
+    "title" : "Ledger를 받으셨나요?",
+    "desc" : "지금 바로 설정을 완료하고 Ledger Live 앱의 모든 기능을 사용해 보세요.",
+    "cta" : "내 Ledger 설정",
+    "bannerTitle" : "Ledger를 받으셨나요?",
+    "bannerCta" : "설정을 시작하세요",
     "continue" : "계속"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "구매 완료",
-    "title" : "축하합니다!",
-    "desc" : "주문을 처리 중입니다.\n곧 Ledger 장치를 받게 됩니다. 주문 확인 이메일을 확인해 주세요."
+    "title" : "Ledger를 선택해 주셔서 감사합니다.",
+    "desc" : "주문을 처리 중입니다.\n주문 확인 이메일을 확인해 주세요."
   },
   "discover" : {
     "title" : "탐색",
@@ -2360,8 +2360,7 @@
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
-      "stake" : "스테이킹",
-      "yield" : "이자"
+      "stake" : "스테이킹"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3271,7 @@
     },
     "stake" : {
       "title" : "스테이킹",
-      "description" : "암호화폐 자산 스테이킹"
+      "description" : "암호화폐로 더 큰 혜택을 누려보세요"
     },
     "swap" : {
       "title" : "스왑",
