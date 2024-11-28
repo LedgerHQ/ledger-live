@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -1287,20 +1293,20 @@
     "title" : "Bir Ledger'a ihtiyacınız var",
     "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
     "cta" : "Ledger'ınızı şimdi satın alın",
-    "footer" : "Zaten bir cihazım var, şimdi kurmak istiyorum",
-    "bannerTitle" : "Kriptolarınızı ve NFT'lerinizi güvende tutun",
-    "bannerTitle2" : "Bir Ledger Cihazıyla işlem yapmak için",
-    "bannerSubtitle" : "bir Nano'ya ihtiyacınız olacak",
-    "bannerButtonTitle" : "Nano'yu Keşfedin",
-    "bannerButtonTitle2" : "Cihaz satın al",
-    "setupCta" : "Zaten bir cihazım var, onu kuralım"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "Buy a Ledger",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Cihazınız elinize geçti mi?",
-    "desc" : "Cihazınız elinize geçtiğinde kurulumunu Ledger Live üzerinde başlatabilirsiniz!",
-    "cta" : "Cihazımı kur",
-    "bannerTitle" : "Cihazınız elinize geçti mi?",
-    "bannerCta" : "Kurulumu başlatın",
+    "title" : "Did you get your Ledger yet?",
+    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta" : "Setup my Ledger",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "Devam"
   },
   "purchaseDevice" : {
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Alım başarıyla gerçekleşti",
-    "title" : "Tebrikler!",
-    "desc" : "Siparişiniz işleniyor.\nLedger cihazınız yakında size ulaşacak. Sipariş onayınız için lütfen e-postanızı kontrol edin."
+    "title" : "Thanks for trusting Ledger",
+    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover" : {
     "title" : "Keşfedin",
@@ -2360,8 +2366,7 @@
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
-      "stake" : "Stake et",
-      "yield" : "Getiri"
+      "stake" : "Stake et"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3277,7 @@
     },
     "stake" : {
       "title" : "Stake et",
-      "description" : "Sahip olduğunuz kriptoları stake edin."
+      "description" : "Kriptolarınızla ödüller kazanın."
     },
     "swap" : {
       "title" : "Takas et",
@@ -5906,6 +5911,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "İmzalamadan önce Ledger cihazınızdaki işlem bilgilerini iki kez kontrol edin. Solana SPL token'ı işlemlerinin benzersiz özellikleri vardır. Daha fazla bilgi edinmek için şu adresi ziyaret edin: <0>ledger.com/spl</0>"
     }
   },
   "near" : {
