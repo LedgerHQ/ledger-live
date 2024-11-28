@@ -32,7 +32,7 @@ describe("Add account from modal", () => {
     await app.addAccount.selectCurrency(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await app.addAccount.startAccountsDiscovery();
+    await app.addAccount.waitAccountsDiscovery();
     await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 0);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();

@@ -43,9 +43,9 @@ export default class AddAccountDrawer {
     await tapById(id);
   }
 
-  @Step("Start accounts discovery")
-  async startAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId, 120000);
+  @Step("Wait for accounts discovery")
+  async waitAccountsDiscovery() {
+    await waitForElementById(this.continueButtonId, 240000);
   }
 
   @Step("Expect account discovered")
@@ -57,7 +57,6 @@ export default class AddAccountDrawer {
 
   @Step("Finish account discovery")
   async finishAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId);
     await tapById(this.continueButtonId);
   }
 
@@ -69,7 +68,7 @@ export default class AddAccountDrawer {
 
   @Step("Add only first discovered account")
   async addFirstAccount(currency: Currency) {
-    await this.startAccountsDiscovery();
+    await this.waitAccountsDiscovery();
     await this.expectAccountDiscovery(currency.name, currency.currencyId);
     await tapById(this.deselectAllButtonId);
     await tapById(this.accountCardRegExp(), 0);
