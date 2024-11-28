@@ -15,7 +15,7 @@ import type {
   TransferCommand,
 } from "./types";
 import { buildTransactionWithAPI } from "./buildTransaction";
-import type { SolanaSigner } from "./signer";
+import type { Resolution, SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
@@ -45,6 +45,24 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
   return optimisticOp;
 };
 
+function getResolution(transaction: Transaction): Resolution | undefined {
+  if (!transaction.subAccountId || !transaction.model.commandDescriptor) return;
+
+  const { command } = transaction.model.commandDescriptor;
+  switch (command.kind) {
+    case "token.transfer": {
+      return {
+        tokenAddress: command.recipientDescriptor.tokenAccAddress,
+      };
+    }
+    case "token.createATA": {
+      return {
+        tokenAddress: command.associatedTokenAccountAddress,
+      };
+    }
+  }
+}
+
 export const buildSignOperation =
   (
     signerContext: SignerContext<SolanaSigner>,
@@ -64,7 +82,11 @@ export const buildSignOperation =
         });
 
         const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize())),
+          signer.signTransaction(
+            account.freshAddressPath,
+            Buffer.from(tx.message.serialize()),
+            getResolution(transaction),
+          ),
         );
 
         subscriber.next({
