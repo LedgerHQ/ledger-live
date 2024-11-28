@@ -1,16 +1,16 @@
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
 import { useSelector } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 import Card from "~/renderer/components/Box/Card";
-import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useHistory, useLocation } from "react-router-dom";
-import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
-import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
+import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 import { captureException } from "~/sentry/renderer";
-import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
