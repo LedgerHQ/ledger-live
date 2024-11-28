@@ -148,6 +148,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           openDrawer: boolean;
           customFeeConfig: object;
           SWAP_VERSION: string;
+          gasLimit?: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -185,6 +186,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
+          customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
