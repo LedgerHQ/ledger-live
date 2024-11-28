@@ -238,7 +238,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 }),
                 errors: statusInit.errors,
                 warnings: statusInit.warnings,
-                customFeeConfig,
+                customFeeConfig: params.customFeeConfig,
                 hasDrawer,
                 gasLimit: transaction.gasLimit,
               });
