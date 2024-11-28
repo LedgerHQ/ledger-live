@@ -147,7 +147,7 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un wallet Ledger",
+    "buyLedger" : "Acheter un wallet",
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
@@ -200,7 +200,8 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "SENDING" : "Envoi"
+      "SENDING" : "Envoi",
+      "BURN" : "Brûlé"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -438,7 +439,7 @@
     },
     "wrongDevice" : {
       "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
-      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -1139,6 +1140,7 @@
       "send" : "Envoyer",
       "swap" : "Swap",
       "stake" : "Staker",
+      "earn" : "Gagner",
       "yield" : "Rendement",
       "buy" : "Acheter",
       "sell" : "Vendre",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "Staker",
-        "description" : "Stakez vos cryptos via Ledger."
+        "description" : "Obtenez des récompenses sur vos cryptos"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Les transactions de tokens Solana SPL ont des caractéristiques uniques. Pour en savoir plus, consultez : <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "Lien",
             "secondaryCta" : "CTA secondaire",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Chemin"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Mémo trop long. Longueur maximale : {{maxLength}}"
