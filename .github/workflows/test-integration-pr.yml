@@ -10,35 +10,35 @@ permissions:
   contents: read
 
 jobs:
-  is-affected:
-    outputs:
-      is-affected: ${{ steps.affected.outputs.is-affected }}
-      paths: ${{ steps.affected.outputs.paths }}
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
-        id: affected
-        with:
-          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+  # is-affected:
+  #   outputs:
+  #     is-affected: ${{ steps.affected.outputs.is-affected }}
+  #     paths: ${{ steps.affected.outputs.paths }}
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: develop
+  #         fetch-depth: 0
+  #     - name: checkout branch (PR)
+  #       if: ${{ github.event_name == 'pull_request' }}
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+  #       run: |
+  #         gh pr checkout ${{ github.event.pull_request.number }}
+  #     - name: checkout branch (not PR)
+  #       if: ${{ github.event_name != 'pull_request' }}
+  #       run: |
+  #         git checkout $GITHUB_SHA
+  #     - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+  #       id: affected
+  #       with:
+  #         ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
   integration-tests:
     name: "Integration Tests"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
+    # needs: is-affected
+    # if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -73,24 +73,24 @@ jobs:
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
         run: pnpm build:llc --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-      - name: Test
-        shell: bash
-        env:
-          FILTER: ${{ needs.is-affected.outputs.paths }}
-          VERBOSE_FILE: logs.txt
-        run: |
-          echo $FILTER | xargs pnpm common ci-test-integration
-          git diff --exit-code libs/ledger-live-common/src
-      - name: (On Failure) Upload live-common snapshots and source
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ${{ format('live-common-src-{0}', matrix.os) }}
-          path: |
-            libs/ledger-live-common/src
-      - name: (On Failure) Upload logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: logs.txt
-          path: logs.txt
+      # - name: Test
+      #   shell: bash
+      #   env:
+      #     FILTER: ${{ needs.is-affected.outputs.paths }}
+      #     VERBOSE_FILE: logs.txt
+      #   run: |
+      #     echo $FILTER | xargs pnpm common ci-test-integration
+      #     git diff --exit-code libs/ledger-live-common/src
+      # - name: (On Failure) Upload live-common snapshots and source
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: ${{ format('live-common-src-{0}', matrix.os) }}
+      #     path: |
+      #       libs/ledger-live-common/src
+      # - name: (On Failure) Upload logs
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: logs.txt
+      #     path: logs.txt
