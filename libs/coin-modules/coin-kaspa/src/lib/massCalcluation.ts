@@ -5,8 +5,10 @@
  * @param volume - The volume of the material
  * @returns The computed mass
  */
+import { BigNumber } from "bignumber.js";
+import { sumBigNumber } from "./utxoSelection/lib";
 
-const C = 10 ** 12;
+const C: BigNumber = BigNumber(10 ** 12);
 
 // note: this is an easy version of computeMass for Ledger only.
 // it has usualy inputs with regular Script and one or two outputs
@@ -26,21 +28,28 @@ export function calcComputeMass(
   return mass;
 }
 
-function _negativeMass(inputs: number[], outputsNum: number): number {
+function _negative_mass(inputs: BigNumber[], outputsNum: number): number {
   const inputsNum = inputs.length;
   if (outputsNum === 1 || inputsNum === 1 || (outputsNum === 2 && inputsNum === 2)) {
-    return inputs.reduce((acc, v) => acc + Math.floor(C / v), 0);
+    return sumBigNumber(inputs.map(v => C.div(v).integerValue(BigNumber.ROUND_FLOOR))).toNumber();
   }
-  return inputsNum * Math.floor(C / Math.floor(inputs.reduce((acc, v) => acc + v, 0) / inputsNum));
+  return (
+    inputsNum *
+    C.div(sumBigNumber(inputs).div(BigNumber(inputsNum)).integerValue(BigNumber.ROUND_FLOOR))
+      .integerValue(BigNumber.ROUND_FLOOR)
+      .toNumber()
+  );
 }
 
-export function calcStorageMass(inputs: number[], outputs: number[]): number {
-  const N = _negativeMass(inputs, outputs.length);
-  const P = outputs.reduce((acc, o) => acc + Math.floor(C / o), 0);
+export function calcStorageMass(inputs: BigNumber[], outputs: BigNumber[]): number {
+  const N: number = _negative_mass(inputs, outputs.length);
+  const P: number = sumBigNumber(
+    outputs.map(v => C.div(v).integerValue(BigNumber.ROUND_FLOOR)),
+  ).toNumber();
   return Math.max(P - N, 0);
 }
 
-export function calcTotalMass(inputs: number[], outputs: number[]): number {
+export function calcTotalMass(inputs: BigNumber[], outputs: BigNumber[]): number {
   return Math.max(
     calcStorageMass(inputs, outputs),
     calcComputeMass(inputs.length, outputs.length === 2, false), // TODO: implement ECDSA

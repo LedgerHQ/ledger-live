@@ -1,6 +1,6 @@
 import { scanUtxos } from "../network";
 import { addressToScriptPublicKey, parseExtendedPublicKey } from "../lib/kaspa-util";
-import { selectUtxos } from "../lib/utxoSelection";
+import { selectUtxos, UtxoStrategy } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
 
 import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput } from "./kaspaHwTransaction";
@@ -34,7 +34,14 @@ export const buildTransaction = async (
 
   const { utxos, accountAddresses } = await scanUtxos(compressedPublicKey, chainCode);
   const recipientIsTypeECDSA: boolean = recipient.length > 67;
-  const selectedUtxos = selectUtxos(utxos, recipientIsTypeECDSA, amount, t.feerate || 1);
+  const result = selectUtxos(
+    utxos,
+    UtxoStrategy.FIFO,
+    recipientIsTypeECDSA,
+    amount,
+    t.feerate || 1,
+  );
+  const selectedUtxos = result.utxos;
 
   const txInputs = selectedUtxos.map(utxo => {
     return new KaspaHwTransactionInput({
@@ -46,25 +53,23 @@ export const buildTransaction = async (
     });
   });
 
-  const changeAmount: BigNumber = selectedUtxos
-    .reduce((sum, utxo) => sum.plus(new BigNumber(utxo.utxoEntry.amount)), new BigNumber(0))
-    .minus(amount)
-    .minus(
-      BigNumber(
-        (t?.feerate || 1) * selectedUtxos.length * 1118 + 918 + (recipientIsTypeECDSA ? 11 : 0),
-      ),
-    );
+  const changeAmount: BigNumber = result.changeAmount;
 
   const txOutputs = [
     new KaspaHwTransactionOutput({
       value: amount.toNumber(),
       scriptPublicKey: addressToScriptPublicKey(recipient),
     }),
-    new KaspaHwTransactionOutput({
-      value: changeAmount.toNumber(),
-      scriptPublicKey: addressToScriptPublicKey(accountAddresses.nextChangeAddress.address),
-    }),
   ];
+
+  if (changeAmount.isGreaterThan(0)) {
+    txOutputs.push(
+      new KaspaHwTransactionOutput({
+        value: changeAmount.toNumber(),
+        scriptPublicKey: addressToScriptPublicKey(accountAddresses.nextChangeAddress.address),
+      }),
+    );
+  }
 
   return new KaspaHwTransaction({
     inputs: txInputs,
