@@ -1287,20 +1287,20 @@
     "title" : "Ledgerが必要です",
     "desc" : "セキュリティーの都合上、Ledger Liveはデバイス上でのみ機能します。継続にはデバイスが必要です。",
     "cta" : "Ledgerを今すぐ購入",
-    "footer" : "既にデバイスを持っており、セットアップを開始可能",
-    "bannerTitle" : "暗号資産とNFTを安全に保管",
-    "bannerTitle2" : "Ledgerデバイスを使って取引するには、",
-    "bannerSubtitle" : "Ledgerデバイスにお任せ",
-    "bannerButtonTitle" : "Nanoをチェック",
-    "bannerButtonTitle2" : "デバイスを購入する",
-    "setupCta" : "すでにデバイスを持っている場合の設定"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "Buy a Ledger",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "デバイスを受け取りましたか？",
-    "desc" : "デバイスを受け取ったら、Ledger Liveでセットアップを開始できます!",
-    "cta" : "デバイスをセットアップ",
-    "bannerTitle" : "デバイスを受け取りましたか？",
-    "bannerCta" : "セットアップを始める",
+    "title" : "Did you get your Ledger yet?",
+    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta" : "Setup my Ledger",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "続行"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "購入手続きに成功",
-    "title" : "おめでとうございます！",
-    "desc" : "注文を処理しています。\nLedgerの受取までもうすぐです。ご注文確認のメールをご確認ください。"
+    "title" : "Thanks for trusting Ledger",
+    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover" : {
     "title" : "アプリ一覧",
@@ -2360,8 +2360,7 @@
       "swap" : "スワップ",
       "send" : "送付",
       "deposit" : "受け取る",
-      "stake" : "ステーキング",
-      "yield" : "イールド"
+      "stake" : "ステーキング"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3271,7 @@
     },
     "stake" : {
       "title" : "ステーキング",
-      "description" : "保有する暗号資産をステーキングしましょう。"
+      "description" : "お持ちの暗号資産で報酬を獲得しましょう。"
     },
     "swap" : {
       "title" : "スワップ",
