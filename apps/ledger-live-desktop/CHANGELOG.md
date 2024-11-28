@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.93.0-next.1
+
+### Minor Changes
+
+- [#8518](https://github.com/LedgerHQ/ledger-live/pull/8518) [`9cea8d5`](https://github.com/LedgerHQ/ledger-live/commit/9cea8d521da6fff071d2b20f9c362a95aafb2a1a) Thanks [@Couto](https://github.com/Couto)! - Ensure returnTo value is defined before tracking analytics
+
 ## 2.93.0-next.0
 
 ### Minor Changes
