@@ -103,7 +103,7 @@ export async function createTransaction(
       index,
     });
   };
-
+  console.log("additionals: ", additionals);
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
   const sapling = additionals.includes("sapling");
@@ -123,7 +123,7 @@ export async function createTransaction(
   const nullPrevout = Buffer.alloc(0);
   const defaultVersion = Buffer.alloc(4);
   !!expiryHeight && !isDecred
-    ? defaultVersion.writeUInt32LE(isZcash ? 0x80000006 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
+    ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
     : defaultVersion.writeUInt32LE(1, 0);
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];

@@ -64,15 +64,15 @@ export function serializeTransaction(
   }
   // from to https://zips.z.cash/zip-0225, zcash is different with other coins, the lock_time and nExpiryHeight fields are before the inputs and outputs
   if (isZcash) {
-    const version6 = transaction.version.equals(Buffer.from([0x06, 0x00, 0x00, 0x80]));
-    let consensus = Buffer.from([0xb4, 0xd0, 0xd6, 0xc2]);
-    if (version6) {
-      consensus = Buffer.from([0x55, 0x10, 0xe7, 0xc8]);
-    }
+    // const version6 = transaction.version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
+    // let consensus = Buffer.from([0xb4, 0xd0, 0xd6, 0xc2]);
+    // if (version6) {
+    //   consensus = Buffer.from([0x55, 0x10, 0xe7, 0xc8]);
+    // }
     return Buffer.concat([
       transaction.version,
       transaction.nVersionGroupId || Buffer.alloc(0),
-      consensus, // Zcash Consensus Branch ID: 0xC2D6D0B4 refer to https://z.cash/upgrade/nu5/
+      Buffer.from([0x55, 0x10, 0xe7, 0xc8]), // Zcash Consensus Branch ID: 0xC2D6D0B4 refer to https://z.cash/upgrade/nu5/
       transaction.locktime || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       transaction.nExpiryHeight || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       useWitness ? Buffer.from("0001", "hex") : Buffer.alloc(0),
