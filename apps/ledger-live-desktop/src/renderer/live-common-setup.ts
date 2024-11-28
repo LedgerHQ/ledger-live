@@ -33,71 +33,69 @@ export function registerTransportModules(store: Store) {
   const vaultTransportPrefixID = "vault-transport:";
   const isSpeculosEnabled = !!getEnv("SPECULOS_API_PORT");
   const isProxyEnabled = !!getEnv("DEVICE_PROXY_URL");
+  const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
 
   listenLogs(({ id, date, ...log }) => {
     if (log.type === "hid-frame") return;
     logger.debug(log);
   });
 
-  registerTransportModule({
-    id: "sdk",
-    open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
-      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
-      if (!ldmkFeatureFlag.enabled) return null;
-      if (isSpeculosEnabled && isProxyEnabled) return null;
-      trace({
-        type: "renderer-setup",
-        message: "Open called on registered module",
-        data: {
-          transport: "SDKTransport",
-          timeoutMs,
-        },
-        context: {
-          openContext: context,
-        },
-      });
-      return DeviceManagementKitTransport.open();
-    },
+  if (ldmkFeatureFlag.enabled) {
+    registerTransportModule({
+      id: "sdk",
+      open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
+        if (isSpeculosEnabled && isProxyEnabled) return null;
+        trace({
+          type: "renderer-setup",
+          message: "Open called on registered module",
+          data: {
+            transport: "SDKTransport",
+            timeoutMs,
+          },
+          context: {
+            openContext: context,
+          },
+        });
+        return DeviceManagementKitTransport.open();
+      },
 
-    disconnect: () => Promise.resolve(),
-  });
+      disconnect: () => Promise.resolve(),
+    });
+  } else {
+    // Register IPC Transport Module
+    registerTransportModule({
+      id: "ipc",
+      open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+        if (isSpeculosEnabled || isProxyEnabled) return null;
+        const originalDeviceMode = currentMode;
+        // id could be another type of transport such as vault-transport
+        if (id.startsWith(vaultTransportPrefixID)) return;
 
-  // Register IPC Transport Module
-  registerTransportModule({
-    id: "ipc",
-    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
-      if (ldmkFeatureFlag.enabled) return null;
-      if (!isSpeculosEnabled && !isProxyEnabled) return null;
+        if (originalDeviceMode !== currentMode) {
+          setDeviceMode(originalDeviceMode);
+        }
 
-      const originalDeviceMode = currentMode;
-      // id could be another type of transport such as vault-transport
-      if (id.startsWith(vaultTransportPrefixID)) return;
+        trace({
+          type: "renderer-setup",
+          message: "Open called on registered module",
+          data: {
+            transport: "IPCTransport",
+            timeoutMs,
+          },
+          context: {
+            openContext: context,
+          },
+        });
 
-      if (originalDeviceMode !== currentMode) {
-        setDeviceMode(originalDeviceMode);
-      }
-
-      trace({
-        type: "renderer-setup",
-        message: "Open called on registered module",
-        data: {
-          transport: "IPCTransport",
-          timeoutMs,
-        },
-        context: {
-          openContext: context,
-        },
-      });
-
-      // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-      return retry(() => IPCTransport.open(id, timeoutMs, context), {
-        interval: 500,
-        maxRetry: 4,
-      });
-    },
-    disconnect: () => Promise.resolve(),
-  });
+        // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
+        return retry(() => IPCTransport.open(id, timeoutMs, context), {
+          interval: 500,
+          maxRetry: 4,
+        });
+      },
+      disconnect: () => Promise.resolve(),
+    });
+  }
 
   // Register Vault Transport Module
   registerTransportModule({
