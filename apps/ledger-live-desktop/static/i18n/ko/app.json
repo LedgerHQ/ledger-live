@@ -200,7 +200,8 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "SENDING" : "보내기"
+      "SENDING" : "보내기",
+      "BURN" : "소각됨"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -1139,6 +1140,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "earn" : "수익 창출",
       "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
+        "description" : "암호화폐로 더 큰 혜택을 누려보세요"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "솔라나 SPL 토큰 트랜잭션에는 고유한 특성이 있습니다. 자세히 알아보려면 ledger.com/spl을 방문하세요."
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "링크",
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
+            "tag" : "태그",
             "url" : "URL",
             "path" : "경로"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
