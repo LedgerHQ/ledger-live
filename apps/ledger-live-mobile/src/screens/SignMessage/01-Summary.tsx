@@ -106,7 +106,7 @@ function SignSummary({
     if (messageData.standard === "EIP712") {
       getMessageProperties(messageData).then(setMessageFields);
     }
-  }, [isACREWithdraw, mainAccount, mainAccount.currency, messageData, setMessageFields]);
+  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <SafeAreaView

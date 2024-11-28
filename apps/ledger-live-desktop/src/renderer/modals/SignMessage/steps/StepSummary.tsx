@@ -114,7 +114,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
       const specific = getLLDCoinFamily(mainAccount.currency.family);
       specific?.message?.getMessageProperties(messageData).then(setMessageFields);
     }
-  }, [account.currency.family, isACREWithdraw, mainAccount, messageData, setMessageFields]);
+  }, [account.currency.family, mainAccount, messageData, setMessageFields]);
 
   return (
     <Box flow={1}>
