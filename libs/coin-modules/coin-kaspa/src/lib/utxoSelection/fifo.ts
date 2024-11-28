@@ -18,7 +18,6 @@ export const selectUtxosFIFO = (
   // sort with blockDaaScore ASCENDING for FIFO
   utxos.sort((a, b) => parseInt(a.utxoEntry.blockDaaScore) - parseInt(b.utxoEntry.blockDaaScore));
 
-  console.log("i am here with ", utxos);
   checkMaxSpendableAmountValidity(utxos.slice(0, 88), amount, isEcdsaRecipient);
   // we have enough UTXOs for this strategy - find the right slice
   // no need to use all of them.
@@ -29,8 +28,6 @@ export const selectUtxosFIFO = (
 
     const minFee = calcComputeMass(i + 1, false, false) * feerate;
     if (combinedAmount.isGreaterThanOrEqualTo(amount.plus(minFee))) {
-      // TODO: ECDSA..!
-
       // here we might have enough UTXOs for the amount + computeMass
       // now the storageMass could be very high, with a low change amount, maybe another UTXO is needed.
       try {
@@ -39,8 +36,6 @@ export const selectUtxosFIFO = (
           amount,
           feerate,
         );
-
-        console.log("returning utxos");
 
         // if calculateChangeAmount worked, the utxo set works:
         return {
