@@ -4,6 +4,8 @@
  * Use only exposed methods below outside of this module.
  */
 
+import { getCertificate } from "./certificate";
+
 export { findCurrencyData, type CurrencyData } from "./currencies";
 export {
   getProvidersCDNData,
@@ -11,3 +13,7 @@ export {
   type PartnerType,
   type ExchangeProvider,
 } from "./partners";
+
+export default {
+  getCertificate,
+};

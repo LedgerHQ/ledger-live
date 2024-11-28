@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { AdditionalProviderConfig, SWAP_DATA_CDN } from "../exchange/providers/swap";
+import { AdditionalProviderConfig, SWAP_DATA_CDN } from "../../exchange/providers/swap";
 
 const CAL_BASE_URL = getEnv("CAL_SERVICE_URL");
 

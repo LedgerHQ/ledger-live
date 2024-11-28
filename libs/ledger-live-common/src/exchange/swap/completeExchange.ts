@@ -26,6 +26,10 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
 import { CEXProviderConfig } from "../providers/swap";
+import { AccountLike } from "@ledgerhq/types-live";
+import loadPKI from "../../hw/loadPKI";
+import { calService } from "../../services";
+import Transport from "@ledgerhq/hw-transport";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -55,6 +59,7 @@ const completeExchange = (
         }
 
         const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
+
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
@@ -136,6 +141,20 @@ const completeExchange = (
         );
         if (unsubscribed) return;
 
+        //-- Special case of SPLToken
+        //TODO: generalize this case when another blockchain has the same requirement
+        if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
+          sendPKI(transport);
+        }
+
+        if (isSPLTokenAccount(fromAccount)) {
+          //TODO Call AppExchange with TrustedService info
+        }
+        if (isSPLTokenAccount(toAccount)) {
+          //TODO Call AppExchange with TrustedService info
+        }
+
+        //-- CHECK_PAYOUT_ADDRESS
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
 
@@ -241,6 +260,20 @@ const completeExchange = (
     };
   });
 };
+
+function isSPLTokenAccount(account: AccountLike): boolean {
+  return account.type !== "TokenAccount" && account.currency.id === "solana";
+}
+
+async function sendPKI(transport: Transport) {
+  // FIXME: version number hardcoded
+  const { descriptor, signature } = await calService.getCertificate(
+    transport.deviceModel!.id,
+    "1.3.0",
+  );
+
+  await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
+}
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg
