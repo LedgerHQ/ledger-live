@@ -1,4 +1,12 @@
-import React, { createContext, type RefObject, useCallback, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  type RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Dimensions, type View } from "react-native";
 
 const IsInViewContext = createContext<IsInViewContext>({});
@@ -7,12 +15,14 @@ export function useIsInViewContext(
   target: RefObject<View>,
   onIsInViewUpdate: (entry: IsInViewEntry) => void,
 ) {
-  const { addIsInViewItem } = React.useContext(IsInViewContext);
+  const { addWatchedItem, removeWatchedItem } = useContext(IsInViewContext);
   const onIsInViewUpdateRef = useRef(onIsInViewUpdate);
 
   useEffect(() => {
-    addIsInViewItem?.({ target, onIsInViewUpdate: onIsInViewUpdateRef.current });
-  }, [target, onIsInViewUpdate, addIsInViewItem]);
+    const item = { target, onIsInViewUpdate: onIsInViewUpdateRef.current };
+    addWatchedItem?.(item);
+    return () => removeWatchedItem?.(item);
+  }, [target, addWatchedItem, removeWatchedItem]);
 }
 
 export function IsInViewContextProvider({
@@ -20,35 +30,50 @@ export function IsInViewContextProvider({
   interval: intervalDuration = 200,
   children,
 }: IsInViewContextProviderProps) {
-  const items = useRef<IsInViewItem[]>([]);
-  const addIsInViewItem = useCallback((item: IsInViewItem) => items.current.push(item), []);
+  const items = useRef<WatchedItem[]>([]);
+  const [hasItems, setHasItems] = useState(false);
 
-  const isInViewMap = useRef(new WeakMap<RefObject<View>, boolean>());
+  const addWatchedItem = useCallback((item: WatchedItem) => {
+    if (items.current.length === 0) setHasItems(true);
+    items.current.push(item);
+  }, []);
+  const removeWatchedItem = useCallback((item: WatchedItem) => {
+    const index = items.current.indexOf(item);
+    if (index === -1) return;
+    items.current.splice(index, 1);
+    if (items.current.length === 0) setHasItems(false);
+  }, []);
+
+  const watchedItem = useRef(new WeakMap<WatchedItem, boolean>());
 
   useEffect(() => {
+    if (!hasItems) return;
+
     const window = Dimensions.get("window");
     const interval = setInterval(() => {
-      items.current.map(({ target, onIsInViewUpdate }) =>
-        target.current?.measureInWindow((x, y, width, height) => {
+      items.current.forEach(item =>
+        item.target.current?.measureInWindow((x, y, width, height) => {
           const inViewRatioX = ratioContained(x, width, window.width);
           const inViewRatioY = ratioContained(y, height, window.height);
           const inViewRatio = inViewRatioX * inViewRatioY;
 
           const isInView = inViewRatio > threshold;
-          if (isInView === isInViewMap.current.get(target)) return;
-          isInViewMap.current.set(target, isInView);
+          if (isInView === watchedItem.current.get(item)) return;
+          watchedItem.current.set(item, isInView);
 
           const boundingClientRect = { x, y, width, height };
-          onIsInViewUpdate({ isInView, inViewRatio, boundingClientRect });
+          item.onIsInViewUpdate({ isInView, inViewRatio, boundingClientRect });
         }),
       );
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [threshold, intervalDuration]);
+  }, [hasItems, threshold, intervalDuration]);
 
   return (
-    <IsInViewContext.Provider value={{ addIsInViewItem }}>{children}</IsInViewContext.Provider>
+    <IsInViewContext.Provider value={{ addWatchedItem, removeWatchedItem }}>
+      {children}
+    </IsInViewContext.Provider>
   );
 }
 
@@ -59,10 +84,11 @@ type IsInViewContextProviderProps = {
 };
 
 type IsInViewContext = {
-  addIsInViewItem?: (items: IsInViewItem) => void;
+  addWatchedItem?: (items: WatchedItem) => void;
+  removeWatchedItem?: (items: WatchedItem) => void;
 };
 
-type IsInViewItem = {
+type WatchedItem = {
   target: RefObject<View>;
   onIsInViewUpdate: (entry: IsInViewEntry) => void;
 };
