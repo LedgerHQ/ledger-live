@@ -2,18 +2,26 @@ import React from "react";
 import { render, act, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BehaviorSubject, of } from "rxjs";
-import { DeviceSdkProvider, useDeviceSessionState, useDeviceSdk } from "./index";
+import {
+  DeviceManagementKitProvider,
+  useDeviceSessionState,
+  useDeviceManagementKit,
+} from "./index";
 import { DeviceStatus } from "@ledgerhq/device-management-kit";
 
 jest.mock("@ledgerhq/device-management-kit", () => ({
   DeviceManagementKitBuilder: jest.fn(() => ({
     addLogger: jest.fn().mockReturnThis(),
+    addTransport: jest.fn().mockReturnThis(),
     build: jest.fn().mockReturnValue({
       getDeviceSessionState: jest.fn(),
       startDiscovering: jest.fn(),
       connect: jest.fn(),
     }),
   })),
+  BuiltinTransports: {
+    USB: "USB",
+  },
   ConsoleLogger: jest.fn(),
   LogLevel: { Debug: "debug" },
   DeviceStatus: {
@@ -29,13 +37,13 @@ const activeDeviceSessionSubjectMock = new BehaviorSubject<{
 
 jest.mock("./index", () => ({
   ...jest.requireActual("./index"),
-  useDeviceSdk: jest.fn(),
+  useDeviceManagementKit: jest.fn(),
 }));
 
 afterEach(cleanup);
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <DeviceSdkProvider>{children}</DeviceSdkProvider>
+  <DeviceManagementKitProvider>{children}</DeviceManagementKitProvider>
 );
 
 const TestComponent: React.FC = () => {
@@ -48,18 +56,18 @@ const TestComponent: React.FC = () => {
 };
 
 describe("useDeviceSessionState", () => {
-  let sdkMock: {
+  let deviceManagementKitMock: {
     getDeviceSessionState: jest.Mock;
   };
 
   beforeEach(() => {
-    sdkMock = {
+    deviceManagementKitMock = {
       getDeviceSessionState: jest.fn(),
     };
-    (useDeviceSdk as jest.Mock).mockReturnValue(sdkMock);
+    (useDeviceManagementKit as jest.Mock).mockReturnValue(deviceManagementKitMock);
 
     jest
-      .spyOn(sdkMock, "getDeviceSessionState")
+      .spyOn(deviceManagementKitMock, "getDeviceSessionState")
       .mockImplementation(({ sessionId }: { sessionId: string }) => {
         if (sessionId === "valid-session") {
           return of({
@@ -132,7 +140,7 @@ describe("useDeviceSessionState", () => {
     activeDeviceSessionSubjectMock.next(null);
 
     await act(async () => {
-      sdkMock.getDeviceSessionState.mockReturnValueOnce(
+      deviceManagementKitMock.getDeviceSessionState.mockReturnValueOnce(
         of({
           deviceStatus: DeviceStatus.NOT_CONNECTED,
         }),

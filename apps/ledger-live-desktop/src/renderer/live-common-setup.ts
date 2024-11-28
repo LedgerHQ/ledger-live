@@ -16,6 +16,7 @@ import { FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { State } from "./reducers";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
 
 interface Store {
   getState: () => State;
@@ -38,12 +39,36 @@ export function registerTransportModules(store: Store) {
     logger.debug(log);
   });
 
+  registerTransportModule({
+    id: "sdk",
+    open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
+      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
+      if (!ldmkFeatureFlag.enabled) return null;
+      if (isSpeculosEnabled && isProxyEnabled) return null;
+      trace({
+        type: "renderer-setup",
+        message: "Open called on registered module",
+        data: {
+          transport: "SDKTransport",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+      return DeviceManagementKitTransport.open();
+    },
+
+    disconnect: () => Promise.resolve(),
+  });
+
   // Register IPC Transport Module
   registerTransportModule({
     id: "ipc",
     open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport" as FeatureId, store);
-      if (ldmkFeatureFlag.enabled && !isSpeculosEnabled && !isProxyEnabled) return;
+      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
+      if (ldmkFeatureFlag.enabled) return null;
+      if (!isSpeculosEnabled && !isProxyEnabled) return null;
 
       const originalDeviceMode = currentMode;
       // id could be another type of transport such as vault-transport
