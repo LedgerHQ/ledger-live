@@ -1139,6 +1139,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
+      "earn" : "Earn",
       "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "تكديس",
-        "description" : "كدّس أصولك المشفرة مع Ledger"
+        "description" : "Get rewards on your crypto"
       }
     },
     "recoverBanner" : {
