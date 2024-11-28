@@ -148,6 +148,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           openDrawer: boolean;
           customFeeConfig: object;
           SWAP_VERSION: string;
+          gasLimit?: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -155,6 +156,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         errors: object;
         warnings: object;
         customFeeConfig: object;
+        gasLimit?: string;
+        hasDrawer: boolean;
       }> => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -185,6 +188,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
+          customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -198,11 +202,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           return newTransaction;
         };
 
+        // filters out the custom fee config for chains without drawer
+        const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
         if (!params.openDrawer) {
-          // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family)
-            ? { hasDrawer: true, ...customFeeConfig }
-            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
@@ -211,17 +213,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }),
             errors: status.errors,
             warnings: status.warnings,
-            customFeeConfig: config,
+            customFeeConfig,
+            hasDrawer,
+            gasLimit: transaction.gasLimit,
           };
         }
 
-        return new Promise<{
-          feesStrategy: string;
-          estimatedFees: BigNumber | undefined;
-          errors: object;
-          warnings: object;
-          customFeeConfig: object;
-        }>(resolve => {
+        return new Promise(resolve => {
           const performClose = (save: boolean) => {
             track("button_clicked2", {
               button: save ? "continueNetworkFees" : "closeNetworkFees",
@@ -241,6 +239,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 errors: statusInit.errors,
                 warnings: statusInit.warnings,
                 customFeeConfig,
+                hasDrawer,
+                gasLimit: transaction.gasLimit,
               });
             }
             resolve({
@@ -253,6 +253,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               errors: status.errors,
               warnings: status.warnings,
               customFeeConfig,
+              hasDrawer,
+              gasLimit: transaction.gasLimit,
             });
           };
 
