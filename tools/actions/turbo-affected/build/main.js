@@ -18990,6 +18990,7 @@ var package_default = {
     "ljs:devices": "pnpm --filter devices",
     "ljs:errors": "pnpm --filter errors",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
+    "ljs:hw-app-aptos": "pnpm --filter hw-app-aptos",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
     "ljs:hw-app-eth": "pnpm --filter hw-app-eth",

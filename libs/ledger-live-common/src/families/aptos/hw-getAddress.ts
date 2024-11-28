@@ -1,4 +1,4 @@
-import Aptos from "./hw-app-aptos";
+import Aptos from "@ledgerhq/hw-app-aptos";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { AptosAddress } from "./types";
 
