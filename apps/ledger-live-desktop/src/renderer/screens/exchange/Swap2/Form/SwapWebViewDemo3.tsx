@@ -215,7 +215,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             warnings: status.warnings,
             customFeeConfig,
             hasDrawer,
-            gasLimit: transaction.gasLimit,
+            gasLimit: finalTx.gasLimit,
           };
         }
 
@@ -240,7 +240,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 warnings: statusInit.warnings,
                 customFeeConfig: params.customFeeConfig,
                 hasDrawer,
-                gasLimit: transaction.gasLimit,
+                gasLimit: finalTx.gasLimit,
               });
             }
             resolve({
@@ -254,7 +254,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               warnings: status.warnings,
               customFeeConfig,
               hasDrawer,
-              gasLimit: transaction.gasLimit,
+              gasLimit: finalTx.gasLimit,
             });
           };
 
