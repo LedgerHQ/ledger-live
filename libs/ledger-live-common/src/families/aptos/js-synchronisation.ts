@@ -8,7 +8,7 @@ import { encodeAccountId, decodeAccountId } from "../../account";
 
 import { AptosAPI } from "./api";
 import { txsToOps } from "./logic";
-import Aptos from "./hw-app-aptos";
+import Aptos from "@ledgerhq/hw-app-aptos";
 
 const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, derivationMode, currency, deviceId, derivationPath } = info;

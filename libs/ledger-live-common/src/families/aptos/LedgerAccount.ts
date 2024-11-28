@@ -1,6 +1,6 @@
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
-import HwAptos from "./hw-app-aptos";
+import HwAptos from "@ledgerhq/hw-app-aptos";
 import {
   AptosAccount,
   HexString,
