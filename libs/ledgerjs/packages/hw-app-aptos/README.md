@@ -6,20 +6,20 @@
 
 ## @ledgerhq/hw-app-algorand
 
-Ledger Hardware Wallet Algorand JavaScript bindings.
+Ledger Hardware Wallet Aptos JavaScript bindings.
 
-***
+---
 
 ## Are you adding Ledger support to your software wallet?
 
-You may be using this package to communicate with the Algorand Nano App.
+You may be using this package to communicate with the Aptos Nano App.
 
 For a smooth and quick integration:
 
-*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
-***
+---
 
 ## API
 
@@ -27,26 +27,26 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [Algorand](#algorand)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-1)
+- [Aptos](#Aptos)
+  - [Parameters](#parameters)
+  - [Examples](#examples)
+  - [getAddress](#getaddress)
+    - [Parameters](#parameters-1)
+    - [Examples](#examples-1)
 
-### Algorand
+### Aptos
 
-Algorand API
+Aptos API
 
 #### Parameters
 
-*   `transport` **Transport**&#x20;
+- `transport` **Transport**&#x20;
 
 #### Examples
 
 ```javascript
-import Algorand from "@ledgerhq/hw-app-algorand";
-const algo = new Algorand(transport)
+import Aptos from "@ledgerhq/hw-app-aptos";
+const algo = new Aptos(transport);
 ```
 
 #### getAddress
@@ -55,13 +55,13 @@ get Algorant address for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 
 ##### Examples
 
 ```javascript
-cosmos.getAddress("44'/283'/0'/0/0").then(o => o.address)
+aptos.getAddress("44'/283'/0'/0/0").then(o => o.address);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey, address and (optionally) chainCode

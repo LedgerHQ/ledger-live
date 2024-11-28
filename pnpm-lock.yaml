@@ -4498,15 +4498,6 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
-      hi-base32:
-        specifier: ^0.5.1
-        version: 0.5.1
-      js-sha512:
-        specifier: ^0.8.0
-        version: 0.8.0
-      tweetnacl:
-        specifier: ^1.0.3
-        version: 1.0.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
