@@ -28,7 +28,7 @@ import BigNumber from "bignumber.js";
 import { CEXProviderConfig } from "../providers/swap";
 import { AccountLike } from "@ledgerhq/types-live";
 import loadPKI from "../../hw/loadPKI";
-import { calService } from "../../services";
+import calService from "@ledgerhq/ledger-cal-service";
 import Transport from "@ledgerhq/hw-transport";
 
 const withDevicePromise = (deviceId, fn) =>

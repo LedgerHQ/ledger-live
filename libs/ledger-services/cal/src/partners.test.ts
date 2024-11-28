@@ -96,7 +96,7 @@ describe("transformData", () => {
             },
           },
         },
-      ];
+      ] satisfies ProvidersDataResponse;
 
       const result = transformData(providersData, ledgerSignatureEnv);
       expect(result).toEqual(expected);

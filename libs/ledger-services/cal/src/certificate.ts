@@ -1,6 +1,17 @@
-import { DeviceModelId } from "@ledgerhq/devices";
 import network from "@ledgerhq/live-network";
 import { getCALDomain } from "./common";
+
+const DeviceModel = {
+  blue: "blue",
+  nanoS: "nanos",
+  nanoSP: "nanosp",
+  nanoX: "nanox",
+  stax: "stax",
+  /** Ledger Flex ("europa" is the internal name) */
+  europa: "flex",
+  flex: "flex",
+} as const;
+export type Device = keyof typeof DeviceModel;
 
 type CertificateResponse = {
   id: string;
@@ -9,7 +20,7 @@ type CertificateResponse = {
     minor: number;
     patch: number;
   };
-  target_device: keyof typeof DeviceModelId;
+  target_device: Device;
   not_valid_after: {
     major: number;
     minor: number;
@@ -34,7 +45,7 @@ export type CertificateInfo = {
  * @param version semver
  */
 export async function getCertificate(
-  device: DeviceModelId,
+  device: Device,
   version: string,
   env: "prod" | "test" = "prod",
   signatureKind: "prod" | "test" = "prod",
@@ -44,7 +55,7 @@ export async function getCertificate(
     url: `${getCALDomain(env)}/v1/certificates`,
     params: {
       output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
-      target_device: device.toLowerCase(),
+      target_device: DeviceModel[device],
       public_key_usage: "trusted_name",
       note_valid_after: version,
     },
