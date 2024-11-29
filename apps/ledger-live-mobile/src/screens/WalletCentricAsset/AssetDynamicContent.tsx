@@ -2,8 +2,8 @@ import { Flex, SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import LogContentCardWrapper from "~/newArch/features/DynamicContent/components/LogContentCardWrapper";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
