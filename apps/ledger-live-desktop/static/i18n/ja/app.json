@@ -200,7 +200,8 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "SENDING" : "送信中"
+      "SENDING" : "送信中",
+      "BURN" : "バーン済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -1139,6 +1140,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "earn" : "報酬獲得",
       "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産をステーキング"
+        "description" : "お持ちの暗号資産で報酬を獲得"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Solana SPLトークンのトランザクションには独特の特徴があります。詳細については、次のサイトをご覧ください：<0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "リンク",
             "secondaryCta" : "セカンダリCTA",
             "cta" : "CTA",
+            "tag" : "タグ",
             "url" : "URL",
             "path" : "パス"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
