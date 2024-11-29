@@ -280,20 +280,6 @@ const linkingOptions = () => ({
               [ScreenName.Accounts]: "account",
             },
           },
-
-          [NavigatorName.AddAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://add-account" will open the add account flow
-               *
-               * @params ?currency: string
-               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-               *
-               */
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
@@ -439,13 +425,43 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-
+  const AddAccountNavigatorEntryPoint = llmNetworkBasedAddAccountFlow?.enabled
+    ? NavigatorName.AssetSelection
+    : NavigatorName.AddAccounts; // both navigators share the same ScreenName.AddAccountsSelectCrypto screen
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions()
+          ? {
+              ...linkingOptions(),
+              config: {
+                ...linkingOptions().config,
+                screens: {
+                  ...linkingOptions().config.screens,
+                  [NavigatorName.Base]: {
+                    ...linkingOptions().config.screens[NavigatorName.Base],
+                    screens: {
+                      ...linkingOptions().config.screens[NavigatorName.Base].screens,
+                      // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
+                      [AddAccountNavigatorEntryPoint]: {
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://add-account" will open the add account flow
+                           *
+                           * @params ?currency: string
+                           * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+                           *
+                           */
+                          [ScreenName.AddAccountsSelectCrypto]: "add-account",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            }
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
@@ -585,6 +601,7 @@ export const DeeplinksProvider = ({
       liveAppProviderInitialized,
       manifests,
       buySellUiManifestId,
+      AddAccountNavigatorEntryPoint,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
