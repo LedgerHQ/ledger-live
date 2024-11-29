@@ -155,6 +155,12 @@ const linkingOptions = () => ({
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
            */
           [ScreenName.PlatformApp]: "discover/:platform",
+          [NavigatorName.Card]: {
+            initialRouteName: ScreenName.Card,
+            screens: {
+              [ScreenName.Card]: "card",
+            },
+          },
           [ScreenName.Recover]: "recover/:platform",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
@@ -479,7 +485,6 @@ export const DeeplinksProvider = ({
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
-
           const {
             ajs_prop_campaign: ajsPropCampaign,
             ajs_prop_track_data: ajsPropTrackData,
