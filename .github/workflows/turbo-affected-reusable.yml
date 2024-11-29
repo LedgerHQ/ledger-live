@@ -40,14 +40,9 @@ jobs:
           echo "Head branch: ${{ inputs.head_branch }}"
           echo "Base branch: ${{ inputs.base_branch }}"
 
-      - name: Checkout head branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.head_branch }}
-  
-      - name: Fetch base branch
-        run: |
-          git fetch origin ${{ inputs.base_branch }}:${{ inputs.base_branch }} --depth=1
+          fetch-depth: 0
 
       - uses: actions/github-script@v7
         id: clean-refs
@@ -62,7 +57,7 @@ jobs:
             core.exportVariable("head_branch", newHeadBranch);
             core.exportVariable("base_branch", newBaseBranch);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
+      - uses: ./tools/actions/turbo-affected
         id: affected
         with:
           ref: ${{ format('origin/{0}', inputs.base_branch) }}
