@@ -85,7 +85,7 @@ test.describe("Password", () => {
 });
 
 test.describe("counter value selection", () => {
-  const account = Account.ETH_1;
+  const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [

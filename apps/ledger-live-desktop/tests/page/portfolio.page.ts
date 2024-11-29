@@ -20,7 +20,7 @@ export class PortfolioPage extends AppPage {
   private showMoreButton = this.page.getByText("Show more");
   private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
   private assetRowValue = (asset: string) =>
-    this.page.getByTestId(`asset-row-${asset.toLowerCase()}-value`);
+    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`).locator("//div[position()=5]");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private totalBalance = this.page.getByTestId("total-balance");
   private balanceDiff = this.page.getByTestId("balance-diff");
