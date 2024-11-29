@@ -15,7 +15,7 @@ jobs:
   determine-affected:
     name: "Turbo Affected"
     if: ${{!github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@support/turbo-affected-fix-scope-testing-2
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@support/turbo-affected-fix-scope-testing-3
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
