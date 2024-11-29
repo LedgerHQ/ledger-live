@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -1287,20 +1293,20 @@
     "title" : "Necesitas un Ledger",
     "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
     "cta" : "Compra tu Ledger ahora",
-    "footer" : "Ya tengo un dispositivo, deseo configurarlo ahora",
-    "bannerTitle" : "Mantén a salvo tus criptomonedas y NFTs",
-    "bannerTitle2" : "Necesitarás un Nano para operar",
-    "bannerSubtitle" : "con un dispositivo Ledger",
-    "bannerButtonTitle" : "Descubre el Nano",
-    "bannerButtonTitle2" : "Compra un dispositivo",
-    "setupCta" : "Ya tengo un dispositivo y quiero configurarlo"
+    "footer" : "Ya tengo un Ledger y quiero configurarlo",
+    "bannerTitle" : "La máxima seguridad para tus cripto y NFTs",
+    "bannerTitle2" : "Necesitarás un Ledger para poder operar",
+    "bannerSubtitle" : "con un Ledger Flex",
+    "bannerButtonTitle" : "Descubre el Flex",
+    "bannerButtonTitle2" : "Compra un Ledger",
+    "setupCta" : "Ya tengo un Ledger y quiero configurarlo"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "¿Has recibido tu dispositivo?",
-    "desc" : "En cuanto recibas tu dispositivo, podrás comenzar a configurarlo a través de Ledger Live.",
-    "cta" : "Configurar mi dispositivo",
-    "bannerTitle" : "¿Has recibido tu dispositivo?",
-    "bannerCta" : "Iniciar la configuración",
+    "title" : "¿Te ha llegado ya tu Ledger?",
+    "desc" : "En cuanto lo tengas, configúralo para desbloquear todas las funciones de la aplicación Ledger Live.",
+    "cta" : "Configurar mi Ledger",
+    "bannerTitle" : "¿Has recibido tu Ledger?",
+    "bannerCta" : "Empezar la configuración",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Compra exitosa",
-    "title" : "¡Enhorabuena!",
-    "desc" : "Tu pedido está en proceso.\nRecibirás tu Ledger pronto. Busca la confirmación de tu pedido en tu correo electrónico."
+    "title" : "Gracias por confiar en Ledger",
+    "desc" : "Tu pedido está en proceso.\nBusca la confirmación de tu pedido en tu correo electrónico."
   },
   "discover" : {
     "title" : "Discover",
@@ -2360,8 +2366,7 @@
       "swap" : "Permutar",
       "send" : "Enviar",
       "deposit" : "Recibir",
-      "stake" : "Participar",
-      "yield" : "Rendimiento"
+      "stake" : "Participar"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3277,7 @@
     },
     "stake" : {
       "title" : "Poner en participación",
-      "description" : "Pon en participación las cripto que tienes."
+      "description" : "Obtén recompensas por tus cripto."
     },
     "swap" : {
       "title" : "Permutar",
@@ -5906,6 +5911,10 @@
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
       },
       "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla. Las transacciones de tokens SPL de Solana presentan características singulares. Para obtener más información, visita <0>ledger.com/spl</0>"
     }
   },
   "near" : {
