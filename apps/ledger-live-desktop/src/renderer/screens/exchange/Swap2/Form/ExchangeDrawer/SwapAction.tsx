@@ -19,6 +19,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Text from "~/renderer/components/Text";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
@@ -72,6 +73,7 @@ export default function SwapAction({
 }: Props) {
   const [initData, setInitData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
+  const mevProtected = useSelector(mevProtectionSelector);
   const device = useSelector(getCurrentDevice);
   const deviceRef = useRef(device);
   const { account: fromAccount, parentAccount: fromParentAccount } = swapTransaction.swap.from;
@@ -83,6 +85,7 @@ export default function SwapAction({
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
+    broadcastConfig: { mevProtected },
   });
 
   const exchange = useMemo(
