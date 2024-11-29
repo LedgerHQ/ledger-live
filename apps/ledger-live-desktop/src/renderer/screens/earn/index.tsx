@@ -12,6 +12,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { getParsedSystemLocale } from "~/helpers/systemLocale";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -24,7 +25,7 @@ const Earn = () => {
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
   const discreetMode = useDiscreetMode();
-
+  const countryLocale = getParsedSystemLocale().region;
   useDeepLinkListener();
 
   return (
@@ -44,6 +45,7 @@ const Earn = () => {
             theme: themeType,
             lang: language,
             locale: locale,
+            countryLocale,
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",

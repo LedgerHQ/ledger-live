@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
-import { Account } from "tests/enum/Account";
-import { AppInfos } from "tests/enum/AppInfos";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Fee } from "tests/enum/Fee";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Swap } from "tests/models/Swap";
-import { Provider, Rate } from "tests/enum/Swap";
+import { Provider, Rate } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
@@ -112,6 +112,73 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
+  //todo: flaky balance retrieval, reactivate after LIVE-14410
+  /*{
+    swap: new Swap(
+      Account.SOL_1,
+      Account.ETH_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2828",
+  },
+  {
+    swap: new Swap(
+      Account.SOL_1,
+      Account.BTC_NATIVE_SEGWIT_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2827",
+  },
+  {
+    swap: new Swap(
+      Account.SOL_1,
+      Account.ETH_USDT_1,
+      "0.25",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2829",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.ETH_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2830",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.SOL_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2831",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_USDC_1,
+      Account.BTC_NATIVE_SEGWIT_1,
+      "45",
+      Fee.MEDIUM,
+      Provider.EXODUS,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2832",
+  },*/
 ];
 
 for (const { swap, xrayTicket } of swaps) {
@@ -233,7 +300,7 @@ const tooLowAmountForQuoteSwaps = [
     swap: new Swap(
       Account.ETH_1,
       Account.BTC_NATIVE_SEGWIT_1,
-      "0.005",
+      "0.001",
       Fee.MEDIUM,
       Provider.CHANGELLY,
       Rate.FLOAT,
@@ -339,7 +406,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
           await app.swap.verifySwapAmountErrorMessageIsDisplayed(
             electronApp,
             swap.accountToDebit,
-            "No quotes available.",
+            "Not enough balance, including network fee.",
           );
         }
       },

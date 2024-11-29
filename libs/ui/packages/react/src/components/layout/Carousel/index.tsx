@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import { Props } from "./types";
+import { ChevronArrow } from "./ChevronArrow";
 
 const Embla = styled.div`
   overflow: hidden;
@@ -13,14 +14,27 @@ const EmblaContainer = styled.div`
 `;
 
 const EmblaSlide = styled.div`
+  display: flex;
   flex: 0 0 100%;
   min-width: 0;
+  > * {
+    flex-basis: 100%;
+  }
+`;
+
+const CarouselContainer = styled.div<Pick<Props, "variant">>`
+  position: relative;
+
+  --hover-transition: 0;
+  &:hover {
+    --hover-transition: 1;
+  }
 `;
 
 /**
  * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
-const Carousel = ({ children, variant = "default" }: Props) => {
+const Carousel = ({ children, variant = "default", onChange }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
@@ -30,7 +44,9 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     const newIndex = emblaApi.selectedScrollSnap();
     setCurrentIndex(newIndex);
     emblaApi.scrollTo(newIndex);
-  }, [emblaApi]);
+
+    onChange?.(newIndex);
+  }, [emblaApi, onChange]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -45,15 +61,27 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     emblaApi.on("reInit", updateIndex);
   }, [emblaApi, updateIndex]);
 
+  const handleGotoPrevSlide = () => emblaApi?.scrollPrev();
+  const handleGotoNextSlide = () => emblaApi?.scrollNext();
+
   return (
     <div>
-      <Embla ref={emblaRef}>
-        <EmblaContainer>
-          {children.map(child => (
-            <EmblaSlide key={child.key}>{child}</EmblaSlide>
-          ))}
-        </EmblaContainer>
-      </Embla>
+      <CarouselContainer variant={variant}>
+        {variant === "default" && children.length > 1 && (
+          <>
+            <ChevronArrow direction="left" onClick={handleGotoPrevSlide} />
+            <ChevronArrow direction="right" onClick={handleGotoNextSlide} />
+          </>
+        )}
+
+        <Embla ref={emblaRef}>
+          <EmblaContainer>
+            {children.map(child => (
+              <EmblaSlide key={child.key}>{child}</EmblaSlide>
+            ))}
+          </EmblaContainer>
+        </Embla>
+      </CarouselContainer>
 
       <Footer
         children={children}
@@ -64,4 +92,5 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     </div>
   );
 };
+
 export default Carousel;

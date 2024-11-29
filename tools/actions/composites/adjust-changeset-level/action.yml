@@ -1,0 +1,37 @@
+name: Adjust Changeset Level
+description: This action adjusts the changeset level from one value to another.
+inputs:
+  from_level:
+    description: 'The changeset level to target'
+    required: true
+  to_level:
+    description: 'The desired changeset level for the target'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate input levels
+      shell: bash
+      run: |
+        valid_levels=("patch" "minor" "major")
+        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.from_level }} " ]]; then
+          echo "Invalid from_level: ${inputs.from_level}. Must be one of ${valid_levels[@]}"
+          exit 1
+        fi
+        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.to_level }} " ]]; then
+          echo "Invalid to_level: ${inputs.to_level}. Must be one of ${valid_levels[@]}"
+          exit 1
+        fi
+
+    - name: Adjust changeset level
+      shell: bash
+      run: |
+        echo "Adjusting changeset level from ${{ inputs.from_level }} to ${{ inputs.to_level }}"
+        for file in .changeset/*.md; do
+          if grep -q ": patch" "$file"; then
+            # target the lines between the "---" yaml delimiters, replace ": patch" with ": minor"
+            sed -i '/---/,/---/s/: patch/: minor/' "$file"
+            echo "Updated $file to minor"
+          fi
+        done

@@ -1139,6 +1139,7 @@
       "send": "Send",
       "swap": "Swap",
       "stake": "Stake",
+      "earn": "Earn",
       "yield": "Yield",
       "buy": "Buy",
       "sell": "Sell",
@@ -1485,7 +1486,7 @@
       },
       "earn": {
         "title": "Stake",
-        "description": "Stake your crypto with Ledger"
+        "description": "Get rewards on your crypto"
       }
     },
     "recoverBanner": {

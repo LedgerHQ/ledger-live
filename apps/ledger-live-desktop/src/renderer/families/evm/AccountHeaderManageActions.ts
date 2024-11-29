@@ -1,10 +1,10 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 import IconCoins from "~/renderer/icons/Coins";
 import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
   account: AccountLike;
@@ -12,9 +12,8 @@ type Props = {
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
-
+  const label = useGetStakeLabelLocaleBased();
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
 
   const onClickStake = useCallback(() => {
@@ -44,9 +43,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           button: "stake",
         },
         icon: IconCoins,
-        label: t("account.stake", {
-          currency: account?.currency?.name,
-        }),
+        label,
         accountActionsTestId: "stake-button",
       },
     ];

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -46,10 +46,6 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./api": {
-      "require": "./lib/api/index.js",
-      "default": "./lib-es/api/index.js"
-    },
     "./deviceTransactionConfig": {
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"

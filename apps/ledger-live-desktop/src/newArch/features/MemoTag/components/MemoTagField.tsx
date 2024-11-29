@@ -27,6 +27,9 @@ type MemoTagFieldProps = InputBaseProps & {
   showLabel?: boolean;
   CaracterCountComponent?: React.FC;
   autoFocus?: boolean;
+  placeholder?: string;
+  label?: string;
+  tooltipText?: string;
 };
 
 const MemoTagField = ({
@@ -38,6 +41,9 @@ const MemoTagField = ({
   maxMemoLength,
   CaracterCountComponent,
   autoFocus,
+  placeholder,
+  label,
+  tooltipText,
 }: MemoTagFieldProps) => {
   const { t } = useTranslation();
   return (
@@ -45,13 +51,15 @@ const MemoTagField = ({
       {showLabel && (
         <Label>
           <Flex>
-            <span>{t("MemoTagField.label")}</span>
+            <span>{label ?? t("MemoTagField.label")}</span>
             &nbsp;&nbsp;
             <Tooltip
               placement="top"
-              content={<TooltipContainer>{t("MemoTagField.information")}</TooltipContainer>}
+              content={
+                <TooltipContainer>{tooltipText ?? t("MemoTagField.information")}</TooltipContainer>
+              }
             >
-              <InfoCircle size={16} />
+              <InfoCircle size={16} data-testid="memo-tag-field-tooltip-icon" />
             </Tooltip>
           </Flex>
         </Label>
@@ -59,7 +67,7 @@ const MemoTagField = ({
       <Flex flexDirection="column" justifyContent="center">
         <Flex justifyContent="end">{CaracterCountComponent && <CaracterCountComponent />}</Flex>
         <Input
-          placeholder={t("MemoTagField.placeholder")}
+          placeholder={placeholder ?? t("MemoTagField.placeholder")}
           onChange={onChange}
           warning={warning}
           error={error}

@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { Currency } from "../enum/Currency";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
   private addAccountButton = this.page.getByTestId("accounts-add-account-button");
@@ -80,6 +80,11 @@ export class AccountsPage extends AppPage {
 
   async countAccounts(): Promise<number> {
     return await this.page.locator(".accounts-account-row-item-content").count();
+  }
+
+  @step("Expect number of accounts to be $0")
+  async expectAccountsCount(count: number) {
+    expect(await this.countAccounts()).toBe(count);
   }
 
   async getAccountsName() {

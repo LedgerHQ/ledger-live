@@ -1,5 +1,31 @@
 # @ledgerhq/coin-framework
 
+## 0.20.0
+
+### Minor Changes
+
+- [#8159](https://github.com/LedgerHQ/ledger-live/pull/8159) [`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: scanAccount handle scheme arg
+
+- [#8432](https://github.com/LedgerHQ/ledger-live/pull/8432) [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Alpaca allows delegate and undelegate tx crafting
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#8159](https://github.com/LedgerHQ/ledger-live/pull/8159) [`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: scanAccount handle scheme arg
+
+- [#8432](https://github.com/LedgerHQ/ledger-live/pull/8432) [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Alpaca allows delegate and undelegate tx crafting
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0-next.0
+
 ## 0.19.1
 
 ### Patch Changes

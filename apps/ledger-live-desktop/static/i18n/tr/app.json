@@ -1139,6 +1139,7 @@
       "send" : "Gönder",
       "swap" : "Takas et",
       "stake" : "Stake et",
+      "earn" : "Kazan",
       "yield" : "Getiri",
       "buy" : "Satın Al",
       "sell" : "Sat",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kriptolarınızı stake edin"
+        "description" : "Kriptolarınızla ödüller kazanın"
       }
     },
     "recoverBanner" : {

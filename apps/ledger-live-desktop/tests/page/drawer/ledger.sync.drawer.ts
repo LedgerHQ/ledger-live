@@ -7,7 +7,7 @@ export class LedgerSyncDrawer extends Drawer {
   private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private manageBackupButton = this.page.getByTestId("walletSync-manage-backup");
-  private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Delete" });
+  private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Yes, delete" });
   private successTextElement = this.page
     .locator("span", { hasText: "Ledger Sync turned on for" })
     .or(this.page.locator("span", { hasText: "Sync successful!" }))
@@ -31,7 +31,7 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Open the Manage Key section")
   async manageBackup() {
     await expect(this.manageBackupButton).toBeVisible();
-    await this.manageBackupButton.click();
+    await this.manageBackupButton.click({ force: true });
   }
 
   @step("Confirm the deletion of the data")

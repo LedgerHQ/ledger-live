@@ -72,6 +72,7 @@ type ExchangeStartParamsUiRequest =
   | {
       exchangeType: "SELL";
       provider: string;
+      exchange: Partial<Exchange> | undefined;
     }
   | {
       exchangeType: "SWAP";
@@ -130,7 +131,7 @@ export const handlers = ({
       if (params.exchangeType == "SWAP") {
         exchangeParams = extractSwapStartParam(params, accounts);
       } else if (params.exchangeType == "SELL") {
-        exchangeParams = extractSellStartParam(params);
+        exchangeParams = extractSellStartParam(params, accounts);
       } else {
         exchangeParams = {
           exchangeType: params.exchangeType,
@@ -362,13 +363,41 @@ function extractSwapStartParam(
   };
 }
 
-function extractSellStartParam(params: ExchangeStartSellParams): ExchangeStartParamsUiRequest {
+function extractSellStartParam(
+  params: ExchangeStartSellParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
   if (!("provider" in params)) {
     throw new ExchangeError(createWrongSellParams(params));
   }
 
+  if (!params.fromAccountId) {
+    return {
+      exchangeType: params.exchangeType,
+      provider: params.provider,
+    } as ExchangeStartParamsUiRequest;
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params?.fromAccountId);
+
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
+  }
+
+  const fromAccount = accounts?.find(acc => acc.id === realFromAccountId);
+
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+
   return {
     exchangeType: params.exchangeType,
     provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+    },
   };
 }

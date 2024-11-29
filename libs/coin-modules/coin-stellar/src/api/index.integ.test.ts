@@ -68,7 +68,7 @@ describe("Stellar Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
-        mode: "send",
+        type: "send",
         recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
         amount: BigInt(1_000_000),
         fee: BigInt(100),

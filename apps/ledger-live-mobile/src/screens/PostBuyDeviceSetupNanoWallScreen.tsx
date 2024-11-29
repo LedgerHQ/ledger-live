@@ -58,10 +58,10 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         px={6}
       >
         <ModalHeaderCloseButton onClose={navigation.goBack} />
-        <Text textAlign="center" variant="h4" mb={5}>
+        <Text textAlign="left" variant="h4" mb={5}>
           {t("postBuyDeviceSetupNanoWall.title")}
         </Text>
-        <Text textAlign="center" variant="bodyLineHeight" color={"neutral.c80"} mb={8}>
+        <Text textAlign="left" variant="bodyLineHeight" color={"neutral.c80"} mb={8}>
           {t("postBuyDeviceSetupNanoWall.desc")}
         </Text>
         <Button

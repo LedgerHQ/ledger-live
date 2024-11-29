@@ -22,6 +22,7 @@ import {
   languageSelector,
   lastSeenDeviceSelector,
   localeSelector,
+  mevProtectionSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
   sidebarCollapsedSelector,
@@ -74,6 +75,17 @@ const getLedgerSyncAttributes = (state: State) => {
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+  };
+};
+
+const getMEVAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
+
+  const hasMEVActivated = mevProtectionSelector(state);
+
+  return {
+    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
   };
 };
 
@@ -148,6 +160,7 @@ const extraProperties = (store: ReduxStore) => {
   const ptxAttributes = getPtxAttributes();
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
+  const mevProtectionAtributes = getMEVAttributes(state);
 
   const deviceInfo = device
     ? {
@@ -203,6 +216,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ptxAttributes,
     ...deviceInfo,
     ...ledgerSyncAtributes,
+    ...mevProtectionAtributes,
   };
 };
 

@@ -20,6 +20,7 @@ import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -35,7 +36,7 @@ export default function MainNavigator() {
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const managerNavLockCallback = useManagerNavLockCallback();
   const web3hub = useFeature("web3hub");
-
+  const earnYiedlLabel = getStakeLabelLocaleBased();
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
@@ -108,7 +109,7 @@ export default function MainNavigator() {
           tabBarIcon: props => (
             <TabIcon
               Icon={IconsLegacy.LendMedium}
-              i18nKey="tabs.earn"
+              i18nKey={earnYiedlLabel}
               testID="tab-bar-earn"
               {...props}
             />

@@ -25,8 +25,6 @@ const FooterArrowContainer = styled.div`
 `;
 
 const FooterContentCard = ({ children, emblaApi, currentIndex, variant }: SubProps) => {
-  if (children.length === 1) return null;
-
   return (
     <FooterContainer>
       <Pagination

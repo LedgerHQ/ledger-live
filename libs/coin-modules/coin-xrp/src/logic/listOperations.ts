@@ -1,10 +1,10 @@
 import { getServerInfos, getTransactions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { XrpOperation } from "../types";
+import { XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
 /**
- * Returns list of operations associated to an account.
+ * Returns list of "Payment" Operations associated to an account.
  * @param address Account address
  * @param blockHeight Height to start searching for operations
  * @returns
@@ -26,7 +26,9 @@ export async function listOperations(
     ledger_index_max: maxLedgerVersion,
   });
 
-  return transactions.map(convertToCoreOperation(address));
+  return transactions
+    .filter(op => op.tx.TransactionType === "Payment")
+    .map(convertToCoreOperation(address));
 }
 
 const convertToCoreOperation =
@@ -71,7 +73,7 @@ const convertToCoreOperation =
       };
     }
 
-    const memos = Memos?.map(m => {
+    const memos: XrpMemo[] | undefined = Memos?.map(m => {
       const memo = {
         data: m?.Memo?.MemoData,
         format: m?.Memo?.MemoFormat,

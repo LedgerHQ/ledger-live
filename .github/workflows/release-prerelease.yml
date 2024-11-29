@@ -61,6 +61,30 @@ jobs:
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: Move patch updates to minor for release branch
+        # For more info about why we do this, see this doc:
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+        if: ${{ startsWith(github.ref_name, 'release') }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        with:
+          from_level: patch
+          to_level: minor
+      - name: Move minor updates to patch for hotfix branch
+        # For more info about why we do this, see this doc:
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        with:
+          from_level: minor
+          to_level: patch
+      - name: Move major updates to patch for hotfix branch
+        # For more info about why we do this, see this doc:
+        # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        with:
+          from_level: major
+          to_level: patch
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') }}
         env:

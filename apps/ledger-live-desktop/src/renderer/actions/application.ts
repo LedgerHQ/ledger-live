@@ -34,10 +34,3 @@ export const toggleSkeletonVisibility = createAction(
     },
   }),
 );
-
-export const toggleShouldDisplayMemoTagInfo = createAction(
-  "APPLICATION_SET_DATA",
-  (alwaysShowMemoTagInfo: boolean) => ({
-    alwaysShowMemoTagInfo,
-  }),
-);

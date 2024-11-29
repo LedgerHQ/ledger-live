@@ -12,7 +12,7 @@ export type StepProps = {
   device: Device | undefined | null;
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
-  transaction: (Transaction & { memo?: string }) | undefined | null;
+  transaction: Transaction | undefined | null;
   status: TransactionStatus;
   bridgePending: boolean;
   error: Error | undefined | null;

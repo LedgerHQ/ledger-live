@@ -15,11 +15,11 @@
     "deadline": "1718467096",
     "witness": {
       "info": {
-        "reactor": "0x6000da47483062a0d734ba3dc7576ce6a0b645c4",
-        "swapper": "0x224cbc440944c72e951507e97d8bf5ffa2e3d2b9",
         "nonce": "1993354326232431306240697018571020274189859638820531235067341608173853199105",
-        "deadline": "1718467096",
+        "swapper": "0x224cbc440944c72e951507e97d8bf5ffa2e3d2b9",
         "additionalValidationContract": "0x0000000000000000000000000000000000000000",
+        "reactor": "0x6000da47483062a0d734ba3dc7576ce6a0b645c4",
+        "deadline": "1718467096",
         "additionalValidationData": "0x"
       },
       "decayStartTime": "1718467024",
@@ -31,15 +31,15 @@
       "inputEndAmount": "100000000000000000",
       "outputs": [
         {
-          "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "startAmount": "348572327",
+          "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "endAmount": "332452012",
           "recipient": "0x224cbc440944c72e951507e97d8bf5ffa2e3d2b9"
         },
         {
+          "endAmount": "833213",
           "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "startAmount": "873614",
-          "endAmount": "833213",
           "recipient": "0x27213e28d7fda5c57fe9e5dd923818dbccf71c47"
         }
       ]
