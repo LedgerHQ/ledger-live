@@ -38,6 +38,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
   currencyAptos: DEFAULT_FEATURE,
+  currencyAptosTestnet: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
   currencyBaseSepolia: DEFAULT_FEATURE,

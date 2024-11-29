@@ -90,6 +90,7 @@ export type CurrencyFeatures = {
   currencyVelasEvm: DefaultFeature;
   currencySyscoin: DefaultFeature;
   currencyAptos: DefaultFeature;
+  currencyAptosTestnet: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
   currencySeiNetwork: DefaultFeature;
