@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import Braze from "@braze/react-native-sdk";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { useSelector, useDispatch } from "react-redux";
+import { track } from "~/analytics";
 import { setDismissedContentCard } from "../actions/settings";
 
 export const useBrazeContentCard = () => {
@@ -22,7 +23,16 @@ export const useBrazeContentCard = () => {
   );
 
   const logImpressionCard = useCallback(
-    (cardId: string) => isTrackedUser && Braze.logContentCardImpression(cardId),
+    async (cardId: string) => {
+      if (!isTrackedUser) return;
+
+      Braze.logContentCardImpression(cardId);
+
+      const allCachedContentCards = await Braze.getCachedContentCards();
+      const card = allCachedContentCards.find(card => card.id === cardId);
+      if (!card) return;
+      track("contentcard_impression", { ...card.extras, page: card.extras.location });
+    },
     [isTrackedUser],
   );
 
