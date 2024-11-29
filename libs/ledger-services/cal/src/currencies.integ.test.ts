@@ -6,7 +6,7 @@ describe("findCurrencyData", () => {
     const currencyId = "arbitrum";
 
     // When
-    const currencies = await findCurrencyData(currencyId, "test");
+    const currencies = await findCurrencyData(currencyId, { env: "test" });
 
     // Then
     expect(currencies).toEqual({

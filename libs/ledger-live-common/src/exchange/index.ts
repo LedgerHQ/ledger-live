@@ -42,7 +42,7 @@ export const getCurrencyExchangeConfig = async (
   let res;
   try {
     const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
-    res = await calService.findCurrencyData(currency.id, env);
+    res = await calService.findCurrencyData(currency.id, { env });
 
     if (!res) {
       throw new Error("Missing primary config");

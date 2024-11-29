@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getCALDomain } from "./common";
+import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
 
 type CurrencyDataResponse = {
   id: string;
@@ -19,8 +19,7 @@ export type CurrencyData = {
 
 export async function findCurrencyData(
   id: string,
-  env: "prod" | "test" = "prod",
-  signatureKind: "prod" | "test" = "prod",
+  { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CurrencyData> {
   const { data: currencyData } = await network<CurrencyDataResponse[]>({
     method: "GET",
@@ -28,6 +27,7 @@ export async function findCurrencyData(
     params: {
       output: "id,descriptor_exchange_app",
       id,
+      ref,
     },
   });
   if (!currencyData.length) {

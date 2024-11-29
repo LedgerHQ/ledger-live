@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getCALDomain } from "./common";
+import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
 
 const DeviceModel = {
   blue: "blue",
@@ -47,8 +47,7 @@ export type CertificateInfo = {
 export async function getCertificate(
   device: Device,
   version: string,
-  env: "prod" | "test" = "prod",
-  signatureKind: "prod" | "test" = "prod",
+  { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CertificateInfo> {
   const { data } = await network<CertificateResponse[]>({
     method: "GET",
@@ -58,6 +57,7 @@ export async function getCertificate(
       target_device: DeviceModel[device],
       public_key_usage: "trusted_name",
       note_valid_after: version,
+      ref,
     },
   });
 
