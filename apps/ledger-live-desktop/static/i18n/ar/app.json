@@ -200,7 +200,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "SENDING" : "إرسال"
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -1139,6 +1140,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
+      "earn" : "Earn",
       "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "تكديس",
-        "description" : "كدّس أصولك المشفرة مع Ledger"
+        "description" : "Get rewards on your crypto"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "معاملات رموز Solana SPL لها خصائص فريدة. لمعرفة المزيد، قم بزيارة: <0>ledger.com/spl</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "الرابط",
             "secondaryCta" : "CTA الثانوي",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "عنوان URL",
             "path" : "المسار"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
