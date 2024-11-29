@@ -36,26 +36,26 @@ export default function trackingWrapper(trackCall: TrackExchange) {
   return {
     // Generate Exchange nonce modal open
     startExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
-      track("WalletAPI start Exchange Nonce request", { provider, exchangeType });
+      track(`Starts Exchange ${exchangeType} Nonce request`, { provider, exchangeType });
     },
 
     // Successfully generated an Exchange app nonce
     startExchangeSuccess: ({ provider, exchangeType }: TrackEventPayload) => {
-      track("WalletAPI start Exchange Nonce success", { provider, exchangeType });
+      track(`Starts Exchange ${exchangeType} Nonce success`, { provider, exchangeType });
     },
 
     // Failed to generate an Exchange app nonce
     startExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
-      track("WalletAPI start Exchange Nonce fail", { provider, exchangeType });
+      track(`Starts Exchange ${exchangeType} Nonce fail`, { provider, exchangeType });
     },
 
     // No Params to generate an Exchange app nonce
     startExchangeNoParams: (manifest: AppManifest) => {
-      track("WalletAPI start Exchange no params", getEventData(manifest));
+      track("Start Exchange no params", getEventData(manifest));
     },
 
     completeExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
-      track("WalletAPI complete Exchange requested", { provider, exchangeType });
+      track(`Completes Exchange ${exchangeType} requested`, { provider, exchangeType });
     },
 
     // Successfully completed an Exchange
@@ -64,17 +64,17 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       exchangeType,
       currency,
     }: TrackEventPayload & { currency: string }) => {
-      track("WalletAPI complete Exchange success", { provider, exchangeType, currency });
+      track(`Completes Exchange ${exchangeType} success`, { provider, exchangeType, currency });
     },
 
     // Failed to complete an Exchange
     completeExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
-      track("WalletAPI complete Exchange Nonce fail", { provider, exchangeType });
+      track(`Completes Exchange ${exchangeType} Nonce fail`, { provider, exchangeType });
     },
 
     // No Params to complete an Exchange
     completeExchangeNoParams: (manifest: AppManifest) => {
-      track("WalletAPI complete Exchange no params", getEventData(manifest));
+      track("Completes Exchange no params", getEventData(manifest));
     },
   } as const;
 }
