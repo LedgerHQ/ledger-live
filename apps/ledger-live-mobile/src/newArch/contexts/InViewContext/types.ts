@@ -2,7 +2,8 @@ import type { RefObject } from "react";
 import type { View } from "react-native";
 
 export type InViewOptions = {
-  threshold?: number;
+  inViewThreshold?: number;
+  outOfViewThreshold?: number;
   interval?: number;
 };
 
@@ -18,6 +19,6 @@ export type WatchedItem = {
 
 export type InViewEntry = {
   boundingClientRect: { x: number; y: number; width: number; height: number };
-  inViewRatio: number;
+  progressRatio: number;
   isInView: boolean;
 };

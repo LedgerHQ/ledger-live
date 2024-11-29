@@ -29,7 +29,8 @@ export function useInViewContext(
 }
 
 export function InViewContextProvider({
-  threshold = 0.5,
+  inViewThreshold = 0.5,
+  outOfViewThreshold = 0,
   interval: intervalDuration = 200,
   children,
 }: InViewOptions & { children: ReactNode }) {
@@ -55,15 +56,17 @@ export function InViewContextProvider({
     const window = Dimensions.get("window");
     const interval = setInterval(() => {
       items.current.forEach(async item => {
+        const wasInView = watchedItem.current.get(item);
+        const threshold = wasInView ? outOfViewThreshold : inViewThreshold;
         const entry = await inViewStatus(item.target, threshold, window);
-        if (entry.isInView === watchedItem.current.get(item)) return;
+        if (entry.isInView === wasInView) return;
         watchedItem.current.set(item, entry.isInView);
         item.onInViewUpdate(entry);
       });
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [hasItems, threshold, intervalDuration]);
+  }, [hasItems, inViewThreshold, outOfViewThreshold, intervalDuration]);
 
   return (
     <InViewContext.Provider value={{ addWatchedItem, removeWatchedItem }}>
