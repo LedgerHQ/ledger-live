@@ -35,6 +35,8 @@ const listSupportedTokens = () =>
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const mock = useEnv("MOCK");
 
+  const aptos = useFeature("currencyAptos");
+  const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -88,6 +90,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aptos,
+      aptos_testnet: aptosTestnet,
       axelar,
       stargaze,
       secret_network: secretNetwork,
@@ -140,6 +144,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       mantra,
     }),
     [
+      aptos,
+      aptosTestnet,
       axelar,
       stargaze,
       secretNetwork,
