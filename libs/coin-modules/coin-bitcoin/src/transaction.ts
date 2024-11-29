@@ -82,16 +82,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
 
 const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus => {
   const common = fromTransactionStatusRawCommon(tr);
-  console.log("tr.txInputs fromTransactionStatusRaw", tr.txInputs);
-  console.log("tr.txOutputs fromTransactionStatusRaw", tr.txOutputs);
-
-  if(tr.txInputs) {
-    console.log("tr.txInputs.map(fromBitcoinInputRaw)", tr.txInputs.map(fromBitcoinInputRaw));
-  }
-  if(tr.txOutputs) {
-    console.log("tr.txOutputs.map(fromBitcoinOutputRaw)", tr.txOutputs.map(fromBitcoinOutputRaw));
-  }
-
   return {
     ...common,
     txInputs: tr.txInputs ? tr.txInputs.map(fromBitcoinInputRaw) : undefined,
@@ -102,15 +92,6 @@ const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus =
 
 export const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(t);
-  console.log("tr.txInputs toTransactionStatusRaw", t.txInputs);
-  console.log("tr.txOutputs toTransactionStatusRaw", t.txOutputs);
-
-  if(t.txInputs) {
-    console.log("tt.txInputs.map(toBitcoinInputRaw)", t.txInputs.map(toBitcoinInputRaw));
-  }
-  if(t.txOutputs) {
-    console.log("t.txOutputs.map(toBitcoinOutputRaw)", t.txOutputs.map(toBitcoinOutputRaw));
-  }
   return {
     ...common,
     txInputs: t.txInputs ? t.txInputs.map(toBitcoinInputRaw) : undefined,

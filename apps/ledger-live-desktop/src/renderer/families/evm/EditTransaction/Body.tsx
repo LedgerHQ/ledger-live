@@ -209,10 +209,7 @@ const Body = ({
   );
 
   const handleStepChange = useCallback((step: St) => onChangeStepId(step.id), [onChangeStepId]);
-  // console.log("transactionError", transactionError);
-  // console.log("bridgeError", bridgeError);
   const error = transactionError || bridgeError;
-  // console.log("FINAL error", error);
   const mainAccount = getMainAccount(account, parentAccount);
 
   useEffect(() => {

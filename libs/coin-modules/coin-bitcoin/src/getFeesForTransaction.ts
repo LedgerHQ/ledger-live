@@ -21,7 +21,6 @@ const getFeesForTransaction = async ({
       previousOutputIndex: i.output_index,
     };
   });
-  console.log("TX INPUTS: ", txInputs);
   let txOutputs = walletTx.outputs.map(o => {
     return {
       outputIndex: walletTx.outputs.indexOf(o),
@@ -33,7 +32,6 @@ const getFeesForTransaction = async ({
       rbf: transaction.rbf,
     };
   });
-  console.log("TX OUTPUTS: ", txOutputs);
   const perCoin = perCoinLogic[account.currency.id];
 
   if (perCoin) {

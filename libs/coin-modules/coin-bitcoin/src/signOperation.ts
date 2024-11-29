@@ -124,7 +124,6 @@ export const buildSignOperation =
           date: new Date(),
           extra: {},
         };
-        console.log("FINAL SIFNATURE", signature);
         o.next({
           type: "signed",
           signedOperation: {

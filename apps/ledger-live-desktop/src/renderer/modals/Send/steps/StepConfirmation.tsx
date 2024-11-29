@@ -40,8 +40,6 @@ function StepConfirmation({
   account,
   parentAccount,
 }: StepProps) {
-  // console.log("signed: ", signed);
-  // console.log("Error: ", error);
   if (optimisticOperation) {
     return (
       <Container>
