@@ -76,7 +76,7 @@ libs/ledger-live-common/src/exchange/                                					@ledge
 libs/exchange-module/                                                					@ledgerhq/ptx
 libs/wallet-api-acre-module/                                         					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
-libs/ledger-live-common/src/cal/partners*.ts                         					@ledgerhq/ptx
+libs/live-services/cal/src/partners/                                 					@ledgerhq/ptx
 
 
 # Wallet API team

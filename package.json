@@ -129,6 +129,7 @@
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
     "ljs:hw-app-icon": "pnpm --filter hw-app-icon",
+    "ljs:hw-bolos": "pnpm --filter hw-bolos",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",

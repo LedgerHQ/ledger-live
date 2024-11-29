@@ -19,6 +19,7 @@ import {
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
+import { loadPKI } from "@ledgerhq/hw-bolos";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
@@ -27,7 +28,6 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
 import { CEXProviderConfig } from "../providers/swap";
 import { AccountLike } from "@ledgerhq/types-live";
-import loadPKI from "../../hw/loadPKI";
 import calService from "@ledgerhq/ledger-cal-service";
 import Transport from "@ledgerhq/hw-transport";
 
