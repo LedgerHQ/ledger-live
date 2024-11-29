@@ -3625,11 +3625,6 @@
       }
     }
   },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip": "Total amount that is delegated to validators."
-    }
-  },
   "solana": {
     "common": {
       "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
