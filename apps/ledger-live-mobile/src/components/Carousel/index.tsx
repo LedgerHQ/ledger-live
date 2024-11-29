@@ -1,10 +1,9 @@
 import React, { memo, useMemo, useCallback, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
-import { InViewContextProvider } from "LLM/contexts/InViewContext";
-import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 
 const WIDTH = width * 0.85;
 
@@ -40,29 +39,27 @@ const Carousel = () => {
   }
 
   return (
-    <InViewContextProvider>
-      <ScrollView
-        horizontal
-        ref={scrollViewRef}
-        onMomentumScrollEnd={onScrollEnd}
-        onContentSizeChange={onScrollViewContentChange}
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={WIDTH + 16}
-        decelerationRate={"fast"}
-      >
-        {walletCardsDisplayed.map((cardProps, index) => (
-          <LogContentCardWrapper key={cardProps.id + index} id={cardProps.id}>
-            <CarouselCard
-              key={cardProps.id + index}
-              id={cardProps.id}
-              cardProps={cardProps}
-              index={index}
-              width={cardsWidth}
-            />
-          </LogContentCardWrapper>
-        ))}
-      </ScrollView>
-    </InViewContextProvider>
+    <ScrollView
+      horizontal
+      ref={scrollViewRef}
+      onMomentumScrollEnd={onScrollEnd}
+      onContentSizeChange={onScrollViewContentChange}
+      showsHorizontalScrollIndicator={false}
+      snapToInterval={WIDTH + 16}
+      decelerationRate={"fast"}
+    >
+      {walletCardsDisplayed.map((cardProps, index) => (
+        <LogContentCardWrapper key={cardProps.id + index} id={cardProps.id}>
+          <CarouselCard
+            key={cardProps.id + index}
+            id={cardProps.id}
+            cardProps={cardProps}
+            index={index}
+            width={cardsWidth}
+          />
+        </LogContentCardWrapper>
+      ))}
+    </ScrollView>
   );
 };
 

@@ -17,28 +17,15 @@ const InViewContext = createContext<InViewContext>({});
 export function useInViewContext(
   target: RefObject<View>,
   onInViewUpdate: (entry: InViewEntry) => void,
-  { threshold = 0.5, interval: intervalDuration = 200 }: InViewOptions = {},
 ) {
   const { addWatchedItem, removeWatchedItem } = useContext(InViewContext);
   const onInViewUpdateRef = useRef(onInViewUpdate);
-  const fallbackInViewRef = useRef(false);
 
   useEffect(() => {
-    if (addWatchedItem && removeWatchedItem) {
-      const item = { target, onInViewUpdate: onInViewUpdateRef.current };
-      addWatchedItem?.(item);
-      return () => removeWatchedItem?.(item);
-    } else {
-      // Fallback: Run the intervals individually if the context is not available
-      const interval = setInterval(async () => {
-        const entry = await inViewStatus(target, threshold, Dimensions.get("window"));
-        if (entry.isInView === fallbackInViewRef.current) return;
-        fallbackInViewRef.current = entry.isInView;
-        onInViewUpdateRef.current(entry);
-      }, intervalDuration);
-      return () => clearInterval(interval);
-    }
-  }, [target, addWatchedItem, removeWatchedItem, intervalDuration, threshold]);
+    const item = { target, onInViewUpdate: onInViewUpdateRef.current };
+    addWatchedItem?.(item);
+    return () => removeWatchedItem?.(item);
+  }, [target, addWatchedItem, removeWatchedItem]);
 }
 
 export function InViewContextProvider({
