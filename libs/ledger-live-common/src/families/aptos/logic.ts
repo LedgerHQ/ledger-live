@@ -8,9 +8,11 @@ import { encodeOperationId } from "../../operation";
 
 import {
   TRANSFER_TYPES,
+  DELEGATION_POOL_TYPES,
+  BATCH_TRANSFER_TYPES,
   TX_TYPE,
   APTOS_OBJECT_TRANSFER,
-  APTOS_TRANSFER_FUNCTION_ADDRESS,
+  APTOS_DELEGATION_WITHDRAW,
   DIRECTION,
 } from "./constants";
 
@@ -108,13 +110,23 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
       }
 
       // TRANSFER & RECEIVE
-      if (TRANSFER_TYPES.includes(type) && "arguments" in payload) {
+      if (
+        (TRANSFER_TYPES.includes(type) || DELEGATION_POOL_TYPES.includes(type)) &&
+        "arguments" in payload
+      ) {
+        // main DELEGATION_POOL functions have identic semantic to TRANSFER_TYPES so we can parse them in the same way
         // avoid v2 parse
         if ("function" in payload && payload.function === APTOS_OBJECT_TRANSFER) {
           op.type = DIRECTION.UNKNOWN;
         } else {
-          op.recipients.push(payload.arguments[0]);
-          op.senders.push(tx.sender);
+          if ("function" in payload && payload.function === APTOS_DELEGATION_WITHDRAW) {
+            // for withdraw function signer should be recipient of the coins
+            op.recipients.push(tx.sender);
+            op.senders.push(payload.arguments[0]);
+          } else {
+            op.recipients.push(payload.arguments[0]);
+            op.senders.push(tx.sender);
+          }
           op.value = op.value.plus(payload.arguments[1]);
           if (compareAddress(op.recipients[0], address)) {
             op.type = DIRECTION.IN;
@@ -123,17 +135,43 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
           }
         }
 
-        if (
-          !payload.type_arguments[0] &&
-          "function" in payload &&
-          payload.function !== APTOS_TRANSFER_FUNCTION_ADDRESS
-        ) {
-          op.type = DIRECTION.UNKNOWN;
-        }
-
         op.hasFailed = !tx.success;
         op.id = encodeOperationId(id, tx.hash, op.type);
         if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
+      } else if (BATCH_TRANSFER_TYPES.includes(type) && "arguments" in payload) {
+        // batch transfers has a list of recipients so we need to find `our` record to show
+        op.senders.push(tx.sender);
+
+        op.type = DIRECTION.UNKNOWN;
+        if (compareAddress(tx.sender, address)) {
+          op.type = DIRECTION.OUT;
+          for (const amount of payload.arguments[1]) {
+            op.value = op.value.plus(amount);
+          }
+        } else {
+          for (const recipient_num in payload.arguments[0]) {
+            if (compareAddress(payload.arguments[0][recipient_num], address)) {
+              op.recipients.push(payload.arguments[0][recipient_num]);
+              op.value = op.value.plus(payload.arguments[1][recipient_num]);
+              op.type = DIRECTION.IN;
+            }
+          }
+        }
+        op.hasFailed = !tx.success;
+        op.id = encodeOperationId(id, tx.hash, op.type);
+        if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
+      } else {
+        // This is the place where we want to process events
+        // TODO: implement generig parsing of events
+        op.type = DIRECTION.UNKNOWN;
+        op.id = encodeOperationId(id, tx.hash, op.type);
+
+        if (compareAddress(tx.sender, address)) {
+          op.type = DIRECTION.OUT;
+        } else {
+          op.type = DIRECTION.IN;
+        }
+        ops.push(op);
       }
     }
   });
