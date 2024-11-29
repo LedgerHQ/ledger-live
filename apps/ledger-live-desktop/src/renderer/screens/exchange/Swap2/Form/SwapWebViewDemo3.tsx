@@ -165,7 +165,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               currencies: cryptoCurrencies,
               onAccountSelected: (account, parentAccount) => {
                 track("button_clicked", {
-                  button: "Choose Account",
+                  button: `Choose Account - ${requestId === "from-account" ? "Source" : "Target"}`,
                   page: "InputSwap",
                   ...swapDefaultTrack,
                 });
@@ -175,7 +175,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               onCurrencySelected: currency => {
                 lastCurrencySelected = currency;
                 track("button_clicked", {
-                  button: "Choose Asset",
+                  button: `Choose Asset - ${requestId === "from-account" ? "Source" : "Target"}`,
                   currency: lastCurrencySelected?.name,
                   page: "InputSwap",
                   ...swapDefaultTrack,
