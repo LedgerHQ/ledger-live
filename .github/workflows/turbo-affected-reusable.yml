@@ -35,6 +35,11 @@ jobs:
       packages: ${{ steps.affected.outputs.packages }}
       paths: ${{ steps.affected.outputs.paths }}
     steps:
+      - name: Echo head branch and base branch
+        run: |
+          echo "Head branch: ${{ inputs.head_branch }}"
+          echo "Base branch: ${{ inputs.base_branch }}"
+
       - name: Checkout head branch
         uses: actions/checkout@v4
         with:
