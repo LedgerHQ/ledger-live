@@ -41,8 +41,10 @@ export enum TX_STATUS {
 }
 
 export const TRANSFER_TYPES = ["transfer", "transfer_coins"];
+export const BATCH_TRANSFER_TYPES = ["batch_transfer", "batch_transfer_coins"];
+export const DELEGATION_POOL_TYPES = ["add_stake", "withdraw"];
 
-export const APTOS_TRANSFER_FUNCTION_ADDRESS = "0x1::aptos_account::transfer";
+export const APTOS_DELEGATION_WITHDRAW = "0x1::delegation_pool::withdraw";
 export const APTOS_OBJECT_TRANSFER = "0x1::object::transfer";
 
 export enum DIRECTION {
