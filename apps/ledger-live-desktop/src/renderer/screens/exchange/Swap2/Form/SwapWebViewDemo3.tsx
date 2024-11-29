@@ -164,11 +164,22 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             {
               currencies: cryptoCurrencies,
               onAccountSelected: (account, parentAccount) => {
+                track("button_clicked", {
+                  button: "Choose Account",
+                  page: "InputSwap",
+                  ...swapDefaultTrack,
+                });
                 setDrawer();
                 resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
               },
               onCurrencySelected: currency => {
                 lastCurrencySelected = currency;
+                track("button_clicked", {
+                  button: "Choose Asset",
+                  currency: lastCurrencySelected?.name,
+                  page: "InputSwap",
+                  ...swapDefaultTrack,
+                });
               },
               onAddAccountClick: () => {
                 track("button_clicked", {
