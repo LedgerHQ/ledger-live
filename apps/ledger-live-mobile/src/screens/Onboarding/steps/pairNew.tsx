@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, memo } from "react";
+import React, { useCallback, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
-import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
+import { ConnectDevice } from "./setupDevice/scenes";
 import { TrackScreen } from "~/analytics";
 import SeedWarning from "../shared/SeedWarning";
-import Illustration from "~/images/illustration/Illustration";
 import { completeOnboarding, setHasBeenRedirectedToPostOnboarding } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "~/logic/notifications";
@@ -16,28 +16,49 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
-import { Step } from "./setupDevice/scenes/BaseStepperView";
+import styled from "styled-components/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "~/components/PreventDoubleClickButton";
 
-const images = {
-  light: {
-    Intro: require("~/images/illustration/Light/_076.png"),
-  },
-  dark: {
-    Intro: require("~/images/illustration/Dark/_076.png"),
-  },
-};
-
-type Metadata = {
-  id: string;
-  illustration: JSX.Element | null;
-  drawer: null | { route: string; screen: string };
-};
+const StyledContainerView = styled(Flex)`
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 32px;
+  flex: 1;
+`;
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingPairNew>
 >;
 
-const scenes = [PairNew, ConnectNano] as Step[];
+const StyledSafeAreaView = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${p => p.theme.colors.background.main};
+`;
+
+const ImageHeader = () => {
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+  return (
+    <Flex
+      flexDirection="row"
+      justifyContent="space-between"
+      alignItems="center"
+      width="100%"
+      height={48}
+    >
+      <Button
+        Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />}
+        onPress={() => navigation.goBack()}
+      />
+      <Flex width={48}>
+        <Button
+          Icon={IconsLegacy.InfoMedium}
+          onPress={() => navigation.navigate(ScreenName.OnboardingBluetoothInformation)}
+        />
+      </Flex>
+    </Flex>
+  );
+};
 
 export default memo(function () {
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -47,45 +68,12 @@ export default memo(function () {
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
-
-  const metadata: Array<Metadata> = useMemo(
-    () => [
-      {
-        id: PairNew.id,
-        illustration: (
-          <Illustration
-            size={150}
-            darkSource={images.dark.Intro}
-            lightSource={images.light.Intro}
-          />
-        ),
-        drawer: {
-          route: ScreenName.OnboardingBluetoothInformation,
-          screen: ScreenName.OnboardingBluetoothInformation,
-        },
-      },
-      {
-        id: ConnectNano.id,
-        illustration: null,
-        drawer: isProtectFlow
-          ? {
-              route: ScreenName.OnboardingProtectionConnectionInformation,
-              screen: ScreenName.OnboardingProtectionConnectionInformation,
-            }
-          : {
-              route: ScreenName.OnboardingBluetoothInformation,
-              screen: ScreenName.OnboardingBluetoothInformation,
-            },
-      },
-    ],
-    [isProtectFlow],
-  );
+  const { deviceModelId, showSeedWarning, isProtectFlow } = route.params;
 
   const onFinish = useCallback(() => {
-    if (next && deviceModelId) {
+    if (isProtectFlow && deviceModelId) {
       // only used for protect for now
-      navigation.navigate(next, {
+      navigation.navigate(ScreenName.OnboardingProtectFlow, {
         deviceModelId,
       });
       return;
@@ -109,28 +97,22 @@ export default memo(function () {
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
+    isProtectFlow,
+    deviceModelId,
     dispatch,
     resetCurrentStep,
     navigation,
-    deviceModelId,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    next,
   ]);
 
-  const nextPage = useCallback(() => {
-    onFinish();
-  }, [onFinish]);
-
   return (
-    <>
+    <StyledSafeAreaView>
       <TrackScreen category="Onboarding" name="PairNew" />
-      <BaseStepperView
-        onNext={nextPage}
-        steps={scenes}
-        metadata={metadata}
-        deviceModelId={deviceModelId}
-      />
+      <ImageHeader />
+      <StyledContainerView>
+        <ConnectDevice onSuccess={onFinish} />
+      </StyledContainerView>
       {showSeedWarning && deviceModelId ? <SeedWarning deviceModelId={deviceModelId} /> : null}
-    </>
+    </StyledSafeAreaView>
   );
 });
