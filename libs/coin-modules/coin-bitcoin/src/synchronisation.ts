@@ -141,6 +141,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const operations = mergeOps(oldOperations, newUniqueOperations);
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+    console.log("rawUtxos: ", JSON.stringify(rawUtxos));
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
 
     return {

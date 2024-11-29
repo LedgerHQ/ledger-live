@@ -30,6 +30,7 @@ export function formatOutput(account: BitcoinAccount, o: BitcoinOutput): string 
 function formatAccountSpecifics(account: BitcoinAccount): string {
   if (!account.bitcoinResources) return "";
   const { utxos } = account.bitcoinResources;
+  console.log("UTXOS: ", utxos);
   let str = `\n${utxos.length} UTXOs`;
   const n = getEnv("DEBUG_UTXO_DISPLAY");
   const displayAll = utxos.length <= n;

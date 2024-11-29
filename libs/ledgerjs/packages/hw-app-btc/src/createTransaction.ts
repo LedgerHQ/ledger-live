@@ -71,6 +71,7 @@ export async function createTransaction(
     onDeviceSignatureGranted,
     onDeviceSignatureRequested,
   } = signTx;
+  // console.log("signTx: ", inputs);
   let useTrustedInputForSegwit = signTx.useTrustedInputForSegwit;
 
   if (useTrustedInputForSegwit === undefined) {
@@ -103,7 +104,6 @@ export async function createTransaction(
       index,
     });
   };
-  console.log("additionals: ", additionals);
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
   const sapling = additionals.includes("sapling");
@@ -166,6 +166,7 @@ export async function createTransaction(
     }
 
     if (expiryHeight && !isDecred) {
+      console.log("isZcash: ", isZcash);
       targetTransaction.nVersionGroupId = Buffer.from(
         // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
         // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
@@ -192,6 +193,9 @@ export async function createTransaction(
       input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
       0,
     );
+    if (isZcash){
+      console.log("regularOutputs[idx].script : ", regularOutputs[idx].script);
+    }
     return {
       script: isZcash ? regularOutputs[idx].script : nullScript,
       prevout: nullPrevout,
@@ -199,6 +203,7 @@ export async function createTransaction(
     };
   });
 
+  console.log("targetTransaction.inputs : ", targetTransaction.inputs);
   if (!resuming) {
     // Collect public keys
     const result: {

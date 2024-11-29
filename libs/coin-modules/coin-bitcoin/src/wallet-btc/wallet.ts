@@ -92,6 +92,7 @@ class BitcoinLikeWallet {
 
   async getAccountUnspentUtxos(account: Account): Promise<Output[]> {
     const addresses = await account.xpub.getXpubAddresses();
+    console.log("addresses CASH: ", addresses);
     return flatten(
       await Promise.all(
         addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
@@ -187,6 +188,7 @@ class BitcoinLikeWallet {
       sequence: params.sequence,
       opReturnData: params.opReturnData,
     });
+    // console.log("txInfo CASH: ", txInfo);
 
     return txInfo;
   }
@@ -266,7 +268,7 @@ class BitcoinLikeWallet {
         i.sequence,
       ];
     });
-
+    console.log("inputs CASH: ", inputs);
     const lastOutputIndex = txInfo.outputs.length - 1;
 
     log("hw", `createPaymentTransaction`, {
@@ -304,7 +306,9 @@ class BitcoinLikeWallet {
   }
 
   async broadcastTx(fromAccount: Account, tx: string): Promise<string> {
+    console.log("START BROADCAST tx CASH: ", tx);
     const res = await fromAccount.xpub.broadcastTx(tx);
+    console.log("res CASH: ", res);
     return res.data.result;
   }
 

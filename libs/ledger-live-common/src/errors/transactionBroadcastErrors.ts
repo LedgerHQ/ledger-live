@@ -20,6 +20,8 @@ export const createTransactionBroadcastError = (
 };
 
 function url(message: string, urls: Record<SpecificErrors, string>) {
+  console.log("message", message);
+  console.log("urls", urls);
   if (
     message.includes("-25: bad-tnxs-inputs-missingorspent") ||
     message.includes("-25: Missing inputs")

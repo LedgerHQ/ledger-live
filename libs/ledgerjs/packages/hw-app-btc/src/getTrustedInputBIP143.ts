@@ -17,7 +17,7 @@ export function getTrustedInputBIP143(
   if (isDecred) {
     throw new Error("Decred does not implement BIP143");
   }
-
+  console.log("getTrustedInputBIP143 transaction: ", transaction);
   let hash = shajs("sha256")
     .update(shajs("sha256").update(serializeTransaction(transaction, true)).digest())
     .digest();

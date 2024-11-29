@@ -34,6 +34,7 @@ export function serializeTransaction(
   const isBech32 = additionals.includes("bech32");
   let inputBuffer = Buffer.alloc(0);
   const useWitness = typeof transaction["witness"] != "undefined" && !skipWitness;
+  console.log("transaction.inputs: ", transaction.inputs);
   transaction.inputs.forEach(input => {
     inputBuffer =
       isDecred || isBech32
@@ -69,6 +70,7 @@ export function serializeTransaction(
     // if (version6) {
     //   consensus = Buffer.from([0x55, 0x10, 0xe7, 0xc8]);
     // }
+    console.log("usewitness", useWitness);
     return Buffer.concat([
       transaction.version,
       transaction.nVersionGroupId || Buffer.alloc(0),
