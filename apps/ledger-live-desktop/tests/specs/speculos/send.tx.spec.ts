@@ -646,6 +646,8 @@ test.describe("Send flows", () => {
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.drawer.close();
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
         await app.account.navigateToNFTOperation();
         await app.sendDrawer.expectNftInfos(transaction);
       },
