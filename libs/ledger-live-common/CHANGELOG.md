@@ -1,5 +1,50 @@
 ## 34.5.0-next.4
 
+## 34.15.0
+
+### Minor Changes
+
+- [#8398](https://github.com/LedgerHQ/ledger-live/pull/8398) [`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add llm Reborn II feature flag for A/B Test + analytics
+
+- [#8373](https://github.com/LedgerHQ/ledger-live/pull/8373) [`cd565e3`](https://github.com/LedgerHQ/ledger-live/commit/cd565e3b6e0735f4f00a67f26279e22b17cef846) Thanks [@CremaFR](https://github.com/CremaFR)! - swap history works for DEX swaps
+
+- [#8391](https://github.com/LedgerHQ/ledger-live/pull/8391) [`2747ffb`](https://github.com/LedgerHQ/ledger-live/commit/2747ffb4cf5a9756eed992015ce9204da232aeab) Thanks [@qperrot](https://github.com/qperrot)! - fix: import from stacks, playwright test selecting 7d timerange
+
+- [#7739](https://github.com/LedgerHQ/ledger-live/pull/7739) [`517fa44`](https://github.com/LedgerHQ/ledger-live/commit/517fa44bbc40425995bf840ecab60773d022a30d) Thanks [@ComradeAERGO](https://github.com/ComradeAERGO)! - move vechain to its own coin module
+
+- [#8401](https://github.com/LedgerHQ/ledger-live/pull/8401) [`5c4455f`](https://github.com/LedgerHQ/ledger-live/commit/5c4455f80b03991843e16c80c5af5a019db25227) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes app install and refactors logic
+
+### Patch Changes
+
+- Updated dependencies [[`32a5e45`](https://github.com/LedgerHQ/ledger-live/commit/32a5e453e06c3c432fcb7e5d8e385f7677c3db64), [`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a), [`abb25e1`](https://github.com/LedgerHQ/ledger-live/commit/abb25e1c0238b918824a9350ac29a425c2b19643), [`4fc1d7a`](https://github.com/LedgerHQ/ledger-live/commit/4fc1d7a0d52839b7d57e1c81b99b8e6a2cfa69c8), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a), [`2747ffb`](https://github.com/LedgerHQ/ledger-live/commit/2747ffb4cf5a9756eed992015ce9204da232aeab), [`517fa44`](https://github.com/LedgerHQ/ledger-live/commit/517fa44bbc40425995bf840ecab60773d022a30d), [`5c4455f`](https://github.com/LedgerHQ/ledger-live/commit/5c4455f80b03991843e16c80c5af5a019db25227)]:
+  - @ledgerhq/coin-xrp@0.7.0
+  - @ledgerhq/coin-framework@0.20.0
+  - @ledgerhq/coin-polkadot@1.4.0
+  - @ledgerhq/coin-evm@2.6.0
+  - @ledgerhq/hw-app-eth@6.42.0
+  - @ledgerhq/coin-stellar@0.4.0
+  - @ledgerhq/coin-tezos@0.7.0
+  - @ledgerhq/coin-stacks@0.2.0
+  - @ledgerhq/coin-vechain@2.2.0
+  - @ledgerhq/wallet-api-exchange-module@0.8.0
+  - @ledgerhq/coin-algorand@0.5.14
+  - @ledgerhq/coin-bitcoin@0.8.9
+  - @ledgerhq/coin-cardano@0.2.9
+  - @ledgerhq/coin-cosmos@0.2.2
+  - @ledgerhq/coin-elrond@0.1.9
+  - @ledgerhq/coin-filecoin@1.3.4
+  - @ledgerhq/coin-hedera@1.1.2
+  - @ledgerhq/coin-icon@0.4.11
+  - @ledgerhq/coin-near@0.5.14
+  - @ledgerhq/coin-solana@0.8.6
+  - @ledgerhq/coin-ton@0.3.22
+  - @ledgerhq/coin-tron@0.0.14
+  - @ledgerhq/live-countervalues@0.2.14
+  - @ledgerhq/live-countervalues-react@0.2.14
+  - @ledgerhq/live-nft@0.4.14
+  - @ledgerhq/live-wallet@0.7.6
+  - @ledgerhq/device-core@0.4.8
+
 ## 34.15.0-next.0
 
 ### Minor Changes

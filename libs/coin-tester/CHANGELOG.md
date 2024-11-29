@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.3.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
 ## 0.3.0-next.0
 
 ### Minor Changes

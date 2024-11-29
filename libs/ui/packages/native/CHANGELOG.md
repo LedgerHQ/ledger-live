@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [[`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112)]:
+  - @ledgerhq/ui-shared@0.3.0
+
 ## 0.26.1-next.0
 
 ### Patch Changes
