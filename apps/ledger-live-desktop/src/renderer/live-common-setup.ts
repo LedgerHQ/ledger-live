@@ -13,7 +13,6 @@ import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { State } from "./reducers";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
@@ -31,8 +30,6 @@ const getFeatureWithOverrides = (key: FeatureId, store: Store) => {
 export function registerTransportModules(store: Store) {
   setEnvOnAllThreads("USER_ID", getUserId());
   const vaultTransportPrefixID = "vault-transport:";
-  const isSpeculosEnabled = !!getEnv("SPECULOS_API_PORT");
-  const isProxyEnabled = !!getEnv("DEVICE_PROXY_URL");
   const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
 
   listenLogs(({ id, date, ...log }) => {
@@ -44,7 +41,6 @@ export function registerTransportModules(store: Store) {
     registerTransportModule({
       id: "sdk",
       open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
-        if (isSpeculosEnabled && isProxyEnabled) return null;
         trace({
           type: "renderer-setup",
           message: "Open called on registered module",
@@ -66,7 +62,6 @@ export function registerTransportModules(store: Store) {
     registerTransportModule({
       id: "ipc",
       open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-        if (isSpeculosEnabled || isProxyEnabled) return null;
         const originalDeviceMode = currentMode;
         // id could be another type of transport such as vault-transport
         if (id.startsWith(vaultTransportPrefixID)) return;
