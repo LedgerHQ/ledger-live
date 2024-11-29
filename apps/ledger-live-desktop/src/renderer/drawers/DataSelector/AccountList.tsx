@@ -36,10 +36,11 @@ const AddIconContainer = styled.div`
 type Props = {
   currency: CryptoCurrency | TokenCurrency;
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void;
+  onAddAccountClick?: () => void;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
+export function AccountList({ currency, onAccountSelect, onAddAccountClick, accounts$ }: Props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const accountIds = useGetAccountIds(accounts$);
@@ -49,12 +50,16 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
     return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
   }, [nestedAccounts, currency, accountIds]);
   const openAddAccounts = useCallback(() => {
+    if (onAddAccountClick) {
+      onAddAccountClick();
+    }
+
     dispatch(
       openModal("MODAL_ADD_ACCOUNTS", {
         currency,
       }),
     );
-  }, [dispatch, currency]);
+  }, [dispatch, onAddAccountClick, currency]);
 
   return (
     <>

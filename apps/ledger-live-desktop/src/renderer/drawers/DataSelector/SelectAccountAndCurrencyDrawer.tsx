@@ -52,6 +52,8 @@ export type SelectAccountAndCurrencyDrawerProps = {
   onClose?: () => void;
   currencies: CryptoOrTokenCurrency[];
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
+  onAddAccountClick?: () => void;
+  onCurrencySelected?: (currency: CryptoOrTokenCurrency) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 const SearchInputContainer = styled.div`
@@ -60,7 +62,7 @@ const SearchInputContainer = styled.div`
 `;
 
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAccountSelected, onClose, accounts$ } = props;
+  const { currencies, onAccountSelected, onAddAccountClick, onClose, accounts$ } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -74,14 +76,20 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     }
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
+
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
+      if (props.onCurrencySelected) {
+        props.onCurrencySelected(currency);
+      }
+
       setDrawer(
         SelectAccountDrawer,
         {
           accounts$,
           currency,
           onAccountSelected,
+          onAddAccountClick,
           onRequestBack: () =>
             setDrawer(MemoizedSelectAccountAndCurrencyDrawer, props, {
               onRequestClose: onClose,
@@ -92,8 +100,9 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
         },
       );
     },
-    [onAccountSelected, props, onClose, accounts$],
+    [onAccountSelected, onAddAccountClick, props, onClose, accounts$],
   );
+
   if (currencies.length === 1) {
     return (
       <SelectAccountDrawer

@@ -33,11 +33,13 @@ const HeaderContainer = styled.div`
 type SelectAccountDrawerProps = {
   currency: CryptoCurrency | TokenCurrency;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
+  onAddAccountClick?: () => void;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 const SelectAccountDrawer = ({
   currency,
   onAccountSelected,
+  onAddAccountClick,
   accounts$,
 }: SelectAccountDrawerProps) => {
   const { t } = useTranslation();
@@ -47,6 +49,12 @@ const SelectAccountDrawer = ({
     },
     [onAccountSelected],
   );
+
+  const handleAddAccountClick = useCallback(() => {
+    if (onAddAccountClick) {
+      onAddAccountClick();
+    }
+  }, [onAddAccountClick]);
   return (
     <AccountSelectorDrawerContainer>
       <HeaderContainer>
@@ -66,6 +74,7 @@ const SelectAccountDrawer = ({
         <AccountList
           currency={currency}
           onAccountSelect={handleAccountSelect}
+          onAddAccountClick={handleAddAccountClick}
           accounts$={accounts$}
         />
       </SelectorContent>
