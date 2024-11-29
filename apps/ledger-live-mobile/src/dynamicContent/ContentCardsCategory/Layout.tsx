@@ -106,7 +106,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const contentCardsType = contentCardsTypes[category.cardsType];
-  const cardsMapped = cards.map(card => contentCardsType.mappingFunction(card));
+  const cardsMapped = cards
+    .map(card => contentCardsType.mappingFunction(card))
+    .filter(card => card);
+
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
 
   const items = cardsSorted.map(card =>
