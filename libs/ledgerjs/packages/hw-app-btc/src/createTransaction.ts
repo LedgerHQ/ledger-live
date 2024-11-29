@@ -103,6 +103,7 @@ export async function createTransaction(
       index,
     });
   };
+
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
   const sapling = additionals.includes("sapling");
@@ -191,7 +192,6 @@ export async function createTransaction(
       input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
       0,
     );
-
     return {
       script: isZcash ? regularOutputs[idx].script : nullScript,
       prevout: nullPrevout,

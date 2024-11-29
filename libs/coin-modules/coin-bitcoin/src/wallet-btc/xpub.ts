@@ -304,7 +304,7 @@ class Xpub {
   }
 
   async broadcastTx(rawTxHex: string): Promise<any> {
-    return await this.explorer.broadcast(rawTxHex);
+    return this.explorer.broadcast(rawTxHex);
   }
 
   // internal

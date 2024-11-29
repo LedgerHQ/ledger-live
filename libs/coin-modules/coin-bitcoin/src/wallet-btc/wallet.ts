@@ -266,6 +266,7 @@ class BitcoinLikeWallet {
         i.sequence,
       ];
     });
+
     const lastOutputIndex = txInfo.outputs.length - 1;
 
     log("hw", `createPaymentTransaction`, {
