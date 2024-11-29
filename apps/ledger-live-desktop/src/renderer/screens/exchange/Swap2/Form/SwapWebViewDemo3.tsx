@@ -337,14 +337,14 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         };
       }): Promise<
         | {
-          hash: string;
-          blockHeight: number | undefined;
-          blockHash: string | undefined;
-          nonce: number;
-          gasUsed: string;
-          gasPrice: string;
-          value: string;
-        }
+            hash: string;
+            blockHeight: number | undefined;
+            blockHash: string | undefined;
+            nonce: number;
+            gasUsed: string;
+            gasPrice: string;
+            value: string;
+          }
         | {}
       > => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
@@ -447,18 +447,18 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         ...(isOffline ? { isOffline: "true" } : {}),
         ...(state?.defaultAccount
           ? {
-            fromAccountId: accountToWalletAPIAccount(
-              walletState,
-              state?.defaultAccount,
-              state?.defaultParentAccount,
-            ).id,
-          }
+              fromAccountId: accountToWalletAPIAccount(
+                walletState,
+                state?.defaultAccount,
+                state?.defaultParentAccount,
+              ).id,
+            }
           : {}),
         ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
         ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
           ? {
-            ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
-          }
+              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
+            }
           : {}),
       }).toString(),
     [
