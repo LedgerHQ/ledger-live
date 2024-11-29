@@ -1,4 +1,3 @@
-import { LiveAppManifest } from "../../platform/types";
 import type { AppManifest } from "../types";
 
 /**
@@ -51,7 +50,7 @@ export default function trackingWrapper(trackCall: TrackExchange) {
     },
 
     // No Params to generate an Exchange app nonce
-    startExchangeNoParams: (manifest: LiveAppManifest) => {
+    startExchangeNoParams: (manifest: AppManifest) => {
       track("WalletAPI start Exchange no params", getEventData(manifest));
     },
 
@@ -74,7 +73,7 @@ export default function trackingWrapper(trackCall: TrackExchange) {
     },
 
     // No Params to complete an Exchange
-    completeExchangeNoParams: (manifest: LiveAppManifest) => {
+    completeExchangeNoParams: (manifest: AppManifest) => {
       track("WalletAPI complete Exchange no params", getEventData(manifest));
     },
   } as const;
