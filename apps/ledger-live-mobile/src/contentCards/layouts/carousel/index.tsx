@@ -15,7 +15,7 @@ import Pagination from "./pagination";
 import { ContentCardItem } from "~/contentCards/cards/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { useIsInViewContext } from "LLM/contexts/IsInViewContext";
+import { useInViewContext } from "LLM/contexts/InViewContext";
 
 type Props = {
   styles?: {
@@ -59,7 +59,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
   const isInViewRef = useRef(false);
   const visibleCardsRef = useRef<string[]>([]);
   const { logImpressionCard } = useDynamicContent();
-  useIsInViewContext(viewRef, ({ isInView }) => {
+  useInViewContext(viewRef, ({ isInView }) => {
     isInViewRef.current = isInView;
     if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
   });

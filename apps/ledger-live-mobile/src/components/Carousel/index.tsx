@@ -3,7 +3,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-nativ
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
-import { IsInViewContextProvider } from "LLM/contexts/IsInViewContext";
+import { InViewContextProvider } from "LLM/contexts/InViewContext";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 
 const WIDTH = width * 0.85;
@@ -40,7 +40,7 @@ const Carousel = () => {
   }
 
   return (
-    <IsInViewContextProvider>
+    <InViewContextProvider>
       <ScrollView
         horizontal
         ref={scrollViewRef}
@@ -62,7 +62,7 @@ const Carousel = () => {
           </LogContentCardWrapper>
         ))}
       </ScrollView>
-    </IsInViewContextProvider>
+    </InViewContextProvider>
   );
 };
 

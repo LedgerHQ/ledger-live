@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { View } from "react-native";
 
-import { useIsInViewContext } from "LLM/contexts/IsInViewContext";
+import { useInViewContext } from "LLM/contexts/InViewContext";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 
 type Props = {
@@ -13,7 +13,7 @@ export default function LogContentCardWrapper({ id, children }: Props) {
   const ref = useRef<View>(null);
   const { logImpressionCard } = useDynamicContent();
 
-  useIsInViewContext(ref, ({ isInView }) => {
+  useInViewContext(ref, ({ isInView }) => {
     if (isInView) logImpressionCard(id);
   });
 

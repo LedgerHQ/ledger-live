@@ -12,36 +12,36 @@ import { Dimensions, type View } from "react-native";
 import type { InViewOptions, InViewContext, InViewEntry, WatchedItem } from "./types";
 import { inViewStatus } from "./utils";
 
-const IsInViewContext = createContext<InViewContext>({});
+const InViewContext = createContext<InViewContext>({});
 
-export function useIsInViewContext(
+export function useInViewContext(
   target: RefObject<View>,
-  onIsInViewUpdate: (entry: InViewEntry) => void,
+  onInViewUpdate: (entry: InViewEntry) => void,
   { threshold = 0.5, interval: intervalDuration = 200 }: InViewOptions = {},
 ) {
-  const { addWatchedItem, removeWatchedItem } = useContext(IsInViewContext);
-  const onIsInViewUpdateRef = useRef(onIsInViewUpdate);
-  const fallbackIsInViewRef = useRef(false);
+  const { addWatchedItem, removeWatchedItem } = useContext(InViewContext);
+  const onInViewUpdateRef = useRef(onInViewUpdate);
+  const fallbackInViewRef = useRef(false);
 
   useEffect(() => {
     if (addWatchedItem && removeWatchedItem) {
-      const item = { target, onIsInViewUpdate: onIsInViewUpdateRef.current };
+      const item = { target, onInViewUpdate: onInViewUpdateRef.current };
       addWatchedItem?.(item);
       return () => removeWatchedItem?.(item);
     } else {
       // Fallback: Run the intervals individually if the context is not available
       const interval = setInterval(async () => {
         const entry = await inViewStatus(target, threshold, Dimensions.get("window"));
-        if (entry.isInView === fallbackIsInViewRef.current) return;
-        fallbackIsInViewRef.current = entry.isInView;
-        onIsInViewUpdateRef.current(entry);
+        if (entry.isInView === fallbackInViewRef.current) return;
+        fallbackInViewRef.current = entry.isInView;
+        onInViewUpdateRef.current(entry);
       }, intervalDuration);
       return () => clearInterval(interval);
     }
   }, [target, addWatchedItem, removeWatchedItem, intervalDuration, threshold]);
 }
 
-export function IsInViewContextProvider({
+export function InViewContextProvider({
   threshold = 0.5,
   interval: intervalDuration = 200,
   children,
@@ -71,7 +71,7 @@ export function IsInViewContextProvider({
         const entry = await inViewStatus(item.target, threshold, window);
         if (entry.isInView === watchedItem.current.get(item)) return;
         watchedItem.current.set(item, entry.isInView);
-        item.onIsInViewUpdate(entry);
+        item.onInViewUpdate(entry);
       });
     }, intervalDuration);
 
@@ -79,8 +79,8 @@ export function IsInViewContextProvider({
   }, [hasItems, threshold, intervalDuration]);
 
   return (
-    <IsInViewContext.Provider value={{ addWatchedItem, removeWatchedItem }}>
+    <InViewContext.Provider value={{ addWatchedItem, removeWatchedItem }}>
       {children}
-    </IsInViewContext.Provider>
+    </InViewContext.Provider>
   );
 }
