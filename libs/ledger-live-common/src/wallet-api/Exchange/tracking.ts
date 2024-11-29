@@ -1,3 +1,4 @@
+import { LiveAppManifest } from "../../platform/types";
 import type { AppManifest } from "../types";
 
 /**
@@ -7,16 +8,15 @@ import type { AppManifest } from "../types";
  */
 type TrackExchange = (
   event: string,
-  properties: Record<string, any> | null,
+  properties: Record<string, string> | null,
   mandatory: boolean | null,
 ) => void;
 
-/**
- * Obtain Event data from WalletAPI App manifest
- *
- * @param {AppManifest} manifest
- * @returns Object - event data
- */
+interface TrackEventPayload {
+  exchangeType: "SELL" | "FUND" | "SWAP";
+  provider: string;
+}
+
 function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
 }
@@ -30,46 +30,51 @@ function getEventData(manifest: AppManifest) {
 // in order to get the exact type matching the tracking wrapper API
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function trackingWrapper(trackCall: TrackExchange) {
-  const track = (event: string, properties: Record<string, any> | null) =>
-    trackCall(event, properties, null);
+  const track = (event: string, properties: Record<string, string> | null) => {
+    return trackCall(event, properties, null);
+  };
 
   return {
     // Generate Exchange nonce modal open
-    startExchangeRequested: (manifest: AppManifest) => {
-      track("WalletAPI start Exchange Nonce request", getEventData(manifest));
+    startExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
+      track("WalletAPI start Exchange Nonce request", { provider, exchangeType });
     },
 
     // Successfully generated an Exchange app nonce
-    startExchangeSuccess: (manifest: AppManifest) => {
-      track("WalletAPI start Exchange Nonce success", getEventData(manifest));
+    startExchangeSuccess: ({ provider, exchangeType }: TrackEventPayload) => {
+      track("WalletAPI start Exchange Nonce success", { provider, exchangeType });
     },
 
     // Failed to generate an Exchange app nonce
-    startExchangeFail: (manifest: AppManifest) => {
-      track("WalletAPI start Exchange Nonce fail", getEventData(manifest));
+    startExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
+      track("WalletAPI start Exchange Nonce fail", { provider, exchangeType });
     },
 
     // No Params to generate an Exchange app nonce
-    startExchangeNoParams: (manifest: AppManifest) => {
+    startExchangeNoParams: (manifest: LiveAppManifest) => {
       track("WalletAPI start Exchange no params", getEventData(manifest));
     },
 
-    completeExchangeRequested: (manifest: AppManifest) => {
-      track("WalletAPI complete Exchange requested", getEventData(manifest));
+    completeExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
+      track("WalletAPI complete Exchange requested", { provider, exchangeType });
     },
 
     // Successfully completed an Exchange
-    completeExchangeSuccess: (manifest: AppManifest) => {
-      track("WalletAPI complete Exchange success", getEventData(manifest));
+    completeExchangeSuccess: ({
+      provider,
+      exchangeType,
+      currency,
+    }: TrackEventPayload & { currency: string }) => {
+      track("WalletAPI complete Exchange success", { provider, exchangeType, currency });
     },
 
     // Failed to complete an Exchange
-    completeExchangeFail: (manifest: AppManifest) => {
-      track("WalletAPI complete Exchange Nonce fail", getEventData(manifest));
+    completeExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
+      track("WalletAPI complete Exchange Nonce fail", { provider, exchangeType });
     },
 
     // No Params to complete an Exchange
-    completeExchangeNoParams: (manifest: AppManifest) => {
+    completeExchangeNoParams: (manifest: LiveAppManifest) => {
       track("WalletAPI complete Exchange no params", getEventData(manifest));
     },
   } as const;
