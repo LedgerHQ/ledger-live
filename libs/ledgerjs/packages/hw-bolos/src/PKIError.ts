@@ -1,4 +1,4 @@
-const ErrorCode = {
+const ErrorCode: Record<number, string> = {
   0x422f: "Incorrect structure type",
   0x4230: "Incorrect certificate version",
   0x4231: "Incorrect certificate validity",
@@ -16,43 +16,44 @@ const ErrorCode = {
   0x5720: "Failed to verify signature",
   0x4118: "trusted_name buffer is too small to contain the trusted name",
 };
+export const handledErrorCode = Object.keys(ErrorCode).map(v => parseInt(v));
 
-export function mapCodeToError(code: number): PKIError {
+export function throwError(code: number) {
   switch (code) {
     case 0x422f:
-      return new PKIStructError();
+      throw new PKIStructError();
     case 0x4230:
-      return new PKICertificateVersionError();
+      throw new PKICertificateVersionError();
     case 0x4231:
-      return new PKICertificateValidityError();
+      throw new PKICertificateValidityError();
     case 0x4232:
-      return new PKICertificateIndexError();
+      throw new PKICertificateIndexError();
     case 0x4233:
-      return new PKIUnknownSignerIdError();
+      throw new PKIUnknownSignerIdError();
     case 0x4234:
-      return new PKIUnknownSignerAlgorithmError();
+      throw new PKIUnknownSignerAlgorithmError();
     case 0x4235:
-      return new PKIUnknownPublicIdError();
+      throw new PKIUnknownPublicIdError();
     case 0x4236:
-      return new PKIUnknownPublicUsageError();
+      throw new PKIUnknownPublicUsageError();
     case 0x4237:
-      return new PKIIncorrectCurveError();
+      throw new PKIIncorrectCurveError();
     case 0x4238:
-      return new PKIIncorrectSignatureError();
+      throw new PKIIncorrectSignatureError();
     case 0x4239:
-      return new PKIUnknownDeviceError();
+      throw new PKIUnknownDeviceError();
     case 0x422d:
-      return new PKIUnknownCertificateTagError();
+      throw new PKIUnknownCertificateTagError();
     case 0x3301:
-      return new PKIFailedHashError();
+      throw new PKIFailedHashError();
     case 0x422e:
-      return new PKIMismatchKeyError();
+      throw new PKIMismatchKeyError();
     case 0x5720:
-      return new PKIFailedVerificationError();
+      throw new PKIFailedVerificationError();
     case 0x4118:
-      return new PKITrustedNameTooSmallError();
+      throw new PKITrustedNameTooSmallError();
     default:
-      return new PKIError("Unknown");
+      throw new PKIError("Unknown");
   }
 }
 

@@ -4298,21 +4298,12 @@ importers:
 
   libs/ledger-services/cal:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../../live-network
-      '@ledgerhq/logs':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-devices
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -4341,21 +4332,12 @@ importers:
 
   libs/ledger-services/trust:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../../live-network
-      '@ledgerhq/logs':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-devices
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -5411,22 +5393,16 @@ importers:
 
   libs/ledgerjs/packages/hw-bolos:
     dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:*
         version: link:../hw-transport-mocker
+      '@ledgerhq/hw-transport-node-hid-singleton':
+        specifier: workspace:^
+        version: link:../hw-transport-node-hid-singleton
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14

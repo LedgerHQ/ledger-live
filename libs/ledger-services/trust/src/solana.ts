@@ -43,7 +43,7 @@ export async function computedTokenAddress(
 ): Promise<OwnerInfo> {
   const { data } = await network<OwnerAddressResponse>({
     method: "GET",
-    url: `${getTrustedDomain(env)}/v2/solana/computed-token-account/${address}/${mintAddress}/?challenge=${challenge}`,
+    url: `${getTrustedDomain(env)}/v2/solana/computed-token-account/${address}/${mintAddress}?challenge=${challenge}`,
   });
 
   return {

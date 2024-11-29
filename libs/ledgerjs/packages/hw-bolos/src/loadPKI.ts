@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { mapCodeToError } from "./PKIError";
+import { handledErrorCode, throwError } from "./PKIError";
 
 const CLA = 0xb0;
 const INS = 0x06;
@@ -44,11 +44,11 @@ export default async (
       new Uint8Array(Buffer.from([signatureBuffer.length])),
       new Uint8Array(signatureBuffer),
     ]),
+    handledErrorCode,
   );
 
   const resultCode = result.readUInt16BE(result.length - 2);
   if (resultCode !== OkStatus) {
-    const error = mapCodeToError(resultCode);
-    throw error;
+    throwError(resultCode);
   }
 };

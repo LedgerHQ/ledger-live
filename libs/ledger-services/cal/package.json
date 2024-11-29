@@ -56,11 +56,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
-    "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/live-network": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
