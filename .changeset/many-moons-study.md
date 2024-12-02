@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-dmk": patch
+"@ledgerhq/live-dmk": minor
 ---
 
 Init ldmk transport pkg
