@@ -10,6 +10,8 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/solana/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import LText from "~/components/LText";
@@ -20,17 +22,21 @@ type SolanaFieldComponentProps = {
   transaction: Transaction;
   status: TransactionStatus;
   field: DeviceTransactionField;
+  device: Device;
 };
 
-const Warning = ({ transaction }: SolanaFieldComponentProps) => {
+const Warning = ({ transaction, device }: SolanaFieldComponentProps) => {
   invariant(transaction.family === "solana", "solana transaction");
-  if (transaction.model.commandDescriptor?.command.kind === "token.transfer") {
+  if (
+    transaction.model.commandDescriptor?.command.kind === "token.transfer" &&
+    device.modelId === DeviceModelId.nanoS
+  ) {
     return (
       <View>
-        <Alert type="hint">
+        <Alert type="warning">
           <LText>
             <Trans i18nKey="solana.token.transferWarning">
-              <Link onPress={() => Linking.openURL(urls.solana.splTokenInfo)} type="color" />
+              <Link type="main" onPress={() => Linking.openURL(urls.solana.splTokenInfo)} />
             </Trans>
           </LText>
         </Alert>

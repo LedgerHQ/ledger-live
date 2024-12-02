@@ -4,14 +4,15 @@ import { SolanaFamily } from "./types";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 import ConfirmTitle from "~/renderer/components/TransactionConfirm/ConfirmTitle";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Box from "~/renderer/components/Box";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Link } from "@ledgerhq/react-ui";
 
 const Title: TitleComponent = props => {
-  const { transaction, account, parentAccount, status } = props;
+  const { transaction, account, parentAccount, status, device } = props;
   const transferTokenHelpUrl = useLocalizedUrl(urls.solana.splTokenInfo);
 
   const fields = getDeviceTransactionConfig({
@@ -29,7 +30,10 @@ const Title: TitleComponent = props => {
     }
   }, [fields]);
 
-  if (transaction.model.commandDescriptor?.command.kind === "token.transfer") {
+  if (
+    transaction.model.commandDescriptor?.command.kind === "token.transfer" &&
+    device.modelId === DeviceModelId.nanoS
+  ) {
     return (
       <Box
         flexDirection="column"
@@ -42,10 +46,7 @@ const Title: TitleComponent = props => {
         <ConfirmTitle title={undefined} typeTransaction={typeTransaction} {...props} />
         <Alert type="warning">
           <Trans i18nKey="solana.token.transferWarning">
-            <LinkWithExternalIcon
-              color="palette.warning.c60"
-              onClick={() => openURL(transferTokenHelpUrl)}
-            />
+            <Link color="palette.warning.c60" onClick={() => openURL(transferTokenHelpUrl)} />
           </Trans>
         </Alert>
       </Box>
