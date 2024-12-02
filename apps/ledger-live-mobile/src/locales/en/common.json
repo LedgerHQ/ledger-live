@@ -5993,7 +5993,7 @@
     },
     "token": {
       "frozenStateWarning": "Account assets are frozen!",
-      "transferWarning": "Double-check the transaction details on your Ledger device before signing. Solana SPL tokens transactions have unique characteristics. To learn more, visit: <0>ledger.com/spl</0>"
+      "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>"
     }
   },
   "near": {
