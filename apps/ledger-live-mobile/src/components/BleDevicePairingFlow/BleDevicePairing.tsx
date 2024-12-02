@@ -105,7 +105,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Animation
           style={{ height: 200 }}
           source={getDeviceAnimation({
-            modelId: deviceToPair.modelId,
+            device: deviceToPair,
             key: "blePaired",
             theme,
           })}
@@ -188,7 +188,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Animation
           style={deviceToPair.modelId === "stax" ? { marginTop: -20 } : { height: 200 }}
           source={getDeviceAnimation({
-            modelId: deviceToPair.modelId,
+            device: deviceToPair,
             key: "blePairing",
             theme,
           })}

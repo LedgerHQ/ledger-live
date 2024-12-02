@@ -1,22 +1,27 @@
 import Animation from "~/components/Animation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import React from "react";
 import { Dimensions, Image } from "react-native";
+import { useTheme } from "styled-components/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
-import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
 
 type Props = {
   device: Device;
   onAnimationFinish: () => void;
 };
 
-const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
+const EuropaCompletionView: React.FC<Props> = ({ device, onAnimationFinish }) => {
+  const {
+    colors: { type },
+  } = useTheme();
+  const theme = type as "dark" | "light";
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
 
   return (
     <Flex height="100%" width="100%">
       <Animation
-        source={OnboardingSuccessAnimation}
+        source={getDeviceAnimation({ device, key: "onboardingSucceed", theme })}
         onAnimationFinish={onAnimationFinish}
         loop={false}
         style={{

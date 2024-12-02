@@ -1,6 +1,5 @@
+import staxTransferBackground from "./assets/staxTransferBackground.png";
 import staxPreviewBackground from "./assets/staxPreviewBackground.png";
-import staxBackgroundLight from "./assets/staxBackgroundLight.png";
-import staxBackgroundDark from "./assets/staxBackgroundDark.png";
 import europaBackgroundLight from "./assets/europaBackgroundLight.png";
 import europaBackgroundDark from "./assets/europaBackgroundDark.png";
 import { FramedPictureConfig } from "./FramedPicture";
@@ -8,14 +7,15 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 
 const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   // NB: measures in px taken directly on the .png
-  frameHeight: 960,
-  frameWidth: 960,
-  innerHeight: 765,
-  innerWidth: 483,
-  innerRight: 239,
-  innerTop: 89,
-  borderRightRadius: 36,
+  frameHeight: 888,
+  frameWidth: 564,
+  innerHeight: 840,
+  innerWidth: (840 * 400) / 670,
+  innerRight: 30, // measured 32px on png and it seems to be 30px on lotties ... using 30 to avoid "long white 1px wide line"
+  innerTop: 24,
+  borderRightRadius: 24,
   resizeMode: "cover",
+  leftPaddingColor: "#272727",
 };
 
 const staxPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
@@ -30,21 +30,31 @@ const staxPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   resizeMode: "cover",
 };
 
+const EUROPA_FRAME_WIDTH = 572;
+const EUROPA_FRAME_HEIGHT = 784;
+
 const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  frameWidth: 960,
-  frameHeight: 960,
-  innerWidth: 440,
-  innerHeight: 557,
-  innerRight: 252,
-  innerTop: 147,
-  borderRightRadius: 6,
-  borderLeftRadius: 6,
+  frameWidth: EUROPA_FRAME_WIDTH,
+  frameHeight: EUROPA_FRAME_HEIGHT,
+  innerWidth: 448,
+  innerHeight: 575,
+  innerRight: 65,
+  innerTop: 60,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
   resizeMode: "cover",
 };
 
 const europaPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  ...europaTransferConfig,
-  scale: 0.4,
+  frameWidth: EUROPA_FRAME_WIDTH,
+  frameHeight: EUROPA_FRAME_HEIGHT,
+  innerWidth: 448,
+  innerHeight: 575,
+  innerRight: 65,
+  innerTop: 60,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
+  resizeMode: "cover",
 };
 
 const configs = {
@@ -52,11 +62,11 @@ const configs = {
     stax: {
       light: {
         ...staxTransferConfig,
-        backgroundSource: staxBackgroundLight,
+        backgroundSource: staxTransferBackground,
       },
       dark: {
         ...staxTransferConfig,
-        backgroundSource: staxBackgroundDark,
+        backgroundSource: staxTransferBackground,
       },
     },
     europa: {

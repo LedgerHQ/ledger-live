@@ -1,83 +1,94 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import Animation from "~/components/Animation";
-import { getAnimationKeysForDeviceModelId, getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import Touchable from "~/components/Touchable";
 import Check from "~/icons/Check";
-import {
-  getOnboardingDeviceAnimation,
-  getAnimationKeysForDeviceModelId as getOnboardingAnimationKeysForDeviceModelId,
-} from "../../../Onboarding/shared/infoPagesData";
+import { lottieAnimations } from "../../../Onboarding/shared/infoPagesData";
 
 const edges: Edge[] = ["bottom"];
 
-function usePrevious<T>(val: T): T {
-  const ref = React.useRef<T>(val);
-  const prevVal = ref.current;
-  ref.current = val;
-  return prevVal;
-}
-
-type EnabledDeviceModelIds =
-  | DeviceModelId.nanoS
-  | DeviceModelId.nanoSP
-  | DeviceModelId.nanoX
-  | DeviceModelId.stax
-  | DeviceModelId.europa;
-
-const deviceModelIds: Array<EnabledDeviceModelIds> = [
-  DeviceModelId.nanoS,
-  DeviceModelId.nanoSP,
-  DeviceModelId.nanoX,
-  DeviceModelId.stax,
-  DeviceModelId.europa,
+const keys = [
+  "plugAndPinCode",
+  "enterPinCode",
+  "quitApp",
+  "allowManager",
+  "openApp",
+  "verify",
+  "sign",
 ];
+const onBoardingKeys = [
+  "pinCode",
+  "recover",
+  "confirmWords",
+  "numberOfWords",
+  "powerOn",
+  "powerOnRecovery",
+];
+
+function getAnimation(params: {
+  key: string;
+  wired: boolean;
+  modelId: DeviceModelId;
+  theme: "light" | "dark";
+}) {
+  const { key, wired, modelId, theme } = params;
+  if (keys.includes(key)) {
+    // Normal deviceAction animations
+    return getDeviceAnimation({
+      device: {
+        deviceId: "",
+        modelId,
+        wired: wired && ["nanoX", "stax"].includes(modelId),
+      },
+      key,
+      theme,
+    });
+  }
+
+  if (onBoardingKeys.includes(key)) {
+    // @ts-expect-error let's assume this is correct…
+    return lottieAnimations[modelId][key][theme];
+  }
+
+  return null; // Onboarding animations
+}
 
 const DebugLottie = () => {
   const { colors } = useTheme();
 
-  const [selectedModelId, setModelId] = useState<EnabledDeviceModelIds>(DeviceModelId.nanoS);
-  const [selectedAnimationIndex, setSelectedAnimationIndex] = useState(0);
+  const [selectedModelId, setModelId] = useState<DeviceModelId>(
+    (Config.OVERRIDE_MODEL_ID as DeviceModelId) || ("nanoS" as DeviceModelId),
+  );
+  const [wired, setWired] = useState(false);
+  const [key, setKey] = useState<string>("plugAndPinCode");
   const [keyModalVisible, setKeyModalVisible] = useState(false);
 
-  const previousSelectedModelId = usePrevious(selectedModelId);
-  if (previousSelectedModelId !== selectedModelId) {
-    setSelectedAnimationIndex(0);
-  }
+  const animationLight = getAnimation({
+    key,
+    theme: "light",
+    modelId: selectedModelId,
+    wired,
+  });
+  const animationDark = getAnimation({
+    key,
+    theme: "dark",
+    modelId: selectedModelId,
+    wired,
+  });
 
-  const keysForDeviceModelId = getAnimationKeysForDeviceModelId(selectedModelId);
-  const onboardingKeysForDeviceModelId =
-    getOnboardingAnimationKeysForDeviceModelId(selectedModelId);
+  const allKeys = [...keys, ...onBoardingKeys];
+  const keyIndex = allKeys.findIndex(k => k === key);
 
-  const animations = useMemo(
-    () => [
-      ...keysForDeviceModelId.map(key => ({
-        key,
-        light: getDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
-        dark: getDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
-      })),
-      ...onboardingKeysForDeviceModelId.map(key => ({
-        key,
-        light: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "light" }),
-        dark: getOnboardingDeviceAnimation({ modelId: selectedModelId, key, theme: "dark" }),
-      })),
-    ],
-    [keysForDeviceModelId, onboardingKeysForDeviceModelId, selectedModelId],
-  );
-
-  const allKeys = animations.map(({ key }) => key);
-  const selectedKey = allKeys[selectedAnimationIndex];
-  const animationLight = animations[selectedAnimationIndex].light;
-  const animationDark = animations[selectedAnimationIndex].dark;
-
-  const animationNodeKey = `${selectedAnimationIndex}_${selectedModelId}`;
+  const animationNodeKey = `${key}_${selectedModelId}_${wired}`;
 
   return (
     <SafeAreaView
@@ -90,14 +101,13 @@ const DebugLottie = () => {
       ]}
     >
       <LText secondary semiBold style={styles.title}>
-        {!selectedKey ? "Select Animation" : `Showing '${selectedKey}'`}
+        {!key ? "Select Animation" : `Showing '${key}'`}
       </LText>
       <Flex flex={1}>
         <ScrollView>
           <View
             style={{
               borderWidth: 1,
-              backgroundColor: "white",
             }}
           >
             {animationLight && <Animation key={animationNodeKey} source={animationLight} />}
@@ -112,23 +122,45 @@ const DebugLottie = () => {
         </ScrollView>
       </Flex>
       <View style={styles.select}>
-        {deviceModelIds.map(modelId => (
+        {[
+          DeviceModelId.nanoS,
+          DeviceModelId.nanoSP,
+          DeviceModelId.nanoX,
+          DeviceModelId.stax,
+          DeviceModelId.blue,
+        ].map(modelId => (
           <Button
             key={modelId}
             type="primary"
             outline={selectedModelId === modelId}
             title={modelId}
+            disabled={
+              modelId === DeviceModelId.blue ||
+              !!Config.OVERRIDE_MODEL_ID ||
+              ([DeviceModelId.nanoS, DeviceModelId.nanoSP].includes(modelId) &&
+                key === "pairDevice")
+            }
             onPress={() => {
-              setModelId(modelId);
+              setModelId(modelId as DeviceModelId);
             }}
           />
         ))}
       </View>
+      <Button
+        containerStyle={{
+          marginTop: 8,
+        }}
+        type="primary"
+        outline={false}
+        title={`Show ${wired ? "Bluetooth" : "Wired"}`}
+        disabled={!["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)}
+        onPress={() => setWired(wired => !wired)}
+      />
       <Flex mt={8} flexDirection="row">
         <Button
-          disabled={selectedAnimationIndex === 0}
+          disabled={keyIndex === 0}
           onPress={() => {
-            setSelectedAnimationIndex(Math.max(selectedAnimationIndex - 1, 0));
+            setKey(allKeys[Math.max(keyIndex - 1, 0)]);
           }}
           type="primary"
           Icon={IconsLegacy.ChevronLeftMedium}
@@ -137,9 +169,9 @@ const DebugLottie = () => {
           <Button type="primary" title="Animation key" onPress={() => setKeyModalVisible(true)} />
         </Flex>
         <Button
-          disabled={selectedAnimationIndex === allKeys.length - 1}
+          disabled={keyIndex === allKeys.length - 1}
           onPress={() => {
-            setSelectedAnimationIndex(Math.min(selectedAnimationIndex + 1, allKeys.length - 1));
+            setKey(allKeys[Math.min(keyIndex + 1, allKeys.length - 1)]);
           }}
           type="primary"
           Icon={IconsLegacy.ChevronRightMedium}
@@ -150,26 +182,31 @@ const DebugLottie = () => {
         onClose={setKeyModalVisible as () => void}
       >
         <ScrollView style={styles.modal}>
-          {animations.map(({ key }, i) => (
+          {allKeys.map((_key, i) => (
             <Touchable
-              key={key + i}
+              key={_key + i}
               onPress={() => {
-                setSelectedAnimationIndex(i);
+                if (_key === "pairDevice") {
+                  setModelId("nanoX" as DeviceModelId);
+                  setWired(false);
+                }
+
+                setKey(_key);
                 setKeyModalVisible(false);
               }}
               style={[styles.button]}
             >
               <LText
-                {...(i === selectedAnimationIndex
+                {...(key === _key
                   ? {
                       semiBold: true,
                     }
                   : {})}
                 style={[styles.buttonLabel]}
               >
-                {key}
+                {_key}
               </LText>
-              {i === selectedAnimationIndex && <Check size={16} color={colors.live} />}
+              {key === _key && <Check size={16} color={colors.live} />}
             </Touchable>
           ))}
         </ScrollView>

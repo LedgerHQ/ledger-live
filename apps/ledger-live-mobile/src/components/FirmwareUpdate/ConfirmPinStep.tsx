@@ -20,7 +20,7 @@ const ConfirmPinStep = ({ device }: Props) => {
       <Track event="FirmwareUpdateConfirmPin" onMount />
       <Animation
         source={getDeviceAnimation({
-          modelId: device.modelId,
+          device,
           key: "enterPinCode",
           theme: theme as "light" | "dark" | undefined,
         })}

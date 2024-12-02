@@ -79,7 +79,6 @@ export type FramedPictureConfig = {
    * and the left edge of the "framed" picture.
    */
   leftPaddingColor?: string;
-  scale?: number;
 };
 
 export type Props = Partial<ComponentProps<typeof Image>> & {
@@ -91,6 +90,7 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
   framedPictureConfig: FramedPictureConfig;
+  scale?: number;
 };
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
@@ -114,6 +114,7 @@ const FramedPicture: React.FC<Props> = ({
   loadingProgress = 1,
   children,
   framedPictureConfig,
+  scale = 1 / 4,
   background,
   ...imageProps
 }) => {
@@ -125,11 +126,9 @@ const FramedPicture: React.FC<Props> = ({
     innerRight,
     innerTop,
     borderRightRadius,
-    borderLeftRadius,
     backgroundSource,
     resizeMode,
     leftPaddingColor,
-    scale = 1 / 4,
   } = framedPictureConfig;
 
   return (
@@ -205,8 +204,6 @@ const FramedPicture: React.FC<Props> = ({
                   width: innerWidth,
                   borderTopRightRadius: borderRightRadius,
                   borderBottomRightRadius: borderRightRadius,
-                  borderTopLeftRadius: borderLeftRadius,
-                  borderBottomLeftRadius: borderLeftRadius,
                 }}
               />
             ) : null}

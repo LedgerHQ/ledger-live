@@ -1,6 +1,5 @@
 ---
 "ledger-live-desktop": patch
-"live-mobile": patch
 ---
 
-Added new lotties
+Update lotties for Stax on LLD
