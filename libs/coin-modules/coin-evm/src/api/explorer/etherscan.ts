@@ -258,13 +258,15 @@ export const getLastNftOperations = async (
   toBlock?: number,
 ): Promise<Operation[]> => {
   const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock, toBlock);
-  const erc1155Ops = await getLastERC1155Operations(
+ 
+  // Base does not support ERC-1155 tokens yet.
+  const erc1155Ops = currency.id !== 'base' ? await getLastERC1155Operations(
     currency,
     address,
     accountId,
     fromBlock,
     toBlock,
-  );
+  ) : [];
 
   return [...erc721Ops, ...erc1155Ops].sort(
     // sorting DESC order

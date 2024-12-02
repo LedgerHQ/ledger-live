@@ -37,7 +37,7 @@ export const blockchainEVMList: BlockchainEVM[] = Object.values(BlockchainEVM);
 export const SUPPORTED_BLOCKCHAINS_LIVE = [
   // BlockchainEVM.Arbitrum,
   BlockchainEVM.Avalanche,
-  //BlockchainEVM.Base,
+  BlockchainEVM.Base,
   // BlockchainEVM.Blast,
   BlockchainEVM.Bsc,
   // BlockchainEVM.Celo,

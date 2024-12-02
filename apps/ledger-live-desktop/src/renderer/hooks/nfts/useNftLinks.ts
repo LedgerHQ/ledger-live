@@ -94,6 +94,41 @@ const linksPerCurrency: Record<
         callback: () => openURL(links.explorer),
       },
     ]),
+    base: (t: TFunction, links: NFTMetadata["links"]) =>
+      safeList([
+        links?.opensea && {
+          id: "opensea",
+          label: t("NFT.viewer.actions.open", {
+            viewer: "Opensea.io",
+          }),
+          Icon: IconOpensea,
+          type: "external",
+          callback: () => openURL(links.opensea),
+        },
+        links?.rarible && {
+          id: "rarible",
+          label: t("NFT.viewer.actions.open", {
+            viewer: "Rarible",
+          }),
+          Icon: IconRarible,
+          type: "external",
+          callback: () => openURL(links.rarible),
+        },
+        {
+          id: "sep2",
+          type: "separator",
+          label: "",
+        },
+        links?.explorer && {
+          id: "explorer",
+          label: t("NFT.viewer.actions.open", {
+            viewer: "Explorer",
+          }),
+          Icon: IconsLegacy.GlobeMedium,
+          type: "external",
+          callback: () => openURL(links.explorer),
+        },
+      ]),
 };
 
 export default (
