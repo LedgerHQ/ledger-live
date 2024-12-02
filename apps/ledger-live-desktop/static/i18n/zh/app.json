@@ -437,8 +437,8 @@
       "cta" : "前往 My Ledger（我的 Ledger）"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ 不兼容 THORChain",
-      "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
+      "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+      "description" : "Ledger Nano S 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 {{provider}} 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
@@ -1139,6 +1139,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "earn" : "赚取",
       "yield" : "收益率",
       "buy" : "买入",
       "sell" : "卖出",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "权益质押",
-        "description" : "使用 Ledger 设备权益质押加密货币"
+        "description" : "获得加密货币权益质押奖励"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "链接",
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
+            "tag" : "标签",
             "url" : "网址",
             "path" : "路径"
           }
