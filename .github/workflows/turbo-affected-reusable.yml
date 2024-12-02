@@ -39,6 +39,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: commit history
+        run: | 
+          git log --oneline -n 30
+          echo "-------------------"
+          git log develop --oneline -n 30
+
       - uses: actions/github-script@v7
         id: clean-refs
         with:

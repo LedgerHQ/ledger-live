@@ -10,13 +10,12 @@ async function main() {
   const packageManager = packageJson.packageManager; // pnpm@<version_specified_in_package.json>
 
   try {
-    const turboOutput = execSync(
-      `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`,
-      {
-        encoding: "utf-8",
-        maxBuffer: 2048 * 1024,
-      },
-    );
+    const cmd = `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`;
+    console.log(`Running command: ${cmd}`);
+    const turboOutput = execSync(cmd, {
+      encoding: "utf-8",
+      maxBuffer: 2048 * 1024,
+    });
     const pnpmOutput = execSync(`npx ${packageManager} list -r --depth=-1 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
