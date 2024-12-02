@@ -16,6 +16,7 @@ export enum ErrorReason {
   NO_BACKUP = "no-backup",
   NO_BACKUP_ONBOARDING_DEVICE = "no-backup-onboarding-device",
   NO_BACKUP_ONBOARDING_QRCODE = "no-backup-onboarding-qrcode",
+  NO_TRUSTCHAIN = "no-trustchain",
 }
 
 export interface ErrorConfig {
@@ -223,6 +224,18 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       secondaryAction: () => {
         secondaryAction?.();
         ContinueWihtoutSync({ page: AnalyticsPage.OnBoardingDeviceNoBackup, hasFlow: false });
+      },
+    },
+    [ErrorReason.NO_TRUSTCHAIN]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      title: t("walletSync.walletSyncActivated.manageKey.error.title"),
+      description: t("walletSync.walletSyncActivated.manageKey.error.description"),
+      cta: t("walletSync.walletSyncActivated.manageKey.error.cta"),
+      analyticsPage: AnalyticsPage.DeleteBackupError,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onCreate({ page: AnalyticsPage.DeleteBackupError, hasFlow: false });
       },
     },
   };
