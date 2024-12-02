@@ -14,8 +14,6 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import { BoxProps } from "./Box/Box";
 import { Icons } from "@ledgerhq/react-ui";
 
-console.log(Icons);
-
 const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string } & BoxProps) => ({
   ff: p.ff || "Inter|Medium",
   horizontal: true,
@@ -32,12 +30,10 @@ const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string 
   width: ${p => (p.inline ? "" : "100%")};
   overflow: hidden;
 `;
-const I = ({ color, children }: { color?: string; children: React.ReactNode }) => (
+const I = ({ color = undefined, children }: { color?: string; children: React.ReactNode }) => (
   <Box color={color}>{children}</Box>
 );
-I.defaultProps = {
-  color: undefined,
-};
+
 export type OwnProps = {
   unit?: Unit;
   val?: BigNumber | number;

@@ -3,18 +3,20 @@ import Transport from "@ledgerhq/hw-transport";
 import {
   DeviceManagementKitBuilder,
   ConsoleLogger,
-  type DeviceManagementKit,
+  DeviceManagementKit,
   type DeviceSessionState,
   DeviceStatus,
   LogLevel,
   BuiltinTransports,
+  DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { BehaviorSubject, firstValueFrom } from "rxjs";
+import { DescriptorEvent } from "@ledgerhq/types-devices";
+import { BehaviorSubject, firstValueFrom, map, Observer, pairwise, startWith } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
 
 const deviceManagementKit = new DeviceManagementKitBuilder()
   .addTransport(BuiltinTransports.USB)
-  .addLogger(new ConsoleLogger(LogLevel.Debug))
+  .addLogger(new ConsoleLogger(LogLevel.Info))
   .build();
 
 export const DeviceManagementKitContext = createContext<DeviceManagementKit>(deviceManagementKit);
@@ -135,10 +137,61 @@ export class DeviceManagementKitTransport extends Transport {
     return transport;
   }
 
+  static listen = (observer: Observer<DescriptorEvent<string>>) => {
+    const subscription = deviceManagementKit
+      .listenToKnownDevices()
+      .pipe(
+        startWith<DiscoveredDevice[]>([]),
+        pairwise(),
+        map(([prev, curr]) => {
+          const added = curr.filter(item => !prev.some(prevItem => prevItem.id === item.id));
+          const removed = prev.filter(item => !curr.some(currItem => currItem.id === item.id));
+          return { added, removed };
+        }),
+      )
+      .subscribe({
+        next: ({ added, removed }) => {
+          for (const device of added) {
+            tracer.trace(`[listen] device added ${device.deviceModel.model}`);
+            observer.next({
+              type: "add",
+              descriptor: "",
+              device: device,
+              deviceModel: {
+                // @ts-expect-error types are not matching
+                id: device.deviceModel.model,
+                type: device.transport,
+              },
+            });
+          }
+
+          for (const device of removed) {
+            tracer.trace(`[listen] device removed ${device.deviceModel.model}`);
+            observer.next({
+              type: "remove",
+              descriptor: "",
+              device: device,
+              deviceModel: {
+                // @ts-expect-error types are not matching
+                id: device.deviceModel.model,
+                type: device.transport,
+              },
+            });
+          }
+        },
+        error: observer.error,
+        complete: observer.complete,
+      });
+
+    return {
+      unsubscribe: () => subscription.unsubscribe(),
+    };
+  };
+
   close: () => Promise<void> = () => Promise.resolve();
 
   async exchange(apdu: Buffer): Promise<Buffer> {
-    tracer.trace(`[exchange] => ${apdu}`);
+    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
     return await this.sdk
       .sendApdu({
         sessionId: this.sessionId,
@@ -146,7 +199,7 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        tracer.trace(`[exchange] <= ${response}`);
+        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
       .catch(e => {
