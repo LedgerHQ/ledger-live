@@ -10,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { Dimensions, type View } from "react-native";
+import { concatMap, from, interval } from "rxjs";
 import type { InViewOptions, InViewContext, InViewEntry, WatchedItem } from "./types";
 import { inViewStatus } from "./utils";
 
@@ -56,18 +57,31 @@ export function InViewContextProvider({
     if (!hasItems) return;
 
     const window = Dimensions.get("window");
-    const interval = setInterval(() => {
-      items.current.forEach(async item => {
-        const wasInView = watchedItem.current.get(item);
-        const threshold = wasInView ? outOfViewThreshold : inViewThreshold;
-        const entry = await inViewStatus(item.target, threshold, window);
-        if (entry.isInView === wasInView) return;
+    const observer = interval(intervalDuration).pipe(
+      concatMap(() =>
+        from(
+          Promise.all(
+            items.current.map(async item => {
+              const threshold = watchedItem.current.get(item)
+                ? outOfViewThreshold
+                : inViewThreshold;
+
+              const entry = await inViewStatus(item.target, threshold, window);
+              return { item, entry };
+            }),
+          ),
+        ),
+      ),
+    );
+
+    const subscription = observer.subscribe(res => {
+      res.forEach(({ item, entry }) => {
+        if (entry.isInView === watchedItem.current.get(item)) return;
         watchedItem.current.set(item, entry.isInView);
         item.onInViewUpdate(entry);
       });
-    }, intervalDuration);
-
-    return () => clearInterval(interval);
+    });
+    return () => subscription.unsubscribe();
   }, [hasItems, inViewThreshold, outOfViewThreshold, intervalDuration]);
 
   return (
