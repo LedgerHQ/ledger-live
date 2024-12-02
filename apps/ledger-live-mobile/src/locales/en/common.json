@@ -6918,6 +6918,13 @@
         "title": "Sync with another Ledger Live app",
         "description": "Sync your Ledger Live crypto accounts across different phones and computers."
       },
+      "unauthorizeMember": {
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
+        }
+      },
       "manageKey": {
         "title": "Delete Sync",
         "description": "Your crypto accounts across different phones and computers will stop synching.",

@@ -6,7 +6,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
 import { HookResult } from "./useManageKeyDrawer";
-import { isNoTrustchainError } from "../../utils/errors";
+import { isNoTrustchainError, isUnauthorizedMemberError } from "../../utils/errors";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
 
@@ -22,6 +22,11 @@ const ManageKeyDrawer = ({
     if (deleteMutation.error) {
       if (isNoTrustchainError(deleteMutation.error)) {
         return <SpecificError error={ErrorReason.NO_TRUSTCHAIN} primaryAction={onCreateKey} />;
+      }
+      if (isUnauthorizedMemberError(deleteMutation.error)) {
+        return (
+          <SpecificError error={ErrorReason.UNAUTHORIZED_MEMBER} primaryAction={onCreateKey} />
+        );
       }
       return (
         <GenericErrorView
