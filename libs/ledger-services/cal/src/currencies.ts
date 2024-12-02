@@ -1,7 +1,5 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-
-const CAL_BASE_URL = getEnv("CAL_SERVICE_URL");
+import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
 
 type CurrencyDataResponse = {
   id: string;
@@ -21,14 +19,15 @@ export type CurrencyData = {
 
 export async function findCurrencyData(
   id: string,
-  env: "prod" | "test" = "prod",
+  { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CurrencyData> {
   const { data: currencyData } = await network<CurrencyDataResponse[]>({
     method: "GET",
-    url: `${CAL_BASE_URL}/v1/currencies`,
+    url: `${getCALDomain(env)}/v1/currencies`,
     params: {
       output: "id,descriptor_exchange_app",
       id,
+      ref,
     },
   });
   if (!currencyData.length) {
@@ -41,6 +40,6 @@ export async function findCurrencyData(
   return {
     id: currencyData[0].id,
     config: currencyData[0].descriptor_exchange_app.data,
-    signature: currencyData[0].descriptor_exchange_app.signatures[env],
+    signature: currencyData[0].descriptor_exchange_app.signatures[signatureKind],
   };
 }

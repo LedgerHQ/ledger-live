@@ -3,7 +3,7 @@ import {
   getProvidersData,
   type ProvidersDataResponse,
   type ExchangeProvider,
-} from "./partners";
+} from "./index";
 import network from "@ledgerhq/live-network";
 
 jest.mock("@ledgerhq/live-network");
@@ -96,7 +96,7 @@ describe("transformData", () => {
             },
           },
         },
-      ];
+      ] satisfies ProvidersDataResponse;
 
       const result = transformData(providersData, ledgerSignatureEnv);
       expect(result).toEqual(expected);

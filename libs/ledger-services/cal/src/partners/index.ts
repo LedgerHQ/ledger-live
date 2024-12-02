@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { AdditionalProviderConfig, SWAP_DATA_CDN } from "../exchange/providers/swap";
+import { AdditionalProviderConfig, SWAP_DATA_CDN } from "./default";
 
 const CAL_BASE_URL = getEnv("CAL_SERVICE_URL");
 
@@ -32,7 +32,7 @@ export type ExchangeProvider = {
 export type ProvidersDataResponse = {
   name: string;
   public_key: string;
-  public_key_curve: string;
+  public_key_curve: "secp256k1" | "secp256r1";
   service_app_version: number;
   partner_id: string;
   descriptor: {
@@ -49,7 +49,7 @@ export function transformData(
   providersData: ProvidersDataResponse,
   ledgerSignatureEnv: "prod" | "test" = "prod",
 ): Record<string, ExchangeProvider> {
-  const transformed = {};
+  const transformed: Record<string, ExchangeProvider> = {};
   providersData.forEach(provider => {
     const key = provider.partner_id;
     transformed[key] = {

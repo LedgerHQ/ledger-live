@@ -1,4 +1,4 @@
-import { getProvidersCDNData, getProvidersData } from "./partners";
+import { getProvidersCDNData, getProvidersData } from "./index";
 
 describe("getProvidersCDNData", () => {
   it("returns CEX data in expected format", async () => {
