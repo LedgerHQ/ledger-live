@@ -14,6 +14,9 @@ import {
 } from "../../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
 import QueuedDrawer from "../../QueuedDrawer";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useSelector } from "react-redux";
+import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -26,10 +29,17 @@ function ZeroBalanceDisabledModalContent({
   const { t } = useTranslation();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+  const { navigateToRebornFlow } = useRebornFlow();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
   const goToBuy = useCallback(() => {
+    if (readOnlyModeEnabled && !hasOrderedNano) {
+      navigateToRebornFlow();
+      return;
+    }
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
       params: {
@@ -38,9 +48,21 @@ function ZeroBalanceDisabledModalContent({
       },
     });
     onClose();
-  }, [account?.id, actionCurrency?.id, navigation, onClose]);
+  }, [
+    account?.id,
+    actionCurrency?.id,
+    hasOrderedNano,
+    navigateToRebornFlow,
+    navigation,
+    onClose,
+    readOnlyModeEnabled,
+  ]);
 
   const goToReceive = useCallback(() => {
+    if (readOnlyModeEnabled && !hasOrderedNano) {
+      navigateToRebornFlow();
+      return;
+    }
     if (account) {
       navigation.navigate(NavigatorName.ReceiveFunds, {
         screen: ScreenName.ReceiveConfirmation,
@@ -60,7 +82,16 @@ function ZeroBalanceDisabledModalContent({
       });
     }
     onClose();
-  }, [account, parentAccount?.id, actionCurrency, navigation, onClose]);
+  }, [
+    readOnlyModeEnabled,
+    hasOrderedNano,
+    account,
+    onClose,
+    navigateToRebornFlow,
+    navigation,
+    actionCurrency,
+    parentAccount?.id,
+  ]);
 
   return (
     <QueuedDrawer
