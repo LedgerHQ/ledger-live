@@ -154,7 +154,8 @@ export const urls = {
   },
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
-    splTokenInfo: "https://support.ledger.com/article/7723954701469-zd",
+    splTokenInfo:
+      "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
     recipient_info: "https://support.ledger.com",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",

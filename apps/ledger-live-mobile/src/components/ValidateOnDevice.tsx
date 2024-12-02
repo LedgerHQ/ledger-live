@@ -86,6 +86,7 @@ type SubComponentCommonProps = {
   parentAccount?: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
+  device: Device;
 };
 
 export default function ValidateOnDevice({
@@ -178,6 +179,7 @@ export default function ValidateOnDevice({
               parentAccount={parentAccount}
               transaction={transaction}
               status={status}
+              device={device}
             />
           ) : (
             <TitleText>{titleWording}</TitleText>
@@ -213,6 +215,7 @@ export default function ValidateOnDevice({
                 transaction={transaction}
                 recipientWording={recipientWording}
                 status={status}
+                device={device}
               />
             ) : null}
           </DataRowsContainer>
