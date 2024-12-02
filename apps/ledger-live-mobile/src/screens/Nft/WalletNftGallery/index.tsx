@@ -11,6 +11,7 @@ import isEqual from "lodash/isEqual";
 import { galleryChainFiltersSelector } from "~/reducers/nft";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useNftCollections } from "~/hooks/nfts/useNftCollections";
+import { State } from "~/reducers/types";
 
 const WalletNftGallery = () => {
   const { space } = useTheme();
@@ -19,7 +20,10 @@ const WalletNftGallery = () => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
 
   const chainFilters = useSelector(galleryChainFiltersSelector);
-  const nftsOwned = useSelector(filteredNftsSelector, isEqual);
+  const nftsOwned = useSelector(
+    (state: State) => filteredNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addresses = useMemo(
     () =>

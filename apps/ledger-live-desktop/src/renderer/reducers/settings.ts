@@ -37,7 +37,7 @@ import {
   TOGGLE_MEV,
   UPDATE_NFT_COLLECTION_STATUS,
 } from "../actions/constants";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { BlockchainsType, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 /* Initial state */
@@ -203,7 +203,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   whitelistedNftCollections: [],
-  nftCollectionsStatusByNetwork: {} as Record<BlockchainsType, Record<string, NftStatus>>,
+  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchainsType, Record<string, NftStatus>>,
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -255,7 +255,7 @@ type HandlersPayloads = {
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
   [UPDATE_NFT_COLLECTION_STATUS]: {
-    blockchain: BlockchainsType;
+    blockchain: SupportedBlockchainsType;
     collectionId: string;
     status: NftStatus;
   };

@@ -20,6 +20,7 @@ import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionParser } from "../hooks/nfts/useNftCollectionsStatus";
 
 /*
 FIXME
@@ -224,13 +225,14 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
 export const orderedVisibleNftsSelector = createSelector(
   accountsSelector,
   nftCollectionsStatusByNetworkSelector,
-  (accounts, nftCollectionsStatusByNetwork) => {
+  (_: State, hideSpam: boolean) => hideSpam,
+  (accounts, nftCollectionsStatusByNetwork, hideSpams) => {
     const nfts = accounts.map(a => a.nfts ?? []).flat();
 
-    const hiddenNftCollections = Object.values(nftCollectionsStatusByNetwork).flatMap(contracts =>
-      Object.entries(contracts)
-        .filter(([_, status]) => status === NftStatus.blacklisted || status === NftStatus.spam)
-        .map(([contract]) => contract),
+    const hiddenNftCollections = nftCollectionParser(
+      nftCollectionsStatusByNetwork,
+      ([_, status]) =>
+        hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
     );
 
     const visibleNfts = nfts.filter(

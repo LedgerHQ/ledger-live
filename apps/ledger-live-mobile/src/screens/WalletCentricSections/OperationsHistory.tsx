@@ -20,10 +20,8 @@ import { ScreenName } from "~/const";
 import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { State } from "~/reducers/types";
-import {
-  filterTokenOperationsZeroAmountEnabledSelector,
-  hiddenNftCollectionsSelector,
-} from "~/reducers/settings";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -44,7 +42,7 @@ const OperationsHistory = ({ accounts }: Props) => {
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
 
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {

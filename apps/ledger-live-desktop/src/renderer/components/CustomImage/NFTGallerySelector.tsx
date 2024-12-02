@@ -11,6 +11,8 @@ import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { getEnv } from "@ledgerhq/live-env";
 import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
+import { State } from "~/renderer/reducers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -31,9 +33,13 @@ type Props = {
 
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const accounts = useSelector(accountsSelector);
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
-
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
   const addresses = useMemo(
     () =>
       [
