@@ -3902,8 +3902,8 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByFigmentTC": "Ledger by Figment T&Cs",
-            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs"
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
             "title": "Device"
