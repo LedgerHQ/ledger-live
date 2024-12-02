@@ -1,5 +1,7 @@
 import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
-import { handledErrorCode, throwError } from "./PKIError";
+import { errorCodeValue, throwError } from "./PKIError";
+
+const handledErrorCode = errorCodeValue.concat(StatusCodes.OK);
 
 const CLA = 0xb0;
 const INS = 0x06;
@@ -42,7 +44,7 @@ export default async (
       new Uint8Array(Buffer.from([signatureBuffer.length])),
       new Uint8Array(signatureBuffer),
     ]),
-    handledErrorCode.concat(StatusCodes.OK),
+    handledErrorCode,
   );
 
   const resultCode = result.readUInt16BE(result.length - 2);

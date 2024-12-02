@@ -16,7 +16,7 @@ const ErrorCode: Record<number, string> = {
   0x5720: "Failed to verify signature",
   0x4118: "trusted_name buffer is too small to contain the trusted name",
 };
-export const handledErrorCode = Object.keys(ErrorCode).map(v => parseInt(v));
+export const errorCodeValue = Object.keys(ErrorCode).map(v => parseInt(v));
 
 export function throwError(code: number) {
   switch (code) {
