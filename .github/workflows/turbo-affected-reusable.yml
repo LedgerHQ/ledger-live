@@ -39,6 +39,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch develop branch
+        run: git fetch origin develop:develop
+
       - name: commit history
         run: | 
           git log --oneline -n 30
