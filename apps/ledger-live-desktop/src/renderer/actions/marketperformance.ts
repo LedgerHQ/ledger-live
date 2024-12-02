@@ -19,8 +19,10 @@ export function useMarketPerformanceFeatureFlag() {
     enabled: (marketperformanceWidgetDesktop?.enabled && marketPerformanceValue) || false,
     variant: marketperformanceWidgetDesktop?.params?.variant || ABTestingVariants.variantA,
     refreshRate: marketperformanceWidgetDesktop?.params?.refreshRate || BASIC_REFETCH,
-    top: marketperformanceWidgetDesktop?.params?.top || 50,
+    top: marketperformanceWidgetDesktop?.params?.top || 100,
+    limit: marketperformanceWidgetDesktop?.params?.limit || 100,
     supported: marketperformanceWidgetDesktop?.params?.supported || false,
+    enableNewFeature: marketperformanceWidgetDesktop?.params?.enableNewFeature || false,
   };
 }
 

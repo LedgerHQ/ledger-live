@@ -117,13 +117,15 @@ function WidgetRow({ data, index, range }: PropsBodyElem) {
 }
 
 const MainContainer = styled(Flex)`
+  transition:
+    background-color 0.35s ease,
+    padding 0.35s ease;
+
   &:hover {
+    transition-delay: 0.15s;
     background-color: ${p => p.theme.colors.opacityDefault.c05};
     padding: 6px 12px;
     border-radius: 12px;
-    transition:
-      background-color 0.35s ease,
-      padding 0.35s ease;
     cursor: pointer;
   }
 `;
