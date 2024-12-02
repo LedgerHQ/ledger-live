@@ -25,7 +25,14 @@ import {
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
-import { TOGGLE_MARKET_WIDGET, TOGGLE_MEMOTAG_INFO, TOGGLE_MEV } from "./constants";
+import {
+  TOGGLE_MARKET_WIDGET,
+  TOGGLE_MEMOTAG_INFO,
+  TOGGLE_MEV,
+  UPDATE_NFT_COLLECTION_STATUS,
+} from "./constants";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -215,15 +222,6 @@ export const blacklistToken = (tokenId: string) => ({
   type: "BLACKLIST_TOKEN",
   payload: tokenId,
 });
-export const hideNftCollection = (collectionId: string) => ({
-  type: "HIDE_NFT_COLLECTION",
-  payload: collectionId,
-});
-
-export const whitelistNftCollection = (collectionId: string) => ({
-  type: "WHITELIST_NFT_COLLECTION",
-  payload: collectionId,
-});
 
 export const hideOrdinalsAsset = (inscriptionId: string) => ({
   type: "HIDE_ORDINALS_ASSET",
@@ -255,14 +253,16 @@ export const showToken = (tokenId: string) => ({
   type: "SHOW_TOKEN",
   payload: tokenId,
 });
-export const unhideNftCollection = (collectionId: string) => ({
-  type: "UNHIDE_NFT_COLLECTION",
-  payload: collectionId,
+
+export const updateNftStatus = (
+  blockchain: BlockchainsType,
+  collectionId: string,
+  status: NftStatus,
+) => ({
+  type: UPDATE_NFT_COLLECTION_STATUS,
+  payload: { blockchain, collectionId, status },
 });
-export const unwhitelistNftCollection = (collectionId: string) => ({
-  type: "UNWHITELIST_NFT_COLLECTION",
-  payload: collectionId,
-});
+
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({
   type: "UNHIDE_ORDINALS_ASSET",
   payload: inscriptionId,

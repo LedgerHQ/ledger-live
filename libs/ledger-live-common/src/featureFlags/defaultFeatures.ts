@@ -516,7 +516,6 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  recoverUpsellRedirection: DEFAULT_FEATURE,
   llMevProtection: DEFAULT_FEATURE,
   llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {

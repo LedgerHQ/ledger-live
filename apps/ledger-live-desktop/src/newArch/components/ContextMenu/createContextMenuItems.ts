@@ -45,6 +45,7 @@ export function createContextMenuItems({
             openModal("MODAL_HIDE_NFT_COLLECTION", {
               collectionName: collectionName ?? collectionAddress,
               collectionId: `${account.id}|${collectionAddress}`,
+              blockchain: account.currency.id,
               onClose: () => {
                 if (goBackToAccount) {
                   setDrawer();
