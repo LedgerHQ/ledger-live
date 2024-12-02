@@ -1,8 +1,5 @@
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import {
-  LEDGER_VALIDATORS_VOTE_ACCOUNTS,
-  ValidatorsAppValidator,
-} from "@ledgerhq/live-common/families/solana/staking";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
 import React, { useState, useCallback } from "react";
@@ -17,7 +14,6 @@ import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { partition } from "lodash/fp";
 
 type Props = {
   account: SolanaAccount;
@@ -34,13 +30,6 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
-
-  const [ledgerValidators] = partition(
-    v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.voteAccount),
-    validators,
-  );
-
-  const ledgerValidatorsLength = ledgerValidators.length;
 
   const renderItem = (validator: ValidatorsAppValidator) => {
     return (
@@ -60,9 +49,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            data={showAll ? validators : validators.slice(0, ledgerValidatorsLength)}
+            data={showAll ? validators : validators.slice(0, 2)}
             style={{
-              flex: showAll ? "1 0 240px" : ledgerValidatorsLength > 1 ? "1 0 126px" : "1 0 63px",
+              flex: showAll ? "1 0 240px" : "1 0 126px",
               marginBottom: 0,
               paddingLeft: 0,
             }}
