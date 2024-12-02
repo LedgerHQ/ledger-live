@@ -1,4 +1,4 @@
-import Transport from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
 import { handledErrorCode, throwError } from "./PKIError";
 
 const CLA = 0xb0;
@@ -18,8 +18,6 @@ const keyUsage = {
   SEED_ID_AUTH: 0x09,
   UNKNOWN: 0x0a,
 };
-
-const OkStatus = 0x9000;
 
 /**
  * Load certificate
@@ -44,11 +42,11 @@ export default async (
       new Uint8Array(Buffer.from([signatureBuffer.length])),
       new Uint8Array(signatureBuffer),
     ]),
-    handledErrorCode,
+    handledErrorCode.concat(StatusCodes.OK),
   );
 
   const resultCode = result.readUInt16BE(result.length - 2);
-  if (resultCode !== OkStatus) {
+  if (resultCode !== StatusCodes.OK) {
     throwError(resultCode);
   }
 };

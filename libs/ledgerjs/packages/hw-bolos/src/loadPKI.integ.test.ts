@@ -13,7 +13,7 @@ describe("loadPKI with real connected device", () => {
     await transport.close();
   });
 
-  it("returns an Ok", async () => {
+  it.skip("returns an Ok", async () => {
     // Given
     const descriptor =
       "0101010201023501043601021004010500001302000314010120086e66745f6d657461300200053101043201213401013321035e6c1020c14dc46442fe89f97c0b68cdb15976dc24f24c316e7b30fe4e8cc76b";

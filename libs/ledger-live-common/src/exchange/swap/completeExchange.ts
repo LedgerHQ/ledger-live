@@ -142,17 +142,18 @@ const completeExchange = (
         if (unsubscribed) return;
 
         //-- Special case of SPLToken
-        //TODO: generalize this case when another blockchain has the same requirement
-        if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
-          sendPKI(transport);
-        }
+        //- NOT READY YET
+        // //TODO: generalize this case when another blockchain has the same requirement
+        // if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
+        //   sendPKI(transport);
+        // }
 
-        if (isSPLTokenAccount(fromAccount)) {
-          //TODO Call AppExchange with TrustedService info
-        }
-        if (isSPLTokenAccount(toAccount)) {
-          //TODO Call AppExchange with TrustedService info
-        }
+        // if (isSPLTokenAccount(fromAccount)) {
+        //   //TODO Call AppExchange with TrustedService info
+        // }
+        // if (isSPLTokenAccount(toAccount)) {
+        //   //TODO Call AppExchange with TrustedService info
+        // }
 
         //-- CHECK_PAYOUT_ADDRESS
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
