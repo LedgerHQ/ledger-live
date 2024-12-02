@@ -309,6 +309,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/device-management-kit':
+        specifier: 0.5.1
+        version: 0.5.1
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -6426,6 +6429,9 @@ importers:
       '@ledgerhq/logs':
         specifier: ^6.12.0
         version: 6.12.0
+      '@ledgerhq/types-devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-devices
       react:
         specifier: ^18.3.1
         version: 18.3.1
