@@ -12,7 +12,7 @@ import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
-import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 
@@ -294,9 +294,14 @@ export function useDeepLinkHandler() {
           }
           break;
         }
+        case "card":
+          navigate("/card", query);
+          break;
         case "discover":
           if (path?.startsWith("protect")) {
             navigate(`/recover/${path}`, undefined, search);
+          } else if (path === CARD_APP_ID) {
+            navigate("/card", query);
           } else {
             navigate(`/platform/${path ?? ""}`, query);
           }
