@@ -1139,6 +1139,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "earn" : "報酬獲得",
       "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産をステーキング"
+        "description" : "お持ちの暗号資産で報酬を獲得"
       }
     },
     "recoverBanner" : {
