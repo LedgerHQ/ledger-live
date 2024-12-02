@@ -442,6 +442,14 @@
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™, Ledger Live üzerinden Ton takasıyla uyumlu değildir",
+      "ton_description" : "Ledger Live üzerinde Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "spl_tokens_title" : "Ledger Nano S™, Ledger Live'da Solana token'larıyla uyumlu değildir",
+      "spl_tokens_description" : "Ledger Live'da Solana token'larıyla işlem yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "ada_title" : "Ledger Nano S™, Ledger Live üzerinden ADA takasıyla uyumlu değildir",
+      "ada_description" : "Ledger Live üzerinde ADA takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+    },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
       "learnMore" : "Takas (Swap) nedir?",
@@ -2390,7 +2398,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Ağ sorunlarını giderin"
+    "title" : "Ağ sorunlarını giderin",
+    "myLedgerServices" : "Ledger hizmetlerim (scriptrunner)",
+    "bitcoinExplorers" : "Bitcoin tarayıcıları",
+    "ethereumExplorers" : "Ethereum tarayıcıları",
+    "countervaluesApi" : "Karşı değerler API'si",
+    "announcements" : "Duyurular",
+    "status" : "Durum",
+    "test" : "Test et",
+    "renderer" : "İŞLEYİCİ"
   },
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
@@ -4084,6 +4100,8 @@
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+      "mevProtection" : "MEV Koruması",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -4107,6 +4125,10 @@
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Sağlayıcı Test Modunda takas",
+        "desc" : "Sağlayıcı aşamasında açık anahtar kullanımını etkinleştirin"
       },
       "analyticsConsole" : {
         "title" : "Analiz Konsoluna İzin Verin",
