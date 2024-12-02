@@ -4,18 +4,38 @@ import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 import BigNumber from "bignumber.js";
 
-// Hardcoding the Ledger validator info as backup,
+// Hardcoding the Ledger validators info as backup,
 // because backend is flaky and sometimes doesn't return it anymore
-export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
+export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
   voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
   name: "Ledger by Figment",
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
   wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 4784119000000000,
+  activeStake: 9079057178046828,
   commission: 7,
   totalScore: 6,
 };
+
+export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
+  voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
+  name: "Ledger by Chorus One",
+  avatarUrl:
+    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
+  wwwUrl: "https://www.ledger.com/staking",
+  activeStake: 0,
+  commission: 7,
+  totalScore: 6,
+};
+
+export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
+  LEDGER_VALIDATOR_BY_FIGMENT,
+  LEDGER_VALIDATOR_BY_CHORUS_ONE,
+];
+
+export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
+
+export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
 
 export const SOLANA_DELEGATION_RESERVE = 0.01;
 
@@ -75,7 +95,7 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
 
 export function defaultVoteAccAddrByCurrencyId(currencyId: string): string | undefined {
   const voteAccAddrs: Record<string, string | undefined> = {
-    solana: LEDGER_VALIDATOR.voteAccount,
+    solana: undefined,
     solana_devnet: undefined,
     solana_testnet: undefined,
   };
@@ -147,17 +167,17 @@ export type Functions<T> = keyof {
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
 
-// move Ledger validator to the first position
+// move Ledger validators to the first positions
 export function ledgerFirstValidators(
   validators: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
-  const [ledgerValidator, restValidators] = partition(
-    v => v.voteAccount === LEDGER_VALIDATOR.voteAccount,
+  const [ledgerValidators, restValidators] = partition(
+    v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.voteAccount),
     validators,
   );
-  return ledgerValidator.length
-    ? ledgerValidator.concat(restValidators)
-    : [LEDGER_VALIDATOR].concat(restValidators);
+  return ledgerValidators.length === 2
+    ? ledgerValidators.concat(restValidators)
+    : LEDGER_VALIDATOR_LIST.concat(restValidators);
 }
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
