@@ -13,9 +13,13 @@ export default function LogContentCardWrapper({ id, children }: Props) {
   const ref = useRef<View>(null);
   const { logImpressionCard } = useDynamicContent();
 
-  useInViewContext(ref, ({ isInView }) => {
-    if (isInView) logImpressionCard(id);
-  });
+  useInViewContext(
+    ref,
+    ({ isInView }) => {
+      if (isInView) logImpressionCard(id);
+    },
+    [id],
+  );
 
   return <View ref={ref}>{children}</View>;
 }

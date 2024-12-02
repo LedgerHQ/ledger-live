@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  DependencyList,
   type ReactNode,
   type RefObject,
   useCallback,
@@ -17,15 +18,16 @@ const InViewContext = createContext<InViewContext>({});
 export function useInViewContext(
   target: RefObject<View>,
   onInViewUpdate: (entry: InViewEntry) => void,
+  deps: DependencyList = [],
 ) {
   const { addWatchedItem, removeWatchedItem } = useContext(InViewContext);
-  const onInViewUpdateRef = useRef(onInViewUpdate);
+  const onInViewUpdateCb = useCallback(onInViewUpdate, deps); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const item = { target, onInViewUpdate: onInViewUpdateRef.current };
+    const item = { target, onInViewUpdate: onInViewUpdateCb };
     addWatchedItem?.(item);
     return () => removeWatchedItem?.(item);
-  }, [target, addWatchedItem, removeWatchedItem]);
+  }, [target, onInViewUpdateCb, addWatchedItem, removeWatchedItem]);
 }
 
 export function InViewContextProvider({
