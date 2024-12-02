@@ -437,8 +437,8 @@
       "cta" : "내 Ledger로 이동"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
-      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -1139,6 +1139,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "earn" : "수익 창출",
       "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
+        "description" : "암호화폐로 더 큰 혜택을 누려보세요"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "링크",
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
+            "tag" : "태그",
             "url" : "URL",
             "path" : "경로"
           }
