@@ -17,6 +17,7 @@ const ContentCardsCategory = ({ category, categoryContentCards }: Props) => {
         description={category.description}
         cta={category.cta}
         link={category.link}
+        centered={category.centeredText}
       />
       <Layout category={category} cards={categoryContentCards} />
     </Flex>
