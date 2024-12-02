@@ -71,11 +71,11 @@ import type {
   TransactionStatusRaw as iconTransactionStatusRaw,
 } from "@ledgerhq/coin-icon/types/index";
 import type {
-  Transaction as internet_computerTransaction,
-  TransactionRaw as internet_computerTransactionRaw,
-  TransactionStatus as internet_computerTransactionStatus,
-  TransactionStatusRaw as internet_computerTransactionStatusRaw,
-} from "../families/internet_computer/types";
+  Transaction as icpTransaction,
+  TransactionRaw as icpTransactionRaw,
+  TransactionStatus as icpTransactionStatus,
+  TransactionStatusRaw as icpTransactionStatusRaw,
+} from "@ledgerhq/coin-icp/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -150,7 +150,7 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | iconTransaction
-  | internet_computerTransaction
+  | icpTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -175,7 +175,7 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | iconTransactionRaw
-  | internet_computerTransactionRaw
+  | icpTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -200,7 +200,7 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | iconTransactionStatus
-  | internet_computerTransactionStatus
+  | icpTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -225,7 +225,7 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
-  | internet_computerTransactionStatusRaw
+  | icpTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
