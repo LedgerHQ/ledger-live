@@ -437,8 +437,8 @@
       "cta" : "Ir a Mi Ledger"
     },
     "wrongDevice" : {
-      "title" : "El Ledger Nano S™ no es compatible con THORChain.",
-      "description" : "El Ledger Nano S™ no es compatible con THORChain. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en THORChain desde Ledger Live.",
+      "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
+      "description" : "El Ledger Nano S no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en {{provider}} desde Ledger Live.",
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
@@ -1139,6 +1139,7 @@
       "send" : "Enviar",
       "swap" : "Permutar",
       "stake" : "Poner en participación",
+      "earn" : "Earn",
       "yield" : "Rendimiento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Poner en participación",
-        "description" : "Pon en participación tus cripto con Ledger"
+        "description" : "Obtén recompensas por tus cripto"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "Enlace",
             "secondaryCta" : "CTA secundario",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Ruta"
           }
