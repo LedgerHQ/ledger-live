@@ -437,8 +437,8 @@
       "cta" : "My Ledgerに移動"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™はTHORChainに対応していません",
-      "description" : "Ledger Nano SはTHORChainに対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger LiveからTHORChainでのクロスチェーンスワップが可能です",
+      "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+      "description" : "Ledger Nano Sは、{{provider}}に対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
@@ -1139,6 +1139,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "earn" : "報酬獲得",
       "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産をステーキング"
+        "description" : "お持ちの暗号資産で報酬を獲得"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "リンク",
             "secondaryCta" : "セカンダリCTA",
             "cta" : "CTA",
+            "tag" : "タグ",
             "url" : "URL",
             "path" : "パス"
           }
