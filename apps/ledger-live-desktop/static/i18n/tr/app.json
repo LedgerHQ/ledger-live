@@ -437,8 +437,8 @@
       "cta" : "My Ledger'a Git"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™, THORChain ile uyumlu değildir",
-      "description" : "Ledger Nano S, THORChain ile uyumlu değildir. Ledger Live üzerinden THORChain'de zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
+      "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+      "description" : "Ledger Nano S, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -1139,6 +1139,7 @@
       "send" : "Gönder",
       "swap" : "Takas et",
       "stake" : "Stake et",
+      "earn" : "Kazan",
       "yield" : "Getiri",
       "buy" : "Satın Al",
       "sell" : "Sat",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kriptolarınızı stake edin"
+        "description" : "Kriptolarınızla ödüller kazanın"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "Bağlantı",
             "secondaryCta" : "İkincil Eylem Çağrısı",
             "cta" : "Eylem Çağrısı",
+            "tag" : "Etiket",
             "url" : "URL",
             "path" : "Yol"
           }
