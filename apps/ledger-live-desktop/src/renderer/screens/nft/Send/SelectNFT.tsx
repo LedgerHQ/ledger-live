@@ -1,10 +1,9 @@
 import React, { useMemo, useEffect, useCallback, useState } from "react";
-import { useSelector } from "react-redux";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-nft";
-import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Option from "./Option";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 const SelectNFT = ({
   onSelect,
   maybeNFTId,
@@ -19,7 +18,7 @@ const SelectNFT = ({
   const [token, setToken] = useState<ProtoNFT | NFT | null>(null);
   // @ts-expect-error impossible to type this, we need to bump react-select to v5
   const getOptionValue = useCallback(item => item, []);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const filteredNFTs = useMemo(
     () =>
       maybeNFTCollection

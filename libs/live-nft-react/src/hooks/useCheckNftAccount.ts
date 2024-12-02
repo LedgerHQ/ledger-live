@@ -7,6 +7,7 @@ import { HookProps, NftsFilterResult } from "./types";
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { hashProtoNFT } from "./helpers";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 /**
  * A React hook that checks NFT accounts against specified criteria and provides filtering functionality for managing NFT collections.
@@ -80,9 +81,9 @@ export function useCheckNftAccount({
 
         if (spams.length > 0) {
           Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => {
-            const { accountId } = decodeNftId(nfts[0].id);
+            const { accountId, currencyId } = decodeNftId(nfts[0].id);
             const collection = `${accountId}|${contract}`;
-            action(collection);
+            action(collection, currencyId as BlockchainsType);
           });
         }
       }

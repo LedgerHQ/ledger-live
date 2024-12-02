@@ -9,7 +9,6 @@ import {
   counterValueCurrencySelector,
   hasInstalledAppsSelector,
   selectedTimeRangeSelector,
-  hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -37,6 +36,7 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -67,7 +67,7 @@ export default function DashboardPage() {
   useAutoRedirectToPostOnboarding();
 
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning

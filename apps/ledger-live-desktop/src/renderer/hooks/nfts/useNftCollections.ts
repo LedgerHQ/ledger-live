@@ -4,11 +4,7 @@ import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
-import {
-  hiddenNftCollectionsSelector,
-  whitelistedNftCollectionsSelector,
-} from "~/renderer/reducers/settings";
+import { useNftCollectionsStatus } from "./useNftCollectionsStatus";
 
 export function useNftCollections({
   account,
@@ -25,19 +21,18 @@ export function useNftCollections({
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const simplehashEnabled = nftsFromSimplehashFeature?.enabled;
 
-  const whitelistNft = useSelector(whitelistedNftCollectionsSelector);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections, whitelistedNftCollections } = useNftCollectionsStatus();
 
   const nftsOwnedToCheck = useMemo(() => account?.nfts ?? nftsOwned, [account?.nfts, nftsOwned]);
 
   const whitelistedNfts = useMemo(
     () =>
       nftsOwnedToCheck?.filter(nft =>
-        whitelistNft
+        whitelistedNftCollections
           .map(collection => decodeCollectionId(collection).contractAddress)
           .includes(nft.contract),
       ) ?? [],
-    [nftsOwnedToCheck, whitelistNft],
+    [nftsOwnedToCheck, whitelistedNftCollections],
   );
 
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
