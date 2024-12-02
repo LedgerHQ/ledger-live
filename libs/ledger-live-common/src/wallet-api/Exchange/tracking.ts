@@ -51,7 +51,7 @@ export default function trackingWrapper(trackCall: TrackExchange) {
 
     // No Params to generate an Exchange app nonce
     startExchangeNoParams: (manifest: AppManifest) => {
-      track("Start Exchange no params", getEventData(manifest));
+      track("Starts Exchange no params", getEventData(manifest));
     },
 
     completeExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
