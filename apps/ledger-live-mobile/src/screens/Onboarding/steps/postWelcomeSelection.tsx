@@ -8,10 +8,16 @@ import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
 import { track, updateIdentify } from "~/analytics";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { ABTestingVariants } from "@ledgerhq/types-live";
+import { LandingPageUseCase } from "~/dynamicContent/types";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { filterCategoriesByLocation, formatCategories } from "~/dynamicContent/utils";
+import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -23,11 +29,35 @@ function PostWelcomeSelection() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const rebornFeatureFlag = useFeature("llmRebornLP");
+  const isRebornActive = rebornFeatureFlag?.enabled;
+  const variant = isRebornActive && rebornFeatureFlag.params?.variant;
+  const { categoriesCards, mobileCards } = useDynamicContent();
+  const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
+  const [hasContentCardsToDisplayOnLp, setHasContentCardsToDisplayOnLp] = useState<boolean>(false);
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => {
-    setModalOpen(true);
+  const onPressNoLedger = async () => {
+    refreshDynamicContent();
+    await fetchData();
+    const categoriesToDisplay = filterCategoriesByLocation(
+      categoriesCards,
+      LandingPageUseCase.LP_Reborn1,
+    );
+    const categoriesFormatted = formatCategories(categoriesToDisplay, mobileCards);
+    const hasContentCardsToDisplay = categoriesFormatted.length > 0;
+    setHasContentCardsToDisplayOnLp(hasContentCardsToDisplay);
+
+    if (hasContentCardsToDisplayOnLp && variant === ABTestingVariants.variantB) {
+      navigation.navigate(NavigatorName.LandingPages, {
+        screen: ScreenName.GenericLandingPage,
+        params: {
+          useCase: LandingPageUseCase.LP_Reborn1,
+        },
+      });
+    } else setModalOpen(true);
+
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
@@ -62,7 +92,7 @@ function PostWelcomeSelection() {
         },
       }}
       footer={
-        <Button type="default" mb={10} onPress={openModal} testID="onboarding-noLedgerYet">
+        <Button type="default" mb={10} onPress={onPressNoLedger} testID="onboarding-noLedgerYet">
           {t("onboarding.postWelcomeStep.noLedgerYet")}
         </Button>
       }
