@@ -3922,9 +3922,6 @@ importers:
       '@ledgerhq/hw-app-xrp':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
-      '@ledgerhq/hw-bolos':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-bolos
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
