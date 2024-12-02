@@ -169,7 +169,7 @@ export const INITIAL_STATE: SettingsState = {
   featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
-  hasBeenUpsoldProtect: false,
+  hasBeenUpsoldProtect: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
   hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingType: null,
   depositFlow: {

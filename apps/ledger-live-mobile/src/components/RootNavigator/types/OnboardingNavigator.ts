@@ -38,6 +38,7 @@ export type OnboardingNavigatorParamList = {
     next?: ScreenName.OnboardingProtectFlow;
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
+    fromAccessExistingWallet?: boolean;
   };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
