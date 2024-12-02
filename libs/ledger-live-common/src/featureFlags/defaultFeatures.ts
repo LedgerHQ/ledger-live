@@ -489,7 +489,6 @@ export const DEFAULT_FEATURES: Features = {
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
-  llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
