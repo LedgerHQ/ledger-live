@@ -437,8 +437,8 @@
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает THORChain.",
-      "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -1139,6 +1139,7 @@
       "send" : "Отправить",
       "swap" : "Обмен",
       "stake" : "Стейкинг",
+      "earn" : "Приумножить",
       "yield" : "Доходность",
       "buy" : "Покупка",
       "sell" : "Продажа",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Стейкинг",
-        "description" : "Стейкайте крипту с Ledger"
+        "description" : "Получайте вознаграждения с вашей крипты"
       }
     },
     "recoverBanner" : {
@@ -4146,6 +4147,7 @@
             "link" : "Ссылка",
             "secondaryCta" : "Вторичный CTA",
             "cta" : "CTA",
+            "tag" : "Тег",
             "url" : "URL",
             "path" : "Путь"
           }
