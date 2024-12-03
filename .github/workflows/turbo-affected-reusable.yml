@@ -64,4 +64,5 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@support/turbo-affected-fix-scope-testing-4-fix-turbo-script
         id: affected
         with:
-          ref: ${{ format('origin/{0}', inputs.base_branch) }}
+          head_ref: ${{ format('origin/{0}', github.ref) }}
+          base_ref: ${{ format('origin/{0}', inputs.base_branch) }}
