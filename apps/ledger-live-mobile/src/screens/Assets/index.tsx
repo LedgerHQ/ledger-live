@@ -22,6 +22,7 @@ import { Asset } from "~/types/asset";
 import { ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import AccountListView from "~/newArch/features/Accounts/components/AccountListView";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -89,31 +90,7 @@ function Assets() {
             </Flex>
           )}
           <Flex px={6} flex={1}>
-            <List
-              data={assetsToDisplay}
-              renderItem={renderItem}
-              keyExtractor={i => i.currency.id}
-              showsVerticalScrollIndicator={false}
-              ListHeaderComponent={
-                <Flex mt={3} mb={3}>
-                  <Text variant="h4">{t("distribution.title")}</Text>
-                </Flex>
-              }
-              ListFooterComponent={
-                <Button
-                  type="shade"
-                  size="large"
-                  outline
-                  mt={6}
-                  mb={8}
-                  iconPosition="left"
-                  Icon={IconsLegacy.PlusMedium}
-                  onPress={openAddModal}
-                >
-                  {t("portfolio.emptyState.buttons.import")}
-                </Button>
-              }
-            />
+            <AccountListView displayType="Accounts" />
           </Flex>
         </Flex>
         <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
