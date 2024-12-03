@@ -59,10 +59,14 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
   const isInViewRef = useRef(false);
   const visibleCardsRef = useRef<string[]>([]);
   const { logImpressionCard } = useDynamicContent();
-  useInViewContext(viewRef, ({ isInView }) => {
-    isInViewRef.current = isInView;
-    if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
-  });
+  useInViewContext(
+    ({ isInView }) => {
+      isInViewRef.current = isInView;
+      if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
+    },
+    [logImpressionCard],
+    viewRef,
+  );
   const handleViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken<ContentCardItem>[] }) => {
       const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
