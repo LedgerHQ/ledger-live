@@ -358,6 +358,9 @@ importers:
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
+      '@ledgerhq/live-dmk':
+        specifier: workspace:*
+        version: link:../../libs/live-dmk
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -3922,6 +3925,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/ledger-cal-service':
+        specifier: workspace:^
+        version: link:../ledger-services/cal
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.2
@@ -4283,17 +4289,17 @@ importers:
 
   libs/ledger-services/cal:
     dependencies:
-      "@ledgerhq/live-env":
+      '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../../env
-      "@ledgerhq/live-network":
+      '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../../live-network
     devDependencies:
-      "@types/jest":
+      '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
-      "@types/node":
+      '@types/node':
         specifier: ^20.11.0
         version: 20.12.12
       dotenv:
@@ -4317,17 +4323,17 @@ importers:
 
   libs/ledger-services/trust:
     dependencies:
-      "@ledgerhq/live-env":
+      '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../../env
-      "@ledgerhq/live-network":
+      '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../../live-network
     devDependencies:
-      "@types/jest":
+      '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
-      "@types/node":
+      '@types/node':
         specifier: ^20.11.0
         version: 20.12.12
       dotenv:
@@ -5378,20 +5384,20 @@ importers:
 
   libs/ledgerjs/packages/hw-bolos:
     dependencies:
-      "@ledgerhq/hw-transport":
+      '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
     devDependencies:
-      "@ledgerhq/hw-transport-mocker":
+      '@ledgerhq/hw-transport-mocker':
         specifier: workspace:*
         version: link:../hw-transport-mocker
-      "@ledgerhq/hw-transport-node-hid-singleton":
+      '@ledgerhq/hw-transport-node-hid-singleton':
         specifier: workspace:^
         version: link:../hw-transport-node-hid-singleton
-      "@types/jest":
+      '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
-      "@types/node":
+      '@types/node':
         specifier: ^20.8.10
         version: 20.12.12
       documentation:
@@ -12562,8 +12568,6 @@ packages:
   '@react-native/babel-preset@0.74.87':
     resolution: {integrity: sha512-hyKpfqzN2nxZmYYJ0tQIHG99FQO0OWXp/gVggAfEUgiT+yNKas1C60LuofUsK7cd+2o9jrpqgqW4WzEDZoBlTg==}
     engines: {node: '>=18'}
-    peerDependencies:
-      '@babel/core': '*'
 
   '@react-native/babel-preset@0.74.88':
     resolution: {integrity: sha512-SQODiFGlyblFTvdvePUDrQ+qlSzhcOm7It/yW2CVKxw5zRUf50+Cj3DBkRFhQDqF3ri2EnWsLnJ3oNE7hqDUxg==}
@@ -38458,7 +38462,7 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@react-native/babel-preset@0.74.87(@babel/core@7.24.3)':
+  '@react-native/babel-preset@0.74.87':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.24.3)
@@ -38792,7 +38796,7 @@ snapshots:
   '@react-native/metro-babel-transformer@0.74.87':
     dependencies:
       '@babel/core': 7.24.3
-      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
+      '@react-native/babel-preset': 0.74.87
       hermes-parser: 0.19.1
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -45661,7 +45665,7 @@ snapshots:
       '@babel/plugin-transform-parameters': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-react': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
-      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
+      '@react-native/babel-preset': 0.74.87
       babel-plugin-react-compiler: 0.0.0-experimental-592953e-20240517
       babel-plugin-react-native-web: 0.19.10
       react-refresh: 0.14.2
