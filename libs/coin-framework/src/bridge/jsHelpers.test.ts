@@ -116,7 +116,7 @@ describe("jsHelpers", () => {
       const path = bip32asBuffer(derivationPath);
       expect(path).toEqual(Buffer.from(expectedResult, "hex"));
     });
-  });  
+  });
 });
 
 const emptyHistoryCache = {
