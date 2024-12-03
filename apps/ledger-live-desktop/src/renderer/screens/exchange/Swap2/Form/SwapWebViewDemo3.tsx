@@ -389,7 +389,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [customPTXHandlers],
   );
 
   const hashString = useMemo(
