@@ -13,6 +13,8 @@ export enum ScreenName {
   AdvancedLogs = "AdvancedLogs",
   Asset = "Asset",
   Assets = "Assets",
+  AccountsList = "AccountsList",
+  AssetsList = "AssetsList",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
@@ -661,4 +663,5 @@ export enum NavigatorName {
   WalletSync = "WalletSync",
   AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
+  Assets = "Assets",
 }

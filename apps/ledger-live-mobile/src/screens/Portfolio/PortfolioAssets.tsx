@@ -12,6 +12,7 @@ import { Box } from "@ledgerhq/native-ui";
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -22,6 +23,8 @@ const maxAssetsToDisplay = 5;
 
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
+  const accountListFF = useFeature("llmAccountListUI");
+  const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
@@ -49,11 +52,22 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const goToAssets = useCallback(
     (uiEvent: GestureResponderEvent) => {
       startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Assets,
-      });
+      if (isAccountListUIEnabled) {
+        navigation.navigate(NavigatorName.Assets, {
+          screen: ScreenName.AssetsList,
+          params: {
+            sourceScreenName: ScreenName.Portfolio,
+            showHeader: true,
+            isSyncEnabled: true,
+          },
+        });
+      } else {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.Assets,
+        });
+      }
     },
-    [startNavigationTTITimer, navigation],
+    [startNavigationTTITimer, isAccountListUIEnabled, navigation],
   );
 
   return (
