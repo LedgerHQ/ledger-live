@@ -35,13 +35,13 @@ jobs:
       packages: ${{ steps.affected.outputs.packages }}
       paths: ${{ steps.affected.outputs.paths }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Fetch develop branch
-        run: git fetch origin develop:develop
-
+      - name: Checkout head branch
+        uses: actions/checkout@v4
+  
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ inputs.base_branch }}:${{ inputs.base_branch }} --depth=1
+  
       - name: commit history
         run: | 
           git log --oneline -n 30
