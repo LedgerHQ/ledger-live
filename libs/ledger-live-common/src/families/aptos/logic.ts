@@ -103,8 +103,10 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
       const payload = tx.payload as AptosTypes.EntryFunctionPayload;
 
       let type;
+      let function_address;
       if ("function" in payload) {
         type = payload.function.split("::").at(-1) as TX_TYPE;
+        function_address = payload.function.split("::").at(0);
       } else if ("type" in payload) {
         type = (payload as any).type as TX_TYPE;
       }
@@ -132,6 +134,7 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
             op.type = DIRECTION.IN;
           } else {
             op.type = DIRECTION.OUT;
+            op.value = op.value.plus(op.fee);
           }
         }
 
@@ -148,6 +151,7 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
           for (const amount of payload.arguments[1]) {
             op.value = op.value.plus(amount);
           }
+          op.value = op.value.plus(op.fee);
         } else {
           for (const recipient_num in payload.arguments[0]) {
             if (compareAddress(payload.arguments[0][recipient_num], address)) {
@@ -168,10 +172,51 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
 
         if (compareAddress(tx.sender, address)) {
           op.type = DIRECTION.OUT;
+          op.value = op.value.plus(op.fee);
+          op.recipients.push(function_address);
         } else {
           op.type = DIRECTION.IN;
+          op.senders.push(function_address);
         }
-        ops.push(op);
+
+        // GENERAL CASE`
+        // get events
+        let amount_in = new BigNumber(0);
+        let amount_out = new BigNumber(0);
+        console.log("Version:" + tx.version);
+        tx.events.forEach(event => {
+          // validate the event is related to the address
+          if (compareAddress(event.guid.account_address, address)) {
+            console.log("Found: " + JSON.stringify(event));
+
+            // for valid event get corresponding change and validate it relates to Aptos Tokens
+            // update amount according to the event type
+            switch (event.type) {
+              case "0x1::coin::WithdrawEvent":
+                op.type = DIRECTION.OUT;
+                if (IsChangeOfAptos(tx, op.type, id, address, event)) {
+                  amount_out = op.value.plus(event.data.amount);
+                }
+                break;
+              case "0x1::coin::DepositEvent":
+                if (IsChangeOfAptos(tx, op.type, id, address, event)) {
+                  amount_in = amount_in.plus(event.data.amount);
+                }
+                break;
+              default:
+                op.type = DIRECTION.UNKNOWN;
+            }
+          }
+          if (amount_in.gt(amount_out)) {
+            op.type = DIRECTION.IN;
+            op.value = amount_in.minus(amount_out);
+          } else {
+            op.type = DIRECTION.OUT;
+            op.value = amount_out.minus(amount_in);
+          }
+
+          ops.push(op);
+        });
       }
     }
   });
@@ -183,4 +228,43 @@ export function compareAddress(addressA: string, addressB: string) {
     addressA.replace(CLEAN_HEX_REGEXP, "").toLowerCase() ===
     addressB.replace(CLEAN_HEX_REGEXP, "").toLowerCase()
   );
+}
+
+function IsChangeOfAptos(
+  tx: AptosTransaction,
+  direction: string, // TODO: convert to enum
+  id: string,
+  address: string,
+  event: any, // TODO: make proper type
+): boolean {
+  return tx.changes.some(change => {
+    if ("data" in change) {
+      const data = change.data;
+      if (data && "type" in data) {
+        //console.log("Changes: " + JSON.stringify(data.type));
+        if (data.type === "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>") {
+          let deposits;
+          if ("deposit_events" in data.data) {
+            deposits = data.data.deposit_events;
+          }
+          let withdraws;
+          if ("withdraw_events" in data.data) {
+            withdraws = data.data.withdraw_events;
+          }
+          const change_event = direction === DIRECTION.IN ? deposits : withdraws;
+          // check events handlers
+          console.log("Take: " + JSON.stringify(data));
+          if (
+            change_event &&
+            change_event.guid.id.addr === event.guid.account_address &&
+            change_event.guid.id.creation_num === event.guid.creation_number
+          ) {
+            console.log("FOUND: " + JSON.stringify(data));
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  });
 }
