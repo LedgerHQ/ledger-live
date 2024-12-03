@@ -4,12 +4,16 @@ import {
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
-import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
+import Exchange, {
+  decodePayloadProtobuf,
+  ExchangeTypes,
+  RateTypes,
+} from "@ledgerhq/hw-app-exchange";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { Observable, firstValueFrom, from } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
@@ -26,9 +30,7 @@ import { delay } from "../../promise";
 import { getSwapAPIBaseURL, getSwapUserIP } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
-import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
-import { getSwapProvider } from "../providers";
-import { convertToAppExchangePartnerKey } from "../providers";
+import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CEXProviderConfig } from "../providers/swap";
 
@@ -196,12 +198,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
-        ].getSerializedAddressParameters(
+        ]?.getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode,
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
 
@@ -230,12 +235,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
         const refundAddressParameters = await perFamily[
           mainRefundCurrency.family
-        ].getSerializedAddressParameters(
+        ]?.getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode,
           mainRefundCurrency.id,
         );
         if (unsubscribed) return;
+        if (!refundAddressParameters) {
+          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+        }
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
           await getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
