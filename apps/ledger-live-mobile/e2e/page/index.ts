@@ -1,3 +1,4 @@
+import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
@@ -49,6 +50,7 @@ export const getUserdataPath = (userdata: string) => {
 export class Application {
   public userdataSpeculos: string | undefined = undefined;
   public userdataPath: string | undefined = undefined;
+  public assetAccountsPage = new AssetAccountsPage();
   public account = new AccountPage();
   public accounts = new AccountsPage();
   public addAccount = new AddAccountDrawer();
