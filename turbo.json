@@ -50,6 +50,7 @@
     "SENTRY_PROJECT",
     "SHORT_BUNDLE_ID",
     "SUPPLY_UPLOAD_MAX_RETRIES",
+    "SWAP_DISABLE_APPS_INSTALL",
     "VERBOSE"
   ],
   "ui": "tui",
