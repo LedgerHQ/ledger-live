@@ -2,8 +2,8 @@ import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/live-common/bot/specs";
-import { DeviceAction } from "@ledgerhq/live-common/bot/types";
+} from "@ledgerhq/coin-framework/bot/specs";
+import { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { methodToString } from "../common-logic/utils";
 import type { Transaction } from "../types";
 

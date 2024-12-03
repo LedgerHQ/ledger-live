@@ -30,7 +30,7 @@ const familiesWPackage = [
   "evm",
   "hedera",
   "filecoin",
-  "icp",
+  "internet_computer",
   "icon",
   "near",
   "polkadot",

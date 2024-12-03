@@ -5,12 +5,13 @@ import {
   getTxnExpirationDate,
   getTxnMetadata,
   getUnsignedTransaction,
+  signICPTransaction,
 } from "./bridgeHelpers/icpRosetta";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { ICPSigner } from "../types";
-import { ICP_SEND_TXN_TYPE } from "../consts";
+import { getPath } from "../common-logic";
 
 export const buildSignOperation =
   (signerContext: SignerContext<ICPSigner>): AccountBridge<Transaction, Account>["signOperation"] =>
@@ -19,42 +20,35 @@ export const buildSignOperation =
       async function main() {
         // log("debug", "[signOperation] start fn");
 
+        const { xpub } = account;
         const { derivationPath } = getAddress(account);
-        const { unsignedTxn } = await getUnsignedTransaction(transaction, account);
+        const { unsignedTxn, payloads } = await getUnsignedTransaction(transaction, account);
 
         o.next({
           type: "device-signature-requested",
         });
 
-        // Sign by device
-        const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.sign(derivationPath, unsignedTxn, ICP_SEND_TXN_TYPE);
-          return { r };
+        const { signedTxn } = await signICPTransaction({
+          signerContext,
+          deviceId,
+          unsignedTxn,
+          path: getPath(derivationPath),
+          payloads,
+          pubkey: xpub ?? "",
         });
-
-        // const { signedTxn } = await signICPTransaction({
-        //   unsignedTxn,
-        //   transport,
-        //   path: getPath(derivationPath),
-        //   payloads,
-        //   pubkey: xpub ?? "",
-        // });
 
         o.next({
           type: "device-signature-granted",
         });
 
-        // build signature on the correct format
-        const signature = `${Buffer.from(r.signature_compact).toString("base64")}`;
-
-        const { hash } = await getTxnMetadata(signature);
+        const { hash } = await getTxnMetadata(signedTxn);
         const operation = await buildOptimisticOperation(account, transaction, hash);
 
         o.next({
           type: "signed",
           signedOperation: {
             operation,
-            signature,
+            signature: signedTxn,
             expirationDate: getTxnExpirationDate(unsignedTxn),
           },
         });

@@ -138,7 +138,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-hedera": "workspace:^",
     "@ledgerhq/coin-icon": "workspace:^",
-    "@ledgerhq/coin-icp": "workspace:^",
+    "@ledgerhq/coin-internet_computer": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",

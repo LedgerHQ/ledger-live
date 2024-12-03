@@ -1,8 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+
 import { Transaction, TransactionStatus } from "../types";
 import { methodToString } from "../common-logic/utils";
 
@@ -15,8 +16,8 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
-  const fields: Array<DeviceTransactionField> = [];
+}): Array<CommonDeviceTransactionField> {
+  const fields: Array<CommonDeviceTransactionField> = [];
   fields.push({
     type: "text",
     label: "Transaction Type",

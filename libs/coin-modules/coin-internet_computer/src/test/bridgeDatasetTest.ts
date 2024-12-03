@@ -40,7 +40,6 @@ const internet_computer: CurrenciesData<Transaction> = {
         freshAddressPath: "44'/223'/0'/0/0",
         index: 0,
         name: "Internet Computer 1",
-        nfts: undefined,
         operationsCount: 1,
         blockHeight: 0,
         pendingOperations: [],

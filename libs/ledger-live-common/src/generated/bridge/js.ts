@@ -9,7 +9,7 @@ import { bridge as elrond } from "../../families/elrond/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as hedera } from "../../families/hedera/setup";
 import { bridge as filecoin } from "../../families/filecoin/setup";
-import { bridge as icp } from "../../families/icp/setup";
+import { bridge as internet_computer } from "../../families/internet_computer/setup";
 import { bridge as icon } from "../../families/icon/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -34,7 +34,7 @@ export default {
   evm,
   hedera,
   filecoin,
-  icp,
+  internet_computer,
   icon,
   near,
   polkadot,
