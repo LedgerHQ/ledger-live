@@ -30,6 +30,7 @@ export default class PortfolioPage {
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
 
+  @Step("Navigate to Settings")
   async navigateToSettings() {
     await tapByElement(this.portfolioSettingsButton());
   }
@@ -55,6 +56,7 @@ export default class PortfolioPage {
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
 
+  @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
