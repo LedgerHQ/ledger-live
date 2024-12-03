@@ -32,7 +32,7 @@ async function main() {
       maxBuffer: 2048 * 1024,
     });
     console.log(baseCommitsOutput);
-    const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${head_ref}...${base_ref}] --dry=json`;
+    const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${base_ref}] --dry=json`;
     console.log(`Running command: ${cmd}`);
     const turboOutput = execSync(cmd, {
       encoding: "utf-8",
@@ -65,7 +65,7 @@ async function main() {
         }
       });
       const affected = JSON.stringify(affectedPackages);
-      core.info(`Affected packages since ${ref} (${packages.length}):\n${affected}`);
+      core.info(`Affected packages since ${base_ref} (${packages.length}):\n${affected}`);
       core.setOutput("affected", affected);
       core.setOutput("packages", JSON.stringify(Object.keys(affectedPackages)));
       core.setOutput(
@@ -74,19 +74,19 @@ async function main() {
       );
       core.setOutput("is-package-affected", isPackageAffected);
       core.summary.addHeading("Affected Packages");
-      core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
+      core.summary.addRaw(`There are ${packages.length} affected packages since ${base_ref}`);
       core.summary.addTable([
         [{ data: "name", header: true }],
         ...packages.map((p: string) => (p === pkg ? [`<strong>${p}</strong>`] : [p])),
       ]);
     } else {
-      core.info(`No packages affected since ${ref}`);
+      core.info(`No packages affected since ${base_ref}`);
       core.setOutput("affected", JSON.stringify({}));
       core.setOutput("paths", []);
       core.setOutput("packages", []);
       core.setOutput("is-package-affected", false);
       core.summary.addHeading("Affected Packages");
-      core.summary.addRaw(`No affected packages since ${ref}`);
+      core.summary.addRaw(`No affected packages since ${base_ref}`);
     }
     core.summary.write();
   } catch (error) {

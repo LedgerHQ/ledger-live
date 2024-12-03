@@ -6364,15 +6364,15 @@ var require_connect = __commonJS({
             if (this._sessionCache.size < this._maxCachedSessions) {
               return;
             }
-            const ref2 = this._sessionCache.get(key);
-            if (ref2 !== void 0 && ref2.deref() === void 0) {
+            const ref = this._sessionCache.get(key);
+            if (ref !== void 0 && ref.deref() === void 0) {
               this._sessionCache.delete(key);
             }
           });
         }
         get(sessionKey) {
-          const ref2 = this._sessionCache.get(sessionKey);
-          return ref2 ? ref2.deref() : null;
+          const ref = this._sessionCache.get(sessionKey);
+          return ref ? ref.deref() : null;
         }
         set(sessionKey, session) {
           if (this._maxCachedSessions === 0) {
@@ -9278,8 +9278,8 @@ var require_agent = __commonJS({
         this[kFinalizer] = new FinalizationRegistry(
           /* istanbul ignore next: gc is undeterministic */
           (key) => {
-            const ref2 = this[kClients].get(key);
-            if (ref2 !== void 0 && ref2.deref() === void 0) {
+            const ref = this[kClients].get(key);
+            if (ref !== void 0 && ref.deref() === void 0) {
               this[kClients].delete(key);
             }
           }
@@ -9300,8 +9300,8 @@ var require_agent = __commonJS({
       }
       get [kRunning]() {
         let ret = 0;
-        for (const ref2 of this[kClients].values()) {
-          const client = ref2.deref();
+        for (const ref of this[kClients].values()) {
+          const client = ref.deref();
           if (client) {
             ret += client[kRunning];
           }
@@ -9315,8 +9315,8 @@ var require_agent = __commonJS({
         } else {
           throw new InvalidArgumentError("opts.origin must be a non-empty string or URL.");
         }
-        const ref2 = this[kClients].get(key);
-        let dispatcher = ref2 ? ref2.deref() : null;
+        const ref = this[kClients].get(key);
+        let dispatcher = ref ? ref.deref() : null;
         if (!dispatcher) {
           dispatcher = this[kFactory](opts.origin, this[kOptions]).on("drain", this[kOnDrain]).on("connect", this[kOnConnect]).on("disconnect", this[kOnDisconnect]).on("connectionError", this[kOnConnectionError]);
           this[kClients].set(key, new WeakRef2(dispatcher));
@@ -9326,8 +9326,8 @@ var require_agent = __commonJS({
       }
       async [kClose]() {
         const closePromises = [];
-        for (const ref2 of this[kClients].values()) {
-          const client = ref2.deref();
+        for (const ref of this[kClients].values()) {
+          const client = ref.deref();
           if (client) {
             closePromises.push(client.close());
           }
@@ -9336,8 +9336,8 @@ var require_agent = __commonJS({
       }
       async [kDestroy](err) {
         const destroyPromises = [];
-        for (const ref2 of this[kClients].values()) {
-          const client = ref2.deref();
+        for (const ref of this[kClients].values()) {
+          const client = ref.deref();
           if (client) {
             destroyPromises.push(client.destroy(err));
           }
@@ -11171,9 +11171,9 @@ var require_mock_agent = __commonJS({
         return this[kOptions] && this[kOptions].connections === 1 ? new MockClient(origin, mockOptions) : new MockPool(origin, mockOptions);
       }
       [kMockAgentGet](origin) {
-        const ref2 = this[kClients].get(origin);
-        if (ref2) {
-          return ref2.deref();
+        const ref = this[kClients].get(origin);
+        if (ref) {
+          return ref.deref();
         }
         if (typeof origin !== "string") {
           const dispatcher = this[kFactory]("http://localhost:9999");
@@ -19101,7 +19101,7 @@ async function main() {
       maxBuffer: 2048 * 1024
     });
     console.log(baseCommitsOutput);
-    const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${head_ref}...${base_ref}] --dry=json`;
+    const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${base_ref}] --dry=json`;
     console.log(`Running command: ${cmd}`);
     const turboOutput = (0, import_child_process.execSync)(cmd, {
       encoding: "utf-8",
@@ -19130,7 +19130,7 @@ async function main() {
         }
       });
       const affected = JSON.stringify(affectedPackages);
-      core.info(`Affected packages since ${ref} (${packages.length}):
+      core.info(`Affected packages since ${base_ref} (${packages.length}):
 ${affected}`);
       core.setOutput("affected", affected);
       core.setOutput("packages", JSON.stringify(Object.keys(affectedPackages)));
@@ -19140,19 +19140,19 @@ ${affected}`);
       );
       core.setOutput("is-package-affected", isPackageAffected);
       core.summary.addHeading("Affected Packages");
-      core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
+      core.summary.addRaw(`There are ${packages.length} affected packages since ${base_ref}`);
       core.summary.addTable([
         [{ data: "name", header: true }],
         ...packages.map((p) => p === pkg ? [`<strong>${p}</strong>`] : [p])
       ]);
     } else {
-      core.info(`No packages affected since ${ref}`);
+      core.info(`No packages affected since ${base_ref}`);
       core.setOutput("affected", JSON.stringify({}));
       core.setOutput("paths", []);
       core.setOutput("packages", []);
       core.setOutput("is-package-affected", false);
       core.summary.addHeading("Affected Packages");
-      core.summary.addRaw(`No affected packages since ${ref}`);
+      core.summary.addRaw(`No affected packages since ${base_ref}`);
     }
     core.summary.write();
   } catch (error2) {
