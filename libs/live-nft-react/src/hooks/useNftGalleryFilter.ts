@@ -18,6 +18,8 @@ export function useNftGalleryFilter({
   nftsOwned,
   chains,
   threshold,
+  staleTime,
+  enabled,
 }: HookProps): NftGalleryFilterResult {
   const queryResult = useInfiniteQuery({
     queryKey: [NFTS_QUERY_KEY.SpamFilter, addresses, chains],
@@ -25,7 +27,9 @@ export function useNftGalleryFilter({
       fetchNftsFromSimpleHash({ addresses, chains, cursor: pageParam, threshold }),
     initialPageParam: undefined,
     getNextPageParam: lastPage => lastPage.next_cursor,
-    enabled: addresses.length > 0,
+    enabled: enabled && addresses.length > 0,
+    staleTime: staleTime || 1000 * 60 * 5, // 5 minutes
+    retry: false,
   });
 
   // for performance, we hashmap the list of nfts by hash.

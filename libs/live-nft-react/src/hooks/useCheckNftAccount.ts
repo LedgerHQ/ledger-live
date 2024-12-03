@@ -53,6 +53,9 @@ export function useCheckNftAccount({
     enabled: enabled && addresses.length > 0,
     refetchInterval: HALF_DAY,
     staleTime: HALF_DAY,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: false,
   });
 
   useEffect(() => {

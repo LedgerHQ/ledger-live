@@ -19,7 +19,8 @@ export function useNftCollections({
 }) {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
-  const simplehashEnabled = nftsFromSimplehashFeature?.enabled;
+  const staleTime = nftsFromSimplehashFeature?.params?.staleTime;
+  const simplehashEnabled = nftsFromSimplehashFeature?.enabled || false;
 
   const { hiddenNftCollections, whitelistedNftCollections } = useNftCollectionsStatus();
 
@@ -42,6 +43,8 @@ export function useNftCollections({
       ? [account.currency.id || BlockchainEVM.Ethereum]
       : chains ?? [BlockchainEVM.Ethereum],
     threshold: getThreshold(threshold),
+    enabled: simplehashEnabled,
+    staleTime,
   });
 
   const allNfts = useMemo(
