@@ -92,7 +92,7 @@ export class SendModal extends Modal {
     expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
     const displayedNftName = await this.nftNameDisplayed.innerText();
-    expect(displayedNftName).toEqual(expect.stringContaining(tx.nftName));
+    expect(displayedNftName).toEqual(expect.stringContaining(tx.nft.nftName));
     await this.continueButton.click();
   }
 
