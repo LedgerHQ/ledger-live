@@ -90,6 +90,7 @@ describe(`Ledger Sync Accounts`, () => {
     await app.accounts.expectAccountsNumber(2);
     await goToLedgerSync();
     await app.ledgerSync.openDeleteSync();
+    // TODO: Remove the following line when the issue is fixed
     await device.disableSynchronization();
     await app.ledgerSync.confirmDeleteSync();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
