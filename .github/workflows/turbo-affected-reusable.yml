@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Checkout head branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.head_branch }}
   
       - name: Fetch base branch
         run: |
