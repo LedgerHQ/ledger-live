@@ -9,7 +9,7 @@ import { resolver as elrond } from "../families/elrond/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as hedera } from "../families/hedera/setup";
 import { resolver as filecoin } from "../families/filecoin/setup";
-import { resolver as icp } from "../families/icp/setup";
+import { resolver as internet_computer } from "../families/internet_computer/setup";
 import { resolver as icon } from "../families/icon/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
@@ -34,7 +34,7 @@ export default {
   evm,
   hedera,
   filecoin,
-  icp,
+  internet_computer,
   icon,
   near,
   polkadot,

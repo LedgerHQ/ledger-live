@@ -8,7 +8,7 @@ import { cliTools as elrond } from "../families/elrond/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as hedera } from "../families/hedera/setup";
 import { cliTools as filecoin } from "../families/filecoin/setup";
-import { cliTools as icp } from "../families/icp/setup";
+import { cliTools as internet_computer } from "../families/internet_computer/setup";
 import { cliTools as icon } from "../families/icon/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
@@ -32,7 +32,7 @@ export default {
   evm,
   hedera,
   filecoin,
-  icp,
+  internet_computer,
   icon,
   near,
   polkadot,

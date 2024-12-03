@@ -9,7 +9,7 @@ import elrond from "@ledgerhq/coin-elrond/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
 import filecoin from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
-import icp from "@ledgerhq/coin-icp/deviceTransactionConfig";
+import internet_computer from "@ledgerhq/coin-internet_computer/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
@@ -33,7 +33,7 @@ export default {
   evm,
   hedera,
   filecoin,
-  icp,
+  internet_computer,
   icon,
   near,
   polkadot,

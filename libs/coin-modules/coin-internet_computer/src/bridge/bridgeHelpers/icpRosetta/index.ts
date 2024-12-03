@@ -1,7 +1,5 @@
-import Transport from "@ledgerhq/hw-transport";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "../../../types";
-import ICP from "@zondax/ledger-icp";
 import { constructionInvoke, getICPRosettaNetworkIdentifier } from "../../../api";
 import {
   ICPRosettaConstructionCombineRequest,
@@ -20,6 +18,9 @@ import { Cbor } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { isError } from "../../../common-logic/utils";
 import BigNumber from "bignumber.js";
+import { ICP_SEND_TXN_TYPE } from "../../../consts";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { ICPSigner } from "../../../types";
 
 export const getUnsignedTransaction = async (
   transaction: Transaction,
@@ -53,14 +54,16 @@ export const getUnsignedTransaction = async (
 };
 
 export const signICPTransaction = async ({
+  signerContext,
+  deviceId,
   unsignedTxn,
-  transport,
   path,
   payloads,
   pubkey,
 }: {
+  signerContext: SignerContext<ICPSigner>;
+  deviceId: string;
   unsignedTxn: string;
-  transport: Transport;
   path: string;
   payloads: ICPRosettaConstructionPayloadsResponse["payloads"];
   pubkey: string;
@@ -68,7 +71,6 @@ export const signICPTransaction = async ({
   signatures: { txnSig: string; readSig: string };
   signedTxn: string;
 }> => {
-  const icp = new ICP(transport);
   const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
   const txnReqFromCbor = decodedTxn.updates[0][1];
   const expiry = new ingressExpiry(BigNumber(decodedTxn.ingress_expiries[0].toString()));
@@ -86,13 +88,17 @@ export const signICPTransaction = async ({
     content: submitReq,
   });
 
-  const signedTxnRes = await icp.sign(path, Buffer.from(txnBlobToSign), 0);
-  isError(signedTxnRes);
+  const { r } = await signerContext(deviceId, async signer => {
+    const r = await signer.sign(path, Buffer.from(txnBlobToSign), ICP_SEND_TXN_TYPE);
+    return { r };
+  });
+
+  isError(r);
 
   const result = {
     signatures: {
       readSig: "",
-      txnSig: Buffer.from(signedTxnRes.signatureRS ?? "").toString("hex"),
+      txnSig: Buffer.from(r.signatureRS ?? "").toString("hex"),
     },
   };
 

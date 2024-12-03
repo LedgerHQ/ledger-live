@@ -2,12 +2,12 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import expect from "expect";
 import BigNumber from "bignumber.js";
-import type { Transaction } from "./types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/live-common/bot/specs";
-import { AppSpec } from "@ledgerhq/live-common/bot/types";
-import { acceptTransaction } from "./test/speculos-deviceActions";
-import { getRandomTransferID } from "./common-logic/utils";
+import type { Transaction } from "../types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { acceptTransaction } from "./speculos-deviceActions";
+import { getRandomTransferID } from "../common-logic/utils";
 
 const MIN_SAFE = new BigNumber(10);
 const maxAccount = 6;

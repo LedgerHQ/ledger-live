@@ -9,7 +9,7 @@ import elrond from "@ledgerhq/coin-elrond/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
 import filecoin from "@ledgerhq/coin-filecoin/specs";
-import icp from "@ledgerhq/coin-icp/specs";
+import internet_computer from "@ledgerhq/coin-internet_computer/specs";
 import icon from "@ledgerhq/coin-icon/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
@@ -34,7 +34,7 @@ export default {
   evm,
   hedera,
   filecoin,
-  icp,
+  internet_computer,
   icon,
   near,
   polkadot,

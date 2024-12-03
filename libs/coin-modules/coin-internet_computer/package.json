@@ -1,11 +1,11 @@
 {
-  "name": "@ledgerhq/coin-icp",
+  "name": "@ledgerhq/coin-internet_computer",
   "version": "1.3.2",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "icp",
+    "ICP",
     "Internet Computer"
   ],
   "repository": {
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-icp",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-internet_computer",
   "publishConfig": {
     "access": "public"
   },

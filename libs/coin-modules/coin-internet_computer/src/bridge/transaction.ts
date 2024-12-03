@@ -6,8 +6,8 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";
 

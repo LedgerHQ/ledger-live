@@ -17,9 +17,14 @@ function resolver(signerContext: SignerContext<ICPSigner>): GetAddressFn {
       return { r };
     });
 
+    if (!r.address || !r.publicKey) {
+      console.error("Failed to get address from device");
+      throw Error("Failed to get address from device");
+    }
+
     return {
       path,
-      address: r.addrString,
+      address: Buffer.from(r.address).toString("hex"),
       principalText: r.principalText,
       publicKey: Buffer.from(r.publicKey).toString("hex"),
     };
