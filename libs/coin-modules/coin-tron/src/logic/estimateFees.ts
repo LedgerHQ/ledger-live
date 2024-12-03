@@ -1,20 +1,46 @@
+
+const getEstimatedFees = async (
+  account: Account,
+  transaction: Transaction,
+  tokenAccount?: TokenAccount | null,
+) => {
+  const feesFromAccountActivation =
+    transaction.mode === "send"
+      ? await getFeesFromAccountActivation(account, transaction, tokenAccount)
+      : new BigNumber(0);
+  if (feesFromAccountActivation.gt(0)) {
+    return feesFromAccountActivation;
+  }
+
+  const feesFromBandwidth = getFeesFromBandwidth(account, transaction);
+  return feesFromBandwidth;
+};
+
+export async function estimateFees(): Promise<bigint> {
+  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
+    await getTronAccountNetwork(address),
+  );
+}
+
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
-import { fetchTronAccount } from "../network";
+import { BandwidthInfo, Transaction } from "../types";
+import { fetchTronAccount, getTronAccountNetwork } from "../network";
 import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20, STANDARD_FEES_TRC_20 } from "../logic/constants";
-import { getEstimatedBlockSize, extractBandwidthInfo } from "../logic/utils";
+import { getEstimatedBlockSize, extractBandwidthInfo, estimatedBlockSize } from "../logic/utils";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
 // 2. If not enough, will cost some TRX
 // 3. normal transfert cost around 0.002 TRX
-const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNumber => {
-  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
-    transaction.networkInfo,
-  );
+const getFeesFromBandwidth = (
+  { freeUsed, freeLimit, gainedUsed, gainedLimit }: BandwidthInfo,
+  mode,
+  coinType,
+  votesLength,
+): BigNumber => {
   const available = freeLimit.minus(freeUsed).plus(gainedLimit).minus(gainedUsed);
-  const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
+  const estimatedBandwidthCost = estimatedBlockSize(mode, coinType, votesLength);
 
   if (available.lt(estimatedBandwidthCost)) {
     return new BigNumber(2000); // cost is around 0.002 TRX
@@ -27,10 +53,10 @@ const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNu
 const getFeesFromAccountActivation = async (
   account: Account,
   transaction: Transaction,
+  { gainedUsed, gainedLimit }: BandwidthInfo,
   tokenAccount?: TokenAccount | null,
 ): Promise<BigNumber> => {
   const [recipientAccount] = await fetchTronAccount(transaction.recipient);
-  const { gainedUsed, gainedLimit } = extractBandwidthInfo(transaction.networkInfo);
   const available = gainedLimit.minus(gainedUsed);
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
@@ -57,22 +83,3 @@ const getFeesFromAccountActivation = async (
 
   return new BigNumber(0); // no fee
 };
-
-const getEstimatedFees = async (
-  account: Account,
-  transaction: Transaction,
-  tokenAccount?: TokenAccount | null,
-) => {
-  const feesFromAccountActivation =
-    transaction.mode === "send"
-      ? await getFeesFromAccountActivation(account, transaction, tokenAccount)
-      : new BigNumber(0);
-  if (feesFromAccountActivation.gt(0)) {
-    return feesFromAccountActivation;
-  }
-
-  const feesFromBandwidth = getFeesFromBandwidth(account, transaction);
-  return feesFromBandwidth;
-};
-
-export default getEstimatedFees;
