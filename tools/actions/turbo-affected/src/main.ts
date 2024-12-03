@@ -12,29 +12,26 @@ async function main() {
 
   try {
     const commits_cmd = `git log --oneline -n 10`;
-    let _ = execSync(commits_cmd, {
+    const commitsOutput = execSync(commits_cmd, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
     });
-    const separator_cmd = `echo "----------------------"`;
-    _ = execSync(separator_cmd, {
+    console.log(commitsOutput);
+    const separator = "----------------------";
+    console.log(separator);
+    // const head_commits_cmd = `git log ${head_ref} --oneline -n 10`;
+    // const headCommitsOutput = execSync(head_commits_cmd, {
+    //   encoding: "utf-8",
+    //   maxBuffer: 2048 * 1024,
+    // });
+    // console.log(headCommitsOutput);
+    // console.log(separator)
+    const base_commits_cmd = `git log ${base_ref} --oneline -n 10`;
+    const baseCommitsOutput = execSync(base_commits_cmd, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
     });
-    const head_commits_cmd = `git log --oneline ${head_ref} -n 10`;
-    _ = execSync(head_commits_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024,
-    });
-    _ = execSync(separator_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024,
-    });
-    const base_commits_cmd = `git log --oneline ${base_ref} -n 10`;
-    _ = execSync(base_commits_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024,
-    });
+    console.log(baseCommitsOutput);
     const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${head_ref}...${base_ref}] --dry=json`;
     console.log(`Running command: ${cmd}`);
     const turboOutput = execSync(cmd, {

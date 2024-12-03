@@ -19088,29 +19088,19 @@ async function main() {
   const packageManager = package_default.packageManager;
   try {
     const commits_cmd = `git log --oneline -n 10`;
-    let _ = (0, import_child_process.execSync)(commits_cmd, {
+    const commitsOutput = (0, import_child_process.execSync)(commits_cmd, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024
     });
-    const separator_cmd = `echo "----------------------"`;
-    _ = (0, import_child_process.execSync)(separator_cmd, {
+    console.log(commitsOutput);
+    const separator = "----------------------";
+    console.log(separator);
+    const base_commits_cmd = `git log ${base_ref} --oneline -n 10`;
+    const baseCommitsOutput = (0, import_child_process.execSync)(base_commits_cmd, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024
     });
-    const head_commits_cmd = `git log --oneline ${head_ref} -n 10`;
-    _ = (0, import_child_process.execSync)(head_commits_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024
-    });
-    _ = (0, import_child_process.execSync)(separator_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024
-    });
-    const base_commits_cmd = `git log --oneline ${base_ref} -n 10`;
-    _ = (0, import_child_process.execSync)(base_commits_cmd, {
-      encoding: "utf-8",
-      maxBuffer: 2048 * 1024
-    });
+    console.log(baseCommitsOutput);
     const cmd = `npx turbo@${turboVersion} run ${command} --filter=[${head_ref}...${base_ref}] --dry=json`;
     console.log(`Running command: ${cmd}`);
     const turboOutput = (0, import_child_process.execSync)(cmd, {
