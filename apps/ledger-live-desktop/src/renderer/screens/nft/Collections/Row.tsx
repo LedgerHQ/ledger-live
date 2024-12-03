@@ -50,7 +50,7 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
       account={account}
     >
       <Container
-        data-testId={`nft-row-${tokenName}`}
+        data-testid={`nft-row-${tokenName}`}
         className={loading || process.env.ALWAYS_SHOW_SKELETONS ? "disabled" : ""}
         justifyContent="center"
         horizontal

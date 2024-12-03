@@ -371,7 +371,7 @@ const OperationD = (props: Props) => {
         <Box flex={1} mb={2} alignItems="center">
           <Skeleton show={show} width={160} barHeight={16} minHeight={32}>
             <Text
-              data-testId="nft-name-operationDrawer"
+              data-testid="nft-name-operationDrawer"
               ff="Inter|SemiBold"
               textAlign="center"
               fontSize={7}

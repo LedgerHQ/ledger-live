@@ -55,7 +55,7 @@ const Summary = ({ transaction }: Props) => {
           <Box mr={3} alignItems="flex-end">
             <Skeleton width={42} minHeight={18} barHeight={6} show={show}>
               <Text
-                data-testId="transaction-nft-name"
+                data-testid="transaction-nft-name"
                 ff="Inter|Medium"
                 color="palette.text.shade100"
                 fontSize={4}

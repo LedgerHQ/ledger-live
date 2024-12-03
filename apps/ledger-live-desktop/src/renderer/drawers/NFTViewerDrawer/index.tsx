@@ -239,7 +239,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
               </Skeleton>
             </Text>
             <Text
-              data-testId="nft-name-sendDrawer"
+              data-testid="nft-name-sendDrawer"
               ff="Inter|SemiBold"
               fontSize={7}
               lineHeight="29px"
@@ -279,7 +279,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
           </Skeleton>
           <NFTActions>
             <Button
-              data-testId="nft-send-button-sendDrawer"
+              data-testid="nft-send-button-sendDrawer"
               style={{
                 flex: 1,
                 justifyContent: "center",
@@ -368,7 +368,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                   value={
                     <Text
                       mb={1}
-                      data-testId="nft-floor-price"
+                      data-testid="nft-floor-price"
                       lineHeight="15.73px"
                       fontSize={4}
                       color="palette.text.shade60"

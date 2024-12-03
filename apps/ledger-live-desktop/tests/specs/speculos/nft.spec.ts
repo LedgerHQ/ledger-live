@@ -6,6 +6,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
+import invariant from "invariant";
 
 test.describe("send NFT to ENS address", () => {
   const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, Nft.PODIUM, Fee.SLOW);
@@ -44,7 +45,7 @@ test.describe("send NFT to ENS address", () => {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
       await app.account.navigateToNFTGallery();
-      await app.account.selectNFT(transaction.nft.nftName);
+      await app.nftGallery.selectNFT(transaction.nft.nftName);
       await app.nftDrawer.expectNftNameIsVisible(transaction.nft.nftName);
       await app.nftDrawer.clickSend();
       await app.send.craftNFTTx(transaction);
@@ -92,22 +93,24 @@ test.describe("The user can see his NFT floor price", () => {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.navigateToNFTGallery();
-      if (account.nft) {
-        await app.account.selectNFT(account.nft[0].nftName);
-        await app.nftDrawer.expectNftNameIsVisible(account.nft[0].nftName);
-      }
+      invariant(account.nft, "No valid NFTs found for this account");
+      const nft = account.nft[0].nftName;
+      await app.nftGallery.selectNFT(nft);
+      await app.nftDrawer.expectNftNameIsVisible(nft);
       await app.nftDrawer.expectNftFloorPriceIsVisible();
+      const floorPrice = await app.nftDrawer.getFloorPriceDisplayed();
       await app.nftDrawer.expectNftFloorPricePositive();
       await app.nftDrawer.clickNftOptions();
-      await app.nftDrawer.checkOpenSea();
+      await app.nftDrawer.verifyFloorPriceValue(account, floorPrice);
     },
   );
 });
 
 const accounts = [
-  { account: Account.ETH_1, xrayTicket: "B2CQA-801.1" },
-  { account: Account.POL_1, xrayTicket: "B2CQA-801.2" },
+  { account: Account.ETH_1, xrayTicket1: "B2CQA-2863", xrayTicket2: "B2CQA-2861" },
+  { account: Account.POL_1, xrayTicket1: "B2CQA-2864", xrayTicket2: "B2CQA-2862" },
 ];
+
 for (const account of accounts) {
   test.describe("The user displays all the nfts from his account", () => {
     test.use({
@@ -131,7 +134,7 @@ for (const account of accounts) {
       {
         annotation: {
           type: "TMS",
-          description: "B2CQA-659",
+          description: account.xrayTicket1,
         },
       },
       async ({ app }) => {
@@ -139,6 +142,43 @@ for (const account of accounts) {
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.checkNftListInAccount(account.account);
+      },
+    );
+  });
+}
+
+for (const account of accounts) {
+  test.describe("The user displays his nft collection", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      cliCommands: [
+        {
+          command: commandCLI.liveData,
+          args: {
+            currency: account.account.currency.currencyId,
+            index: account.account.index,
+            appjson: "",
+            add: true,
+          },
+        },
+      ],
+      speculosApp: account.account.currency.speculosApp,
+    });
+
+    test(
+      `User displays his ${account.account.currency.name} nft collection`,
+      {
+        annotation: {
+          type: "TMS",
+          description: account.xrayTicket2,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(account.account.accountName);
+        await app.account.navigateToNFTGallery();
+        await app.nftGallery.verifyNftPresenceInGallery(account.account);
       },
     );
   });
