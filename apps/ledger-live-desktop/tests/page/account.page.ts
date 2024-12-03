@@ -34,6 +34,7 @@ export class AccountPage extends AppPage {
   private seeGalleryButton = this.page.getByTestId("see-gallery-button");
   private nft = (nftName: string) => this.page.locator(`text=${nftName}`);
   private nftOperation = this.page.getByText("NFT Sent");
+  private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -176,5 +177,15 @@ export class AccountPage extends AppPage {
   @step("Navigate to NFT operation")
   async navigateToNFTOperation() {
     await this.nftOperation.click();
+  }
+
+  @step("Expect NFT list $0 to be visible")
+  async checkNftListInAccount(account: Account) {
+    if (account.nft) {
+      for (const nft of account.nft) {
+        const nftLocator = this.nftList(nft.collectionName);
+        await expect(nftLocator).toBeVisible();
+      }
+    }
   }
 }
