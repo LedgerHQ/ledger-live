@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cosmos
 
+## 0.3.0-next.1
+
+### Minor Changes
+
+- [#8580](https://github.com/LedgerHQ/ledger-live/pull/8580) [`ea3a175`](https://github.com/LedgerHQ/ledger-live/commit/ea3a17562ab1954b14803ff19ab575e4fcfc64c8) Thanks [@Canestin](https://github.com/Canestin)! - fix: add ledger validator on mantra
+
 ## 0.2.3-next.0
 
 ### Patch Changes
