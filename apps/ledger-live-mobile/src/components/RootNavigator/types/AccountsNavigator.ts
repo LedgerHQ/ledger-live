@@ -34,4 +34,15 @@ export type AccountsNavigatorParamList = {
   [ScreenName.Asset]: {
     currency: CryptoOrTokenCurrency;
   };
+  [ScreenName.AccountsList]: {
+    sourceScreenName: ScreenName;
+    showHeader?: boolean;
+    canAddAccount?: boolean;
+    isSyncEnabled?: boolean;
+  };
+  [ScreenName.AssetsList]: {
+    sourceScreenName: ScreenName;
+    showHeader?: boolean;
+    isSyncEnabled?: boolean;
+  };
 };

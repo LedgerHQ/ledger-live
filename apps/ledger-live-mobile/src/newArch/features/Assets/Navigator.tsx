@@ -6,13 +6,10 @@ import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
-import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
-import SelectAccounts from "LLM/features/Accounts/screens/SelectAccounts";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
-import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
-import { AccountsListNavigator } from "./screens/AccountsList/types";
+import { AssetsListNavigator } from "./screens/AssetsList/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import AccountsList from "LLM/features/Accounts/screens/AccountsList";
+import AssetsList from "./screens/AssetsList";
 
 export default function Navigator() {
   const { colors } = useTheme();
@@ -41,27 +38,10 @@ export default function Navigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {/* Select Accounts */}
-      <Stack.Screen
-        name={ScreenName.SelectAccounts}
-        component={SelectAccounts}
-        options={{
-          headerTitle: "",
-        }}
-      />
-
-      {/* Scan accounts from device */}
-      <Stack.Screen
-        name={ScreenName.ScanDeviceAccounts}
-        component={ScanDeviceAccounts}
-        options={{
-          headerTitle: "",
-        }}
-      />
       {accountListUIFF?.enabled && (
         <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
+          name={ScreenName.AssetsList}
+          component={AssetsList}
           options={{
             headerTitle: "",
           }}
@@ -71,4 +51,4 @@ export default function Navigator() {
   );
 }
 
-const Stack = createStackNavigator<NetworkBasedAddAccountNavigator & AccountsListNavigator>();
+const Stack = createStackNavigator<AssetsListNavigator>();
