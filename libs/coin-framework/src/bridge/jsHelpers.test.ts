@@ -2,17 +2,17 @@ import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
+import { AccountShapeInfo, updateTransaction, makeSync, bip32asBuffer } from "./jsHelpers";
 
 describe("jsHelpers", () => {
-  describe("defaultUpdateTransaction", () => {
+  describe("updateTransaction", () => {
     it("should not update the transaction object", () => {
       const transaction: TransactionCommon = {
         recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
         amount: new BigNumber("10000000000000"),
       };
 
-      const updatedTransaction = defaultUpdateTransaction(transaction, {
+      const updatedTransaction = updateTransaction(transaction, {
         recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
         amount: new BigNumber("10000000000000"),
       });
@@ -26,7 +26,7 @@ describe("jsHelpers", () => {
         amount: new BigNumber("10000000000000"),
       };
 
-      const updatedTransaction = defaultUpdateTransaction(transaction, {
+      const updatedTransaction = updateTransaction(transaction, {
         recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
         amount: new BigNumber("20000000000000"),
       });
@@ -92,6 +92,29 @@ describe("jsHelpers", () => {
         subAccounts: undefined,
       };
       expect(newAccount.id).toEqual(expectedAccount.id);
+    });
+  });
+
+  describe("bip32asBuffer", () => {
+    it.each([
+      {
+        name: "Simple",
+        derivationPath: "m/44'/1/1/0",
+        expectedResult: "048000002c000000010000000100000000",
+      },
+      {
+        name: "Hardened coin type",
+        derivationPath: "m/44'/1'/1/0",
+        expectedResult: "048000002c800000010000000100000000",
+      },
+      {
+        name: "Hardened account",
+        derivationPath: "m/44'/1'/1'/0",
+        expectedResult: "048000002c800000018000000100000000",
+      },
+    ])("converts path for AppCoins with $name case", ({ derivationPath, expectedResult }) => {
+      const path = bip32asBuffer(derivationPath);
+      expect(path).toEqual(Buffer.from(expectedResult, "hex"));
     });
   });
 });

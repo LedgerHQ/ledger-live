@@ -1,6 +1,7 @@
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -51,7 +52,7 @@ function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
 
   const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     prepareTransaction,
     estimateMaxSpendable,
     getTransactionStatus,
@@ -59,6 +60,7 @@ function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
     receive,
     signOperation,
     broadcast,
+    getSerializedAddressParameters,
   };
 
   return accountBridge;

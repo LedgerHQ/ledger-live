@@ -1,5 +1,6 @@
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   GetAccountShape,
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -164,7 +165,7 @@ export function makeBridges({
 
   const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,
@@ -176,6 +177,7 @@ export function makeBridges({
     assignToAccountRaw,
     toOperationExtraRaw,
     fromOperationExtraRaw,
+    getSerializedAddressParameters,
   };
 
   const currencyBridge: CurrencyBridge = {

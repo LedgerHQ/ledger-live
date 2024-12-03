@@ -1,6 +1,7 @@
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -45,13 +46,14 @@ export function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
     receive,
     signOperation,
     broadcast,
+    getSerializedAddressParameters,
   };
 }
 

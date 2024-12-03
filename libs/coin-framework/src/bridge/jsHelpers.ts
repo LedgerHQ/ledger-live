@@ -1,3 +1,4 @@
+import bippath from "bip32-path";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { Observable, Observer, from } from "rxjs";
@@ -560,8 +561,28 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   };
 }
 
-// Default trivial implem for updateTransaction, that keeps reference stability (for React)
-export function defaultUpdateTransaction<T extends TransactionCommon>(t: T, patch: Partial<T>): T {
+/**
+ * Default trivial implem for updateTransaction, that keeps reference stability (for React)
+ */
+export function updateTransaction<T extends TransactionCommon>(t: T, patch: Partial<T>): T {
   const patched = { ...t, ...patch };
   return isEqual(t, patched) ? t : patched;
+}
+
+/**
+ * Default trivial implem for getSerializedAddressParameters
+ */
+export function getSerializedAddressParameters(account: Account): Buffer {
+  return bip32asBuffer(account.freshAddressPath);
+}
+
+export function bip32asBuffer(path: string): Buffer {
+  const pathElements = !path ? [] : bippath.fromString(path).toPathArray();
+
+  const buffer = Buffer.alloc(1 + pathElements.length * 4);
+  buffer[0] = pathElements.length;
+  pathElements.forEach((element, index) => {
+    buffer.writeUInt32BE(element, 1 + 4 * index);
+  });
+  return buffer;
 }

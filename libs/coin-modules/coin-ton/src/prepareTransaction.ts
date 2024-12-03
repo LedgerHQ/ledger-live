@@ -1,5 +1,5 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
@@ -23,7 +23,7 @@ const prepareTransaction: AccountBridge<Transaction, Account>["prepareTransactio
     amount = transaction.amount;
   }
 
-  return defaultUpdateTransaction(transaction, { fees, amount });
+  return updateTransaction(transaction, { fees, amount });
 };
 
 export default prepareTransaction;

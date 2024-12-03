@@ -1,4 +1,4 @@
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { StacksMainnet } from "@stacks/network";
 import {
@@ -56,5 +56,5 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (useAllAmount) patch.amount = spendableBalance.minus(patch.fee);
   }
 
-  return defaultUpdateTransaction(transaction, patch);
+  return updateTransaction(transaction, patch);
 };

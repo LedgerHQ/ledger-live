@@ -24,7 +24,6 @@ import {
   SwapRateExpiredError,
   TransactionRefusedOnDevice,
 } from "../../errors";
-import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { getSwapAPIBaseURL, getSwapUserIP } from "./";
@@ -196,11 +195,9 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (mainPayoutCurrency.type !== "CryptoCurrency") {
           throw new Error("This should be a cryptocurrency");
         }
-        const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
-        ]?.getSerializedAddressParameters(
-          payoutAccount.freshAddressPath,
-          payoutAccount.derivationMode,
+        const mainPayoutBridge = getAccountBridge(payoutAccount);
+        const payoutAddressParameters = mainPayoutBridge.getSerializedAddressParameters(
+          payoutAccount,
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
@@ -214,7 +211,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           await swap.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters,
+            payoutAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
@@ -233,11 +230,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (mainRefundCurrency.type !== "CryptoCurrency") {
           throw new Error("This should be a cryptocurrency");
         }
-        const refundAddressParameters = await perFamily[
-          mainRefundCurrency.family
-        ]?.getSerializedAddressParameters(
-          refundAccount.freshAddressPath,
-          refundAccount.derivationMode,
+        const refundAddressParameters = accountBridge.getSerializedAddressParameters(
+          refundAccount,
           mainRefundCurrency.id,
         );
         if (unsubscribed) return;
@@ -277,7 +271,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           await swap.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters,
+            refundAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {

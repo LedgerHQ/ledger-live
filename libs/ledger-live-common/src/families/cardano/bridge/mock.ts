@@ -18,7 +18,10 @@ import {
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "@ledgerhq/coin-cardano/errors";
 import { buildTransaction } from "@ledgerhq/coin-cardano/buildTransaction";
 import { CARDANO_MAX_SUPPLY } from "@ledgerhq/coin-cardano/constants";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,
@@ -158,7 +161,7 @@ const prepareTransaction = async (account: Account, transaction: CardanoTransact
 
 const accountBridge: AccountBridge<CardanoTransaction> = {
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
@@ -166,6 +169,7 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 const currencyBridge: CurrencyBridge = {
