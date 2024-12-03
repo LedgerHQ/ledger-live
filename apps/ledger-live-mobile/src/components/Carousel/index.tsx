@@ -50,13 +50,7 @@ const Carousel = () => {
     >
       {walletCardsDisplayed.map((cardProps, index) => (
         <LogContentCardWrapper key={cardProps.id + index} id={cardProps.id}>
-          <CarouselCard
-            key={cardProps.id + index}
-            id={cardProps.id}
-            cardProps={cardProps}
-            index={index}
-            width={cardsWidth}
-          />
+          <CarouselCard id={cardProps.id} cardProps={cardProps} index={index} width={cardsWidth} />
         </LogContentCardWrapper>
       ))}
     </ScrollView>
