@@ -10,9 +10,12 @@ import { BackHandler } from "react-native";
 import { updateNftStatus } from "~/actions/settings";
 import { track } from "../../../analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { updateMainNavigatorVisibility } from "~/actions/appstate";
-import { galleryFilterDrawerVisibleSelector, galleryChainFiltersSelector } from "~/reducers/nft";
-import { setGalleryChainFilter, setGalleryFilterDrawerVisible } from "~/actions/nft";
+import { updateMainNavigatorVisibility } from "../../../actions/appstate";
+import {
+  galleryFilterDrawerVisibleSelector,
+  galleryChainFiltersSelector,
+} from "../../../reducers/nft";
+import { setGalleryChainFilter, setGalleryFilterDrawerVisible } from "../../../actions/nft";
 import { NftGalleryChainFiltersState } from "../../../reducers/types";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
