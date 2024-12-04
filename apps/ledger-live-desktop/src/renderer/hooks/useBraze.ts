@@ -22,8 +22,13 @@ import {
   trackingEnabledSelector,
   dismissedContentCardsSelector,
   anonymousBrazeIdSelector,
+  anonymousUserNotificationsSelector,
 } from "../reducers/settings";
-import { clearDismissedContentCards, setAnonymousBrazeId } from "../actions/settings";
+import {
+  clearDismissedContentCards,
+  setAnonymousBrazeId,
+  updateAnonymousUserNotifications,
+} from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
 import { getOldCampaignIds, generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
@@ -90,6 +95,7 @@ export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
   const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
+  const anonymousUserNotifications = useSelector(anonymousUserNotificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
@@ -102,6 +108,30 @@ export async function useBraze() {
     if (!anonymousBrazeId.current) {
       anonymousBrazeId.current = generateAnonymousId();
       dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
+    }
+
+    /**
+     * If the user is opt-out from analytics, we need to purge expired notifications persisted in the store/offline storage
+     */
+    if (!isTrackedUser) {
+      const expiredAnonymousUserNotifications = getOldCampaignIds(anonymousUserNotifications);
+      if (expiredAnonymousUserNotifications.length) {
+        const validAnonymousUserNotificationsOnly = Object.keys(anonymousUserNotifications).reduce(
+          (validNotifications: Record<string, string | number>, key: string) => {
+            if (!expiredAnonymousUserNotifications.includes(key)) {
+              validNotifications[key] = anonymousUserNotifications[key];
+            }
+            return validNotifications;
+          },
+          {},
+        );
+        dispatch(
+          updateAnonymousUserNotifications({
+            notifications: validAnonymousUserNotificationsOnly,
+            purgeState: true,
+          }),
+        );
+      }
     }
 
     braze.initialize(brazeConfig.apiKey, {
@@ -150,7 +180,14 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
+  }, [
+    dispatch,
+    devMode,
+    isTrackedUser,
+    contentCardsDissmissed,
+    anonymousBrazeId,
+    anonymousUserNotifications,
+  ]);
 
   useEffect(() => {
     initBraze();
