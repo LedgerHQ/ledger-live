@@ -41,11 +41,15 @@ export async function estimateFees({
   account: CoreAccountInfo;
   transaction: CoreTransactionInfo;
 }): Promise<EstimatedFees> {
+  console.time("Estimate Fees")
+  console.time("-encodePubkey")
   const encodedPubKey = b58cencode(
     compressPublicKey(Buffer.from(account.xpub || "", "hex"), DerivationType.ED25519),
     prefix[Prefix.EDPK],
   );
+  console.timeEnd("-encodePubkey")
 
+  console.time("-setProvider")
   const tezosToolkit = getTezosToolkit();
   tezosToolkit.setProvider({
     signer: {
@@ -55,6 +59,7 @@ export async function estimateFees({
       secretKey: () => Promise.reject(new Error("unsupported")),
     },
   });
+  console.timeEnd("-setProvider")
 
   const estimation: EstimatedFees = {
     fees: BigInt(0),
@@ -75,6 +80,7 @@ export async function estimateFees({
 
   try {
     let estimate: Estimate;
+    console.time("-estimate")
     switch (transaction.mode) {
       case "send":
         estimate = await tezosToolkit.estimate.transfer({
@@ -98,9 +104,11 @@ export async function estimateFees({
       default:
         throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.mode });
     }
+    console.timeEnd("-estimate")
 
     // NOTE: if useAllAmount is true, is it for sure in the send mode (ie. transfer)?
     if (transaction.useAllAmount) {
+      console.time("-useAllAmount")
       let totalFees: number;
       if (estimate.burnFeeMutez > 0) {
         // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
@@ -136,6 +144,7 @@ export async function estimateFees({
     if (!account.revealed) {
       estimation.estimatedFees = estimation.estimatedFees + BigInt(DEFAULT_FEE.REVEAL);
     }
+    console.timeEnd("-useAllAmount")
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {
@@ -151,5 +160,6 @@ export async function estimateFees({
       throw e;
     }
   }
+  console.timeEnd("Estimate Fees")
   return estimation;
 }
