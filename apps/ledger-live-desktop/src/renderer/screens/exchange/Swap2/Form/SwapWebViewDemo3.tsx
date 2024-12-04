@@ -4,6 +4,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
+import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
@@ -53,6 +54,10 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -138,6 +143,63 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     () => ({
       ...loggerHandlers,
       ...customPTXHandlers,
+
+      "custom.requestAccount": ({
+        params,
+      }: {
+        params: {
+          currencyIds: string[];
+          requestId: "from-account" | "to-account";
+        };
+      }): Promise<WalletAPIAccount> => {
+        const { currencyIds, requestId } = params;
+        const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
+          currencies: currencyIds || [],
+        });
+
+        return new Promise((resolve, reject) => {
+          let lastCurrencySelected: CryptoOrTokenCurrency | null = null;
+          setDrawer(
+            SelectAccountAndCurrencyDrawer,
+            {
+              currencies: cryptoCurrencies,
+              onAccountSelected: (account, parentAccount) => {
+                track("button_clicked", {
+                  button: `Choose Account - ${requestId === "from-account" ? "Source" : "Target"}`,
+                  page: "InputSwap",
+                  ...swapDefaultTrack,
+                });
+                setDrawer();
+                resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+              },
+              onCurrencySelected: currency => {
+                lastCurrencySelected = currency;
+                track("button_clicked", {
+                  button: `Choose Asset - ${requestId === "from-account" ? "Source" : "Target"}`,
+                  currency: lastCurrencySelected?.name,
+                  page: "InputSwap",
+                  ...swapDefaultTrack,
+                });
+              },
+              onAddAccountClick: () => {
+                track("button_clicked", {
+                  button: requestId === "from-account" ? "New source account" : "new account",
+                  currency: lastCurrencySelected?.name,
+                  page: "InputSwap",
+                  ...swapDefaultTrack,
+                });
+              },
+            },
+            {
+              onRequestClose: () => {
+                setDrawer();
+                reject();
+              },
+            },
+          );
+        });
+      },
+
       "custom.getFee": async ({
         params,
       }: {
