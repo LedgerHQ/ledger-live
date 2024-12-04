@@ -148,6 +148,10 @@ export class DeviceManagementKitTransport extends Transport {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
         tracer.trace(`[exchange] <= ${response}`);
         return response;
+      })
+      .catch(e => {
+        console.error("[exchange] error", e);
+        throw e;
       });
   }
 }

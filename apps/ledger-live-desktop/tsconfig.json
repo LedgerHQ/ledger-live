@@ -3,10 +3,11 @@
   "compilerOptions": {
     "allowJs": false,
     "composite": true,
-    "module": "es2020",
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
