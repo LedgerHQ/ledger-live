@@ -516,6 +516,7 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+  staleTime: number;
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{

@@ -71,7 +71,10 @@ const Gallery = () => {
     chains: [account?.currency.id ?? "ethereum"],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
     enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
+
+  const INITIAL_INCREMENT = nftsFromSimplehashFeature?.enabled ? 50 : 5;
 
   const collections = useMemo(
     () =>
@@ -103,9 +106,9 @@ const Gallery = () => {
     [account?.id, history],
   );
   const listFooterRef = useRef<HTMLDivElement>(null);
-  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
+  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(INITIAL_INCREMENT);
   const updateMaxVisibleNtfs = () => {
-    setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+    setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + INITIAL_INCREMENT);
     if (hasNextPage) {
       fetchNextPage();
     }
