@@ -168,12 +168,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: DefaultFeature;
-  ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapCoreExperiment: Feature_PtxSwapCoreExperiment;
-  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
-  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -202,6 +197,7 @@ export type Features = CurrencyFeatures & {
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
+  llmAccountListUI: DefaultFeature;
 };
 
 /**
@@ -470,18 +466,6 @@ export type Feature_RatingsPrompt = Feature<{
 }>;
 
 export type Feature_PtxSwapLiveApp = Feature<{
-  currencies?: Array<string>;
-  families?: Array<string>;
-}>;
-
-export type Feature_PtxSwapLiveAppDemoZero = Feature<{
-  manifest_id: string;
-  currencies?: string[];
-  families?: string[];
-}>;
-
-export type Feature_PtxSwapCoreExperiment = Feature<{
-  variant: "Demo0" | "Demo3" | "Demo3Thorswap";
   manifest_id: string;
   currencies?: string[];
   families?: string[];
@@ -555,8 +539,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
-export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
-export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;

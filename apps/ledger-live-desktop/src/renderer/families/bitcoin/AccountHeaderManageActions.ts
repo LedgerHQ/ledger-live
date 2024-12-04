@@ -18,7 +18,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake = stakeProgramsEnabled && listFlag.includes("bitcoin");
+  const availableOnStake =
+    stakeProgramsEnabled && (listFlag.includes("bitcoin") || listFlag.includes("bitcoin_testnet"));
   const history = useHistory();
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -26,7 +27,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     bitcoinResources,
     currency: { id: currencyId },
   } = mainAccount;
-  if (!bitcoinResources || parentAccount || currencyId !== "bitcoin") return null;
+  if (
+    !bitcoinResources ||
+    parentAccount ||
+    (currencyId !== "bitcoin" && currencyId !== "bitcoin_testnet")
+  )
+    return null;
 
   const stakeOnClick = () => {
     const value = "/platform/acre";

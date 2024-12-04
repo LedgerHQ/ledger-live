@@ -50,7 +50,8 @@
     "SENTRY_PROJECT",
     "SHORT_BUNDLE_ID",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE"
+    "VERBOSE",
+    "BYPASS_CORS"
   ],
   "ui": "tui",
   "tasks": {
