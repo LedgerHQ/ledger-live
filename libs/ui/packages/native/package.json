@@ -29,7 +29,6 @@
     "./lib/*/": "./lib/*/index.js",
     "./*": "./lib/*.js",
     "./*/": "./lib/*/index.js",
-    "./": "./lib/",
     "./package.json": "./package.json"
   },
   "files": [

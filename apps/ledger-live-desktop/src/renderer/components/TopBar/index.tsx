@@ -22,6 +22,7 @@ import { NotificationIndicator } from "~/renderer/components/TopBar/Notification
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+
 const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
   box-sizing: content-box;

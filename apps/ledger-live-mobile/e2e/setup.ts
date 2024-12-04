@@ -2,7 +2,7 @@ import { device } from "detox";
 import * as serverBridge from "./bridge/server";
 import fs from "fs";
 import { getState } from "expect";
-import { MatcherState } from "expect/build/types";
+import { MatcherState } from "expect";
 import { format } from "date-fns";
 import { launchApp, deleteSpeculos } from "./helpers";
 import { closeProxy } from "./bridge/proxy";

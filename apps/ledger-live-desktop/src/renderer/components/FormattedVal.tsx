@@ -14,6 +14,8 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import { BoxProps } from "./Box/Box";
 import { Icons } from "@ledgerhq/react-ui";
 
+console.log(Icons);
+
 const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string } & BoxProps) => ({
   ff: p.ff || "Inter|Medium",
   horizontal: true,
