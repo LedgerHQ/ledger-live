@@ -10,8 +10,9 @@ import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoa
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
@@ -112,7 +113,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     return null;
   }, [toAccount, getCurrencyByAccount]);
 
-  const broadcast = useBroadcast({ account, parentAccount });
+  const mevProtected = useSelector(mevProtectionSelector);
+  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected }});
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
