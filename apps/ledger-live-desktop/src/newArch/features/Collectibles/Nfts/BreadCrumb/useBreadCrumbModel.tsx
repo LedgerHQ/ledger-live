@@ -26,6 +26,7 @@ const useBreadCrumbModel = () => {
     chains: [String(account?.currency.id)],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
     enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const collections = useMemo(

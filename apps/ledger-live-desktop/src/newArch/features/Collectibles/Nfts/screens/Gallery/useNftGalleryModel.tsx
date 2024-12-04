@@ -30,12 +30,15 @@ const useNftGalleryModel = () => {
 
   const { hiddenNftCollections } = useNftCollectionsStatus();
 
+  const INITIAL_INCREMENT = nftsFromSimplehashFeature?.enabled ? 50 : 5;
+
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account?.nfts || [],
     addresses: account?.freshAddress || "",
     chains: [account?.currency.id ?? ChainsEnum.ETHEREUM],
     threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
     enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const allNfts = useMemo(
@@ -69,11 +72,11 @@ const useNftGalleryModel = () => {
   );
 
   const updateMaxVisibleNtfs = useCallback(() => {
-    setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + 5);
+    setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + INITIAL_INCREMENT);
     if (hasNextPage) {
       fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage]);
+  }, [hasNextPage, INITIAL_INCREMENT, fetchNextPage]);
 
   useOnScreen({
     enabled: maxVisibleNFTs < allNfts?.length,

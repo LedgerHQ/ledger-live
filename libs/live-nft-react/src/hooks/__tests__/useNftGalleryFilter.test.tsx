@@ -69,6 +69,7 @@ describe("useNftGalleryFilter", () => {
           chains,
           threshold: 80,
           enabled: true,
+          staleTime: 1000 * 60 * 10,
         }),
       {
         wrapper,

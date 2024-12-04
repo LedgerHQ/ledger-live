@@ -59,19 +59,20 @@ export const useNftCollectionsModel = ({ account }: Props) => {
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
     enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const collections = useMemo(
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
-  const collectionsLength = Object.keys(collections).length;
+
   const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    setNumberOfVisibleCollections(
+      numberOfVisibleCollections => numberOfVisibleCollections + INCREMENT,
     );
     if (hasNextPage) fetchNextPage();
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
+  }, [fetchNextPage, hasNextPage]);
 
   const filteredCollections = useMemo(
     () => filterHiddenCollections(collections, hiddenNftCollections, account.id),
@@ -84,9 +85,17 @@ export const useNftCollectionsModel = ({ account }: Props) => {
   );
 
   useEffect(() => {
-    const moreToShow = numberOfVisibleCollections < filteredCollections.length;
+    const moreToShow = nftsFromSimplehashFeature?.enabled
+      ? filteredCollections.length <= numberOfVisibleCollections && hasNextPage
+      : numberOfVisibleCollections < filteredCollections.length;
+
     setDisplayShowMore(moreToShow);
-  }, [numberOfVisibleCollections, filteredCollections.length]);
+  }, [
+    numberOfVisibleCollections,
+    filteredCollections.length,
+    nftsFromSimplehashFeature?.enabled,
+    hasNextPage,
+  ]);
 
   return {
     nftsInTheCollection,

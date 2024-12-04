@@ -47,6 +47,7 @@ type Props = {
 const Collections = ({ account }: Props) => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const staleTime = nftsFromSimplehashFeature?.params?.staleTime;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -76,20 +77,21 @@ const Collections = ({ account }: Props) => {
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
     enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime,
   });
   const collections = useMemo(
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
-  const collectionsLength = Object.keys(collections).length;
+
   const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    setNumberOfVisibleCollections(
+      numberOfVisibleCollections => numberOfVisibleCollections + INCREMENT,
     );
     if (hasNextPage) {
       fetchNextPage();
     }
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
+  }, [fetchNextPage, hasNextPage]);
   const { hiddenNftCollections } = useNftCollectionsStatus();
   const filteredCollections = useMemo(
     () =>
@@ -113,6 +115,10 @@ const Collections = ({ account }: Props) => {
         )),
     [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
+
+  const isShowMoreVisible = nftsFromSimplehashFeature?.enabled
+    ? filteredCollections.length <= numberOfVisibleCollections && hasNextPage
+    : filteredCollections.length > numberOfVisibleCollections;
 
   useEffect(() => {
     track("View NFT Collections (Account Page)");
@@ -164,7 +170,7 @@ const Collections = ({ account }: Props) => {
             </Button>
           </EmptyState>
         )}
-        {filteredCollections.length > numberOfVisibleCollections ? (
+        {isShowMoreVisible ? (
           <TokenShowMoreIndicator expanded onClick={onShowMore}>
             <Box horizontal alignContent="center" justifyContent="center" py={3}>
               <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
