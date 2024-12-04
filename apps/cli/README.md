@@ -271,7 +271,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
@@ -345,7 +345,7 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
@@ -518,7 +518,7 @@ Usage: ledger-live send       # Send crypto-assets
      --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
-     --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
+     --tokenId <String>       : determine the tokenId of an NFT (related to the --collection)
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
