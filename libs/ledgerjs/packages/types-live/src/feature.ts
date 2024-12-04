@@ -202,6 +202,7 @@ export type Features = CurrencyFeatures & {
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
+  llmAccountListUI: DefaultFeature;
 };
 
 /**
