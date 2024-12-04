@@ -24,7 +24,6 @@ test("getAddress without display", async () => {
   );
   const aptos = new Aptos(transport);
   const { address } = await aptos.getAddress("m/44'/637'/1'/0'/0'", false);
-  console.log(address);
   expect(address).toEqual("0x783135e8b00430253a22ba041d860c373d7a1501ccf7ac2d1ad37a8ed2775aee");
 });
 

@@ -1,3 +1,20 @@
+/********************************************************************************
+ *   Ledger Node JS API
+ *   (c) 2017-2018 Ledger
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
+
 import BIPPath from "bip32-path";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
@@ -27,6 +44,40 @@ export interface AddressData {
   address: string;
 }
 
+/**
+ * Aptos API
+ *
+ * @example
+ * import Transport from "@ledgerhq/hw-transport";
+ * import Aptos from "@ledgerhq/hw-app-aptos";
+ *
+ * function establishConnection() {
+ *     return Transport.create()
+ *         .then(transport => new Aptos(transport));
+ * }
+ *
+ * function fetchAddress(aptosClient) {
+ *     return aptosClient.getAddress("44'/144'/0'/0/0");
+ * }
+ *
+ * function signTransaction(aptosClient, deviceData, seqNo, buffer) { *
+ *     const transactionBlob = encode(buffer);
+ *
+ *     console.log('Sending transaction to device for approval...');
+ *     return aptosClient.signTransaction("44'/144'/0'/0/0", transactionBlob);
+ * }
+ *
+ * function prepareAndSign(aptosClient, seqNo) {
+ *     return fetchAddress(aptosClient)
+ *         .then(deviceData => signTransaction(aptosClient, deviceData, seqNo));
+ * }
+ *
+ * establishConnection()
+ *     .then(aptos => prepareAndSign(aptos, 123, payload))
+ *     .then(signature => console.log(`Signature: ${signature}`))
+ *     .catch(e => console.log(`An error occurred (${e.message})`));
+ */
+
 export default class Aptos {
   transport: Transport;
 
@@ -47,6 +98,16 @@ export default class Aptos {
     };
   }
 
+  /**
+   * get Aptos address for a given BIP 32 path.
+   *
+   * @param path a path in BIP 32 format
+   * @param display optionally enable or not the display
+   * @return an object with a publicKey, address and (optionally) chainCode
+   * @example
+   * const result = await aptos.getAddress("44'/144'/0'/0/0");
+   * const { publicKey, address } = result;
+   */
   async getAddress(path: string, display = false): Promise<AddressData> {
     const pathBuffer = this.pathToBuffer(path);
     const responseBuffer = await this.sendToDevice(
@@ -71,6 +132,16 @@ export default class Aptos {
     };
   }
 
+  /**
+   * sign a Aptos transaction with a given BIP 32 path
+   *
+   *
+   * @param path a path in BIP 32 format
+   * @param txBuffer the buffer to be signed for transaction
+   * @return a signature as hex string
+   * @example
+   * const signature = await aptos.signTransaction("44'/144'/0'/0/0", "12000022800000002400000002614000000001315D3468400000000000000C73210324E5F600B52BB3D9246D49C4AB1722BA7F32B7A3E4F9F2B8A1A28B9118CC36C48114F31B152151B6F42C1D61FE4139D34B424C8647D183142ECFC1831F6E979C6DA907E88B1CAD602DB59E2F");
+   */
   async signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }> {
     const pathBuffer = this.pathToBuffer(path);
     await this.sendToDevice(INS.SIGN_TX, P1_START, P2_MORE, pathBuffer);
