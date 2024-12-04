@@ -287,7 +287,7 @@ const ValidatorRow = ({
         </Title>
         <SubTitle>{subtitle}</SubTitle>
       </InfoContainer>
-      <SideInfo>{sideInfo}</SideInfo>
+      <SideInfo data-testid="modal-provider-side-info">{sideInfo}</SideInfo>
       {input}
     </Row>
   );

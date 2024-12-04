@@ -28,7 +28,7 @@ test("Delegate flow using max amount", async () => {
 
   await test.step("Check Ledger is the provider by default", async () => {
     await modalPage.continue();
-    const defaultprovider = await delegate.getTitleProvider();
+    const defaultprovider = await delegate.getTitleProvider(1);
     expect(defaultprovider).toEqual("Ledger");
   });
 
@@ -53,7 +53,7 @@ test("The user search and select a provider", async () => {
     await delegate.openSearchProviderModal();
     await delegate.inputProvider(providerResearched);
     await delegate.selectProvider(0);
-    const providerSelected = await delegate.getTitleProvider();
+    const providerSelected = await delegate.getTitleProvider(1);
     expect(providerSelected).toEqual(providerResearched);
   });
 });
