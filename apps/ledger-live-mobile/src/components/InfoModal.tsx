@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 
 import { useTheme } from "styled-components/native";
 import { IconsLegacy, IconBox, Flex } from "@ledgerhq/native-ui";
-import type { Props as IconBoxProps } from "@ledgerhq/native-ui/components/Icon/IconBox";
+import type { Props as IconBoxProps } from "@ledgerhq/native-ui/components/Icon/IconBox/index";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import IconArrowRight from "~/icons/ArrowRight";

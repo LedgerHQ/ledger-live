@@ -22,9 +22,6 @@
   },
   "typesVersions": {
     "*": {
-      "lib/*": [
-        "lib/*"
-      ],
       "lib-es/*": [
         "lib-es/*"
       ],
@@ -32,63 +29,29 @@
         "lib/test/bot-specs"
       ],
       "*": [
-        "lib/*",
-        "lib/api/*",
-        "lib/bridge/*",
-        "lib/common-logic/*",
-        "lib/signer/*",
-        "lib/test/*",
-        "lib/types/*"
+        "lib-es/*",
+        "lib-es/api/*",
+        "lib-es/bridge/*",
+        "lib-es/common-logic/*",
+        "lib-es/signer/*",
+        "lib-es/test/*",
+        "lib-es/types/*"
       ]
     }
   },
   "exports": {
-    "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./api": {
-      "require": "./lib/api/index.js",
-      "default": "./lib-es/api/index.js"
-    },
-    "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
-    },
-    "./erc20": {
-      "require": "./lib/erc20/tokenAccounts.js",
-      "default": "./lib-es/erc20/tokenAccounts.js"
-    },
-    "./logic": {
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
-    },
-    "./network": {
-      "require": "./lib/network/index.js",
-      "default": "./lib-es/network/index.js"
-    },
-    "./signer": {
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
-    "./specs": {
-      "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/test/bot-specs.js"
-    },
-    "./transaction": {
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
-    },
-    "./types": {
-      "require": "./lib/types/index.js",
-      "default": "./lib-es/types/index.js"
-    },
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    ".": {
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
+    "./api": "./lib-es/api/index.js",
+    "./deviceTransactionConfig": "./lib-es/bridge/deviceTransactionConfig.js",
+    "./erc20": "./lib-es/erc20/tokenAccounts.js",
+    "./logic": "./lib-es/common-logic/index.js",
+    "./network": "./lib-es/network/index.js",
+    "./signer": "./lib-es/signer/index.js",
+    "./specs": "./lib-es/test/bot-specs.js",
+    "./transaction": "./lib-es/bridge/transaction.js",
+    "./types": "./lib-es/types/index.js",
+    "./*": "./lib-es/*.js",
+    ".": "./lib-es/index.js",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -121,11 +84,11 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-filecoin.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

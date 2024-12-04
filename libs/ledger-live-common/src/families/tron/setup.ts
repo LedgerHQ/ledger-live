@@ -4,7 +4,7 @@ import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import tronResolver from "@ledgerhq/coin-tron/signer";
 import type { CliTools } from "@ledgerhq/coin-tron/test/cli";
 import makeCliTools from "@ledgerhq/coin-tron/test/cli";
-import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types";
+import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";

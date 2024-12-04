@@ -6,7 +6,6 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "downlevelIteration": true,
-    "module": "commonjs",
     "lib": ["es2020", "dom"],
     "jsx": "react",
     "outDir": "lib"

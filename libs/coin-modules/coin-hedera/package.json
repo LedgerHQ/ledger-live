@@ -22,9 +22,6 @@
   },
   "typesVersions": {
     "*": {
-      "lib/*": [
-        "lib/*"
-      ],
       "lib-es/*": [
         "lib-es/*"
       ],
@@ -32,45 +29,19 @@
         "lib/test/bot-specs"
       ],
       "*": [
-        "lib/*"
+        "lib-es/*"
       ]
     }
   },
   "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./api": {
-      "require": "./lib/api/index.js",
-      "default": "./lib-es/api/index.js"
-    },
-    "./deviceTransactionConfig": {
-      "require": "./lib/deviceTransactionConfig.js",
-      "default": "./lib-es/deviceTransactionConfig.js"
-    },
-    "./signer": {
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
-    "./specs": {
-      "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/test/bot-specs.js"
-    },
-    "./transaction": {
-      "require": "./lib/transaction.js",
-      "default": "./lib-es/transaction.js"
-    },
-    "./types": {
-      "require": "./lib/types/index.js",
-      "default": "./lib-es/types/index.js"
-    },
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    ".": {
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
+    "./api": "./lib-es/api/index.js",
+    "./deviceTransactionConfig": "./lib-es/deviceTransactionConfig.js",
+    "./signer": "./lib-es/signer/index.js",
+    "./specs": "./lib-es/test/bot-specs.js",
+    "./transaction": "./lib-es/transaction.js",
+    "./types": "./lib-es/types/index.js",
+    "./*": "./lib-es/*.js",
+    ".": "./lib-es/index.js",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -83,7 +54,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
-    "@hashgraph/sdk": "2.14.2",
+    "@hashgraph/sdk": "2.54.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
@@ -99,11 +70,11 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hedera.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
