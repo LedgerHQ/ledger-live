@@ -68,6 +68,7 @@ describe("useNftGalleryFilter", () => {
           nftsOwned,
           chains,
           threshold: 80,
+          enabled: true,
         }),
       {
         wrapper,
