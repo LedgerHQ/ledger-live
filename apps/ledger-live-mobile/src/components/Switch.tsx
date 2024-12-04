@@ -1,6 +1,6 @@
 import React from "react";
 import { Switch as RNSwitch } from "@ledgerhq/native-ui";
-import type { SwitchProps as RNSwitchProps } from "@ledgerhq/native-ui/components/Form/Switch";
+import type { SwitchProps as RNSwitchProps } from "@ledgerhq/native-ui/components/Form/Switch/index";
 
 type SwitchProps = {
   value: boolean;

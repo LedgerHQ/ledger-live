@@ -22,7 +22,7 @@ import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currenci
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
-import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -229,7 +229,7 @@ function FromRow({
 
       {(!!fromAmountError || !!fromAmountWarning) && (
         <SwapStatusContainer isError={!!fromAmountError}>
-          <WarningSolidMedium size={16} />
+          <IconsLegacy.WarningSolidMedium size={16} />
           <SwapStatusText fontWeight={500} fontFamily="Inter" fontSize={12} lineHeight="14px">
             <TranslatedError error={fromAmountError || fromAmountWarning} />
           </SwapStatusText>
