@@ -58,6 +58,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
     chains: SUPPORTED_NFT_CURRENCIES,
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const nfts = nftsFromSimplehashEnabled ? filteredNfts : nftsOrdered;

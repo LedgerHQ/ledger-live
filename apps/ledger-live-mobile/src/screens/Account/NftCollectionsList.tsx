@@ -40,6 +40,7 @@ export default function NftCollectionsList({ account }: Props) {
     chains: [account.currency.id],
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const { hiddenNftCollections } = useNftCollectionsStatus();

@@ -29,6 +29,7 @@ export function useNftGalleryFilter({
     getNextPageParam: lastPage => lastPage.next_cursor,
     enabled: enabled && addresses.length > 0,
     refetchOnMount: true,
+    refetchOnWindowFocus: false,
     staleTime: staleTime ?? 1000 * 60 * 10,
   });
 

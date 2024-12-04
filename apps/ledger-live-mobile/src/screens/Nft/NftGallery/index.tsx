@@ -57,6 +57,7 @@ const NftGallery = () => {
     chains: [account.currency.id],
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const { hiddenNftCollections } = useNftCollectionsStatus();
