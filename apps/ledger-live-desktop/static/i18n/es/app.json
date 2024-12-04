@@ -1139,6 +1139,7 @@
       "send" : "Enviar",
       "swap" : "Permutar",
       "stake" : "Poner en participación",
+      "earn" : "Earn",
       "yield" : "Rendimiento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Poner en participación",
-        "description" : "Pon en participación tus cripto con Ledger"
+        "description" : "Obtén recompensas por tus cripto"
       }
     },
     "recoverBanner" : {

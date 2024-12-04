@@ -31,6 +31,7 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
       currencyUnit={units[0]}
       balance={new BigNumber(0)}
       name={name}
+      id={id}
       progress={0}
     />
   );

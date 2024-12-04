@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { accountsSelector, orderedVisibleNftsSelector } from "~/renderer/reducers/accounts";
 import isEqual from "lodash/isEqual";
 import { getEnv } from "@ledgerhq/live-env";
+import { State } from "~/renderer/reducers";
 
 /**
  * Represents the size of groups for batching address fetching.
@@ -41,9 +42,12 @@ export function useSyncNFTsWithAccounts() {
   const threshold = getThreshold(nftsFromSimplehashFeature?.params?.threshold);
 
   const { enabled, hideSpamCollection } = useHideSpamCollection();
-
   const accounts = useSelector(accountsSelector);
-  const nftsOwned = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOwned = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addressGroups = useMemo(() => {
     const uniqueAddresses = [

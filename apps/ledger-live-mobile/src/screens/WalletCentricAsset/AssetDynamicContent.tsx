@@ -1,7 +1,8 @@
 import { Flex, SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Linking } from "react-native";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 
 type Props = {
@@ -9,13 +10,8 @@ type Props = {
 };
 
 const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
-  const {
-    getAssetCardByIdOrTicker,
-    logClickCard,
-    logImpressionCard,
-    dismissCard,
-    trackContentCardEvent,
-  } = useDynamicContent();
+  const { getAssetCardByIdOrTicker, logClickCard, dismissCard, trackContentCardEvent } =
+    useDynamicContent();
   const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
   const onClickLink = useCallback(() => {
@@ -45,26 +41,21 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
     dismissCard(dynamicContentCard.id);
   }, [dismissCard, dynamicContentCard, trackContentCardEvent]);
 
-  useEffect(() => {
-    if (dynamicContentCard) {
-      // Notify Braze that the card has been displayed to the user
-      logImpressionCard(dynamicContentCard.id);
-    }
-  }, [dynamicContentCard, logImpressionCard]);
-
   if (!dynamicContentCard) return null;
 
   return (
-    <Flex mt={6}>
-      <SideImageCard
-        title={dynamicContentCard.title}
-        tag={dynamicContentCard.tag}
-        cta={dynamicContentCard.cta}
-        imageUrl={dynamicContentCard.image}
-        onPress={onClickLink}
-        onPressDismiss={onPressDismiss}
-      />
-    </Flex>
+    <LogContentCardWrapper id={dynamicContentCard.id}>
+      <Flex mt={6}>
+        <SideImageCard
+          title={dynamicContentCard.title}
+          tag={dynamicContentCard.tag}
+          cta={dynamicContentCard.cta}
+          imageUrl={dynamicContentCard.image}
+          onPress={onClickLink}
+          onPressDismiss={onPressDismiss}
+        />
+      </Flex>
+    </LogContentCardWrapper>
   );
 };
 

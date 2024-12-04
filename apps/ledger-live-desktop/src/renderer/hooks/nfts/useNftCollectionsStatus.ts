@@ -5,27 +5,27 @@ import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/setti
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
+export const nftCollectionParser = (
+  nftCollection: Record<BlockchainEVM, Record<string, NftStatus>>,
+  applyFilterFn: (arg0: [string, NftStatus]) => boolean,
+) =>
+  Object.values(nftCollection).flatMap(contracts =>
+    Object.entries(contracts)
+      .filter(applyFilterFn)
+      .map(([contract]) => contract),
+  );
+
 export function useNftCollectionsStatus() {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
-  const shouldDisplaySpams = !nftsFromSimplehashFeature?.enabled;
-
-  const nftCollectionParser = (
-    nftCollection: Record<BlockchainEVM, Record<string, NftStatus>>,
-    applyFilterFn: (arg0: [string, NftStatus]) => boolean,
-  ) =>
-    Object.values(nftCollection).flatMap(contracts =>
-      Object.entries(contracts)
-        .filter(applyFilterFn)
-        .map(([contract]) => contract),
-    );
+  const hideSpams = Boolean(nftsFromSimplehashFeature?.enabled);
 
   const list = useMemo(() => {
     return nftCollectionParser(nftCollectionsStatusByNetwork, ([_, status]) =>
-      !shouldDisplaySpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+      hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
     );
-  }, [nftCollectionsStatusByNetwork, shouldDisplaySpams]);
+  }, [nftCollectionsStatusByNetwork, hideSpams]);
 
   const whitelisted = useMemo(() => {
     return nftCollectionParser(

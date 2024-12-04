@@ -1,7 +1,7 @@
 import {
   TransportStatusError,
-  WrongDeviceForAccountRefund,
   WrongDeviceForAccountPayout,
+  WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
@@ -14,14 +14,13 @@ import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import {
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
-import { getSwapProvider } from "../providers";
-import { convertToAppExchangePartnerKey } from "../providers";
+import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
@@ -130,12 +129,15 @@ const completeExchange = (
 
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
-        ].getSerializedAddressParameters(
+        ]?.getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode,
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         //-- Special case of SPLToken
         //- NOT READY YET
@@ -184,12 +186,15 @@ const completeExchange = (
         if (unsubscribed) return;
         const refundAddressParameters = await perFamily[
           mainRefundCurrency.family
-        ].getSerializedAddressParameters(
+        ]?.getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode,
           mainRefundCurrency.id,
         );
         if (unsubscribed) return;
+        if (!refundAddressParameters) {
+          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+        }
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
           await getCurrencyExchangeConfig(refundCurrency);

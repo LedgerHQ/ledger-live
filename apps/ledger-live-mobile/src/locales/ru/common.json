@@ -1287,20 +1287,20 @@
     "title" : "Вам нужен Ledger",
     "desc" : "В целях безопасности Ledger Live работает только при использовании устройства. Для продолжения вам необходимо устройство.",
     "cta" : "Купить Ledger",
-    "footer" : "У меня уже есть устройство, его необходимо настроить",
-    "bannerTitle" : "Храните криптовалюту и NFT в безопасности",
-    "bannerTitle2" : "Для торговли с устройством Ledger",
-    "bannerSubtitle" : "вам потребуется Nano",
-    "bannerButtonTitle" : "Подробнее о Nano",
-    "bannerButtonTitle2" : "Купить устройство",
-    "setupCta" : "У меня уже есть устройство, настроить его"
+    "footer" : "У меня уже есть Ledger, настроить его",
+    "bannerTitle" : "Передовая защита для ваших монет и NFT",
+    "bannerTitle2" : "Вам понадобится Ledger для проведения сделок",
+    "bannerSubtitle" : "с Ledger Flex",
+    "bannerButtonTitle" : "Больше о Ledger Flex",
+    "bannerButtonTitle2" : "Купить Ledger",
+    "setupCta" : "У меня уже есть Ledger, настроить его"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Уже получили устройство?",
-    "desc" : "Как только получите устройство, можете начать его настройку через Ledger Live.",
-    "cta" : "Настройка устройства",
-    "bannerTitle" : "Получили устройство?",
-    "bannerCta" : "Начните настройку",
+    "title" : "Уже получили ваш Ledger?",
+    "desc" : "Настройте устройство Ledger после получения, чтобы полноценно использовать Ledger Live.",
+    "cta" : "Настроить мой Ledger",
+    "bannerTitle" : "Получили новый Ledger?",
+    "bannerCta" : "Настройте его",
     "continue" : "Продолжить"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Успешная покупка",
-    "title" : "Поздравляем!",
-    "desc" : "Ваш заказ обрабатывается.\nОчень скоро вы получите свой Ledger. Мы выслали подтверждение заказа на Email."
+    "title" : "Спасибо, что доверяете Ledger",
+    "desc" : "Ваш заказ обрабатывается. \nМы выслали подтверждение заказа на Email."
   },
   "discover" : {
     "title" : "Исследуйте",
@@ -2360,8 +2360,7 @@
       "swap" : "Обмен",
       "send" : "Отправить",
       "deposit" : "Получить",
-      "stake" : "Стейкать",
-      "yield" : "Доходность"
+      "stake" : "Стейкать"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3272,7 +3271,7 @@
     },
     "stake" : {
       "title" : "Стейкинг",
-      "description" : "Стейкайте криптоактивы"
+      "description" : "Получайте вознаграждения с вашей крипты"
     },
     "swap" : {
       "title" : "Обмен",

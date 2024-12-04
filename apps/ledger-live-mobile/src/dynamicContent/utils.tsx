@@ -30,16 +30,10 @@ export const filterByType = (array: BrazeContentCard[], type: ContentCardsType) 
   array.filter(elem => elem.extras.type === type);
 
 export const compareCards = (a: ContentCardCommonProperties, b: ContentCardCommonProperties) => {
-  if (a.order && !b.order) {
-    return -1;
-  }
-  if (!a.order && b.order) {
-    return 1;
-  }
-  if ((!a.order && !b.order) || a.order === b.order) {
-    return b.createdAt - a.createdAt;
-  }
-  return (a.order || 0) - (b.order || 0);
+  if (a.order === b.order) return b.createdAt - a.createdAt;
+  if (a.order === undefined) return 1;
+  if (b.order === undefined) return -1;
+  return a.order - b.order;
 };
 
 export const filterCategoriesByLocation = (
@@ -82,7 +76,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   location: card.extras.location as ContentCardLocation,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
   cardsLayout: card.extras.cardsLayout as ContentCardsLayout,
   cardsType: card.extras.cardsType as ContentCardsType,
   type: card.extras.type as ContentCardsType.category,
@@ -92,6 +86,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   cta: card.extras.cta,
   isDismissable: Boolean(card.extras?.isDismissable === "true"),
   hasPagination: Boolean(card.extras?.hasPagination === "true"),
+  centeredText: Boolean(card.extras?.centeredText === "true"),
 });
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
@@ -104,7 +99,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCar
   background: Background[card.extras.background as Background] || Background.purple,
   viewed: card.viewed,
   createdAt: card.created,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
 });
 
 export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard => ({
@@ -116,10 +111,10 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   link: card.extras.link,
   cta: card.extras.cta,
   assets: card.extras.assets ?? "",
-  displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
+  displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets),
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
 });
 
 export const mapAsLearnContentCard = (card: BrazeContentCard): LearnContentCard => ({
@@ -131,7 +126,7 @@ export const mapAsLearnContentCard = (card: BrazeContentCard): LearnContentCard 
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
 });
 
 export const mapAsNotificationContentCard = (card: BrazeContentCard): NotificationContentCard => ({
@@ -144,7 +139,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
   cta: card.extras.cta,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
 });
 
 export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalContentCard => ({
@@ -157,7 +152,7 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
   gridWidthFactor: WidthFactor.Full,
 });
 
@@ -173,17 +168,20 @@ const mapAsSquareContentCard = (
   tag: card.extras.tag,
   title: card.extras.title,
   description: card.extras.description,
-  image: card.extras.image,
-  price: card.extras.subtitle,
+  subDescription: card.extras.subDescription,
+  descriptionTextAlign: card.extras.descriptionTextAlign as CanvasTextAlign,
+  titleTextAlign: card.extras.titleTextAlign as CanvasTextAlign,
   cta: card.extras.cta,
   size,
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
   carouselWidthFactor,
   gridWidthFactor,
-  filledImage: Boolean(card.extras.filledImage),
+  mediaType: card.extras.mediaType as VerticalContentCard["mediaType"],
+  media: card.extras.media,
+  filledMedia: Boolean(card.extras.filledMedia),
 });
 
 export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
@@ -191,12 +189,14 @@ export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard =>
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
+  secondaryText: card.extras.secondaryText,
   image: card.extras.image,
   cta: card.extras.cta,
+  centeredText: Boolean(card.extras?.centeredText === "true"),
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  order: parseInt(card.extras.order) ?? undefined,
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>

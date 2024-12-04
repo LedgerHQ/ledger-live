@@ -5,6 +5,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import { Account } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Root = (props: {
   account: Account;
@@ -13,6 +14,10 @@ const Root = (props: {
   onChange: (a: Transaction) => void;
   trackProperties?: object;
 }) => {
+  const lldMemoTag = useFeature("lldMemoTag");
+
+  if (lldMemoTag?.enabled) return null;
+
   return <MemoField {...props} />;
 };
 

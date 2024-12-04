@@ -78,7 +78,9 @@ const MemoTagField = ({
           autoFocus={autoFocus}
           data-testid="memo-tag-input"
         />
-        {autoFocus && <InstructionText>{t("MemoTagField.instruction")}</InstructionText>}
+        {!warning && !error && autoFocus && (
+          <InstructionText>{t("MemoTagField.instruction")}</InstructionText>
+        )}
       </Flex>
     </Box>
   );

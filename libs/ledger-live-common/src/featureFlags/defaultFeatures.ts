@@ -466,8 +466,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       variant: ABTestingVariants.variantA,
       refreshRate: 2,
-      top: 50,
+      top: 100,
+      limit: 100,
       supported: true,
+      enableNewFeature: false,
     },
   },
 

@@ -110,6 +110,7 @@ const AccountRow = ({
       currencyUnit={unit}
       balance={account.balance}
       name={name}
+      id={accountId}
       countervalueChange={countervalueChange}
       tag={tag}
       topLink={topLink}

@@ -26,6 +26,7 @@ export default class CommonPage {
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
+  deviceRowRegex = /device-item-.*/;
 
   @Step("Perform search")
   async performSearch(text: string) {
@@ -86,5 +87,10 @@ export default class CommonPage {
   async removeSpeculos(proxyPort?: number) {
     await deleteSpeculos(proxyPort);
     proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  }
+
+  @Step("Select a known device")
+  async selectKnownDevice(index = 0) {
+    await tapById(this.deviceRowRegex, index);
   }
 }

@@ -42,6 +42,7 @@ function AccessExistingWallet() {
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
+      fromAccessExistingWallet: true,
     });
   }, [dispatch, navigation]);
 

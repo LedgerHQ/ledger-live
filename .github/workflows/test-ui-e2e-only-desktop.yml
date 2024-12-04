@@ -37,6 +37,15 @@ on:
         required: false
         type: string
         default: "B2CQA-2461"
+      build_type:
+        description: "Firebase env to target (pick js for release testing)"
+        required: false
+        type: choice
+        options:
+          - js
+          - staging
+          - testing
+        default: testing
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -80,6 +89,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
+          build_type: ${{ inputs.build_type || 'testing' }}
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}

@@ -509,7 +509,9 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
   refreshRate: number;
   top: number;
+  limit: number;
   supported: boolean;
+  enableNewFeature: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{

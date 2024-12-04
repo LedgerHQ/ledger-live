@@ -25,6 +25,7 @@ export const Close = ({ onPress }: { onPress: ButtonAction }) => {
 
 type LabelProps = {
   label: string;
+  hasSecondaryText?: boolean;
 };
 
 export const Tag = ({ label }: LabelProps) => {
@@ -47,12 +48,27 @@ export const Tag = ({ label }: LabelProps) => {
   );
 };
 
-export const Title = ({ label }: LabelProps) => {
+export const Title = ({ label, hasSecondaryText }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="body" fontWeight="medium" color={colors.neutral.c80} lineHeight={"18px"}>
-      {label}
+    <Text
+      variant="body"
+      fontWeight="medium"
+      color={!hasSecondaryText ? colors.neutral.c80 : colors.neutral.c100}
+      lineHeight={"18px"}
+    >
+      {label.replace(/\\n/g, "\n")}
+    </Text>
+  );
+};
+
+export const SecondaryText = ({ label }: { label: string }) => {
+  const { colors } = useTheme();
+
+  return (
+    <Text variant="small" color={colors.neutral.c70} lineHeight={"16px"}>
+      {label.replace(/\\n/g, "\n")}
     </Text>
   );
 };
