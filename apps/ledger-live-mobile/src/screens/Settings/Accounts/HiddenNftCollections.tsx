@@ -15,9 +15,6 @@ import { State } from "~/reducers/types";
 import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 
-const MAX_COLLECTIONS_FIRST_RENDER = 10;
-const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
-
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
 ` as unknown as typeof FlatList;
@@ -35,6 +32,9 @@ const CollectionNameSkeleton = styled(Skeleton)`
   border-radius: 4px;
   margin-left: 10px;
 `;
+
+const MAX_COLLECTIONS_FIRST_RENDER = 20;
+const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 10;
 
 const HiddenNftCollectionRow = ({
   contractAddress,

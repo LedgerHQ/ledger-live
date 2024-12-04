@@ -9,8 +9,8 @@ import { accountsSelector, filteredNftsSelector, hasNftsSelector } from "~/reduc
 
 import isEqual from "lodash/isEqual";
 import { galleryChainFiltersSelector } from "~/reducers/nft";
+import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useNftCollections } from "~/hooks/nfts/useNftCollections";
 import { State } from "~/reducers/types";
 
 const WalletNftGallery = () => {
@@ -18,6 +18,8 @@ const WalletNftGallery = () => {
   const hasNFTs = useSelector(hasNftsSelector);
   const accounts = useSelector(accountsSelector);
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const enabled = nftsFromSimplehashFeature?.enabled || false;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
 
   const chainFilters = useSelector(galleryChainFiltersSelector);
   const nftsOwned = useSelector(
@@ -43,10 +45,13 @@ const WalletNftGallery = () => {
     [chainFilters],
   );
 
-  const { isLoading, hasNextPage, error, fetchNextPage, refetch, allNfts } = useNftCollections({
+  const { isLoading, hasNextPage, error, fetchNextPage, refetch, nfts } = useNftGalleryFilter({
     addresses,
     chains,
     nftsOwned,
+    threshold: getThreshold(threshold),
+    enabled,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const useSimpleHash = Boolean(nftsFromSimplehashFeature?.enabled);
@@ -55,10 +60,11 @@ const WalletNftGallery = () => {
     <Flex flex={1} testID="wallet-nft-gallery-screen">
       {hasNFTs ? (
         <NftList
-          data={allNfts}
+          data={useSimpleHash ? nfts : nftsOwned}
           isLoading={useSimpleHash ? isLoading : false}
           error={error}
           refetch={refetch}
+          hasNextPage={!!hasNextPage && useSimpleHash}
           fetchNextPage={() => {
             if (useSimpleHash && hasNextPage) {
               fetchNextPage();
