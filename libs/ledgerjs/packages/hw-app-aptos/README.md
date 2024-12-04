@@ -49,6 +49,18 @@ import Aptos from "@ledgerhq/hw-app-aptos";
 const aptos = new Aptos(transport);
 ```
 
+#### getVersion
+
+Get application version.
+
+##### Examples
+
+```javascript
+aptos.getVersion().then(r => r.version);
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<AppConfig>** an object with the version field
+
 #### getAddress
 
 get Aptos address for a given BIP 32 path.
@@ -65,3 +77,20 @@ aptos.getAddress("44'/283'/0'/0/0").then(o => o.address);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey, address and (optionally) chainCode
+
+#### signTransaction
+
+Sign an Aptos transaction.
+
+##### Parameters
+
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+- `txBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized transaction
+
+##### Examples
+
+```javascript
+aptos.signTransaction("m/44'/637'/1'/0'/0'", txBuffer).then(r => r.signature);
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field

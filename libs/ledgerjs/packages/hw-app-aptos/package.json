@@ -5,7 +5,6 @@
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "algo",
     "Aptos",
     "NanoS",
     "Blue",
@@ -18,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-aptosd",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-aptos",
   "publishConfig": {
     "access": "public"
   },
