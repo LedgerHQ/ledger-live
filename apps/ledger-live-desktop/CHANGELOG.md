@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.94.0-next.3
+
+### Minor Changes
+
+- [#8596](https://github.com/LedgerHQ/ledger-live/pull/8596) [`40509e4`](https://github.com/LedgerHQ/ledger-live/commit/40509e4411af132a03e3d70f685dc8242c8d1031) Thanks [@Canestin](https://github.com/Canestin)! - fix: add mev protection on swap
+
 ## 2.94.0-next.2
 
 ### Minor Changes
