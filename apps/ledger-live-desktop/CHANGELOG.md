@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.94.0-next.2
+
+### Minor Changes
+
+- [#8586](https://github.com/LedgerHQ/ledger-live/pull/8586) [`87d298c`](https://github.com/LedgerHQ/ledger-live/commit/87d298cf99479ba1cab21665f5b1216dceba0da8) Thanks [@themooneer](https://github.com/themooneer)! - Add ICP memo field to first step of new memo flow , FF ON
+
 ## 2.94.0-next.1
 
 ### Patch Changes
