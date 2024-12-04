@@ -45,6 +45,7 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 1 \
+    --runInBand \
     --cleanup`;
 };
 
