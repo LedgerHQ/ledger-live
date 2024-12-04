@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { AnalyticsButton, AnalyticsPage, useLedgerSyncAnalytics } from "./useLedgerSyncAnalytics";
 
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 
 export enum ErrorReason {
   UNSECURED = "unsecured",

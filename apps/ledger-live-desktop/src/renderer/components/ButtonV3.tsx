@@ -1,6 +1,6 @@
 import React from "react";
 import { Button as BaseButton, InvertTheme } from "@ledgerhq/react-ui";
-import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button";
+import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button/index";
 import { useTrack } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 

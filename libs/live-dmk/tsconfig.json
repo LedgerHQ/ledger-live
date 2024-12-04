@@ -6,8 +6,6 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "module": "esnext",
-    "moduleResolution": "Bundler",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
