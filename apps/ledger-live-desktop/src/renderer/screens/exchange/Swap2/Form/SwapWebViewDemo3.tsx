@@ -101,6 +101,7 @@ function simplifyFromPath(path: string): string {
 }
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
+const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
@@ -453,6 +454,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
+            swapUserIp: SWAP_USER_IP,
             devMode,
             shareAnalytics,
           }}
