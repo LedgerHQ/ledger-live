@@ -51,6 +51,7 @@ const WalletNftGallery = () => {
     nftsOwned,
     threshold: getThreshold(threshold),
     enabled,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const useSimpleHash = Boolean(nftsFromSimplehashFeature?.enabled);

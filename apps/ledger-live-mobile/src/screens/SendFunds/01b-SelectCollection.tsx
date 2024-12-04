@@ -100,6 +100,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
     chains: [account.currency.id],
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);

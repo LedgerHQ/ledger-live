@@ -116,10 +116,6 @@ const Collections = ({ account }: Props) => {
     [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
 
-  const isShowMoreVisible = nftsFromSimplehashFeature?.enabled
-    ? filteredCollections.length <= numberOfVisibleCollections && hasNextPage
-    : filteredCollections.length > numberOfVisibleCollections;
-
   useEffect(() => {
     track("View NFT Collections (Account Page)");
   }, []);
@@ -170,7 +166,7 @@ const Collections = ({ account }: Props) => {
             </Button>
           </EmptyState>
         )}
-        {isShowMoreVisible ? (
+        {filteredCollections.length > numberOfVisibleCollections ? (
           <TokenShowMoreIndicator expanded onClick={onShowMore}>
             <Box horizontal alignContent="center" justifyContent="center" py={3}>
               <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
