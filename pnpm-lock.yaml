@@ -24822,8 +24822,8 @@ packages:
     resolution: {integrity: sha512-yAyTfdeNJGGBFxWdzSKCBYxs5FxLbCg5X5Q4ets974hcQzG1+qCxvIyOo4j2Ry6MUlhWVMX4OoYDefAIIwupjw==}
     engines: {node: '>= 10.13'}
 
-  node-abi@3.56.0:
-    resolution: {integrity: sha512-fZjdhDOeRcaS+rcpve7XuwHBmktS1nS1gzgghwKUQQ8nTy2FdSDr6ZT8k6YhvlJeHmmQMYiT/IH9hfco5zeW2Q==}
+  node-abi@3.71.0:
+    resolution: {integrity: sha512-SZ40vRiy/+wRTf21hxkkEjPJZpARzUMVcJoQse2EF8qkUWbbO2z7vd5oA/H6bVH6SZQ5STGcu0KRDS7biNRfxw==}
     engines: {node: '>=10'}
 
   node-abort-controller@3.1.1:
@@ -58202,7 +58202,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  node-abi@3.56.0:
+  node-abi@3.71.0:
     dependencies:
       semver: 7.5.4
 
@@ -59532,7 +59532,7 @@ snapshots:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 1.0.2
-      node-abi: 3.56.0
+      node-abi: 3.71.0
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
