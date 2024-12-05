@@ -37,7 +37,7 @@ for (const currency of currencies) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();

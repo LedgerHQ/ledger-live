@@ -41,11 +41,11 @@ for (const account of accounts) {
       {
         annotation: {
           type: "TMS",
-          description: "B2CQA-249, B2CQA-651, B2CQA-652",
+          description: account.xrayTicket,
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
@@ -102,7 +102,7 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);

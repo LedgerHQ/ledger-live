@@ -38,7 +38,7 @@ for (const token of subAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();
@@ -74,7 +74,7 @@ for (const token of subAccountReceive) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(token.account.accountName);
@@ -110,7 +110,7 @@ for (const token of subAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(token.account.accountName);
