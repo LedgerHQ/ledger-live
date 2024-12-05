@@ -1139,6 +1139,7 @@
       "send" : "Enviar",
       "swap" : "Permutar",
       "stake" : "Poner en participación",
+      "earn" : "Earn",
       "yield" : "Rendimiento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Poner en participación",
-        "description" : "Pon en participación tus cripto con Ledger"
+        "description" : "Obtén recompensas por tus cripto"
       }
     },
     "recoverBanner" : {
@@ -2390,7 +2391,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Diagnosticar problemas de red"
+    "title" : "Diagnosticar problemas de red",
+    "myLedgerServices" : "Servicios de Mi Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Exploradores de Bitcoin",
+    "ethereumExplorers" : "Exploradores de Ethereum",
+    "countervaluesApi" : "API de contravalores",
+    "announcements" : "Anuncios",
+    "status" : "Estado",
+    "test" : "Prueba",
+    "renderer" : "RENDERIZADOR"
   },
   "systemLanguageAvailable" : {
     "title" : "¿Deseas cambiar el idioma de tu aplicación?",
@@ -4084,6 +4093,8 @@
       "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
+      "mevProtection" : "Protección contra MEV",
+      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -4107,6 +4118,10 @@
         "title" : "Modo de desarrollador del exchange",
         "desc" : "Añadir información del proveedor del exchange",
         "placeholder" : "Información del proveedor del exchange en formato CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Exchange en modo de prueba para socios",
+        "desc" : "Permitir uso de la clave pública provisional del socio"
       },
       "analyticsConsole" : {
         "title" : "Permitir consola de análisis",

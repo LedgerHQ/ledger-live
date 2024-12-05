@@ -49,8 +49,11 @@
     "SENTRY_ENVIRONMENT",
     "SENTRY_PROJECT",
     "SHORT_BUNDLE_ID",
+    "SWAP_API_BASE",
+    "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE"
+    "VERBOSE",
+    "BYPASS_CORS"
   ],
   "ui": "tui",
   "tasks": {

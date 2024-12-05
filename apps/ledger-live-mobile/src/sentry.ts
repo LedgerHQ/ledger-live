@@ -25,8 +25,6 @@ const excludedErrorName = [
   "EthAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "CantOpenDevice",
-  "DisconnectedDevice",
-  "DisconnectedDeviceDuringOperation",
   "DeviceOnDashboardExpected",
   "PairingFailed",
   "GetAppAndVersionUnsupportedFormat",
@@ -61,7 +59,6 @@ const excludedErrorDescription = [
   "Unexpected '<'",
   "Service Unvailable",
   // base usage of device
-  /Device .* was disconnected/,
   "Invalid channel",
   /Ledger Device is busy/,
   "Ledger device: UNKNOWN_ERROR",

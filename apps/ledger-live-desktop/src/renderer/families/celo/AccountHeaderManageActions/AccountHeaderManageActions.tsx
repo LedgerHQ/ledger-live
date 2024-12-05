@@ -8,6 +8,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { IconType } from "../../types";
 import { CeloFamily } from "../types";
 import Icon from "./Icon";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
   account,
@@ -16,6 +17,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
   const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -45,7 +47,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
       onClick: onClick,
       icon: (props: IconType) => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,
-      label: t("account.stake"),
+      label,
       tooltip: disabledLabel,
       event: "button_clicked2",
       eventProperties: {

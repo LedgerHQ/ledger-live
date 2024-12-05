@@ -120,7 +120,8 @@ const makeRecursiveFieldStructImplem = ({
         await recursiveFieldStructImplem([typeDescription, restSizes], entry, entryPath);
       }
     } else if (isCustomType) {
-      for (const [fieldName, fieldValue] of Object.entries(data as EIP712Message["message"])) {
+      for (const fieldName of Object.keys(typesMap[typeDescription?.name || ""])) {
+        const fieldValue = data[fieldName];
         const fieldType = typesMap[typeDescription?.name || ""]?.[fieldName];
 
         if (fieldType) {

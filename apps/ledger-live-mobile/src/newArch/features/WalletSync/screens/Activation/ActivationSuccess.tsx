@@ -37,6 +37,7 @@ export function ActivationSuccess({ route }: Props) {
       mainButton={{
         label: t("walletSync.success.close"),
         onPress: onClose,
+        testID: "walletsync-activation-success-close",
       }}
       analyticsPage={page}
     />

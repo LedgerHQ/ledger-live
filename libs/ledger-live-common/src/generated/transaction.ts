@@ -2,7 +2,6 @@ import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import crypto_org from "../families/crypto_org/transaction";
 import internet_computer from "../families/internet_computer/transaction";
-import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
@@ -20,6 +19,7 @@ import stellar from "@ledgerhq/coin-stellar/transaction";
 import tezos from "@ledgerhq/coin-tezos/transaction";
 import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
+import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 
 export default {
@@ -27,7 +27,6 @@ export default {
   celo,
   crypto_org,
   internet_computer,
-  vechain,
   algorand,
   bitcoin,
   cardano,
@@ -45,5 +44,6 @@ export default {
   tezos,
   ton,
   tron,
+  vechain,
   xrp,
 };

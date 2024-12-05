@@ -25,8 +25,10 @@ import { NavigatorName, ScreenName } from "~/const";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import SetupDeviceBanner from "~/components/SetupDeviceBanner";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BUY_DEVICE_FLEX,
+} from "LLM/features/Reborn/components/BuyDeviceBanner";
 import Assets from "../Assets";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -108,7 +110,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       </Box>,
       ...(hasOrderedNano
         ? [
-            <Box mx={6} mt={7} key="SetupDeviceBanner">
+            <Box mt={7} key="SetupDeviceBanner">
               <SetupDeviceBanner screen="Wallet" />
             </Box>,
           ]
@@ -121,23 +123,19 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       </Box>,
       ...(!hasOrderedNano
         ? [
-            <BuyDeviceBanner
-              style={{
-                marginHorizontal: 16,
-                marginTop: 40,
-                paddingTop: 13.5,
-                paddingBottom: 13.5,
-              }}
-              buttonLabel={t("buyDevice.bannerButtonTitle")}
-              buttonSize="small"
-              event="button_clicked"
-              eventProperties={{
-                button: "Discover the Nano",
-              }}
-              screen="Wallet"
-              {...IMAGE_PROPS_BIG_NANO}
-              key="BuyDeviceBanner"
-            />,
+            <Flex key="BuyDeviceBanner" mt={6} bg="transparent">
+              <BuyDeviceBanner
+                {...IMAGE_PROPS_BUY_DEVICE_FLEX}
+                image="buyFlex"
+                buttonLabel={t("buyDevice.bannerButtonTitle")}
+                buttonSize="small"
+                event="button_clicked"
+                eventProperties={{
+                  button: "Discover the Nano",
+                }}
+                screen="Wallet"
+              />
+            </Flex>,
           ]
         : []),
     ],

@@ -73,6 +73,7 @@ export default function AccountHeaderRight() {
         )}
         <Touchable
           event="button_clicked"
+          testID="account-settings-button"
           eventProperties={{
             button: "Account Settings",
           }}

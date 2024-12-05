@@ -15,10 +15,12 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { commandCLI } from "tests/utils/cliUtils";
 import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
+import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 
 type Command<T extends (...args: any) => Observable<any> | Promise<any> | string> = {
   command: T;
   args: Parameters<T>[0]; // Infer the first argument type
+  output?: (output: any) => void;
 };
 
 type TestFixtures = {
@@ -125,7 +127,15 @@ export const test = base.extend<TestFixtures>({
             if (command.args && "appjson" in command.args) {
               command.args.appjson = `${userdataDestinationPath}/app.json`;
             }
-            const result = await handleResult(command.command(command.args as any));
+
+            const resultPromise = handleResult(command.command(command.args as any));
+
+            if (command.args && "getKeyRingTree" in command.args) {
+              await activateLedgerSync();
+            }
+
+            const result = await resultPromise;
+            command?.output?.(result);
             console.log("CLI result: ", result);
           }
         }
@@ -143,7 +153,7 @@ export const test = base.extend<TestFixtures>({
           ...process.env,
           VERBOSE: true,
           MOCK: IS_NOT_MOCK ? undefined : true,
-          MOCK_COUNTERVALUES: true,
+          MOCK_COUNTERVALUES: IS_NOT_MOCK ? undefined : true,
           HIDE_DEBUG_MOCK: true,
           CI: process.env.CI || undefined,
           PLAYWRIGHT_RUN: true,
@@ -152,8 +162,6 @@ export const test = base.extend<TestFixtures>({
           FEATURE_FLAGS: JSON.stringify(featureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
-          DISABLE_TRANSACTION_BROADCAST:
-            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
         },
         env,
       );

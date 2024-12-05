@@ -1,6 +1,6 @@
 import { Application } from "../page";
 
-let app: Application;
+const app = new Application();
 
 const langButtonText = [
   { lang: "Français", localization: "Général" },
@@ -26,7 +26,7 @@ const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }
 $TmsLink("B2CQA-2344");
 describe("Change Language", () => {
   beforeAll(async () => {
-    app = await Application.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
+    await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

@@ -7,7 +7,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
-import LedgerByFigmentTC from "../../shared/components/LedgerByFigmentTCLink";
+import LedgerValidatorTCLink from "../../shared/components/LedgerValidatorTCLink";
 import ValidatorsField from "../../shared/fields/ValidatorsField";
 import { StepProps } from "../types";
 export default function StepValidator({
@@ -72,7 +72,8 @@ export function StepValidatorFooter({
   if (!transaction) return null;
   return (
     <>
-      <LedgerByFigmentTC transaction={transaction} />
+      <LedgerValidatorTCLink transaction={transaction} />
+
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

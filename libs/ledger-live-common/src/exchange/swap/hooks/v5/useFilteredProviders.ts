@@ -1,15 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { useFeature } from "../../../../featureFlags";
-import { fetchAndMergeProviderData } from "../../../providers/swap";
 import { getEnv } from "@ledgerhq/live-env";
+import { useCallback, useEffect, useState } from "react";
+import { fetchAndMergeProviderData } from "../../../providers/swap";
 
 export const useFilteredProviders = () => {
   const [providers, setProviders] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
-
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
 
   const fetchProviders = useCallback(async () => {
     try {
@@ -18,13 +14,7 @@ export const useFilteredProviders = () => {
 
       const data = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
 
-      let filteredProviders = Object.keys(data);
-      if (!ptxSwapMoonpayProviderFlag?.enabled) {
-        filteredProviders = filteredProviders.filter(provider => provider !== "moonpay");
-      }
-      if (!ptxSwapExodusProviderFlag?.enabled) {
-        filteredProviders = filteredProviders.filter(provider => provider !== "exodus");
-      }
+      const filteredProviders = Object.keys(data);
 
       setProviders(filteredProviders);
     } catch (error) {
@@ -32,7 +22,7 @@ export const useFilteredProviders = () => {
     } finally {
       setLoading(false);
     }
-  }, [ptxSwapMoonpayProviderFlag, ptxSwapExodusProviderFlag]);
+  }, []);
 
   useEffect(() => {
     fetchProviders();

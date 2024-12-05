@@ -88,8 +88,8 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
-    dispatch(setIsDynamicContentLoading(false));
     dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
+    dispatch(setIsDynamicContentLoading(false));
   }, [Braze, dismissedContentCardsIds, dispatch]);
 
   const clearOldDismissedContentCards = () => {

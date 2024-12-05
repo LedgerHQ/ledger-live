@@ -5,6 +5,7 @@ import {
   pressUntilTextFound,
   waitFor,
   containsSubstringInEvent,
+  activateLedgerSync,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
@@ -27,7 +28,7 @@ import { delegateCosmos, sendCosmos } from "tests/families/cosmos";
 import { delegateSolana, sendSolana } from "tests/families/solana";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
-  async expectValidAddressDevice(account: Account) {
+  async expectValidAddressDevice(account: Account, addressDisplayed: string) {
     let deviceLabels: string[];
 
     switch (account.currency) {
@@ -45,19 +46,14 @@ export class SpeculosPage extends AppPage {
 
     await waitFor(deviceLabels[0]);
     const events = await pressUntilTextFound(deviceLabels[1]);
-    const isAddressCorrect = containsSubstringInEvent(account.address, events);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
     expect(isAddressCorrect).toBeTruthy();
     await pressBoth();
   }
 
   @step("Activate Ledger Sync")
   async activateLedgerSync() {
-    await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
-    await pressBoth();
-    await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await pressBoth();
+    await activateLedgerSync();
   }
 
   @step("Sign Send NFT Transaction")

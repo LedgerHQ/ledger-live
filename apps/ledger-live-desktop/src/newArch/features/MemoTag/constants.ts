@@ -1,5 +1,4 @@
 export const MEMO_TAG_COINS: string[] = [
-  "algorand",
   "cardano",
   "casper",
   "cosmos",

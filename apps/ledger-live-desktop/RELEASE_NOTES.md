@@ -1,3 +1,7 @@
+# 2.92.1
+
+We've upgraded the sell feature to provide a more seamless and flexible experience. Users can now select their preferred payment method and easily compare quotes from different providers, ensuring they get the best deal possible.
+
 # 2.92.0
 
 ### 🌷 Improvements

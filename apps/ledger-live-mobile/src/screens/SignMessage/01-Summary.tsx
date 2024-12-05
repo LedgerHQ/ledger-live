@@ -105,15 +105,8 @@ function SignSummary({
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       getMessageProperties(messageData).then(setMessageFields);
-    } else if (isACREWithdraw) {
-      setMessageFields(
-        Object.entries(messageData.message).map(([label, value]) => ({
-          label,
-          value,
-        })),
-      );
     }
-  }, [isACREWithdraw, mainAccount, mainAccount.currency, messageData, setMessageFields]);
+  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <SafeAreaView
@@ -160,15 +153,17 @@ function SignSummary({
           ]}
         />
         <ScrollView style={styles.scrollContainer}>
-          {messageData.standard === "EIP712" || isACREWithdraw ? (
-            <MessagePropertiesComp properties={messageFields} />
-          ) : (
-            <View style={styles.messageContainer}>
-              <MessageProperty label={"message"} value={messageData.message || ""} />
-            </View>
-          )}
+          {!isACREWithdraw ? (
+            messageData.standard === "EIP712" ? (
+              <MessagePropertiesComp properties={messageFields} />
+            ) : (
+              <View style={styles.messageContainer}>
+                <MessageProperty label={"message"} value={messageData.message || ""} />
+              </View>
+            )
+          ) : null}
 
-          {messageData.standard === "EIP712" || isACREWithdraw ? (
+          {messageData.standard === "EIP712" ? (
             <>
               {messageFields ? (
                 <View>

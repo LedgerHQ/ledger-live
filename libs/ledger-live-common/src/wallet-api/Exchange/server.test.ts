@@ -119,6 +119,7 @@ describe("handlers", () => {
       const params: ExchangeStartSellParams = {
         exchangeType: "SELL",
         provider: "TestSellProvider",
+        fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 

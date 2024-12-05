@@ -42,6 +42,12 @@ const wrapEthDecoder = (input: `0x${string}`, chainId: number | string): `0x${st
   return contract instanceof Error ? [] : [contract.toLowerCase()];
 };
 
+const sweepDecoder = (input: `0x${string}`): `0x${string}`[] => {
+  const [token] = defaultAbiCoder.decode(["address", "address", "uint256"], input);
+
+  return [token.toLowerCase()];
+};
+
 const noDecoder = () => [];
 
 export const UniswapDecoders: Record<
@@ -59,4 +65,5 @@ export const UniswapDecoders: Record<
   PERMIT2_PERMIT_BATCH: noDecoder,
   PERMIT2_TRANSFER_FROM_BATCH: noDecoder,
   PAY_PORTION: noDecoder,
+  SWEEP: sweepDecoder,
 };

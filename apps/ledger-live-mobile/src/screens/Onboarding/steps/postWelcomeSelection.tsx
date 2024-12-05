@@ -1,6 +1,6 @@
 import { Button, Icons } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -8,7 +8,7 @@ import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
 import { track, updateIdentify } from "~/analytics";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
@@ -23,22 +23,37 @@ function PostWelcomeSelection() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
+  const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
 
   const [modalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
+    identifyUser(false);
     setModalOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
   };
 
-  const closeModal = () => setModalOpen(false);
-
-  const identifyUser = (hasDevice: boolean) => {
-    dispatch(setOnboardingHasDevice(hasDevice));
-    updateIdentify();
+  const closeModal = () => {
+    setModalOpen(false);
   };
+
+  const identifyUser = useCallback(
+    (hasDevice: boolean | null) => {
+      if (isInOnboarding) dispatch(setOnboardingHasDevice(hasDevice));
+      updateIdentify();
+    },
+    [dispatch, isInOnboarding],
+  );
+
+  useFocusEffect(() => {
+    if (!modalOpen) {
+      identifyUser(null);
+      dispatch(setReadOnlyMode(true));
+    }
+  });
 
   const setupLedger = () => {
     dispatch(setReadOnlyMode(false));

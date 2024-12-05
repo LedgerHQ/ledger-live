@@ -31,6 +31,7 @@ import CompleteExchange, {
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
 import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
+import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
@@ -61,6 +62,8 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   }
   return "exchangeType" in data;
 }
+
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 
 type Keys = Record<string, { title: string; description: string }>;
 
@@ -241,6 +244,11 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
+        payload?.data?.onCancel?.({
+          error: new DrawerClosedError("User closed the drawer"),
+          name: "DrawerClosedError",
+          message: "User closed the drawer",
+        });
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"

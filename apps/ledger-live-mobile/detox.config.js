@@ -46,15 +46,13 @@ module.exports = {
     },
     "android.debug": {
       type: "android.apk",
-      build:
-        "cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug && cd ..",
+      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
-      build:
-        "cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox && cd ..",
+      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
     },

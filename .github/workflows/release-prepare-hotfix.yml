@@ -7,6 +7,17 @@ on:
         description: the branch to release from
         default: hotfix
         required: true
+      tag_version:
+        description: version to hotfix (e.g. 2.91.0)
+        default: latest
+        required: false
+      application:
+        description: application (LLM | LLD)
+        required: true
+        type: choice
+        options:
+          - LLM
+          - LLD
 
 jobs:
   prepare-release:
@@ -21,6 +32,19 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Checkout composite actions
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: tools/actions/composites
+
+      - name: Generate ref/tag version to use when running changeset status
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        id: format-app-tag
+        with:
+          tag_version: ${{ github.event.inputs.tag_version }}
+          application: ${{ github.event.inputs.application }}
+
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
@@ -30,8 +54,11 @@ jobs:
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
@@ -52,19 +79,21 @@ jobs:
       - name: push changes
         run: |
           git push origin ${{ inputs.ref }}
-          git fetch origin
 
       - name: fetch develop and main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         run: |
           git fetch origin develop main
 
       - name: merge into main
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         run: |
           git checkout main
           git merge ${{ inputs.ref }} --no-ff
           git push origin main
 
       - name: create PR to develop
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -74,6 +103,7 @@ jobs:
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
       - name: merge into release if present
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
