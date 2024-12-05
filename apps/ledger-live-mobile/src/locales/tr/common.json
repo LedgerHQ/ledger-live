@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -1287,19 +1293,19 @@
     "title" : "Bir Ledger'a ihtiyacınız var",
     "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
     "cta" : "Ledger'ınızı şimdi satın alın",
-    "footer" : "Zaten bir cihazım var, şimdi kurmak istiyorum",
-    "bannerTitle" : "Kriptolarınızı ve NFT'lerinizi güvende tutun",
-    "bannerTitle2" : "Bir Ledger Cihazıyla işlem yapmak için",
-    "bannerSubtitle" : "bir Nano'ya ihtiyacınız olacak",
-    "bannerButtonTitle" : "Nano'yu Keşfedin",
-    "bannerButtonTitle2" : "Cihaz satın al",
-    "setupCta" : "Zaten bir cihazım var, onu kuralım"
+    "footer" : "Zaten bir Ledger cihazım var, onu kuralım",
+    "bannerTitle" : "Kriptolarınız ve NFT'leriniz için birinci sınıf güvenlik",
+    "bannerTitle2" : "Ledger Flex ile işlem yapmak için",
+    "bannerSubtitle" : "bir Ledger cihazınızın olması gerekir",
+    "bannerButtonTitle" : "Flex'i keşfedin",
+    "bannerButtonTitle2" : "Ledger satın alın",
+    "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Cihazınız elinize geçti mi?",
-    "desc" : "Cihazınız elinize geçtiğinde kurulumunu Ledger Live üzerinde başlatabilirsiniz!",
-    "cta" : "Cihazımı kur",
-    "bannerTitle" : "Cihazınız elinize geçti mi?",
+    "title" : "Ledger cihazınız elinize ulaştı mı?",
+    "desc" : "Ledger cihazınız elinize ulaştığında Ledger Live uygulamasının tüm özelliklerinin kilidini açmak için cihazınızın kurulumunu yapın.",
+    "cta" : "Ledger'ımı kur",
+    "bannerTitle" : "Ledger cihazınız elinize ulaştı mı?",
     "bannerCta" : "Kurulumu başlatın",
     "continue" : "Devam"
   },
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Alım başarıyla gerçekleşti",
-    "title" : "Tebrikler!",
-    "desc" : "Siparişiniz işleniyor.\nLedger cihazınız yakında size ulaşacak. Sipariş onayınız için lütfen e-postanızı kontrol edin."
+    "title" : "Ledger'a güvendiğiniz için teşekkürler",
+    "desc" : "Siparişiniz işleniyor. \nSipariş onayınız için lütfen e-postanızı kontrol edin."
   },
   "discover" : {
     "title" : "Keşfedin",
@@ -2360,8 +2366,7 @@
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
-      "stake" : "Stake et",
-      "yield" : "Getiri"
+      "stake" : "Stake et"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -3092,6 +3097,13 @@
       "desc" : "Geliştirici özelliklerini deneyip ne düşündüğünüzü bizimle paylaşın.",
       "customManifest" : {
         "title" : "Özel Platform Manifest Dosyası Yükle"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange Geliştirici Modu",
+        "description" : "Exchange sağlayıcısı bilgilerini ekleyin",
+        "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri",
+        "currentSetting" : "Mevcut Ayar",
+        "error" : "Geçersiz CAL değeri"
       }
     },
     "debug" : {
@@ -3272,7 +3284,7 @@
     },
     "stake" : {
       "title" : "Stake et",
-      "description" : "Sahip olduğunuz kriptoları stake edin."
+      "description" : "Kriptolarınızla ödüller kazanın."
     },
     "swap" : {
       "title" : "Takas et",
@@ -5906,6 +5918,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "near" : {
@@ -6913,6 +6929,13 @@
         "title" : "Başka bir Ledger Live uygulamasıyla senkronize et",
         "description" : "Ledger Live'daki kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Bu uygulama artık senkronize değil",
+          "description" : "Ya bu Ledger Live'da ya da senkronize ettiğiniz Ledger Live'da Ledger Sync'i açın",
+          "cta" : "Ledger Sync'i Aç"
+        }
+      },
       "manageKey" : {
         "title" : "Senkronizasyonu Sil",
         "description" : "Farklı telefonlardaki ve bilgisayarlardaki kripto hesaplarınız artık senkronize olmayacaktır.",
@@ -6923,6 +6946,11 @@
           "cancel" : "Senkronizasyonu tut",
           "title" : "Senkronizasyonu silmek istediğinizden emin misiniz?",
           "desc" : "Farklı telefonlardaki ve bilgisayarlardaki kripto hesaplarınız artık senkronize olmayacaktır. Bu, fonlarınızı hiçbir şekilde etkilemez."
+        },
+        "error" : {
+          "title" : "Bu uygulama artık senkronize değil",
+          "description" : "Ya bu Ledger Live'da ya da senkronize ettiğiniz Ledger Live'da Ledger Sync'i açın",
+          "cta" : "Ledger Sync'i Aç"
         }
       },
       "manageInstances" : {
