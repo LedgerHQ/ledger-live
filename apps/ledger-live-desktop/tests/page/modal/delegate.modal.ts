@@ -31,7 +31,7 @@ export class delegateModal extends Modal {
 
   @step("Select provider on row $0")
   async selectProvider(row: number) {
-    this.sideInfoProvider.nth(row - 1).click();
+    this.rowProvider.nth(row - 1).click();
     await this.verifyContinueEnabled();
   }
 
