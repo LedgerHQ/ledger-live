@@ -23,9 +23,9 @@ export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
   wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 0,
+  activeStake: 10001001000098,
   commission: 7,
-  totalScore: 6,
+  totalScore: 7,
 };
 
 export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
@@ -175,8 +175,17 @@ export function ledgerFirstValidators(
     v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.voteAccount),
     validators,
   );
+
+  const LEDGER_FIRST_VALIDATOR =
+    ledgerValidators.find(v => v.voteAccount === LEDGER_VALIDATOR_BY_CHORUS_ONE.voteAccount) ||
+    LEDGER_VALIDATOR_BY_CHORUS_ONE;
+
+  const ledgerValidatorsFiltered = ledgerValidators.filter(
+    v => v.voteAccount !== LEDGER_FIRST_VALIDATOR.voteAccount,
+  );
+
   return ledgerValidators.length === 2
-    ? ledgerValidators.concat(restValidators)
+    ? [LEDGER_FIRST_VALIDATOR, ...ledgerValidatorsFiltered].concat(restValidators)
     : LEDGER_VALIDATOR_LIST.concat(restValidators);
 }
 
