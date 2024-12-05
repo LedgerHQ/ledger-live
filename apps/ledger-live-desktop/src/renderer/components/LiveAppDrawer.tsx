@@ -34,6 +34,7 @@ import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -54,6 +55,14 @@ export type StartExchangeData = {
   provider?: string;
   exchange?: Exchange;
   onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
+};
+
+type SwapRequest = {
+  transaction: Transaction;
+  exchange: ExchangeSwap;
+  provider: string;
+  rate: number;
+  amountExpectedTo: number;
 };
 
 export function isStartExchangeData(data: unknown): data is StartExchangeData {
@@ -199,6 +208,14 @@ export const LiveAppDrawer = () => {
       case "EXCHANGE_START": {
         if (data && isStartExchangeData(data)) {
           if (device?.modelId === "nanoS" && data.exchange && isExchangeSwap(data.exchange)) {
+            if (data.provider === "thorswap") {
+              return (
+                <HardwareUpdate
+                  i18nKeyTitle="swap.wrongDevice.title"
+                  i18nKeyDescription="swap.wrongDevice.description"
+                />
+              );
+            }
             const keys = getIncompatibleCurrencyKeys(data.exchange);
             if (keys) {
               return (
