@@ -200,7 +200,8 @@
       "STAKE" : "Gestaket",
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "SENDING" : "Senden"
+      "SENDING" : "Senden",
+      "BURN" : "Verbrannt"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -1139,6 +1140,7 @@
       "send" : "Senden",
       "swap" : "Swappen",
       "stake" : "Staken",
+      "earn" : "Verdienen",
       "yield" : "Ertrag",
       "buy" : "Kaufen",
       "sell" : "Verkaufen",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "Staken",
-        "description" : "Krypto mit Ledger staken"
+        "description" : "Prämien für deine Kryptos erhalten"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "Link",
             "secondaryCta" : "Sekundärer CTA",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Pfad"
           }
@@ -6166,6 +6173,15 @@
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
     },
@@ -6330,7 +6346,7 @@
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
       "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
-      "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+      "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
     "EtherscanAPIError" : {
       "title" : "Abruf der Transaktionen fehlgeschlagen",
