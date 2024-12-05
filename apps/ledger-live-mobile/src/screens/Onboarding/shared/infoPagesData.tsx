@@ -200,8 +200,7 @@ export function getOnboardingDeviceAnimation<M extends DeviceModelId>({
 
   if (!animation) {
     console.error(`No animation for ${modelId} ${key}`);
-    // @ts-expect-error Halp :()
-    return undefined;
+    return "";
   }
 
   return animation;

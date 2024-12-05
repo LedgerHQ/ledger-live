@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
@@ -58,7 +58,7 @@ function getAllAnimations(selectedModelId: DeviceModelId) {
   ];
 }
 
-const DebugLottie = () => {
+export default function DebugLottie() {
   const { colors } = useTheme();
 
   const [selectedModelId, setModelId] = useState<EnabledDeviceModelIds>(DeviceModelId.nanoS);
@@ -186,7 +186,7 @@ const DebugLottie = () => {
       </QueuedDrawer>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -224,4 +224,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-export default DebugLottie;

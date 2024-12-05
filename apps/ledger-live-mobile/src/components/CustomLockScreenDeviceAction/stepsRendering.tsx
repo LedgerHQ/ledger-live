@@ -162,7 +162,7 @@ export const RenderImageCommitRequested = ({
           borderBottomLeftRadius: framedPictureConfig.borderLeftRadius,
           overflow: "hidden",
         }}
-        bg="green"
+        bg={colors.success.c70}
       >
         <Flex flexDirection="row" flex={2}>
           <Flex

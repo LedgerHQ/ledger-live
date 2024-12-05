@@ -10,9 +10,6 @@ import {
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { FramedImageWithContext, ImageSourceContext } from "~/components/CustomImage/FramedPicture";
-// import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
-// import allowConnection from "~/animations/stax/customimage/allowConnection.json";
-// import { FramedLottieWithContext } from "~/components/CustomImage/FramedLottie";
 import {
   RenderImageCommitRequested,
   RenderImageLoadRequested,
