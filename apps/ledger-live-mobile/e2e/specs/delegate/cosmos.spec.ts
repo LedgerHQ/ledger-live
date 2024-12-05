@@ -21,7 +21,7 @@ const knownDevice = knownDevices.nanoX;
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "onboardingcompleted",
+      userdata: "skip-onboarding",
       knownDevices: [knownDevice],
       testAccounts: [testAccount],
     });

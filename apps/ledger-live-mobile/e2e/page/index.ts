@@ -83,7 +83,7 @@ export class Application {
   constructor() {
     if (!getEnv("MOCK")) {
       // Create a temporary userdata file for Speculos tests
-      const originalUserdata = "onboardingcompleted";
+      const originalUserdata = "skip-onboarding";
       this.userdataSpeculos = `temp-userdata-${Date.now()}`;
       this.userdataPath = getUserdataPath(this.userdataSpeculos);
       const originalFilePath = getUserdataPath(originalUserdata);
