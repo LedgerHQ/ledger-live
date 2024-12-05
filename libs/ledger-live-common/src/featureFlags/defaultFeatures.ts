@@ -433,6 +433,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       threshold: 75,
+      staleTime: 1000 * 60 * 15,
     },
   },
   marketperformanceWidgetDesktop: {

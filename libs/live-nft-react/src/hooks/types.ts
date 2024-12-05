@@ -21,7 +21,8 @@ export type HookProps = {
   chains: string[];
   threshold: number;
   action?: (collection: string, blockchain: BlockchainsType) => void;
-  enabled?: boolean;
+  enabled: boolean;
+  staleTime?: number;
 };
 
 export type PartialProtoNFT = Partial<ProtoNFT>;

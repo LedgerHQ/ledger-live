@@ -24,7 +24,7 @@ const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTa
   return (
     <MemoTagField
       warning={status.warnings.transaction}
-      error={status.errors.transaction}
+      error={status.errors.transaction || status.errors.sender}
       value={transaction.transferId ?? ""}
       placeholder={t("families.casper.transferIdPlaceholder")}
       label={t("families.casper.transferId")}

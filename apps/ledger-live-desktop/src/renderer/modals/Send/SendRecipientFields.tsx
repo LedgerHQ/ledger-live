@@ -20,6 +20,8 @@ export const getFields = (account: Account, isLldMemoTagEnabled?: boolean): stri
   switch (account.currency.family) {
     case "internet_computer":
       return ["transaction"];
+    case "casper":
+      return ["sender"];
     default:
       return module?.fields || [];
   }

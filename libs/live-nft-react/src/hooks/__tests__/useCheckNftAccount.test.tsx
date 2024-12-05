@@ -68,6 +68,8 @@ describe("useCheckNftAccount", () => {
           nftsOwned,
           chains,
           threshold: 80,
+          enabled: true,
+          staleTime: 1000 * 60 * 10,
         }),
       {
         wrapper,
@@ -98,6 +100,8 @@ describe("useCheckNftAccount", () => {
           chains,
           threshold: 80,
           action: actionMockMulti,
+          staleTime: 1000 * 60 * 10,
+          enabled: true,
         }),
       {
         wrapper,
@@ -122,6 +126,8 @@ describe("useCheckNftAccount", () => {
           chains,
           threshold: 80,
           action: actionMockUnique,
+          staleTime: 1000 * 60 * 10,
+          enabled: true,
         }),
       {
         wrapper,

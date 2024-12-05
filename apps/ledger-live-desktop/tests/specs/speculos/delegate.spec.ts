@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const e2eDelegationAccounts = [
   {
@@ -34,10 +35,10 @@ const validators = [
     delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
-  /*{
-    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),  // todo: deactivate due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
+  {
+    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
     xrayTicket: "B2CQA-2766",
-  },*/
+  },
   {
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-2767",
@@ -85,8 +86,13 @@ test.describe("Delegate flows", () => {
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
           await app.account.clickBannerCTA();
-          await app.delegate.verifyProvider(account.delegate.provider);
-
+          await app.delegate.verifyFirstProviderName(account.delegate.provider);
+          if (account.delegate.account.currency.name == Currency.SOL.name) {
+            await app.delegate.verifyContinueDisabled();
+            await app.delegate.selectProviderByName(account.delegate.provider);
+            await app.delegate.verifyProviderTC(account.delegate.provider);
+            await app.delegate.verifyProvider(1);
+          }
           await app.delegate.continueDelegate();
           await app.delegate.fillAmount(account.delegate.amount);
           await app.modal.countinueSendAmount();
@@ -142,10 +148,23 @@ test.describe("Delegate flows", () => {
           await app.account.startStakingFlowFromMainStakeButton();
           await app.modal.continue();
 
-          await app.delegate.verifyProvider(validator.delegate.provider);
+          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
+          if (validator.delegate.account.currency.name == Currency.SOL.name) {
+            await app.delegate.verifyContinueDisabled();
+            await app.delegate.selectProviderByName(validator.delegate.provider);
+            await app.delegate.verifyProviderTC(validator.delegate.provider);
+          } else await app.delegate.verifyContinueEnabled();
+          await app.delegate.verifyProvider(1);
           await app.delegate.openSearchProviderModal();
           await app.delegate.checkValidatorListIsVisible();
-          await app.delegate.selectProvider(1);
+          await app.delegate.selectProviderOnRow(2);
+          // TODO: verification skipped due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
+          if (
+            ![Currency.SOL.name, Currency.ADA.name].includes(
+              validator.delegate.account.currency.name,
+            )
+          )
+            await app.delegate.closeProviderList(2);
         },
       );
     });
@@ -185,7 +204,7 @@ test.describe("Delegate flows", () => {
         await app.assetDrawer.selectAsset(delegateAccount.account.currency);
         await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
-        await app.delegate.verifyProvider(delegateAccount.provider);
+        await app.delegate.verifyFirstProviderName(delegateAccount.provider);
         await app.delegate.continueDelegate();
       },
     );
@@ -206,7 +225,7 @@ test.describe("Delegate flows", () => {
 
         await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
-        await app.delegate.verifyProvider(delegateAccount.provider);
+        await app.delegate.verifyFirstProviderName(delegateAccount.provider);
         await app.delegate.continueDelegate();
       },
     );

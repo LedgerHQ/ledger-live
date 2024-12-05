@@ -28,6 +28,6 @@ export function useHideSpamCollection() {
 
   return {
     hideSpamCollection,
-    enabled: spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled,
+    enabled: (spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled) || false,
   };
 }

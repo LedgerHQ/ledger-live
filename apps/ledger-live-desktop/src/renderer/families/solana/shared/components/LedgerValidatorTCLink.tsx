@@ -21,7 +21,13 @@ export default function LedgerValidatorTCLink({ transaction }: Props) {
   if (!data) return null;
 
   const openLedgerValidatorTC = () => openURL(data.url);
-  return <LinkWithExternalIcon label={t(data.label)} onClick={openLedgerValidatorTC} />;
+  return (
+    <LinkWithExternalIcon
+      label={t(data.label)}
+      onClick={openLedgerValidatorTC}
+      id="ledger-validator-tc"
+    />
+  );
 }
 const shouldShowTC = ({ model }: Transaction) => {
   switch (model.kind) {
