@@ -181,42 +181,6 @@ class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
   }
 }
 
-type Keys = Record<string, { title: string; description: string }>;
-
-const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
-  solana: {
-    title: "swap.incompatibility.spl_tokens_title",
-    description: "swap.incompatibility.spl_tokens_description",
-  },
-};
-
-const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
-  ton: {
-    title: "swap.incompatibility.ton_title",
-    description: "swap.incompatibility.ton_description",
-  },
-  cardano: {
-    title: "swap.incompatibility.ada_title",
-    description: "swap.incompatibility.ada_description",
-  },
-};
-
-const getIncompatibleCurrencyKeys = (request: SwapRequest) => {
-  const exchange = request?.exchange;
-  const parentFrom = exchange?.fromParentAccount?.currency?.id || "";
-  const parentTo = exchange?.toParentAccount?.currency?.id || "";
-  const from =
-    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
-  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
-
-  return (
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
-  );
-};
-
 export const DeviceActionDefaultRendering = <R, H extends States, P>({
   status: hookState,
   payload,
@@ -376,21 +340,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (device?.modelId === "nanoS") {
-    const requestAsSwapRequest = request as SwapRequest;
-    if (requestAsSwapRequest?.provider === "thorswap") {
-      return (
-        <HardwareUpdate
-          i18nKeyTitle="swap.wrongDevice.title"
-          i18nKeyDescription="swap.wrongDevice.description"
-        />
-      );
-    } else {
-      const keys = getIncompatibleCurrencyKeys(requestAsSwapRequest);
-      if (keys) {
-        return <HardwareUpdate i18nKeyTitle={keys.title} i18nKeyDescription={keys.description} />;
-      }
-    }
+  if (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") {
+    return (
+      <HardwareUpdate
+        i18nKeyTitle="swap.wrongDevice.title"
+        i18nKeyDescription="swap.wrongDevice.description"
+      />
+    );
   }
 
   if (listingApps) {
