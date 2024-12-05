@@ -28,7 +28,7 @@ const validators = [
     xrayTicket: "B2CQA-2731, B2CQA-2763",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"), //Issue with the provider - CI ✅ because failling code is commented - LIVE-14500
     xrayTicket: "B2CQA-2730, B2CQA-2764",
   },
   {
@@ -36,7 +36,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
+    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"), //Issue with the provider - CI ✅ because failling code is commented - LIVE-14500
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -74,13 +74,11 @@ test.describe("Delegate flows", () => {
       test(
         `[${account.delegate.account.currency.name}] Delegate`,
         {
-          annotation: {
-            type: "TMS",
-            description: account.xrayTicket,
-          },
+          annotation: { type: "TMS", description: account.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
@@ -133,13 +131,11 @@ test.describe("Delegate flows", () => {
       test(
         `[${validator.delegate.account.currency.name}] - Select validator`,
         {
-          annotation: {
-            type: "TMS",
-            description: validator.xrayTicket,
-          },
+          annotation: { type: "TMS", description: validator.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
@@ -195,6 +191,7 @@ test.describe("Delegate flows", () => {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await app.layout.goToPortfolio();
         await app.portfolio.startStakeFlow();
 
@@ -216,6 +213,7 @@ test.describe("Delegate flows", () => {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await app.layout.goToMarket();
         await app.market.search(delegateAccount.account.currency.name);
         await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);

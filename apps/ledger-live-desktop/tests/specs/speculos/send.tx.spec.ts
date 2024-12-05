@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "../../models/Transaction";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
@@ -24,6 +24,7 @@ const transactionsAmountInvalid = [
     transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
+    bugTicket: "BACK-8110",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
@@ -144,10 +145,10 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  /*{
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW), //todo: Reactivate when BE issue is fixed - LIVE-14844
+  {
+    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
-  },*/
+  },
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
@@ -246,10 +247,7 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          annotation: {
-            type: "TMS",
-            description: transaction.xrayTicket,
-          },
+          annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
@@ -317,6 +315,8 @@ test.describe("Send flows", () => {
         },
       },
       async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(
           tokenTransactionInvalid.transaction.accountToDebit.accountName,
@@ -357,6 +357,8 @@ test.describe("Send flows", () => {
           },
         },
         async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations).split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -404,6 +406,8 @@ test.describe("Send flows", () => {
         },
       },
       async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(
           tokenTransactionValid.accountToDebit.accountName,
@@ -440,12 +444,17 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          annotation: {
-            type: "TMS",
-            description: transaction.xrayTicket,
-          },
+          annotation: [
+            { type: "TMS", description: transaction.xrayTicket },
+            { type: "BUG", description: transaction.bugTicket },
+          ],
         },
         async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations).split(", "));
+          if (transaction.bugTicket) {
+            await addBugLink(getDescription(test.info().annotations).split(", "));
+          }
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -493,6 +502,7 @@ test.describe("Send flows", () => {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(
           transactionInputValid.accountToDebit.accountName,
@@ -536,6 +546,7 @@ test.describe("Send flows", () => {
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -577,6 +588,7 @@ test.describe("Send flows", () => {
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
