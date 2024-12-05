@@ -14,7 +14,6 @@ import Edit from "../../icons/Edit";
 import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps } from "@react-navigation/native";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -25,7 +24,6 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 type Props = {
   transaction: Transaction;
   account: AccountLike;
-  setTransaction: (_: Transaction) => void;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
@@ -33,42 +31,13 @@ type Props = {
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function SendRowsFee({
-  transaction,
-  account,
-  navigation,
-  route,
-  setTransaction,
-}: Props) {
+export default function SendRowsFee({ transaction, account }: Props) {
   const currency = getAccountCurrency(account);
   const unit = currency.units[0];
   const { fees } = transaction as AptosTransaction;
-  const { colors } = useTheme();
-
-  const setCustomFees = useCallback(
-    (txPatch: Partial<Transaction>) => {
-      const bridge = getAccountBridge(account);
-      const updatedTx = bridge.updateTransaction(transaction, { ...txPatch });
-      setTransaction(updatedTx);
-    },
-    [account, transaction, setTransaction],
-  );
-
-  const openFeesSettings = useCallback(() => {
-    navigation.navigate(ScreenName.AptosCustomFees, {
-      ...route.params,
-      accountId: account.id,
-      transaction: transaction as AptosTransaction,
-      setCustomFees,
-    });
-  }, [navigation, route.params, transaction, account.id, setCustomFees]);
-
   return (
-    <TouchableOpacity onPress={openFeesSettings} activeOpacity={0.7}>
-      <SummaryRow
-        title={<Trans i18nKey="send.fees.title" />}
-        additionalInfo={<Edit size={14} color={colors.grey} />}
-      >
+    <View>
+      <SummaryRow title={<Trans i18nKey="send.fees.title" />}>
         <View
           style={{
             alignItems: "flex-end",
@@ -84,7 +53,7 @@ export default function SendRowsFee({
           </>
         </View>
       </SummaryRow>
-    </TouchableOpacity>
+    </View>
   );
 }
 
