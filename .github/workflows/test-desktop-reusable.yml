@@ -35,7 +35,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,7 +44,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -77,7 +76,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,7 +85,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -172,7 +170,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
   report:
     needs: [codechecks, unit-tests, e2e-tests-linux]
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@v4
