@@ -200,7 +200,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "SENDING" : "发送"
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -1139,6 +1140,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "earn" : "赚取",
       "yield" : "收益率",
       "buy" : "买入",
       "sell" : "卖出",
@@ -1485,7 +1487,7 @@
       },
       "earn" : {
         "title" : "权益质押",
-        "description" : "使用 Ledger 设备权益质押加密货币"
+        "description" : "获得加密货币权益质押奖励"
       }
     },
     "recoverBanner" : {
@@ -3714,6 +3716,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum" : {
@@ -4146,6 +4152,7 @@
             "link" : "链接",
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
+            "tag" : "标签",
             "url" : "网址",
             "path" : "路径"
           }
@@ -6165,6 +6172,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
