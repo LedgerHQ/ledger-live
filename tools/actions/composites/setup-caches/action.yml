@@ -1,4 +1,4 @@
-name: "Setup Caches"
+name: "Setup Caches" 
 description: "Setup caches for faster running time"
 inputs:
   install-proto:
