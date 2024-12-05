@@ -4,7 +4,6 @@ import { step } from "tests/misc/reporters/step";
 
 export class delegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
-  private sideInfoProvider = this.page.getByTestId("modal-provider-side-info");
   private delegateContinueButton = this.page.getByText("Continue");
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
@@ -18,20 +17,28 @@ export class delegateModal extends Modal {
   private checkIcon = this.page.getByTestId("check-icon");
 
   @step("Get title provider on row $0")
-  async getTitleProvider(row: number) {
+  async getTitleProvider(row: number): Promise<string> {
     await this.titleProvider.nth(row - 1).waitFor();
-    return await this.titleProvider.nth(row - 1).textContent();
+    const titleProvider = await this.titleProvider.nth(row - 1).textContent();
+    expect(titleProvider).not.toBeNull();
+    return titleProvider!;
   }
 
-  @step("Verify first provider name")
+  @step("Verify first provider name is $0")
   async verifyFirstProviderName(provider: string) {
     const providerName = await this.getTitleProvider(1);
     expect(providerName).toBe(provider);
   }
 
   @step("Select provider on row $0")
-  async selectProvider(row: number) {
-    this.rowProvider.nth(row - 1).click();
+  async selectProviderOnRow(row: number) {
+    await this.selectProviderByName(await this.getTitleProvider(row));
+  }
+
+  @step("Select provider $0")
+  async selectProviderByName(name: string) {
+    const providerRow = this.rowProvider.filter({ hasText: name }).first();
+    await providerRow.click({ position: { x: 10, y: 10 } }); // Prevent click on the title as it is a redirection
     await this.verifyContinueEnabled();
   }
 

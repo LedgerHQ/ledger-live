@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const e2eDelegationAccounts = [
   {
@@ -86,9 +87,9 @@ test.describe("Delegate flows", () => {
 
           await app.account.clickBannerCTA();
           await app.delegate.verifyFirstProviderName(account.delegate.provider);
-          if (account.delegate.account.currency.name === "Solana") {
+          if (account.delegate.account.currency.name == Currency.SOL.name) {
             await app.delegate.verifyContinueDisabled();
-            await app.delegate.selectProvider(1);
+            await app.delegate.selectProviderByName(account.delegate.provider);
             await app.delegate.verifyProviderTC(account.delegate.provider);
             await app.delegate.verifyProvider(1);
           }
@@ -148,17 +149,21 @@ test.describe("Delegate flows", () => {
           await app.modal.continue();
 
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-          if (validator.delegate.account.currency.name === "Solana") {
+          if (validator.delegate.account.currency.name == Currency.SOL.name) {
             await app.delegate.verifyContinueDisabled();
-            await app.delegate.selectProvider(1);
+            await app.delegate.selectProviderByName(validator.delegate.provider);
             await app.delegate.verifyProviderTC(validator.delegate.provider);
           } else await app.delegate.verifyContinueEnabled();
           await app.delegate.verifyProvider(1);
           await app.delegate.openSearchProviderModal();
           await app.delegate.checkValidatorListIsVisible();
-          await app.delegate.selectProvider(2);
+          await app.delegate.selectProviderOnRow(2);
           // TODO: verification skipped due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
-          if (!["Solana", "Cardano"].includes(validator.delegate.account.currency.name))
+          if (
+            ![Currency.SOL.name, Currency.ADA.name].includes(
+              validator.delegate.account.currency.name,
+            )
+          )
             await app.delegate.closeProviderList(2);
         },
       );

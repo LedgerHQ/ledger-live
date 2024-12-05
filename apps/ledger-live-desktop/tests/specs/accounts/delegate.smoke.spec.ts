@@ -52,7 +52,7 @@ test("The user search and select a provider", async () => {
     const providerResearched = "Figment";
     await delegate.openSearchProviderModal();
     await delegate.inputProvider(providerResearched);
-    await delegate.selectProvider(0);
+    await delegate.selectProviderOnRow(1);
     const providerSelected = await delegate.getTitleProvider(1);
     expect(providerSelected).toEqual(providerResearched);
   });
