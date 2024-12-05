@@ -45,7 +45,9 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   if (amount.lte(0)) errors.amount = new AmountRequired();
   if (totalSpent.gt(spendableBalance)) errors.amount = new NotEnoughBalance();
-  if (memo && memo.length > STACKS_MAX_MEMO_SIZE) errors.transaction = new StacksMemoTooLong();
+
+  const memoBytesLength = Buffer.from(memo ?? "", "utf-8").byteLength;
+  if (memoBytesLength > STACKS_MAX_MEMO_SIZE) errors.transaction = new StacksMemoTooLong();
 
   return {
     errors,

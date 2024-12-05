@@ -10,7 +10,7 @@ import { truncateUtf8 } from "LLM/utils/truncateUtf8";
 // E.g.
 // Javascript will evaluate a 16👍 emojis string as 34 characters.
 //  While this string is in fact encoded in 68B in UTF8 which is well above STX limit.
-// `truncateUtf8` will truncate the string correctly, which is 7👍 with 2 characters to spare.
+// `truncateUtf8` will truncate the string correctly, which is 8👍 with 2 characters to spare.
 
 export default (props: MemoTagInputProps<StacksTransaction>) => (
   <GenericMemoTagInput
