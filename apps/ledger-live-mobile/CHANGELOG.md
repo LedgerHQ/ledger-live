@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.59.0-next.4
+
+### Minor Changes
+
+- [#8606](https://github.com/LedgerHQ/ledger-live/pull/8606) [`ffc2445`](https://github.com/LedgerHQ/ledger-live/commit/ffc2445bb2d90d59abde08c96bfa97ea2d36e9a4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix margin issue
+
 ## 3.59.0-next.3
 
 ### Minor Changes
