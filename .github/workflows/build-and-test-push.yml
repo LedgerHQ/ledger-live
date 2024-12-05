@@ -53,7 +53,7 @@ jobs:
 
   build-web-tools:
     name: "Build Web Tools"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@support/rename-web-tools
     secrets: inherit
 
   test-cli:
