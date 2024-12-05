@@ -34,7 +34,7 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-turbo-cache: "false"
+          skip-turbo-cache: true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
