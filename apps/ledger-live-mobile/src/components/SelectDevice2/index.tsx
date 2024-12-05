@@ -327,6 +327,7 @@ export default function SelectDevice({
       ) : (
         <Flex flex={1}>
           <ScrollContainer
+            mb={4}
             contentContainerStyle={{
               flexGrow: 1,
               justifyContent: "space-between",
