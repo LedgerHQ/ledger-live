@@ -124,6 +124,7 @@
     "src/families/solana/react.ts",
     "src/families/solana/staking.ts",
     "src/families/solana/types.ts",
+    "src/families/stacks/constants.ts",
     "src/families/stacks/deviceTransactionConfig.ts",
     "src/families/stacks/types.ts",
     "src/families/stellar/types.ts",
