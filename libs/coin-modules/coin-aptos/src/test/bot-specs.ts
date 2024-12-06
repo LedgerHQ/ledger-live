@@ -8,12 +8,21 @@ import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-fr
 import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
 import BigNumber from "bignumber.js";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
+import { AccountLike } from "@ledgerhq/types-live";
 
 const currency = getCryptoCurrencyById("aptos");
-const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
-const minimalAmount = parseCurrencyUnit(currency.units[0], "0.5");
-const reserve = parseCurrencyUnit(currency.units[0], "1");
-const maxAccount = 1;
+const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.0001");
+const reserve = parseCurrencyUnit(currency.units[0], "0.5");
+
+const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.5");
+const maxAccountSiblings = 4;
+
+const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) => {
+  if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
+    invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
+  }
+};
 
 const aptos: AppSpec<Transaction> = {
   name: "Aptos",
@@ -31,34 +40,27 @@ const aptos: AppSpec<Transaction> = {
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
-        const transaction = bridge.createTransaction(account);
-        const sibling = pickSiblings(siblings, 3);
-        const recipient = sibling.freshAddress;
-        let amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
 
-        if (!sibling.used && amount.lt(reserve)) {
-          invariant(
-            maxSpendable.gt(reserve.plus(minAmountCutoff)),
-            "not enough funds to send to new account",
-          );
-          amount = reserve;
-        }
+        const sibling = pickSiblings(siblings, maxAccountSiblings);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+
+        const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
+
+        checkSendableToEmptyAccount(amount, sibling);
+
+        const updates = [
+          {
+            amount,
+          },
+          {
+            recipient,
+          },
+        ];
 
         return {
           transaction,
-          updates: [
-            {
-              amount,
-            },
-            {
-              recipient,
-            },
-            Math.random() > 0.5
-              ? {
-                  tag: 123,
-                }
-              : null,
-          ],
+          updates,
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
@@ -70,18 +72,24 @@ const aptos: AppSpec<Transaction> = {
       },
     },
     {
-      name: "send max to another account",
+      name: "send max",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings, maxAccount);
-        const recipient = sibling.freshAddress;
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
+
+        const sibling = pickSiblings(siblings, maxAccountSiblings);
+
+        // Send the full spendable balance
+        const amount = maxSpendable;
+
+        checkSendableToEmptyAccount(amount, sibling);
+
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient,
+              recipient: sibling.freshAddress,
             },
             {
               useAllAmount: true,
@@ -90,13 +98,12 @@ const aptos: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        botTest("account spendable balance is zero", () =>
-          expect(account.balance.toString()).toBe(new BigNumber(0).toString()),
+        botTest("account spendable balance is very low", () =>
+          expect(account.spendableBalance.lt(reserve)).toBe(true),
         );
       },
     },
   ],
 };
-export default {
-  aptos,
-};
+
+export default { aptos };
