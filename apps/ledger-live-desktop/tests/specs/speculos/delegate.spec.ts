@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
 
 const e2eDelegationAccounts = [
@@ -59,14 +59,13 @@ test.describe("Delegate flows", () => {
         userdata: "skip-onboarding",
         speculosApp: account.delegate.account.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: account.delegate.account.currency.ticker,
               index: account.delegate.account.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -114,14 +113,13 @@ test.describe("Delegate flows", () => {
         userdata: "skip-onboarding",
         speculosApp: validator.delegate.account.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: validator.delegate.account.currency.ticker,
               index: validator.delegate.account.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -157,14 +155,13 @@ test.describe("Delegate flows", () => {
       userdata: "skip-onboarding",
       speculosApp: delegateAccount.account.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: delegateAccount.account.currency.ticker,
             index: delegateAccount.account.index,
             add: true,
-            appjson: "",
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });

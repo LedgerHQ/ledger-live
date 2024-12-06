@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -24,14 +24,13 @@ for (const account of accounts) {
       userdata: "skip-onboarding",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: account.account.currency.currencyId,
             index: account.account.index,
-            appjson: "",
             add: true,
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });
@@ -82,14 +81,13 @@ test.describe("Receive", () => {
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
           add: true,
-          appjson: "",
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
   });
