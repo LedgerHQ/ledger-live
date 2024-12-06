@@ -1,4 +1,5 @@
-import { FC, useCallback, useState } from "react";
+import debounce from "lodash/debounce";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -18,14 +19,20 @@ export const useMemoTagInput = (
 
   const [isEmpty, setIsEmpty] = useState(true);
   const [error, setError] = useState<Error | undefined>();
+  const debouncedUpdateTransaction = useMemo(
+    () => debounce(updateTransaction, DEBOUNCE_DELAY),
+    [updateTransaction],
+  );
   const handleChange = useCallback<MemoTagInputProps["onChange"]>(
     ({ patch, value, error }) => {
       setIsEmpty(!value);
       setError(error);
-      updateTransaction(patch);
+      debouncedUpdateTransaction(patch);
     },
-    [updateTransaction],
+    [debouncedUpdateTransaction],
   );
 
   return Input && { Input, isEmpty, error, handleChange };
 };
+
+const DEBOUNCE_DELAY = 300;
