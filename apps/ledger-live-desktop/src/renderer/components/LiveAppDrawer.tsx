@@ -34,7 +34,6 @@ import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
