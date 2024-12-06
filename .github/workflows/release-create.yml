@@ -26,8 +26,11 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
       - name: install dependencies
         run: pnpm i
       - name: Build libs

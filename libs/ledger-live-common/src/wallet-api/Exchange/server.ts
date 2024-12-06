@@ -114,52 +114,61 @@ export const handlers = ({
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
-    "custom.exchange.start": customWrapper<
-      ExchangeStartParams | ExchangeStartSwapParams | ExchangeStartSellParams,
-      ExchangeStartResult
-    >(async params => {
-      tracking.startExchangeRequested(manifest);
+    "custom.exchange.start": customWrapper<ExchangeStartParams, ExchangeStartResult>(
+      async params => {
+        if (!params) {
+          tracking.startExchangeNoParams(manifest);
+          return { transactionId: "" };
+        }
 
-      if (!params) {
-        tracking.startExchangeNoParams(manifest);
-        return { transactionId: "" };
-      }
-
-      let exchangeParams: ExchangeStartParamsUiRequest;
-
-      // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
-      if (params.exchangeType == "SWAP") {
-        exchangeParams = extractSwapStartParam(params, accounts);
-      } else if (params.exchangeType == "SELL") {
-        exchangeParams = extractSellStartParam(params, accounts);
-      } else {
-        exchangeParams = {
+        const trackingParams = {
+          // @ts-expect-error ExchangeStartFundParams does not yet have the provider. Will be added in another iteration after a bugfix is confirmed
+          // TODO: expect-error to be deleted after
+          provider: params.provider,
           exchangeType: params.exchangeType,
         };
-      }
 
-      return new Promise((resolve, reject) =>
-        uiExchangeStart({
-          exchangeParams,
-          onSuccess: (nonce: string, device) => {
-            tracking.startExchangeSuccess(manifest);
-            resolve({ transactionId: nonce, device });
-          },
-          onCancel: error => {
-            tracking.completeExchangeFail(manifest);
-            reject(error);
-          },
-        }),
-      );
-    }),
+        tracking.startExchangeRequested(trackingParams);
+
+        let exchangeParams: ExchangeStartParamsUiRequest;
+
+        // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
+        if (params.exchangeType == "SWAP") {
+          exchangeParams = extractSwapStartParam(params, accounts);
+        } else if (params.exchangeType == "SELL") {
+          exchangeParams = extractSellStartParam(params, accounts);
+        } else {
+          exchangeParams = {
+            exchangeType: params.exchangeType,
+          };
+        }
+
+        return new Promise((resolve, reject) =>
+          uiExchangeStart({
+            exchangeParams,
+            onSuccess: (nonce: string, device) => {
+              tracking.startExchangeSuccess(trackingParams);
+              resolve({ transactionId: nonce, device });
+            },
+            onCancel: error => {
+              tracking.startExchangeFail(trackingParams);
+              reject(error);
+            },
+          }),
+        );
+      },
+    ),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
-        tracking.completeExchangeRequested(manifest);
-
         if (!params) {
           tracking.completeExchangeNoParams(manifest);
           return { transactionHash: "" };
         }
+        const trackingParams = {
+          provider: params.provider,
+          exchangeType: params.exchangeType,
+        };
+        tracking.completeExchangeRequested(trackingParams);
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -286,11 +295,14 @@ export const handlers = ({
               magnitudeAwareRate,
             },
             onSuccess: (transactionHash: string) => {
-              tracking.completeExchangeSuccess(manifest);
+              tracking.completeExchangeSuccess({
+                ...trackingParams,
+                currency: params.rawTransaction.family,
+              });
               resolve({ transactionHash });
             },
             onCancel: error => {
-              tracking.completeExchangeFail(manifest);
+              tracking.completeExchangeFail(trackingParams);
               reject(error);
             },
           }),

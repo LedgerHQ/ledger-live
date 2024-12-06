@@ -74,6 +74,8 @@ import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNa
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
+import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { AssetSelectionNavigatorParamsList } from "~/newArch/features/AssetSelection/types";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -85,6 +87,14 @@ export type NavigateInput<
 
 export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
+type CommonAddAccountNavigatorParamsList = {
+  currency?: CryptoCurrency | TokenCurrency | null;
+  token?: TokenCurrency;
+  returnToSwap?: boolean;
+  analyticsPropertyFlow?: string;
+  onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
+  onError?: (_: Error) => void;
+};
 
 export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]?: NavigatorScreenParams<MainNavigatorParamList> & {
@@ -208,14 +218,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
-  [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<AddAccountsNavigatorParamList>> & {
-    currency?: CryptoCurrency | TokenCurrency | null;
-    token?: TokenCurrency;
-    returnToSwap?: boolean;
-    analyticsPropertyFlow?: string;
-    onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-    onError?: (_: Error) => void;
-  };
+  [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<AddAccountsNavigatorParamList>> &
+    CommonAddAccountNavigatorParamsList;
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
     onClose?: () => void;
   };
@@ -311,6 +315,13 @@ export type BaseNavigatorStackParamList = {
     isBeforeOnboarding?: boolean;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
+  [NavigatorName.DeviceSelection]?: Partial<
+    NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
+  >;
+  [NavigatorName.AssetSelection]?: Partial<
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
+  > &
+    CommonAddAccountNavigatorParamsList;
 };
 
 declare global {

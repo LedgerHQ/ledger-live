@@ -1,10 +1,10 @@
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 
 describe("Swap", () => {
   beforeAll(async () => {
-    app = await Application.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
+    await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

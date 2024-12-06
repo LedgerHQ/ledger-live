@@ -42,6 +42,7 @@ export default function NFTCollectionContextMenu({
                 history.replace(`account/${account.id}`);
               }
             },
+            blockchain: account.currency.id,
           }),
         ),
     },

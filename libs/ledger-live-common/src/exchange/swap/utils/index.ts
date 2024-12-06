@@ -1,7 +1,8 @@
+import { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
-import { getSwapProvider, SWAP_DATA_CDN } from "../../providers/swap";
+import { getSwapProvider } from "../../providers/swap";
 
 export const FILTER = {
   centralised: "centralised",

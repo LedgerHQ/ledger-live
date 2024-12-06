@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 import { UseMutationResult } from "@tanstack/react-query";
@@ -11,6 +11,7 @@ import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
 import { manageKeyDrawerSelector } from "~/reducers/walletSync";
 import { track } from "~/analytics";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { NavigationProps } from "~/screens/AccountSettings";
 
 const messageLog = "Follow Steps on device";
 
@@ -22,6 +23,7 @@ export type HookResult = {
   onClickConfirm: () => Promise<void>;
   deleteMutation: UseMutationResult<void, Error, void, unknown>;
   handleCancel: () => void;
+  onCreateKey: () => void;
 };
 
 export const useManageKeyDrawer = () => {
@@ -43,6 +45,7 @@ export const useManageKeyDrawer = () => {
   }, [dispatch]);
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const baseNavigation = useNavigation<NavigationProps["navigation"]>();
 
   const handleClose = () => {
     closeDrawer();
@@ -72,6 +75,12 @@ export const useManageKeyDrawer = () => {
     navigation.navigate(ScreenName.WalletSyncManageKeyDeleteSuccess);
   };
 
+  const onCreateKey = () => {
+    baseNavigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncActivationProcess,
+    });
+  };
+
   return {
     isDrawerVisible,
     openDrawer,
@@ -80,5 +89,6 @@ export const useManageKeyDrawer = () => {
     deleteMutation,
     handleCancel,
     handleClose,
+    onCreateKey,
   };
 };

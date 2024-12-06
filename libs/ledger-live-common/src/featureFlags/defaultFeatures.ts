@@ -459,6 +459,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       threshold: 75,
+      staleTime: 1000 * 60 * 15,
     },
   },
   marketperformanceWidgetDesktop: {
@@ -466,8 +467,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       variant: ABTestingVariants.variantA,
       refreshRate: 2,
-      top: 50,
+      top: 100,
+      limit: 100,
       supported: true,
+      enableNewFeature: false,
     },
   },
 
@@ -516,7 +519,6 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  recoverUpsellRedirection: DEFAULT_FEATURE,
   llMevProtection: DEFAULT_FEATURE,
   llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {

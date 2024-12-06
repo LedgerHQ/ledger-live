@@ -62,10 +62,11 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
-          upgrade_npm: ${{ matrix.config.name == 'win' }}
+          install-proto: true
       - name: Build desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         id: build-desktop

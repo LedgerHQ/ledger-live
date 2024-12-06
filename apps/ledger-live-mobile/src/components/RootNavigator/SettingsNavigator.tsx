@@ -53,7 +53,10 @@ import RegionSettings from "~/screens/Settings/General/Region";
 import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, { DeveloperCustomManifest } from "~/screens/Settings/Developer";
+import DeveloperSettings, {
+  DeveloperCustomManifest,
+  ExchangeDeveloperMode,
+} from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
@@ -188,6 +191,16 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.ExchangeDeveloperMode}
+        component={ExchangeDeveloperMode}
+        options={{
+          title: t("settings.developer.exchangeDeveloperMode.title"),
           headerTitleStyle: {
             width: "80%",
           },

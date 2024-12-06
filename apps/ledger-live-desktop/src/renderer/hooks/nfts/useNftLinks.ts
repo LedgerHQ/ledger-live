@@ -116,11 +116,12 @@ export default (
             collectionName: metadata?.tokenName ?? nft.contract,
             collectionId: `${account.id}|${nft.contract}`,
             onClose,
+            blockchain: account.currency.id,
           }),
         );
       },
     }),
-    [account.id, dispatch, metadata?.tokenName, nft.contract, onClose, t],
+    [account.currency.id, account.id, dispatch, metadata?.tokenName, nft.contract, onClose, t],
   );
   const customImageUri = useMemo(() => {
     const mediaTypes = metadata ? getMetadataMediaTypes(metadata) : null;

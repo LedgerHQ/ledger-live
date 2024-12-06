@@ -81,6 +81,7 @@ export type GlobalModalData = {
     collectionId: string;
     collectionName: string;
     onClose?: () => void;
+    blockchain: string;
   };
   MODAL_WEBSOCKET_BRIDGE: {
     origin?: string | undefined | null;

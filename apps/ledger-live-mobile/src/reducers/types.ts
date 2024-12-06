@@ -32,6 +32,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 // === ACCOUNT STATE ===
 
@@ -219,6 +220,7 @@ export type SettingsState = {
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   whitelistedNftCollections: string[];
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchainsType, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;

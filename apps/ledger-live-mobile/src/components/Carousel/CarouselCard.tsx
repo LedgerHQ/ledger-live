@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
 import { Flex, FullBackgroundCard } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -15,15 +15,7 @@ type CarouselCardProps = {
 
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   const { theme } = useTheme();
-  const { logClickCard, logImpressionCard, dismissCard, trackContentCardEvent } =
-    useDynamicContent();
-
-  useEffect(() => {
-    if (cardProps) {
-      // Notify Braze that the card has been displayed to the user
-      logImpressionCard(cardProps.id);
-    }
-  }, [cardProps, logImpressionCard]);
+  const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
   const onPress = useCallback(() => {
     if (!cardProps) return;

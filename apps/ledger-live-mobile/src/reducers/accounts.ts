@@ -39,7 +39,7 @@ import type {
 } from "../actions/types";
 import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
-import { blacklistedTokenIdsSelector, hiddenNftCollectionsSelector } from "./settings";
+import { blacklistedTokenIdsSelector, nftCollectionsStatusByNetworkSelector } from "./settings";
 import { galleryChainFiltersSelector } from "./nft";
 import {
   accountNameWithDefaultSelector,
@@ -51,6 +51,8 @@ import { importAccountsReduce } from "@ledgerhq/live-wallet/liveqr/importAccount
 import { walletSelector } from "./wallet";
 import { nestedSortAccounts } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionParser } from "~/hooks/nfts/useNftCollectionsStatus";
 
 export const INITIAL_STATE: AccountsState = {
   active: [],
@@ -478,12 +480,23 @@ export const orderedNftsSelector = createSelector(
  * ```
  * */
 export const orderedVisibleNftsSelector = createSelector(
-  orderedNftsSelector,
-  hiddenNftCollectionsSelector,
-  (nfts, hiddenNftCollections) =>
-    nfts.filter(
+  accountsSelector,
+  nftCollectionsStatusByNetworkSelector,
+  (_: State, hideSpam: boolean) => hideSpam,
+  (accounts, nftCollectionsStatusByNetwork, hideSpam) => {
+    const nfts = accounts.map(a => a.nfts ?? []).flat();
+
+    const hiddenNftCollections = nftCollectionParser(
+      nftCollectionsStatusByNetwork,
+      ([_, status]) =>
+        hideSpam ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+    );
+
+    const visibleNfts = nfts.filter(
       nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
-    ),
+    );
+    return orderByLastReceived(accounts, visibleNfts);
+  },
 );
 
 export const hasNftsSelector = createSelector(nftsSelector, nfts => {

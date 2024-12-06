@@ -26,8 +26,8 @@ describe("fetchAndMergeProviderData", () => {
     // Then
     expect(providers).toEqual({
       changelly: {
-        continuesInProviderLiveApp: false,
         displayName: "Changelly",
+        useInExchangeApp: true,
         mainUrl: "https://changelly.com/",
         name: "Changelly",
         needsKYC: false,
@@ -63,9 +63,9 @@ describe("fetchAndMergeProviderData", () => {
         version: 1,
       },
       cic: {
-        continuesInProviderLiveApp: false,
         displayName: "CIC",
         mainUrl: "https://criptointercambio.com/",
+        useInExchangeApp: true,
         name: "CIC",
         needsKYC: false,
         publicKey: {
@@ -85,8 +85,8 @@ describe("fetchAndMergeProviderData", () => {
         version: 1,
       },
       exodus: {
-        continuesInProviderLiveApp: false,
         displayName: "Exodus",
+        useInExchangeApp: true,
         mainUrl: "https://www.exodus.com/",
         name: "Exodus",
         needsKYC: false,
@@ -122,8 +122,8 @@ describe("fetchAndMergeProviderData", () => {
         version: 1,
       },
       moonpay: {
-        continuesInProviderLiveApp: true,
         displayName: "MoonPay",
+        useInExchangeApp: true,
         mainUrl: "https://www.moonpay.com/",
         name: "MoonPay",
         needsKYC: true,
@@ -144,8 +144,8 @@ describe("fetchAndMergeProviderData", () => {
         version: 2,
       },
       oneinch: {
-        continuesInProviderLiveApp: true,
         displayName: "1inch",
+        useInExchangeApp: false,
         mainUrl: "https://1inch.io/",
         needsKYC: false,
         supportUrl: "https://help.1inch.io/en/",
@@ -153,19 +153,19 @@ describe("fetchAndMergeProviderData", () => {
         type: "DEX",
       },
       paraswap: {
-        continuesInProviderLiveApp: true,
         displayName: "Paraswap",
         mainUrl: "https://www.paraswap.io/",
+        useInExchangeApp: false,
         needsKYC: false,
         supportUrl: "https://help.paraswap.io/en/",
         termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
         type: "DEX",
       },
       thorswap: {
-        continuesInProviderLiveApp: false,
         displayName: "THORChain",
         mainUrl: "https://www.thorswap.finance/",
         name: "THORSwap",
+        useInExchangeApp: true,
         needsKYC: false,
         publicKey: {
           curve: "secp256r1",
@@ -180,12 +180,12 @@ describe("fetchAndMergeProviderData", () => {
         ),
         supportUrl: "https://ledgerhelp.swapkit.dev/",
         termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-        type: "CEX",
+        type: "DEX",
         version: 2,
       },
       uniswap: {
-        continuesInProviderLiveApp: false,
         displayName: "Uniswap",
+        useInExchangeApp: false,
         mainUrl: "https://uniswap.org/",
         needsKYC: false,
         supportUrl: "mailto:support@uniswap.org",

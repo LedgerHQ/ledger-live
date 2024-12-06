@@ -1,7 +1,13 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
-import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
+import { nftsByCollections } from "@ledgerhq/live-nft";
+import {
+  getThreshold,
+  useNftCollectionMetadata,
+  useNftGalleryFilter,
+  useNftMetadata,
+} from "@ledgerhq/live-nft-react";
 import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,7 +22,8 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { useNftCollections } from "~/hooks/nfts/useNftCollections";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 8;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 8;
@@ -82,12 +89,28 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   const { params } = route;
   const { account } = params;
   const { colors } = useTheme();
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
+  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
+  const { hiddenNftCollections } = useNftCollectionsStatus();
 
-  const { collections, fetchNextPage, hasNextPage } = useNftCollections({
-    account,
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account.nfts || [],
+    addresses: account.freshAddress,
+    chains: [account.currency.id],
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
+  const collections = useMemo(
+    () =>
+      Object.entries(nftsByCollections(nftsFromSimplehashEnabled ? nfts : account.nfts)).filter(
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
+      ),
+    [account.id, account.nfts, hiddenNftCollections, nfts, nftsFromSimplehashEnabled],
+  ) as [string, ProtoNFT[]][];
 
   const collectionsSlice: Array<ProtoNFT[]> = useMemo(
     () => collections.slice(0, collectionsCount).map(([, collection]) => collection),

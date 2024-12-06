@@ -13,9 +13,9 @@ import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { State } from "./reducers";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
 
 interface Store {
   getState: () => State;
@@ -30,49 +30,67 @@ const getFeatureWithOverrides = (key: FeatureId, store: Store) => {
 export function registerTransportModules(store: Store) {
   setEnvOnAllThreads("USER_ID", getUserId());
   const vaultTransportPrefixID = "vault-transport:";
-  const isSpeculosEnabled = !!getEnv("SPECULOS_API_PORT");
-  const isProxyEnabled = !!getEnv("DEVICE_PROXY_URL");
+  const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
 
   listenLogs(({ id, date, ...log }) => {
     if (log.type === "hid-frame") return;
     logger.debug(log);
   });
 
-  // Register IPC Transport Module
-  registerTransportModule({
-    id: "ipc",
-    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport" as FeatureId, store);
-      if (ldmkFeatureFlag.enabled && !isSpeculosEnabled && !isProxyEnabled) return;
+  if (ldmkFeatureFlag.enabled) {
+    registerTransportModule({
+      id: "sdk",
+      open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
+        trace({
+          type: "renderer-setup",
+          message: "Open called on registered module",
+          data: {
+            transport: "SDKTransport",
+            timeoutMs,
+          },
+          context: {
+            openContext: context,
+          },
+        });
+        return DeviceManagementKitTransport.open();
+      },
 
-      const originalDeviceMode = currentMode;
-      // id could be another type of transport such as vault-transport
-      if (id.startsWith(vaultTransportPrefixID)) return;
+      disconnect: () => Promise.resolve(),
+    });
+  } else {
+    // Register IPC Transport Module
+    registerTransportModule({
+      id: "ipc",
+      open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+        const originalDeviceMode = currentMode;
+        // id could be another type of transport such as vault-transport
+        if (id.startsWith(vaultTransportPrefixID)) return;
 
-      if (originalDeviceMode !== currentMode) {
-        setDeviceMode(originalDeviceMode);
-      }
+        if (originalDeviceMode !== currentMode) {
+          setDeviceMode(originalDeviceMode);
+        }
 
-      trace({
-        type: "renderer-setup",
-        message: "Open called on registered module",
-        data: {
-          transport: "IPCTransport",
-          timeoutMs,
-        },
-        context: {
-          openContext: context,
-        },
-      });
+        trace({
+          type: "renderer-setup",
+          message: "Open called on registered module",
+          data: {
+            transport: "IPCTransport",
+            timeoutMs,
+          },
+          context: {
+            openContext: context,
+          },
+        });
 
-      // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-      return retry(() => IPCTransport.open(id, timeoutMs, context), {
-        interval: 500,
-        maxRetry: 4,
-      });
-    },
-    disconnect: () => Promise.resolve(),
-  });
+        // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
+        return retry(() => IPCTransport.open(id, timeoutMs, context), {
+          interval: 500,
+          maxRetry: 4,
+        });
+      },
+      disconnect: () => Promise.resolve(),
+    });
+  }
 
   // Register Vault Transport Module
   registerTransportModule({

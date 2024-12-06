@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
@@ -18,10 +18,7 @@ import {
   setCountervalueFirst,
   useFilterTokenOperationsZeroAmount,
 } from "~/renderer/actions/settings";
-import {
-  countervalueFirstSelector,
-  hiddenNftCollectionsSelector,
-} from "~/renderer/reducers/settings";
+import { countervalueFirstSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
@@ -45,6 +42,7 @@ import { urls } from "~/config/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 type Params = {
   id: string;
@@ -107,7 +105,7 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
 
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isNftReworkedEnabled = nftReworked?.enabled;

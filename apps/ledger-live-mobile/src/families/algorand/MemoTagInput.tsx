@@ -8,7 +8,7 @@ import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemo
 export default (props: MemoTagInputProps<AlgorandTransaction>) => (
   <GenericMemoTagInput
     {...props}
-    textToValue={text => text.slice(0, ALGORAND_MAX_MEMO_SIZE)}
+    maxLength={ALGORAND_MAX_MEMO_SIZE}
     valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
   />
 );

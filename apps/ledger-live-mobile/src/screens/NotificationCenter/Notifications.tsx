@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   View,
   RefreshControl,
+  type ViewToken,
 } from "react-native";
 
 import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -52,19 +53,14 @@ export default function NotificationCenter() {
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
 
-  const logCardsImpression = useCallback(() => {
-    // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-    notificationCards.forEach(item => {
-      logImpressionCard(item.id);
-    });
-
+  const dispatchCards = useCallback(() => {
     const cards = notificationCards.map(n => ({
       ...n,
       viewed: true,
     }));
 
     dispatch(setDynamicContentNotificationCards(cards));
-  }, [notificationCards, dispatch, logImpressionCard]);
+  }, [notificationCards, dispatch]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
@@ -72,11 +68,11 @@ export default function NotificationCenter() {
     await fetchData();
     setIsDynamicContentLoading(false);
 
-    logCardsImpression();
-  }, [refreshDynamicContent, fetchData, logCardsImpression]);
+    dispatchCards();
+  }, [refreshDynamicContent, fetchData, dispatchCards]);
 
   useEffect(() => {
-    logCardsImpression();
+    dispatchCards();
     // Need to refresh just one time when coming in the Page
     refreshNotifications();
 
@@ -186,6 +182,17 @@ export default function NotificationCenter() {
   };
   // -------------------------------
 
+  const visibleCardsRef = useRef<string[]>([]);
+  const handleViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken<NotificationContentCard>[] }) => {
+      const visibleCards = viewableItems.map(({ item }) => item.id);
+      const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
+      visibleCardsRef.current = visibleCards;
+      newlyVisibleCards.forEach(logImpressionCard);
+    },
+    [logImpressionCard],
+  );
+
   return (
     <Container
       refreshControl={
@@ -202,6 +209,8 @@ export default function NotificationCenter() {
         keyExtractor={(card: NotificationContentCard) => card.id}
         renderItem={elem => ListItem(elem.item)}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        onViewableItemsChanged={handleViewableItemsChanged}
         ListEmptyComponent={
           <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
             <Text

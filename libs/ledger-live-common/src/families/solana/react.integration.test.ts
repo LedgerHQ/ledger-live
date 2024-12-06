@@ -7,7 +7,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
 import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
-import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
+import { LEDGER_VALIDATOR_DEFAULT } from "@ledgerhq/coin-solana/utils";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
@@ -44,7 +44,9 @@ describe("solana/react", () => {
       const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
 
       expect(
-        result.current.some(validator => validator.voteAccount === LEDGER_VALIDATOR.voteAccount),
+        result.current.some(
+          validator => validator.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount,
+        ),
       ).toBe(true);
     });
   });

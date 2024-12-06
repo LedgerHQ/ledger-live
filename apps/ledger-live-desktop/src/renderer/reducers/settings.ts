@@ -27,11 +27,18 @@ import {
 } from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
-import { getSystemLocale } from "~/helpers/systemLocale";
+import { getAppLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
 import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
-import { TOGGLE_MEMOTAG_INFO } from "../actions/constants";
+import {
+  TOGGLE_MEMOTAG_INFO,
+  TOGGLE_MARKET_WIDGET,
+  TOGGLE_MEV,
+  UPDATE_NFT_COLLECTION_STATUS,
+} from "../actions/constants";
+import { BlockchainsType, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 /* Initial state */
 
@@ -78,6 +85,7 @@ export type SettingsState = {
   collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
+  marketPerformanceWidget: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
@@ -86,6 +94,7 @@ export type SettingsState = {
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   whitelistedNftCollections: string[];
+  nftCollectionsStatusByNetwork: Record<BlockchainsType, Record<string, NftStatus>>;
   hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -128,7 +137,7 @@ export type SettingsState = {
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
-  const systemLocal = getSystemLocale();
+  const systemLocal = getAppLocale();
 
   // Find language from system locale (i.e., en, fr, es ...)
   const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
@@ -182,6 +191,7 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   lastSeenDevice: null,
   mevProtection: true,
+  marketPerformanceWidget: true,
   hasSeenOrdinalsDiscoveryDrawer: false,
   hasProtectedOrdinalsAssets: false,
   devicesModelList: [],
@@ -193,6 +203,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   whitelistedNftCollections: [],
+  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchainsType, Record<string, NftStatus>>,
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -243,10 +254,11 @@ type HandlersPayloads = {
   SETTINGS_DISMISS_BANNER: string;
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
-  UNHIDE_NFT_COLLECTION: string;
-  HIDE_NFT_COLLECTION: string;
-  WHITELIST_NFT_COLLECTION: string;
-  UNWHITELIST_NFT_COLLECTION: string;
+  [UPDATE_NFT_COLLECTION_STATUS]: {
+    blockchain: SupportedBlockchainsType;
+    collectionId: string;
+    status: NftStatus;
+  };
   UNHIDE_ORDINALS_ASSET: string;
   HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
@@ -296,8 +308,9 @@ type HandlersPayloads = {
   SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
   SET_LAST_ONBOARDED_DEVICE: Device | null;
 
-  SET_MEV_PROTECTION: boolean;
+  [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
+  [TOGGLE_MARKET_WIDGET]: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -350,33 +363,16 @@ const handlers: SettingsHandlers = {
       blacklistedTokenIds: [...new Set([...ids, tokenId])],
     };
   },
-  UNHIDE_NFT_COLLECTION: (state, { payload: collectionId }) => {
-    const ids = state.hiddenNftCollections;
+  [UPDATE_NFT_COLLECTION_STATUS]: (state, { payload: { blockchain, collectionId, status } }) => {
     return {
       ...state,
-      hiddenNftCollections: ids.filter(id => id !== collectionId),
-    };
-  },
-  HIDE_NFT_COLLECTION: (state, { payload: collectionId }) => {
-    const collections = state.hiddenNftCollections;
-    return {
-      ...state,
-      hiddenNftCollections: [...new Set(collections.concat(collectionId))],
-    };
-  },
-
-  UNWHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
-    const ids = state.whitelistedNftCollections;
-    return {
-      ...state,
-      whitelistedNftCollections: ids.filter(id => id !== collectionId),
-    };
-  },
-  WHITELIST_NFT_COLLECTION: (state, { payload: collectionId }) => {
-    const collections = state.whitelistedNftCollections;
-    return {
-      ...state,
-      whitelistedNftCollections: [...new Set(collections.concat(collectionId))],
+      nftCollectionsStatusByNetwork: {
+        ...state.nftCollectionsStatusByNetwork,
+        [blockchain]: {
+          ...state.nftCollectionsStatusByNetwork[blockchain],
+          [collectionId]: status,
+        },
+      },
     };
   },
 
@@ -548,11 +544,14 @@ const handlers: SettingsHandlers = {
     ...state,
     lastOnboardedDevice: payload,
   }),
-  SET_MEV_PROTECTION: (state: SettingsState, { payload }) => ({
+  [TOGGLE_MEV]: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
   }),
-
+  [TOGGLE_MARKET_WIDGET]: (state: SettingsState, { payload }) => ({
+    ...state,
+    marketPerformanceWidget: payload,
+  }),
   [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
     ...state,
     alwaysShowMemoTagInfo: payload,
@@ -828,9 +827,6 @@ export const catalogProviderSelector = (state: State) => state.settings.catalogP
 export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
-export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
-export const whitelistedNftCollectionsSelector = (state: State) =>
-  state.settings.whitelistedNftCollections;
 export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
@@ -911,5 +907,8 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-
+export const marketPerformanceWidgetSelector = (state: State) =>
+  state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
+export const nftCollectionsStatusByNetworkSelector = (state: State) =>
+  state.settings.nftCollectionsStatusByNetwork;

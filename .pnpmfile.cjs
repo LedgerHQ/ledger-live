@@ -63,17 +63,8 @@ function readPackage(pkg, context) {
         webpack: "*",
       }),
       /* @celo/* packages */
-      addDependencies(/@celo\/(?!base)+/, { "@celo/base": `^${pkg.version}` }),
       addDependencies("@celo/connect", {
-        "@celo/base": `^${pkg.version}`,
-        "web3-eth-contract": pkg.peerDependencies?.web3 ?? "*",
-      }),
-      addDependencies("@celo/contractkit", {
-        "web3-utils": pkg.dependencies?.["web3"],
-      }),
-      addDependencies("@celo/utils", {
-        "fp-ts": "*",
-        rlp: "*",
+        "web3": pkg.peerDependencies?.web3 ?? "1.10",
       }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {

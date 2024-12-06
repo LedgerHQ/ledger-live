@@ -59,21 +59,12 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
   const { currency } = mainAccount;
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
-  const isACREWithdraw = "type" in signMessageRequested && signMessageRequested.type === "Withdraw";
-
   useEffect(() => {
     if (signMessageRequested.standard === "EIP712") {
       const specific = getLLDCoinFamily(currency.family);
       specific?.message?.getMessageProperties(signMessageRequested).then(setMessageFields);
-    } else if (isACREWithdraw) {
-      setMessageFields(
-        Object.entries(signMessageRequested.message).map(([label, value]) => ({
-          label,
-          value,
-        })),
-      );
     }
-  }, [currency, isACREWithdraw, mainAccount, signMessageRequested]);
+  }, [currency, mainAccount, signMessageRequested]);
 
   if (!device) return null;
 
@@ -96,12 +87,6 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
         type: "text",
         label: t("SignMessageConfirm.messageHash"),
         value: signMessageRequested.hashStruct,
-      });
-    } else if (!isACREWithdraw) {
-      fields.push({
-        type: "text",
-        label: t("SignMessageConfirm.message"),
-        value: signMessageRequested.message,
       });
     }
   }

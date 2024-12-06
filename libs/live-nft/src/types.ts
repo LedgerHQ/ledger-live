@@ -79,3 +79,9 @@ export type Batch = {
   resolvers: Array<BatchElement["resolve"]>;
   rejecters: Array<BatchElement["reject"]>;
 };
+
+export enum NftStatus {
+  spam = "spam",
+  blacklisted = "blacklisted",
+  whitelisted = "whitelisted",
+}

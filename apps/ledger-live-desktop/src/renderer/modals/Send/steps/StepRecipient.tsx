@@ -147,7 +147,9 @@ export const StepRecipientFooter = ({
   const { errors } = status;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const isTerminated = mainAccount && mainAccount.currency.terminated;
-  const fields = ["recipient"].concat(mainAccount ? getFields(mainAccount) : []);
+  const fields = ["recipient"].concat(
+    mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
+  );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
   const canNext = !bridgePending && !hasFieldError && !isTerminated;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);

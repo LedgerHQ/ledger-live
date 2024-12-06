@@ -22,6 +22,7 @@ import {
   languageSelector,
   lastSeenDeviceSelector,
   localeSelector,
+  marketPerformanceWidgetSelector,
   mevProtectionSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
@@ -61,11 +62,15 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getMarketWidgetAnalytics = () => {
+const getMarketWidgetAnalytics = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
 
-  return !!marketWidget?.enabled;
+  const hasMarketWidgetActivated = marketPerformanceWidgetSelector(state);
+
+  return {
+    hasMarketWidget: !marketWidget?.enabled ? "Null" : hasMarketWidgetActivated ? "Yes" : "No",
+  };
 };
 
 const getLedgerSyncAttributes = (state: State) => {
@@ -159,8 +164,9 @@ const extraProperties = (store: ReduxStore) => {
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
 
-  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
-  const mevProtectionAtributes = getMEVAttributes(state);
+  const ledgerSyncAttributes = getLedgerSyncAttributes(state);
+  const mevProtectionAttributes = getMEVAttributes(state);
+  const marketWidgetAttributes = getMarketWidgetAnalytics(state);
 
   const deviceInfo = device
     ? {
@@ -211,12 +217,12 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
-    hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
-    ...ledgerSyncAtributes,
-    ...mevProtectionAtributes,
+    ...ledgerSyncAttributes,
+    ...mevProtectionAttributes,
+    ...marketWidgetAttributes,
   };
 };
 

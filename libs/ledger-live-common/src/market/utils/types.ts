@@ -167,6 +167,7 @@ export type MarketItemResponse = {
   updatedAt: string;
 };
 export type MarketItemPerformer = {
+  id: string;
   name: string;
   ticker: string;
   priceChangePercentage1h: number;

@@ -3,7 +3,7 @@ import { loadAccountsRaw } from "../bridge/server";
 import { Application } from "../page";
 import { initTestAccounts } from "../models/currencies";
 
-let app: Application;
+const app = new Application();
 
 const [badAccount1, badAccount2] = initTestAccounts(["bitcoin", "bitcoin"]).map(account =>
   toAccountRaw(account),
@@ -22,7 +22,7 @@ describe("Portfolio to load with unknown currency data in accounts", () => {
       { data: badAccount2, version: 0 },
     ]);
 
-    app = await Application.init({ userdata: "onboardingcompleted" });
+    await app.init({ userdata: "onboardingcompleted" });
   });
 
   it("opens to empty state", async () => {

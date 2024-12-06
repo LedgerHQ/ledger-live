@@ -2,7 +2,7 @@ import { ChainAPI } from "./api";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import { Transaction, TransactionModel } from "./types";
-import { LEDGER_VALIDATOR, assertUnreachable } from "./utils";
+import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 import { getStakeAccountAddressWithSeed } from "./api/chain/web3";
@@ -88,7 +88,7 @@ const createDummyStakeCreateAccountTx = async (address: string): Promise<Transac
           kind: "stake.createAccount",
           amount: 0,
           delegate: {
-            voteAccAddress: LEDGER_VALIDATOR.voteAccount,
+            voteAccAddress: LEDGER_VALIDATOR_DEFAULT.voteAccount,
           },
           fromAccAddress: address,
           seed: "",

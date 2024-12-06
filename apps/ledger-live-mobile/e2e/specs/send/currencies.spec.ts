@@ -10,7 +10,7 @@ import {
 } from "../../models/currencies";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 let first = true;
@@ -35,7 +35,7 @@ const knownDevice = knownDevices.nanoX;
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
-    app = await Application.init({
+    await app.init({
       userdata: "onboardingcompleted",
       knownDevices: [knownDevice],
       testAccounts: testAccounts,
