@@ -10,7 +10,6 @@ import {
   hasExternalStash,
   hasPendingOperationType,
   isElectionOpen,
-  isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -29,7 +28,7 @@ const getMainActions = (args: {
   parentAccount?: Account;
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account, parentAccount, parentRoute } = args;
+  const { account, parentAccount } = args;
   invariant(account.polkadotResources, "polkadot resources required");
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
@@ -45,43 +44,29 @@ const getMainActions = (args: {
     return null;
   }
 
-  const getNavigationParams = (): NavigationParamsType => {
-    if (!earnRewardsEnabled && !nominationEnabled) {
-      return [
-        NavigatorName.NoFundsFlow,
-        {
-          screen: ScreenName.NoFunds,
-          params: {
-            account,
-            parentAccount,
+  const navigationParams: NavigationParamsType =
+    !earnRewardsEnabled && !nominationEnabled
+      ? [
+          NavigatorName.NoFundsFlow,
+          {
+            screen: ScreenName.NoFunds,
+            params: {
+              account,
+              parentAccount,
+            },
           },
-        },
-      ];
-    }
-    if (isStash(account)) {
-      return [
-        NavigatorName.PolkadotNominateFlow,
-        {
-          screen: ScreenName.PolkadotNominateSelectValidators,
-          params: {
-            accountId,
-            source: parentRoute,
+        ]
+      : [
+          ScreenName.PlatformApp,
+          {
+            params: {
+              platform: "stakekit",
+              name: "StakeKit",
+              accountId,
+              yieldId: "polkadot-dot-validator-staking",
+            },
           },
-        },
-      ];
-    }
-    return [
-      NavigatorName.PolkadotBondFlow,
-      {
-        screen: ScreenName.PolkadotBondStarted,
-        params: {
-          accountId,
-        },
-      },
-    ];
-  };
-
-  const navigationParams = getNavigationParams();
+        ];
 
   return [
     {
