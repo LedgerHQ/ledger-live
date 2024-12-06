@@ -75,7 +75,7 @@ jobs:
   test-web-tools:
     name: "Test Web Tools"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
+    if: true
     uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@develop
     secrets: inherit
 
