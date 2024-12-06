@@ -100,8 +100,11 @@
     "@dfinity/principal": "^0.15.6",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21"
-  
+    "lodash": "^4.17.21",
+    "simple-cbor": "^0.4.1",
+    "big-integer": "^1.6.51",
+    "rxjs": "^7.8.1",
+    "expect": "^27.4.6"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
