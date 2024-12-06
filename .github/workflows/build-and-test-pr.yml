@@ -61,7 +61,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    if: true
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
@@ -75,7 +75,7 @@ jobs:
   test-web-tools:
     name: "Test Web Tools"
     needs: determine-affected
-    if: true
+    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@develop
     secrets: inherit
 
