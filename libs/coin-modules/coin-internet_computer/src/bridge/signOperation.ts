@@ -18,8 +18,6 @@ export const buildSignOperation =
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       async function main() {
-        // log("debug", "[signOperation] start fn");
-
         const { xpub } = account;
         const { derivationPath } = getAddress(account);
         const { unsignedTxn, payloads } = await getUnsignedTransaction(transaction, account);
