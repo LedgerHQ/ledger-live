@@ -1,220 +1,69 @@
-import bot, { BotJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/bot";
-import botPortfolio, {
-  BotPortfolioJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/botPortfolio";
+import bot from "@ledgerhq/live-cli/src/commands/blockchain/bot";
+import botPortfolio from "@ledgerhq/live-cli/src/commands/blockchain/botPortfolio";
 import botTransfer from "@ledgerhq/live-cli/src/commands/blockchain/botTransfer";
-import broadcast, { BroadcastJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/broadcast";
-import confirmOp, { ConfirmOpJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/confirmOp";
+import broadcast from "@ledgerhq/live-cli/src/commands/blockchain/broadcast";
+import confirmOp from "@ledgerhq/live-cli/src/commands/blockchain/confirmOp";
 import derivation from "@ledgerhq/live-cli/src/commands/blockchain/derivation";
-import estimateMaxSpendable, {
-  EstimateMaxSpendableJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/estimateMaxSpendable";
-import generateTestScanAccounts, {
-  GenerateTestScanAccountsJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/generateTestScanAccounts";
-import generateTestTransaction, {
-  GenerateTestTransactionJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/generateTestTransaction";
-import getAddress, {
-  GetAddressJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/getAddress";
-import getTransactionStatus, {
-  GetTransactionStatusJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/getTransactionStatus";
-import receive, { ReceiveJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/receive";
-import satstack, { SatstackJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/satstack";
-import satstackStatus, {
-  SatstackStatusJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/satstackStatus";
-import scanDescriptors, {
-  ScanDescriptorsJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/scanDescriptors";
-import send, { SendJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/send";
-import signMessage, {
-  SignMessageJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/signMessage";
-import sync, { SyncJobOpts } from "@ledgerhq/live-cli/src/commands/blockchain/sync";
-import testDetectOpCollision, {
-  TestDetectOpCollisionJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/testDetectOpCollision";
-import testGetTrustedInputFromTxHash, {
-  TestGetTrustedInputFromTxHashJobOpts,
-} from "@ledgerhq/live-cli/src/commands/blockchain/testGetTrustedInputFromTxHash";
-import app, { AppJobOpts } from "@ledgerhq/live-cli/src/commands/device/app";
-import appUninstallAll, {
-  AppsUninstallAllJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/appUninstallAll";
-import appsCheckAllAppVersions, {
-  AppsCheckAllAppVersionsJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/appsCheckAllAppVersions";
-import appsInstallAll, {
-  AppsInstallAllJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/appsInstallAll";
-import appsUpdateTestAll, {
-  AppsUpdateTestAllJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/appsUpdateTestAll";
+import estimateMaxSpendable from "@ledgerhq/live-cli/src/commands/blockchain/estimateMaxSpendable";
+import generateTestScanAccounts from "@ledgerhq/live-cli/src/commands/blockchain/generateTestScanAccounts";
+import generateTestTransaction from "@ledgerhq/live-cli/src/commands/blockchain/generateTestTransaction";
+import getAddress from "@ledgerhq/live-cli/src/commands/blockchain/getAddress";
+import getTransactionStatus from "@ledgerhq/live-cli/src/commands/blockchain/getTransactionStatus";
+import receive from "@ledgerhq/live-cli/src/commands/blockchain/receive";
+import satstack from "@ledgerhq/live-cli/src/commands/blockchain/satstack";
+import satstackStatus from "@ledgerhq/live-cli/src/commands/blockchain/satstackStatus";
+import scanDescriptors from "@ledgerhq/live-cli/src/commands/blockchain/scanDescriptors";
+import send from "@ledgerhq/live-cli/src/commands/blockchain/send";
+import signMessage from "@ledgerhq/live-cli/src/commands/blockchain/signMessage";
+import sync from "@ledgerhq/live-cli/src/commands/blockchain/sync";
+import testDetectOpCollision from "@ledgerhq/live-cli/src/commands/blockchain/testDetectOpCollision";
+import testGetTrustedInputFromTxHash from "@ledgerhq/live-cli/src/commands/blockchain/testGetTrustedInputFromTxHash";
+import app from "@ledgerhq/live-cli/src/commands/device/app";
+import appUninstallAll from "@ledgerhq/live-cli/src/commands/device/appUninstallAll";
+import appsCheckAllAppVersions from "@ledgerhq/live-cli/src/commands/device/appsCheckAllAppVersions";
+import appsInstallAll from "@ledgerhq/live-cli/src/commands/device/appsInstallAll";
+import appsUpdateTestAll from "@ledgerhq/live-cli/src/commands/device/appsUpdateTestAll";
 import cleanSpeculos from "@ledgerhq/live-cli/src/commands/device/cleanSpeculos";
-import customLockScreenFetch, {
-  CustomLockScreenFetchJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetch";
-import customLockScreenFetchAndRestore, {
-  CustomLockScreenFetchAndRestoreJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetchAndRestore";
-import customLockScreenFetchHash, {
-  CustomLockScreenFetchHashJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetchHash";
-import customLockScreenLoad, {
-  CustomLockScreenLoadJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/customLockScreenLoad";
-import customLockScreenRemove, {
-  CustomLockScreenRemoveJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/customLockScreenRemove";
-import devDeviceAppsScenario, {
-  DevDeviceAppsScenarioJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/devDeviceAppsScenario";
-import deviceAppVersion, {
-  DeviceAppVersionJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceAppVersion";
-import deviceInfo, { DeviceInfoJobOpts } from "@ledgerhq/live-cli/src/commands/device/deviceInfo";
-import deviceSDKFirmwareUpdate, {
-  DeviceSDKFirmwareUpdateJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceSDKFirmwareUpdate";
-import deviceSDKGetBatteryStatuses, {
-  DeviceSDKGetBatteryStatusesJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceSDKGetBatteryStatuses";
-import deviceSDKGetDeviceInfo, {
-  DeviceSDKGetDeviceInfoJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceSDKGetDeviceInfo";
-import deviceSDKToggleOnboardingEarlyCheck, {
-  DeviceSDKToggleOnboardingEarlyCheckJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceSDKToggleOnboardingEarlyCheck";
-import deviceVersion, {
-  DeviceVersionJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/deviceVersion";
-import discoverDevices, {
-  DiscoverDevicesJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/discoverDevices";
-import firmwareRepair, {
-  FirmwareRepairJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/firmwareRepair";
-import firmwareUpdate, {
-  FirmwareUpdateJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/firmwareUpdate";
-import genuineCheck, {
-  GenuineCheckJobArgs,
-} from "@ledgerhq/live-cli/src/commands/device/genuineCheck";
-import getBatteryStatus, {
-  GetBatteryStatusJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/getBatteryStatus";
-import getDeviceRunningMode, {
-  GetDeviceRunningModeJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/getDeviceRunningMode";
-import i18n, { I18nJobOpts } from "@ledgerhq/live-cli/src/commands/device/i18n";
-import listApps, { ListAppsJobOpts } from "@ledgerhq/live-cli/src/commands/device/listApps";
-import managerListApps, {
-  ManagerListAppsJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/managerListApps";
-import proxy, { ProxyJobOpts } from "@ledgerhq/live-cli/src/commands/device/proxy";
-import reinstallConfigurationConsent, {
-  ReinstallConfigurationConsentJobOpts,
-} from "@ledgerhq/live-cli/src/commands/device/reinstallConfigurationConsent";
-import repl, { ReplJobOpts } from "@ledgerhq/live-cli/src/commands/device/repl";
+import customLockScreenFetch from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetch";
+import customLockScreenFetchAndRestore from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetchAndRestore";
+import customLockScreenFetchHash from "@ledgerhq/live-cli/src/commands/device/customLockScreenFetchHash";
+import customLockScreenLoad from "@ledgerhq/live-cli/src/commands/device/customLockScreenLoad";
+import customLockScreenRemove from "@ledgerhq/live-cli/src/commands/device/customLockScreenRemove";
+import devDeviceAppsScenario from "@ledgerhq/live-cli/src/commands/device/devDeviceAppsScenario";
+import deviceAppVersion from "@ledgerhq/live-cli/src/commands/device/deviceAppVersion";
+import deviceInfo from "@ledgerhq/live-cli/src/commands/device/deviceInfo";
+import deviceSDKFirmwareUpdate from "@ledgerhq/live-cli/src/commands/device/deviceSDKFirmwareUpdate";
+import deviceSDKGetBatteryStatuses from "@ledgerhq/live-cli/src/commands/device/deviceSDKGetBatteryStatuses";
+import deviceSDKGetDeviceInfo from "@ledgerhq/live-cli/src/commands/device/deviceSDKGetDeviceInfo";
+import deviceSDKToggleOnboardingEarlyCheck from "@ledgerhq/live-cli/src/commands/device/deviceSDKToggleOnboardingEarlyCheck";
+import deviceVersion from "@ledgerhq/live-cli/src/commands/device/deviceVersion";
+import discoverDevices from "@ledgerhq/live-cli/src/commands/device/discoverDevices";
+import firmwareRepair from "@ledgerhq/live-cli/src/commands/device/firmwareRepair";
+import firmwareUpdate from "@ledgerhq/live-cli/src/commands/device/firmwareUpdate";
+import genuineCheck from "@ledgerhq/live-cli/src/commands/device/genuineCheck";
+import getBatteryStatus from "@ledgerhq/live-cli/src/commands/device/getBatteryStatus";
+import getDeviceRunningMode from "@ledgerhq/live-cli/src/commands/device/getDeviceRunningMode";
+import i18n from "@ledgerhq/live-cli/src/commands/device/i18n";
+import listApps from "@ledgerhq/live-cli/src/commands/device/listApps";
+import managerListApps from "@ledgerhq/live-cli/src/commands/device/managerListApps";
+import proxy from "@ledgerhq/live-cli/src/commands/device/proxy";
+import reinstallConfigurationConsent from "@ledgerhq/live-cli/src/commands/device/reinstallConfigurationConsent";
+import repl from "@ledgerhq/live-cli/src/commands/device/repl";
 import speculosList from "@ledgerhq/live-cli/src/commands/device/speculosList";
-import balanceHistory, {
-  BalanceHistoryJobOpts,
-} from "@ledgerhq/live-cli/src/commands/live/balanceHistory";
-import countervalues, {
-  CountervaluesJobOpts,
-} from "@ledgerhq/live-cli/src/commands/live/countervalues";
+import balanceHistory from "@ledgerhq/live-cli/src/commands/live/balanceHistory";
+import countervalues from "@ledgerhq/live-cli/src/commands/live/countervalues";
 import envs from "@ledgerhq/live-cli/src/commands/live/envs";
-import exportAccounts, {
-  ExportAccountsJobOpts,
-} from "@ledgerhq/live-cli/src/commands/live/exportAccounts";
-import ledgerKeyRingProtocol, {
-  LedgerKeyRingProtocolJobOpts,
-} from "@ledgerhq/live-cli/src/commands/live/ledgerKeyRingProtocol";
-import ledgerSync, { LedgerSyncJobOpts } from "@ledgerhq/live-cli/src/commands/live/ledgerSync";
-import liveData, { LiveDataJobOpts } from "@ledgerhq/live-cli/src/commands/live/liveData";
-import portfolio, { PortfolioJobOpts } from "@ledgerhq/live-cli/src/commands/live/portfolio";
-import synchronousOnboarding, {
-  SynchronousOnboardingJobOpts,
-} from "@ledgerhq/live-cli/src/commands/live/synchronousOnboarding";
+import exportAccounts from "@ledgerhq/live-cli/src/commands/live/exportAccounts";
+import ledgerKeyRingProtocol from "@ledgerhq/live-cli/src/commands/live/ledgerKeyRingProtocol";
+import ledgerSync from "@ledgerhq/live-cli/src/commands/live/ledgerSync";
+import liveData from "@ledgerhq/live-cli/src/commands/live/liveData";
+import portfolio from "@ledgerhq/live-cli/src/commands/live/portfolio";
+import synchronousOnboarding from "@ledgerhq/live-cli/src/commands/live/synchronousOnboarding";
 import user from "@ledgerhq/live-cli/src/commands/live/user";
 import version from "@ledgerhq/live-cli/src/commands/live/version";
-import swap, { SwapJobOpts } from "@ledgerhq/live-cli/src/commands/ptx/swap";
-import { Observable } from "rxjs";
+import swap from "@ledgerhq/live-cli/src/commands/ptx/swap";
 
-export type Command<JobOpts> = (arg: JobOpts) => Observable<any> | Promise<any> | string; // Job accepts a single object
-type EmtyArgs = {};
-
-export type Commands = {
-  bot: Command<BotJobOpts>;
-  botPortfolio: Command<BotPortfolioJobOpts>;
-  botTransfer: Command<EmtyArgs>;
-  broadcast: Command<BroadcastJobOpts>;
-  confirmOp: Command<ConfirmOpJobOpts>;
-  derivation: Command<EmtyArgs>;
-  estimateMaxSpendable: Command<EstimateMaxSpendableJobOpts>;
-  generateTestScanAccounts: Command<GenerateTestScanAccountsJobOpts>;
-  generateTestTransaction: Command<GenerateTestTransactionJobOpts>;
-  getAddress: Command<GetAddressJobOpts>;
-  getTransactionStatus: Command<GetTransactionStatusJobOpts>;
-  receive: Command<ReceiveJobOpts>;
-  satstack: Command<SatstackJobOpts>;
-  satstackStatus: Command<SatstackStatusJobOpts>;
-  scanDescriptors: Command<ScanDescriptorsJobOpts>;
-  send: Command<SendJobOpts>;
-  signMessage: Command<SignMessageJobOpts>;
-  sync: Command<SyncJobOpts>;
-  testDetectOpCollision: Command<TestDetectOpCollisionJobOpts>;
-  testGetTrustedInputFromTxHash: Command<TestGetTrustedInputFromTxHashJobOpts>;
-  app: Command<AppJobOpts>;
-  appUninstallAll: Command<AppsUninstallAllJobOpts>;
-  appsCheckAllAppVersions: Command<AppsCheckAllAppVersionsJobOpts>;
-  appsInstallAll: Command<AppsInstallAllJobOpts>;
-  appsUpdateTestAll: Command<AppsUpdateTestAllJobOpts>;
-  cleanSpeculos: Command<EmtyArgs>;
-  customLockScreenFetch: Command<CustomLockScreenFetchJobOpts>;
-  customLockScreenFetchAndRestore: Command<CustomLockScreenFetchAndRestoreJobOpts>;
-  customLockScreenFetchHash: Command<CustomLockScreenFetchHashJobOpts>;
-  customLockScreenLoad: Command<CustomLockScreenLoadJobOpts>;
-  customLockScreenRemove: Command<CustomLockScreenRemoveJobOpts>;
-  devDeviceAppsScenario: Command<DevDeviceAppsScenarioJobOpts>;
-  deviceAppVersion: Command<DeviceAppVersionJobOpts>;
-  deviceInfo: Command<DeviceInfoJobOpts>;
-  deviceSDKFirmwareUpdate: Command<DeviceSDKFirmwareUpdateJobOpts>;
-  deviceSDKGetBatteryStatuses: Command<DeviceSDKGetBatteryStatusesJobOpts>;
-  deviceSDKGetDeviceInfo: Command<DeviceSDKGetDeviceInfoJobOpts>;
-  deviceSDKToggleOnboardingEarlyCheck: Command<DeviceSDKToggleOnboardingEarlyCheckJobOpts>;
-  deviceVersion: Command<DeviceVersionJobOpts>;
-  discoverDevices: Command<DiscoverDevicesJobOpts>;
-  firmwareRepair: Command<FirmwareRepairJobOpts>;
-  firmwareUpdate: Command<FirmwareUpdateJobOpts>;
-  genuineCheck: Command<GenuineCheckJobArgs>;
-  getBatteryStatus: Command<GetBatteryStatusJobOpts>;
-  getDeviceRunningMode: Command<GetDeviceRunningModeJobOpts>;
-  i18n: Command<I18nJobOpts>;
-  listApps: Command<ListAppsJobOpts>;
-  managerListApps: Command<ManagerListAppsJobOpts>;
-  proxy: Command<ProxyJobOpts>;
-  reinstallConfigurationConsent: Command<ReinstallConfigurationConsentJobOpts>;
-  repl: Command<ReplJobOpts>;
-  speculosList: Command<EmtyArgs>;
-  balanceHistory: Command<BalanceHistoryJobOpts>;
-  countervalues: Command<CountervaluesJobOpts>;
-  envs: Command<EmtyArgs>;
-  exportAccounts: Command<ExportAccountsJobOpts>;
-  ledgerKeyRingProtocol: Command<LedgerKeyRingProtocolJobOpts>;
-  ledgerSync: Command<LedgerSyncJobOpts>;
-  liveData: Command<LiveDataJobOpts>;
-  portfolio: Command<PortfolioJobOpts>;
-  synchronousOnboarding: Command<SynchronousOnboardingJobOpts>;
-  user: Command<EmtyArgs>;
-  version: Command<EmtyArgs>;
-  swap: Command<SwapJobOpts>;
-};
-
-export const commandCLI = {
+export const CLI = {
   bot: bot.job,
   botPortfolio: botPortfolio.job,
   botTransfer: botTransfer.job,

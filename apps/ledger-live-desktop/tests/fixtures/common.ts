@@ -13,15 +13,7 @@ import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { commandCLI } from "tests/utils/cliUtils";
 import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
-import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
-
-type Command<T extends (...args: any) => Observable<any> | Promise<any> | string> = {
-  command: T;
-  args: Parameters<T>[0]; // Infer the first argument type
-  output?: (output: any) => void;
-};
 
 type TestFixtures = {
   lang: string;
@@ -38,7 +30,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
-  cliCommands: Command<(typeof commandCLI)[keyof typeof commandCLI]>[];
+  cliCommands?: ((appjsonPath: string) => Observable<unknown> | Promise<unknown> | string)[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -121,30 +113,15 @@ export const test = base.extend<TestFixtures>({
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
         setEnv("MOCK", "");
 
-        if (cliCommands) {
+        if (cliCommands?.length) {
           registerSpeculosTransport(device?.ports.apiPort);
-          for (const command of cliCommands) {
-            if (command.args && "appjson" in command.args) {
-              command.args.appjson = `${userdataDestinationPath}/app.json`;
-            }
-
-            const resultPromise = handleResult(command.command(command.args as any));
-
-            if (command.args && "getKeyRingTree" in command.args) {
-              await activateLedgerSync();
-            }
-
-            const result = await resultPromise;
-            command?.output?.(result);
+          for (const cmd of cliCommands) {
+            const promise = await cmd(`${userdataDestinationPath}/app.json`);
+            const result =
+              promise instanceof Observable ? await lastValueFrom(promise) : await promise;
             console.log("CLI result: ", result);
           }
         }
-      }
-      async function handleResult(result: Promise<any> | Observable<any> | string): Promise<any> {
-        if (result instanceof Observable) {
-          return lastValueFrom(result); // Converts Observable to Promise
-        }
-        return result; // Return Promise directly
       }
 
       // default environment variables

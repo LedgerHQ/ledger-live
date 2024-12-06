@@ -4,7 +4,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
@@ -224,23 +224,21 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToCredit.currency.currencyId,
               index: transaction.transaction.accountToCredit.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.currencyId,
               index: transaction.transaction.accountToDebit.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -299,14 +297,13 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding",
       speculosApp: tokenTransactionInvalid.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: tokenTransactionInvalid.transaction.accountToDebit.currency.currencyId,
             index: tokenTransactionInvalid.transaction.accountToDebit.index,
             add: true,
-            appjson: "",
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });
@@ -341,14 +338,13 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.currencyId,
               index: transaction.transaction.accountToDebit.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -388,14 +384,13 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding",
       speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: tokenTransactionValid.accountToDebit.currency.currencyId,
             index: tokenTransactionValid.accountToDebit.index,
             add: true,
-            appjson: "",
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });
@@ -431,14 +426,13 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.currencyId,
               index: transaction.transaction.accountToDebit.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -478,14 +472,13 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: transactionInputValid.accountToDebit.currency.currencyId,
             index: transactionInputValid.accountToDebit.index,
             add: true,
-            appjson: "",
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });
@@ -521,15 +514,14 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.currencyId,
               index: transaction.transaction.accountToDebit.index,
               scheme: transaction.transaction.accountToDebit.derivationMode,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -564,14 +556,13 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.currencyId,
               index: transaction.transaction.accountToDebit.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
