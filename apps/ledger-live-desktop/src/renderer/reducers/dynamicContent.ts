@@ -5,6 +5,8 @@ import {
   PortfolioContentCard,
 } from "~/types/dynamicContent";
 import { Handlers } from "./types";
+import { SettingsState, trackingEnabledSelector } from "./settings";
+import { State } from ".";
 
 export type DynamicContentState = {
   portfolioCards: PortfolioContentCard[];
@@ -61,8 +63,18 @@ export const portfolioContentCardSelector = (state: { dynamicContent: DynamicCon
 export const actionContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.actionCards;
 
-export const notificationsContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
-  state.dynamicContent.notificationsCards;
+export const notificationsContentCardSelector = (state: {
+  dynamicContent: DynamicContentState;
+  settings: SettingsState;
+}) => {
+  const { settings, dynamicContent } = state;
+  return dynamicContent.notificationsCards.map(n => ({
+    ...n,
+    viewed: trackingEnabledSelector(state as State)
+      ? n.viewed
+      : !!settings.anonymousUserNotifications[n.id],
+  }));
+};
 
 // Exporting reducer
 
