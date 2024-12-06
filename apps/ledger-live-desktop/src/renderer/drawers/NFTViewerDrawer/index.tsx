@@ -366,7 +366,13 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                   skeleton={floorPriceLoading}
                   title={t("NFT.viewer.attributes.floorPrice")}
                   value={
-                    <Text mb={1} lineHeight="15.73px" fontSize={4} color="palette.text.shade60">
+                    <Text
+                      mb={1}
+                      data-testId="nft-floor-price"
+                      lineHeight="15.73px"
+                      fontSize={4}
+                      color="palette.text.shade60"
+                    >
                       {floorPrice} {ticker}
                     </Text>
                   }

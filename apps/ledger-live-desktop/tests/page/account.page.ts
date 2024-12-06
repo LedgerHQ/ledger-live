@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import invariant from "invariant";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
@@ -31,9 +32,9 @@ export class AccountPage extends AppPage {
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
-  private seeGalleryButton = this.page.getByTestId("see-gallery-button");
-  private nft = (nftName: string) => this.page.locator(`text=${nftName}`);
+  private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
   private nftOperation = this.page.getByText("NFT Sent");
+  private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -168,13 +169,18 @@ export class AccountPage extends AppPage {
     await this.seeGalleryButton.click();
   }
 
-  @step("Select NFT $0")
-  async selectNFT(nftName: string) {
-    await this.nft(nftName).click();
-  }
-
   @step("Navigate to NFT operation")
   async navigateToNFTOperation() {
     await this.nftOperation.click();
+  }
+
+  @step("Expect NFT list to be visible")
+  async checkNftListInAccount(account: Account) {
+    invariant(account.nft && account.nft.length > 0, "No NFT found in account");
+
+    for (const nft of account.nft) {
+      const nftLocator = this.nftList(nft.collectionName);
+      await expect(nftLocator).toBeVisible();
+    }
   }
 }
