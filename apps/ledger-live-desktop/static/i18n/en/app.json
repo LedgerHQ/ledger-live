@@ -442,6 +442,14 @@
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
+    "incompatibility": {
+      "ton_title": "Ledger Nano S™ does not support swapping Ton through Ledger Live",
+      "ton_description": "To swap Ton through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens through Ledger Live",
+      "spl_tokens_description": "To swap Solana tokens through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title": "Ledger Nano S™ does not support swapping Cardano through Ledger Live",
+      "ada_description": "To swap Cardano through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+    },
     "providers": {
       "title": "Choose a provider to swap crypto",
       "learnMore": "What is Swap?",
