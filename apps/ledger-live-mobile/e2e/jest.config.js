@@ -21,7 +21,7 @@ const jestAllure2ReporterOptions = {
 
 module.exports = async () => ({
   rootDir: "..",
-  maxWorkers: "50%",
+  maxWorkers: process.env.CI ? 2 : 1,
   preset: "ts-jest",
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
