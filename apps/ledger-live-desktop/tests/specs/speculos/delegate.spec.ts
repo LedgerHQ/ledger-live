@@ -13,7 +13,7 @@ const e2eDelegationAccounts = [
     xrayTicket: "B2CQA-2740, B2CQA-2770",
   },
   {
-    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
+    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Chorus One"),
     xrayTicket: "B2CQA-2742",
   },
   {
@@ -28,7 +28,7 @@ const validators = [
     xrayTicket: "B2CQA-2731, B2CQA-2763",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"),
     xrayTicket: "B2CQA-2730, B2CQA-2764",
   },
   {
