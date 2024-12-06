@@ -52,17 +52,9 @@
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
-    "./erc20": {
-      "require": "./lib/erc20/tokenAccounts.js",
-      "default": "./lib-es/erc20/tokenAccounts.js"
-    },
     "./logic": {
       "require": "./lib/common-logic/index.js",
       "default": "./lib-es/common-logic/index.js"
-    },
-    "./network": {
-      "require": "./lib/network/index.js",
-      "default": "./lib-es/network/index.js"
     },
     "./signer": {
       "require": "./lib/signer/index.js",
@@ -108,11 +100,8 @@
     "@dfinity/principal": "^0.15.6",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
-    "simple-cbor": "^0.4.1",
-    "big-integer": "^1.6.51",
-    "rxjs": "^7.8.1",
-    "expect": "^27.4.6"
+    "lodash": "^4.17.21"
+  
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",

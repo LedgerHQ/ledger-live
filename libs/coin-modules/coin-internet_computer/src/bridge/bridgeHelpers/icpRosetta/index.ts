@@ -16,7 +16,6 @@ import {
 import { ingressExpiry, generateOperations, generateSignaturesPayload } from "./utils";
 import { Cbor } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import { isError } from "../../../common-logic/utils";
 import BigNumber from "bignumber.js";
 import { ICP_SEND_TXN_TYPE } from "../../../consts";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -92,8 +91,6 @@ export const signICPTransaction = async ({
     const r = await signer.sign(path, Buffer.from(txnBlobToSign), ICP_SEND_TXN_TYPE);
     return { r };
   });
-
-  isError(r);
 
   const result = {
     signatures: {
