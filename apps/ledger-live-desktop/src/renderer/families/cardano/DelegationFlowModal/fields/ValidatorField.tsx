@@ -30,7 +30,7 @@ type Props = {
 };
 
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
-  const [currentPool, setCurrentPool] = useState<StakePool>();
+  const [currentPool, setCurrentPool] = useState<Array<StakePool>>([]);
   const unit = useAccountUnit(account);
   const [showAll, setShowAll] = useState(false);
   const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
@@ -47,10 +47,16 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       setLedgerPoolsLoading(true);
       fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
         .then((apiRes: { pools: Array<StakePool> }) => {
-          const filteredPool = apiRes.pools
-            .filter(pool => pool.poolId === delegation?.poolId)
-            .at(0);
-          setCurrentPool(filteredPool || apiRes.pools.at(0));
+          const filteredPool = apiRes.pools.filter(pool => pool.poolId === delegation?.poolId);
+          const firstFilteredPool = filteredPool.at(0);
+          const firstApiResPool = apiRes.pools.at(0);
+          if (firstFilteredPool) {
+            setCurrentPool([firstFilteredPool]);
+          } else if (firstApiResPool) {
+            setCurrentPool([firstApiResPool]);
+          } else {
+            setCurrentPool([]);
+          }
           const filteredLedgerPools = apiRes.pools.filter(
             pool => pool.poolId !== delegation?.poolId,
           );
@@ -103,7 +109,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
                     ? pools.filter(
                         p => p?.poolId === selectedPoolId || p?.poolId === delegation?.poolId,
                       )
-                    : [currentPool]
+                    : currentPool
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",
