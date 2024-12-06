@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.94.0-next.5
+
+### Minor Changes
+
+- [#8628](https://github.com/LedgerHQ/ledger-live/pull/8628) [`3a9758f`](https://github.com/LedgerHQ/ledger-live/commit/3a9758f7642cea56e49b45a9e36dc5c4babc57ef) Thanks [@KVNLS](https://github.com/KVNLS)! - LLD: LIVE-15143 use a debounce on the memotag field
+
 ## 2.94.0-next.4
 
 ### Minor Changes
