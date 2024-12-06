@@ -2627,15 +2627,27 @@ importers:
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
+      big-integer:
+        specifier: ^1.6.51
+        version: 1.6.52
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      simple-cbor:
+        specifier: ^0.4.1
+        version: 0.4.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2

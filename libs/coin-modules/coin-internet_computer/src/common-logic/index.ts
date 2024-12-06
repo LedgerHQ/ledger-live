@@ -1,4 +1,5 @@
 export {
+  getPath,
   isValidHex,
   isValidBase64,
   methodToString,
