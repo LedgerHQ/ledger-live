@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -43,14 +43,13 @@ test.describe("Password", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
@@ -89,14 +88,13 @@ test.describe("counter value selection", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
