@@ -4,7 +4,7 @@ import flatMap from "lodash/flatMap";
 import type { Transaction } from "../types";
 
 function inferAccounts(account: Account): AccountLikeArray {
-  invariant(account.currency.family === "hedera", "hedera family");
+  invariant(account.currency.family === "internet_computer", "internet computer family");
 
   const accounts: Account[] = [account];
   return accounts;
