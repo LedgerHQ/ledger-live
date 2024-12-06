@@ -1,20 +1,8 @@
-import { BigNumber } from "bignumber.js";
-import MultiversXApi from "./apiCalls";
-import {
-  MultiversXApiTransaction,
-  MultiversXDelegation,
-  MultiversXProvider,
-  MultiversXTransferOptions,
-  MultiversXTransactionOperation,
-  ESDTToken,
-  Transaction,
-  MultiversXOperation,
-} from "../types";
-import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/types-live";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { getEnv } from "@ledgerhq/live-env";
+import type { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import {
   Address,
   ApiNetworkProvider,
@@ -23,15 +11,27 @@ import {
   Transaction as MultiversXSdkTransaction,
   TransactionPayload,
 } from "@multiversx/sdk-core";
-import { BinaryUtils } from "../utils/binary.utils";
+import { BigNumber } from "bignumber.js";
 import {
   CHAIN_ID,
-  MULTIVERSX_STAKING_POOL,
   GAS_PER_DATA_BYTE,
   GAS_PRICE,
   GAS_PRICE_MODIFIER,
   MIN_GAS_LIMIT,
+  MULTIVERSX_STAKING_POOL,
 } from "../constants";
+import {
+  ESDTToken,
+  MultiversXApiTransaction,
+  MultiversXDelegation,
+  MultiversXOperation,
+  MultiversXProvider,
+  MultiversXTransactionOperation,
+  MultiversXTransferOptions,
+  Transaction,
+} from "../types";
+import { BinaryUtils } from "../utils/binary.utils";
+import MultiversXApi from "./apiCalls";
 import { MultiversXAccount } from "./dtos/multiversx-account";
 const api = new MultiversXApi(
   getEnv("MULTIVERSX_API_ENDPOINT"),
@@ -348,7 +348,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
 
   const transaction = new MultiversXSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
-    receiver: new Address(getAbandonSeedAddress("multiversx")),
+    receiver: new Address(getAbandonSeedAddress("elrond")),
     chainID: CHAIN_ID,
     gasPrice: GAS_PRICE,
     gasLimit: t.gasLimit ?? networkConfig.MinGasLimit,
