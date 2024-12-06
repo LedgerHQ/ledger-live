@@ -30,14 +30,9 @@ type Props = {
 };
 
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
-  const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
+  const [currentPool, setCurrentPool] = useState<StakePool>();
   const unit = useAccountUnit(account);
-
-  const [showAll, setShowAll] = useState(
-    LEDGER_POOL_IDS.length === 0 ||
-      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
-  );
-
+  const [showAll, setShowAll] = useState(false);
   const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
@@ -52,11 +47,14 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       setLedgerPoolsLoading(true);
       fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
         .then((apiRes: { pools: Array<StakePool> }) => {
+          const filteredPool = apiRes.pools
+            .filter(pool => pool.poolId === delegation?.poolId)
+            .at(0);
+          setCurrentPool(filteredPool || apiRes.pools.at(0));
           const filteredLedgerPools = apiRes.pools.filter(
             pool => pool.poolId !== delegation?.poolId,
           );
           if (filteredLedgerPools.length) {
-            setLedgerPools(filteredLedgerPools);
             onChangeValidator(filteredLedgerPools[0]);
           }
         })
@@ -88,7 +86,9 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
+          {(showAll && isSearching) ||
+          (!showAll && ledgerPoolsLoading) ||
+          (!showAll && !pools.length) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
             </Box>
@@ -96,8 +96,14 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             <ScrollLoadingList
               data={
                 showAll
-                  ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
-                  : ledgerPools
+                  ? pools.filter(p => p && !poolIdsToFilterFromAllPools.includes(p.poolId))
+                  : pools.filter(
+                        p => p?.poolId === selectedPoolId || p?.poolId === delegation?.poolId,
+                      ).length > 0
+                    ? pools.filter(
+                        p => p?.poolId === selectedPoolId || p?.poolId === delegation?.poolId,
+                      )
+                    : [currentPool]
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",
