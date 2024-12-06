@@ -17,7 +17,7 @@ export const CHAIN_ID = "1";
 export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber("1000000000000000000");
 export const DECIMALS_LIMIT = 18;
 
-export const MULTIVERSX_EXPLORER_URL = "https://explorer.multiversx.com/";
+export const MULTIVERSX_EXPLORER_URL = "https://explorer.multiversx.com";
 export const MULTIVERSX_STAKING_POOL =
   "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
 export const MULTIVERSX_LEDGER_VALIDATOR_ADDRESS =
