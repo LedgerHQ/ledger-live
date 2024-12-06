@@ -1,4 +1,4 @@
-name: "Web Tools Tests"
+name: "Build Web Tools"
 
 on:
   workflow_call:
@@ -16,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  test-web-tools:
-    name: "Test web-tools"
+  build-web-tools:
+    name: "Build web-tools"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -42,7 +42,7 @@ jobs:
         run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   report:
-    needs: test-web-tools
+    needs: build-web-tools
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:
@@ -58,15 +58,15 @@ jobs:
             const fs = require("fs");
             const statuses = {
               tool: {
-                pass: ${{ needs.test-web-tools.result == 'success' }},
-                status: "${{ needs.test-web-tools.result }}",
+                pass: ${{ needs.build-web-tools.result == 'success' }},
+                status: "${{ needs.build-web-tools.result }}",
               }
             };
 
             const summary = `### Common Tools
 
-            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools tests failed"}
-              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* tests* ended with status \`${statuses.tool.status}\`
+            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools build failed"}
+              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* build* ended with status \`${statuses.tool.status}\`
             `;
 
             const actions = [];
