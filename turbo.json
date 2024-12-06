@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "daemon": false,
   "globalDependencies": ["turbo.json"],
   "globalEnv": [
     "ANDROID_HOME",
@@ -48,8 +49,11 @@
     "SENTRY_ENVIRONMENT",
     "SENTRY_PROJECT",
     "SHORT_BUNDLE_ID",
+    "SWAP_API_BASE",
+    "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE"
+    "VERBOSE",
+    "BYPASS_CORS"
   ],
   "ui": "tui",
   "tasks": {
@@ -81,6 +85,9 @@
     "unimported": {
       "cache": false
     },
+    "knip-check": {
+      "cache": false
+    },
     "android:apk:local": {
       "dependsOn": ["^build"]
     },
@@ -107,7 +114,13 @@
     },
     "watch": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "watch:es": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "coverage": {
       "cache": false

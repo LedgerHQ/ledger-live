@@ -25,7 +25,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { openModal } from "../../actions/modals";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -41,7 +41,10 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
+    const { webviewState, webviewRef, webviewProps, webviewPartition } = useWebviewState(
+      { manifest, inputs },
+      ref,
+    );
 
     const tracking = useMemo(
       () =>
@@ -408,6 +411,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           {...webviewProps}
+          {...webviewPartition}
         />
         {!widgetLoaded ? (
           <Loader>

@@ -51,13 +51,13 @@ import type {
   TransactionRaw as filecoinTransactionRaw,
   TransactionStatus as filecoinTransactionStatus,
   TransactionStatusRaw as filecoinTransactionStatusRaw,
-} from "../families/filecoin/types";
+} from "@ledgerhq/coin-filecoin/types/index";
 import type {
   Transaction as hederaTransaction,
   TransactionRaw as hederaTransactionRaw,
   TransactionStatus as hederaTransactionStatus,
   TransactionStatusRaw as hederaTransactionStatusRaw,
-} from "../families/hedera/types";
+} from "@ledgerhq/coin-hedera/types/index";
 import type {
   Transaction as iconTransaction,
   TransactionRaw as iconTransactionRaw,
@@ -99,7 +99,7 @@ import type {
   TransactionRaw as stacksTransactionRaw,
   TransactionStatus as stacksTransactionStatus,
   TransactionStatusRaw as stacksTransactionStatusRaw,
-} from "../families/stacks/types";
+} from "@ledgerhq/coin-stacks/types/index";
 import type {
   Transaction as stellarTransaction,
   TransactionRaw as stellarTransactionRaw,
@@ -129,7 +129,7 @@ import type {
   TransactionRaw as vechainTransactionRaw,
   TransactionStatus as vechainTransactionStatus,
   TransactionStatusRaw as vechainTransactionStatusRaw,
-} from "../families/vechain/types";
+} from "@ledgerhq/coin-vechain/types/index";
 import type {
   Transaction as xrpTransaction,
   TransactionRaw as xrpTransactionRaw,

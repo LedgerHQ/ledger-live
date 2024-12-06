@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
 import { TrackScreen } from "~/analytics";
 import SeedWarning from "../shared/SeedWarning";
 import Illustration from "~/images/illustration/Illustration";
-import { completeOnboarding } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setHasBeenRedirectedToPostOnboarding,
+  setHasBeenUpsoldProtect,
+} from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "~/logic/notifications";
 import {
@@ -49,7 +51,8 @@ export default memo(function () {
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
+  const { deviceModelId, showSeedWarning, next, isProtectFlow, fromAccessExistingWallet } =
+    route.params;
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -84,8 +87,6 @@ export default memo(function () {
     [isProtectFlow],
   );
 
-  const startPostOnboarding = useStartPostOnboardingCallback();
-
   const onFinish = useCallback(() => {
     if (next && deviceModelId) {
       // only used for protect for now
@@ -105,24 +106,24 @@ export default memo(function () {
       parentNav.popToTop();
     }
 
-    startPostOnboarding({
-      deviceModelId: deviceModelId as DeviceModelId,
-      resetNavigationStack: true,
-      fallbackIfNoAction: () =>
-        navigation.replace(NavigatorName.Base, {
-          screen: NavigatorName.Main,
-        }),
+    navigation.replace(NavigatorName.Base, {
+      screen: NavigatorName.Main,
     });
+
+    dispatch(setHasBeenUpsoldProtect(false));
+    if (!fromAccessExistingWallet) {
+      dispatch(setHasBeenRedirectedToPostOnboarding(false));
+    }
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
+    next,
+    deviceModelId,
     dispatch,
     resetCurrentStep,
     navigation,
-    startPostOnboarding,
-    deviceModelId,
+    fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    next,
   ]);
 
   const nextPage = useCallback(() => {

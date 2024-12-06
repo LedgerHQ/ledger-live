@@ -1,22 +1,20 @@
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
-import { useTranslation } from "react-i18next";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 type Props = {
   onChange: (t: Transaction) => void;
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
+  autoFocus?: boolean;
 };
 
-const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
+const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: Props) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
-
-  const { t } = useTranslation();
 
   const bridge = getAccountBridge(account);
 
@@ -31,12 +29,12 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
   // It will be usefull to block a memo wrong format
   // on the ledger-live mobile
   return (
-    <Input
+    <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.memo}
-      placeholder={t("families.stacks.memoPlaceholder")}
+      value={transaction.memo ?? ""}
       onChange={onMemoValueChange}
+      autoFocus={autoFocus}
     />
   );
 };

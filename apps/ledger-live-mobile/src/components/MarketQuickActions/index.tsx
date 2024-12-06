@@ -7,7 +7,9 @@ import { track } from "~/analytics";
 import { EntryOf } from "~/types/helpers";
 import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
+const stakeLabel = getStakeLabelLocaleBased();
 export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
@@ -69,7 +71,7 @@ const QUICK_ACTIONS = {
     analytics: "quick_action_swap",
   },
   STAKE: {
-    name: "portfolio.quickActions.stake",
+    name: stakeLabel,
     analytics: "quick_action_stake",
   },
 } as const;

@@ -590,6 +590,15 @@ const injective = {
   }),
 };
 
+const mantraMinimalTransactionAmount = new BigNumber(20000);
+const mantra = {
+  ...generateGenericCosmosTest("mantra", false, {
+    minViableAmount: mantraMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(mantraMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -605,4 +614,5 @@ export default {
   stargaze,
   coreum,
   injective,
+  mantra,
 };

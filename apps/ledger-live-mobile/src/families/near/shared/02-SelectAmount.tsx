@@ -31,6 +31,8 @@ import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -91,6 +93,8 @@ function StakingAmount({ navigation, route }: Props) {
   if (Platform.OS === "ios") {
     behaviorParam = "padding";
   }
+
+  const errorDuringUnstaking = error instanceof NotEnoughBalance && transaction.mode === "unstake";
 
   return (
     <View
@@ -158,6 +162,7 @@ function StakingAmount({ navigation, route }: Props) {
                 },
               ]}
             >
+              {errorDuringUnstaking && <NotEnoughFundFeesAlert account={account} />}
               {remaining.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignSelf: "stretch",
-    padding: 8,
+    paddingVertical: 8,
   },
   labelContainer: {
     width: "100%",

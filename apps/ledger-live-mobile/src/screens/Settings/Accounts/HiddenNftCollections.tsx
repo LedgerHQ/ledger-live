@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,13 +6,14 @@ import { Account, NFTMetadata } from "@ledgerhq/types-live";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import { NFTResource, NFTResourceLoaded } from "@ledgerhq/live-nft/types";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import { NFTResource, NFTResourceLoaded, NftStatus } from "@ledgerhq/live-nft/types";
 import { accountSelector } from "~/reducers/accounts";
 import NftMedia from "~/components/Nft/NftMedia";
 import Skeleton from "~/components/Skeleton";
-import { unhideNftCollection } from "~/actions/settings";
+import { updateNftStatus } from "~/actions/settings";
 import { State } from "~/reducers/types";
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
+import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -31,6 +32,9 @@ const CollectionNameSkeleton = styled(Skeleton)`
   border-radius: 4px;
   margin-left: 10px;
 `;
+
+const MAX_COLLECTIONS_FIRST_RENDER = 20;
+const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 10;
 
 const HiddenNftCollectionRow = ({
   contractAddress,
@@ -85,32 +89,68 @@ const HiddenNftCollectionRow = ({
 };
 
 const HiddenNftCollections = () => {
-  const hiddenCollections = useSelector(hiddenNftCollectionsSelector);
+  const collections = useSelector(nftCollectionsStatusByNetworkSelector);
+
   const dispatch = useDispatch();
 
-  const renderItem = useCallback(
-    ({ item }: { item: string }) => {
-      const [accountId, contractAddress] = item.split("|");
-      return (
-        <HiddenNftCollectionRow
-          accountId={accountId}
-          contractAddress={contractAddress}
-          onUnhide={() => dispatch(unhideNftCollection(item))}
-        />
+  const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
+
+  const onUnhideCollection = useCallback(
+    (collectionId: string, blockchain: BlockchainsType) => {
+      dispatch(
+        updateNftStatus({ blockchain, collection: collectionId, status: NftStatus.whitelisted }),
       );
     },
     [dispatch],
   );
 
+  const renderItem = useCallback(
+    ({ item }: { item: string }) => {
+      const [accountId, contractAddress] = item.split("|");
+      const network = (Object.keys(collections).find(
+        key => collections[key as BlockchainEVM][item],
+      ) ?? BlockchainEVM.Ethereum) as BlockchainsType;
+      return (
+        <HiddenNftCollectionRow
+          accountId={accountId}
+          contractAddress={contractAddress}
+          onUnhide={() => onUnhideCollection(item, network)}
+        />
+      );
+    },
+    [collections, onUnhideCollection],
+  );
+
   const keyExtractor = useCallback((item: string) => item, []);
+
+  const hiddenNftCollections = useMemo(
+    () =>
+      Object.values(collections).flatMap(network =>
+        Object.keys(network).filter(
+          collection =>
+            network[collection] === NftStatus.blacklisted || network[collection] === NftStatus.spam,
+        ),
+      ),
+    [collections],
+  );
+
+  const collectionsSliced: string[] = useMemo(
+    () => hiddenNftCollections.slice(0, collectionsCount),
+    [collectionsCount, hiddenNftCollections],
+  );
+
+  const onEndReached = useCallback(() => {
+    setCollectionsCount(collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED);
+  }, [collectionsCount]);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>
       <Flex p={2}>
         <CollectionFlatList
-          data={hiddenCollections}
+          data={collectionsSliced}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
+          onEndReached={onEndReached}
         />
       </Flex>
     </Box>

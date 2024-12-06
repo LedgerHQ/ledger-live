@@ -7,6 +7,7 @@ export class LockscreenPage extends AppPage {
   private loginButton = this.page.getByTestId("lockscreen-login-button");
 
   async login(password: string) {
+    await this.container.waitFor({ state: "visible" });
     await this.passwordInput.fill(password);
     await this.loginButton.click();
   }

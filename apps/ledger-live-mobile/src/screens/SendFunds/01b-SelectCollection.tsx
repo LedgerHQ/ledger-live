@@ -3,16 +3,14 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import {
-  isThresholdValid,
+  getThreshold,
   useNftCollectionMetadata,
   useNftGalleryFilter,
   useNftMetadata,
 } from "@ledgerhq/live-nft-react";
 import type { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
 import LoadingFooter from "~/components/LoadingFooter";
 import NftMedia from "~/components/Nft/NftMedia";
 import Skeleton from "~/components/Skeleton";
@@ -25,6 +23,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 8;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 8;
@@ -91,15 +90,17 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   const { account } = params;
   const { colors } = useTheme();
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
 
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);

@@ -25,8 +25,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- react-native-share base64 sharing (swap history/logs export)-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Needed by Flipper 🐬 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Adjust and by Braze -->
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/> <!-- Needed by Adjust -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Braze -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed by Live apps -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Required for the webview camera/audio media -->
     <uses-sdk

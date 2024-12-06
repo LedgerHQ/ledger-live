@@ -80,6 +80,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
+  currencyZkSync: DEFAULT_FEATURE,
+  currencyZkSyncSepolia: DEFAULT_FEATURE,
+  currencyMantra: DEFAULT_FEATURE,
 };
 
 /**
@@ -87,7 +90,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
-
   brazeLearn: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
@@ -96,6 +98,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -395,37 +398,12 @@ export const DEFAULT_FEATURES: Features = {
   },
   ptxCard: DEFAULT_FEATURE,
 
-  ptxSwapLiveAppDemoZero: {
-    enabled: false,
-    params: {
-      manifest_id: "swap-live-app-demo-0",
-    },
-  },
-
-  ptxSwapLiveAppDemoOne: {
-    enabled: false,
-    params: {
-      manifest_id: "swap-live-app-demo-1",
-    },
-  },
-
-  ptxSwapLiveAppDemoThree: {
-    enabled: false,
+  ptxSwapLiveApp: {
+    enabled: true,
     params: {
       manifest_id: "swap-live-app-demo-3",
     },
   },
-
-  ptxSwapCoreExperiment: {
-    enabled: false,
-    params: {
-      variant: "Demo0",
-      manifest_id: "swap-live-app-demo-0",
-    },
-  },
-
-  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
-  ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,
@@ -455,6 +433,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       threshold: 75,
+      staleTime: 1000 * 60 * 15,
     },
   },
   marketperformanceWidgetDesktop: {
@@ -462,8 +441,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       variant: ABTestingVariants.variantA,
       refreshRate: 2,
-      top: 50,
+      top: 100,
+      limit: 100,
       supported: true,
+      enableNewFeature: false,
     },
   },
 
@@ -506,6 +487,23 @@ export const DEFAULT_FEATURES: Features = {
   spamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
+  ldmkTransport: {
+    ...DEFAULT_FEATURE,
+    params: {
+      warningVisible: true,
+    },
+  },
+  llMevProtection: DEFAULT_FEATURE,
+  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
+  llCounterValueGranularitiesRates: {
+    ...DEFAULT_FEATURE,
+    params: {
+      daily: 14 * 24 * 60 * 60 * 1000,
+      hourly: 2 * 24 * 60 * 60 * 1000,
+    },
+  },
+  llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmAccountListUI: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

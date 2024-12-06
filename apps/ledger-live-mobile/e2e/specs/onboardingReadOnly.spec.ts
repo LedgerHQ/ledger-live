@@ -1,13 +1,9 @@
 import { device } from "detox";
 import { Application } from "../page";
 
-let app: Application;
+const app = new Application();
 
 describe("Onboarding - Read Only", () => {
-  beforeAll(() => {
-    app = new Application();
-  });
-
   $TmsLink("B2CQA-1752");
   it("is able to buy a nano from the onboarding flow", async () => {
     await app.onboarding.startOnboarding();

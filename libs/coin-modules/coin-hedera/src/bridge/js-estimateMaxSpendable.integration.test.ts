@@ -1,0 +1,63 @@
+import BigNumber from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
+import { createBridges } from ".";
+import { getEstimatedFees } from "./utils";
+
+// Balance is 1 Hbar
+const account: Account = {
+  type: "Account",
+  id: "",
+  seedIdentifier: "",
+  derivationMode: "",
+  index: 0,
+  freshAddress: "",
+  freshAddressPath: "",
+  used: false,
+  balance: new BigNumber(100000000),
+  spendableBalance: new BigNumber(0),
+  creationDate: new Date(),
+  blockHeight: 0,
+  currency: {
+    type: "CryptoCurrency",
+    id: "hedera",
+    managerAppName: "",
+    coinType: 0,
+    scheme: "",
+    color: "",
+    family: "",
+    explorerViews: [],
+    name: "",
+    ticker: "",
+    units: [],
+  },
+  operationsCount: 0,
+  operations: [],
+  pendingOperations: [],
+  lastSyncDate: new Date(),
+  balanceHistoryCache: {
+    HOUR: { latestDate: null, balances: [] },
+    DAY: { latestDate: null, balances: [] },
+    WEEK: { latestDate: null, balances: [] },
+  },
+  swapHistory: [],
+};
+
+describe("js-estimateMaxSpendable", () => {
+  let bridge: ReturnType<typeof createBridges>;
+  let estimatedFees = new BigNumber("150200").multipliedBy(2); // 0.001502 ℏ (as of 2023-03-14)
+
+  beforeAll(async () => {
+    const signer = jest.fn();
+    bridge = createBridges(signer);
+    estimatedFees = await getEstimatedFees(account);
+  });
+
+  test("estimateMaxSpendable", async () => {
+    const result = await bridge.accountBridge.estimateMaxSpendable({
+      account,
+    });
+    const data = account.balance.minus(estimatedFees);
+
+    expect(result).toEqual(data);
+  });
+});

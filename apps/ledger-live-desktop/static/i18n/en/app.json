@@ -148,7 +148,10 @@
     "or": "OR",
     "clearAll": "Clear all",
     "buyLedger": "Buy a Ledger",
-    "quote": "Quote"
+    "quote": "Quote",
+    "memoTag": {
+      "learnMore": "Learn more about Tag/Memo"
+    }
   },
   "devices": {
     "nanoS": "Nano S",
@@ -432,6 +435,12 @@
       "title": "Please update the {{appName}} app on your device",
       "subtitle": "Go to My Ledger and update {{appName}} app to swap assets.",
       "cta": "Go to My Ledger"
+    },
+    "wrongDevice": {
+      "title": "Ledger Nano S™ is not compatible with THORChain",
+      "description": "Ledger Nano S is not compatible with THORChain. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on THORChain via Ledger Live",
+      "cta": "Explore compatible devices",
+      "changeProvider": "Swap with another provider"
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1130,6 +1139,7 @@
       "send": "Send",
       "swap": "Swap",
       "stake": "Stake",
+      "earn": "Earn",
       "yield": "Yield",
       "buy": "Buy",
       "sell": "Sell",
@@ -1476,7 +1486,7 @@
       },
       "earn": {
         "title": "Stake",
-        "description": "Stake your crypto with Ledger"
+        "description": "Get rewards on your crypto"
       }
     },
     "recoverBanner": {
@@ -2260,8 +2270,7 @@
     },
     "memoTag": {
       "title": "Need a Tag/Memo?",
-      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
-      "learnMore": "Learn more about Tag/Memo"
+      "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
   "send": {
@@ -2284,12 +2293,17 @@
           "noResolution": {
             "title": "No address found for this domain"
           }
+        },
+        "memoTag": {
+          "question": "Dont use Memo Tag?",
+          "learnMore": "Learn more about Tag/Memo",
+          "warning": " Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet."
         }
       },
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Max estimated fee",
+        "fees": "Learn more about fees",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
@@ -2361,6 +2375,15 @@
     },
     "footer": {
       "estimatedFees": "Network fees"
+    },
+    "info": {
+      "needMemoTag": {
+        "title": "Don’t use Tag/Memo?",
+        "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+        "cta.addTag": "Add Tag",
+        "cta.not.addTag": "Don’t add Tag",
+        "checkbox.label": "Do not show this again."
+      }
     }
   },
   "releaseNotes": {
@@ -2368,7 +2391,15 @@
     "version": "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork": {
-    "title": "Troubleshoot networking"
+    "title": "Troubleshoot networking",
+    "myLedgerServices": "My Ledger services (scriptrunner)",
+    "bitcoinExplorers": "Bitcoin explorers",
+    "ethereumExplorers": "Ethereum explorers",
+    "countervaluesApi": "Countervalues API",
+    "announcements": "Announcements",
+    "status": "Status",
+    "test": "TEST",
+    "renderer": "RENDERER"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
@@ -3014,6 +3045,7 @@
         "validatorGroup": {
           "title": "Validator Group",
           "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+          "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
           "totalVotes": "Total Votes",
           "commission": "Commission"
         }
@@ -3611,6 +3643,7 @@
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
       "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+      "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
       "emptyState": {
         "description": "You can earn SOL rewards by delegating your assets.",
         "info": "How Delegation works",
@@ -3869,6 +3902,7 @@
           },
           "validator": {
             "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4082,6 +4116,8 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
+      "mevProtection": "MEV Protection",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -4105,6 +4141,10 @@
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
         "placeholder": "Exchange provider's info in CAL format"
+      },
+      "exchangeTestPartnerMode": {
+        "title": "Exchange in Test Partner Mode",
+        "desc": "Enable use of the partner stage public key"
       },
       "analyticsConsole": {
         "title": "Allow Analytics Console",
@@ -4130,6 +4170,7 @@
             "link": "Link",
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
+            "tag": "Tag",
             "url": "URL",
             "path": "Path"
           }
@@ -5338,25 +5379,17 @@
     "link": "Terms of Use",
     "cta": "Continue"
   },
+  "MemoTagField": {
+    "label": "Tag / Memo",
+    "placeholder": "Enter Tag / Memo",
+    "information": "To ensure your transaction is deposited correctly to your account, centralized exchanges and sometimes custodial wallets require a Tag/Memo.",
+    "instruction": "Copy and paste the Tag/Memo provided by the exchange or custodial wallet."
+  },
   "families": {
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
       "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
-    },
-    "cardano": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo"
-    },
-    "internet_computer": {
-      "memoPlaceholder": "Optional, Default: 0",
-      "memo": "Memo",
-      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
-    },
-    "stacks": {
-      "memoPlaceholder": "Optional",
-      "memo": "Memo",
-      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
     "ton": {
       "commentPlaceholder": "Optional",
@@ -5386,13 +5419,8 @@
       "assetCode": "Asset code",
       "assetIssuer": "Asset issuer"
     },
-    "cosmos": {
-      "memo": "Memo",
-      "memoPlaceholder": "Optional",
-      "memoWarningText": "When using a memo, carefully check the information with the recipient"
-    },
     "solana": {
-      "memo": "Memo",
+      "memo": "Tag / Memo",
       "memoPlaceholder": "Optional"
     }
   },
@@ -6382,11 +6410,22 @@
       "getHelp": "Get Help",
       "technicalErrorTitle": "Technical error : ",
       "saveLogs": "Save logs"
+    },
+    "NotEnoughBalanceForUnstaking": {
+      "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
+      "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",
+      "twoCtas": "<cta1>{{cta1Label}}</cta1> or <cta2>{{cta2Label}}</cta2> {{assetName}} into your account.",
+      "threeCtas": "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> or <cta3>{{cta3Label}}</cta3> {{assetName}} into your account.",
+      "ctas": {
+        "buy": "Buy",
+        "swap": "Swap",
+        "deposit": "Deposit"
+      }
     }
   },
   "cryptoOrg": {
     "memo": "Memo",
-    "memoPlaceholder": "Optional",
+    "memoPlaceholder": "Enter Tag / Memo",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
   "hedera": {
@@ -6418,6 +6457,7 @@
     "cta": "Custom lock screen",
     "managerCTA": "Lock screen picture",
     "managerCTARemove": "Remove",
+    "rotate": "Rotate",
     "steps": {
       "choose": {
         "stepLabel": "Choose picture",
@@ -6519,12 +6559,12 @@
   "analyticsOptInPrompt": {
     "variantA": {
       "description": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
-      "whatWeTrack": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+      "whatWeTrack": "With your consent, Ledger will be able to collect data about how you use Ledger Live (including page visits and clicks):",
       "whatWeTrackList": {
         "1": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
         "2": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
       },
-      "whatWeDoNotTrack": "Ledger will never track information regarding:",
+      "whatWeDoNotTrack": "Ledger will never collect information regarding:",
       "whatWeDoNotTrackList": {
         "1": "Your assets.",
         "2": "Your portfolio.",
@@ -6566,13 +6606,13 @@
     "common": {
       "title": "Help us improve and personalize your experience",
       "revokeInfo": "You can revoke your consent any time in the app settings.",
-      "learnMore": "Learn more about our Tracking Policy"
+      "learnMore": "Learn more about how we handle your data"
     },
     "profileSettings": {
       "personalizedExp": "Personalized experience",
       "analytics": "Analytics",
-      "personalizedExpDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
-      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience."
+      "personalizedExpDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience."
     }
   },
   "walletSync": {
@@ -6585,7 +6625,6 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?"
     },
-
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6810,5 +6849,8 @@
       "address": "Address",
       "transactionId": "Transaction ID"
     }
+  },
+  "ldmkFeatureFlagWarning": {
+    "title": "With LDMK transport"
   }
 }

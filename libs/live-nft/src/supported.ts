@@ -35,19 +35,19 @@ export enum BlockchainEVM {
 export const blockchainEVMList: BlockchainEVM[] = Object.values(BlockchainEVM);
 
 export const SUPPORTED_BLOCKCHAINS_LIVE = [
-  BlockchainEVM.Arbitrum,
+  // BlockchainEVM.Arbitrum,
   BlockchainEVM.Avalanche,
-  BlockchainEVM.Base,
+  //BlockchainEVM.Base,
   // BlockchainEVM.Blast,
-  // BlockchainEVM.Bsc,
+  BlockchainEVM.Bsc,
   // BlockchainEVM.Celo,
   BlockchainEVM.Ethereum,
   // BlockchainEVM.Fantom,
   // BlockchainEVM.Linea,
   // BlockchainEVM.Moonbeam,
-  BlockchainEVM.Optimism,
+  //BlockchainEVM.Optimism,
   BlockchainEVM.Polygon,
-  BlockchainEVM.Scroll,
+  //BlockchainEVM.Scroll,
   // BlockchainEVM.Sei,
 ];
 

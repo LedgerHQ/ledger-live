@@ -9,7 +9,6 @@ import {
   counterValueCurrencySelector,
   hasInstalledAppsSelector,
   selectedTimeRangeSelector,
-  hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -34,8 +33,10 @@ import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperfor
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
-import Carousel from "~/renderer/components/Carousel";
+import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import useActionCards from "~/renderer/hooks/useActionCards";
+import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -63,8 +64,10 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
+  useAutoRedirectToPostOnboarding();
+
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -81,7 +84,8 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
-  const isActionCardsCampainRunning = useActionCards().length > 0;
+  const { actionCards } = useActionCards();
+  const isActionCardsCampainRunning = actionCards.length > 0;
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
@@ -100,7 +104,7 @@ export default function DashboardPage() {
             {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
               <ActionContentCards variant={ABTestingVariants.variantA} />
             ) : (
-              <Carousel />
+              <PortfolioContentCards />
             )}
           </RecoverBanner>
         )}

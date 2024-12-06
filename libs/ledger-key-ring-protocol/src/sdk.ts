@@ -95,7 +95,7 @@ export class SDK implements TrustchainSDK {
   }
 
   async initMemberCredentials(): Promise<MemberCredentials> {
-    const kp = await crypto.randomKeypair();
+    const kp = crypto.randomKeypair();
     return convertKeyPairToLiveCredentials(kp);
   }
 

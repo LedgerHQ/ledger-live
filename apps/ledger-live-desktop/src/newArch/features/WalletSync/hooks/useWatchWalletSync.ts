@@ -15,6 +15,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import {
   memberCredentialsSelector,
+  resetTrustchainStore,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { State } from "~/renderer/reducers";
@@ -36,6 +37,7 @@ import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -117,6 +119,7 @@ export type WalletSyncUserState = {
 
 export function useWatchWalletSync(): WalletSyncUserState {
   const featureWalletSync = useFeature("lldWalletSync");
+  const dispatch = useDispatch();
   const saveUpdate = useSaveUpdate();
   const getState = useGetState();
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -132,6 +135,18 @@ export function useWatchWalletSync(): WalletSyncUserState {
     () => ({ visualPending, walletSyncError, onUserRefresh: onUserRefreshRef.current }),
     [visualPending, walletSyncError],
   );
+
+  const resetLedgerSync = useCallback(() => {
+    dispatch(resetTrustchainStore());
+    dispatch(walletSyncUpdate(null, 0));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (walletSyncError) {
+      if (walletSyncError instanceof TrustchainNotAllowed) resetLedgerSync();
+      if (walletSyncError instanceof TrustchainEjected) resetLedgerSync();
+    }
+  }, [dispatch, resetLedgerSync, walletSyncError]);
 
   // pull and push wallet sync loop
   useEffect(() => {

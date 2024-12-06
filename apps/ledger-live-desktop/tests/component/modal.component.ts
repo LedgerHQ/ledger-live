@@ -78,6 +78,7 @@ export class Modal extends Component {
     return parseInt(valueAmount);
   }
 
+  @step("Click Continue button")
   async countinueSendAmount() {
     await this.continueAmountButton.click();
   }

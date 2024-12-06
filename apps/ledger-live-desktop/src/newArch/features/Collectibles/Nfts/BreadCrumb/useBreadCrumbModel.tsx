@@ -25,13 +25,14 @@ const useBreadCrumbModel = () => {
     addresses: String(account?.freshAddress),
     chains: [String(account?.currency.id)],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const collections = useMemo(
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts),
     [account?.nfts, nfts, nftsFromSimplehashFeature],
   );
-
   const items: DropDownItemType<ProtoNFT>[] = useMemo(
     () =>
       Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => ({

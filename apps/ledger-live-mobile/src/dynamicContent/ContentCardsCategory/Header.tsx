@@ -7,9 +7,10 @@ type HeaderProps = {
   description?: string;
   cta?: string;
   link?: string;
+  centered?: boolean;
 };
 
-const Header = ({ title, description, cta, link }: HeaderProps) => {
+const Header = ({ title, description, cta, link, centered = false }: HeaderProps) => {
   if (!title && !description && !cta && !link) return null;
 
   const onLinkPress = () => {
@@ -21,16 +22,11 @@ const Header = ({ title, description, cta, link }: HeaderProps) => {
   return (
     <Flex mx={6} mb={6}>
       {title || (link && cta) ? (
-        <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
-          <Text
-            variant="h5"
-            fontWeight="semiBold"
-            numberOfLines={1}
-            width={link && cta ? "80%" : "100%"}
-          >
+        <Flex flexDirection="row" justifyContent={centered ? "center" : "space-between"}>
+          <Text variant="h5" fontWeight="semiBold" numberOfLines={1}>
             {title}
           </Text>
-          {link && cta ? (
+          {link && cta && !centered ? (
             <Link size="medium" type="color" onPress={onLinkPress}>
               {cta}
             </Link>
@@ -43,9 +39,10 @@ const Header = ({ title, description, cta, link }: HeaderProps) => {
           fontWeight="medium"
           numberOfLines={2}
           color="neutral.c70"
+          textAlign={centered ? "center" : "left"}
           mt={title || cta ? 1 : 0}
         >
-          {description}
+          {description.replace(/\\n/g, "\n")}
         </Text>
       ) : null}
     </Flex>

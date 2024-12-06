@@ -13,12 +13,14 @@ import { orderByLastReceived } from "@ledgerhq/live-nft";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import { State } from ".";
-import { hiddenNftCollectionsSelector } from "./settings";
+import { nftCollectionsStatusByNetworkSelector } from "./settings";
 import { Handlers } from "./types";
 import { walletSelector } from "./wallet";
 import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionParser } from "../hooks/nfts/useNftCollectionsStatus";
 
 /*
 FIXME
@@ -222,9 +224,17 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
  * */
 export const orderedVisibleNftsSelector = createSelector(
   accountsSelector,
-  hiddenNftCollectionsSelector,
-  (accounts, hiddenNftCollections) => {
+  nftCollectionsStatusByNetworkSelector,
+  (_: State, hideSpam: boolean) => hideSpam,
+  (accounts, nftCollectionsStatusByNetwork, hideSpams) => {
     const nfts = accounts.map(a => a.nfts ?? []).flat();
+
+    const hiddenNftCollections = nftCollectionParser(
+      nftCollectionsStatusByNetwork,
+      ([_, status]) =>
+        hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+    );
+
     const visibleNfts = nfts.filter(
       nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
     );

@@ -43,6 +43,7 @@ import {
   renderAllowOpeningApp,
   renderBootloaderStep,
   renderConnectYourDevice,
+  renderHardwareUpdate,
   renderError,
   renderInWrongAppForAccount,
   renderLoading,
@@ -76,11 +77,19 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isDeviceNotOnboardedError } from "./utils";
+import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+
+type SwapRequest = {
+  transaction: Transaction;
+  exchange: ExchangeSwap;
+  provider: string;
+  rate: number;
+  amountExpectedTo: number;
+};
 
 type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
@@ -331,6 +340,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
+  if (device?.modelId === "nanoS" && (request as SwapRequest)?.provider === "thorswap") {
+    return renderHardwareUpdate();
+  }
+
   if (listingApps) {
     return renderListingApps();
   }
@@ -470,6 +483,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         withOpenManager: true,
         withExportLogs: true,
         ...(device && { device }),
+        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
       });
     }
 

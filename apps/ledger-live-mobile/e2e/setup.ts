@@ -12,6 +12,14 @@ const currentDate = new Date();
 const date = format(currentDate, "MM-dd");
 const directoryPath = `artifacts/${date}_LLM`;
 
+if (process.env.MOCK == "0") {
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+} else {
+  setEnv("MOCK", "1");
+  process.env.MOCK = "1";
+}
+
 beforeAll(
   async () => {
     setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);

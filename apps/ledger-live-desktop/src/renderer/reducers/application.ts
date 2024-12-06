@@ -60,7 +60,6 @@ export const osLangAndRegionSelector = (state: { application: ApplicationState }
   state.application.osLanguage;
 export const isNavigationLocked = (state: { application: ApplicationState }) =>
   state.application.navigationLocked;
-
 // Exporting reducer
 
 export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(

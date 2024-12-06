@@ -48,12 +48,17 @@ export type PreloadStrategy = Partial<{
   preloadMaxAge: number;
 }>;
 
+export type BroadcastConfig = {
+  mevProtected: boolean;
+};
+
 /**
  *
  */
 export type BroadcastArg<A extends Account> = {
   account: A;
   signedOperation: SignedOperation;
+  broadcastConfig?: BroadcastConfig;
 };
 
 /**

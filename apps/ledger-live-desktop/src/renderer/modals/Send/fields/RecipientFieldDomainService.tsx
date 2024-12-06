@@ -142,7 +142,7 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
                 </Text>
               </Box>
               <Box>
-                <Text ff="Inter|SemiBold" fontSize={3}>
+                <Text data-testId="ens-address-sendModal" ff="Inter|SemiBold" fontSize={3}>
                   {transaction.recipientDomain.address}
                 </Text>
               </Box>

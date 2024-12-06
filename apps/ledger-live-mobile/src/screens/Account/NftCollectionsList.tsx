@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { useSelector } from "react-redux";
 import { Box, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
@@ -10,14 +9,15 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "~/components/Nft/NftCollectionOptionsMenu";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+
 import NftCollectionRow from "~/components/Nft/NftCollectionRow";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "~/components/wrappedUi/Button";
 import Touchable from "~/components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { useNftGalleryFilter, getThreshold } from "@ledgerhq/live-nft-react";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
 
@@ -28,8 +28,8 @@ type Props = {
 export default function NftCollectionsList({ account }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
-  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
+  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled || false;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -38,10 +38,13 @@ export default function NftCollectionsList({ account }: Props) {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
+
   const nftCollections = useMemo(
     () =>
       Object.entries(nftsByCollections(nftsFromSimplehashEnabled ? nfts : account.nfts)).filter(

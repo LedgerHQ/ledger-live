@@ -1,12 +1,12 @@
-import { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
-import { openModal } from "~/renderer/actions/modals";
-import IconCoins from "~/renderer/icons/Coins";
-import { SubAccount } from "@ledgerhq/types-live";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
+import { SubAccount } from "@ledgerhq/types-live";
+import { useCallback, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import IconCoins from "~/renderer/icons/Coins";
 
 const AccountHeaderManageActions = (props: {
   account: MultiversXAccount | SubAccount;
@@ -14,8 +14,8 @@ const AccountHeaderManageActions = (props: {
   source?: string;
 }) => {
   const { account, source } = props;
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
   const validators = useMultiversXRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
@@ -57,7 +57,7 @@ const AccountHeaderManageActions = (props: {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",

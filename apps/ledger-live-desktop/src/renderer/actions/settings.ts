@@ -25,6 +25,14 @@ import {
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
+import {
+  TOGGLE_MARKET_WIDGET,
+  TOGGLE_MEMOTAG_INFO,
+  TOGGLE_MEV,
+  UPDATE_NFT_COLLECTION_STATUS,
+} from "./constants";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -214,10 +222,7 @@ export const blacklistToken = (tokenId: string) => ({
   type: "BLACKLIST_TOKEN",
   payload: tokenId,
 });
-export const hideNftCollection = (collectionId: string) => ({
-  type: "HIDE_NFT_COLLECTION",
-  payload: collectionId,
-});
+
 export const hideOrdinalsAsset = (inscriptionId: string) => ({
   type: "HIDE_ORDINALS_ASSET",
   payload: inscriptionId,
@@ -248,10 +253,16 @@ export const showToken = (tokenId: string) => ({
   type: "SHOW_TOKEN",
   payload: tokenId,
 });
-export const unhideNftCollection = (collectionId: string) => ({
-  type: "UNHIDE_NFT_COLLECTION",
-  payload: collectionId,
+
+export const updateNftStatus = (
+  blockchain: BlockchainsType,
+  collectionId: string,
+  status: NftStatus,
+) => ({
+  type: UPDATE_NFT_COLLECTION_STATUS,
+  payload: { blockchain, collectionId, status },
 });
+
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({
   type: "UNHIDE_ORDINALS_ASSET",
   payload: inscriptionId,
@@ -407,3 +418,39 @@ export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
   type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
   payload,
 });
+
+export const setHasBeenUpsoldRecover = (payload: boolean) => ({
+  type: "SET_HAS_BEEN_UPSOLD_RECOVER",
+  payload,
+});
+
+export const setOnboardingUseCase = (payload: Settings["onboardingUseCase"]) => ({
+  type: "SET_ONBOARDING_USE_CASE",
+  payload,
+});
+
+export const setHasRedirectedToPostOnboarding = (payload: boolean) => ({
+  type: "SET_HAS_REDIRECTED_TO_POST_ONBOARDING",
+  payload,
+});
+
+export const setLastOnboardedDevice = (payload: Device | null) => ({
+  type: "SET_LAST_ONBOARDED_DEVICE",
+  payload,
+});
+export const setMevProtection = (payload: boolean) => ({
+  type: TOGGLE_MEV,
+  payload,
+});
+
+export const setMarketWidget = (payload: boolean) => ({
+  type: TOGGLE_MARKET_WIDGET,
+  payload,
+});
+
+export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
+  return {
+    type: TOGGLE_MEMOTAG_INFO,
+    payload,
+  };
+};

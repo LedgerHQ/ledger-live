@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "tests/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class ReceiveModal extends Modal {
   private skipDeviceButton = this.page.getByTestId("receive-connect-device-skip-device-button");
@@ -32,6 +32,12 @@ export class ReceiveModal extends Modal {
 
   async skipDevice() {
     await this.skipDeviceButton.click();
+  }
+
+  @step("Retrieve fees amount value")
+  async getAddressDisplayed() {
+    const text = await this.addressDisplayedValue.textContent();
+    return text ? text?.split(" ")[0] : "";
   }
 
   @step("Verify receive address correctness $0")

@@ -25,8 +25,6 @@ const excludedErrorName = [
   "EthAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "CantOpenDevice",
-  "DisconnectedDevice",
-  "DisconnectedDeviceDuringOperation",
   "DeviceOnDashboardExpected",
   "PairingFailed",
   "GetAppAndVersionUnsupportedFormat",
@@ -61,7 +59,6 @@ const excludedErrorDescription = [
   "Unexpected '<'",
   "Service Unvailable",
   // base usage of device
-  /Device .* was disconnected/,
   "Invalid channel",
   /Ledger Device is busy/,
   "Ledger device: UNKNOWN_ERROR",
@@ -82,7 +79,8 @@ const excludedErrorDescription = [
   "Bad status on response: 503", // cryptoorg node
 ];
 
-const sentryEnabled = Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK;
+const sentryEnabled =
+  Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
 
 export function withSentry(App: React.ComponentType) {
   if (sentryEnabled) {

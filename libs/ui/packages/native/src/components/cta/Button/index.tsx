@@ -181,10 +181,10 @@ const Button = (props: ButtonProps): React.ReactElement => {
 
   return (
     <Base
+      activeOpacity={1}
       {...props}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
-      activeOpacity={1}
       disabled={disabled || pending}
       testID={testID}
     >

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Animated, Easing } from "react-native";
+import Config from "react-native-config";
 
 type Props = {
   children?: React.ReactNode;
@@ -22,14 +23,16 @@ class Spinning extends Component<Props> {
   }
 
   start = () => {
-    Animated.loop(
-      Animated.timing(this.spinValue, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
+    Config.DETOX
+      ? undefined
+      : Animated.loop(
+          Animated.timing(this.spinValue, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+        ).start();
   };
   stop = () => {
     this.spinValue.setValue(0);

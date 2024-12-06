@@ -14,14 +14,14 @@ import NftCollectionWithName from "./NftCollectionWithName";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "~/components/Button";
 import SendIcon from "~/icons/Send";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import InfoModal from "~/modals/Info";
 import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 import invariant from "invariant";
-import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { useNftGalleryFilter, getThreshold } from "@ledgerhq/live-nft-react";
+import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -32,7 +32,7 @@ type NavigationProps = BaseComposite<
 
 const NftGallery = () => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
@@ -55,10 +55,12 @@ const NftGallery = () => {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const collections = useMemo(
     () =>
       Object.entries(nftsByCollections(nftsFromSimplehashEnabled ? nfts : account.nfts)).filter(

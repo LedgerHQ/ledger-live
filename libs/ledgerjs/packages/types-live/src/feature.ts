@@ -121,6 +121,9 @@ export type CurrencyFeatures = {
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
 };
 
 /**
@@ -164,12 +167,8 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
-  ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapCoreExperiment: Feature_PtxSwapCoreExperiment;
-  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
-  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
+  ptxSwapLiveAppMobile: DefaultFeature;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -193,6 +192,12 @@ export type Features = CurrencyFeatures & {
   spamFilteringTx: Feature_SpamFilteringTx;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
+  ldmkTransport: Feature_LdmkTransport;
+  llMevProtection: DefaultFeature;
+  llmNetworkBasedAddAccountFlow: DefaultFeature;
+  llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
+  llmRebornLP: Feature_LlmRebornLP;
+  llmAccountListUI: DefaultFeature;
 };
 
 /**
@@ -402,6 +407,10 @@ export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   project: string;
 }>;
 
+export type Feature_LdmkTransport = Feature<{
+  warningVisible: boolean;
+}>;
+
 export type Feature_NpsRatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
@@ -457,18 +466,6 @@ export type Feature_RatingsPrompt = Feature<{
 }>;
 
 export type Feature_PtxSwapLiveApp = Feature<{
-  currencies?: Array<string>;
-  families?: Array<string>;
-}>;
-
-export type Feature_PtxSwapLiveAppDemoZero = Feature<{
-  manifest_id: string;
-  currencies?: string[];
-  families?: string[];
-}>;
-
-export type Feature_PtxSwapCoreExperiment = Feature<{
-  variant: "Demo0" | "Demo3" | "Demo3Thorswap";
   manifest_id: string;
   currencies?: string[];
   families?: string[];
@@ -496,11 +493,14 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
   refreshRate: number;
   top: number;
+  limit: number;
   supported: boolean;
+  enableNewFeature: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+  staleTime: number;
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{
@@ -525,6 +525,11 @@ export type Feature_LlmWalletSync = Feature<{
   learnMoreLink: string;
 }>;
 
+export type Feature_LlCounterValueGranularitiesRates = Feature<{
+  daily: number;
+  hourly: number;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -535,8 +540,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
-export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
-export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
@@ -550,6 +553,9 @@ export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 
+export type Feature_LlmRebornLP = Feature<{
+  variant: ABTestingVariants;
+}>;
 /**
  * Utils types.
  */

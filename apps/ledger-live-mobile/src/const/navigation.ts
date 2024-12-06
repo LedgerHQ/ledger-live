@@ -80,6 +80,7 @@ export enum ScreenName {
   Card = "Card",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
+  ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeHistory = "ExchangeHistory",
   ExchangeSelectAccount = "ExchangeSelectAccount",
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
@@ -140,6 +141,7 @@ export enum ScreenName {
   SendSelectDevice = "SendSelectDevice",
   SendSelectRecipient = "SendSelectRecipient",
   SendSummary = "SendSummary",
+  SendBroadcastError = "SendBroadcastError",
   SendValidationError = "SendValidationError",
   TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",
@@ -157,6 +159,7 @@ export enum ScreenName {
   SwapFormSelectAccount = "SwapFormSelectAccount",
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
+  SwapLiveApp = "SwapLiveApp",
   SwapHistory = "SwapHistory",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
@@ -531,6 +534,13 @@ export enum ScreenName {
   Web3HubSearch = "Web3HubSearch",
   Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
+
+  // Add Accountv2 / Receive shared screens
+  ConnectDevice = "ConnectDevice",
+  SelectNetwork = "SelectNetwork",
+  SelectDevice = "SelectDevice",
+  SelectAccounts = "SelectAccounts",
+  ScanDeviceAccounts = "ScanDeviceAccounts",
 }
 
 export enum NavigatorName {
@@ -649,4 +659,6 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  AssetSelection = "AssetSelection",
+  DeviceSelection = "DeviceSelection",
 }

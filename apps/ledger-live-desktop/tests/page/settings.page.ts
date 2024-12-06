@@ -1,8 +1,11 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
+import { expect } from "@playwright/test";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
+  private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
+  private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
@@ -55,10 +58,16 @@ export class SettingsPage extends AppPage {
     await this.experimentalDevModeToggle.click();
   }
 
-  async changeCounterValue() {
+  @step("Change counter value to $0")
+  async changeCounterValue(currency: string) {
     await this.counterValueSelector.click();
-    await this.counterValueSearchBar.fill("euro");
+    await this.counterValueSearchBar.fill(currency);
     await this.counterValueropdownChoiceEuro.click();
+  }
+
+  @step("Expect counter value to be $0")
+  async expectCounterValue(currency: string) {
+    expect(this.counterValueSelector).toHaveText(currency);
   }
 
   async changeTheme() {
@@ -90,5 +99,11 @@ export class SettingsPage extends AppPage {
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
     await this.manageLedgerSyncButton.click();
+  }
+
+  @step("Clear cache")
+  async clearCache() {
+    await this.clearCacheButton.click();
+    await this.confirmButton.click();
   }
 }

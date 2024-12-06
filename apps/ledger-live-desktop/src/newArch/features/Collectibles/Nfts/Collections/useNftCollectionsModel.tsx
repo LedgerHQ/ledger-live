@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
-import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
@@ -11,6 +10,7 @@ import {
   filterHiddenCollections,
   mapCollectionsToStructure,
 } from "LLD/features/Collectibles/utils/collectionUtils";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 type NftsInTheCollections = {
   contract: string;
@@ -29,7 +29,7 @@ export const useNftCollectionsModel = ({ account }: Props) => {
   const dispatch = useDispatch();
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = nftsFromSimplehashFeature?.params?.threshold;
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
   const [displayShowMore, setDisplayShowMore] = useState(false);
 
@@ -58,6 +58,8 @@ export const useNftCollectionsModel = ({ account }: Props) => {
     addresses: account.freshAddress,
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const collections = useMemo(
@@ -65,20 +67,17 @@ export const useNftCollectionsModel = ({ account }: Props) => {
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
 
-  const collectionsLength = Object.keys(collections).length;
-
   const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    setNumberOfVisibleCollections(
+      numberOfVisibleCollections => numberOfVisibleCollections + INCREMENT,
     );
     if (hasNextPage) fetchNextPage();
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
+  }, [fetchNextPage, hasNextPage]);
 
   const filteredCollections = useMemo(
     () => filterHiddenCollections(collections, hiddenNftCollections, account.id),
     [account.id, collections, hiddenNftCollections],
   );
-
   const nftsInTheCollection: NftsInTheCollections[] = useMemo(
     () =>
       mapCollectionsToStructure(filteredCollections, numberOfVisibleCollections, onOpenCollection),
@@ -86,9 +85,17 @@ export const useNftCollectionsModel = ({ account }: Props) => {
   );
 
   useEffect(() => {
-    const moreToShow = numberOfVisibleCollections < filteredCollections.length;
+    const moreToShow = nftsFromSimplehashFeature?.enabled
+      ? filteredCollections.length <= numberOfVisibleCollections && hasNextPage
+      : numberOfVisibleCollections < filteredCollections.length;
+
     setDisplayShowMore(moreToShow);
-  }, [numberOfVisibleCollections, filteredCollections.length]);
+  }, [
+    numberOfVisibleCollections,
+    filteredCollections.length,
+    nftsFromSimplehashFeature?.enabled,
+    hasNextPage,
+  ]);
 
   return {
     nftsInTheCollection,

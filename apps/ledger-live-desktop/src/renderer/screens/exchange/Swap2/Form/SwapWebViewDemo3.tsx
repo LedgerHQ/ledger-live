@@ -4,14 +4,27 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
+import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
+import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
+import {
+  convertToAtomicUnit,
+  convertToNonAtomicUnit,
+  getCustomFeesPerFamily,
+} from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
+import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import styled from "styled-components";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
@@ -19,6 +32,7 @@ import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/We
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import useTheme from "~/renderer/hooks/useTheme";
 import logger from "~/renderer/logger";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -27,31 +41,18 @@ import {
   developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
+  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
+import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
-import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
-import {
-  convertToAtomicUnit,
-  convertToNonAtomicUnit,
-  getCustomFeesPerFamily,
-} from "@ledgerhq/live-common/exchange/swap/webApp/utils";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router";
-import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
-import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
 import {
   transformToBigNumbers,
   useGetSwapTrackingProperties,
   useRedirectToSwapHistory,
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -89,6 +90,7 @@ export type SwapWebProps = {
 };
 
 const SwapWebAppWrapper = styled.div`
+  display: flex;
   width: 100%;
   flex: 1;
 `;
@@ -99,6 +101,7 @@ function simplifyFromPath(path: string): string {
 }
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
+const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
@@ -117,6 +120,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const locale = useSelector(languageSelector);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -125,8 +129,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     defaultParentAccount?: Account;
     from?: string;
   }>();
-  const swapLiveEnabledFlag = useSwapLiveConfig();
-
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
 
@@ -145,6 +147,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           openDrawer: boolean;
           customFeeConfig: object;
           SWAP_VERSION: string;
+          gasLimit?: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -152,6 +155,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         errors: object;
         warnings: object;
         customFeeConfig: object;
+        gasLimit?: string;
+        hasDrawer: boolean;
       }> => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -182,6 +187,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
+          customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -195,11 +201,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           return newTransaction;
         };
 
+        // filters out the custom fee config for chains without drawer
+        const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
         if (!params.openDrawer) {
-          // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family)
-            ? { hasDrawer: true, ...customFeeConfig }
-            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
@@ -208,17 +212,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }),
             errors: status.errors,
             warnings: status.warnings,
-            customFeeConfig: config,
+            customFeeConfig,
+            hasDrawer,
+            gasLimit: finalTx.gasLimit,
           };
         }
 
-        return new Promise<{
-          feesStrategy: string;
-          estimatedFees: BigNumber | undefined;
-          errors: object;
-          warnings: object;
-          customFeeConfig: object;
-        }>(resolve => {
+        return new Promise(resolve => {
           const performClose = (save: boolean) => {
             track("button_clicked2", {
               button: save ? "continueNetworkFees" : "closeNetworkFees",
@@ -237,7 +237,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 }),
                 errors: statusInit.errors,
                 warnings: statusInit.warnings,
-                customFeeConfig,
+                customFeeConfig: params.customFeeConfig,
+                hasDrawer,
+                gasLimit: finalTx.gasLimit,
               });
             }
             resolve({
@@ -250,6 +252,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               errors: status.errors,
               warnings: status.warnings,
               customFeeConfig,
+              hasDrawer,
+              gasLimit: finalTx.gasLimit,
             });
           };
 
@@ -384,7 +388,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [customPTXHandlers],
   );
 
   const hashString = useMemo(
@@ -401,20 +405,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }
           : {}),
         ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
-        ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
-          ? {
-              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
-            }
-          : {}),
       }).toString(),
-    [
-      isOffline,
-      state?.defaultAccount,
-      state?.defaultParentAccount,
-      state?.from,
-      walletState,
-      swapLiveEnabledFlag,
-    ],
+    [isOffline, state?.defaultAccount, state?.defaultParentAccount, state?.from, walletState],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
@@ -462,7 +454,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
+            swapUserIp: SWAP_USER_IP,
             devMode,
+            shareAnalytics,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

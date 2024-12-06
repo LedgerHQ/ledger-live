@@ -1,53 +1,94 @@
 import { Flex, Icons, Text, Button as SystemButton } from "@ledgerhq/native-ui";
 import React, { PropsWithChildren } from "react";
-import { Image as NativeImage, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import Video from "react-native-video";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 import { Size } from "~/contentCards/cards/vertical/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
+import FastImage from "react-native-fast-image";
 
-export const ImageStyles: {
+export const MediaStyles: {
   [key in Size]: object;
 } = {
   L: {
     flex: 1,
     width: "100%",
     maxHeight: 260,
-    marginTop: 24,
+    height: 260,
+    alignSelf: "center",
   },
   M: {
     flex: 1,
-    aspectRatio: 1,
+    width: "100%",
     maxHeight: 160,
+    height: 160,
+    alignSelf: "center",
     marginTop: 24,
   },
   S: {
     flex: 1,
     aspectRatio: 1,
     maxHeight: 90,
+    height: 90,
+    alignSelf: "center",
     marginTop: 10,
   },
 };
 
-type ImageProps = {
+type MediaProps = {
   uri: string;
   size: Size;
   filledImage?: boolean;
+  isMediaOnly?: boolean;
+  mediaType: "image" | "video" | "gif";
 };
 
-export const Image = ({ uri, size, filledImage }: ImageProps) => {
+export const Media = ({ uri, size, filledImage, isMediaOnly, mediaType }: MediaProps) => {
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
-  const stylesBigCard = isBigCardAndFilled
-    ? { marginBottom: 0, marginTop: 0, borderTopLeftRadius: 12, borderTopRightRadius: 12 }
+  const isMediumCardAndFilled = (size === "M" && filledImage) || false;
+  const isBigOrMediumCardAndFilled = isBigCardAndFilled || isMediumCardAndFilled;
+
+  const mediaOnlyStyle = isMediaOnly &&
+    isBigCardAndFilled && {
+      height: 282,
+      maxHeight: 282,
+    };
+
+  const extraStylesCard = isBigOrMediumCardAndFilled
+    ? {
+        marginBottom: 0,
+        marginTop: 0,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        borderBottomLeftRadius:
+          isMediumCardAndFilled || (isMediaOnly && isBigCardAndFilled) ? 12 : 0,
+        borderBottomRightRadius:
+          isMediumCardAndFilled || (isMediaOnly && isBigCardAndFilled) ? 12 : 0,
+      }
     : { aspectRatio: 1 };
 
-  return (
-    <NativeImage
-      source={{ uri }}
-      style={{ ...ImageStyles[size], ...stylesBigCard }}
-      resizeMode={isBigCardAndFilled ? "cover" : "contain"}
-    />
-  );
+  if (mediaType === "video") {
+    return (
+      <Video
+        source={{ uri }}
+        style={{ ...MediaStyles[size], ...extraStylesCard, ...mediaOnlyStyle }}
+        resizeMode={isBigOrMediumCardAndFilled ? "cover" : "contain"}
+        fullscreen={false}
+        paused={false}
+        repeat={true}
+        muted={true}
+      />
+    );
+  } else {
+    return (
+      <FastImage
+        source={{ uri }}
+        style={{ ...MediaStyles[size], ...extraStylesCard, ...mediaOnlyStyle }}
+        resizeMode={isBigOrMediumCardAndFilled ? "cover" : "contain"}
+      />
+    );
+  }
 };
 
 const absoluteTopStyle: StyleProp<ViewStyle> = {
@@ -69,6 +110,7 @@ export const Close = ({ onPress }: { onPress: ButtonAction }) => {
 type LabelProps = {
   label: string;
   size: Size;
+  textAlign?: CanvasTextAlign;
 };
 
 export const Tag = ({ label }: LabelProps) => {
@@ -92,57 +134,61 @@ export const TitleStyles: {
     variant: "large",
     fontWeight: "medium",
     paddingBottom: 2,
-    textAlign: "center",
   },
   M: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
     paddingBottom: 2,
-    textAlign: "center",
   },
   S: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    textAlign: "center",
   },
 };
 
-export const Title = ({ label, size }: LabelProps) => {
-  return <Text {...TitleStyles[size]}>{label}</Text>;
+export const Title = ({ label, size, textAlign }: LabelProps) => {
+  return (
+    <Text textAlign={textAlign} {...TitleStyles[size]}>
+      {label}
+    </Text>
+  );
 };
 
-export const SubtitleStyles: {
+export const DescriptionStyles: {
   [key in Size]: object;
 } = {
   L: {
     variant: "body",
     fontWeight: "medium",
-    textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLines: 1,
-    textAlign: "center",
+    numberOfLines: 2,
   },
   S: {
     display: "none",
   },
 };
 
-export const Subtitle = ({ label, size }: LabelProps) => {
+export const Description = ({ label, size, textAlign }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text {...SubtitleStyles[size]} color={colors.neutral.c70}>
+    <Text
+      alignSelf={textAlign}
+      textAlign={textAlign}
+      {...DescriptionStyles[size]}
+      color={colors.neutral.c70}
+    >
       {label.replace(/\\n/g, "\n")}
     </Text>
   );
 };
 
-export const PriceStyles: {
+export const SubDescriptionStyles: {
   [key in Size]: object;
 } = {
   L: {
@@ -168,11 +214,15 @@ export const PriceStyles: {
   },
 };
 
-export const Price = ({ label, size }: LabelProps) => {
+export const SubDescription = ({ label, size }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text {...PriceStyles[size]} color={colors.neutral.c70} style={PriceStyles[size]}>
+    <Text
+      {...SubDescriptionStyles[size]}
+      color={colors.neutral.c70}
+      style={SubDescriptionStyles[size]}
+    >
       {label}
     </Text>
   );
@@ -216,9 +266,21 @@ export const ButtonlabelStyles: {
   },
 };
 
-export const Button = ({ label, size, action }: LabelProps & { action?: () => void }) => {
+export const Button = ({
+  label,
+  size,
+  textAlign: descriptionAlign,
+  action,
+}: LabelProps & { action?: () => void }) => {
+  const alignSelf = descriptionAlign === "center" ? "center" : "flex-start";
+
   return (
-    <SystemButton {...ButtonStyles[size]} type="main" style={ButtonStyles[size]} onPress={action}>
+    <SystemButton
+      {...ButtonStyles[size]}
+      type="main"
+      style={(ButtonStyles[size], { alignSelf })}
+      onPress={action}
+    >
       <Text color="neutral.c00" {...ButtonlabelStyles[size]}>
         {label}
       </Text>
@@ -229,13 +291,12 @@ export const Button = ({ label, size, action }: LabelProps & { action?: () => vo
 export const ContainerStyles = (
   size: Size,
   widthFactor: WidthFactor,
-  isOnlyImage?: boolean,
+  isMediaOnly?: boolean,
 ): object => {
   const styles = {
     L: {
-      height: isOnlyImage ? 282 : 406,
-      paddingBottom: isOnlyImage ? 0 : 24,
-      justifyContent: isOnlyImage ? "center" : "space-between",
+      paddingBottom: isMediaOnly ? 0 : 12,
+      justifyContent: isMediaOnly ? "center" : "space-between",
       borderRadius: 12,
     },
     M: {
@@ -257,19 +318,15 @@ export const Container = ({
   size,
   children,
   widthFactor,
-  isOnlyImage,
-}: { size: Size; isOnlyImage?: boolean } & PropsWithChildren & { widthFactor: WidthFactor }) => {
+  isMediaOnly,
+}: { size: Size; isMediaOnly?: boolean } & PropsWithChildren & { widthFactor: WidthFactor }) => {
   const { colors } = useTheme();
-  const styles = ContainerStyles(size, widthFactor, isOnlyImage);
+  const styles = ContainerStyles(size, widthFactor, isMediaOnly);
   return (
     <Flex
-      alignItems="center"
       width={"100%"}
-      height={"100%"}
       style={{
         position: "relative",
-        justifyContent: "space-between",
-        alignItems: "center",
         backgroundColor: colors.opacityDefault.c05,
         ...styles,
       }}

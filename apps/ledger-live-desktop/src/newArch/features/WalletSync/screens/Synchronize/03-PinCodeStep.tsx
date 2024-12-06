@@ -36,6 +36,7 @@ export default function PinCodeStep() {
             backgroundColor={colors.opacityDefault.c05}
             alignItems="center"
             justifyContent="center"
+            data-testid={`pin-code-digit-${index}`}
           >
             <Text fontSize={14} variant="body" fontWeight="medium" color="neutral.c100">
               {digit}

@@ -4,9 +4,9 @@ import type { Transaction as CardanoTransaction } from "@ledgerhq/live-common/fa
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps) => (
-  <GenericMemoTagInput<CardanoTransaction>
+export default (props: MemoTagInputProps<CardanoTransaction>) => (
+  <GenericMemoTagInput
     {...props}
-    valueToTxPatch={value => ({ memo: value || undefined })}
+    valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
   />
 );

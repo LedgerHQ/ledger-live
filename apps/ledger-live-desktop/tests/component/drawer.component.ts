@@ -1,6 +1,6 @@
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "tests/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -21,6 +21,7 @@ export class Drawer extends Component {
     await this.continueButton.click();
   }
 
+  @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
     await this.content.waitFor({ state: "visible" });
     await this.closeButton.waitFor({ state: "visible" });

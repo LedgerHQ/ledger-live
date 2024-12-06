@@ -1,14 +1,13 @@
-export const MEMO_TAG_LEARN_MORE_LINK = "https://support.ledger.com/article/4409603715217-zd";
 export const MEMO_TAG_COINS: string[] = [
-  "ripple",
-  "stellar",
+  "cardano",
+  "casper",
   "cosmos",
-  "hedera",
-  "injective",
   "crypto_org",
-  "crypto_org_croeseid",
+  "hedera",
+  "internet_computer",
+  "solana",
   "stacks",
+  "stellar",
   "ton",
-  "eos",
-  "bsc",
+  "xrp",
 ];

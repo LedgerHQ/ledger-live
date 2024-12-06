@@ -31,6 +31,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "axelar",
     "persistence",
     "onomy",
+    "mantra",
     "quicksilver",
   ]);
 });

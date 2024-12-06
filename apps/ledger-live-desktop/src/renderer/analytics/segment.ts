@@ -22,6 +22,8 @@ import {
   languageSelector,
   lastSeenDeviceSelector,
   localeSelector,
+  marketPerformanceWidgetSelector,
+  mevProtectionSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
   sidebarCollapsedSelector,
@@ -60,11 +62,15 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getMarketWidgetAnalytics = () => {
+const getMarketWidgetAnalytics = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
 
-  return !!marketWidget?.enabled;
+  const hasMarketWidgetActivated = marketPerformanceWidgetSelector(state);
+
+  return {
+    hasMarketWidget: !marketWidget?.enabled ? "Null" : hasMarketWidgetActivated ? "Yes" : "No",
+  };
 };
 
 const getLedgerSyncAttributes = (state: State) => {
@@ -77,20 +83,22 @@ const getLedgerSyncAttributes = (state: State) => {
   };
 };
 
+const getMEVAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
+
+  const hasMEVActivated = mevProtectionSelector(state);
+
+  return {
+    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
-  const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
-
-  const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
-  const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
-  const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
-  const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
-  const ptxSwapCoreExperimentFlag = analyticsFeatureFlagMethod("ptxSwapCoreExperiment");
-  const ptxSwapCoreExperiment =
-    ptxSwapCoreExperimentFlag?.enabled && ptxSwapCoreExperimentFlag?.params?.variant;
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -104,19 +112,13 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
-  const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
+
   return {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard,
-    ptxSwapMoonpayProviderEnabled,
-    ptxSwapLiveAppDemoZero,
-    ptxSwapLiveAppDemoOne,
-    ptxSwapLiveAppDemoThree,
-    ptxSwapCoreExperiment,
-    ptxSwapExodusProvider,
   };
 };
 
@@ -146,7 +148,9 @@ const extraProperties = (store: ReduxStore) => {
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
 
-  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
+  const ledgerSyncAttributes = getLedgerSyncAttributes(state);
+  const mevProtectionAttributes = getMEVAttributes(state);
+  const marketWidgetAttributes = getMarketWidgetAnalytics(state);
 
   const deviceInfo = device
     ? {
@@ -197,11 +201,12 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
-    hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
-    ...ledgerSyncAtributes,
+    ...ledgerSyncAttributes,
+    ...mevProtectionAttributes,
+    ...marketWidgetAttributes,
   };
 };
 

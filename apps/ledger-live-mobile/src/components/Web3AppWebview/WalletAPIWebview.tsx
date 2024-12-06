@@ -23,17 +23,24 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    const { onMessage, onLoadError, onOpenWindow, webviewProps, webviewRef, noAccounts } =
-      useWebView(
-        {
-          manifest,
-          inputs,
-          customHandlers,
-          currentAccountHistDb,
-        },
-        ref,
-        onStateChange,
-      );
+    const {
+      onMessage,
+      onLoadError,
+      onOpenWindow,
+      webviewProps,
+      webviewRef,
+      webviewCacheOptions,
+      noAccounts,
+    } = useWebView(
+      {
+        manifest,
+        inputs,
+        customHandlers,
+        currentAccountHistDb,
+      },
+      ref,
+      onStateChange,
+    );
 
     const reloadWebView = () => {
       webviewRef.current?.reload();
@@ -76,6 +83,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
+        {...webviewCacheOptions}
       />
     );
   },

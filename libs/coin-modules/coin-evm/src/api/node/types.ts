@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 import { EvmConfigInfo } from "../../config";
@@ -26,7 +26,11 @@ export type NodeApi = {
   getTransactionCount: (currency: CryptoCurrency, address: string) => Promise<number>;
   getGasEstimation: (account: Account, transaction: EvmTransaction) => Promise<BigNumber>;
   getFeeData: (currency: CryptoCurrency, transaction: EvmTransaction) => Promise<FeeData>;
-  broadcastTransaction: (currency: CryptoCurrency, signedTxHex: string) => Promise<string>;
+  broadcastTransaction: (
+    currency: CryptoCurrency,
+    signedTxHex: string,
+    broadcastConfig?: BroadcastConfig,
+  ) => Promise<string>;
   getBlockByHeight: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",

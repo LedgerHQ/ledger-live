@@ -35,6 +35,7 @@ import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -175,6 +176,21 @@ const SideBarScrollContainer = styled(Box)`
     height: 0;
   }
 `;
+
+const LDMKTransportFlag = styled.div`
+  z-index: 51;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(100%, 0);
+  padding: 5px;
+  background: ${p => p.theme.colors.palette.opacityPurple.c90};
+  color: ${p => p.theme.colors.palette.text.shade100};
+  font-weight: bold;
+  border-radius: 0 0 4px 0;
+  opacity: 0.8;
+`;
+
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
@@ -223,6 +239,7 @@ const MainSideBar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const earnLabel = useGetStakeLabelLocaleBased();
   const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
   const isCardDisabled = !manifest;
 
@@ -237,6 +254,7 @@ const MainSideBar = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
+  const ldmkTransportFlag = useFeature("ldmkTransport");
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -370,6 +388,9 @@ const MainSideBar = () => {
               <IconChevron size={16} />
             </Collapser>
             <SideBarScrollContainer>
+              {ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible && (
+                <LDMKTransportFlag>{t("ldmkFeatureFlagWarning.title")}</LDMKTransportFlag>
+              )}
               <TopGradient />
               <Space of={70} />
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
@@ -437,7 +458,7 @@ const MainSideBar = () => {
                 />
                 <SideBarListItem
                   id={"earn"}
-                  label={t("sidebar.earn")}
+                  label={earnLabel}
                   icon={IconsLegacy.LendMedium}
                   iconSize={20}
                   iconActiveColor="wallet"

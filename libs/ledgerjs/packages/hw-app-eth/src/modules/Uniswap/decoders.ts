@@ -1,9 +1,9 @@
-import { utils } from "ethers";
+import { defaultAbiCoder } from "@ethersproject/abi";
 import { WETH_PER_CHAIN_ID } from "./constants";
 import { UniswapSupportedCommand } from "./types";
 
 const swapV2Decoder = (input: `0x${string}`): `0x${string}`[] => {
-  const [, , , addresses] = utils.defaultAbiCoder.decode(
+  const [, , , addresses] = defaultAbiCoder.decode(
     ["address", "uint256", "uint256", "address[]", "bool"],
     input,
   );
@@ -12,7 +12,7 @@ const swapV2Decoder = (input: `0x${string}`): `0x${string}`[] => {
 };
 
 const swapV3Decoder = (input: `0x${string}`): `0x${string}`[] => {
-  const [, , , path] = utils.defaultAbiCoder.decode(
+  const [, , , path] = defaultAbiCoder.decode(
     ["address", "uint256", "uint256", "bytes", "bool"],
     input,
   );
@@ -42,6 +42,12 @@ const wrapEthDecoder = (input: `0x${string}`, chainId: number | string): `0x${st
   return contract instanceof Error ? [] : [contract.toLowerCase()];
 };
 
+const sweepDecoder = (input: `0x${string}`): `0x${string}`[] => {
+  const [token] = defaultAbiCoder.decode(["address", "address", "uint256"], input);
+
+  return [token.toLowerCase()];
+};
+
 const noDecoder = () => [];
 
 export const UniswapDecoders: Record<
@@ -59,4 +65,5 @@ export const UniswapDecoders: Record<
   PERMIT2_PERMIT_BATCH: noDecoder,
   PERMIT2_TRANSFER_FROM_BATCH: noDecoder,
   PAY_PORTION: noDecoder,
+  SWEEP: sweepDecoder,
 };

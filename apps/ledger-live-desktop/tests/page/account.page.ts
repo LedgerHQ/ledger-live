@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { Account } from "tests/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
@@ -31,6 +31,9 @@ export class AccountPage extends AppPage {
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
+  private seeGalleryButton = this.page.getByTestId("see-gallery-button");
+  private nft = (nftName: string) => this.page.locator(`text=${nftName}`);
+  private nftOperation = this.page.getByText("NFT Sent");
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -67,6 +70,7 @@ export class AccountPage extends AppPage {
     await this.sellButton.click();
   }
 
+  @step("Click Stake button")
   async startStakingFlowFromMainStakeButton() {
     await this.stakeButton.click();
   }
@@ -81,6 +85,7 @@ export class AccountPage extends AppPage {
     await this.operationRows.first().click();
   }
 
+  @step("Click Stake button on banner")
   async clickBannerCTA() {
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
@@ -156,5 +161,20 @@ export class AccountPage extends AppPage {
   @step("Navigate to token in account")
   async navigateToTokenInAccount(SubAccount: Account) {
     await this.tokenRow(SubAccount.currency.ticker).click();
+  }
+
+  @step("Navigate to NFT gallery")
+  async navigateToNFTGallery() {
+    await this.seeGalleryButton.click();
+  }
+
+  @step("Select NFT $0")
+  async selectNFT(nftName: string) {
+    await this.nft(nftName).click();
+  }
+
+  @step("Navigate to NFT operation")
+  async navigateToNFTOperation() {
+    await this.nftOperation.click();
   }
 }

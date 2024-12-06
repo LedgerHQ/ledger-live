@@ -16,7 +16,7 @@ import {
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
-import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -39,6 +39,8 @@ import {
   userNpsSelector,
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  mevProtectionSelector,
+  readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -107,6 +109,27 @@ const getLedgerSyncAttributes = (state: State) => {
   };
 };
 
+const getRebornAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const reborn = analyticsFeatureFlagMethod("llmRebornLP");
+
+  return {
+    llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
+    llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+  };
+};
+
+const getMEVAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
+
+  const hasMEVActivated = mevProtectionSelector(state);
+
+  return {
+    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+  };
+};
+
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -149,7 +172,9 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
+
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
+  const isReborn = readOnlyModeEnabledSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
@@ -186,6 +211,8 @@ const extraProperties = async (store: AppStore) => {
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
+  const rebornAttributes = getRebornAttributes();
+  const mevProtectionAtributes = getMEVAttributes(state);
 
   return {
     ...mandatoryProperties,
@@ -203,6 +230,7 @@ const extraProperties = async (store: AppStore) => {
     devicesCount: devices.length,
     modelIdQtyList: aggregateData(devices),
     modelIdList: getUniqueModelIdList(devices),
+    isReborn,
     onboardingHasDevice,
     ...(satisfaction
       ? {
@@ -222,6 +250,8 @@ const extraProperties = async (store: AppStore) => {
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     ...ledgerSyncAtributes,
+    ...rebornAttributes,
+    ...mevProtectionAtributes,
   };
 };
 
@@ -371,6 +401,11 @@ export const trackWithRoute = (
   };
   track(event, newProperties, mandatory);
 };
+
+export const flush = () => {
+  segmentClient?.flush();
+};
+
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(

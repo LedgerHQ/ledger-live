@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { BackHandler } from "react-native";
-import { hideNftCollection } from "../../../actions/settings";
+import { updateNftStatus } from "~/actions/settings";
 import { track } from "../../../analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { updateMainNavigatorVisibility } from "../../../actions/appstate";
@@ -17,6 +17,8 @@ import {
 } from "../../../reducers/nft";
 import { setGalleryChainFilter, setGalleryFilterDrawerVisible } from "../../../actions/nft";
 import { NftGalleryChainFiltersState } from "../../../reducers/types";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 const TOAST_ID = "SUCCESS_HIDE";
 
@@ -66,7 +68,15 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     exitMultiSelectMode();
     nftsToHide.forEach(nft => {
       const { accountId } = decodeNftId(nft.id ?? "");
-      dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
+      const collectionId = `${accountId}|${nft.contract}`;
+
+      dispatch(
+        updateNftStatus({
+          collection: collectionId,
+          status: NftStatus.blacklisted,
+          blockchain: nft.currencyId as BlockchainEVM,
+        }),
+      );
     });
 
     pushToast({
@@ -77,7 +87,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
         count: nftsToHide.length,
       }),
     });
-  }, [exitMultiSelectMode, dispatch, nftsToHide, pushToast, t]);
+  }, [exitMultiSelectMode, nftsToHide, pushToast, t, dispatch]);
 
   const triggerMultiSelectMode = useCallback(() => {
     setNftsToHide([]);

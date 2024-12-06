@@ -22,7 +22,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
 
 export type Props = StackNavigatorProps<
@@ -60,6 +60,7 @@ export function PtxScreen({ route, config }: Props) {
   const manifest = localManifest || remoteManifest;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
+  const discreetMode = useSelector(discreetModeSelector);
 
   /**
    * Pass correct account ID
@@ -114,6 +115,7 @@ export function PtxScreen({ route, config }: Props) {
           locale,
           currencyTicker,
           devMode,
+          discreetMode: discreetMode ? "true" : "false",
           ...(localManifest?.providerTestBaseUrl && {
             providerTestBaseUrl: localManifest?.providerTestBaseUrl,
           }),

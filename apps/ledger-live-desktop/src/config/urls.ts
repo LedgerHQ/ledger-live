@@ -56,7 +56,7 @@ export const urls = {
   contactSupport: "https://support.ledger.com/",
   contactSupportWebview: "https://support.ledger.com/article/4423020306705-zd",
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
-  feesMoreInfo: "https://support.ledger.com/?redirect=false",
+  feesMoreInfo: "https://support.ledger.com/article/360021039173-zd",
   feesEIP1559MoreInfo: "https://support.ledger.com/article/6018110754845-zd",
   feesTron: "https://support.ledger.com/article/6331588714141-zd",
   recipientAddressInfo: "https://support.ledger.com/article/4404389453841-zd",
@@ -154,6 +154,7 @@ export const urls = {
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
     recipient_info: "https://support.ledger.com",
+    ledgerByChorusOneTC: "https://chorus.one/tos",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
@@ -177,7 +178,6 @@ export const urls = {
     "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   ens: "https://support.ledger.com/article/9710787581469-zd",
   ledgerLiveMobile: {
-    storeLink: "https://r354.adj.st/?adj_t=t2esmlk&adj_campaign=Ledger_Live",
     appStore: "https://apps.apple.com/app/id1361671700",
     playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   },
@@ -188,6 +188,16 @@ export const urls = {
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
+
+  // Node errors
+  txBroadcastErrors: {
+    badTxns: "https://support.ledger.com/article/5129526865821-zd",
+    blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
+    txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
+  },
+  memoTag: {
+    learnMore: "https://support.ledger.com/article/4409603715217-zd",
+  },
 };
 
 export const vaultSigner = {

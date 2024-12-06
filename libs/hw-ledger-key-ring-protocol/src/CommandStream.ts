@@ -132,9 +132,9 @@ export class CommandStreamIssuer {
   ): Promise<CommandStream> {
     const lastBlockHash =
       this._stream.blocks.length > 0
-        ? await hashCommandBlock(this._stream.blocks[this._stream.blocks.length - 1])
+        ? hashCommandBlock(this._stream.blocks[this._stream.blocks.length - 1])
         : null;
-    const block = await createCommandBlock(
+    const block = createCommandBlock(
       ISSUER_PLACEHOLDER,
       [],
       new Uint8Array(),
@@ -167,7 +167,7 @@ export default class CommandStream {
     return CommandStreamResolver.resolve(this._blocks);
   }
 
-  public getRootHash(): Promise<Uint8Array> {
+  public getRootHash(): Uint8Array {
     return hashCommandBlock(this._blocks[0]);
   }
 
@@ -211,7 +211,7 @@ export default class CommandStream {
     if (block.commands[0].getType() === CommandType.Derive) {
       // Set the parent hash of the block to the root hash
       const b = { ...block };
-      b.parent = await hashCommandBlock(stream[0]);
+      b.parent = hashCommandBlock(stream[0]);
       stream = stream.concat([b]);
     } else {
       stream = stream.concat([block]);
@@ -227,10 +227,8 @@ export default class CommandStream {
     parentHash: Uint8Array | null = null,
   ): Promise<CommandStream> {
     const lastBlockHash =
-      this._blocks.length > 0
-        ? await hashCommandBlock(this._blocks[this._blocks.length - 1])
-        : null;
-    const block = await createCommandBlock(
+      this._blocks.length > 0 ? hashCommandBlock(this._blocks[this._blocks.length - 1]) : null;
+    const block = createCommandBlock(
       ISSUER_PLACEHOLDER,
       commands,
       new Uint8Array(),

@@ -45,6 +45,8 @@ export default function ValidateOnDevice({ device, message: messageData, account
 
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
+  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
+
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       getMessageProperties(messageData).then(setMessageFields);
@@ -72,33 +74,35 @@ export default function ValidateOnDevice({ device, message: messageData, account
           <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
           <LText semiBold>{mainAccountName}</LText>
         </View>
-        {messageData.standard === "EIP712" ? (
-          <>
-            {messageFields
-              ? messageFields.map(({ label, value }) => (
-                  <View key={label} style={messageContainerStyle}>
-                    <LText style={messageTextStyle}>{label}</LText>
-                    {Array.isArray(value) ? (
-                      value.map((v, i) => (
-                        <LText key={i} style={[styles.value, styles.subValue]} semiBold>
-                          {v}
+        {!isACREWithdraw ? (
+          messageData.standard === "EIP712" ? (
+            <>
+              {messageFields
+                ? messageFields.map(({ label, value }) => (
+                    <View key={label} style={messageContainerStyle}>
+                      <LText style={messageTextStyle}>{label}</LText>
+                      {Array.isArray(value) ? (
+                        value.map((v, i) => (
+                          <LText key={i} style={[styles.value, styles.subValue]} semiBold>
+                            {v}
+                          </LText>
+                        ))
+                      ) : (
+                        <LText style={styles.value} semiBold>
+                          {value}
                         </LText>
-                      ))
-                    ) : (
-                      <LText style={styles.value} semiBold>
-                        {value}
-                      </LText>
-                    )}
-                  </View>
-                ))
-              : null}
-          </>
-        ) : (
-          <View style={messageContainerStyle}>
-            <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
-            <LText semiBold>{messageData.message}</LText>
-          </View>
-        )}
+                      )}
+                    </View>
+                  ))
+                : null}
+            </>
+          ) : (
+            <View style={messageContainerStyle}>
+              <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
+              <LText semiBold>{messageData.message}</LText>
+            </View>
+          )
+        ) : null}
       </ScrollView>
     </View>
   );

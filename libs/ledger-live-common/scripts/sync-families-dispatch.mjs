@@ -27,15 +27,19 @@ const familiesWPackage = [
   "cardano",
   "cosmos",
   "evm",
+  "hedera",
+  "filecoin",
   "icon",
   "multiversx",
   "near",
   "polkadot",
   "solana",
+  "stacks",
   "stellar",
   "tezos",
   "ton",
   "tron",
+  "vechain",
   "xrp",
 ];
 
@@ -162,7 +166,7 @@ async function getDeviceTransactionConfig(families) {
 
   const libsDir = path.join(__dirname, "../..");
   const target = "deviceTransactionConfig.ts";
-  for (const family of ["polkadot", "tron"]) {
+  for (const family of ["filecoin", "stacks", "polkadot", "tron"]) {
     if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
       imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
       exprts += `\n  | ExtraDeviceTransactionField_${family}`;

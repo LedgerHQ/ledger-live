@@ -3,6 +3,8 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
+import { useDispatch } from "react-redux";
+import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 
 type Props = {
   stepId?: StepId;
@@ -23,13 +25,24 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const handleReset = useCallback(() => setStep("recipient"), []);
   const handleStepChange = useCallback((stepId: StepId) => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId as StepId];
+  const dispatch = useDispatch();
+
+  const handleModalClose = useCallback(() => {
+    dispatch(
+      setMemoTagInfoBoxDisplay({
+        isMemoTagBoxVisible: false,
+        forceAutoFocusOnMemoField: false,
+      }),
+    );
+    onClose?.();
+  }, [dispatch, onClose]);
   return (
     <DomainServiceProvider>
       <Modal
         name="MODAL_SEND"
         centered
         onHide={handleReset}
-        onClose={onClose}
+        onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => (
           <Body

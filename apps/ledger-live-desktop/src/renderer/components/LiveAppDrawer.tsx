@@ -31,6 +31,7 @@ import CompleteExchange, {
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
 import { renderLoading } from "./DeviceAction/rendering";
+import { createCustomErrorClass } from "@ledgerhq/errors";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -59,6 +60,8 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   }
   return "exchangeType" in data;
 }
+
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
@@ -192,6 +195,11 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
+        payload?.data?.onCancel?.({
+          error: new DrawerClosedError("User closed the drawer"),
+          name: "DrawerClosedError",
+          message: "User closed the drawer",
+        });
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"

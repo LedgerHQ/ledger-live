@@ -26,7 +26,9 @@ export default class CommonPage {
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
+  deviceRowRegex = /device-item-.*/;
 
+  @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text, false);
@@ -74,17 +76,21 @@ export default class CommonPage {
     await new DeviceAction(nano).accessManager();
   }
 
-  async addSpeculos(nanoApp: string) {
+  async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
     const proxyPort = await bridge.findFreePort();
-    const speculosAddress = "localhost";
     const speculosPort = await launchSpeculos(nanoApp, proxyPort);
     await launchProxy(proxyPort, speculosAddress, speculosPort);
     await bridge.addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
     return proxyPort;
   }
 
-  async removeSpeculos(proxyPort: number) {
+  async removeSpeculos(proxyPort?: number) {
     await deleteSpeculos(proxyPort);
-    await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  }
+
+  @Step("Select a known device")
+  async selectKnownDevice(index = 0) {
+    await tapById(this.deviceRowRegex, index);
   }
 }

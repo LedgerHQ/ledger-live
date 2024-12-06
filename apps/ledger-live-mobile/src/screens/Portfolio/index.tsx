@@ -1,28 +1,14 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { ListRenderItemInfo, Linking, Platform } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { ListRenderItemInfo, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import {
-  useAlreadyOnboardedURI,
-  usePostOnboardingURI,
-  useHomeURI,
-} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import {
-  // TODO: discreetMode is never used 😱 is it safe to remove
-  // discreetModeSelector,
-  hasBeenUpsoldProtectSelector,
-  lastConnectedDeviceSelector,
-  onboardingTypeSelector,
-} from "~/reducers/settings";
-import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
@@ -47,13 +33,12 @@ import {
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
-import { internetReachable } from "~/logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
-import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -68,19 +53,9 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const { t } = useTranslation();
-  // TODO: discreetMode is never used 😱 is it safe to remove
-  // const discreetMode = useSelector(discreetModeSelector);
-  const hasBeenUpsoldProtect = useSelector(hasBeenUpsoldProtectSelector);
-  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
-  const onboardingType = useSelector(onboardingTypeSelector);
-  const protectFeature = useFeature("protectServicesMobile");
-  const recoverAlreadyOnboardedURI = useAlreadyOnboardedURI(protectFeature);
-  const recoverPostOnboardingURI = usePostOnboardingURI(protectFeature);
-  const recoverHomeURI = useHomeURI(protectFeature);
-  const dispatch = useDispatch();
 
   const onBackFromUpdate = useCallback(
     (_updateState: UpdateStep) => {
@@ -89,33 +64,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [navigation],
   );
 
-  useEffect(() => {
-    const openProtectUpsell = async () => {
-      const internetConnected = await internetReachable();
-      if (internetConnected && protectFeature?.enabled) {
-        if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
-          Linking.openURL(recoverPostOnboardingURI);
-        } else if (recoverHomeURI && onboardingType === OnboardingType.setupNew) {
-          Linking.openURL(recoverHomeURI);
-        } else if (recoverAlreadyOnboardedURI) {
-          Linking.openURL(recoverAlreadyOnboardedURI);
-        }
-      }
-    };
-    if (!hasBeenUpsoldProtect && lastConnectedDevice?.modelId === "nanoX") {
-      openProtectUpsell();
-      dispatch(setHasBeenUpsoldProtect(true));
-    }
-  }, [
-    onboardingType,
-    hasBeenUpsoldProtect,
-    lastConnectedDevice,
-    recoverPostOnboardingURI,
-    recoverAlreadyOnboardedURI,
-    recoverHomeURI,
-    dispatch,
-    protectFeature?.enabled,
-  ]);
+  useAutoRedirectToPostOnboarding();
 
   usePortfolioAnalyticsOptInPrompt();
 

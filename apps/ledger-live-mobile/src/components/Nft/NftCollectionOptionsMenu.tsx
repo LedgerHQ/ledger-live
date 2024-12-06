@@ -4,8 +4,10 @@ import { useDispatch } from "react-redux";
 import { Text, IconsLegacy, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { hideNftCollection } from "~/actions/settings";
+import { updateNftStatus } from "~/actions/settings";
 import QueuedDrawer from "../QueuedDrawer";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 type Props = {
   isOpen: boolean;
@@ -19,9 +21,17 @@ const NftCollectionOptionsMenu = ({ isOpen, onClose, collection, account }: Prop
   const dispatch = useDispatch();
 
   const onConfirm = useCallback(() => {
-    dispatch(hideNftCollection(`${account.id}|${collection?.[0]?.contract}`));
+    const collectionId = `${account.id}|${collection?.[0]?.contract}`;
+
+    dispatch(
+      updateNftStatus({
+        collection: collectionId,
+        status: NftStatus.blacklisted,
+        blockchain: account.currency.id as BlockchainEVM,
+      }),
+    );
     onClose();
-  }, [dispatch, account.id, collection, onClose]);
+  }, [account.id, account.currency.id, collection, dispatch, onClose]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>

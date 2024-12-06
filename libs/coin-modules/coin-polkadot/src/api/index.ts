@@ -1,4 +1,4 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { Api, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -27,16 +27,7 @@ export function createApi(config: PolkadotConfig): Api {
   };
 }
 
-async function craft(
-  address: string,
-  transaction: {
-    mode: string;
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-    supplement?: unknown;
-  },
-): Promise<string> {
+async function craft(address: string, transaction: ApiTransaction): Promise<string> {
   const extrinsicArg = defaultExtrinsicArg(transaction.amount, transaction.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;

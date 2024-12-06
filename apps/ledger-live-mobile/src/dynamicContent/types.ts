@@ -33,6 +33,8 @@ enum LandingPageUseCase {
   LP_Wallet_Connect = "LP_Wallet_Connect",
   LP_Security_Key = "LP_Security_Key",
   LP_Generic = "LP_Generic",
+  LP_Reborn1 = "LP_Reborn1",
+  LP_Reborn2 = "LP_Reborn2",
 }
 
 enum ContentCardLocation {
@@ -42,6 +44,7 @@ enum ContentCardLocation {
   Learn = "learn",
   MyLedger = "my_ledger",
   NotificationCenter = "notification_center",
+  LandingPageStickyCta = "landing_page_sticky_cta",
 }
 
 type AllLocations = ContentCardLocation | LandingPageUseCase;
@@ -73,6 +76,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   link?: string;
   isDismissable?: boolean;
   hasPagination?: boolean;
+  centeredText?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {
@@ -108,6 +112,12 @@ type NotificationContentCard = ContentCardCommonProperties & {
   cta?: string;
 };
 
+type LandingPageStickyCtaContentCard = ContentCardCommonProperties & {
+  cta: string;
+  link: string;
+  landingPage: LandingPageUseCase;
+};
+
 type HorizontalContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
@@ -121,8 +131,10 @@ type HeroContentCard = ContentCardCommonProperties & {
   title?: string;
   image?: string;
   tag?: string;
-  cta: string;
+  cta?: string;
   link?: string;
+  secondaryText?: string;
+  centeredText?: boolean;
 };
 
 type VerticalContentCard = ContentCardCommonProperties & {
@@ -130,11 +142,14 @@ type VerticalContentCard = ContentCardCommonProperties & {
   title?: string;
   link?: string;
   description?: string;
-  image?: string;
-  price?: string;
+  subDescription?: string;
+  descriptionTextAlign?: CanvasTextAlign;
+  titleTextAlign?: CanvasTextAlign;
   cta?: string;
   size: Size;
-  filledImage?: boolean;
+  media?: string;
+  filledMedia?: boolean;
+  mediaType?: "image" | "video" | "gif";
 };
 
 type AnyContentCard =
@@ -160,6 +175,7 @@ export type {
   BrazeContentCard,
   AnyContentCard,
   AllLocations,
+  LandingPageStickyCtaContentCard,
 };
 export {
   ContentCardLocation,

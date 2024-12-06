@@ -7,10 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { track, TrackScreen } from "~/analytics";
-import { hideNftCollection } from "~/actions/settings";
 import { accountSelector } from "~/reducers/accounts";
 import { State } from "~/reducers/types";
 import QueuedDrawer from "../QueuedDrawer";
+import { updateNftStatus } from "~/actions/settings";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 type Props = {
   nftId?: string;
@@ -35,10 +37,18 @@ const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Pr
       drawer: "Hide NFT Confirmation",
     });
 
-    dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
+    const collectionId = `${account?.id}|${nftContract}`;
+
+    dispatch(
+      updateNftStatus({
+        collection: collectionId,
+        status: NftStatus.blacklisted,
+        blockchain: account?.currency.id as BlockchainEVM,
+      }),
+    );
     onClose();
     navigation.goBack();
-  }, [account?.id, dispatch, navigation, nftContract, onClose]);
+  }, [account?.currency.id, account?.id, dispatch, navigation, nftContract, onClose]);
 
   const onPressClose = useCallback(() => {
     track("button_clicked", {

@@ -1,27 +1,44 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Switch from "~/renderer/components/Switch";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import Track from "~/renderer/analytics/Track";
+import { useSelector, useDispatch } from "react-redux";
+import { setMarketWidget } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
+import { marketPerformanceWidgetSelector } from "~/renderer/reducers/settings";
+
 const MarketPerformanceWidgetRow = () => {
-  const featureFlagsProvider = useFeatureFlags();
+  const marketWidgetValue = useSelector(marketPerformanceWidgetSelector);
 
-  const currentValue = Boolean(
-    featureFlagsProvider.getFeature("marketperformanceWidgetDesktop")?.enabled,
+  const dispatch = useDispatch();
+
+  const toggle = useCallback(
+    (value: boolean) => {
+      dispatch(setMarketWidget(value));
+
+      track(
+        "toggle_clicked",
+        {
+          toggleAction: value ? "ON" : "OFF",
+          toggle: "MarketPerformanceWidget",
+          page: "Page Settings General",
+        },
+        true,
+      );
+    },
+    [dispatch],
   );
-
-  const update = (value: boolean) => {
-    featureFlagsProvider.overrideFeature("marketperformanceWidgetDesktop", { enabled: value });
-  };
 
   return (
     <>
       <Track
         onUpdate
         event={
-          currentValue ? "MarketPerformanceWidgetEnabled" : "MarketPerformanceWidgetRowDisabled"
+          marketWidgetValue
+            ? "MarketPerformanceWidgetEnabled"
+            : "MarketPerformanceWidgetRowDisabled"
         }
       />
-      <Switch isChecked={currentValue} onChange={() => update(!currentValue)} />
+      <Switch isChecked={marketWidgetValue} onChange={() => toggle(!marketWidgetValue)} />
     </>
   );
 };

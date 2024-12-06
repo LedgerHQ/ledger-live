@@ -2,7 +2,7 @@ import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 let first = true;
@@ -10,7 +10,10 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    app = await Application.init("EthAccountXrpAccountReadOnlyFalse", [knownDevice]);
+    await app.init({
+      userdata: "EthAccountXrpAccountReadOnlyFalse",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

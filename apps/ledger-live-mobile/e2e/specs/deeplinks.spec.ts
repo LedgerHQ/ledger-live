@@ -1,7 +1,7 @@
 import { Application } from "../page";
 import { knownDevices } from "../models/devices";
 
-let app: Application;
+const app = new Application();
 
 const ethereumLong = "ethereum";
 const bitcoinLong = "bitcoin";
@@ -11,7 +11,10 @@ const bobaLong = "boba";
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse", [knownDevices.nanoX]);
+    await app.init({
+      userdata: "1AccountBTC1AccountETHReadOnlyFalse",
+      knownDevices: [knownDevices.nanoX],
+    });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
@@ -21,7 +24,7 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open Account page", async () => {
-    await app.account.openViaDeeplink();
+    await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
   });
 
@@ -31,13 +34,13 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
-    await app.account.openViaDeeplink(ethereumLong);
-    await app.account.waitForAccountAssetsToLoad(ethereumLong);
+    await app.assetAccountsPage.openViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
-    await app.account.openViaDeeplink(bitcoinLong);
-    await app.account.waitForAccountAssetsToLoad(bitcoinLong);
+    await app.assetAccountsPage.openViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.waitForAccountAssetsToLoad(bitcoinLong);
   });
 
   it("should open Custom Lock Screen page", async () => {

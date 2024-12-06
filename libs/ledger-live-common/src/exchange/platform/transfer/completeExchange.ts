@@ -4,9 +4,9 @@ import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
-  isExchangeTypeNg,
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
+  isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
@@ -106,8 +106,11 @@ const completeExchange = (
 
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
-        ].getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
+        ]?.getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
@@ -182,9 +185,12 @@ const completeExchange = (
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
-  return isExchangeTypeNg(exchangeType)
-    ? Buffer.from(signature, "base64url")
-    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+  if (isExchangeTypeNg(exchangeType)) {
+    const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
+    return Buffer.from(base64Signature, "base64");
+  }
+  if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
+  return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;

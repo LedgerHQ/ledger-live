@@ -202,14 +202,14 @@ export interface CommandBlock {
  * @param parent The parent command block hash (if null, the block is the first block and a parent will be generated)
  * @returns
  */
-export async function createCommandBlock(
+export function createCommandBlock(
   issuer: Uint8Array,
   commands: Command[],
   signature: Uint8Array = new Uint8Array(),
   parent: Uint8Array | null = null,
-): Promise<CommandBlock> {
+): CommandBlock {
   if (parent === null) {
-    parent = parent = await crypto.randomBytes(32);
+    parent = parent = crypto.randomBytes(32);
   }
   return {
     version: 1,
@@ -220,28 +220,25 @@ export async function createCommandBlock(
   };
 }
 
-export async function signCommandBlock(
+export function signCommandBlock(
   block: CommandBlock,
   issuer: Uint8Array,
   secretKey: Uint8Array,
-): Promise<CommandBlock> {
-  const signature = await crypto.sign(
-    await hashCommandBlock(block),
-    await crypto.keypairFromSecretKey(secretKey),
-  );
+): CommandBlock {
+  const signature = crypto.sign(hashCommandBlock(block), crypto.keypairFromSecretKey(secretKey));
   return {
     ...block,
     signature,
   };
 }
 
-export async function hashCommandBlock(block: CommandBlock): Promise<Uint8Array> {
-  return await crypto.hash(CommandStreamEncoder.encode([block]));
+export function hashCommandBlock(block: CommandBlock): Uint8Array {
+  return crypto.hash(CommandStreamEncoder.encode([block]));
 }
 
-export async function verifyCommandBlock(block: CommandBlock): Promise<boolean> {
+export function verifyCommandBlock(block: CommandBlock): boolean {
   const unsignedBlock = { ...block };
   unsignedBlock.signature = new Uint8Array();
-  const hash = await hashCommandBlock(unsignedBlock);
-  return await crypto.verify(hash, block.signature, block.issuer);
+  const hash = hashCommandBlock(unsignedBlock);
+  return crypto.verify(hash, block.signature, block.issuer);
 }

@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { TokenShowMoreIndicator, IconAngleDown } from "~/renderer/screens/account/TokensList";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
-import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { supportLinkByTokenType } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { track } from "~/renderer/analytics/segment";
@@ -19,9 +18,9 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
-import { isThresholdValid, useCheckNftAccount } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useHideSpamCollection } from "~/renderer/hooks/useHideSpamCollection";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 const INCREMENT = 5;
 const EmptyState = styled.div`
@@ -48,7 +47,7 @@ type Props = {
 const Collections = ({ account }: Props) => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = nftsFromSimplehashFeature?.params?.threshold;
-
+  const staleTime = nftsFromSimplehashFeature?.params?.staleTime;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -72,30 +71,28 @@ const Collections = ({ account }: Props) => {
     [account.id, history],
   );
 
-  const { enabled, hideSpamCollection } = useHideSpamCollection();
-
-  const { nfts, fetchNextPage, hasNextPage } = useCheckNftAccount({
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
-    ...(enabled && { action: hideSpamCollection }),
+    enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime,
   });
-
   const collections = useMemo(
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
-  const collectionsLength = Object.keys(collections).length;
+
   const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    setNumberOfVisibleCollections(
+      numberOfVisibleCollections => numberOfVisibleCollections + INCREMENT,
     );
     if (hasNextPage) {
       fetchNextPage();
     }
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  }, [fetchNextPage, hasNextPage]);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
   const filteredCollections = useMemo(
     () =>
       Object.entries(collections).filter(

@@ -13,7 +13,8 @@ import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { track } from "~/renderer/analytics/segment";
 import { ScreenId } from "../Tutorial";
-import { OnboardingContext, UseCase } from "../../index";
+import { OnboardingContext } from "../../index";
+import { OnboardingUseCase } from "../../OnboardingUseCase";
 import connectNanoLight from "./assets/connectNanoLight.png";
 import restorePhraseLight from "./assets/restorePhraseLight.png";
 import setupNanoLight from "./assets/setupNanoLight.png";
@@ -79,7 +80,7 @@ const RightColumn = styled(Flex).attrs({
 `;
 
 type Props = {
-  setUseCase: (useCase: UseCase) => void;
+  setUseCase: (useCase: OnboardingUseCase) => void;
   setOpenedPedagogyModal: (isOpened: boolean) => void;
 };
 
@@ -123,9 +124,11 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               }
               onClick={() => {
                 track("Onboarding - Setup new");
-                setUseCase(UseCase.setupDevice);
+                setUseCase(OnboardingUseCase.setupDevice);
                 setOpenedPedagogyModal(true);
-                history.push(`/onboarding/${UseCase.setupDevice}/${ScreenId.howToGetStarted}`);
+                history.push(
+                  `/onboarding/${OnboardingUseCase.setupDevice}/${ScreenId.howToGetStarted}`,
+                );
               }}
             />
           </RightColumn>
@@ -157,8 +160,10 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               }
               onClick={() => {
                 track("Onboarding - Connect");
-                setUseCase(UseCase.connectDevice);
-                history.push(`/onboarding/${UseCase.connectDevice}/${ScreenId.pairMyNano}`);
+                setUseCase(OnboardingUseCase.connectDevice);
+                history.push(
+                  `/onboarding/${OnboardingUseCase.connectDevice}/${ScreenId.pairMyNano}`,
+                );
               }}
             />
             <UseCaseOption
@@ -182,9 +187,9 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               }
               onClick={() => {
                 track("Onboarding - Restore");
-                setUseCase(UseCase.recoveryPhrase);
+                setUseCase(OnboardingUseCase.recoveryPhrase);
                 history.push(
-                  `/onboarding/${UseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
+                  `/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
               }}
             />
@@ -209,8 +214,10 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                   if (deviceModelId === DeviceModelId.nanoS) {
                     dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
                   } else {
-                    setUseCase(UseCase.recover);
-                    history.push(`/onboarding/${UseCase.recover}/${ScreenId.recoverHowTo}`);
+                    setUseCase(OnboardingUseCase.recover);
+                    history.push(
+                      `/onboarding/${OnboardingUseCase.recover}/${ScreenId.recoverHowTo}`,
+                    );
                   }
                 }}
               />

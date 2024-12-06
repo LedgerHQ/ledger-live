@@ -13,11 +13,9 @@ import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
-
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import * as Sentry from "@sentry/react-native";
-
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
@@ -29,8 +27,8 @@ import { track } from "~/analytics";
 import { setEarnInfoModal } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
-
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+const TRACKING_EVENT = "deeplink_clicked";
 
 const themes: {
   [key: string]: Theme;
@@ -100,6 +98,7 @@ const linkingOptions = () => ({
   prefixes: [
     "ledgerlive://",
     "https://ledger.com",
+    // FIXME: We will be fixing the universal links in this epic : https://ledgerhq.atlassian.net/browse/LIVE-14732
     /**
      * Adjust universal links attached to iOS Bundle ID com.ledger.live
      * (local debug, prod & nightly builds)
@@ -156,6 +155,12 @@ const linkingOptions = () => ({
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
            */
           [ScreenName.PlatformApp]: "discover/:platform",
+          [NavigatorName.Card]: {
+            initialRouteName: ScreenName.Card,
+            screens: {
+              [ScreenName.Card]: "card",
+            },
+          },
           [ScreenName.Recover]: "recover/:platform",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
@@ -281,20 +286,6 @@ const linkingOptions = () => ({
               [ScreenName.Accounts]: "account",
             },
           },
-
-          [NavigatorName.AddAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://add-account" will open the add account flow
-               *
-               * @params ?currency: string
-               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-               *
-               */
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
@@ -440,13 +431,43 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-
+  const AddAccountNavigatorEntryPoint = llmNetworkBasedAddAccountFlow?.enabled
+    ? NavigatorName.AssetSelection
+    : NavigatorName.AddAccounts; // both navigators share the same ScreenName.AddAccountsSelectCrypto screen
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions()
+          ? {
+              ...linkingOptions(),
+              config: {
+                ...linkingOptions().config,
+                screens: {
+                  ...linkingOptions().config.screens,
+                  [NavigatorName.Base]: {
+                    ...linkingOptions().config.screens[NavigatorName.Base],
+                    screens: {
+                      ...linkingOptions().config.screens[NavigatorName.Base].screens,
+                      // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
+                      [AddAccountNavigatorEntryPoint]: {
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://add-account" will open the add account flow
+                           *
+                           * @params ?currency: string
+                           * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+                           *
+                           */
+                          [ScreenName.AddAccountsSelectCrypto]: "add-account",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            }
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
@@ -480,7 +501,6 @@ export const DeeplinksProvider = ({
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
-
           const {
             ajs_prop_campaign: ajsPropCampaign,
             ajs_prop_track_data: ajsPropTrackData,
@@ -488,6 +508,12 @@ export const DeeplinksProvider = ({
             currency,
             installApp,
             appName,
+            deeplinkSource,
+            deeplinkType,
+            deeplinkDestination,
+            deeplinkChannel,
+            deeplinkMedium,
+            deeplinkCampaign,
           } = query;
 
           if (!ajsPropSource && !Config.MOCK) {
@@ -503,7 +529,7 @@ export const DeeplinksProvider = ({
 
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {
-            track("deeplink_clicked", {
+            track(TRACKING_EVENT, {
               deeplinkSource: ajsPropSource,
               deeplinkCampaign: ajsPropCampaign,
               url: hostname,
@@ -512,7 +538,16 @@ export const DeeplinksProvider = ({
               appName,
               ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
             });
-          }
+          } else
+            track(TRACKING_EVENT, {
+              deeplinkSource,
+              deeplinkType,
+              deeplinkDestination,
+              deeplinkChannel,
+              deeplinkMedium,
+              deeplinkCampaign,
+            });
+
           const platform = pathname.split("/")[1];
 
           if (isStorylyLink(url.toString())) {
@@ -571,6 +606,7 @@ export const DeeplinksProvider = ({
       liveAppProviderInitialized,
       manifests,
       buySellUiManifestId,
+      AddAccountNavigatorEntryPoint,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);

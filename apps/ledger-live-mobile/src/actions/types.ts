@@ -37,6 +37,8 @@ import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -165,7 +167,9 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
   DYNAMIC_CONTENT_SET_CATEGORIES_CARDS = "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
+  DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS = "DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS",
   DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
+  DYNAMIC_CONTENT_IS_LOADING = "DYNAMIC_CONTENT_IS_LOADING",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -177,6 +181,8 @@ export type DynamicContentSetLearnCardsPayload = DynamicContentState["learnCards
 export type DynamicContentSetNotificationCardsPayload = DynamicContentState["notificationCards"];
 
 export type DynamicContentSetCategoriesCardsPayload = DynamicContentState["categoriesCards"];
+export type DynamicContentSetLandingStickyCtaCardsPayload =
+  DynamicContentState["landingPageStickyCtaCards"];
 
 export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
 
@@ -186,6 +192,7 @@ export type DynamicContentPayload =
   | DynamicContentSetLearnCardsPayload
   | DynamicContentSetNotificationCardsPayload
   | DynamicContentSetCategoriesCardsPayload
+  | DynamicContentSetLandingStickyCtaCardsPayload
   | DynamicContentSetMobileCardsPayload;
 
 // === RATINGS ACTIONS ===
@@ -237,8 +244,7 @@ export enum SettingsActionTypes {
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
-  HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
-  UNHIDE_NFT_COLLECTION = "UNHIDE_NFT_COLLECTION",
+  UPDATE_NFT_COLLECTION_STATUS = "UPDATE_NFT_COLLECTION_STATUS",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -272,7 +278,9 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
+  /* NB: Protect is the former codename for Ledger Recover */
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
+  SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING = "SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
   SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
@@ -283,6 +291,7 @@ export enum SettingsActionTypes {
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
+  SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -314,8 +323,11 @@ export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
-export type SettingsHideNftCollectionPayload = string;
-export type SettingsUnhideNftCollectionPayload = string;
+export type SettingsUpdateNftCollectionStatus = {
+  blockchain: BlockchainEVM;
+  collection: string;
+  status: NftStatus;
+};
 export type SettingsDismissBannerPayload = string;
 export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
@@ -379,6 +391,8 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
 export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsoldProtect"];
+export type SettingsSetHasBeenRedirectedToPostOnboardingPayload =
+  SettingsState["hasBeenRedirectedToPostOnboarding"];
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
@@ -388,6 +402,7 @@ export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnaly
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
+export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
@@ -410,8 +425,7 @@ export type SettingsPayload =
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
-  | SettingsHideNftCollectionPayload
-  | SettingsUnhideNftCollectionPayload
+  | SettingsUpdateNftCollectionStatus
   | SettingsDismissBannerPayload
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
@@ -448,6 +462,7 @@ export type SettingsPayload =
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
+  | SettingsSetMevProtectionPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 

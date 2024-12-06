@@ -1,5 +1,6 @@
 import { log } from "@ledgerhq/logs";
-import { utils, Transaction } from "ethers";
+import { Interface } from "@ethersproject/abi";
+import type { Transaction } from "@ethersproject/transactions";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "../../services/ledger/erc20";
 import { LoadConfig } from "../../services/types";
 import { UniswapDecoders } from "./decoders";
@@ -81,7 +82,7 @@ export const getCommandsAndTokensFromUniswapCalldata = (
   chainId: number,
 ): CommandsAndTokens => {
   try {
-    const [commands, inputs] = new utils.Interface([
+    const [commands, inputs] = new Interface([
       "function execute(bytes calldata commands, bytes[] calldata inputs, uint256 deadline) external payable",
     ]).decodeFunctionData("execute", calldata) as [`0x${string}`, `0x${string}`[]];
 
@@ -124,14 +125,14 @@ export const loadInfosForUniswap = async (
     return {};
   }
 
+  const uniqueTokens = Array.from(new Set(commandsAndTokens.flatMap(([, tokens]) => tokens)));
   const tokenDescriptorsPromises = Promise.all(
-    commandsAndTokens.flatMap(([, tokens]) =>
-      tokens.map(async token => {
-        const erc20SignaturesBlob = await findERC20SignaturesInfo(userConfig || {}, chainId);
-        return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob)?.data;
-      }),
-    ),
+    uniqueTokens.map(async token => {
+      const erc20SignaturesBlob = await findERC20SignaturesInfo(userConfig || {}, chainId);
+      return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob)?.data;
+    }),
   );
+
   const tokenDescriptors = await tokenDescriptorsPromises.then(descriptors =>
     descriptors.filter((descriptor): descriptor is Buffer => !!descriptor),
   );

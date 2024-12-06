@@ -13,7 +13,7 @@ import { crypto } from "../Crypto";
 import { CommandStream } from "..";
 
 describe("Encode/Decode command stream tester", () => {
-  it("should encode and decode a byte", async () => {
+  it("should encode and decode a byte", () => {
     const byte = 42;
     let buffer = new Uint8Array();
     buffer = TLV.pushByte(buffer, 42);
@@ -21,7 +21,7 @@ describe("Encode/Decode command stream tester", () => {
     expect(decoded.value).toBe(byte);
   });
 
-  it("should encode and decode a Int32", async () => {
+  it("should encode and decode a Int32", () => {
     const varint = 0xdeadbeef;
     let buffer = new Uint8Array();
     buffer = TLV.pushInt32(buffer, varint);
@@ -29,7 +29,7 @@ describe("Encode/Decode command stream tester", () => {
     expect(decoded.value).toBe(varint);
   });
 
-  it("should encode and decode a string", async () => {
+  it("should encode and decode a string", () => {
     const str = "Hello World";
     let buffer = new Uint8Array();
     buffer = TLV.pushString(buffer, str);
@@ -37,15 +37,15 @@ describe("Encode/Decode command stream tester", () => {
     expect(decoded.value).toBe(str);
   });
 
-  it("should encode and decode a hash", async () => {
-    const hash = await crypto.hash(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
+  it("should encode and decode a hash", () => {
+    const hash = crypto.hash(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
     let buffer = new Uint8Array();
     buffer = TLV.pushHash(buffer, hash);
     const decoded = TLV.readHash(TLV.readTLV(buffer, 0));
     expect(crypto.to_hex(decoded.value)).toEqual(crypto.to_hex(hash));
   });
 
-  it("should encode and decode bytes", async () => {
+  it("should encode and decode bytes", () => {
     const bytes = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     let buffer = new Uint8Array();
     buffer = TLV.pushBytes(buffer, bytes);
@@ -53,10 +53,10 @@ describe("Encode/Decode command stream tester", () => {
     expect(decoded.value).toEqual(bytes);
   });
 
-  it("should encode and decode a signature", async () => {
-    const alice = await crypto.randomKeypair();
-    const block = await signCommandBlock(
-      await createCommandBlock(alice.publicKey, []),
+  it("should encode and decode a signature", () => {
+    const alice = crypto.randomKeypair();
+    const block = signCommandBlock(
+      createCommandBlock(alice.publicKey, []),
       alice.publicKey,
       alice.privateKey,
     );
@@ -66,28 +66,28 @@ describe("Encode/Decode command stream tester", () => {
     expect(decoded.value).toEqual(block.signature);
   });
 
-  it("should encode and decode a public key", async () => {
-    const alice = await crypto.randomKeypair();
+  it("should encode and decode a public key", () => {
+    const alice = crypto.randomKeypair();
     let buffer = new Uint8Array();
     buffer = TLV.pushPublicKey(buffer, alice.publicKey);
     const decoded = TLV.readPublicKey(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(alice.publicKey);
   });
 
-  it("should encode and decode a stream. Encoding/Decoding should not alter the stream", async () => {
-    const alice = await crypto.randomKeypair();
-    const groupPk = await crypto.randomKeypair();
-    const groupChainCode = await crypto.randomBytes(32);
+  it("should encode and decode a stream. Encoding/Decoding should not alter the stream", () => {
+    const alice = crypto.randomKeypair();
+    const groupPk = crypto.randomKeypair();
+    const groupChainCode = crypto.randomBytes(32);
     const xpriv = new Uint8Array(64);
-    const initializationVector = await crypto.randomBytes(16);
+    const initializationVector = crypto.randomBytes(16);
     xpriv.set(groupPk.privateKey);
     xpriv.set(groupChainCode, 32);
-    const ephemeralPk = await crypto.randomKeypair();
+    const ephemeralPk = crypto.randomKeypair();
 
-    const block1 = await signCommandBlock(
-      await createCommandBlock(alice.publicKey, [
+    const block1 = signCommandBlock(
+      createCommandBlock(alice.publicKey, [
         new Seed(
-          await crypto.randomBytes(16),
+          crypto.randomBytes(16),
           0,
           groupPk.publicKey,
           initializationVector,
@@ -99,21 +99,21 @@ describe("Encode/Decode command stream tester", () => {
       alice.privateKey,
     );
 
-    const block2 = await signCommandBlock(
-      await createCommandBlock(alice.publicKey, [
-        new AddMember("Alice", await crypto.randomBytes(32), Permissions.OWNER),
+    const block2 = signCommandBlock(
+      createCommandBlock(alice.publicKey, [
+        new AddMember("Alice", crypto.randomBytes(32), Permissions.OWNER),
         new PublishKey(
-          await crypto.randomBytes(16),
-          await crypto.randomBytes(32),
-          await crypto.randomBytes(32),
-          await crypto.randomBytes(32),
+          crypto.randomBytes(16),
+          crypto.randomBytes(32),
+          crypto.randomBytes(32),
+          crypto.randomBytes(32),
         ),
       ]),
       alice.publicKey,
       alice.privateKey,
     );
-    const block3 = await signCommandBlock(
-      await createCommandBlock(alice.publicKey, []),
+    const block3 = signCommandBlock(
+      createCommandBlock(alice.publicKey, []),
       alice.publicKey,
       alice.privateKey,
     );
@@ -121,11 +121,11 @@ describe("Encode/Decode command stream tester", () => {
     const stream = [block1, block2, block3];
 
     const encoded = CommandStreamEncoder.encode(stream);
-    const digestEncoded = await crypto.hash(encoded);
+    const digestEncoded = crypto.hash(encoded);
 
     const decoded = CommandStreamDecoder.decode(encoded);
     const reencoded = CommandStreamEncoder.encode(decoded);
-    const digestReencoded = await crypto.hash(reencoded);
+    const digestReencoded = crypto.hash(reencoded);
     expect(digestEncoded).toEqual(digestReencoded);
   });
 

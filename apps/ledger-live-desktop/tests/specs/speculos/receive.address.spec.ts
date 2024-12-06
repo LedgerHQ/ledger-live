@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { Account } from "../../enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
@@ -66,9 +66,10 @@ for (const account of accounts) {
             break;
         }
         await app.modal.continue();
-        await app.receive.expectValidReceiveAddress(account.account.address);
+        const displayedAddress = await app.receive.getAddressDisplayed();
+        await app.receive.expectValidReceiveAddress(displayedAddress);
 
-        await app.speculos.expectValidReceiveAddress(account.account);
+        await app.speculos.expectValidAddressDevice(account.account, displayedAddress);
         await app.receive.expectApproveLabel();
       },
     );
@@ -76,7 +77,7 @@ for (const account of accounts) {
 }
 
 test.describe("Receive", () => {
-  const account = Account.TRX_2;
+  const account = Account.TRX_3;
   test.use({
     userdata: "skip-onboarding",
     speculosApp: account.currency.speculosApp,

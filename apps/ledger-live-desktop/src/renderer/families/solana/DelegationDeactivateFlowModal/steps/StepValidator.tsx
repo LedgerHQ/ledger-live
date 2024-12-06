@@ -14,8 +14,17 @@ import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import ValidatorRow from "../../shared/components/ValidatorRow";
 import { StepProps } from "../types";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
-export default function StepValidator({ account, transaction, status, error, t: _t }: StepProps) {
+export default function StepValidator({
+  account,
+  transaction,
+  status,
+  error,
+  t: _t,
+  onClose,
+}: StepProps) {
   const unit = useMaybeAccountUnit(account);
   if (account === null || transaction === null || account?.solanaResources === undefined || !unit) {
     throw new Error("account, transaction and solana resouces required");
@@ -36,6 +45,8 @@ export default function StepValidator({ account, transaction, status, error, t: 
   if (validator === undefined) {
     return null;
   }
+  const notEnoughFundsError = status.errors?.fee instanceof NotEnoughBalance;
+
   return (
     <Box flow={1}>
       <TrackPage
@@ -53,7 +64,8 @@ export default function StepValidator({ account, transaction, status, error, t: 
         validator={validator}
         unit={unit}
       />
-      {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
+      {status.errors.fee && !notEnoughFundsError && <ErrorDisplay error={status.errors.fee} />}
+      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
     </Box>
   );
 }
