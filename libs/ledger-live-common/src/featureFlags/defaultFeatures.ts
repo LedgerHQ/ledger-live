@@ -171,8 +171,8 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
+
           supportLinkURI: "https://support.ledger.com",
         },
       },
@@ -324,8 +324,7 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
           supportLinkURI:
             "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
         },
