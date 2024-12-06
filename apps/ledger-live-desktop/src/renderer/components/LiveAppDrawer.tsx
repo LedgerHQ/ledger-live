@@ -57,7 +57,6 @@ export type StartExchangeData = {
   onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
 };
 
-
 export function isStartExchangeData(data: unknown): data is StartExchangeData {
   if (data === null || typeof data !== "object") {
     return false;
