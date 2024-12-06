@@ -74,7 +74,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/fix-caches-bug
         with:
           skip-pod-cache: "false"
           skip-turbo-cache: "false"
@@ -203,7 +203,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/fix-caches-bug
         id: setup-caches
         with:
           install-proto: true

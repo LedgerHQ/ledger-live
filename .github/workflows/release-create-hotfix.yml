@@ -52,7 +52,7 @@ jobs:
         run: |
           git checkout -b hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/fix-caches-bug
         id: setup-caches
         with:
           install-proto: true
