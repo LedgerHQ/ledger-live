@@ -57,13 +57,6 @@ export type StartExchangeData = {
   onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
 };
 
-type SwapRequest = {
-  transaction: Transaction;
-  exchange: ExchangeSwap;
-  provider: string;
-  rate: number;
-  amountExpectedTo: number;
-};
 
 export function isStartExchangeData(data: unknown): data is StartExchangeData {
   if (data === null || typeof data !== "object") {
