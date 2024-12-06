@@ -11,7 +11,7 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-internet_computer/types/index";
 import { ICPGetAddrResponse, ICPSignature, ICPSigner } from "./types";
-import { getPath, isError } from "./utils";
+import { getPath, isError } from "./common";
 
 const createSigner: CreateSigner<ICPSigner> = (transport: Transport) => {
   const icp = new ICP(transport);
