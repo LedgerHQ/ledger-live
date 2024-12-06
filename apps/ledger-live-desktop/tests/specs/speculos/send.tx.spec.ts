@@ -3,7 +3,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { commandCLI } from "tests/utils/cliUtils";
 import { test } from "../../fixtures/common";
-import { Transaction } from "../../models/Transaction";
+import { NFTTransaction, Transaction } from "../../models/Transaction";
 import { getDescription } from "../../utils/customJsonReporter";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
@@ -146,7 +146,7 @@ const transactionE2E = [
   /*{
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW), //todo: Reactivate when BE issue is fixed - LIVE-14844
     xrayTicket: "B2CQA-2574",
-  },
+  },*/
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
@@ -190,7 +190,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
     xrayTicket: "B2CQA-2816",
-  },*/
+  },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "",
@@ -283,7 +283,7 @@ for (const transaction of transactionE2E) {
     );
   });
 }
-/*
+
 test.describe("Send token (subAccount) - invalid address input", () => {
   const tokenTransactionInvalid = {
     transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
@@ -644,4 +644,3 @@ test.describe("send NFT to ENS address", () => {
     },
   );
 });
-*/
