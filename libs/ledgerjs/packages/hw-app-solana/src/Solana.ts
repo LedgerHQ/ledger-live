@@ -1,12 +1,16 @@
 import Transport from "@ledgerhq/hw-transport";
 
 import { StatusCodes } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 
 import BIPPath from "bip32-path";
+import axios from "axios";
+import semver from "semver";
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
 
+const P2_INIT = 0x00;
 const P2_EXTEND = 0x01;
 const P2_MORE = 0x02;
 
@@ -19,11 +23,19 @@ const INS = {
   GET_ADDR: 0x05,
   SIGN: 0x06,
   SIGN_OFFCHAIN: 0x07,
+  GET_CHALLENGE: 0x20,
+  PROVIDE_TRUSTED_NAME: 0x21,
 };
 
 enum EXTRA_STATUS_CODES {
   BLIND_SIGNATURE_REQUIRED = 0x6808,
 }
+
+const TRUSTED_NAME_MIN_VERSION = "1.6.0";
+
+export type Resolution = {
+  tokenAddress?: string;
+};
 
 /**
  * Solana API
@@ -100,9 +112,17 @@ export default class Solana {
   async signTransaction(
     path: string,
     txBuffer: Buffer,
+    resolution?: Resolution,
   ): Promise<{
     signature: Buffer;
   }> {
+    if (resolution) {
+      const { version } = await this.getAppConfig();
+      if (resolution.tokenAddress && semver.gte(version, TRUSTED_NAME_MIN_VERSION)) {
+        await this.trustedNameResolutionFlow(resolution.tokenAddress);
+      }
+    }
+
     const pathBuffer = this.pathToBuffer(path);
     // Ledger app supports only a single derivation path per call ATM
     const pathsCountBuffer = Buffer.alloc(1);
@@ -157,6 +177,11 @@ export default class Solana {
    * solana.getAppConfiguration().then(r => r.version)
    */
   async getAppConfiguration(): Promise<AppConfig> {
+    return this.getAppConfig();
+  }
+
+  // Created to be able to call it from signTransaction as getAppConfiguration is decorated to avoid calling it while signing
+  private async getAppConfig(): Promise<AppConfig> {
     const [blindSigningEnabled, pubKeyDisplayMode, major, minor, patch] = await this.sendToDevice(
       INS.GET_VERSION,
       P1_NON_CONFIRM,
@@ -167,6 +192,74 @@ export default class Solana {
       pubKeyDisplayMode,
       version: `${major}.${minor}.${patch}`,
     };
+  }
+
+  /**
+   * Method returning a 4 bytes TLV challenge as an hex string
+   *
+   * @returns {Promise<string>}
+   */
+  async getChallenge(): Promise<string> {
+    return this.transport.send(LEDGER_CLA, INS.GET_CHALLENGE, P1_NON_CONFIRM, P2_INIT).then(res => {
+      const data = res.toString("hex");
+      const fourBytesChallenge = data.slice(0, -4);
+      const statusCode = data.slice(-4);
+
+      if (statusCode !== "9000") {
+        throw new Error(
+          `An error happened while generating the challenge. Status code: ${statusCode}`,
+        );
+      }
+      return `0x${fourBytesChallenge}`;
+    });
+  }
+
+  /**
+   * Provides a trusted name to be displayed during transactions in place of the token address it is associated to. It shall be run just before a transaction involving the associated address that would be displayed on the device.
+   *
+   * @param data a stringified buffer of some TLV encoded data to represent the trusted name
+   * @returns a boolean
+   */
+  async provideTrustedName(data: string): Promise<boolean> {
+    await this.transport.send(
+      LEDGER_CLA,
+      INS.PROVIDE_TRUSTED_NAME,
+      P1_NON_CONFIRM,
+      P2_INIT,
+      Buffer.from(data, "hex"),
+    );
+
+    return true;
+  }
+
+  private async trustedNameResolutionFlow(tokenAddress: string) {
+    const challenge = await this.getChallenge();
+    const trustedNameAPDU = await this.signTokenAddressResolution(tokenAddress, challenge);
+
+    if (trustedNameAPDU) {
+      await this.provideTrustedName(trustedNameAPDU);
+    }
+  }
+
+  private async signTokenAddressResolution(tokenAddress: string, challenge: string) {
+    return axios
+      .request<{
+        contract: string;
+        descriptorType: string;
+        descriptorVersion: number;
+        owner: string;
+        signedDescriptor: string;
+        tokenAccount: string;
+      }>({
+        method: "GET",
+        url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v2/solana/owner/${tokenAddress}?challenge=${challenge}`,
+      })
+      .then(({ data }) => {
+        return data.signedDescriptor;
+      })
+      .catch(() => {
+        return null;
+      });
   }
 
   private pathToBuffer(originalPath: string) {
@@ -191,13 +284,13 @@ export default class Solana {
   private async sendToDevice(instruction: number, p1: number, payload: Buffer) {
     /*
      * By default transport will throw if status code is not OK.
-     * For some pyaloads we need to enable blind sign in the app settings
+     * For some payloads we need to enable blind sign in the app settings
      * and this is reported with StatusCodes.MISSING_CRITICAL_PARAMETER first byte prefix
      * so we handle it and show a user friendly error message.
      */
     const acceptStatusList = [StatusCodes.OK, EXTRA_STATUS_CODES.BLIND_SIGNATURE_REQUIRED];
 
-    let p2 = 0;
+    let p2 = P2_INIT;
     let payload_offset = 0;
 
     if (payload.length > MAX_PAYLOAD) {
