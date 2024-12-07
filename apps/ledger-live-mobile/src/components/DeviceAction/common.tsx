@@ -23,7 +23,9 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
           {wording}
         </Text>
       </Flex>
-      <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
+      <Animation
+        source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
+      />
     </Flex>
   );
 };
@@ -64,7 +66,7 @@ export const ConfirmFirmwareUpdate = ({
 
       <Animation
         source={getDeviceAnimation({
-          device,
+          modelId: device.modelId,
           key: "allowUpdate",
           theme,
         })}
@@ -98,7 +100,9 @@ export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Devi
         </Flex>
       </Flex>
       <Flex alignItems="center">
-        <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+        <Animation
+          source={getDeviceAnimation({ modelId: device.modelId, key: "enterPinCode", theme })}
+        />
       </Flex>
     </Flex>
   );

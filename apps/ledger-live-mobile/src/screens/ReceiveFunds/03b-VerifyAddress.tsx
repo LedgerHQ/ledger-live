@@ -195,7 +195,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             <Animation
               style={{ width: "100%" }}
               source={getDeviceAnimation({
-                device,
+                modelId: device.modelId,
                 key: "verify",
                 theme: themeKind,
               })}
