@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.59.0-next.8
+
+### Minor Changes
+
+- [#8639](https://github.com/LedgerHQ/ledger-live/pull/8639) [`8851e59`](https://github.com/LedgerHQ/ledger-live/commit/8851e5980591854a1a1151f7f8e73d1c375be0c2) Thanks [@thesan](https://github.com/thesan)! - Fix the memo/tag drawer copy
+
 ## 3.59.0-next.7
 
 ### Minor Changes
