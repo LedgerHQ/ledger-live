@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.59.0-next.7
+
+### Minor Changes
+
+- [#8625](https://github.com/LedgerHQ/ledger-live/pull/8625) [`70ee295`](https://github.com/LedgerHQ/ledger-live/commit/70ee2959c9cbd750be7cc7ebfff0d3e5a64a205f) Thanks [@thesan](https://github.com/thesan)! - Truncate Cardano memos in the input to prevent the transaction validation errors
+
 ## 3.59.0-next.6
 
 ### Minor Changes
