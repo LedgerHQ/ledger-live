@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.59.0-next.6
+
+### Minor Changes
+
+- [#8635](https://github.com/LedgerHQ/ledger-live/pull/8635) [`177265d`](https://github.com/LedgerHQ/ledger-live/commit/177265de63038fa03b0cdc618c8cde0311c9cadd) Thanks [@thesan](https://github.com/thesan)! - Debounce memo tag changes
+
 ## 3.59.0-next.5
 
 ### Minor Changes
