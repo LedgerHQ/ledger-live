@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
@@ -8,6 +9,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PlatformExchangeNavigatorParamList } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
 import { ScreenName } from "~/const";
 import { useTransactionDeviceAction, useCompleteExchangeDeviceAction } from "~/hooks/deviceActions";
+import { mevProtectionSelector } from "~/reducers/settings";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
@@ -22,12 +24,13 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   },
   navigation,
 }) => {
+  const mevProtected = useSelector(mevProtectionSelector);
   const { fromAccount: account, fromParentAccount: parentAccount } = request.exchange;
   let tokenCurrency: TokenCurrency | undefined;
 
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
-  const broadcast = useBroadcast({ account, parentAccount });
+  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected } });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();

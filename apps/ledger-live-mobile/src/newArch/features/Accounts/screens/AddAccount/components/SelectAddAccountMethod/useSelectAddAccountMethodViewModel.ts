@@ -21,7 +21,7 @@ const useSelectAddAccountMethodViewModel = ({
 }: AddAccountScreenProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
-
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
   const hasCurrency = !!currency;
@@ -55,8 +55,17 @@ const useSelectAddAccountMethodViewModel = ({
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose?.();
-    navigation.navigate(NavigatorName.AddAccounts, navigationParams);
-  }, [navigation, navigationParams, trackButtonClick, onClose]);
+    const EntryNavigatorName = llmNetworkBasedAddAccountFlow?.enabled
+      ? NavigatorName.AssetSelection
+      : NavigatorName.AddAccounts;
+    navigation.navigate(EntryNavigatorName, navigationParams);
+  }, [
+    navigation,
+    navigationParams,
+    trackButtonClick,
+    onClose,
+    llmNetworkBasedAddAccountFlow?.enabled,
+  ]);
 
   return {
     isWalletSyncEnabled,

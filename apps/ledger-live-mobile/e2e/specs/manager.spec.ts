@@ -3,7 +3,7 @@ import { knownDevices } from "../models/devices";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
 import { Application } from "../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
@@ -12,7 +12,7 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Test My Ledger", () => {
   beforeAll(async () => {
-    app = await Application.init({ userdata: "onboardingcompleted" });
+    await app.init({ userdata: "onboardingcompleted" });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

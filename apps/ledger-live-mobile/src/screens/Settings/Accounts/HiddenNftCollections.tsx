@@ -6,16 +6,14 @@ import { Account, NFTMetadata } from "@ledgerhq/types-live";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import { NFTResource, NFTResourceLoaded } from "@ledgerhq/live-nft/types";
-import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import { NFTResource, NFTResourceLoaded, NftStatus } from "@ledgerhq/live-nft/types";
 import { accountSelector } from "~/reducers/accounts";
 import NftMedia from "~/components/Nft/NftMedia";
 import Skeleton from "~/components/Skeleton";
-import { unhideNftCollection, whitelistNftCollection } from "~/actions/settings";
+import { updateNftStatus } from "~/actions/settings";
 import { State } from "~/reducers/types";
-
-const MAX_COLLECTIONS_FIRST_RENDER = 10;
-const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
+import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -34,6 +32,9 @@ const CollectionNameSkeleton = styled(Skeleton)`
   border-radius: 4px;
   margin-left: 10px;
 `;
+
+const MAX_COLLECTIONS_FIRST_RENDER = 20;
+const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 10;
 
 const HiddenNftCollectionRow = ({
   contractAddress,
@@ -88,15 +89,17 @@ const HiddenNftCollectionRow = ({
 };
 
 const HiddenNftCollections = () => {
-  const hiddenCollections = useSelector(hiddenNftCollectionsSelector);
+  const collections = useSelector(nftCollectionsStatusByNetworkSelector);
+
   const dispatch = useDispatch();
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
 
   const onUnhideCollection = useCallback(
-    (collectionId: string) => {
-      dispatch(unhideNftCollection(collectionId));
-      dispatch(whitelistNftCollection(collectionId));
+    (collectionId: string, blockchain: BlockchainsType) => {
+      dispatch(
+        updateNftStatus({ blockchain, collection: collectionId, status: NftStatus.whitelisted }),
+      );
     },
     [dispatch],
   );
@@ -104,22 +107,36 @@ const HiddenNftCollections = () => {
   const renderItem = useCallback(
     ({ item }: { item: string }) => {
       const [accountId, contractAddress] = item.split("|");
+      const network = (Object.keys(collections).find(
+        key => collections[key as BlockchainEVM][item],
+      ) ?? BlockchainEVM.Ethereum) as BlockchainsType;
       return (
         <HiddenNftCollectionRow
           accountId={accountId}
           contractAddress={contractAddress}
-          onUnhide={() => onUnhideCollection(item)}
+          onUnhide={() => onUnhideCollection(item, network)}
         />
       );
     },
-    [onUnhideCollection],
+    [collections, onUnhideCollection],
   );
 
   const keyExtractor = useCallback((item: string) => item, []);
 
+  const hiddenNftCollections = useMemo(
+    () =>
+      Object.values(collections).flatMap(network =>
+        Object.keys(network).filter(
+          collection =>
+            network[collection] === NftStatus.blacklisted || network[collection] === NftStatus.spam,
+        ),
+      ),
+    [collections],
+  );
+
   const collectionsSliced: string[] = useMemo(
-    () => hiddenCollections.slice(0, collectionsCount),
-    [collectionsCount, hiddenCollections],
+    () => hiddenNftCollections.slice(0, collectionsCount),
+    [collectionsCount, hiddenNftCollections],
   );
 
   const onEndReached = useCallback(() => {

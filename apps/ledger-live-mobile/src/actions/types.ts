@@ -37,6 +37,8 @@ import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -242,10 +244,7 @@ export enum SettingsActionTypes {
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
-  HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
-  UNHIDE_NFT_COLLECTION = "UNHIDE_NFT_COLLECTION",
-  UNWHITELIST_NFT_COLLECTION = "UNWHITELIST_NFT_COLLECTION",
-  WHITELIST_NFT_COLLECTION = "WHITELIST_NFT_COLLECTION",
+  UPDATE_NFT_COLLECTION_STATUS = "UPDATE_NFT_COLLECTION_STATUS",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -324,10 +323,11 @@ export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
-export type SettingsHideNftCollectionPayload = string;
-export type SettingsUnhideNftCollectionPayload = string;
-export type SettingsWhitelistNftCollectionPayload = string;
-export type SettingsUnwhitelistNftCollectionPayload = string;
+export type SettingsUpdateNftCollectionStatus = {
+  blockchain: BlockchainEVM;
+  collection: string;
+  status: NftStatus;
+};
 export type SettingsDismissBannerPayload = string;
 export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
@@ -425,10 +425,7 @@ export type SettingsPayload =
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
-  | SettingsHideNftCollectionPayload
-  | SettingsUnhideNftCollectionPayload
-  | SettingsWhitelistNftCollectionPayload
-  | SettingsUnwhitelistNftCollectionPayload
+  | SettingsUpdateNftCollectionStatus
   | SettingsDismissBannerPayload
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload

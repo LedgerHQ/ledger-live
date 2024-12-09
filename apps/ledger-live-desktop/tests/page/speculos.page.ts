@@ -28,7 +28,7 @@ import { delegateCosmos, sendCosmos } from "tests/families/cosmos";
 import { delegateSolana, sendSolana } from "tests/families/solana";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
-  async expectValidAddressDevice(account: Account) {
+  async expectValidAddressDevice(account: Account, addressDisplayed: string) {
     let deviceLabels: string[];
 
     switch (account.currency) {
@@ -46,7 +46,7 @@ export class SpeculosPage extends AppPage {
 
     await waitFor(deviceLabels[0]);
     const events = await pressUntilTextFound(deviceLabels[1]);
-    const isAddressCorrect = containsSubstringInEvent(account.address, events);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
     expect(isAddressCorrect).toBeTruthy();
     await pressBoth();
   }

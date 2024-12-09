@@ -29,8 +29,9 @@ export const useOpenHideCollectionModal = (
             collectionName: collectionName as string,
             collectionId: `${account.id}|${nft.contract}`,
             onClose,
+            blockchain: account.currency.id,
           }),
         ),
     };
-  }, [account.id, dispatch, metadata, nft.contract, onClose, t]);
+  }, [account.currency.id, account.id, dispatch, metadata, nft.contract, onClose, t]);
 };

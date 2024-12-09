@@ -64,8 +64,16 @@ registerTransportModule({
   disconnect: () => Promise.resolve(),
 });
 
-if (process.env.DEVICE_PROXY_URL) {
-  const Tr = createTransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
+const {
+  SPECULOS_API_PORT,
+  SPECULOS_APDU_PORT,
+  SPECULOS_BUTTON_PORT,
+  SPECULOS_HOST,
+  DEVICE_PROXY_URL,
+} = process.env;
+
+if (DEVICE_PROXY_URL) {
+  const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () =>
@@ -77,8 +85,6 @@ if (process.env.DEVICE_PROXY_URL) {
     disconnect: () => Promise.resolve(),
   });
 }
-
-const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
 if (SPECULOS_API_PORT) {
   registerSpeculosTransport(parseInt(SPECULOS_API_PORT, 10));
@@ -146,7 +152,7 @@ export function registerSpeculosTransport(apiPort: number) {
 
 LiveConfig.setConfig(liveConfig);
 
-if (!process.env.CI && !SPECULOS_API_PORT) {
+if (!process.env.CI && !SPECULOS_API_PORT && !DEVICE_PROXY_URL) {
   init();
 }
 

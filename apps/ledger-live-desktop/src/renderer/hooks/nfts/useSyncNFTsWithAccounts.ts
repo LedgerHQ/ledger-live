@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { accountsSelector, orderedVisibleNftsSelector } from "~/renderer/reducers/accounts";
 import isEqual from "lodash/isEqual";
 import { getEnv } from "@ledgerhq/live-env";
+import { State } from "~/renderer/reducers";
 
 /**
  * Represents the size of groups for batching address fetching.
@@ -41,9 +42,12 @@ export function useSyncNFTsWithAccounts() {
   const threshold = getThreshold(nftsFromSimplehashFeature?.params?.threshold);
 
   const { enabled, hideSpamCollection } = useHideSpamCollection();
-
   const accounts = useSelector(accountsSelector);
-  const nftsOwned = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOwned = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addressGroups = useMemo(() => {
     const uniqueAddresses = [
@@ -66,12 +70,12 @@ export function useSyncNFTsWithAccounts() {
   const [, setCurrentIndex] = useState(0);
 
   const { refetch } = useCheckNftAccount({
-    addresses: groupToFetch.join(","),
+    addresses: groupToFetch?.join(",") || "",
     nftsOwned,
     chains: SUPPORTED_NFT_CURRENCIES,
     threshold,
     action: hideSpamCollection,
-    enabled,
+    enabled: enabled && groupToFetch.length > 0,
   });
 
   // Refetch with new last group when addressGroups length changes
@@ -91,7 +95,7 @@ export function useSyncNFTsWithAccounts() {
     const interval = setInterval(() => {
       setCurrentIndex(prevIndex => {
         const nextIndex = (prevIndex + 1) % addressGroups.length;
-        setGroupToFetch(addressGroups[nextIndex]);
+        setGroupToFetch(addressGroups[nextIndex] || []);
         return nextIndex;
       });
     }, TIMER);

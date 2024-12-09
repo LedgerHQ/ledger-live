@@ -3,7 +3,6 @@ import { shouldRedirectToPostOnboardingOrRecoverUpsell } from "./shouldRedirectT
 
 type Scenario = {
   device: { modelId: DeviceModelId };
-  upsellForTouchScreenDevices: boolean;
   hasBeenUpsoldRecover: boolean;
   hasRedirectedToPostOnboarding: boolean;
   expected: { shouldRedirectToRecoverUpsell: boolean; shouldRedirectToPostOnboarding: boolean };
@@ -19,17 +18,10 @@ const mockedSupportedDeviceModels = [
 
 function testScenarios(scenarios: Scenario[]) {
   it.each(scenarios)(
-    "should return $expected for $device and upsell for touch screen devices: $upsellForTouchScreenDevices",
-    ({
-      device,
-      upsellForTouchScreenDevices,
-      hasBeenUpsoldRecover,
-      hasRedirectedToPostOnboarding,
-      expected,
-    }) => {
+    "should return $expected for $device and upsell for touch screen devices",
+    ({ device, hasBeenUpsoldRecover, hasRedirectedToPostOnboarding, expected }) => {
       const result = shouldRedirectToPostOnboardingOrRecoverUpsell({
         lastConnectedDevice: device,
-        upsellForTouchScreenDevices,
         hasBeenUpsoldRecover,
         hasRedirectedToPostOnboarding,
         supportedDeviceModels: mockedSupportedDeviceModels,
@@ -56,52 +48,34 @@ describe("useShouldRedirect", () => {
       [
         {
           device: { modelId: DeviceModelId.nanoS },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: true },
         },
         {
           device: { modelId: DeviceModelId.nanoS },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: true },
         },
         {
           device: { modelId: DeviceModelId.nanoSP },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoSP },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoX },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoX },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.stax },
-          upsellForTouchScreenDevices: false,
-          expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: true },
-        },
-        {
-          device: { modelId: DeviceModelId.stax },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.europa },
-          upsellForTouchScreenDevices: false,
-          expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: true },
-        },
-        {
-          device: { modelId: DeviceModelId.europa },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
       ].map(scenario => ({ ...scenario, ...params })),
@@ -116,20 +90,17 @@ describe("useShouldRedirect", () => {
       DeviceModelId.stax,
       DeviceModelId.europa,
     ].forEach(modelId => {
-      [true, false].forEach(upsellForTouchScreenDevices =>
-        testScenarios([
-          {
-            device: { modelId },
-            upsellForTouchScreenDevices,
-            expected: {
-              shouldRedirectToRecoverUpsell: false,
-              shouldRedirectToPostOnboarding: true,
-            },
-            hasBeenUpsoldRecover: true,
-            hasRedirectedToPostOnboarding: false,
+      testScenarios([
+        {
+          device: { modelId },
+          expected: {
+            shouldRedirectToRecoverUpsell: false,
+            shouldRedirectToPostOnboarding: true,
           },
-        ]),
-      );
+          hasBeenUpsoldRecover: true,
+          hasRedirectedToPostOnboarding: false,
+        },
+      ]);
     });
   });
 
@@ -141,20 +112,17 @@ describe("useShouldRedirect", () => {
       DeviceModelId.stax,
       DeviceModelId.europa,
     ].forEach(modelId => {
-      [true, false].forEach(upsellForTouchScreenDevices =>
-        testScenarios([
-          {
-            device: { modelId },
-            upsellForTouchScreenDevices,
-            expected: {
-              shouldRedirectToRecoverUpsell: false,
-              shouldRedirectToPostOnboarding: false,
-            },
-            hasBeenUpsoldRecover: true,
-            hasRedirectedToPostOnboarding: true,
+      testScenarios([
+        {
+          device: { modelId },
+          expected: {
+            shouldRedirectToRecoverUpsell: false,
+            shouldRedirectToPostOnboarding: false,
           },
-        ]),
-      );
+          hasBeenUpsoldRecover: true,
+          hasRedirectedToPostOnboarding: true,
+        },
+      ]);
     });
   });
 
@@ -167,52 +135,34 @@ describe("useShouldRedirect", () => {
       [
         {
           device: { modelId: DeviceModelId.nanoS },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoS },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoSP },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoSP },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoX },
-          upsellForTouchScreenDevices: false,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.nanoX },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.stax },
-          upsellForTouchScreenDevices: false,
-          expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: false },
-        },
-        {
-          device: { modelId: DeviceModelId.stax },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
         {
           device: { modelId: DeviceModelId.europa },
-          upsellForTouchScreenDevices: false,
-          expected: { shouldRedirectToRecoverUpsell: false, shouldRedirectToPostOnboarding: false },
-        },
-        {
-          device: { modelId: DeviceModelId.europa },
-          upsellForTouchScreenDevices: true,
           expected: { shouldRedirectToRecoverUpsell: true, shouldRedirectToPostOnboarding: false },
         },
       ].map(scenario => ({ ...scenario, ...params })),

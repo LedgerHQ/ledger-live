@@ -425,7 +425,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" mt={10}>
+            <Flex alignItems="center" my={8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>

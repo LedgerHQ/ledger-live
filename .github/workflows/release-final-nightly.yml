@@ -29,8 +29,12 @@ jobs:
       - name: merge develop
         run: |
           git merge origin/develop -X theirs
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
@@ -56,6 +60,10 @@ jobs:
         run: |
           git add .
           git commit -m "chore(nightly): :rocket: nightly release"
+      - name: authenticate with npm
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
       - name: publish nightly
         run: pnpm changeset publish --no-git-tag
         env:

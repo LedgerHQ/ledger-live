@@ -760,6 +760,8 @@ export const renderError = ({
   device,
   inlineRetry = true,
   withDescription = true,
+  learnMoreLink,
+  learnMoreTextKey,
   Icon,
 }: {
   error: Error | ErrorConstructor;
@@ -769,6 +771,8 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  learnMoreLink?: string;
+  learnMoreTextKey?: string;
   buyLedger?: string;
   warning?: boolean;
   info?: boolean;
@@ -798,6 +802,8 @@ export const renderError = ({
       <NoSuchAppOnProviderErrorComponent
         error={tmpError}
         productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        learnMoreLink={learnMoreLink}
+        learnMoreTextKey={learnMoreTextKey}
       />
     );
   }

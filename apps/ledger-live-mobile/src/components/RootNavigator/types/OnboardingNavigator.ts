@@ -3,6 +3,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
@@ -38,6 +39,7 @@ export type OnboardingNavigatorParamList = {
     next?: ScreenName.OnboardingProtectFlow;
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
+    fromAccessExistingWallet?: boolean;
   };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
@@ -59,4 +61,5 @@ export type OnboardingNavigatorParamList = {
     filterByDeviceModelId: DeviceModelId;
   };
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+  [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };

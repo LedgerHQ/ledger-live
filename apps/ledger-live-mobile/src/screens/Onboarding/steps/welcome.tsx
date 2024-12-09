@@ -12,7 +12,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import { urls } from "~/utils/urls";
 import { useAcceptGeneralTerms } from "~/logic/terms";
-import { setAnalytics } from "~/actions/settings";
+import { setAnalytics, setOnboardingHasDevice } from "~/actions/settings";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import ForceTheme from "~/components/theme/ForceTheme";
 import Button from "~/components/wrappedUi/Button";
@@ -119,10 +119,11 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   );
 
   useEffect(() => {
+    dispatch(setOnboardingHasDevice(null));
     return () => {
       if (timeout.current) clearTimeout(timeout.current);
     };
-  }, []);
+  }, [dispatch]);
 
   const videoSource = videoSources.welcomeScreenStax;
 

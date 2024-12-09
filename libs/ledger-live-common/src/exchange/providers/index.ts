@@ -83,3 +83,6 @@ export function setTestProviderInfo(provider: string) {
 export function getTestProviderInfo(): ExchangeProviderNameAndSignature | undefined {
   return testProvider;
 }
+export function removeTestProviderInfo(): ExchangeProviderNameAndSignature | undefined {
+  return (testProvider = undefined);
+}

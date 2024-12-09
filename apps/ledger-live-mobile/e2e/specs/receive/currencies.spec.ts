@@ -3,7 +3,7 @@ import { knownDevices } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 let first = true;
 const knownDevice = knownDevices.nanoX;
@@ -12,7 +12,7 @@ $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    app = await Application.init({
+    await app.init({
       userdata: "onboardingcompleted",
       knownDevices: [knownDevice],
     });

@@ -1,25 +1,33 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { hideNftCollection } from "~/actions/settings";
-import { whitelistedNftCollectionsSelector } from "~/reducers/settings";
+import { updateNftStatus } from "~/actions/settings";
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 export function useHideSpamCollection() {
   const spamFilteringTxFeature = useFeature("spamFilteringTx");
-  const whitelistedNftCollections = useSelector(whitelistedNftCollectionsSelector);
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
+  const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
   const dispatch = useDispatch();
+
   const hideSpamCollection = useCallback(
-    (collection: string) => {
-      if (!whitelistedNftCollections.includes(collection)) {
-        dispatch(hideNftCollection(collection));
+    (collection: string, blockchain: BlockchainsType) => {
+      const blockchainToCheck = nftCollectionsStatusByNetwork[blockchain] || {};
+      const elem = Object.entries(blockchainToCheck).find(([key, _]) => key === collection);
+
+      if (!elem) {
+        dispatch(updateNftStatus({ blockchain, collection, status: NftStatus.spam }));
       }
     },
-    [dispatch, whitelistedNftCollections],
+    [dispatch, nftCollectionsStatusByNetwork],
   );
 
   return {
     hideSpamCollection,
-    enabled: spamFilteringTxFeature?.enabled,
+    enabled: (spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled) || false,
   };
 }

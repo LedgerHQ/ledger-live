@@ -15,7 +15,7 @@ export default {
   argTypes: {
     children: {
       description: "The elements to be displayed.",
-      control: { type: "range", min: 1, max: 10, step: 1 },
+      control: { type: "range", min: 0, max: 10, step: 1 },
     },
     variant: {
       description: "Variant for the carousel.",
@@ -23,13 +23,20 @@ export default {
       defaultValue: "default",
       control: "inline-radio",
     },
-    onChange: {
-      description: "Function called when a new slide is shown.",
+    autoPlay: {
+      description: "The time in milliseconds between automatic slide change (0 for no auto-play).",
+    },
+    onNext: {
+      description: "Function called when the user moves to the next slide.",
+    },
+    onPrev: {
+      description: "Function called when the user moves to the previous slide.",
     },
   },
   args: {
     variant: "default",
     children: 5,
+    autoPlay: 0,
   },
   parameters: {
     docs: {

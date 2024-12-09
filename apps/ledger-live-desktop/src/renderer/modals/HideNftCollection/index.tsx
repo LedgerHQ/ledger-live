@@ -14,6 +14,7 @@ const HideNftCollectionModal = () => (
           onClose?.();
           data?.onClose?.();
         }}
+        blockchain={data.blockchain}
       />
     )}
   />

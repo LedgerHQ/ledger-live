@@ -10,7 +10,6 @@ import {
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
-  SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
@@ -41,7 +40,6 @@ import {
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
-  SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
@@ -71,9 +69,8 @@ import {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
-  SettingsWhitelistNftCollectionPayload,
-  SettingsUnwhitelistNftCollectionPayload,
   SettingsSetMevProtectionPayload,
+  SettingsUpdateNftCollectionStatus,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -144,19 +141,8 @@ export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
 export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTypes.SHOW_TOKEN);
-export const hideNftCollection = createAction<SettingsHideNftCollectionPayload>(
-  SettingsActionTypes.HIDE_NFT_COLLECTION,
-);
-export const unhideNftCollection = createAction<SettingsUnhideNftCollectionPayload>(
-  SettingsActionTypes.UNHIDE_NFT_COLLECTION,
-);
-
-export const whitelistNftCollection = createAction<SettingsWhitelistNftCollectionPayload>(
-  SettingsActionTypes.WHITELIST_NFT_COLLECTION,
-);
-
-export const unwhitelistNftCollection = createAction<SettingsUnwhitelistNftCollectionPayload>(
-  SettingsActionTypes.UNWHITELIST_NFT_COLLECTION,
+export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
+  SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
 );
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(

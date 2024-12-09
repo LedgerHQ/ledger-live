@@ -18,6 +18,7 @@ export class AddAccountModal extends Modal {
   private selectAccountInList = (Currency: Currency) =>
     this.page.getByRole("option", {
       name: `${Currency.name} (${Currency.ticker})`,
+      exact: true,
     });
   private selectTokenNetwork = (SubAccount: Account) =>
     this.page

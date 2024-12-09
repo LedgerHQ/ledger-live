@@ -3091,6 +3091,13 @@
       "desc": "Try out the Developer features and let us know what you think.",
       "customManifest": {
         "title": "Load Custom Platform Manifest"
+      },
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "description": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format",
+        "currentSetting": "Current Setting",
+        "error": "Invalid CAL value"
       }
     },
     "debug": {
@@ -6918,6 +6925,13 @@
         "title": "Sync with another Ledger Live app",
         "description": "Sync your Ledger Live crypto accounts across different phones and computers."
       },
+      "unauthorizeMember": {
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
+        }
+      },
       "manageKey": {
         "title": "Delete Sync",
         "description": "Your crypto accounts across different phones and computers will stop synching.",
@@ -6928,6 +6942,11 @@
           "cancel": "Keep sync",
           "title": "Sure you want delete sync?",
           "desc": "Your crypto accounts on different phones and computers will stop being in sync. This does not impact your funds in any way."
+        },
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
         }
       },
       "manageInstances": {

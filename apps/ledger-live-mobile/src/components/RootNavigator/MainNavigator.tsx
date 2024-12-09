@@ -21,6 +21,7 @@ import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -37,6 +38,8 @@ export default function MainNavigator() {
   const managerNavLockCallback = useManagerNavLockCallback();
   const web3hub = useFeature("web3hub");
   const earnYiedlLabel = getStakeLabelLocaleBased();
+  const { navigateToRebornFlow } = useRebornFlow();
+
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
@@ -119,9 +122,14 @@ export default function MainNavigator() {
           tabPress: e => {
             e.preventDefault();
             managerLockAwareCallback(() => {
-              navigation.navigate(NavigatorName.Earn, {
-                screen: ScreenName.Earn,
-              });
+              if (readOnlyModeEnabled && hasOrderedNano) {
+                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+              } else if (readOnlyModeEnabled) {
+                navigateToRebornFlow();
+              } else
+                navigation.navigate(NavigatorName.Earn, {
+                  screen: ScreenName.Earn,
+                });
             });
           },
         })}
@@ -190,7 +198,7 @@ export default function MainNavigator() {
               if (readOnlyModeEnabled && hasOrderedNano) {
                 navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
               } else if (readOnlyModeEnabled) {
-                navigation.navigate(NavigatorName.BuyDevice);
+                navigateToRebornFlow();
               } else {
                 navigation.navigate(NavigatorName.MyLedger, {
                   screen: ScreenName.MyLedgerChooseDevice,

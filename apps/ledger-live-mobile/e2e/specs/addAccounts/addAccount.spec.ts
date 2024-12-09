@@ -2,7 +2,7 @@ import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "bitcoin";
@@ -11,7 +11,7 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
-    app = await Application.init({
+    await app.init({
       userdata: "onboardingcompleted",
       knownDevices: [knownDevice],
     });

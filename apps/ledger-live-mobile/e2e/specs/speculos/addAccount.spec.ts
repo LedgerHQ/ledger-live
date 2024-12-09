@@ -1,6 +1,6 @@
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 
 const currencies = [
   { currency: "bitcoin", nanoApp: "Bitcoin", tmsLink: "B2CQA-101" },
@@ -9,7 +9,7 @@ const currencies = [
 
 describe("Add accounts", () => {
   beforeAll(async () => {
-    app = await Application.init({ userdata: "onboardingcompleted" });
+    await app.init({ userdata: "onboardingcompleted" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

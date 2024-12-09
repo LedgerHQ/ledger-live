@@ -63,6 +63,8 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
   id: String(card.id),
   title: card.extras?.title,
   description: card.extras?.description,
+  cta: card.extras?.cta,
+  tag: card.extras?.tag,
   location: LocationContentCard.Portfolio,
   image: card.extras?.image,
   url: card.extras?.url,

@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Button from "~/components/wrappedUi/Button";
 import { urls } from "~/utils/urls";
@@ -30,6 +30,7 @@ import {
 import { BuyDeviceNavigatorParamList } from "~/components/RootNavigator/types/BuyDeviceNavigator";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import videoSources from "../../assets/videos";
+import { setOnboardingHasDevice } from "~/actions/settings";
 
 const sourceDark = videoSources.nanoXDark;
 const sourceLight = videoSources.nanoXLight;
@@ -92,6 +93,9 @@ export default function GetDeviceScreen() {
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const dispatch = useDispatch();
+  const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
+  const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
 
   const handleBack = useCallback(() => {
     navigation.goBack();
@@ -106,6 +110,7 @@ export default function GetDeviceScreen() {
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
     setFirstTimeOnboarding(false);
+    if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
@@ -118,7 +123,14 @@ export default function GetDeviceScreen() {
         page: "Upsell Nano",
       });
     }
-  }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
+  }, [
+    setShowWelcome,
+    setFirstTimeOnboarding,
+    isInOnboarding,
+    dispatch,
+    navigation,
+    readOnlyModeEnabled,
+  ]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {

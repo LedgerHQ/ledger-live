@@ -21,6 +21,7 @@ export enum AnalyticsPage {
   ManageBackup = "Delete sync",
   ConfirmDeleteBackup = "Confirm delete sync",
   DeleteBackupSuccess = "Delete sync success",
+  DeleteBackupError = "Delete sync error",
   SyncWithNoKey = "Scan attempt with no sync",
   LedgerSyncActivated = "Ledger Sync activated",
   AutoRemove = "Can’t remove current instance",

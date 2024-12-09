@@ -94,3 +94,18 @@ jest.mock("src/sentry/renderer", () => ({
   setTags: jest.fn(),
   getSentryIfAvailable: jest.fn().mockReturnValue(false),
 }));
+
+if (!globalThis.Buffer) {
+  // Note: this polyfill depends on the patch buffer@6.0.3 which adds the Uint8
+  // subarray logic. It's the same as in ledger-live-mobile
+  // Furthermore, importing 'buffer' gets translated to 'node:buffer' so we're
+  // using a relative path here
+  const { Buffer } = require("../node_modules/buffer");
+  Object.defineProperty(globalThis, "Buffer", { value: Buffer });
+} else {
+  // jsdom defines a global Buffer
+  if (!(globalThis.Buffer.prototype instanceof Uint8Array)) {
+    // jsdom does not define Buffer as an instance of Uint8Array, so we need to set it
+    Object.setPrototypeOf(globalThis.Buffer.prototype, Uint8Array.prototype);
+  }
+}

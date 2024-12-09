@@ -113,15 +113,8 @@ export default function StepSummary({ account, message: messageData }: StepProps
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
       specific?.message?.getMessageProperties(messageData).then(setMessageFields);
-    } else if (isACREWithdraw) {
-      setMessageFields(
-        Object.entries(messageData.message).map(([label, value]) => ({
-          label,
-          value,
-        })),
-      );
     }
-  }, [account.currency.family, isACREWithdraw, mainAccount, messageData, setMessageFields]);
+  }, [account.currency.family, mainAccount, messageData, setMessageFields]);
 
   return (
     <Box flow={1}>
@@ -145,11 +138,13 @@ export default function StepSummary({ account, message: messageData }: StepProps
       </Box>
       <Separator />
 
-      {messageData.standard === "EIP712" || isACREWithdraw ? (
-        <MessagePropertiesComp properties={messageFields} />
-      ) : (
-        <MessageProperty label={"message"} value={messageData.message} />
-      )}
+      {!isACREWithdraw ? (
+        messageData.standard === "EIP712" ? (
+          <MessagePropertiesComp properties={messageFields} />
+        ) : (
+          <MessageProperty label={"message"} value={messageData.message} />
+        )
+      ) : null}
 
       <MessageContainer flex="1">
         {messageFields ? (

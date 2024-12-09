@@ -4,8 +4,8 @@ import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import AddAccount from "../Accounts/AddAccount";
 import Touchable from "~/components/Touchable";
-import { ScreenName } from "~/const";
 import { track } from "~/analytics";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 
 type Props = {
   readOnly?: boolean;
@@ -13,14 +13,15 @@ type Props = {
 
 function AssetsNavigationHeader({ readOnly }: Props) {
   const navigation = useNavigation();
+  const { navigateToRebornFlow } = useRebornFlow();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
       button: "Add Account '+'",
       page: "Assets",
     });
-    navigation.navigate(ScreenName.NoDeviceWallScreen);
-  }, [navigation]);
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow]);
 
   const goBack = useCallback(() => {
     track("button_clicked", {
