@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 export function getDescription(annotations: any) {
-  const annotation = annotations.find((ann: any) => ann.type === "TMS");
+  const annotation = annotations.find((ann: any) => ann.type === "TMS" || ann.type === "BUG");
   return annotation ? annotation.description : "Type not found";
 }
 
