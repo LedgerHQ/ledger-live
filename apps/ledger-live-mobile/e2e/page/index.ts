@@ -22,6 +22,7 @@ import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
+import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
 import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
@@ -75,6 +76,7 @@ export class Application {
   public send = new SendPage();
   public settings = new SettingsPage();
   public settingsGeneral = new SettingsGeneralPage();
+  public speculos = new SpeculosPage();
   public stake = new StakePage();
   public swap = new SwapPage();
   public transfertMenu = new TransfertMenuDrawer();

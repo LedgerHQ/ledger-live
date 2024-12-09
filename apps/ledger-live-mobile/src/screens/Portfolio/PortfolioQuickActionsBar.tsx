@@ -70,7 +70,14 @@ function PortfolioQuickActionsBar() {
     },
   ].filter(<T extends QuickActionButtonProps>(v: T | undefined): v is T => !!v);
 
-  return <QuickActionList data={quickActionsData} numColumns={5} id="asset_five_columns" />;
+  return (
+    <QuickActionList
+      data={quickActionsData}
+      numColumns={5}
+      id="asset_five_columns"
+      testID="portoflio-quick-action-button"
+    />
+  );
 }
 
 export default PortfolioQuickActionsBar;

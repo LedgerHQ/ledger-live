@@ -46,6 +46,7 @@ const QuickActionButton = ({
   onPressWhenDisabled,
   textVariant = "body",
   variant = "large",
+  testID,
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
   return (
@@ -55,6 +56,7 @@ const QuickActionButton = ({
       visuallyDisabled={disabled}
       variant={variant}
       {...otherProps}
+      testID={`${testID}-${children}`}
     >
       <Icon
         size={variant === "small" ? 20 : 24}
