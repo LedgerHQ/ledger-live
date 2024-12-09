@@ -5,7 +5,7 @@ import { Nft } from "@ledgerhq/live-common/e2e/enum/Nft";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import invariant from "invariant";
 
 test.describe("send NFT to ENS address", () => {
@@ -19,14 +19,13 @@ test.describe("send NFT to ENS address", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: transaction.accountToDebit.currency.currencyId,
           index: transaction.accountToDebit.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: transaction.accountToDebit.currency.speculosApp,
@@ -67,14 +66,13 @@ test.describe("The user can see his NFT floor price", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
@@ -116,14 +114,13 @@ for (const account of accounts) {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: account.account.currency.currencyId,
             index: account.account.index,
-            appjson: "",
             add: true,
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
       speculosApp: account.account.currency.speculosApp,
@@ -152,14 +149,13 @@ for (const account of accounts) {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: account.account.currency.currencyId,
             index: account.account.index,
-            appjson: "",
             add: true,
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
       speculosApp: account.account.currency.speculosApp,
