@@ -25,6 +25,7 @@ import { sendXRP } from "tests/families/xrp";
 import { delegateNear } from "tests/families/near";
 import { delegateCosmos, sendCosmos } from "tests/families/cosmos";
 import { delegateSolana, sendSolana } from "tests/families/solana";
+import { sendAptos } from "tests/families/aptos";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account) {
@@ -107,6 +108,9 @@ export class SpeculosPage extends AppPage {
         break;
       case Currency.XRP:
         await sendXRP(tx);
+        break;
+      case Currency.APT:
+        await sendAptos();
         break;
       default:
         throw new Error(`Unsupported currency: ${currencyName}`);
