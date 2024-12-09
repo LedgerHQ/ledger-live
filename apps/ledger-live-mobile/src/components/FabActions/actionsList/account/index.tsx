@@ -34,6 +34,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
               numColumns={2}
               id="two_columns"
               key="two_columns"
+              testID="account-quick-action-button"
             />
           ) : (
             <QuickActionList
@@ -41,6 +42,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
               numColumns={3}
               id="three_columns"
               key="three_columns"
+              testID="account-quick-action-button"
             />
           )}
         </>

@@ -36,6 +36,10 @@ export default class ReceivePage {
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
+  tronNewAddressWarning = () => getElementById("tron-receive-newAddress-warning");
+  tronNewAddressWarningText =
+    "You first need to send at least 0.1 TRX to this address to activate it.";
+
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
@@ -98,6 +102,11 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
   }
 
+  async getFreshAddressDisplayed() {
+    await waitForElementById(this.accountFreshAddress);
+    return await getTextOfElement(this.accountFreshAddress);
+  }
+
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
     //set "account" in plural or not in fonction of number account
     const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");
@@ -148,6 +157,15 @@ export default class ReceivePage {
     await waitForElementById(receiveTitleTickerId);
     await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();
+  }
+
+  async expectAdressIsCorrect(address: string) {
+    await expect(getElementById(this.accountAddress)).toHaveText(address);
+  }
+
+  async expectTronNewAddressWarning() {
+    await expect(this.tronNewAddressWarning()).toBeVisible();
+    await expect(this.tronNewAddressWarning()).toHaveText(this.tronNewAddressWarningText);
   }
 
   async doNotVerifyAddress() {
