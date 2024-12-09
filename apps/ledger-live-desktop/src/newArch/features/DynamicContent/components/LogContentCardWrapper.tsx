@@ -1,9 +1,13 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import * as braze from "@braze/web-sdk";
-import { useSelector } from "react-redux";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  anonymousUserNotificationsSelector,
+  trackingEnabledSelector,
+} from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { Box } from "@ledgerhq/react-ui";
+import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 
 interface LogContentCardWrapperProps {
   id: string;
@@ -12,6 +16,7 @@ interface LogContentCardWrapperProps {
 }
 
 const PERCENTAGE_OF_CARD_VISIBLE = 0.5;
+const OFFLINE_SEEN_DELAY = 2e3;
 
 const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   id,
@@ -20,6 +25,8 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const anonymousUserNotifications = useSelector(anonymousUserNotificationsSelector);
+  const dispatch = useDispatch();
 
   const currentCard = useMemo(() => {
     const cards = braze.getCachedContentCards().cards;
@@ -27,17 +34,33 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   }, [id]);
 
   useEffect(() => {
-    if (!currentCard || !isTrackedUser) return;
+    if (!currentCard) return;
 
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.intersectionRatio > PERCENTAGE_OF_CARD_VISIBLE) {
-          braze.logContentCardImpressions([currentCard]);
-          track("contentcard_impression", {
-            id: currentCard.id,
-            ...currentCard.extras,
-            ...additionalProps,
-          });
+          if (isTrackedUser) {
+            braze.logContentCardImpressions([currentCard]);
+            track("contentcard_impression", {
+              id: currentCard.id,
+              ...currentCard.extras,
+              ...additionalProps,
+            });
+          } else if (
+            anonymousUserNotifications[currentCard.id as string] !==
+            currentCard?.expiresAt?.getTime()
+          ) {
+            // support new campaign or resumed campaign with the same id + different expiration date targeting anonymous users
+            setTimeout(() => {
+              dispatch(
+                updateAnonymousUserNotifications({
+                  notifications: {
+                    [currentCard.id as string]: currentCard?.expiresAt?.getTime() as number,
+                  },
+                }),
+              );
+            }, OFFLINE_SEEN_DELAY);
+          }
         }
       },
       { threshold: PERCENTAGE_OF_CARD_VISIBLE },
@@ -54,7 +77,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
         intersectionObserver.unobserve(currentRef);
       }
     };
-  }, [currentCard, isTrackedUser, additionalProps]);
+  }, [currentCard, isTrackedUser, additionalProps, dispatch, anonymousUserNotifications]);
 
   return (
     <Box width="100%" ref={ref}>

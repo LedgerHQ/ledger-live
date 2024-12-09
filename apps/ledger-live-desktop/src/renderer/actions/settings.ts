@@ -29,6 +29,7 @@ import {
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
+  UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
   UPDATE_NFT_COLLECTION_STATUS,
 } from "./constants";
 import { BlockchainsType } from "@ledgerhq/live-nft/supported";
@@ -451,6 +452,16 @@ export const setMarketWidget = (payload: boolean) => ({
 export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
   return {
     type: TOGGLE_MEMOTAG_INFO,
+    payload,
+  };
+};
+
+export const updateAnonymousUserNotifications = (payload: {
+  notifications: Record<string, string | number>;
+  purgeState?: boolean;
+}) => {
+  return {
+    type: UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
     payload,
   };
 };
