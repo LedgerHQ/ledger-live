@@ -76,6 +76,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  m: 6,
 })``;
 
 const ActionContainer = styled(Flex).attrs({
@@ -142,7 +143,7 @@ export function renderRequestQuitApp({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "quitApp", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "quitApp", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -203,7 +204,7 @@ export function renderVerifyAddress({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "verify", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -274,7 +275,7 @@ export function renderConfirmSwap({
         </Alert>
         <AnimationContainer marginTop="16px">
           <Animation
-            source={getDeviceAnimation({ device, key: "sign", theme })}
+            source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
             style={getDeviceAnimationStyles(device.modelId)}
           />
         </AnimationContainer>
@@ -385,7 +386,7 @@ export function renderAllowManager({
       </Flex>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "allowManager", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -424,7 +425,7 @@ export function renderAllowLanguageInstallation({
       </Text>
       <AnimationContainer my={8}>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -450,7 +451,7 @@ export const renderAllowRemoveCustomLockscreen = ({
       </Text>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -487,7 +488,7 @@ const AllowOpeningApp = ({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: "openApp",
             theme,
           })}
@@ -842,7 +843,7 @@ export function renderConnectYourDevice({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
@@ -931,7 +932,7 @@ export function renderSecureTransferDeviceConfirmation({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "sign", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>

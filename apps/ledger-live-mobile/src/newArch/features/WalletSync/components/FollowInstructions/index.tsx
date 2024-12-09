@@ -30,7 +30,7 @@ const FollowInstructions: React.FC<Props> = ({ device }) => {
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device: device as Device,
+            modelId: device.modelId,
             key: "openApp",
             theme,
           })}
