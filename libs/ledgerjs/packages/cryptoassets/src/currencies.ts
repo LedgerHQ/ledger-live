@@ -3658,7 +3658,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "rsk",
     coinType: CoinType.ETH,
-    name: "RSK",
+    name: "Rootstock",
     managerAppName: "Ethereum",
     ticker: "RBTC",
     scheme: "rsk",
@@ -3670,9 +3670,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [
       {
-        tx: "https://explorer.rsk.co/tx/$hash",
-        address: "https://explorer.rsk.co/address/$address",
-        token: "https://explorer.rsk.co/address/$address",
+        tx: "https://explorer.rootstock.io/tx/$hash",
+        address: "https://explorer.rootstock.io/address/$address",
+        token: "https://explorer.rootstock.io/address/$address",
       },
     ],
   },
