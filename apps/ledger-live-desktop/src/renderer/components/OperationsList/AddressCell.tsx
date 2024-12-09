@@ -22,11 +22,19 @@ export const SplitAddress = ({
     ff,
     fontSize,
   };
-  const third = Math.round(value.length / 3);
 
   // FIXME why not using CSS for this? meaning we might be able to have a left & right which both take 50% & play with overflow & text-align
-  const left = value.slice(0, third);
-  const right = value.slice(third, value.length);
+  let left, right;
+  if (value.includes(".")) {
+    const parts = value.split(".");
+    left = parts[0] + ".";
+    right = parts.slice(1).join(".");
+  } else {
+    const third = Math.round(value.length / 3);
+    left = value.slice(0, third);
+    right = value.slice(third, value.length);
+  }
+
   return (
     <Box horizontal {...boxProps}>
       <Left>{left}</Left>
