@@ -78,6 +78,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
+  // "multiversx",
   "elrond",
   "hedera",
   "cardano",
