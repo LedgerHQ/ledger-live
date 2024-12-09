@@ -44,6 +44,7 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
         key={quickActionsData.length}
         numColumns={quickActionsData.length}
         id="asset_five_columns"
+        testID="market-quick-action-button"
       />
     </Flex>
   );

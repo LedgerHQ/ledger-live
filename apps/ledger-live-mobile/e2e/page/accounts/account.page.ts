@@ -12,6 +12,7 @@ export default class AccountPage {
   operationHistorySectionId = (accountId: string) => `operations-history-${accountId}`;
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
+  receiveButton = () => getElementById("account-quick-action-button-Receive");
 
   @Step("Open account settings")
   async openAccountSettings() {
@@ -53,5 +54,10 @@ export default class AccountPage {
     const advancedLogsText = await getTextOfElement(this.accountAdvancedLogsId);
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     jestExpect(advancedLogsJson).toHaveProperty("index", indexNumber);
+  }
+
+  @Step("Tap on receive button")
+  async tapReceive() {
+    await tapByElement(this.receiveButton());
   }
 }
