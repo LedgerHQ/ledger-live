@@ -17,7 +17,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_cosmos: {
     type: "object",
     default: {
-      lcd: "https://cosmoshub4.coin.ledger.com",
+      lcd: "https://cosmoshub4.coin.ledger-stg.com",
       minGasPrice: 0.025,
       ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
       status: {
