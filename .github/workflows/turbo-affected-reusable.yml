@@ -29,7 +29,7 @@ permissions:
 jobs:
   turbo-affected:
     name: "Determine Affected"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     outputs:
       affected: ${{ steps.affected.outputs.affected }}
       packages: ${{ steps.affected.outputs.packages }}

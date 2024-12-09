@@ -24,7 +24,7 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
       test-fail: ${{ steps.test.outcome }}
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     steps:
       - uses: actions/checkout@v4
         with:
