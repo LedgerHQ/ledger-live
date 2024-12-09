@@ -26,7 +26,7 @@ export class SendDrawer extends Drawer {
     const transactionType = await this.transactionType.textContent();
     expect(transactionType).toMatch("Sending");
     const NFTName = await this.nftName.textContent();
-    expect(NFTName).toBe(tx.nftName);
+    expect(NFTName).toBe(tx.nft.nftName);
     const address = await this.addressValue(tx.accountToCredit.address).textContent();
     expect(address).toBe(tx.accountToCredit.address);
   }

@@ -162,7 +162,7 @@ const StepSummary = (props: StepProps) => {
               </Text>
               {transaction.recipientDomain && (
                 <Text
-                  data-testId="transaction-recipient-ens"
+                  data-testid="transaction-recipient-ens"
                   ff="Inter|Bold"
                   color="palette.text.shade100"
                   fontSize={4}

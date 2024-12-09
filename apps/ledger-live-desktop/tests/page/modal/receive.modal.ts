@@ -34,7 +34,7 @@ export class ReceiveModal extends Modal {
     await this.skipDeviceButton.click();
   }
 
-  @step("Retrieve fees amount value")
+  @step("Retrieve address displayed")
   async getAddressDisplayed() {
     const text = await this.addressDisplayedValue.textContent();
     return text ? text?.split(" ")[0] : "";
