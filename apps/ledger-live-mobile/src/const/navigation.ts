@@ -13,6 +13,8 @@ export enum ScreenName {
   AdvancedLogs = "AdvancedLogs",
   Asset = "Asset",
   Assets = "Assets",
+  AccountsList = "AccountsList",
+  AssetsList = "AssetsList",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
