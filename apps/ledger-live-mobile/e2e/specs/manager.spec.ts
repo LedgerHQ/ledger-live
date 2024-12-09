@@ -12,7 +12,7 @@ const knownDevice = knownDevices.nanoX;
 
 describe("Test My Ledger", () => {
   beforeAll(async () => {
-    await app.init({ userdata: "onboardingcompleted" });
+    await app.init({ userdata: "skip-onboarding" });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
