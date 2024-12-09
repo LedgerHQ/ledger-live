@@ -111,23 +111,30 @@ import BLUE_LIGHT_openApp from "~/renderer/animations/blue/6OpenApp/data.json";
 // @ts-ignore
 import BLUE_LIGHT_validate from "~/renderer/animations/blue/7Validate/data.json";
 
-// STAX
-
-// @ts-ignore
-import STAX_enterPin from "~/renderer/animations/stax/enterPIN.json";
-// @ts-ignore
-import STAX_verifyAddress from "~/renderer/animations/stax/verifyAddress.json";
-// @ts-ignore
-import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.json";
-// @ts-ignore
-import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
 // @ts-ignore
 import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
 // @ts-ignore
 import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess.json";
-// @ts-ignore
-import STAX_plug_and_pin from "~/renderer/animations/stax/USBConnectionAndPin.json";
 
+// @ts-ignore
+import STAX_DARK_PAIRED from "~/renderer/animations/nanoX/dark/paired.json";
+// @ts-ignore
+import STAX_LIGHT_PAIRED from "~/renderer/animations/nanoX/light/paired.json";
+// @ts-ignore
+import STAX_DARK_PAIRING from "~/renderer/animations/nanoX/dark/pairing.json";
+// @ts-ignore
+import STAX_LIGHT_PAIRING from "~/renderer/animations/nanoX/light/pairing.json";
+
+// @ts-ignore
+import STAX_DARK_PIN from "~/renderer/animations/nanoSP/dark/pin.json";
+// @ts-ignore
+import STAX_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
+// @ts-ignore
+import STAX_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.json";
+// @ts-ignore
+import STAX_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
+
+/** FLEX LOTTIES */
 // @ts-ignore
 import EUROPA_LIGHT_enterPin from "~/renderer/animations/europa/light/enterPIN.json";
 // @ts-ignore
@@ -138,6 +145,8 @@ import EUROPA_LIGHT_allowConnection from "~/renderer/animations/europa/light/all
 import EUROPA_LIGHT_confirmLockscreen from "~/renderer/animations/europa/light/confirmLockscreen.json";
 // @ts-ignore
 import EUROPA_LIGHT_USB_connection_success from "~/renderer/animations/europa/light/connectionSuccess.json";
+// @ts-ignore
+import EUROPA_LIGHT_onboarding_success from "~/renderer/animations/europa/light/onboardingSuccess.json";
 
 // @ts-ignore
 import EUROPA_DARK_enterPin from "~/renderer/animations/europa/dark/enterPIN.json";
@@ -151,8 +160,70 @@ import EUROPA_DARK_confirmLockscreen from "~/renderer/animations/europa/dark/con
 import EUROPA_DARK_USB_connection_success from "~/renderer/animations/europa/dark/connectionSuccess.json";
 // @ts-ignore
 import EUROPA_DARK_onboarding_success from "~/renderer/animations/europa/dark/onboardingSuccess.json";
-// @ts-ignore
-import EUROPA_LIGHT_onboarding_success from "~/renderer/animations/europa/light/onboardingSuccess.json";
+
+/** NEW ASSETS START @13.12.2024 */
+
+// // @ts-ignore
+// import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
+// // @ts-ignore
+// import STAX_DARK_PAIRING from "~/renderer/animations/stax/dark/pairing.json";
+// // @ts-ignore
+// import STAX_DARK_PAIRED from "~/renderer/animations/stax/dark/paired.json";
+// // @ts-ignore
+// import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
+// // @ts-ignore
+// import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
+// // @ts-ignore
+// import STAX_LIGHT_PAIRING from "~/renderer/animations/stax/light/pairing.json";
+// // @ts-ignore
+// import STAX_LIGHT_PAIRED from "~/renderer/animations/stax/light/paired.json";
+// // @ts-ignore
+// import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
+
+// // @ts-ignore
+// import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
+// // @ts-ignore
+// import FLEX_DARK_PAIRING from "~/renderer/animations/flex/dark/pairing.json";
+// // @ts-ignore
+// import FLEX_DARK_PAIRED from "~/renderer/animations/flex/dark/paired.json";
+// // @ts-ignore
+// import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
+// // @ts-ignore
+// import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
+// // @ts-ignore
+// import FLEX_LIGHT_PAIRING from "~/renderer/animations/flex/light/pairing.json";
+// // @ts-ignore
+// import FLEX_LIGHT_PAIRED from "~/renderer/animations/flex/light/paired.json";
+// // @ts-ignore
+// import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
+
+// // @ts-ignore
+// import NANOX_DARK_PIN from "~/renderer/animations/nanoX/dark/pin.json";
+// // @ts-ignore
+// import NANOX_DARK_PAIRING from "~/renderer/animations/nanoX/dark/pairing.json";
+// // @ts-ignore
+// import NANOX_DARK_PAIRED from "~/renderer/animations/nanoX/dark/paired.json";
+// // @ts-ignore
+// import NANOX_DARK_CONTINUE from "~/renderer/animations/nanoX/dark/continue.json";
+// // @ts-ignore
+// import NANOX_LIGHT_PIN from "~/renderer/animations/nanoX/light/pin.json";
+// // @ts-ignore
+// import NANOX_LIGHT_PAIRING from "~/renderer/animations/nanoX/light/pairing.json";
+// // @ts-ignore
+// import NANOX_LIGHT_PAIRED from "~/renderer/animations/nanoX/light/paired.json";
+// // @ts-ignore
+// import NANOX_LIGHT_CONTINUE from "~/renderer/animations/nanoX/light/continue.json";
+
+// // @ts-ignore
+// import NANOSP_DARK_PIN from "~/renderer/animations/nanoSP/dark/pin.json";
+// // @ts-ignore
+// import NANOSP_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.json";
+// // @ts-ignore
+// import NANOSP_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
+// // @ts-ignore
+// import NANOSP_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
+
+/** NEW ASSETS END @13.12.2024 */
 
 /* eslint-enable camelcase */
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
@@ -327,52 +398,54 @@ const nanoSP: DeviceAnimations = {
 
 const stax: DeviceAnimations = {
   plugAndPinCode: {
-    light: STAX_plug_and_pin,
-    dark: STAX_plug_and_pin,
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
   },
   enterPinCode: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
   },
   quitApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   allowManager: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   openApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
+  // For testing purposes
   verify: {
-    light: STAX_verifyAddress,
-    dark: STAX_verifyAddress,
+    light: STAX_LIGHT_PAIRING,
+    dark: STAX_DARK_PAIRING,
   },
+  // For testing purposes
   sign: {
-    light: STAX_signTransaction,
-    dark: STAX_signTransaction,
+    light: STAX_LIGHT_PAIRED,
+    dark: STAX_DARK_PAIRED,
   },
   firmwareUpdating: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_PIN,
   },
   installLoading: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   confirmLockscreen: {
-    light: STAX_confirmLockscreen,
-    dark: STAX_confirmLockscreen,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_PAIRED,
+    dark: STAX_DARK_PAIRED,
   },
 };
 
