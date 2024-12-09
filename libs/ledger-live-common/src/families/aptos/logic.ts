@@ -137,14 +137,15 @@ export function compareAddress(addressA: string, addressB: string) {
   );
 }
 
-function getFunctionAddress(payload: AptosTypes.EntryFunctionPayload): string | undefined {
+export function getFunctionAddress(payload: AptosTypes.EntryFunctionPayload): string | undefined {
   if ("function" in payload) {
-    return payload.function.split("::").at(0);
+    const parts = payload.function.split("::");
+    return parts.length === 3 ? parts[0] : undefined;
   }
   return undefined;
 }
 
-function processRecipients(
+export function processRecipients(
   payload: AptosTypes.EntryFunctionPayload,
   address: string,
   op: Operation,
@@ -157,11 +158,11 @@ function processRecipients(
     "arguments" in payload
   ) {
     // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.arguments[0]);
+    op.recipients.push(payload.arguments[1]);
   } else if (BATCH_TRANSFER_TYPES.includes(payload.function) && "arguments" in payload) {
     // 2. Batch function, to validate we are in the recipients list
     if (!compareAddress(op.senders[0], address)) {
-      for (const recipient of payload.arguments[0]) {
+      for (const recipient of payload.arguments[1]) {
         if (compareAddress(recipient, address)) {
           op.recipients.push(recipient);
         }
