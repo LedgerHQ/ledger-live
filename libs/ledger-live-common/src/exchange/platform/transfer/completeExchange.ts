@@ -1,5 +1,5 @@
 import secp256k1 from "secp256k1";
-import { firstValueFrom, from, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
@@ -12,7 +12,7 @@ import {
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
-import { withDevice } from "../../../hw/deviceAccess";
+import { withDevicePromise } from "../../../hw/deviceAccess";
 import { getCurrencyExchangeConfig } from "../..";
 import { convertToAppExchangePartnerKey, getProviderConfig } from "../../providers";
 
@@ -22,9 +22,6 @@ import type {
   CompleteExchangeRequestEvent,
 } from "../types";
 import { CompleteExchangeStep, convertTransportError } from "../../error";
-
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const completeExchange = (
   input: CompleteExchangeInputFund | CompleteExchangeInputSell,

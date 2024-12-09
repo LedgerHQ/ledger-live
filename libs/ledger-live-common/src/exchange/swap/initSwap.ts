@@ -13,7 +13,7 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { firstValueFrom, from, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
@@ -24,7 +24,7 @@ import {
   SwapRateExpiredError,
   TransactionRefusedOnDevice,
 } from "../../errors";
-import { withDevice } from "../../hw/deviceAccess";
+import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { getSwapAPIBaseURL, getSwapUserIP } from "./";
 import { mockInitSwap } from "./mock";
@@ -32,9 +32,6 @@ import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CEXProviderConfig } from "../providers/swap";
-
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 // init a swap with the Exchange app
 // throw if TransactionStatus have errors

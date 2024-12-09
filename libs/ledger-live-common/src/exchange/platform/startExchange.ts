@@ -1,14 +1,11 @@
 import { log } from "@ledgerhq/logs";
-import { Observable, firstValueFrom, from } from "rxjs";
+import { Observable } from "rxjs";
 import semver from "semver";
 import { ExchangeTypes, createExchange, isExchangeTypeNg } from "@ledgerhq/hw-app-exchange";
-import { withDevice } from "../../hw/deviceAccess";
+import { withDevicePromise } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 import { StartExchangeInput } from "./types";
 import { getProviderConfig, getSwapProvider } from "../providers";
-
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEvent> => {
   return new Observable(o => {
