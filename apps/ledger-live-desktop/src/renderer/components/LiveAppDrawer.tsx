@@ -85,8 +85,11 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
   },
 };
 const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
-  const parentFrom = exchange?.fromParentAccount?.currency?.id || "";
-  const parentTo = exchange?.toParentAccount?.currency?.id || "";
+  const parentFrom =
+    (exchange?.fromAccount?.type === "TokenAccount" && exchange?.fromParentAccount?.currency?.id) ||
+    "";
+  const parentTo =
+    (exchange?.toAccount?.type === "TokenAccount" && exchange?.toParentAccount?.currency?.id) || "";
   const from =
     (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
   const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
