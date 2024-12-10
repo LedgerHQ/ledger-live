@@ -1,15 +1,13 @@
-import React, { useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
-import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import { ScreenName } from "../../const";
-import Edit from "../../icons/Edit";
 
 import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import type { AccountLike } from "@ledgerhq/types-live";
