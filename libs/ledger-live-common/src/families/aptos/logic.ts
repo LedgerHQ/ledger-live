@@ -1,4 +1,3 @@
-import { EntryFunction } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -99,7 +98,7 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
 
-      const payload = tx.payload as EntryFunction;
+      const payload = tx.payload;
 
       let type;
       if ("function" in payload) {
