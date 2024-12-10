@@ -313,6 +313,7 @@
     "src/deviceSDK/tasks/genuineCheck.ts",
     "src/e2e/enum/Account.ts",
     "src/e2e/enum/Nft.ts",
+    "src/e2e/enum/OperationType.ts",
     "src/e2e/enum/AccountType.ts",
     "src/e2e/enum/AppInfos.ts",
     "src/e2e/enum/Currency.ts",

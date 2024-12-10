@@ -1,5 +1,6 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -104,7 +105,7 @@ test.describe("Delegate flows", () => {
           await app.drawer.close();
 
           await app.layout.syncAccounts();
-          await app.account.clickOnLastOperation();
+          await app.account.selectAndClickOnLastOperation(OperationType.DELEGATED);
           await app.delegateDrawer.expectDelegationInfos(account.delegate);
         },
       );
