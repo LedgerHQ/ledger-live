@@ -1,5 +1,5 @@
 import debounce from "lodash/debounce";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -17,22 +17,23 @@ export const useMemoTagInput = (
       (perFamily[family as keyof typeof perFamily] as FC<MemoTagInputProps>)) ||
     null;
 
+  const [isDebouncePending, setIsDebouncePending] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
   const [error, setError] = useState<Error | undefined>();
-  const debouncedUpdateTransaction = useMemo(
-    () => debounce(updateTransaction, DEBOUNCE_DELAY),
-    [updateTransaction],
-  );
-  const handleChange = useCallback<MemoTagInputProps["onChange"]>(
-    ({ patch, value, error }) => {
+  const handleChange = useMemo<MemoTagInputProps["onChange"]>(() => {
+    const debouncedUpdateTransaction = debounce(patch => {
+      setIsDebouncePending(false);
+      updateTransaction(patch);
+    }, DEBOUNCE_DELAY);
+    return ({ patch, value, error }) => {
+      setIsDebouncePending(true);
       setIsEmpty(!value);
       setError(error);
       debouncedUpdateTransaction(patch);
-    },
-    [debouncedUpdateTransaction],
-  );
+    };
+  }, [updateTransaction]);
 
-  return Input && { Input, isEmpty, error, handleChange };
+  return Input && { Input, isEmpty, isDebouncePending, error, handleChange };
 };
 
 const DEBOUNCE_DELAY = 300;
