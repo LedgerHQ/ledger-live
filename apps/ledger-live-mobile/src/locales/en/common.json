@@ -2749,6 +2749,9 @@
       }
     }
   },
+  "assets": {
+    "title": "Assets"
+  },
   "accounts": {
     "title": "Accounts",
     "cryptoAccountsTitle": "{{currencyTicker}} accounts",
@@ -3959,6 +3962,7 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },

@@ -70,7 +70,7 @@ const AccountRow = ({
       });
       if (navigationParams) {
         startNavigationTTITimer({ source: sourceScreenName, uiEvent });
-        // @ts-expect-error navigagtion spread, ask your mom about it
+        // @ts-expect-error navigagtion spread
         navigation.navigate(...navigationParams);
       } else if (account.type === "Account") {
         startNavigationTTITimer({ source: sourceScreenName, uiEvent });
