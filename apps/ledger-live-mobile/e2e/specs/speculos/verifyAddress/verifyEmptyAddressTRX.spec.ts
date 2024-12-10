@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 const app = new Application();
 const account = Account.TRX_3;
 
-describe(`Verify Address - ${account.currency.name}`, () => {
+describe(`Verify Address warnings - ${account.currency.name}`, () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
@@ -24,11 +24,13 @@ describe(`Verify Address - ${account.currency.name}`, () => {
   });
 
   $TmsLink("B2CQA-1551");
-  it(`Verify adress on ${account.currency.name}`, async () => {
+  it(`Verify adress warning for ${account.currency.name}`, async () => {
     await app.accounts.openViaDeeplink();
     await app.common.goToAccountByName(account.accountName);
     await app.account.tapReceive();
     await app.receive.doNotVerifyAddress();
+    await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
+    await app.receive.expectTronNewAddressWarning();
   });
 
   afterAll(async () => {

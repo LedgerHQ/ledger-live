@@ -87,6 +87,7 @@ export default class ReceivePage {
     await tapById(CurrencyRowId);
   }
 
+  @Step("Accept to verify address")
   async selectVerifyAddress() {
     await waitForElementById(this.buttonVerifyAddressId);
     await tapById(this.buttonVerifyAddressId);
@@ -102,6 +103,7 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
   }
 
+  @Step("Get the fresh address displayed")
   async getFreshAddressDisplayed() {
     await waitForElementById(this.accountFreshAddress);
     return await getTextOfElement(this.accountFreshAddress);
@@ -150,6 +152,7 @@ export default class ReceivePage {
     return tapById(this.noVerifyValidateButton);
   }
 
+  @Step("Expect account receive page is displayed")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
     const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameId = this.accountNameReceiveId(accountName);
@@ -159,15 +162,18 @@ export default class ReceivePage {
     await expect(getElementById(accountNameId)).toBeVisible();
   }
 
+  @Step("Expect given address is displayed on receive page")
   async expectAdressIsCorrect(address: string) {
     await expect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
+  @Step("Expect tron new address warning")
   async expectTronNewAddressWarning() {
     await expect(this.tronNewAddressWarning()).toBeVisible();
     await expect(this.tronNewAddressWarning()).toHaveText(this.tronNewAddressWarningText);
   }
 
+  @Step("Refuse to verify address")
   async doNotVerifyAddress() {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();
