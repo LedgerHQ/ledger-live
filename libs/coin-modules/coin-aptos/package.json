@@ -1,11 +1,12 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "0.6.0",
+  "version": "0.0.1",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "aptos",
+    "Aptos",
+    "apt",
     "Hardware Wallet"
   ],
   "repository": {
