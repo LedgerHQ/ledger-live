@@ -167,9 +167,13 @@ export default function Alert(props: Props) {
   return !isDismissed ? (
     <BaseAlert {...alertProps}>
       <Container testID={testID}>
-        {title && <BaseAlert.BodyText>{title}</BaseAlert.BodyText>}
+        {title && <BaseAlert.BodyText testID={`${testID}-title`}>{title}</BaseAlert.BodyText>}
         {description && (
-          <BaseAlert.BodyText mt={title ? 2 : undefined} mb={hasLearnMore ? 2 : undefined}>
+          <BaseAlert.BodyText
+            testID={`${testID}-description`}
+            mt={title ? 2 : undefined}
+            mb={hasLearnMore ? 2 : undefined}
+          >
             {description}
           </BaseAlert.BodyText>
         )}

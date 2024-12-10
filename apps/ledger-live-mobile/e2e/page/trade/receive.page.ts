@@ -4,6 +4,7 @@ import {
   getElementByText,
   getTextOfElement,
   openDeeplink,
+  scrollToId,
   tapById,
   waitForElementById,
 } from "../../helpers";
@@ -32,11 +33,14 @@ export default class ReceivePage {
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
+  receivePageScrollViewId = "receive-screen-scrollView";
 
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
-  tronNewAddressWarning = () => getElementById("tron-receive-newAddress-warning");
+  tronNewAddressWarningId = "tron-receive-newAddress-warning";
+  tronNewAddressWarningDescription = () =>
+    getElementById(`${this.tronNewAddressWarningId}-description`);
   tronNewAddressWarningText =
     "You first need to send at least 0.1 TRX to this address to activate it.";
 
@@ -169,8 +173,11 @@ export default class ReceivePage {
 
   @Step("Expect tron new address warning")
   async expectTronNewAddressWarning() {
-    await expect(this.tronNewAddressWarning()).toBeVisible();
-    await expect(this.tronNewAddressWarning()).toHaveText(this.tronNewAddressWarningText);
+    await scrollToId(this.tronNewAddressWarningId, this.receivePageScrollViewId);
+    await expect(getElementById(this.tronNewAddressWarningId)).toBeVisible();
+    await expect(this.tronNewAddressWarningDescription()).toHaveText(
+      this.tronNewAddressWarningText,
+    );
   }
 
   @Step("Refuse to verify address")
