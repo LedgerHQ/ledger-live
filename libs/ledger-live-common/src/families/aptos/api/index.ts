@@ -10,13 +10,14 @@ import {
   InputGenerateTransactionOptions,
   MimeType,
   Network,
+  NetworkToIndexerAPI,
+  NetworkToNodeAPI,
   post,
   RawTransaction,
   SimpleTransaction,
   TransactionResponse,
   UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
@@ -36,10 +37,6 @@ import type { AptosTransaction, TransactionOptions } from "../types";
 
 const getNetwork = (currencyId: string) =>
   isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
-const getIndexerEndpoint = (currencyId: string) =>
-  isTestnet(currencyId)
-    ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
-    : getEnv("APTOS_INDEXER_ENDPOINT");
 
 export class AptosAPI {
   private network: Network;
@@ -50,7 +47,7 @@ export class AptosAPI {
 
   constructor(currencyId: string) {
     this.network = getNetwork(currencyId);
-    this.indexerUrl = getIndexerEndpoint(currencyId);
+    this.indexerUrl = NetworkToIndexerAPI[this.network];
     this.aptosConfig = new AptosConfig({ network: this.network });
     this.aptosClient = new Aptos(this.aptosConfig);
     this.apolloClient = new ApolloClient({
@@ -225,7 +222,7 @@ export class AptosAPI {
   private async getHeight(): Promise<number> {
     const { data } = await network({
       method: "GET",
-      url: this.network,
+      url: NetworkToNodeAPI[this.network],
     });
     return parseInt(data.block_height);
   }
