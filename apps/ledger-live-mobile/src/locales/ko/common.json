@@ -3091,6 +3091,13 @@
       "desc" : "다양한 개발자 특징을 시험해 보고 의견을 나누어 주세요.",
       "customManifest" : {
         "title" : "커스텀 플랫폼 Manifest 불러오기"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "description" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보",
+        "currentSetting" : "현재 설정",
+        "error" : "유효하지 않은 CAL 값"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "다른 Ledger Live 앱과 동기화",
         "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정을 동기화하세요."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "이 앱은 더 이상 동기화되지 않습니다",
+          "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+          "cta" : "Ledger 동기화 켜기"
+        }
+      },
       "manageKey" : {
         "title" : "동기화 삭제",
         "description" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정 동기화가 중단됩니다.",
@@ -6922,6 +6936,11 @@
           "cancel" : "동기화 유지",
           "title" : "정말 동기화를 삭제하시겠습니까?",
           "desc" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다."
+        },
+        "error" : {
+          "title" : "이 앱은 더 이상 동기화되지 않습니다",
+          "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+          "cta" : "Ledger 동기화 켜기"
         }
       },
       "manageInstances" : {
