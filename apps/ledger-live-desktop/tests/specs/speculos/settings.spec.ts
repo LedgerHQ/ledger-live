@@ -12,13 +12,11 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-817",
-      },
+      annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations).split(", "));
+
       await app.layout.goToAccounts();
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
@@ -65,6 +63,7 @@ test.describe("Password", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations).split(", "));
+
       await app.layout.goToAccounts();
       const countBeforeLock = await app.accounts.countAccounts();
       await app.layout.goToSettings();
@@ -110,6 +109,7 @@ test.describe("counter value selection", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations).split(", "));
+
       await app.layout.goToSettings();
       await app.settings.changeCounterValue("euro");
       await app.settings.expectCounterValue("Euro - EUR");

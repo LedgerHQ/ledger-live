@@ -222,6 +222,7 @@ for (const { swap, xrayTicket } of swaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
@@ -285,6 +286,7 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
@@ -375,6 +377,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations).split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."

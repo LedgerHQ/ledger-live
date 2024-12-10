@@ -40,7 +40,7 @@ for (const account of accounts) {
       {
         annotation: {
           type: "TMS",
-          description: "B2CQA-249, B2CQA-651, B2CQA-652",
+          description: account.xrayTicket,
         },
       },
       async ({ app }) => {

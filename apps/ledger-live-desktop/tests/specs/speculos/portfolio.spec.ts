@@ -1,4 +1,6 @@
 import { test } from "../../fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "../../utils/customJsonReporter";
 
 test.describe("Portfolio", () => {
   test.use({
@@ -13,6 +15,8 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+
       await app.layout.goToPortfolio();
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
