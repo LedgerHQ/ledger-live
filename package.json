@@ -82,6 +82,7 @@
     "coin:hedera": "pnpm --filter coin-hedera",
     "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
+    "coin:icp": "pnpm --filter coin-internet_computer",
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
