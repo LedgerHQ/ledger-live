@@ -17,6 +17,7 @@ function DeleteAccountRow({ onPress }: Props) {
       title={t("account.settings.delete.title")}
       titleStyle={{ color: colors.error.c50 }}
       desc={t("account.settings.delete.desc")}
+      testID="account-settings-delete-row"
       onPress={onPress}
       arrowRight
     />

@@ -7,7 +7,7 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
   describe(`Add accounts - ${currency.name}`, () => {
     beforeAll(async () => {
       await app.init({
-        userdata: "onboardingcompleted",
+        userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
       });
       await app.portfolio.waitForPortfolioPageToLoad();
@@ -22,7 +22,7 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
       const accountId = await app.addAccount.addFirstAccount(currency);
       await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);
       await app.assetAccountsPage.expectAccountsBalanceVisible();
-      await app.assetAccountsPage.goToAccount(accountId);
+      await app.common.goToAccount(accountId);
       await app.account.expectAccountBalanceVisible(accountId);
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);

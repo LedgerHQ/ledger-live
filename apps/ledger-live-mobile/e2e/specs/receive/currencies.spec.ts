@@ -13,7 +13,7 @@ $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "onboardingcompleted",
+      userdata: "skip-onboarding",
       knownDevices: [knownDevice],
     });
     deviceAction = new DeviceAction(knownDevice);

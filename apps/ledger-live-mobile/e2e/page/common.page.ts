@@ -1,6 +1,7 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import {
   getElementById,
+  getTextOfElement,
   launchProxy,
   scrollToId,
   tapByElement,
@@ -9,6 +10,7 @@ import {
   waitForElementById,
 } from "../helpers";
 import { expect } from "detox";
+import jestExpect from "expect";
 import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";
 
@@ -22,6 +24,9 @@ export default class CommonPage {
   closeButton = () => getElementById("NavigationHeaderCloseButton");
 
   accoundCardId = (id: string) => "account-card-" + id;
+  accountRowId = (accountId: string) => `account-row-${accountId}`;
+  baseAccountName = "account-row-name-";
+  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
 
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
@@ -51,6 +56,27 @@ export default class CommonPage {
     const id = this.accoundCardId(accountId);
     await waitForElementById(id);
     await tapById(id);
+  }
+
+  @Step("Go to the account")
+  async goToAccount(accountId: string) {
+    await scrollToId(this.accountNameRegExp);
+    await tapById(this.accountRowId(accountId));
+  }
+
+  @Step("Get the account name at index")
+  async getAccountName(index = 0) {
+    return await getTextOfElement(this.accountNameRegExp, index);
+  }
+
+  @Step("Expect the account name at index")
+  async expectAccountName(accountName: string, index = 0) {
+    jestExpect(await this.getAccountName(index)).toBe(accountName);
+  }
+
+  @Step("Go to the account with the name")
+  async goToAccountByName(name: string) {
+    await tapById(this.baseAccountName + name);
   }
 
   async selectAddDevice() {
