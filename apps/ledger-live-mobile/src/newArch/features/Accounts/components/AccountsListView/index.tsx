@@ -6,6 +6,8 @@ import { Flex } from "@ledgerhq/native-ui";
 import { Pressable } from "react-native";
 import AccountItem from "./components/AccountItem";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import isEqual from "lodash/isEqual";
 
 const ESTIMED_ITEM_SIZE = 150;
 
@@ -50,4 +52,4 @@ const AccountsListView: React.FC<Props> = props => {
   return <View {...viewModel} />;
 };
 
-export default AccountsListView;
+export default React.memo(withDiscreetMode(AccountsListView), isEqual);
