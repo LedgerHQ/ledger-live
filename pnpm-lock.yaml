@@ -313,9 +313,6 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
-      '@ledgerhq/coin-internet_computer':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-internet_computer
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
