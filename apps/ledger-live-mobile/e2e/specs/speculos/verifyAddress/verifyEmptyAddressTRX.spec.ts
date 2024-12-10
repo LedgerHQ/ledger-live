@@ -24,7 +24,7 @@ describe(`Verify Address warnings - ${account.currency.name}`, () => {
   });
 
   $TmsLink("B2CQA-1551");
-  it(`Verify adress warning for ${account.currency.name}`, async () => {
+  it(`Verify address warning for ${account.currency.name}`, async () => {
     await app.accounts.openViaDeeplink();
     await app.common.goToAccountByName(account.accountName);
     await app.account.tapReceive();

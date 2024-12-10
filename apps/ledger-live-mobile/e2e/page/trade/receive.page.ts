@@ -167,7 +167,7 @@ export default class ReceivePage {
   }
 
   @Step("Expect given address is displayed on receive page")
-  async expectAdressIsCorrect(address: string) {
+  async expectAddressIsCorrect(address: string) {
     await expect(getElementById(this.accountAddress)).toHaveText(address);
   }
 

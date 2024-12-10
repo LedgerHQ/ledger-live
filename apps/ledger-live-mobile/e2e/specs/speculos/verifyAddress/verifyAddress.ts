@@ -24,7 +24,7 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
     });
 
     $TmsLink(tmsLink);
-    it(`Verify adress on ${account.currency.name}`, async () => {
+    it(`Verify address on ${account.currency.name}`, async () => {
       await app.accounts.openViaDeeplink();
       await app.common.goToAccountByName(account.accountName);
       await app.account.tapReceive();
@@ -32,7 +32,7 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
       const displayedAddress = await app.receive.getFreshAddressDisplayed();
       await app.speculos.expectValidAddressDevice(account, displayedAddress);
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
-      await app.receive.expectAdressIsCorrect(displayedAddress);
+      await app.receive.expectAddressIsCorrect(displayedAddress);
     });
 
     afterAll(async () => {
