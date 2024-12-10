@@ -1,6 +1,9 @@
 name: "[Bot] Testing with 'Nitrogen'"
 run-name: Test with 🤖 Nitrogen by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
+  push:
+    branches:
+      - bugfix/bot-slack
   workflow_dispatch:
     inputs:
       families:
@@ -37,13 +40,14 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Run the bot
-        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@bugfix/bot-slack
         id: bot
         timeout-minutes: 120
         with:
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed7:"
+          SLACK_CHANNEL: "ledger-live-bot"
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: testing
           BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
