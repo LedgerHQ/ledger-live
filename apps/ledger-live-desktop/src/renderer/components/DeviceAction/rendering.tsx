@@ -101,6 +101,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   min-height: 260px;
   max-width: 100%;
+  margin: auto ${p => p.theme.space[5]}px;
 `;
 
 export const ConfirmWrapper = styled.div`
