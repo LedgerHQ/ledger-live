@@ -3037,6 +3037,7 @@
         "validatorGroup" : {
           "title" : "Validator-Gruppe",
           "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+          "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
           "totalVotes" : "Stimmen insgesamt",
           "commission" : "Provision"
         }
@@ -3626,6 +3627,7 @@
       "withdrawableTitle" : "Auszahlbar",
       "statusUpdateNotice" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
       "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+      "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
       "emptyState" : {
         "description" : "Du kannst SOL-Belohnungen verdienen, indem du deine Vermögenswerte delegierst.",
         "info" : "So funktioniert Delegation",
@@ -3880,6 +3882,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
+            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
             "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
           },
           "connectDevice" : {
@@ -4147,6 +4150,7 @@
             "link" : "Link",
             "secondaryCta" : "Sekundärer CTA",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Pfad"
           }
@@ -6331,7 +6335,7 @@
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
       "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
-      "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+      "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
     "EtherscanAPIError" : {
       "title" : "Abruf der Transaktionen fehlgeschlagen",
