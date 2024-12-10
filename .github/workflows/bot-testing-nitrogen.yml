@@ -1,9 +1,6 @@
 name: "[Bot] Testing with 'Nitrogen'"
 run-name: Test with 🤖 Nitrogen by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
-  push:
-    branches:
-      - bugfix/bot-slack
   workflow_dispatch:
     inputs:
       families:
