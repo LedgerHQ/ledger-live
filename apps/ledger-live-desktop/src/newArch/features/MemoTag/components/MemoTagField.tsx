@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Input, { Props as InputBaseProps } from "~/renderer/components/Input";
-import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Tooltip } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+
 const TooltipContainer = styled(Box)`
   background-color: ${({ theme }) => theme.colors.palette.neutral.c100};
   padding: 10px;
@@ -30,7 +30,6 @@ type MemoTagFieldProps = InputBaseProps & {
   placeholder?: string;
   label?: string;
   tooltipText?: string;
-  validationHandler?: (newValue: string) => string;
 };
 
 const MemoTagField = ({
@@ -45,20 +44,8 @@ const MemoTagField = ({
   placeholder,
   label,
   tooltipText,
-  validationHandler,
 }: MemoTagFieldProps) => {
   const { t } = useTranslation();
-  const [memoValue, setMemoValue] = useState(value);
-  const debouncedMemoValue = useDebounce(memoValue, 300);
-
-  useEffect(() => {
-    if (debouncedMemoValue !== value) onChange?.(debouncedMemoValue || "");
-  }, [debouncedMemoValue, onChange, value]);
-
-  const handleChange = (newValue: string) => {
-    setMemoValue(validationHandler ? validationHandler(newValue) : newValue);
-  };
-
   return (
     <Box flow={1}>
       {showLabel && (
@@ -81,10 +68,10 @@ const MemoTagField = ({
         <Flex justifyContent="end">{CaracterCountComponent && <CaracterCountComponent />}</Flex>
         <Input
           placeholder={placeholder ?? t("MemoTagField.placeholder")}
-          onChange={handleChange}
+          onChange={onChange}
           warning={warning}
           error={error}
-          value={memoValue}
+          value={value}
           spellCheck="false"
           ff="Inter"
           maxMemoLength={maxMemoLength}

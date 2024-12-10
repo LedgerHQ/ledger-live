@@ -14,6 +14,7 @@ const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTa
 
   const onTransferIdFieldChange = useCallback(
     (value: string) => {
+      value = value.replace(/\D/g, "");
       if (value !== "") onChange(bridge.updateTransaction(transaction, { transferId: value }));
       else onChange(bridge.updateTransaction(transaction, { transferId: undefined }));
     },
@@ -31,7 +32,6 @@ const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTa
       onChange={onTransferIdFieldChange}
       spellCheck="false"
       autoFocus={autoFocus}
-      validationHandler={newValue => newValue.replace(/\D/g, "")}
     />
   );
 };
