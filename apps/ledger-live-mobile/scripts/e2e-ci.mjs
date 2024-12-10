@@ -45,6 +45,7 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 1 \
+    --runInBand \
     --cleanup`;
 };
 
@@ -61,6 +62,7 @@ const test_android = async () => {
     --forceExit \\
     --headless \\
     --retries 1 \\
+    --runInBand \\
     --cleanup`;
 };
 
