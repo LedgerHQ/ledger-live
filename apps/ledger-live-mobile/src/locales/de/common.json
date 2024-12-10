@@ -1287,20 +1287,20 @@
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert Ledger Live nur mit einem Gerät. Sie benötigen ein Gerät, um fortzufahren.",
     "cta" : "Ledger jetzt kaufen",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
+    "footer" : "Ich habe bereits ein Ledger-Gerät. Bitte Einrichtung starten.",
+    "bannerTitle" : "Überragende Sicherheit für deine Kryptos und NFTs",
+    "bannerTitle2" : "Du brauchst ein Ledger-Gerät zum Handeln",
+    "bannerSubtitle" : "mit einer Ledger Flex",
+    "bannerButtonTitle" : "Flex entdecken",
     "bannerButtonTitle2" : "Ledger-Gerät kaufen",
-    "setupCta" : "I already have a Ledger, set it up"
+    "setupCta" : "Ich habe bereits ein Ledger-Gerät. Einrichtung starten."
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Hast du deine Ledger schon bekommen?",
+    "desc" : "Sobald du dein Ledger-Gerät erhalten hast, richte es ein, um alle Funktionen der Ledger Live-App freizuschalten.",
+    "cta" : "Mein Ledger-Gerät einrichten",
+    "bannerTitle" : "Hast du dein Ledger-Gerät erhalten?",
+    "bannerCta" : "Einrichtung starten",
     "continue" : "Weiter"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Kauf erfolgreich",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Vielen Dank für dein Vertrauen in Ledger",
+    "desc" : "Deine Bestellung wird bearbeitet.\nEine Auftragsbestätigung erhältst du per E-Mail."
   },
   "discover" : {
     "title" : "Neues entdecken",
@@ -3091,6 +3091,13 @@
       "desc" : "Probieren Sie die experimentellen Entwicklerfunktionen aus und lassen Sie uns wissen, was Sie davon halten.",
       "customManifest" : {
         "title" : "Benutzerdefiniertes Plattform-Manifest laden"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Entwicklermodus für Börsen",
+        "description" : "Info des Börsenanbieters hinzufügen",
+        "placeholder" : "Info des Börsenanbieters im CAL-Format",
+        "currentSetting" : "Aktuelle Einstellung",
+        "error" : "Ungültiger CAL-Wert"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "Mit einer anderen Ledger Live-App synchronisieren",
         "description" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
+        }
+      },
       "manageKey" : {
         "title" : "Sync löschen",
         "description" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert.",
@@ -6922,6 +6936,11 @@
           "cancel" : "Sync behalten",
           "title" : "Möchtest du Sync wirklich löschen?",
           "desc" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert. Das hat keinerlei Auswirkungen auf deine Vermögenswerte."
+        },
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
         }
       },
       "manageInstances" : {
