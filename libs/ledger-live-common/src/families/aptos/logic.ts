@@ -110,7 +110,8 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      op.value = calculateAmount(tx, address, op.fee);
+      let { amount_in, amount_out } = getAptosAmounts(tx, address);
+      op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
 
@@ -174,32 +175,40 @@ export function processRecipients(
   }
 }
 
-function isChangeOfAptos(
+function checkWriteSets(
   tx: AptosTransaction,
+  event: AptosTypes.Event,
+  event_name: string,
+): boolean {
+  return tx.changes.some(change => {
+    return isChangeOfAptos(change, event, event_name);
+  });
+}
+
+export function isChangeOfAptos(
+  change: AptosTypes.WriteSetChange,
   event: AptosTypes.Event,
   event_name: string,
 ): boolean {
   // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
   // with the same guid as event
-  return tx.changes.some((change: AptosTypes.WriteSetChange) => {
-    if (change.type == "write_resource") {
-      const change_data = (change as AptosTypes.WriteSetChange_WriteResource).data;
-      if (change_data.type === APTOS_COIN_CHANGE) {
-        const change_event_data = change_data.data[event_name];
-        if (
-          change_event_data &&
-          change_event_data.guid.id.addr === event.guid.account_address &&
-          change_event_data.guid.id.creation_num === event.guid.creation_number
-        ) {
-          return true;
-        }
+  if (change.type == "write_resource") {
+    const change_data = (change as AptosTypes.WriteSetChange_WriteResource).data;
+    if (change_data.type === APTOS_COIN_CHANGE) {
+      const change_event_data = change_data.data[event_name];
+      if (
+        change_event_data &&
+        change_event_data.guid.id.addr === event.guid.account_address &&
+        change_event_data.guid.id.creation_num === event.guid.creation_number
+      ) {
+        return true;
       }
     }
-    return false;
-  });
+  }
+  return false;
 }
 
-function getAptosAmounts(
+export function getAptosAmounts(
   tx: AptosTransaction,
   address: string,
 ): { amount_in: BigNumber; amount_out: BigNumber } {
@@ -210,12 +219,12 @@ function getAptosAmounts(
     if (compareAddress(event.guid.account_address, address)) {
       switch (event.type) {
         case "0x1::coin::WithdrawEvent":
-          if (isChangeOfAptos(tx, event, "withdraw_events")) {
+          if (checkWriteSets(tx, event, "withdraw_events")) {
             amount_out = amount_out.plus(event.data.amount);
           }
           break;
         case "0x1::coin::DepositEvent":
-          if (isChangeOfAptos(tx, event, "deposit_events")) {
+          if (checkWriteSets(tx, event, "deposit_events")) {
             amount_in = amount_in.plus(event.data.amount);
           }
           break;
@@ -225,10 +234,14 @@ function getAptosAmounts(
   return { amount_in, amount_out };
 }
 
-function calculateAmount(tx: AptosTransaction, address: string, fee: BigNumber): BigNumber {
-  let { amount_in, amount_out } = getAptosAmounts(tx, address);
-
-  const is_sender: boolean = compareAddress(tx.sender, address);
+export function calculateAmount(
+  sender: string,
+  address: string,
+  fee: BigNumber,
+  amount_in: BigNumber,
+  amount_out: BigNumber,
+): BigNumber {
+  const is_sender: boolean = compareAddress(sender, address);
   // Include fees if our address is the sender
   if (is_sender) {
     amount_out = amount_out.plus(fee);
