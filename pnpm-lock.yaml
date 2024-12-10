@@ -2603,9 +2603,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -2615,15 +2612,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@zondax/ledger-icp':
-        specifier: ^0.7.0
-        version: 0.7.0
       big-integer:
         specifier: ^1.6.51
         version: 1.6.52
