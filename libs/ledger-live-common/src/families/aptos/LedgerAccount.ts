@@ -1,5 +1,6 @@
 import {
   Account,
+  AccountAddress,
   AccountAuthenticatorEd25519,
   Ed25519PublicKey,
   Ed25519Signature,
@@ -18,7 +19,7 @@ export default class LedgerAccount {
 
   private client?: HwAptos;
   private publicKey: Buffer = Buffer.from([]);
-  private accountAddress: Hex = Hex.fromHexString("");
+  private accountAddress: AccountAddress = new AccountAddress(new Uint8Array(32));
 
   static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
     const account = new LedgerAccount(path);
@@ -33,7 +34,7 @@ export default class LedgerAccount {
   constructor(path: string, pubKey?: string) {
     this.hdPath = path;
     if (pubKey) {
-      this.publicKey = Buffer.from(Hex.fromHexString(pubKey).toUint8Array());
+      this.publicKey = Buffer.from(AccountAddress.from(pubKey).toUint8Array());
       this.accountAddress = this.authKey();
     }
   }
@@ -42,7 +43,7 @@ export default class LedgerAccount {
     this.client = new HwAptos(transport);
     if (!this.publicKey.length && !display) {
       const response = await this.client.getAddress(this.hdPath, display);
-      this.accountAddress = Hex.fromHexString(response.address);
+      this.accountAddress = AccountAddress.from(response.address);
       this.publicKey = response.publicKey;
     }
   }
@@ -51,19 +52,19 @@ export default class LedgerAccount {
     return this.hdPath;
   }
 
-  address(): Hex {
+  address(): AccountAddress {
     return this.accountAddress;
   }
 
-  authKey(): Hex {
+  authKey(): AccountAddress {
     const hash = sha3Hash.create();
-    hash.update(this.publicKey.toString());
+    hash.update(this.publicKey.toString("hex"));
     hash.update("\x00");
-    return Hex.fromHexString(hash.digest().toString());
+    return AccountAddress.from(hash.digest());
   }
 
-  pubKey(): Hex {
-    return Hex.fromHexString(this.publicKey.toString());
+  pubKey(): AccountAddress {
+    return AccountAddress.from(this.publicKey.toString("hex"));
   }
 
   async asyncSignBuffer(buffer: Uint8Array): Promise<Hex> {
@@ -71,10 +72,12 @@ export default class LedgerAccount {
       throw new Error("LedgerAccount not initialized");
     }
     const response = await this.client.signTransaction(this.hdPath, Buffer.from(buffer));
-    return Hex.fromHexString(response.signature.toString());
+    return Hex.fromHexString(response.signature.toString("hex"));
   }
 
-  async asyncSignHexString(hexString: Hex): Promise<Hex> {
+  async asyncSignHexString(hexString: AccountAddress): Promise<Hex> {
+    const isValidAddress = AccountAddress.isValid({ input: hexString });
+    if (!isValidAddress) throw new Error("Invalid account address");
     const toSign = hexString.toUint8Array();
     return this.asyncSignBuffer(toSign);
   }
@@ -86,7 +89,7 @@ export default class LedgerAccount {
     const sigHexStr = await this.asyncSignBuffer(signingMessage);
     const signature = new Ed25519Signature(sigHexStr.toUint8Array());
     const authenticator = new AccountAuthenticatorEd25519(
-      new Ed25519PublicKey(this.publicKey.toString()),
+      new Ed25519PublicKey(this.publicKey.toString("hex")),
       signature,
     );
 

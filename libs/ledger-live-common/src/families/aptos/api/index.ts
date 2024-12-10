@@ -196,7 +196,7 @@ export class AptosAPI {
       contentType: MimeType.BCS_SIGNED_TRANSACTION,
       aptosConfig: this.aptosClient.config,
       body: txBytes,
-      path: "/v1/transactions",
+      path: "transactions",
       type: AptosApiType.FULLNODE,
       originMethod: "",
     });
@@ -208,7 +208,7 @@ export class AptosAPI {
       const [balanceStr] = await this.aptosClient.view<[string]>({
         payload: {
           function: "0x1::coin::balance",
-          typeArguments: ["0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>"], // TODO: or is it "0x1::aptos_coin::AptosCoin" ??
+          typeArguments: ["0x1::aptos_coin::AptosCoin"],
           functionArguments: [address],
         },
       });
