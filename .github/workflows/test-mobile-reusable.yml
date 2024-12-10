@@ -31,7 +31,7 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-    runs-on: ledger-live-4xlarge
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
