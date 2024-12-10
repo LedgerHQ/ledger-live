@@ -24,7 +24,7 @@
     "bip32": "^4.0.0",
     "secp256k1": "^5.0.0",
     "create-hmac": "^1.1.7",
-    "tiny-secp256k1": "1"
+    "tiny-secp256k1": "1.1.7"
   },
   "devDependencies": {
     "@types/lodash": "4",

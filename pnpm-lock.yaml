@@ -3681,8 +3681,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       tiny-secp256k1:
-        specifier: '1'
-        version: 1.1.6
+        specifier: 1.1.7
+        version: 1.1.7
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -28512,6 +28512,10 @@ packages:
 
   tiny-secp256k1@1.1.6:
     resolution: {integrity: sha512-FmqJZGduTyvsr2cF3375fqGHUovSwDi/QytexX1Se4BPuPZpTE5Ftp5fg+EFSuEf3lhZqgCRjEG3ydUQ/aNiwA==}
+    engines: {node: '>=6.0.0'}
+
+  tiny-secp256k1@1.1.7:
+    resolution: {integrity: sha512-eb+F6NabSnjbLwNoC+2o5ItbmP1kg7HliWue71JgLegQt6A5mTN8YbvTLCazdlg6e5SV6A+r8OGvZYskdlmhqQ==}
     engines: {node: '>=6.0.0'}
 
   tiny-typed-emitter@2.1.0:
@@ -62199,6 +62203,14 @@ snapshots:
   tiny-queue@0.2.0: {}
 
   tiny-secp256k1@1.1.6:
+    dependencies:
+      bindings: 1.5.0
+      bn.js: 4.12.0
+      create-hmac: 1.1.7
+      elliptic: 6.5.5
+      nan: 2.20.0
+
+  tiny-secp256k1@1.1.7:
     dependencies:
       bindings: 1.5.0
       bn.js: 4.12.0
