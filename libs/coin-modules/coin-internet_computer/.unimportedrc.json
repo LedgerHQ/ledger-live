@@ -33,5 +33,6 @@
     "src/types/common.ts",
     "src/types/index.ts",
     "src/types/signer.ts"
-  ]
+  ],
+  "ignoreUnresolved": ["form-data", "proxy-from-env", "follow-redirects"]
 }
