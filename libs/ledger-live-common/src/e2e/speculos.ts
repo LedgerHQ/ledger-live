@@ -17,6 +17,7 @@ import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
+import expect from "expect";
 
 export type Spec = {
   currency?: CryptoCurrency;
