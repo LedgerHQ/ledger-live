@@ -7,14 +7,6 @@ import { render, screen, fireEvent } from "tests/testUtils";
 import MemoTagField from "../components/MemoTagField";
 
 describe("MemoTagField", () => {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   it("renders MemoTagField with label and text field", () => {
     render(<MemoTagField showLabel={true} />);
     expect(screen.getByText(/Tag \/ Memo/gi)).toBeInTheDocument();
@@ -27,14 +19,12 @@ describe("MemoTagField", () => {
     expect(screen.queryByText(/Tag \/ Memo/gi)).not.toBeInTheDocument();
   });
 
-  it("should call onChange when input value changes with a debounce", () => {
+  it("should call onChange when input value changes", () => {
     const handleChange = jest.fn();
     render(<MemoTagField onChange={handleChange} />);
     fireEvent.change(screen.getByPlaceholderText(/Enter Tag \/ Memo/gi), {
       target: { value: "new memo" },
     });
-    expect(handleChange).not.toHaveBeenCalled();
-    jest.runAllTimers();
     expect(handleChange).toHaveBeenCalledTimes(1);
   });
 

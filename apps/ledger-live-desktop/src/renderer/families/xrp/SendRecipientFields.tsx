@@ -15,7 +15,7 @@ const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
   const onChangeTag = useCallback(
     (str: string) => {
       const bridge = getAccountBridge(account);
-      const tag = BigNumber(str);
+      const tag = BigNumber(str.replace(/[^0-9]/g, ""));
       const patch = {
         tag:
           !tag.isNaN() &&
@@ -37,7 +37,6 @@ const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
       value={String(transaction.tag || "")}
       onChange={onChangeTag}
       autoFocus={autoFocus}
-      validationHandler={str => str.replace(/[^0-9]/g, "")}
     />
   );
 };
