@@ -1,19 +1,18 @@
+import { EntryFunction } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
-
-import type { Types as AptosTypes } from "aptos";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { AptosTransaction, Transaction } from "./types";
+import BigNumber from "bignumber.js";
 import { encodeOperationId } from "../../operation";
+import type { AptosTransaction, Transaction } from "./types";
 
 import {
-  TRANSFER_TYPES,
-  DELEGATION_POOL_TYPES,
-  BATCH_TRANSFER_TYPES,
-  TX_TYPE,
-  APTOS_OBJECT_TRANSFER,
   APTOS_DELEGATION_WITHDRAW,
+  APTOS_OBJECT_TRANSFER,
+  BATCH_TRANSFER_TYPES,
+  DELEGATION_POOL_TYPES,
   DIRECTION,
+  TRANSFER_TYPES,
+  TX_TYPE,
 } from "./constants";
 
 export const DEFAULT_GAS = 5;
@@ -100,7 +99,7 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
 
-      const payload = tx.payload as AptosTypes.EntryFunctionPayload;
+      const payload = tx.payload as EntryFunction;
 
       let type;
       if ("function" in payload) {

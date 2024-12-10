@@ -1,14 +1,17 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import {
-  Account,
   AccountData,
   Aptos,
+  AptosApiType,
   AptosConfig,
   Ed25519PublicKey,
   GasEstimation,
   InputEntryFunctionData,
   InputGenerateTransactionOptions,
+  MimeType,
   Network,
+  post,
+  RawTransaction,
   SimpleTransaction,
   TransactionResponse,
   UserTransactionResponse,
@@ -137,7 +140,7 @@ export class AptosAPI {
     address: string,
     payload: InputEntryFunctionData,
     options: TransactionOptions,
-  ): Promise<SimpleTransaction> {
+  ): Promise<RawTransaction> {
     const opts: Partial<InputGenerateTransactionOptions> = {};
     if (!isUndefined(options.maxGasAmount)) {
       opts.maxGasAmount = Number(options.maxGasAmount);
@@ -162,16 +165,21 @@ export class AptosAPI {
       }
     }
 
-    return this.aptosClient.transaction.build.simple({
-      sender: address,
-      data: payload,
-      options: opts,
-    });
+    return this.aptosClient.transaction.build
+      .simple({
+        sender: address,
+        data: payload,
+        options: opts,
+      })
+      .then(t => t.rawTransaction)
+      .catch((error: any) => {
+        throw error;
+      });
   }
 
   async simulateTransaction(
     address: Ed25519PublicKey,
-    tx: SimpleTransaction,
+    tx: RawTransaction,
     options = {
       estimateGasUnitPrice: true,
       estimateMaxGasAmount: true,
@@ -180,48 +188,22 @@ export class AptosAPI {
   ): Promise<UserTransactionResponse[]> {
     return this.aptosClient.transaction.simulate.simple({
       signerPublicKey: address,
-      transaction: tx,
+      transaction: { rawTransaction: tx } as SimpleTransaction,
       options,
     });
   }
 
   async broadcast(signature: string): Promise<string> {
-    // *** PREVIOUSLY ***
-    // const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    // const pendingTx = await this.aptosClient.submitTransaction(txBytes);
-    // return pendingTx.hash;
-    // *** PREVIOUSLY ***
-
-    // const accountInfo = await this.aptosClient.getAccountInfo({ accountAddress: address });
-    // const alice = Account.fromDerivationPath({ path: address, mnemonic: "" });
-    const alice = Account.generate();
-
-    const senderAuthenticator = this.aptosClient.transaction.sign({
-      signer: alice, // TODO: get sender account object
-      // signer: {
-      //   accountAddress: transaction.rawTransaction.sender,
-      //   publicKey: alice.publicKey, // TODO: get public key from account
-      //   signingScheme: SigningScheme.Ed25519,
-      // },
-
-      transaction: {}, // TODO: Get transaction
-      // transaction: {
-      //   rawTransaction: {
-      //     sender: ,
-      //     sequence_number: accountInfo.sequence_number,
-      //     payload
-      //     max_gas_amount
-      //     gas_unit_price
-      //     expiration_timestamp_secs
-      //     chain_id
-      //   }
-      // },
+    const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
+    const pendingTx = await post({
+      contentType: MimeType.BCS_SIGNED_TRANSACTION,
+      aptosConfig: this.aptosClient.config,
+      body: txBytes,
+      path: "/v1/transactions",
+      type: AptosApiType.FULLNODE,
+      originMethod: "",
     });
-    const pendingTx = await this.aptosClient.transaction.submit.simple({
-      senderAuthenticator,
-      transaction,
-    });
-    return pendingTx.hash;
+    return (pendingTx.data as TransactionResponse).hash;
   }
 
   private async getBalance(address: string): Promise<BigNumber> {

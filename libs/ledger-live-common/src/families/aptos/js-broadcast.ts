@@ -9,9 +9,9 @@ const broadcast = async ({
   signedOperation: SignedOperation;
   account: Account;
 }): Promise<Operation> => {
-  const { signature, operation } = signedOperation;
-  const hash = await new AptosAPI(account.currency.id).broadcast(signature);
-  return patchOperationWithHash(operation, hash);
+  // const { signature, operation } = signedOperation;
+  const hash = await new AptosAPI(account.currency.id).broadcast(signedOperation, account);
+  return patchOperationWithHash(signedOperation.operation, hash);
 };
 
 export default broadcast;

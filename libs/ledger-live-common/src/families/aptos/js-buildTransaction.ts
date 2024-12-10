@@ -1,6 +1,6 @@
+import { RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { SimpleTransaction } from "@aptos-labs/ts-sdk";
 import { AptosAPI } from "./api";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "./types";
@@ -9,7 +9,7 @@ const buildTransaction = async (
   account: Account,
   transaction: Transaction,
   aptosClient: AptosAPI,
-): Promise<SimpleTransaction> => {
+): Promise<RawTransaction> => {
   const amount = transaction.useAllAmount
     ? getMaxSendBalance(
         account.spendableBalance,
