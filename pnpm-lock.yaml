@@ -2580,6 +2580,85 @@ importers:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-internet_computer:
+    dependencies:
+      '@dfinity/agent':
+        specifier: ^0.21.0
+        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))
+      '@dfinity/candid':
+        specifier: ^0.21.0
+        version: 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
+      '@dfinity/principal':
+        specifier: ^0.15.6
+        version: 0.15.7(typescript@5.4.3)
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      big-integer:
+        specifier: ^1.6.51
+        version: 1.6.52
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      simple-cbor:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.7
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-near:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -3790,15 +3869,6 @@ importers:
       '@crypto-org-chain/chain-jslib':
         specifier: 1.1.2
         version: 1.1.2
-      '@dfinity/agent':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
-      '@dfinity/candid':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
-      '@dfinity/principal':
-        specifier: ^0.15.6
-        version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -3829,6 +3899,9 @@ importers:
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
+      '@ledgerhq/coin-internet_computer':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-internet_computer
       '@ledgerhq/coin-near':
         specifier: workspace:^
         version: link:../coin-modules/coin-near
@@ -4036,9 +4109,6 @@ importers:
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
-      big-integer:
-        specifier: ^1.6.51
-        version: 1.6.52
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4120,9 +4190,6 @@ importers:
       sha.js:
         specifier: ^2.4.11
         version: 2.4.11
-      simple-cbor:
-        specifier: ^0.4.1
-        version: 0.4.1
       triple-beam:
         specifier: ^1.3.0
         version: 1.4.1
@@ -26030,7 +26097,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33570,10 +33636,10 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
+  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))':
     dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
-      '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
+      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
+      '@dfinity/principal': 0.15.7(typescript@5.4.3)
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
       base64-arraybuffer: 0.2.0
@@ -33581,14 +33647,14 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
 
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
+  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))':
     dependencies:
-      '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
+      '@dfinity/principal': 0.15.7(typescript@5.4.3)
 
-  '@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)':
+  '@dfinity/principal@0.15.7(typescript@5.4.3)':
     dependencies:
       js-sha256: 0.9.0
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.1.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
