@@ -48,6 +48,7 @@ export default function Navigator() {
         options={{
           headerTitle: "",
         }}
+        initialParams={route.params}
       />
 
       {/* Scan accounts from device */}
