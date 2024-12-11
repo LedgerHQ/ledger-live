@@ -31,3 +31,15 @@ export type GroupedCurrencies = {
   currenciesByProvider: CurrenciesByProviderId[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
 };
+
+export enum LoadingStatus {
+  Idle = "idle",
+  Pending = "pending",
+  Success = "success",
+  Error = "error",
+}
+
+export type LoadingBasedGroupedCurrencies = {
+  result: GroupedCurrencies;
+  loadingStatus: LoadingStatus;
+};
