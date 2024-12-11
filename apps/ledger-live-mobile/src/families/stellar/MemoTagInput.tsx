@@ -18,7 +18,7 @@ export default ({ onChange }: MemoTagInputProps<StellarTransaction>) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (type: MemoType, value: string) => {
-    const error = isMemoValid(type, value) ? undefined : new StellarWrongMemoFormat();
+    const error = !value || isMemoValid(type, value) ? undefined : new StellarWrongMemoFormat();
     const patch = (tx: StellarTransaction) => ({ ...tx, memoType: type, memoValue: value });
     onChange({ value, patch, error });
   };
