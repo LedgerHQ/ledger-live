@@ -7,8 +7,6 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import GasPriceField from "./GasPriceField";
-import MaxGasAmountField from "./MaxGasAmountField";
 import SequenceNumberField from "./SequenceNumberField";
 import ExpirationTimestampField from "./ExpirationTimestampField";
 import { AptosFamily } from "./types";
@@ -23,29 +21,10 @@ const Fields: Props = ({ account, parentAccount, transaction, updateTransaction,
   invariant(mainAccount, "Account required");
   const { t } = useTranslation();
 
-  const [isFee, setIsFee] = useState<boolean>(true);
   const [isSettings, setIsSettings] = useState<boolean>(true);
 
-  const gasPriceFieldElement = useRef<{ resetData: () => void }>();
-  const gasLimitElement = useRef<{ resetData: () => void }>();
   const sequenceNumberElement = useRef<{ resetData: () => void }>();
   const expirationTimestampElement = useRef<{ resetData: () => void }>();
-
-  const setOptimalGas = useCallback(() => {
-    gasPriceFieldElement.current?.resetData();
-    gasLimitElement.current?.resetData();
-
-    const bridge = getAccountBridge(mainAccount);
-    updateTransaction((transaction: AptosTransaction) =>
-      bridge.updateTransaction(transaction, {
-        options: {
-          ...transaction.options,
-          maxGasAmount: transaction.estimate.maxGasAmount,
-          gasUnitPrice: transaction.estimate.gasUnitPrice,
-        },
-      }),
-    );
-  }, [mainAccount, updateTransaction]);
 
   const resetSettings = useCallback(() => {
     sequenceNumberElement.current?.resetData();
@@ -75,44 +54,7 @@ const Fields: Props = ({ account, parentAccount, transaction, updateTransaction,
 
   return (
     <Box flex={1} {...wrapperProps}>
-      <Box flex={1} mt={3}>
-        <Box mb={1} horizontal>
-          <Label onClick={() => setIsFee(!isFee)}>
-            <span>{t("send.steps.details.aptosGasFee")}</span>
-          </Label>
-          <Button
-            small
-            style={{
-              marginLeft: "10px",
-              paddingLeft: 8,
-              paddingRight: 8,
-              textDecoration: "underline",
-            }}
-            onClick={setOptimalGas}
-          >
-            SET OPTIMAL GAS
-          </Button>
-        </Box>
-        <Box mb={2} gap="2rem" horizontal grow alignItems="center" justifyContent="space-between">
-          <MaxGasAmountField
-            ref={gasLimitElement}
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            status={status}
-            updateTransaction={updateTransaction}
-          />
-          <GasPriceField
-            ref={gasPriceFieldElement}
-            parentAccount={parentAccount}
-            account={account}
-            transaction={transaction}
-            status={status}
-            updateTransaction={updateTransaction}
-          />
-        </Box>
-      </Box>
-      <Box flex={1} mt={4}>
+      <Box flex={1} mt={2}>
         <Box mb={1} horizontal>
           <Label onClick={() => setIsSettings(!isSettings)}>
             <span>{t("send.steps.details.aptosAdditionalSettings")}</span>
