@@ -1,6 +1,8 @@
 name: "Test Mobile E2E"
 
 on:
+  schedule:
+    - cron: "0 3 * * 1-5"
   workflow_call:
   workflow_dispatch:
     inputs:
@@ -55,12 +57,13 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
   COINAPPS: ${{ github.workspace }}/coin-apps
+  SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
 
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
     runs-on: [m1, ARM64]
-    if: ${{ !inputs.speculos_tests }}
+    if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -127,7 +130,7 @@ jobs:
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
       - name: Setup Speculos image and Coin Apps
-        if: ${{ inputs.speculos_tests }}
+        if: ${{ env.SPECULOS_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
@@ -140,7 +143,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
+          INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
       - name: Delete iOS simulator
         if: ${{ always() && steps.simulator.outputs.id }}
         run: |
@@ -280,7 +283,7 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
       - name: Setup Speculos image and Coin Apps
-        if: ${{ inputs.speculos_tests }}
+        if: ${{ env.SPECULOS_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
@@ -290,11 +293,11 @@ jobs:
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
-        timeout-minutes: 45
+        timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
+          INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
