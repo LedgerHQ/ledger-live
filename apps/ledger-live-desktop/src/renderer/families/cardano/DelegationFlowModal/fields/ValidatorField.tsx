@@ -45,18 +45,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
       setLedgerPoolsLoading(true);
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
+      const delegationPoolId = delegation?.poolId ? [delegation.poolId] : [];
+      fetchPoolDetails(account.currency, delegationPoolId, LEDGER_POOL_IDS)
         .then((apiRes: { pools: Array<StakePool> }) => {
-          const filteredPool = apiRes.pools.filter(pool => pool.poolId === delegation?.poolId);
-          const firstFilteredPool = filteredPool.at(0);
-          const firstApiResPool = apiRes.pools.at(0);
-          if (firstFilteredPool) {
-            setCurrentPool([firstFilteredPool]);
-          } else if (firstApiResPool) {
-            setCurrentPool([firstApiResPool]);
-          } else {
-            setCurrentPool([]);
-          }
+          setCurrentPool(apiRes.pools);
           const filteredLedgerPools = apiRes.pools.filter(
             pool => pool.poolId !== delegation?.poolId,
           );
@@ -70,6 +62,17 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const selectedPool = pools.find(p => p.poolId === selectedPoolId);
+    if (selectedPool) {
+      setCurrentPool([selectedPool]);
+      onChangeValidator(selectedPool);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPoolId]);
+
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(evt.target.value),
     [setSearchQuery],
@@ -102,14 +105,16 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             <ScrollLoadingList
               data={
                 showAll
-                  ? pools.filter(p => p && !poolIdsToFilterFromAllPools.includes(p.poolId))
-                  : pools.filter(
-                        p => p?.poolId === selectedPoolId || p?.poolId === delegation?.poolId,
-                      ).length > 0
-                    ? pools.filter(
-                        p => p?.poolId === selectedPoolId || p?.poolId === delegation?.poolId,
-                      )
-                    : currentPool
+                  ? [
+                      currentPool[0],
+                      ...pools.filter(
+                        p =>
+                          p &&
+                          !poolIdsToFilterFromAllPools.includes(p.poolId) &&
+                          p !== currentPool[0],
+                      ),
+                    ]
+                  : currentPool
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",

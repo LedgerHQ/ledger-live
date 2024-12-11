@@ -1,4 +1,5 @@
 ---
+"@ledgerhq/coin-cardano": minor
 "ledger-live-desktop": minor
 ---
 
