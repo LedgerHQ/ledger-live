@@ -321,9 +321,11 @@ export type BaseNavigatorStackParamList = {
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
   [NavigatorName.AssetSelection]?: Partial<
-    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
-  > &
-    CommonAddAccountNavigatorParamsList;
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList> & {
+      context?: "addAccounts" | "receiveFunds";
+      token?: string;
+    } // in some cases we need to pass directly the context to the navigator and let it handle the logic
+  >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
 };
 
