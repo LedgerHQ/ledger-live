@@ -38,6 +38,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const { t } = useTranslation();
   const stakeLabel = getStakeLabelLocaleBased();
@@ -226,11 +227,16 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
                     navigationParams: [
-                      NavigatorName.AddAccounts,
+                      llmNetworkBasedAddAccountFlow?.enabled
+                        ? NavigatorName.AssetSelection
+                        : NavigatorName.AddAccounts,
                       {
                         screen: ScreenName.AddAccountsSelectCrypto,
                         params: {
                           filterCurrencyIds: currency ? [currency.id] : undefined,
+                          ...(llmNetworkBasedAddAccountFlow?.enabled && {
+                            context: "addAccounts",
+                          }),
                         },
                       },
                     ] as const,

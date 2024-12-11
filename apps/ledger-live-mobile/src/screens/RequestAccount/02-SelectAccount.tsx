@@ -23,6 +23,7 @@ import type {
 import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SEARCH_KEYS = [
   "name",
@@ -99,6 +100,7 @@ function SelectAccount({ navigation, route }: Props) {
   const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds));
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       onSuccess && onSuccess(account, parentAccount);
@@ -115,13 +117,21 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const onAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
-      screen: ScreenName.AddAccountsSelectDevice,
-      params: {
-        currency: currency as CryptoOrTokenCurrency,
-        onSuccess: () => navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
+    navigation.navigate(
+      llmNetworkBasedAddAccountFlow?.enabled
+        ? NavigatorName.DeviceSelection
+        : NavigatorName.RequestAccountsAddAccounts,
+      {
+        screen: llmNetworkBasedAddAccountFlow?.enabled
+          ? ScreenName.SelectDevice
+          : ScreenName.AddAccountsSelectDevice,
+        params: {
+          currency: currency as CryptoOrTokenCurrency,
+          onSuccess: () =>
+            navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
+        },
       },
-    });
+    );
   }, [currency, navigation, route.params]);
 
   const renderFooter = useCallback(

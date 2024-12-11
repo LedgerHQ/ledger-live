@@ -7118,5 +7118,13 @@
         }
       }
     }
+  },
+  "assetSelection": {
+    "selectCrypto": {
+      "title": "Select Asset"
+    },
+    "selectNetwork": {
+      "title": "Select the blockchain network the asset belongs to"
+    }
   }
 }

@@ -29,10 +29,15 @@ const useSelectAddAccountMethodViewModel = ({
   const navigationParams = useMemo(() => {
     return hasCurrency
       ? currency.type === "TokenCurrency"
-        ? { token: currency }
-        : { currency }
-      : {};
-  }, [hasCurrency, currency]);
+        ? {
+            token: currency,
+            ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          }
+        : { currency, ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }) }
+      : llmNetworkBasedAddAccountFlow?.enabled
+        ? { context: "addAccounts" }
+        : {};
+  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
