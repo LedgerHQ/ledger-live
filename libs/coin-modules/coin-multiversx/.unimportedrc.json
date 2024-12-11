@@ -1,0 +1,30 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/bridge/js.ts",
+    "src/config.ts",
+    "src/network/index.ts",
+    "src/signer.ts"
+  ],
+  "ignoreUnimported": [
+    "src/cli-transaction.ts",
+    "src/datasets/multiversx1.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/formatters.ts",
+    "src/helpers/denominate.ts",
+    "src/helpers/handleTransactionStatus.ts",
+    "src/helpers/hasMinimumDelegableBalance.ts",
+    "src/helpers/randomizeProviders.ts",
+    "src/specs.ts",
+    "src/speculos-deviceActions.ts",
+    "src/transaction.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "@ledgerhq/live-promise",
+    "expect",
+    "invariant",
+    "lodash"
+  ],
+  "ignoreUnresolved": []
+}
