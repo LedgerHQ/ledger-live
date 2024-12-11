@@ -1,11 +1,13 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Transaction } from "../../models/Transaction";
-import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
+import { getEnv } from "@ledgerhq/live-env";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -21,10 +23,9 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", undefined, "noTag"),
-    expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag"),
+    expectedErrorMessage: "Recipient address is inactive. Send at least 1 XRP to activate it",
     xrayTicket: "B2CQA-2571",
-    bugTicket: "BACK-8110",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
@@ -270,16 +271,18 @@ test.describe("Send flows", () => {
             transaction.transaction.accountToCredit.address,
           );
           await app.drawer.close();
-
-          await app.layout.goToAccounts();
-          await app.accounts.clickSyncBtnForAccount(
-            transaction.transaction.accountToCredit.accountName,
-          );
-          await app.accounts.navigateToAccountByName(
-            transaction.transaction.accountToCredit.accountName,
-          );
-          await app.account.clickOnLastOperation();
-          await app.sendDrawer.expectReceiverInfos(transaction.transaction);
+          // Todo: Update method => Check the receiver account only when we broadcast
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            await app.layout.goToAccounts();
+            await app.accounts.clickSyncBtnForAccount(
+              transaction.transaction.accountToCredit.accountName,
+            );
+            await app.accounts.navigateToAccountByName(
+              transaction.transaction.accountToCredit.accountName,
+            );
+            await app.account.selectAndClickOnLastOperation(OperationType.RECEIVED);
+            await app.sendDrawer.expectReceiverInfos(transaction.transaction);
+          }
         },
       );
     });
@@ -444,16 +447,10 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          annotation: [
-            { type: "TMS", description: transaction.xrayTicket },
-            { type: "BUG", description: transaction.bugTicket },
-          ],
+          annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations).split(", "));
-          if (transaction.bugTicket) {
-            await addBugLink(getDescription(test.info().annotations).split(", "));
-          }
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
