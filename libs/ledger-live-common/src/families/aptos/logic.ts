@@ -10,10 +10,8 @@ import {
   TRANSFER_TYPES,
   DELEGATION_POOL_TYPES,
   BATCH_TRANSFER_TYPES,
-  TX_TYPE,
-  APTOS_OBJECT_TRANSFER,
-  APTOS_DELEGATION_WITHDRAW,
   DIRECTION,
+  APTOS_COIN_CHANGE,
 } from "./constants";
 
 export const DEFAULT_GAS = 5;
@@ -63,7 +61,6 @@ export function normalizeTransactionOptions(
     }
     return v;
   };
-
   return {
     maxGasAmount: check(options.maxGasAmount),
     gasUnitPrice: check(options.gasUnitPrice),
@@ -92,89 +89,45 @@ const getBlankOperation = (
   hasFailed: false,
 });
 
-export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]) => {
+export const txsToOps = (
+  info: { address: string },
+  id: string,
+  txs: (AptosTransaction | null)[],
+): Operation[] => {
   const { address } = info;
   const ops: Operation[] = [];
+
   txs.forEach(tx => {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
-      op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
+      op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
       const payload = tx.payload as AptosTypes.EntryFunctionPayload;
 
-      let type;
-      if ("function" in payload) {
-        type = payload.function.split("::").at(-1) as TX_TYPE;
-      } else if ("type" in payload) {
-        type = (payload as any).type as TX_TYPE;
+      const function_address = getFunctionAddress(payload);
+
+      if (!function_address) {
+        return; // skip transaction without functions in payload
       }
 
-      // TRANSFER & RECEIVE
-      if (
-        (TRANSFER_TYPES.includes(type) || DELEGATION_POOL_TYPES.includes(type)) &&
-        "arguments" in payload
-      ) {
-        // main DELEGATION_POOL functions have identic semantic to TRANSFER_TYPES so we can parse them in the same way
-        // avoid v2 parse
-        if ("function" in payload && payload.function === APTOS_OBJECT_TRANSFER) {
-          op.type = DIRECTION.UNKNOWN;
-        } else {
-          if ("function" in payload && payload.function === APTOS_DELEGATION_WITHDRAW) {
-            // for withdraw function signer should be recipient of the coins
-            op.recipients.push(tx.sender);
-            op.senders.push(payload.arguments[0]);
-          } else {
-            op.recipients.push(payload.arguments[0]);
-            op.senders.push(tx.sender);
-          }
-          op.value = op.value.plus(payload.arguments[1]);
-          if (compareAddress(op.recipients[0], address)) {
-            op.type = DIRECTION.IN;
-          } else {
-            op.type = DIRECTION.OUT;
-          }
-        }
+      let { amount_in, amount_out } = getAptosAmounts(tx, address);
+      op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
+      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.senders.push(tx.sender);
 
-        op.hasFailed = !tx.success;
-        op.id = encodeOperationId(id, tx.hash, op.type);
-        if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
-      } else if (BATCH_TRANSFER_TYPES.includes(type) && "arguments" in payload) {
-        // batch transfers has a list of recipients so we need to find `our` record to show
-        op.senders.push(tx.sender);
+      processRecipients(payload, address, op, function_address);
 
+      if (op.value.isZero()) {
+        // skip transaction that result no Aptos change
         op.type = DIRECTION.UNKNOWN;
-        if (compareAddress(tx.sender, address)) {
-          op.type = DIRECTION.OUT;
-          for (const amount of payload.arguments[1]) {
-            op.value = op.value.plus(amount);
-          }
-        } else {
-          for (const recipient_num in payload.arguments[0]) {
-            if (compareAddress(payload.arguments[0][recipient_num], address)) {
-              op.recipients.push(payload.arguments[0][recipient_num]);
-              op.value = op.value.plus(payload.arguments[1][recipient_num]);
-              op.type = DIRECTION.IN;
-            }
-          }
-        }
-        op.hasFailed = !tx.success;
-        op.id = encodeOperationId(id, tx.hash, op.type);
-        if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
-      } else {
-        // This is the place where we want to process events
-        // TODO: implement generig parsing of events
-        op.type = DIRECTION.UNKNOWN;
-        op.id = encodeOperationId(id, tx.hash, op.type);
-
-        if (compareAddress(tx.sender, address)) {
-          op.type = DIRECTION.OUT;
-        } else {
-          op.type = DIRECTION.IN;
-        }
-        ops.push(op);
       }
+
+      op.hasFailed = !tx.success;
+      op.id = encodeOperationId(id, tx.hash, op.type);
+      if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
     }
   });
+
   return ops;
 };
 
@@ -183,4 +136,118 @@ export function compareAddress(addressA: string, addressB: string) {
     addressA.replace(CLEAN_HEX_REGEXP, "").toLowerCase() ===
     addressB.replace(CLEAN_HEX_REGEXP, "").toLowerCase()
   );
+}
+
+export function getFunctionAddress(payload: AptosTypes.EntryFunctionPayload): string | undefined {
+  if ("function" in payload) {
+    const parts = payload.function.split("::");
+    return parts.length === 3 ? parts[0] : undefined;
+  }
+  return undefined;
+}
+
+export function processRecipients(
+  payload: AptosTypes.EntryFunctionPayload,
+  address: string,
+  op: Operation,
+  function_address: string,
+): void {
+  // get recipients buy 3 groups
+  if (
+    (TRANSFER_TYPES.includes(payload.function) ||
+      DELEGATION_POOL_TYPES.includes(payload.function)) &&
+    "arguments" in payload
+  ) {
+    // 1. Transfer like functions (includes some delegation pool functions)
+    op.recipients.push(payload.arguments[1]);
+  } else if (BATCH_TRANSFER_TYPES.includes(payload.function) && "arguments" in payload) {
+    // 2. Batch function, to validate we are in the recipients list
+    if (!compareAddress(op.senders[0], address)) {
+      for (const recipient of payload.arguments[1]) {
+        if (compareAddress(recipient, address)) {
+          op.recipients.push(recipient);
+        }
+      }
+    }
+  } else {
+    // 3. other smart contracts, in this case smart contract will be treated as a recipient
+    op.recipients.push(function_address);
+  }
+}
+
+function checkWriteSets(
+  tx: AptosTransaction,
+  event: AptosTypes.Event,
+  event_name: string,
+): boolean {
+  return tx.changes.some(change => {
+    return isChangeOfAptos(change, event, event_name);
+  });
+}
+
+export function isChangeOfAptos(
+  change: AptosTypes.WriteSetChange,
+  event: AptosTypes.Event,
+  event_name: string,
+): boolean {
+  // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
+  // with the same guid as event
+  if (change.type == "write_resource") {
+    const change_data = (change as AptosTypes.WriteSetChange_WriteResource).data;
+    if (change_data.type === APTOS_COIN_CHANGE) {
+      const change_event_data = change_data.data[event_name];
+      if (
+        change_event_data &&
+        change_event_data.guid.id.addr === event.guid.account_address &&
+        change_event_data.guid.id.creation_num === event.guid.creation_number
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+export function getAptosAmounts(
+  tx: AptosTransaction,
+  address: string,
+): { amount_in: BigNumber; amount_out: BigNumber } {
+  let amount_in = new BigNumber(0);
+  let amount_out = new BigNumber(0);
+  // collect all events related to the address and calculate the overall amounts
+  tx.events.forEach(event => {
+    if (compareAddress(event.guid.account_address, address)) {
+      switch (event.type) {
+        case "0x1::coin::WithdrawEvent":
+          if (checkWriteSets(tx, event, "withdraw_events")) {
+            amount_out = amount_out.plus(event.data.amount);
+          }
+          break;
+        case "0x1::coin::DepositEvent":
+          if (checkWriteSets(tx, event, "deposit_events")) {
+            amount_in = amount_in.plus(event.data.amount);
+          }
+          break;
+      }
+    }
+  });
+  return { amount_in, amount_out };
+}
+
+export function calculateAmount(
+  sender: string,
+  address: string,
+  fee: BigNumber,
+  amount_in: BigNumber,
+  amount_out: BigNumber,
+): BigNumber {
+  const is_sender: boolean = compareAddress(sender, address);
+  // Include fees if our address is the sender
+  if (is_sender) {
+    amount_out = amount_out.plus(fee);
+  }
+  // LL negates the amount for SEND transactions
+  // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
+  // we need to make it negative
+  return is_sender ? amount_out.minus(amount_in) : amount_in.minus(amount_out);
 }
