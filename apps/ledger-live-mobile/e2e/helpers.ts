@@ -1,4 +1,4 @@
-import { by, element, waitFor, device } from "detox";
+import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
 
@@ -50,6 +50,16 @@ export function getElementById(id: string | RegExp, index = 0) {
 export function getElementByText(text: string | RegExp, index = 0) {
   if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   return element(by.text(text)).atIndex(index);
+}
+
+export function getWebElementById(id: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.id(id)).atIndex(index);
+}
+
+export function getWebElementByTag(tag: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.tag(tag)).atIndex(index);
 }
 
 export async function tapById(id: string | RegExp, index = 0) {
