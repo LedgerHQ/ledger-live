@@ -28,7 +28,6 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/hw-transport-mock": "workspace:^",
     "@noble/hashes": "1.5.0",
     "bip32-path": "^0.4.2"
   },
