@@ -29,10 +29,15 @@ const useSelectAddAccountMethodViewModel = ({
   const navigationParams = useMemo(() => {
     return hasCurrency
       ? currency.type === "TokenCurrency"
-        ? { token: currency }
-        : { currency }
-      : {};
-  }, [hasCurrency, currency]);
+        ? {
+            token: currency,
+            ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          }
+        : { currency, ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }) }
+      : llmNetworkBasedAddAccountFlow?.enabled
+        ? { context: "addAccounts" }
+        : {};
+  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
@@ -58,6 +63,9 @@ const useSelectAddAccountMethodViewModel = ({
     const EntryNavigatorName = llmNetworkBasedAddAccountFlow?.enabled
       ? NavigatorName.AssetSelection
       : NavigatorName.AddAccounts;
+    // to delete after llmNetworkBasedAddAccountFlow is fully enabled (ts inference not working well based on navigationParams)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     navigation.navigate(EntryNavigatorName, navigationParams);
   }, [
     navigation,
