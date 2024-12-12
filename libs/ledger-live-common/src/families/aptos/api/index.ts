@@ -9,20 +9,19 @@ import {
   InputEntryFunctionData,
   InputGenerateTransactionOptions,
   MimeType,
-  Network,
-  NetworkToIndexerAPI,
-  NetworkToNodeAPI,
   post,
   RawTransaction,
   SimpleTransaction,
   TransactionResponse,
   UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-
+import { APTOS_ASSET_ID } from "../constants";
 import { isTestnet } from "../logic";
+import type { AptosTransaction, TransactionOptions } from "../types";
 import {
   GetAccountTransactionsData,
   GetAccountTransactionsDataGt,
@@ -33,23 +32,27 @@ import {
   GetAccountTransactionsDataQueryVariables,
 } from "./graphql/types";
 
-import { APTOS_ASSET_ID } from "../constants";
-import type { AptosTransaction, TransactionOptions } from "../types";
-
-const getNetwork = (currencyId: string) =>
-  isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
+const getApiEndpoint = (currencyId: string) =>
+  isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
+const getIndexerEndpoint = (currencyId: string) =>
+  isTestnet(currencyId)
+    ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
+    : getEnv("APTOS_INDEXER_ENDPOINT");
 
 export class AptosAPI {
-  private network: Network;
+  private apiUrl: string;
   private indexerUrl: string;
   private aptosConfig: AptosConfig;
   private aptosClient: Aptos;
   private apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
-    this.network = getNetwork(currencyId);
-    this.indexerUrl = NetworkToIndexerAPI[this.network];
-    this.aptosConfig = new AptosConfig({ network: this.network });
+    this.apiUrl = getApiEndpoint(currencyId);
+    this.indexerUrl = getIndexerEndpoint(currencyId);
+    this.aptosConfig = new AptosConfig({
+      fullnode: this.apiUrl,
+      indexer: this.indexerUrl,
+    });
     this.aptosClient = new Aptos(this.aptosConfig);
     this.apolloClient = new ApolloClient({
       uri: this.indexerUrl,
@@ -223,7 +226,7 @@ export class AptosAPI {
   private async getHeight(): Promise<number> {
     const { data } = await network({
       method: "GET",
-      url: NetworkToNodeAPI[this.network],
+      url: this.apiUrl,
     });
     return parseInt(data.block_height);
   }
