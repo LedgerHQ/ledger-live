@@ -1,6 +1,5 @@
 import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
-import crypto_org from "../families/crypto_org/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
@@ -25,11 +24,6 @@ import xrp from "@ledgerhq/coin-xrp/transaction";
 export default {
   casper,
   celo,
-<<<<<<< HEAD
-  crypto_org,
-=======
-  internet_computer,
->>>>>>> 83ebc75b9f (fix: move crypto org into cosmos coin module)
   algorand,
   bitcoin,
   cardano,
