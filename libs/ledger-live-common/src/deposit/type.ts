@@ -31,3 +31,8 @@ export type GroupedCurrencies = {
   currenciesByProvider: CurrenciesByProviderId[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
 };
+
+export type LoadingBasedGroupedCurrencies = {
+  result: GroupedCurrencies;
+  loadingStatus: "idle" | "pending" | "success" | "error";
+};

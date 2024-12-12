@@ -44,7 +44,9 @@ import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorScreenParams } from "@react-navigation/core";
+import { AssetSelectionNavigatorParamsList } from "~/newArch/features/AssetSelection/types";
 
 type Target = "from" | "to";
 
@@ -329,4 +331,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [NavigatorName.AssetSelection]?: Partial<
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
+  >;
 };
