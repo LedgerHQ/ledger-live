@@ -4,12 +4,13 @@ import { basename } from "path";
 let platform, test, build, bundle;
 let speculos = "";
 let cache = true;
+let shard = "";
 
 const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--speculos]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--speculos] [--shard]`,
   );
   process.exit(exitCode);
 };
@@ -63,7 +64,8 @@ const test_android = async () => {
     --headless \\
     --retries 1 \\
     --runInBand \\
-    --cleanup`;
+    --cleanup \\
+    --shard ${shard}`;
 };
 
 const getTasksFrom = {
@@ -111,6 +113,9 @@ for (const argName in argv) {
       break;
     case "speculos":
       speculos = ":speculos";
+      break;
+    case "shard":
+      shard = argv[argName];
       break;
     default:
       usage(42);
