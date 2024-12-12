@@ -38,8 +38,10 @@ export type Api = {
   /**
    *
    * @param address
-   * @param pagination
-   * @returns Operations found with the oldest "index". This last value can be used for pagination.
+   * @param pagination The max number of operation to receive and the "id" or "index" to start from (see returns value).
+   * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
+   * If `0` is returns, no pagination needed.
+   * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
    */
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], number]>;
 };

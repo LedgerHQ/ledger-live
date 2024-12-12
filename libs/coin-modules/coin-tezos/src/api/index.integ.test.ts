@@ -65,7 +65,8 @@ describe("Tezos Api", () => {
       tx.push(...tx2);
 
       // Then
-      const checkSet = new Set(tx.map(elt => elt.hash));
+      // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
+      const checkSet = new Set(tx.map(elt => `${elt.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
     });
   });

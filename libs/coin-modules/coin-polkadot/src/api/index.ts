@@ -1,4 +1,8 @@
-import type { Api, Transaction as ApiTransaction, Pagination } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Api,
+  Transaction as ApiTransaction,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,

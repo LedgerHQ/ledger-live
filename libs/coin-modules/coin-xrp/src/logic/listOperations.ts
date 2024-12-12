@@ -49,7 +49,7 @@ export async function listOperations(
     transactions
       .filter(op => op.tx.TransactionType === "Payment")
       .map(convertToCoreOperation(address)),
-    transactions.slice(-1)[0].tx.ledger_index,
+    transactions.slice(-1)[0].tx.ledger_index - 1, // Returns the next index to start from for pagination
   ];
 }
 
