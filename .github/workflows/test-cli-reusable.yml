@@ -24,7 +24,7 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
       test-fail: ${{ steps.test.outcome }}
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-4xlarge
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,7 +34,7 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-turbo-cache: "false"
+          skip-turbo-cache: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
