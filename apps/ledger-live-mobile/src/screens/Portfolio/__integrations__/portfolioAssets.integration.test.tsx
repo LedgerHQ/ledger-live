@@ -6,10 +6,13 @@ import TestNavigator, { INITIAL_STATE, SlicedMockedAccounts } from "./shared";
 import { track } from "~/analytics";
 
 describe("portfolioAssets", () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
   it("should render empty portfolio", async () => {
     render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => console.log("modal")} />
+        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -26,7 +29,7 @@ describe("portfolioAssets", () => {
   it("should render portfolio with assets and accounts list", async () => {
     const { user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => console.log("modal")} />
+        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -41,15 +44,17 @@ describe("portfolioAssets", () => {
 
     jest.advanceTimersByTime(600);
 
+    //screen.debug();
+
     expect(screen.getByText(/see all accounts/i)).toBeVisible();
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
-    //  await waitFor(() => expect(screen.getByText(/cronos 2/i)).toBeVisible());
+    // await waitFor(() => expect(screen.getByText(/cronos 2/i)).toBeVisible());
   });
 
   it("should hide see all button and display add account button because there is less than 5 assets", async () => {
     const { user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => console.log("modal")} />
+        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -87,7 +92,7 @@ describe("portfolioAssets", () => {
   it("should render assets list screen", async () => {
     const { user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => console.log("modal")} />
+        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -107,7 +112,7 @@ describe("portfolioAssets", () => {
   it("should render accounts list screen", async () => {
     const { user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => console.log("modal")} />
+        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
