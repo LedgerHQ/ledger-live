@@ -5,17 +5,13 @@ import { useNavigation } from "@react-navigation/core";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { setHasOrderedNano, setOnboardingHasDevice } from "~/actions/settings";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
-
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import ImageLedger from "~/images/double-ledger.png";
 
 type Props = {
@@ -28,10 +24,12 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.OnboardingPostWelcomeSelection
 >;
 export function NoLedgerYetModal({ onClose, isOpen }: Props) {
-  const [isFromBuy, setFromBuy] = useState(false);
-  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  const [isFromBuy, setFromBuy] = useState(false);
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const identifyUser = useCallback(
     (hasDevice: boolean) => {
@@ -69,10 +67,8 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
       page: "Onboarding Get Started",
       drawer: "Get Started Upsell",
     });
-    (navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
-      NavigatorName.BuyDevice,
-    );
-  }, [navigation]);
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow]);
 
   return (
     <QueuedDrawer
@@ -89,25 +85,32 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
           {t("onboarding.postWelcomeStep.noLedgerYetModal.desc")}
         </Text>
       </Flex>
-      <Flex mx={16} flexDirection={"row"} mt={8}>
-        <Button
-          onPress={buyLedger}
-          type="main"
-          size={"large"}
-          flex={1}
-          testID="onboarding-noLedgerYetModal-buy"
-        >
-          {t("onboarding.postWelcomeStep.noLedgerYetModal.buy")}
-        </Button>
-      </Flex>
+
+      {!rebornFeatureFlagEnabled && (
+        <Flex mx={16} flexDirection={"row"} mt={8}>
+          <Button
+            onPress={buyLedger}
+            type="main"
+            size={"large"}
+            flex={1}
+            testID="onboarding-noLedgerYetModal-buy"
+          >
+            {t("onboarding.postWelcomeStep.noLedgerYetModal.buy")}
+          </Button>
+        </Flex>
+      )}
       <Flex mx={16} flexDirection={"row"} mt={24}>
         <Button
           onPress={exploreLedger}
-          type="default"
+          type={rebornFeatureFlagEnabled ? "main" : "default"}
           flex={1}
           testID="onboarding-noLedgerYetModal-explore"
         >
-          <Text variant="large" fontWeight="semiBold">
+          <Text
+            variant="large"
+            fontWeight="semiBold"
+            color={rebornFeatureFlagEnabled ? "neutral.c00" : "neutral.c100"}
+          >
             {t("onboarding.postWelcomeStep.noLedgerYetModal.explore")}
           </Text>
         </Button>

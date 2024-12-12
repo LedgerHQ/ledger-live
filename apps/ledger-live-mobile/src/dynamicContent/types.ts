@@ -76,6 +76,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   link?: string;
   isDismissable?: boolean;
   hasPagination?: boolean;
+  centeredText?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {
@@ -130,8 +131,10 @@ type HeroContentCard = ContentCardCommonProperties & {
   title?: string;
   image?: string;
   tag?: string;
-  cta: string;
+  cta?: string;
   link?: string;
+  secondaryText?: string;
+  centeredText?: boolean;
 };
 
 type VerticalContentCard = ContentCardCommonProperties & {
@@ -139,11 +142,14 @@ type VerticalContentCard = ContentCardCommonProperties & {
   title?: string;
   link?: string;
   description?: string;
-  image?: string;
-  price?: string;
+  subDescription?: string;
+  descriptionTextAlign?: CanvasTextAlign;
+  titleTextAlign?: CanvasTextAlign;
   cta?: string;
   size: Size;
-  filledImage?: boolean;
+  media?: string;
+  filledMedia?: boolean;
+  mediaType?: "image" | "video" | "gif";
 };
 
 type AnyContentCard =

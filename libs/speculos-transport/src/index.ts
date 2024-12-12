@@ -269,7 +269,7 @@ export async function createSpeculosDevice(
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (data.includes("is already in use by container")) {
+    } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );

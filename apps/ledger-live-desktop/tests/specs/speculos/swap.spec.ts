@@ -186,7 +186,7 @@ for (const { swap, xrayTicket } of swaps) {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-      process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
     });
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>

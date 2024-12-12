@@ -21,7 +21,7 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2569",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "1", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
     xrayTicket: "B2CQA-2571",
   },
@@ -213,8 +213,8 @@ const tokenTransactionInvalid = [
 
 test.describe("Send flows", () => {
   test.beforeAll(async () => {
-    process.env.ENABLE_TRANSACTION_BROADCAST =
-      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "1" : "0";
+    process.env.DISABLE_TRANSACTION_BROADCAST =
+      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "0" : "1";
   });
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
@@ -263,6 +263,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.craftTx(transaction.transaction);
+          await app.send.countinueSendAmount();
           await app.send.expectTxInfoValidity(transaction.transaction);
           await app.send.clickContinueToDevice();
 
@@ -455,11 +456,9 @@ test.describe("Send flows", () => {
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
-
           await app.account.clickSend();
-          await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
-          await app.send.clickContinue();
-          await app.send.fillAmount(transaction.transaction.amount);
+
+          await app.send.craftTx(transaction.transaction);
           await app.send.checkContinueButtonDisabled();
           await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
         },
@@ -602,7 +601,7 @@ test.describe("Send flows", () => {
   }
 
   test.describe("send NFT to ENS address", () => {
-    const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "NY la muse", Fee.SLOW);
+    const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, "Podium", Fee.SLOW);
     test.beforeAll(async () => {
       process.env.DISABLE_TRANSACTION_BROADCAST = "true";
     });
@@ -647,6 +646,8 @@ test.describe("Send flows", () => {
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.drawer.close();
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
         await app.account.navigateToNFTOperation();
         await app.sendDrawer.expectNftInfos(transaction);
       },

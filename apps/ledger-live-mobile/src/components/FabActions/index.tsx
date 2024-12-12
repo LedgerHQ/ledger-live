@@ -12,6 +12,9 @@ import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { NavigatorName } from "~/const";
 import { useRoute } from "@react-navigation/native";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useSelector } from "react-redux";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -96,6 +99,10 @@ export const FabButtonBarProvider = ({
 
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  const { navigateToRebornFlow } = useRebornFlow();
+
   const router = useRoute();
 
   const onNavigate = useCallback(
@@ -134,6 +141,11 @@ export const FabButtonBarProvider = ({
     (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
       const { navigationParams, confirmModalProps, linkUrl, event, eventProperties, id } = data;
 
+      if (readOnlyModeEnabled && !hasOrderedNano) {
+        navigateToRebornFlow();
+        return;
+      }
+
       if (!confirmModalProps) {
         if (event) {
           track(event, { page: router.name, ...globalEventProperties, ...eventProperties });
@@ -157,7 +169,15 @@ export const FabButtonBarProvider = ({
         setIsModalInfoOpened(true);
       }
     },
-    [globalEventProperties, onNavigate, track, router.name],
+    [
+      readOnlyModeEnabled,
+      hasOrderedNano,
+      navigateToRebornFlow,
+      track,
+      router.name,
+      globalEventProperties,
+      onNavigate,
+    ],
   );
 
   const onContinue = useCallback(() => {

@@ -17,6 +17,7 @@ const createElem = (change: number): MarketItemPerformer => ({
   ticker: "BTC",
   price: 70000,
   ledgerIds: [],
+  id: "bitcoin",
 });
 
 const createElemWithMultipleChange = (range: {
@@ -36,6 +37,7 @@ const createElemWithMultipleChange = (range: {
   ticker: "BTC",
   price: 70000,
   ledgerIds: [],
+  id: "bitcoin",
 });
 
 describe("useMarketPerformanceWidget", () => {

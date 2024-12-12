@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.58.0",
+  "version": "3.59.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -238,6 +238,7 @@
     "@babel/runtime": "7.24.1",
     "@jest/reporters": "29.7.0",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "13.6.1",

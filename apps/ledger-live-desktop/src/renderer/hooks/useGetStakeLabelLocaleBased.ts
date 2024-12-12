@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { getSystemLocale } from "~/helpers/systemLocale";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
 export const useGetStakeLabelLocaleBased = () => {
-  const locale = getSystemLocale();
+  const { region } = getParsedSystemDeviceLocale();
   const { t } = useTranslation();
-  return locale === "en-GB" ? t("accounts.contextMenu.yield") : t("accounts.contextMenu.earn");
+
+  return region === "GB" ? t("accounts.contextMenu.yield") : t("accounts.contextMenu.earn");
 };

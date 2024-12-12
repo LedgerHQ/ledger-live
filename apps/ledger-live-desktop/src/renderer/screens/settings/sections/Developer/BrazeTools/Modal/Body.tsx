@@ -28,6 +28,7 @@ interface FormState {
   link: string;
   secondaryCta: string;
   cta: string;
+  tag?: string;
   url: string;
   path: string;
   order?: number;
@@ -70,10 +71,10 @@ export const ModalBody: React.FC = () => {
     useGenerateLocalBraze();
 
   const handleAddCard = () => {
-    const { title, description, image, mainCta, link, secondaryCta, cta, url, path, order } =
+    const { title, description, image, mainCta, link, secondaryCta, cta, tag, url, path, order } =
       formData;
     if (selectedTab === "PortfolioContentCard") {
-      addLocalPortfolioCard(title, description, image, order, url);
+      addLocalPortfolioCard(title, description, image, order, url, cta, tag);
     } else if (selectedTab === "ActionContentCard") {
       addLocalActionCard(title, description, image, mainCta, link, secondaryCta, order);
     } else if (selectedTab === "NotificationContentCard") {
@@ -130,6 +131,16 @@ export const ModalBody: React.FC = () => {
         field: "url",
         placeholder: "URL",
         label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "cta",
+        placeholder: "CTA",
+        label: t("settings.developer.brazeTools.modal.fields.cta"),
+      },
+      {
+        field: "tag",
+        placeholder: "TAG",
+        label: t("settings.developer.brazeTools.modal.fields.tag"),
       },
     ],
     ActionContentCard: [

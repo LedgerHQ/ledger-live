@@ -46,6 +46,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
   return (
     <Box horizontal {...boxProps}>
       <Box
+        data-testid="balance-diff"
         horizontal
         alignItems="center"
         style={{

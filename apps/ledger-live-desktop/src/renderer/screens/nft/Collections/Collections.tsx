@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -17,7 +18,9 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
-import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 const INCREMENT = 5;
 const EmptyState = styled.div`
@@ -42,15 +45,13 @@ type Props = {
   account: Account;
 };
 const Collections = ({ account }: Props) => {
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const staleTime = nftsFromSimplehashFeature?.params?.staleTime;
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
   const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
-
-  const { fetchNextPage, hasNextPage, collectionsLength, collections } = useNftCollections({
-    account,
-  });
-
   const onOpenGallery = useCallback(() => {
     history.push(`/account/${account.id}/nft-collection`);
   }, [account.id, history]);
@@ -70,18 +71,38 @@ const Collections = ({ account }: Props) => {
     [account.id, history],
   );
 
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account.nfts || [],
+    addresses: account.freshAddress,
+    chains: [account.currency.id],
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime,
+  });
+  const collections = useMemo(
+    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
+    [account.nfts, nfts, nftsFromSimplehashFeature],
+  );
+
   const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    setNumberOfVisibleCollections(
+      numberOfVisibleCollections => numberOfVisibleCollections + INCREMENT,
     );
     if (hasNextPage) {
       fetchNextPage();
     }
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
-
+  }, [fetchNextPage, hasNextPage]);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const filteredCollections = useMemo(
+    () =>
+      Object.entries(collections).filter(
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
+      ),
+    [account.id, collections, hiddenNftCollections],
+  );
   const visibleCollections = useMemo(
     () =>
-      collections
+      filteredCollections
         .slice(0, numberOfVisibleCollections)
         .map(([contract, nfts]: [string, (ProtoNFT | NFT)[]]) => (
           <Row
@@ -92,7 +113,7 @@ const Collections = ({ account }: Props) => {
             nfts={nfts}
           />
         )),
-    [account, collections, numberOfVisibleCollections, onOpenCollection],
+    [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
 
   useEffect(() => {
@@ -110,7 +131,7 @@ const Collections = ({ account }: Props) => {
                   <Box>{t("NFT.collections.receiveCTA")}</Box>
                 </Box>
               </Button>
-              <Button primary onClick={onOpenGallery} data-testId="see-gallery-button">
+              <Button primary onClick={onOpenGallery}>
                 {t("NFT.collections.galleryCTA")}
               </Button>
             </>
@@ -145,7 +166,7 @@ const Collections = ({ account }: Props) => {
             </Button>
           </EmptyState>
         )}
-        {collections.length > numberOfVisibleCollections ? (
+        {filteredCollections.length > numberOfVisibleCollections ? (
           <TokenShowMoreIndicator expanded onClick={onShowMore}>
             <Box horizontal alignContent="center" justifyContent="center" py={3}>
               <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>

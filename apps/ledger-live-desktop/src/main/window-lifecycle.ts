@@ -78,6 +78,8 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
+    fullUrl.searchParams.append("systemLocale", app.getSystemLocale());
+
     await mainWindow.loadURL(fullUrl.href);
   }
 };

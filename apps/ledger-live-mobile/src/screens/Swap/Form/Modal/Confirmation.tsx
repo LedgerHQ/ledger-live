@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +31,7 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { BigNumber } from "bignumber.js";
+import { mevProtectionSelector } from "~/reducers/settings";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -79,10 +80,12 @@ export function Confirmation({
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
+  const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
+    broadcastConfig: { mevProtected },
   });
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;

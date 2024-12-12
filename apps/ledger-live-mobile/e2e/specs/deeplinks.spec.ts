@@ -1,7 +1,7 @@
 import { Application } from "../page";
 import { knownDevices } from "../models/devices";
 
-let app: Application;
+const app = new Application();
 
 const ethereumLong = "ethereum";
 const bitcoinLong = "bitcoin";
@@ -11,7 +11,7 @@ const bobaLong = "boba";
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    app = await Application.init({
+    await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
       knownDevices: [knownDevices.nanoX],
     });
