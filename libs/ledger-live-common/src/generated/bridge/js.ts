@@ -1,6 +1,5 @@
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
-import crypto_org from "../../families/crypto_org/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
@@ -25,11 +24,6 @@ import { bridge as xrp } from "../../families/xrp/setup";
 export default {
   casper,
   celo,
-<<<<<<< HEAD
-  crypto_org,
-=======
-  internet_computer,
->>>>>>> 83ebc75b9f (fix: move crypto org into cosmos coin module)
   algorand,
   bitcoin,
   cardano,

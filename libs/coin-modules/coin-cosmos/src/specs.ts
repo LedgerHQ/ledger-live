@@ -604,6 +604,7 @@ const cryptoOrg = {
   ...generateGenericCosmosTest("crypto_org", false, {
     minViableAmount: cryptoOrgMinimalTransactionAmount,
     mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
+    testTimeout: 4 * 60 * 1000,
     skipOperationHistory: true,
   }),
 };

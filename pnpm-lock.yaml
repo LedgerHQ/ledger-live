@@ -62049,7 +62049,7 @@ snapshots:
       chromium-pickle-js: 0.2.0
       debug: 4.3.4
       dmg-builder: 24.13.3(lodash@4.17.21)
-      ejs: 3.1.9
+      ejs: 3.1.10
       electron-publish: 24.13.1
       form-data: 4.0.0
       fs-extra: 10.1.0
@@ -65392,10 +65392,6 @@ snapshots:
       keccak: 3.0.4
 
   ejs@3.1.10:
-    dependencies:
-      jake: 10.8.7
-
-  ejs@3.1.9:
     dependencies:
       jake: 10.8.7
 
