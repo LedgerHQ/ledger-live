@@ -1,5 +1,11 @@
 # @ledgerhq/hw-transport-webhid
 
+## 6.30.0
+
+### Minor Changes
+
+- [#8502](https://github.com/LedgerHQ/ledger-live/pull/8502) [`e857228`](https://github.com/LedgerHQ/ledger-live/commit/e85722807a58ead3fcb8b06bf5bcf33cea393483) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix invalid channel when using multiple apps
+
 ## 6.30.0-next.0
 
 ### Minor Changes
