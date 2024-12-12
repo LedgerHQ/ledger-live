@@ -12,6 +12,22 @@ export class Account {
     public readonly derivationMode?: string,
   ) {}
 
+  static readonly APTOS_1 = new Account(
+    Currency.APT,
+    "Aptos 1",
+    "0x17457f3e93cbd37f5c714a89b92b86a478f1350918c37e0523fff83b66f21027",
+    undefined,
+    0,
+  );
+
+  static readonly APTOS_2 = new Account(
+    Currency.APT,
+    "Aptos 2",
+    "0x6c0e2e27005620ea8e0f11762687b0e5483b721c8407dc855c6f7127f8881371",
+    undefined,
+    1,
+  );
+
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",

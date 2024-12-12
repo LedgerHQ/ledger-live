@@ -1,10 +1,10 @@
-import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { Transaction, NFTTransaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "../../utils/customJsonReporter";
 import { commandCLI } from "tests/utils/cliUtils";
+import { test } from "../../fixtures/common";
+import { NFTTransaction, Transaction } from "../../models/Transaction";
+import { getDescription } from "../../utils/customJsonReporter";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -191,6 +191,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
     xrayTicket: "B2CQA-2816",
   },
+  {
+    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
+    xrayTicket: "B2CQA-2920",
+  },
 ];
 
 const tokenTransactionInvalid = [
@@ -268,10 +272,10 @@ for (const transaction of transactionE2E) {
 
         await app.layout.goToAccounts();
         await app.accounts.clickSyncBtnForAccount(
-          transaction.transaction.accountToCredit.accountName,
+          transaction.transaction.accountToDebit.accountName,
         );
         await app.accounts.navigateToAccountByName(
-          transaction.transaction.accountToCredit.accountName,
+          transaction.transaction.accountToDebit.accountName,
         );
         await app.account.clickOnLastOperation();
         await app.sendDrawer.expectReceiverInfos(transaction.transaction);
