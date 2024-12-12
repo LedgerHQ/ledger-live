@@ -36,13 +36,22 @@ export const groupCurrenciesByProvider = (
           providerId: asset.providerId,
           currenciesByNetwork: [ledgerCurrency],
         });
-        // in this case, the first currency of the provider is the one we want to display
-        sortedCryptoCurrencies.push(ledgerCurrency);
       } else {
         existingEntry.currenciesByNetwork.push(ledgerCurrency);
       }
     }
   }
+
+  // in this case, the first currency of the provider is the one we want to display (Wasn't true)
+  // So we need to take the first crypto or token currency of each provider to fix that
+  for (const [, { currenciesByNetwork }] of assetsByProviderId.entries()) {
+    const firstCrypto = currenciesByNetwork.find(c => c.type === "CryptoCurrency");
+    const elem = firstCrypto || currenciesByNetwork.find(c => c.type === "TokenCurrency");
+    if (elem) {
+      sortedCryptoCurrencies.push(elem);
+    }
+  }
+
   return {
     currenciesByProvider: Array.from(assetsByProviderId.values()),
     sortedCryptoCurrencies,
