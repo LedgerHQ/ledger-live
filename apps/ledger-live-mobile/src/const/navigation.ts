@@ -336,8 +336,6 @@ export enum ScreenName {
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
 
-  AptosCustomFees = "AptosCustomFees",
-
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
