@@ -94,7 +94,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
-import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import AssetsNavigator from "LLM/features/Assets/Navigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -605,7 +605,7 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
-        {llmAccountListUI?.enabled && AssetsListNavigator({ Stack })}
+        {llmAccountListUI?.enabled && AssetsNavigator({ Stack })}
       </Stack.Navigator>
     </>
   );
