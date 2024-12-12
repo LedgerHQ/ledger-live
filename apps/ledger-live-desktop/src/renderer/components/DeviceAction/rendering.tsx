@@ -1214,9 +1214,7 @@ export const renderSwapDeviceConfirmation = ({
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
       <Separator />
-      <Flex width="100%" mb={3}>
-        <DrawerFooter provider={exchangeRate.provider} />
-      </Flex>
+      <DrawerFooter provider={exchangeRate.provider} />
     </>
   );
 };
