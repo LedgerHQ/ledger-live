@@ -127,6 +127,7 @@
     "@celo/utils": "^7.0.0",
     "@celo/wallet-base": "^6.0.3",
     "@celo/wallet-ledger": "^6.0.3",
+    "@crypto-org-chain/chain-jslib": "1.1.2",
     "@dfinity/agent": "^0.21.0",
     "@dfinity/candid": "^0.21.0",
     "@dfinity/principal": "^0.15.6",

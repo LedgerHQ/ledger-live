@@ -441,7 +441,7 @@ const generateGenericCosmosTest = (
     currency: getCryptoCurrencyById(currencyId),
     appQuery: {
       model: DeviceModelId.nanoS,
-      appName: currencyId == "crypto_org" ? "Cronos POS Chain" : "Cosmos",
+      appName: currencyId == "crypto_org_cosmos" ? "Cronos POS Chain" : "Cosmos",
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
@@ -601,7 +601,7 @@ const mantra = {
 
 const cryptoOrgMinimalTransactionAmount = new BigNumber(1000000);
 const cryptoOrg = {
-  ...generateGenericCosmosTest("crypto_org", false, {
+  ...generateGenericCosmosTest("crypto_org_cosmos", false, {
     minViableAmount: cryptoOrgMinimalTransactionAmount,
     mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
     testTimeout: 4 * 60 * 1000,

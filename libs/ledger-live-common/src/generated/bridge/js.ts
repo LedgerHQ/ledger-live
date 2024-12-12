@@ -1,5 +1,6 @@
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
+import crypto_org from "../../families/crypto_org/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
@@ -24,6 +25,7 @@ import { bridge as xrp } from "../../families/xrp/setup";
 export default {
   casper,
   celo,
+  crypto_org,
   algorand,
   bitcoin,
   cardano,

@@ -168,7 +168,7 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
-  config_currency_crypto_org: {
+  config_currency_crypto_org_cosmos: {
     type: "object",
     default: {
       lcd: "https://cryptocom-api.polkachu.com",

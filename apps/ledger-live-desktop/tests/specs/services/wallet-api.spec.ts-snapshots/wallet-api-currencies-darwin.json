@@ -211,6 +211,15 @@
     "id": "crypto_org",
     "ticker": "CRO",
     "name": "Cronos POS Chain",
+    "family": "crypto_org",
+    "color": "#0e1c37",
+    "decimals": 8
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "crypto_org_cosmos",
+    "ticker": "CRO",
+    "name": "Cronos POS Chain",
     "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8

@@ -29,6 +29,7 @@ setSupportedCurrencies([
   "cosmos",
   "crypto_org",
   "crypto_org_croeseid",
+  "crypto_org_cosmos",
   "celo",
   "dash",
   "tron",

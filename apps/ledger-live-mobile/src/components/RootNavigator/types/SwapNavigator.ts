@@ -28,6 +28,10 @@ import {
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import {
+  CryptoOrgAccount,
+  Transaction as CryptoOrgTransaction,
+} from "@ledgerhq/live-common/families/crypto_org/types";
+import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
@@ -195,6 +199,20 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     account: CosmosAccount;
     transaction: CosmosTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.CryptoOrgEditMemo]: {
+    accountId: string;
+    parentId?: string;
+    account: CryptoOrgAccount;
+    transaction: CryptoOrgTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

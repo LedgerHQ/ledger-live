@@ -47,6 +47,7 @@ setSupportedCurrencies([
   "komodo",
   "zencash",
   "crypto_org",
+  "crypto_org_cosmos",
   "crypto_org_croeseid",
   "celo",
   "hedera",

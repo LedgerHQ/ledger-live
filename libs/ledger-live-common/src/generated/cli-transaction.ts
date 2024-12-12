@@ -1,4 +1,5 @@
 import celo from "../families/celo/cli-transaction";
+import crypto_org from "../families/crypto_org/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
@@ -22,6 +23,7 @@ import { cliTools as xrp } from "../families/xrp/setup";
 
 export default {
   celo,
+  crypto_org,
   algorand,
   bitcoin,
   cardano,

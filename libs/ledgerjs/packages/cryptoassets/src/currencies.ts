@@ -3143,6 +3143,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
+    family: "crypto_org",
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 8,
+      },
+      {
+        name: "baseCRO",
+        code: "baseCRO",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://cronos-pos.org/explorer/tx/$hash",
+        address: "https://cronos-pos.org/explorer/account/$address",
+      },
+    ],
+  },
+   // Cronos POS Chain (formerly Crypto.org) Cosmos integration
+   crypto_org_cosmos: {
+    type: "CryptoCurrency",
+    id: "crypto_org",
+    coinType: CoinType.CRYPTO_ORG,
+    name: "Cronos POS Chain",
+    managerAppName: "Cronos POS Chain",
+    ticker: "CRO",
+    scheme: "crypto_org",
+    color: "#0e1c37",
     family: "cosmos",
     units: [
       {

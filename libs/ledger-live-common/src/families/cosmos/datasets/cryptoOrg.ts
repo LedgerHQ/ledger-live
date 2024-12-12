@@ -5,7 +5,7 @@ import type { Transaction } from "../types";
 const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
-      name: "crypto_org seed 1",
+      name: "crypto_org_cosmos seed 1",
       apdus: `
       => 55040000180363726f2c0000808a010080000000800000000000000000
       <= 0346289788c2f518a158232e7028e8e86b30cff0670326d3a2507183cb0d81cecb63726f316a72306b6767786a64336b36376575377872376c7a3473333074796e736d727a3434667233399000

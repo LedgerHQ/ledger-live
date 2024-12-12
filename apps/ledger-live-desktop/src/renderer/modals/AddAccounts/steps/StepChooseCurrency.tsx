@@ -139,7 +139,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zksync,
       zksync_sepolia: zksyncSepolia,
       mantra,
-      crypto_org: cryptoOrg,
+      crypto_org_cosmos: cryptoOrg,
     }),
     [
       axelar,

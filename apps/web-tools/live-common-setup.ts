@@ -51,6 +51,7 @@ setSupportedCurrencies([
   "ethereum_sepolia",
   "ethereum_holesky",
   "crypto_org",
+  "crypto_org_cosmos",
   "crypto_org_croeseid",
   "celo",
   "hedera",

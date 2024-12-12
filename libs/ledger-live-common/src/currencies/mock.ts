@@ -40,7 +40,7 @@ export const IDS = [
   "persistence",
   "onomy",
   "mantra",
-  "crypto_org",
+  "crypto_org_cosmos",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -538,7 +538,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "crypto_org",
+    id: "crypto_org_cosmos",
     coinType: 394,
     name: "Cronos POS Chain",
     managerAppName: "Cronos POS Chain",

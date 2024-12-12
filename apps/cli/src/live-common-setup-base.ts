@@ -40,6 +40,7 @@ setSupportedCurrencies([
   "ethereum_holesky",
   "crypto_org",
   "crypto_org_croeseid",
+  "crypto_org_cosmos",
   "celo",
   "hedera",
   "cardano",

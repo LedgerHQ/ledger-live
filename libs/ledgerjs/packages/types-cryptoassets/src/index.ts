@@ -119,6 +119,7 @@ export type CryptoCurrencyId =
   | "zencash"
   | "zilliqa"
   | "crypto_org"
+  | "crypto_org_cosmos"
   | "bitcoin_testnet"
   | "ethereum_sepolia"
   | "ethereum_holesky"

@@ -40,7 +40,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
   function decodeModel(raw) {
     let { data } = raw;
 
-    if (data.currencyId == "crypto_org" && !data.cosmosResources) {
+    if (data.currencyId == "crypto_org_cosmos" && !data.cosmosResources) {
       data.cosmosResources = {
         delegations: [],
         redelegations: [],
