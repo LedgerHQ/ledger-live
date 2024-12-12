@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.7.0
+
+### Minor Changes
+
+- [#8375](https://github.com/LedgerHQ/ledger-live/pull/8375) [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b) Thanks [@Canestin](https://github.com/Canestin)! - add mev protection
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.20.1
+  - @ledgerhq/domain-service@1.2.14
+  - @ledgerhq/evm-tools@1.3.0
+
 ## 2.7.0-next.1
 
 ### Patch Changes
