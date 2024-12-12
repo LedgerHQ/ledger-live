@@ -605,13 +605,7 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
-        {llmAccountListUI?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.Assets}
-            component={AssetsListNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+        {llmAccountListUI?.enabled && AssetsListNavigator({ Stack })}
       </Stack.Navigator>
     </>
   );

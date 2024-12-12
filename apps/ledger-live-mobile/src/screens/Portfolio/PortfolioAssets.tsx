@@ -84,13 +84,10 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         return;
       }
       if (isAccountListUIEnabled) {
-        navigation.navigate(NavigatorName.Assets, {
-          screen: ScreenName.AssetsList,
-          params: {
-            sourceScreenName: ScreenName.Portfolio,
-            showHeader: true,
-            isSyncEnabled: true,
-          },
+        navigation.navigate(ScreenName.AssetsList, {
+          sourceScreenName: ScreenName.Portfolio,
+          showHeader: true,
+          isSyncEnabled: true,
         });
       } else {
         navigation.navigate(NavigatorName.Accounts, {
