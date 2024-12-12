@@ -121,7 +121,7 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should add function address as recipient for other smart contracts", () => {
-      const payload: EntryFunctionPayloadResponse = {
+      const payload: PayloadResponse = {
         function: "0x2::other::contract",
         type_arguments: [],
         arguments: ["0x11", ["0x12"], [1]],
