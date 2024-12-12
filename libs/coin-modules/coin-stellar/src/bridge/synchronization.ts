@@ -2,7 +2,7 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { Account } from "@ledgerhq/types-live";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchAccount, fetchOperations } from "../network";
+import { fetchAccount, fetchAllOperations } from "../network";
 import { buildSubAccounts } from "./tokens";
 import { StellarBurnAddressError, StellarOperation } from "../types";
 import { STELLAR_BURN_ADDRESS } from "./logic";
@@ -24,14 +24,13 @@ export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig
   const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(address);
 
   const oldOperations = (initialAccount?.operations || []) as StellarOperation[];
-  const lastPagingToken = oldOperations[0]?.extra.pagingToken || "0";
 
   const newOperations =
-    (await fetchOperations({
+    (await fetchAllOperations({
       accountId,
       addr: address,
       order: "asc",
-      cursor: lastPagingToken,
+      cursor: oldOperations[0]?.extra.pagingToken,
     })) || [];
 
   const allOperations = mergeOps(oldOperations, newOperations) as StellarOperation[];

@@ -1,5 +1,6 @@
 import {
   IncorrectTypeError,
+  Pagination,
   type Api,
   type Transaction as ApiTransaction,
 } from "@ledgerhq/coin-framework/api/index";
@@ -26,7 +27,7 @@ export function createApi(config: TezosConfig): Api {
     estimateFees: estimate,
     getBalance,
     lastBlock,
-    listOperations,
+    listOperations: operations,
   };
 }
 
@@ -63,3 +64,6 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   });
   return estimatedFees.estimatedFees;
 }
+
+const operations = (address: string, { limit, start }: Pagination) =>
+  listOperations(address, { limit, lastId: start });

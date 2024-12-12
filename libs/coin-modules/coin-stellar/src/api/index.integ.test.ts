@@ -1,9 +1,12 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 
+/**
+ * Testnet scan: https://testnet.lumenscan.io/
+ */
 describe("Stellar Api", () => {
   let module: Api;
-  const address = "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX";
+  const address = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
     module = createApi({
@@ -26,19 +29,30 @@ describe("Stellar Api", () => {
     });
   });
 
-  describe("listOperations", () => {
+  describe.only("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const result = await module.listOperations(address, 0);
+      const [tx, _] = await module.listOperations(address, { limit: 100 });
 
       // Then
-      expect(result.length).toBeGreaterThanOrEqual(1);
-      result.forEach(operation => {
+      expect(tx.length).toBeGreaterThanOrEqual(100);
+      tx.forEach(operation => {
         expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
+    });
+
+    it("returns paginated operations", async () => {
+      // When
+      const [tx, idx] = await module.listOperations(address, { limit: 200 });
+      const [tx2, _] = await module.listOperations(address, { limit: 200, start: idx });
+      tx.push(...tx2);
+
+      // Then
+      const checkSet = new Set(tx.map(elt => elt.hash));
+      expect(checkSet.size).toEqual(tx.length);
     });
   });
 

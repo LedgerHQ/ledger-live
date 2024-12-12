@@ -194,7 +194,7 @@ const getValue = (extrinsic: any, type: OperationType): BigNumber => {
 const extrinsicToOperation = (
   addr: string,
   accountId: string,
-  extrinsic: any,
+  extrinsic: ExplorerExtrinsic,
 ): PolkadotOperation | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
@@ -219,7 +219,7 @@ const extrinsicToOperation = (
     extra: getExtra(type, extrinsic),
     senders: [extrinsic.signer],
     recipients: [extrinsic.affectedAddress1, extrinsic.affectedAddress2]
-      .filter(Boolean)
+      .filter(addr => addr !== undefined)
       .filter(isValidAddress),
     transactionSequenceNumber: extrinsic.signer === addr ? extrinsic.nonce : undefined,
     hasFailed: !extrinsic.isSuccess,
@@ -295,12 +295,13 @@ const fetchOperationList = async (
   accountId: string,
   addr: string,
   startAt: number,
+  limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt),
+    url: getAccountOperationUrl(addr, offset, startAt, limit),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -313,7 +314,7 @@ const fetchOperationList = async (
     return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
   }
 
-  return await fetchOperationList(accountId, addr, startAt, offset + LIMIT, mergedOp);
+  return await fetchOperationList(accountId, addr, startAt, limit, offset + LIMIT, mergedOp);
 };
 
 /**
@@ -325,6 +326,11 @@ const fetchOperationList = async (
  *
  * @return {PolkadotOperation[]}
  */
-export const getOperations = async (accountId: string, addr: string, startAt = 0) => {
-  return await fetchOperationList(accountId, addr, startAt);
+export const getOperations = async (
+  accountId: string,
+  addr: string,
+  startAt = 0,
+  limit = LIMIT,
+) => {
+  return await fetchOperationList(accountId, addr, startAt, limit);
 };

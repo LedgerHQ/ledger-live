@@ -89,7 +89,7 @@ describe("listOperations", () => {
       ]);
 
       // When
-      const results = await listOperations(address, 0);
+      const [results, _] = await listOperations(address, { startAt: 0 });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);

@@ -30,16 +30,27 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const result = await module.listOperations(address, 0);
+      const [tx, _] = await module.listOperations(address, { limit: 200 });
 
       // Then
-      expect(result.length).toBeGreaterThanOrEqual(1);
-      result.forEach(operation => {
+      expect(tx.length).toBe(200);
+      tx.forEach(operation => {
         expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
+    });
+
+    it("returns paginated operations", async () => {
+      // When
+      const [tx, idx] = await module.listOperations(address, { limit: 200 });
+      const [tx2, _] = await module.listOperations(address, { limit: 200, start: idx });
+      tx.push(...tx2);
+
+      // Then
+      const checkSet = new Set(tx.map(elt => elt.hash));
+      expect(checkSet.size).toEqual(tx.length);
     });
   });
 
@@ -84,7 +95,7 @@ describe("Xrp Api", () => {
       });
 
       // Then
-      expect(result.slice(0, 34)).toEqual("1200002280000000240002588F201B001D");
+      expect(result.slice(0, 34)).toEqual("12000022800000002400025899201B002D");
       expect(result.slice(38)).toEqual(
         "61400000000000000A68400000000000000181142A6ADC782DAFDDB464E434B684F01416B8A33B208314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
       );
