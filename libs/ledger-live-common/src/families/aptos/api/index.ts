@@ -59,58 +59,6 @@ export class AptosAPI {
     });
   }
 
-  async fetchTransactions(address: string, lt?: string, gt?: string) {
-    if (!address) {
-      return [];
-    }
-
-    // WORKAROUND: Where is no way to pass optional bigint var to query
-    let query = GetAccountTransactionsData;
-    if (lt) {
-      query = GetAccountTransactionsDataLt;
-    }
-    if (gt) {
-      query = GetAccountTransactionsDataGt;
-    }
-
-    const queryResponse = await this.apolloClient.query<
-      GetAccountTransactionsDataQuery,
-      GetAccountTransactionsDataQueryVariables
-    >({
-      query,
-      variables: {
-        address,
-        limit: 1000,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        lt,
-        gt,
-      },
-      fetchPolicy: "network-only",
-    });
-
-    return Promise.all(
-      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
-        return this.richItemByVersion(transaction_version);
-      }),
-    );
-  }
-
-  async richItemByVersion(version: number): Promise<AptosTransaction | null> {
-    try {
-      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
-        ledgerVersion: version,
-      });
-      const block = await this.getBlock(version);
-      return {
-        ...tx,
-        block,
-      } as AptosTransaction;
-    } catch (error) {
-      return null;
-    }
-  }
-
   async getAccount(address: string): Promise<AccountData> {
     return this.aptosClient.getAccountInfo({ accountAddress: address });
   }
@@ -216,6 +164,58 @@ export class AptosAPI {
       return new BigNumber(balance);
     } catch (e: any) {
       return new BigNumber(0);
+    }
+  }
+
+  private async fetchTransactions(address: string, lt?: string, gt?: string) {
+    if (!address) {
+      return [];
+    }
+
+    // WORKAROUND: Where is no way to pass optional bigint var to query
+    let query = GetAccountTransactionsData;
+    if (lt) {
+      query = GetAccountTransactionsDataLt;
+    }
+    if (gt) {
+      query = GetAccountTransactionsDataGt;
+    }
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsDataQuery,
+      GetAccountTransactionsDataQueryVariables
+    >({
+      query,
+      variables: {
+        address,
+        limit: 1000,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        lt,
+        gt,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    return Promise.all(
+      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
+        return this.richItemByVersion(transaction_version);
+      }),
+    );
+  }
+
+  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
+    try {
+      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
+        ledgerVersion: version,
+      });
+      const block = await this.getBlock(version);
+      return {
+        ...tx,
+        block,
+      } as AptosTransaction;
+    } catch (error) {
+      return null;
     }
   }
 
