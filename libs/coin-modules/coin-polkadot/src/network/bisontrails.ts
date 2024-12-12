@@ -299,7 +299,6 @@ const fetchOperationList = async (
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
-  console.log("POLKADOT", startAt, limit);
   const { data } = await network({
     method: "GET",
     url: getAccountOperationUrl(addr, offset, startAt, limit),

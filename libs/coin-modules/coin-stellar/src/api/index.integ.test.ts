@@ -51,7 +51,6 @@ describe("Stellar Api", () => {
       tx.push(...tx2);
 
       // Then
-      // expect(tx.length).toBe(400);
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);
     });
