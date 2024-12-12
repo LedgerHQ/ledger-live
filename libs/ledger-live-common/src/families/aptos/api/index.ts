@@ -33,6 +33,7 @@ import {
   GetAccountTransactionsDataQueryVariables,
 } from "./graphql/types";
 
+import { APTOS_ASSET_ID } from "../constants";
 import type { AptosTransaction, TransactionOptions } from "../types";
 
 const getNetwork = (currencyId: string) =>
@@ -156,7 +157,7 @@ export class AptosAPI {
       const [balanceStr] = await this.aptosClient.view<[string]>({
         payload: {
           function: "0x1::coin::balance",
-          typeArguments: ["0x1::aptos_coin::AptosCoin"],
+          typeArguments: [APTOS_ASSET_ID],
           functionArguments: [address],
         },
       });

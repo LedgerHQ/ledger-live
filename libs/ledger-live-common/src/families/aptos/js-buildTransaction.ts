@@ -2,6 +2,7 @@ import { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "./api";
+import { APTOS_ASSET_ID } from "./constants";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "./types";
 
@@ -35,7 +36,7 @@ const getMaxSendBalance = (amount: BigNumber, gas: BigNumber, gasPrice: BigNumbe
 const getPayload = (sendTo: string, amount: BigNumber): InputEntryFunctionData => {
   return {
     function: "0x1::aptos_account::transfer_coins",
-    typeArguments: ["0x1::aptos_coin::AptosCoin"],
+    typeArguments: [APTOS_ASSET_ID],
     functionArguments: [sendTo, amount.toString()],
   };
 };

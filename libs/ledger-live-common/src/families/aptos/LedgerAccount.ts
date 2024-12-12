@@ -74,7 +74,6 @@ export default class LedgerAccount {
       throw new Error("LedgerAccount not initialized");
     }
     const response = await this.client.signTransaction(this.hdPath, Buffer.from(buffer));
-    // return Hex.fromHexString(response.signature.toString("hex"));
     return new Hex(new Uint8Array(response.signature));
   }
 
