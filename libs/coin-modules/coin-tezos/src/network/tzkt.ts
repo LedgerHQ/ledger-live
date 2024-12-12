@@ -3,7 +3,6 @@ import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
 import { APIAccount, APIBlock, APIOperation } from "./types";
-import { pickBy } from "lodash";
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -43,12 +42,14 @@ const api = {
       limit?: number;
     },
   ): Promise<APIOperation[]> {
-    console.log("TZKT", query);
-    console.log("TZKT", pickBy(query, val => val !== undefined));
+    // Remove undefined from query
+    Object.entries(query).forEach(
+      ([key, value]) => value === undefined && delete query[key as keyof typeof query],
+    );
     const { data } = await network<APIOperation[]>({
       url: URL.format({
         pathname: `${getExplorerUrl()}/v1/accounts/${address}/operations`,
-        query: pickBy(query, val => val !== undefined),
+        query,
       }),
     });
     return data;

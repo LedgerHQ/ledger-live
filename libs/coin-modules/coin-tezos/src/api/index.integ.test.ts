@@ -61,11 +61,7 @@ describe("Tezos Api", () => {
     it("returns paginated operations", async () => {
       // When
       const [tx, idx] = await module.listOperations(address, { limit: 100 });
-      console.log("TEZOS tx last", tx.slice(-1)[0])
-      console.log("TEZOS tx length", tx.length)
       const [tx2, _] = await module.listOperations(address, { limit: 100, start: idx });
-      console.log("TEZOS idx", idx)
-      console.log("TEZOS tx2 lengtj", tx2.length)
       tx.push(...tx2);
 
       // Then

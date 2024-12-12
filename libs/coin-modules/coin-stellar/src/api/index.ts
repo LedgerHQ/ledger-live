@@ -1,4 +1,9 @@
-import type { Api, Operation, Pagination, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Api,
+  Operation,
+  Pagination,
+  Transaction as ApiTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,

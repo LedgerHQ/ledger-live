@@ -21,30 +21,12 @@ export async function listOperations(
 ): Promise<[XrpOperation[], number]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
-  // const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  // blockHeight = maxLedgerVersion - blockHeight
-
-  // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
-  // const startAt = Math.max(limit, minLedgerVersion);
-
-  // console.log("min:", startAt, "max:", maxLedgerVersion);
   const transactions = await getTransactions(address, {
     limit,
     ledger_index_max: mostRecentIndex ?? maxLedgerVersion,
   });
-  console.log(transactions.length);
-  console.log(transactions[0].tx.ledger_index);
-  console.log(transactions.slice(-1)[0].tx.ledger_index);
-
-  // const tx = await getTransactions(address, {
-  //   ledger_index_min: startAt,
-  //   ledger_index_max: transactions.slice(-1)[0].tx.ledger_index,
-  // });
-
-  // console.log(tx[0].tx.ledger_index);
-  // console.log(tx.slice(-1)[0].tx.ledger_index);
 
   return [
     transactions

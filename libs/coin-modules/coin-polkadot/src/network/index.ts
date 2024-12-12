@@ -1,11 +1,6 @@
-import { hours, makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import BigNumber from "bignumber.js";
-import coinConfig from "../config";
-import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
+import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
-  getLastBlock,
   getAccount as sidecardGetAccount,
   getBalances as sidecardGetBalances,
   getMinimumBondBalance as sidecarGetMinimumBondBalance,
@@ -13,15 +8,18 @@ import {
   getStakingProgress as sidecarGetStakingProgress,
   getTransactionParams as sidecarGetTransactionParams,
   getValidators as sidecarGetValidators,
+  isNewAccount as sidecarIsNewAccount,
   isControllerAddress as sidecarIsControllerAddress,
   isElectionClosed as sidecarIsElectionClosed,
-  isNewAccount as sidecarIsNewAccount,
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
+  getLastBlock,
 } from "./sidecar";
-
-export { getApiPromise } from "./node";
+import BigNumber from "bignumber.js";
+import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
+import network from "@ledgerhq/live-network/network";
+import coinConfig from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
