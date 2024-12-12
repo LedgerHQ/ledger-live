@@ -1,14 +1,14 @@
-import type { BigNumber } from "bignumber.js";
-import type { Types as AptosTypes } from "aptos";
+import type { UserTransactionResponse } from "@aptos-labs/ts-sdk";
 import type {
+  Account,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
-  Account,
 } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
-export type AptosTransaction = AptosTypes.UserTransaction & {
+export type AptosTransaction = UserTransactionResponse & {
   block: {
     height: number;
     hash: string;

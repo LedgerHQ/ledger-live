@@ -1,21 +1,27 @@
-import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
-import Transport from "@ledgerhq/hw-transport";
-import HwAptos from "@ledgerhq/hw-app-aptos";
 import {
-  AptosAccount,
-  HexString,
-  MaybeHexString,
-  TransactionBuilder,
-  TxnBuilderTypes,
-  BCS,
-} from "aptos";
+  Account,
+  AccountAddress,
+  AccountAuthenticatorEd25519,
+  Ed25519PublicKey,
+  Ed25519Signature,
+  Hex,
+  RawTransaction,
+  SimpleTransaction,
+  generateSignedTransaction,
+  generateSigningMessageForTransaction,
+} from "@aptos-labs/ts-sdk";
+import HwAptos from "@ledgerhq/hw-app-aptos";
+import Transport from "@ledgerhq/hw-transport";
+import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 
 export default class LedgerAccount {
   private readonly hdPath: string;
 
   private client?: HwAptos;
   private publicKey: Buffer = Buffer.from([]);
-  private accountAddress: HexString = new HexString("");
+  private accountAddress: AccountAddress = new AccountAddress(
+    new Uint8Array(AccountAddress.LENGTH),
+  );
 
   static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
     const account = new LedgerAccount(path);
@@ -23,14 +29,14 @@ export default class LedgerAccount {
     return account;
   }
 
-  toAptosAccount(): AptosAccount {
-    return this as unknown as AptosAccount;
+  toAptosAccount(): Account {
+    return this as unknown as Account;
   }
 
   constructor(path: string, pubKey?: string) {
     this.hdPath = path;
     if (pubKey) {
-      this.publicKey = Buffer.from(HexString.ensure(pubKey).toUint8Array());
+      this.publicKey = Buffer.from(AccountAddress.from(pubKey).toUint8Array());
       this.accountAddress = this.authKey();
     }
   }
@@ -39,7 +45,7 @@ export default class LedgerAccount {
     this.client = new HwAptos(transport);
     if (!this.publicKey.length && !display) {
       const response = await this.client.getAddress(this.hdPath, display);
-      this.accountAddress = new HexString(response.address);
+      this.accountAddress = AccountAddress.from(response.address);
       this.publicKey = response.publicKey;
     }
   }
@@ -48,49 +54,50 @@ export default class LedgerAccount {
     return this.hdPath;
   }
 
-  address(): HexString {
+  address(): AccountAddress {
     return this.accountAddress;
   }
 
-  authKey(): HexString {
+  authKey(): AccountAddress {
     const hash = sha3Hash.create();
-    hash.update(this.publicKey);
+    hash.update(this.publicKey.toString("hex"));
     hash.update("\x00");
-    return HexString.fromBuffer(hash.digest());
+    return AccountAddress.from(hash.digest());
   }
 
-  pubKey(): HexString {
-    return HexString.fromBuffer(this.publicKey);
+  pubKey(): AccountAddress {
+    return AccountAddress.from(this.publicKey.toString("hex"));
   }
 
-  async asyncSignBuffer(buffer: Uint8Array): Promise<HexString> {
+  async asyncSignBuffer(buffer: Uint8Array): Promise<Hex> {
     if (!this.client) {
       throw new Error("LedgerAccount not initialized");
     }
     const response = await this.client.signTransaction(this.hdPath, Buffer.from(buffer));
-    return HexString.fromBuffer(response.signature);
+    return new Hex(new Uint8Array(response.signature));
   }
 
-  async asyncSignHexString(hexString: MaybeHexString): Promise<HexString> {
-    const toSign = HexString.ensure(hexString).toUint8Array();
+  async asyncSignHexString(hexString: AccountAddress): Promise<Hex> {
+    const isValidAddress = AccountAddress.isValid({ input: hexString });
+    if (!isValidAddress) throw new Error("Invalid account address");
+    const toSign = hexString.toUint8Array();
     return this.asyncSignBuffer(toSign);
   }
 
-  async rawToSigned(
-    rawTxn: TxnBuilderTypes.RawTransaction,
-  ): Promise<TxnBuilderTypes.SignedTransaction> {
-    const signingMessage = TransactionBuilder.getSigningMessage(rawTxn);
+  async signTransaction(rawTxn: RawTransaction): Promise<Uint8Array> {
+    const signingMessage = generateSigningMessageForTransaction({
+      rawTransaction: rawTxn,
+    } as SimpleTransaction);
     const sigHexStr = await this.asyncSignBuffer(signingMessage);
-    const signature = new TxnBuilderTypes.Ed25519Signature(sigHexStr.toUint8Array());
-    const authenticator = new TxnBuilderTypes.TransactionAuthenticatorEd25519(
-      new TxnBuilderTypes.Ed25519PublicKey(this.publicKey),
+    const signature = new Ed25519Signature(sigHexStr.toUint8Array());
+    const authenticator = new AccountAuthenticatorEd25519(
+      new Ed25519PublicKey(this.publicKey.toString("hex")),
       signature,
     );
 
-    return new TxnBuilderTypes.SignedTransaction(rawTxn, authenticator);
-  }
-
-  async signTransaction(rawTxn: TxnBuilderTypes.RawTransaction): Promise<Uint8Array> {
-    return BCS.bcsToBytes(await this.rawToSigned(rawTxn));
+    return generateSignedTransaction({
+      transaction: { rawTransaction: rawTxn } as SimpleTransaction,
+      senderAuthenticator: authenticator,
+    });
   }
 }

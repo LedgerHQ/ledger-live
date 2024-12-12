@@ -1,10 +1,15 @@
-import BigNumber from "bignumber.js";
-import { calculateAmount, getAptosAmounts, getFunctionAddress, isChangeOfAptos } from "./logic";
-
-import { processRecipients, compareAddress } from "./logic";
+import { Event, InputEntryFunctionData, WriteSetChange } from "@aptos-labs/ts-sdk";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-
-import type { Types as AptosTypes } from "aptos";
+import BigNumber from "bignumber.js";
+import { APTOS_ASSET_ID, APTOS_COIN_CHANGE } from "./constants";
+import {
+  calculateAmount,
+  compareAddress,
+  getAptosAmounts,
+  getFunctionAddress,
+  isChangeOfAptos,
+  processRecipients,
+} from "./logic";
 import type { AptosTransaction } from "./types";
 
 describe("Aptos sync logic ", () => {
@@ -34,13 +39,12 @@ describe("Aptos sync logic ", () => {
     });
   });
 
-  ///////////////////////////////////////////
   describe("getFunctionAddress", () => {
     it("should return the function address when payload contains a function", () => {
-      const payload: AptosTypes.EntryFunctionPayload = {
+      const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
-        type_arguments: [],
-        arguments: [],
+        typeArguments: [],
+        functionArguments: [],
       };
 
       const result = getFunctionAddress(payload);
@@ -49,23 +53,23 @@ describe("Aptos sync logic ", () => {
 
     it("should return undefined when payload does not contain a function", () => {
       const payload = {
-        function: "",
-        type_arguments: [],
-        arguments: [],
-      } as AptosTypes.EntryFunctionPayload;
+        function: "::::",
+        typeArguments: [],
+        functionArguments: [],
+      } as InputEntryFunctionData;
 
       const result = getFunctionAddress(payload);
       expect(result).toBeUndefined();
     });
 
     it("should return undefined when payload is empty", () => {
-      const payload = {} as AptosTypes.EntryFunctionPayload;
+      const payload = {} as InputEntryFunctionData;
 
       const result = getFunctionAddress(payload);
       expect(result).toBeUndefined();
     });
   });
-  ///////////////////////////////////////////
+
   describe("processRecipients", () => {
     let op: Operation;
 
@@ -89,10 +93,10 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should add recipient for transfer-like functions from LL account", () => {
-      const payload: AptosTypes.EntryFunctionPayload = {
+      const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
-        type_arguments: [],
-        arguments: ["0x12", "0x13", 1], //from: &signer, to: address, amount: u64
+        typeArguments: [],
+        functionArguments: ["0x12", "0x13", 1], // from: &signer, to: address, amount: u64
       };
 
       processRecipients(payload, "0x13", op, "0x1");
@@ -100,10 +104,10 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should add recipient for transfer-like functions from external account", () => {
-      const payload: AptosTypes.EntryFunctionPayload = {
+      const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
-        type_arguments: [],
-        arguments: ["0x13", "0x12", 1], //from: &signer, to: address, amount: u64
+        typeArguments: [],
+        functionArguments: ["0x13", "0x12", 1], // from: &signer, to: address, amount: u64
       };
 
       processRecipients(payload, "0x13", op, "0x1");
@@ -111,10 +115,10 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should add recipients for batch transfer functions", () => {
-      const payload: AptosTypes.EntryFunctionPayload = {
+      const payload: InputEntryFunctionData = {
         function: "0x1::aptos_account::batch_transfer_coins",
-        type_arguments: ["0x1::aptos_coin::AptosCoin"],
-        arguments: ["0x11", ["0x12", "0x13"], [1, 2]],
+        typeArguments: [APTOS_ASSET_ID],
+        functionArguments: ["0x11", ["0x12", "0x13"], [1, 2]],
       };
 
       op.senders.push("0x11");
@@ -123,23 +127,23 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should add function address as recipient for other smart contracts", () => {
-      const payload: AptosTypes.EntryFunctionPayload = {
+      const payload: InputEntryFunctionData = {
         function: "0x2::other::contract",
-        type_arguments: [],
-        arguments: ["0x11", ["0x12"], [1]],
+        typeArguments: [],
+        functionArguments: ["0x11", ["0x12"], [1]],
       };
 
       processRecipients(payload, "0x11", op, "0x2");
       expect(op.recipients).toContain("0x2");
     });
   });
-  ///////////////////////////////////////////
+
   describe("isChangeOfAptos", () => {
     it("should return true for a valid change of Aptos", () => {
       const change = {
         type: "write_resource",
         data: {
-          type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+          type: APTOS_COIN_CHANGE,
           data: {
             withdraw_events: {
               guid: {
@@ -151,7 +155,7 @@ describe("Aptos sync logic ", () => {
             },
           },
         },
-      } as unknown as AptosTypes.WriteSetChange;
+      } as unknown as WriteSetChange;
 
       const event = {
         guid: {
@@ -159,7 +163,7 @@ describe("Aptos sync logic ", () => {
           creation_number: "2",
         },
         type: "0x1::coin::WithdrawEvent",
-      } as AptosTypes.Event;
+      } as Event;
 
       const result = isChangeOfAptos(change, event, "withdraw_events");
       expect(result).toBe(true);
@@ -169,7 +173,7 @@ describe("Aptos sync logic ", () => {
       const change = {
         type: "write_resource",
         data: {
-          type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+          type: APTOS_COIN_CHANGE,
           data: {
             withdraw_events: {
               guid: {
@@ -181,7 +185,7 @@ describe("Aptos sync logic ", () => {
             },
           },
         },
-      } as unknown as AptosTypes.WriteSetChange;
+      } as unknown as WriteSetChange;
 
       const event = {
         guid: {
@@ -189,7 +193,7 @@ describe("Aptos sync logic ", () => {
           creation_number: "1",
         },
         type: "0x1::coin::WithdrawEvent",
-      } as AptosTypes.Event;
+      } as Event;
 
       const result = isChangeOfAptos(change, event, "withdraw_events");
       expect(result).toBe(false);
@@ -199,7 +203,7 @@ describe("Aptos sync logic ", () => {
       const change = {
         type: "write_module",
         data: {},
-      } as unknown as AptosTypes.WriteSetChange;
+      } as unknown as WriteSetChange;
 
       const event = {
         guid: {
@@ -207,7 +211,7 @@ describe("Aptos sync logic ", () => {
           creation_number: "1",
         },
         type: "0x1::coin::WithdrawEvent",
-      } as AptosTypes.Event;
+      } as Event;
 
       const result = isChangeOfAptos(change, event, "withdraw_events");
       expect(result).toBe(false);
@@ -229,7 +233,7 @@ describe("Aptos sync logic ", () => {
             },
           },
         },
-      } as unknown as AptosTypes.WriteSetChange;
+      } as unknown as WriteSetChange;
 
       const event = {
         guid: {
@@ -237,13 +241,13 @@ describe("Aptos sync logic ", () => {
           creation_number: "2",
         },
         type: "0x1::coin::WithdrawEvent",
-      } as AptosTypes.Event;
+      } as Event;
 
       const result = isChangeOfAptos(change, event, "withdraw_events");
       expect(result).toBe(false);
     });
   });
-  ///////////////////////////////////////////
+
   describe("getAptosAmounts", () => {
     it("should calculate the correct amounts for withdraw and deposit events", () => {
       const tx = {
@@ -273,7 +277,7 @@ describe("Aptos sync logic ", () => {
           {
             type: "write_resource",
             data: {
-              type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+              type: APTOS_COIN_CHANGE,
               data: {
                 withdraw_events: {
                   guid: {
@@ -332,7 +336,7 @@ describe("Aptos sync logic ", () => {
           {
             type: "write_resource",
             data: {
-              type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+              type: APTOS_COIN_CHANGE,
               data: {
                 withdraw_events: {
                   guid: {
@@ -386,7 +390,7 @@ describe("Aptos sync logic ", () => {
       expect(result.amount_out).toEqual(new BigNumber(0));
     });
   });
-  ///////////////////////////////////////////
+
   describe("calculateAmount", () => {
     it("should calculate the correct amount when the address is the sender", () => {
       const address = "0x11";

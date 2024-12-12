@@ -121,6 +121,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
+    "@aptos-labs/ts-sdk": "^1.33.0",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^3.0.1",
@@ -208,7 +209,6 @@
     "@zondax/ledger-filecoin": "^0.11.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
-    "aptos": "^1.21.0",
     "async": "^3.2.3",
     "axios": "1.7.7",
     "bech32": "^1.1.3",

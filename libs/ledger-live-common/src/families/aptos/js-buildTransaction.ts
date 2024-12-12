@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import { TxnBuilderTypes } from "aptos";
+import { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account } from "@ledgerhq/types-live";
-
+import BigNumber from "bignumber.js";
 import { AptosAPI } from "./api";
+import { APTOS_ASSET_ID } from "./constants";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "./types";
 
@@ -10,7 +10,7 @@ const buildTransaction = async (
   account: Account,
   transaction: Transaction,
   aptosClient: AptosAPI,
-): Promise<TxnBuilderTypes.RawTransaction> => {
+): Promise<RawTransaction> => {
   const amount = transaction.useAllAmount
     ? getMaxSendBalance(
         account.spendableBalance,
@@ -33,11 +33,11 @@ const getMaxSendBalance = (amount: BigNumber, gas: BigNumber, gasPrice: BigNumbe
   return amount;
 };
 
-const getPayload = (sendTo: string, amount: BigNumber) => {
+const getPayload = (sendTo: string, amount: BigNumber): InputEntryFunctionData => {
   return {
     function: "0x1::aptos_account::transfer_coins",
-    type_arguments: ["0x1::aptos_coin::AptosCoin"],
-    arguments: [sendTo, amount.toString()],
+    typeArguments: [APTOS_ASSET_ID],
+    functionArguments: [sendTo, amount.toString()],
   };
 };
 
