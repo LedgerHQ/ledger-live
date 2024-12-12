@@ -10,7 +10,7 @@ import { AnimatedInputSelect } from "@ledgerhq/native-ui";
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { MemoTypeDrawer, MEMO_TYPES } from "./MemoTypeDrawer";
 
-export default ({ onChange }: MemoTagInputProps<StellarTransaction>) => {
+export default ({ onChange, ...inputProps }: MemoTagInputProps<StellarTransaction>) => {
   const { t } = useTranslation();
 
   const [memoType, setMemoType] = useState<MemoType>("NO_MEMO");
@@ -43,6 +43,7 @@ export default ({ onChange }: MemoTagInputProps<StellarTransaction>) => {
   return (
     <>
       <AnimatedInputSelect
+        {...inputProps}
         placeholder={t("send.summary.memo.value")}
         value={memoValue}
         onChange={handleChangeValue}
