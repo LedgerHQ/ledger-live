@@ -14,19 +14,36 @@ export async function listOperations(
   {
     limit,
     mostRecentIndex,
+    startAt,
   }: {
-    limit: number;
+    limit?: number;
     mostRecentIndex?: number | undefined;
+    startAt?: number;
   },
 ): Promise<[XrpOperation[], number]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
+  const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  const transactions = await getTransactions(address, {
-    limit,
+  let options: { ledger_index_min?: number; ledger_index_max?: number; limit?: number } = {
     ledger_index_max: mostRecentIndex ?? maxLedgerVersion,
-  });
+  };
+  if (limit) {
+    options = {
+      ...options,
+      limit,
+    };
+  }
+  if (startAt) {
+    options = {
+      ...options,
+      // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
+      ledger_index_min: Math.max(startAt ?? 0, minLedgerVersion),
+    };
+  }
+
+  const transactions = await getTransactions(address, options);
 
   return [
     transactions

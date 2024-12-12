@@ -1,4 +1,4 @@
-import api from "../network";
+import { tzkt } from "../network";
 import {
   type APIDelegationType,
   type APITransactionType,
@@ -23,7 +23,7 @@ export async function listOperations(
   address: string,
   { lastId, limit }: { lastId?: number; limit?: number },
 ): Promise<[Operation[], number]> {
-  const operations = await api.tzkt.getAccountOperations(address, { lastId, limit });
+  const operations = await tzkt.getAccountOperations(address, { lastId, limit });
   return [
     operations
       .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))

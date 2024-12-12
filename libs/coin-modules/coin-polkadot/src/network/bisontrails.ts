@@ -23,23 +23,6 @@ const LIMIT = 200;
  */
 const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
 
-type AtlasOperation = {
-  blockNumber: number;
-  timestamp: number;
-  nonce: number;
-  hash: string;
-  signer: string;
-  affectedAddress1: string;
-  affectedAddress2: string;
-  method: string;
-  section: string;
-  index: number;
-  isSuccess: boolean;
-  amount: number;
-  partialFee: number;
-  isBatch: boolean;
-};
-
 /**
  * Fetch operation lists from indexer
  *
@@ -211,7 +194,7 @@ const getValue = (extrinsic: any, type: OperationType): BigNumber => {
 const extrinsicToOperation = (
   addr: string,
   accountId: string,
-  extrinsic: AtlasOperation,
+  extrinsic: ExplorerExtrinsic,
 ): PolkadotOperation | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
@@ -236,7 +219,7 @@ const extrinsicToOperation = (
     extra: getExtra(type, extrinsic),
     senders: [extrinsic.signer],
     recipients: [extrinsic.affectedAddress1, extrinsic.affectedAddress2]
-      .filter(Boolean)
+      .filter(addr => addr !== undefined)
       .filter(isValidAddress),
     transactionSequenceNumber: extrinsic.signer === addr ? extrinsic.nonce : undefined,
     hasFailed: !extrinsic.isSuccess,

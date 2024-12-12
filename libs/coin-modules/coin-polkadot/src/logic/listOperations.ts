@@ -22,7 +22,7 @@ export async function listOperations(
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
 
-  return [operations.map(convertToCoreOperation(addr)), operations.slice(-1)[0].id];
+  return [operations.map(convertToCoreOperation(addr)), operations.slice(-1)[0].blockHeight ?? 0];
 }
 
 const convertToCoreOperation = (address: string) => (operation: PolkadotOperation) => {

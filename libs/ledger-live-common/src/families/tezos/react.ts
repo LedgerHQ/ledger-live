@@ -1,29 +1,24 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import { Baker, Delegation } from "@ledgerhq/coin-tezos/types/index";
-import {
-  getAccountDelegationSync,
-  getBakerSync,
-  listBakers,
-  listBakersWithDefault,
-  loadAccountDelegation,
-  loadBaker,
-} from "@ledgerhq/coin-tezos/network/index";
+import { bakers } from "@ledgerhq/coin-tezos/network/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [bakers, setBakers] = useState<Baker[]>(() => listBakersWithDefault(whitelistAddresses));
+  const [bakers, setBakers] = useState<Baker[]>(() =>
+    bakers.listBakersWithDefault(whitelistAddresses),
+  );
   useEffect(() => {
-    listBakers(whitelistAddresses).then(setBakers);
-  }, [whitelistAddresses]);
+    bakers.listBakers(whitelistAddresses).then(setBakers);
+  }, [bakers, whitelistAddresses]);
 
   return bakers;
 }
 
 export function useDelegation(account: AccountLike): Delegation | null | undefined {
-  const [delegation, setDelegation] = useState(() => getAccountDelegationSync(account));
+  const [delegation, setDelegation] = useState(() => bakers.getAccountDelegationSync(account));
   useEffect(() => {
     let cancelled = false;
-    loadAccountDelegation(account).then(delegation => {
+    bakers.loadAccountDelegation(account).then(delegation => {
       if (cancelled) return;
       setDelegation(delegation);
     });
@@ -36,9 +31,9 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
 }
 
 export function useBaker(addr: string): Baker | undefined {
-  const [baker, setBaker] = useState(() => getBakerSync(addr));
+  const [baker, setBaker] = useState(() => bakers.getBakerSync(addr));
 
-  loadBaker(addr).then(setBaker);
+  bakers.loadBaker(addr).then(setBaker);
 
   return baker;
 }
