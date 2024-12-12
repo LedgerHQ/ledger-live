@@ -1,6 +1,5 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -29,7 +28,7 @@ const validators = [
     xrayTicket: "B2CQA-2731, B2CQA-2763",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"), //Issue with the provider - CI ✅ because failling code is commented - LIVE-14500
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"),
     xrayTicket: "B2CQA-2730, B2CQA-2764",
   },
   {
@@ -37,7 +36,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"), //Issue with the provider - CI ✅ because failling code is commented - LIVE-14500
+    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -78,7 +77,7 @@ test.describe("Delegate flows", () => {
           annotation: { type: "TMS", description: account.xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations).split(", "));
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
@@ -105,7 +104,7 @@ test.describe("Delegate flows", () => {
           await app.drawer.close();
 
           await app.layout.syncAccounts();
-          await app.account.selectAndClickOnLastOperation(OperationType.DELEGATED);
+          await app.account.clickOnLastOperation();
           await app.delegateDrawer.expectDelegationInfos(account.delegate);
         },
       );
@@ -135,7 +134,7 @@ test.describe("Delegate flows", () => {
           annotation: { type: "TMS", description: validator.xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations).split(", "));
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
@@ -153,13 +152,7 @@ test.describe("Delegate flows", () => {
           await app.delegate.openSearchProviderModal();
           await app.delegate.checkValidatorListIsVisible();
           await app.delegate.selectProviderOnRow(2);
-          // TODO: verification skipped due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
-          if (
-            ![Currency.SOL.name, Currency.ADA.name].includes(
-              validator.delegate.account.currency.name,
-            )
-          )
-            await app.delegate.closeProviderList(2);
+          await app.delegate.closeProviderList(2);
         },
       );
     });
@@ -191,7 +184,7 @@ test.describe("Delegate flows", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToPortfolio();
         await app.portfolio.startStakeFlow();
@@ -213,7 +206,7 @@ test.describe("Delegate flows", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToMarket();
         await app.market.search(delegateAccount.account.currency.name);
