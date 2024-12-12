@@ -1,7 +1,7 @@
 import {
   EntryFunctionPayloadResponse,
   Event,
-  TransactionPayloadResponse,
+  InputEntryFunctionData,
   WriteSetChange,
   WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
@@ -93,6 +93,14 @@ const getBlankOperation = (
   hasFailed: false,
 });
 
+const convertFunctionPayloadResponseToInputEntryFunctionData = (
+  payload: EntryFunctionPayloadResponse,
+): InputEntryFunctionData => ({
+  function: payload.function,
+  typeArguments: payload.type_arguments,
+  functionArguments: payload.arguments,
+});
+
 export const txsToOps = (
   info: { address: string },
   id: string,
@@ -106,7 +114,9 @@ export const txsToOps = (
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
-      const payload = tx.payload;
+      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
+        tx.payload as EntryFunctionPayloadResponse,
+      );
 
       const function_address = getFunctionAddress(payload);
 
@@ -142,37 +152,41 @@ export function compareAddress(addressA: string, addressB: string) {
   );
 }
 
-export function getFunctionAddress(payload: TransactionPayloadResponse): string | undefined {
+export function getFunctionAddress(payload: InputEntryFunctionData): string | undefined {
   if ("function" in payload) {
     const parts = payload.function.split("::");
-    return parts.length === 3 ? parts[0] : undefined;
+    return parts.length === 3 && parts[0].length ? parts[0] : undefined;
   }
   return undefined;
 }
 
 export function processRecipients(
-  payload: TransactionPayloadResponse,
+  payload: InputEntryFunctionData,
   address: string,
   op: Operation,
   function_address: string,
 ): void {
   // get recipients buy 3 groups
   if (
-    (TRANSFER_TYPES.includes((payload as EntryFunctionPayloadResponse).function) ||
-      DELEGATION_POOL_TYPES.includes((payload as EntryFunctionPayloadResponse).function)) &&
-    "arguments" in payload
+    (TRANSFER_TYPES.includes(payload.function) ||
+      DELEGATION_POOL_TYPES.includes(payload.function)) &&
+    payload.functionArguments &&
+    payload.functionArguments.length > 1 &&
+    typeof payload.functionArguments[1] === "string"
   ) {
     // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.arguments[1]);
+    op.recipients.push(payload.functionArguments[1].toString());
   } else if (
-    BATCH_TRANSFER_TYPES.includes((payload as EntryFunctionPayloadResponse).function) &&
-    "arguments" in payload
+    BATCH_TRANSFER_TYPES.includes(payload.function) &&
+    payload.functionArguments &&
+    payload.functionArguments.length > 1 &&
+    Array.isArray(payload.functionArguments[1])
   ) {
     // 2. Batch function, to validate we are in the recipients list
     if (!compareAddress(op.senders[0], address)) {
-      for (const recipient of payload.arguments[1]) {
-        if (compareAddress(recipient, address)) {
-          op.recipients.push(recipient);
+      for (const recipient of payload.functionArguments[1]) {
+        if (recipient && compareAddress(recipient.toString(), address)) {
+          op.recipients.push(recipient.toString());
         }
       }
     }
