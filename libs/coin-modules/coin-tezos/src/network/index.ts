@@ -1,2 +1,4 @@
-export * from "./tzkt";
-export * from "./bakers";
+import tzkt, { fetchAllTransactions } from "./tzkt";
+import * as bakers from "./bakers";
+
+export default { bakers, tzkt, fetchAllTransactions };

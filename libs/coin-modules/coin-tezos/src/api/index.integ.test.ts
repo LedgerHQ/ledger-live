@@ -6,7 +6,7 @@ import { createApi } from ".";
  */
 describe("Tezos Api", () => {
   let module: Api;
-  const address = "tz1THUNARo58aD5YdNGYPnWNnvd8yHPrMdsF";
+  const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
     module = createApi({
@@ -43,19 +43,34 @@ describe("Tezos Api", () => {
     });
   });
 
-  describe("listOperations", () => {
+  describe.only("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const result = await module.listOperations(address, 0);
+      const [tx, _] = await module.listOperations(address, { limit: 100 });
 
       // Then
-      expect(result.length).toBeGreaterThanOrEqual(1);
-      result.forEach(operation => {
+      expect(tx.length).toBeGreaterThanOrEqual(1);
+      tx.forEach(operation => {
         expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
+    });
+
+    it("returns paginated operations", async () => {
+      // When
+      const [tx, idx] = await module.listOperations(address, { limit: 100 });
+      console.log("TEZOS tx last", tx.slice(-1)[0])
+      console.log("TEZOS tx length", tx.length)
+      const [tx2, _] = await module.listOperations(address, { limit: 100, start: idx });
+      console.log("TEZOS idx", idx)
+      console.log("TEZOS tx2 lengtj", tx2.length)
+      tx.push(...tx2);
+
+      // Then
+      const checkSet = new Set(tx.map(elt => elt.hash));
+      expect(checkSet.size).toEqual(tx.length);
     });
   });
 

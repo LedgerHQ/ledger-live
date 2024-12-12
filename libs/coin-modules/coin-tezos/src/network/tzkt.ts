@@ -3,6 +3,7 @@ import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
 import { APIAccount, APIBlock, APIOperation } from "./types";
+import { pickBy } from "lodash";
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -33,23 +34,31 @@ const api = {
     });
     return data;
   },
+  // https://api.tzkt.io/#operation/Accounts_GetOperations
   async getAccountOperations(
     address: string,
     query: {
       lastId?: number;
       sort?: number;
+      limit?: number;
     },
   ): Promise<APIOperation[]> {
+    console.log("TZKT", query);
+    console.log("TZKT", pickBy(query, val => val !== undefined));
     const { data } = await network<APIOperation[]>({
       url: URL.format({
         pathname: `${getExplorerUrl()}/v1/accounts/${address}/operations`,
-        query,
+        query: pickBy(query, val => val !== undefined),
       }),
     });
     return data;
   },
 };
 
+const sortOperation = {
+  ascending: 0,
+  descending: 1,
+};
 export const fetchAllTransactions = async (
   address: string,
   lastId?: number,
@@ -57,7 +66,10 @@ export const fetchAllTransactions = async (
   let ops: APIOperation[] = [];
   let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
   do {
-    const newOps = await api.getAccountOperations(address, { lastId, sort: 0 });
+    const newOps = await api.getAccountOperations(address, {
+      lastId,
+      sort: sortOperation.ascending,
+    });
     if (newOps.length === 0) return ops;
     ops = ops.concat(newOps);
     const last = ops[ops.length - 1];

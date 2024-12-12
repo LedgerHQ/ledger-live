@@ -27,6 +27,7 @@ export type Transaction = {
   supplement?: unknown;
 };
 
+export type Pagination = { limit: number; start?: number };
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
@@ -34,5 +35,11 @@ export type Api = {
   estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
   getBalance: (address: string) => Promise<bigint>;
   lastBlock: () => Promise<BlockInfo>;
-  listOperations: (address: string, blockHeight: number) => Promise<Operation[]>;
+  /**
+   *
+   * @param address
+   * @param pagination
+   * @returns Operations found with the oldest "index". This last value can be used for pagination.
+   */
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], number]>;
 };

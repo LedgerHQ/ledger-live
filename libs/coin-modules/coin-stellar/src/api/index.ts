@@ -1,4 +1,4 @@
-import type { Api, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
+import type { Api, Operation, Pagination, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
@@ -20,7 +20,7 @@ export function createApi(config: StellarConfig): Api {
     estimateFees,
     getBalance,
     lastBlock,
-    listOperations,
+    listOperations: operations,
   };
 }
 
@@ -61,3 +61,8 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   }
   return combine(tx, signature, pubkey);
 }
+
+const operations = async (
+  address: string,
+  { limit, start }: Pagination,
+): Promise<[Operation[], number]> => listOperations(address, { limit, cursor: start });

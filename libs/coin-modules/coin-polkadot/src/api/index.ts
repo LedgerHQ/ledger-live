@@ -1,4 +1,4 @@
-import type { Api, Transaction as ApiTransaction } from "@ledgerhq/coin-framework/api/index";
+import type { Api, Transaction as ApiTransaction, Pagination } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -23,7 +23,7 @@ export function createApi(config: PolkadotConfig): Api {
     estimateFees: estimate,
     getBalance,
     lastBlock,
-    listOperations,
+    listOperations: operations,
   };
 }
 
@@ -42,3 +42,6 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   const tx = await craftEstimationTransaction(addr, amount);
   return estimateFees(tx);
 }
+
+const operations = async (addr: string, { limit, start }: Pagination) =>
+  listOperations(addr, { limit, startAt: start });
