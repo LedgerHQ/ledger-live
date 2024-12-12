@@ -1,28 +1,36 @@
-import { AptosClient, TxnBuilderTypes } from "aptos";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import type { Types as AptosTypes } from "aptos";
-import BigNumber from "bignumber.js";
-import network from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
-import { isUndefined } from "lodash";
-
-import { isTestnet } from "../logic";
 import {
-  GetAccountTransactionsDataQuery,
-  GetAccountTransactionsDataQueryVariables,
-} from "./graphql/types";
+  AccountData,
+  Aptos,
+  AptosApiType,
+  AptosConfig,
+  Ed25519PublicKey,
+  GasEstimation,
+  InputEntryFunctionData,
+  InputGenerateTransactionOptions,
+  MimeType,
+  post,
+  RawTransaction,
+  SimpleTransaction,
+  TransactionResponse,
+  UserTransactionResponse,
+} from "@aptos-labs/ts-sdk";
+import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network/network";
+import BigNumber from "bignumber.js";
+import isUndefined from "lodash/isUndefined";
+import { APTOS_ASSET_ID } from "../constants";
+import { isTestnet } from "../logic";
+import type { AptosTransaction, TransactionOptions } from "../types";
 import {
   GetAccountTransactionsData,
   GetAccountTransactionsDataGt,
   GetAccountTransactionsDataLt,
 } from "./graphql/queries";
-
-import type {
-  AptosResource,
-  AptosCoinStoreResource,
-  AptosTransaction,
-  Transaction,
-} from "../types";
+import {
+  GetAccountTransactionsDataQuery,
+  GetAccountTransactionsDataQueryVariables,
+} from "./graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -34,13 +42,18 @@ const getIndexerEndpoint = (currencyId: string) =>
 export class AptosAPI {
   private apiUrl: string;
   private indexerUrl: string;
-  private aptosClient: AptosClient;
+  private aptosConfig: AptosConfig;
+  private aptosClient: Aptos;
   private apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
     this.apiUrl = getApiEndpoint(currencyId);
     this.indexerUrl = getIndexerEndpoint(currencyId);
-    this.aptosClient = new AptosClient(this.apiUrl);
+    this.aptosConfig = new AptosConfig({
+      fullnode: this.apiUrl,
+      indexer: this.indexerUrl,
+    });
+    this.aptosClient = new Aptos(this.aptosConfig);
     this.apolloClient = new ApolloClient({
       uri: this.indexerUrl,
       cache: new InMemoryCache(),
@@ -50,7 +63,115 @@ export class AptosAPI {
     });
   }
 
-  async fetchTransactions(address: string, lt?: string, gt?: string) {
+  async getAccount(address: string): Promise<AccountData> {
+    return this.aptosClient.getAccountInfo({ accountAddress: address });
+  }
+
+  async getAccountInfo(address: string, startAt: string) {
+    const [balance, transactions, blockHeight] = await Promise.all([
+      this.getBalance(address),
+      this.fetchTransactions(address, undefined, startAt),
+      this.getHeight(),
+    ]);
+
+    return {
+      balance,
+      transactions,
+      blockHeight,
+    };
+  }
+
+  async estimateGasPrice(): Promise<GasEstimation> {
+    return this.aptosClient.getGasPriceEstimation();
+  }
+
+  async generateTransaction(
+    address: string,
+    payload: InputEntryFunctionData,
+    options: TransactionOptions,
+  ): Promise<RawTransaction> {
+    const opts: Partial<InputGenerateTransactionOptions> = {};
+    if (!isUndefined(options.maxGasAmount)) {
+      opts.maxGasAmount = Number(options.maxGasAmount);
+    }
+
+    if (!isUndefined(options.gasUnitPrice)) {
+      opts.gasUnitPrice = Number(options.gasUnitPrice);
+    }
+
+    if (!isUndefined(options.sequenceNumber)) {
+      opts.accountSequenceNumber = Number(options.sequenceNumber);
+    }
+
+    if (!isUndefined(options.expirationTimestampSecs)) {
+      opts.expireTimestamp = Number(options.expirationTimestampSecs);
+    } else {
+      try {
+        const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
+        opts.expireTimestamp = Number(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
+      } catch (_) {
+        // skip
+      }
+    }
+
+    return this.aptosClient.transaction.build
+      .simple({
+        sender: address,
+        data: payload,
+        options: opts,
+      })
+      .then(t => t.rawTransaction)
+      .catch((error: any) => {
+        throw error;
+      });
+  }
+
+  async simulateTransaction(
+    address: Ed25519PublicKey,
+    tx: RawTransaction,
+    options = {
+      estimateGasUnitPrice: true,
+      estimateMaxGasAmount: true,
+      estimatePrioritizedGasUnitPrice: false,
+    },
+  ): Promise<UserTransactionResponse[]> {
+    return this.aptosClient.transaction.simulate.simple({
+      signerPublicKey: address,
+      transaction: { rawTransaction: tx } as SimpleTransaction,
+      options,
+    });
+  }
+
+  async broadcast(signature: string): Promise<string> {
+    const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
+    const pendingTx = await post({
+      contentType: MimeType.BCS_SIGNED_TRANSACTION,
+      aptosConfig: this.aptosClient.config,
+      body: txBytes,
+      path: "transactions",
+      type: AptosApiType.FULLNODE,
+      originMethod: "",
+    });
+    return (pendingTx.data as TransactionResponse).hash;
+  }
+
+  private async getBalance(address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::coin::balance",
+          typeArguments: [APTOS_ASSET_ID],
+          functionArguments: [address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (e: any) {
+      return new BigNumber(0);
+    }
+  }
+
+  private async fetchTransactions(address: string, lt?: string, gt?: string) {
     if (!address) {
       return [];
     }
@@ -87,9 +208,11 @@ export class AptosAPI {
     );
   }
 
-  async richItemByVersion(version: number): Promise<AptosTransaction | null> {
+  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
     try {
-      const tx: AptosTypes.Transaction = await this.aptosClient.getTransactionByVersion(version);
+      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
+        ledgerVersion: version,
+      });
       const block = await this.getBlock(version);
       return {
         ...tx,
@@ -97,106 +220,6 @@ export class AptosAPI {
       } as AptosTransaction;
     } catch (error) {
       return null;
-    }
-  }
-
-  async getAccount(address: string): Promise<AptosTypes.AccountData> {
-    return this.aptosClient.getAccount(address);
-  }
-
-  async getAccountInfo(address: string, startAt: string) {
-    const [balance, transactions, blockHeight] = await Promise.all([
-      this.getBalance(address),
-      this.fetchTransactions(address, undefined, startAt),
-      this.getHeight(),
-    ]);
-
-    return {
-      balance,
-      transactions,
-      blockHeight,
-    };
-  }
-
-  async estimateGasPrice(): Promise<AptosTypes.GasEstimation> {
-    return this.aptosClient.estimateGasPrice();
-  }
-
-  async generateTransaction(
-    address: string,
-    payload: AptosTypes.EntryFunctionPayload,
-    options: Transaction["options"],
-  ): Promise<TxnBuilderTypes.RawTransaction> {
-    const opts: Partial<AptosTypes.SubmitTransactionRequest> = {};
-    if (!isUndefined(options.maxGasAmount)) {
-      opts.max_gas_amount = BigNumber(options.maxGasAmount).toString();
-    }
-
-    if (!isUndefined(options.gasUnitPrice)) {
-      opts.gas_unit_price = BigNumber(options.gasUnitPrice).toString();
-    }
-
-    if (!isUndefined(options.sequenceNumber)) {
-      opts.sequence_number = BigNumber(options.sequenceNumber).toString();
-    }
-
-    if (!isUndefined(options.expirationTimestampSecs)) {
-      opts.expiration_timestamp_secs = BigNumber(options.expirationTimestampSecs).toString();
-    }
-
-    const tx = await this.aptosClient.generateTransaction(address, payload, opts);
-
-    let serverTimestamp = tx.expiration_timestamp_secs;
-    if (isUndefined(opts.expiration_timestamp_secs)) {
-      try {
-        const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
-        serverTimestamp = BigInt(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
-      } catch (_) {
-        // skip
-      }
-    }
-
-    const ntx = new TxnBuilderTypes.RawTransaction(
-      tx.sender,
-      tx.sequence_number,
-      tx.payload,
-      tx.max_gas_amount,
-      tx.gas_unit_price,
-      serverTimestamp,
-      tx.chain_id,
-    );
-
-    return ntx;
-  }
-
-  async simulateTransaction(
-    address: TxnBuilderTypes.Ed25519PublicKey,
-    tx: TxnBuilderTypes.RawTransaction,
-    options = {
-      estimateGasUnitPrice: true,
-      estimateMaxGasAmount: true,
-      estimatePrioritizedGasUnitPrice: false,
-    },
-  ): Promise<AptosTypes.UserTransaction[]> {
-    return this.aptosClient.simulateTransaction(address, tx, options);
-  }
-
-  async broadcast(signature: string): Promise<string> {
-    const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    const pendingTx = await this.aptosClient.submitTransaction(txBytes);
-    return pendingTx.hash;
-  }
-
-  private async getBalance(address: string): Promise<BigNumber> {
-    try {
-      const balanceRes = await this.aptosClient.getAccountResource(
-        address,
-        "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
-      );
-      const balance = (balanceRes as AptosResource<AptosCoinStoreResource>).data.coin.value;
-      return new BigNumber(balance);
-    } catch (e: any) {
-      return new BigNumber(0);
     }
   }
 
@@ -209,7 +232,7 @@ export class AptosAPI {
   }
 
   private async getBlock(version: number) {
-    const block = await this.aptosClient.getBlockByVersion(version);
+    const block = await this.aptosClient.getBlockByVersion({ ledgerVersion: version });
     return {
       height: parseInt(block.block_height),
       hash: block.block_hash,

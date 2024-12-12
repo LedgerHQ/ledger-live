@@ -1,18 +1,22 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
-
-import type { Types as AptosTypes } from "aptos";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { AptosTransaction, Transaction } from "./types";
-import { encodeOperationId } from "../../operation";
-
 import {
-  TRANSFER_TYPES,
-  DELEGATION_POOL_TYPES,
-  BATCH_TRANSFER_TYPES,
-  DIRECTION,
+  EntryFunctionPayloadResponse,
+  Event,
+  InputEntryFunctionData,
+  WriteSetChange,
+  WriteSetChangeWriteResource,
+} from "@aptos-labs/ts-sdk";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { encodeOperationId } from "../../operation";
+import {
   APTOS_COIN_CHANGE,
+  BATCH_TRANSFER_TYPES,
+  DELEGATION_POOL_TYPES,
+  DIRECTION,
+  TRANSFER_TYPES,
 } from "./constants";
+import type { AptosTransaction, Transaction } from "./types";
 
 export const DEFAULT_GAS = 5;
 export const DEFAULT_GAS_PRICE = 100;
@@ -89,6 +93,14 @@ const getBlankOperation = (
   hasFailed: false,
 });
 
+const convertFunctionPayloadResponseToInputEntryFunctionData = (
+  payload: EntryFunctionPayloadResponse,
+): InputEntryFunctionData => ({
+  function: payload.function,
+  typeArguments: payload.type_arguments,
+  functionArguments: payload.arguments,
+});
+
 export const txsToOps = (
   info: { address: string },
   id: string,
@@ -102,7 +114,9 @@ export const txsToOps = (
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
-      const payload = tx.payload as AptosTypes.EntryFunctionPayload;
+      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
+        tx.payload as EntryFunctionPayloadResponse,
+      );
 
       const function_address = getFunctionAddress(payload);
 
@@ -110,7 +124,7 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      let { amount_in, amount_out } = getAptosAmounts(tx, address);
+      const { amount_in, amount_out } = getAptosAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
@@ -138,16 +152,16 @@ export function compareAddress(addressA: string, addressB: string) {
   );
 }
 
-export function getFunctionAddress(payload: AptosTypes.EntryFunctionPayload): string | undefined {
+export function getFunctionAddress(payload: InputEntryFunctionData): string | undefined {
   if ("function" in payload) {
     const parts = payload.function.split("::");
-    return parts.length === 3 ? parts[0] : undefined;
+    return parts.length === 3 && parts[0].length ? parts[0] : undefined;
   }
   return undefined;
 }
 
 export function processRecipients(
-  payload: AptosTypes.EntryFunctionPayload,
+  payload: InputEntryFunctionData,
   address: string,
   op: Operation,
   function_address: string,
@@ -156,16 +170,23 @@ export function processRecipients(
   if (
     (TRANSFER_TYPES.includes(payload.function) ||
       DELEGATION_POOL_TYPES.includes(payload.function)) &&
-    "arguments" in payload
+    payload.functionArguments &&
+    payload.functionArguments.length > 1 &&
+    typeof payload.functionArguments[1] === "string"
   ) {
     // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.arguments[1]);
-  } else if (BATCH_TRANSFER_TYPES.includes(payload.function) && "arguments" in payload) {
+    op.recipients.push(payload.functionArguments[1].toString());
+  } else if (
+    BATCH_TRANSFER_TYPES.includes(payload.function) &&
+    payload.functionArguments &&
+    payload.functionArguments.length > 1 &&
+    Array.isArray(payload.functionArguments[1])
+  ) {
     // 2. Batch function, to validate we are in the recipients list
     if (!compareAddress(op.senders[0], address)) {
-      for (const recipient of payload.arguments[1]) {
-        if (compareAddress(recipient, address)) {
-          op.recipients.push(recipient);
+      for (const recipient of payload.functionArguments[1]) {
+        if (recipient && compareAddress(recipient.toString(), address)) {
+          op.recipients.push(recipient.toString());
         }
       }
     }
@@ -175,25 +196,17 @@ export function processRecipients(
   }
 }
 
-function checkWriteSets(
-  tx: AptosTransaction,
-  event: AptosTypes.Event,
-  event_name: string,
-): boolean {
+function checkWriteSets(tx: AptosTransaction, event: Event, event_name: string): boolean {
   return tx.changes.some(change => {
     return isChangeOfAptos(change, event, event_name);
   });
 }
 
-export function isChangeOfAptos(
-  change: AptosTypes.WriteSetChange,
-  event: AptosTypes.Event,
-  event_name: string,
-): boolean {
+export function isChangeOfAptos(change: WriteSetChange, event: Event, event_name: string): boolean {
   // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
   // with the same guid as event
   if (change.type == "write_resource") {
-    const change_data = (change as AptosTypes.WriteSetChange_WriteResource).data;
+    const change_data = (change as WriteSetChangeWriteResource).data;
     if (change_data.type === APTOS_COIN_CHANGE) {
       const change_event_data = change_data.data[event_name];
       if (
