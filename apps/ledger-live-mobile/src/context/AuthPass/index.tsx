@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, AppState, Platform } from "react-native";
+import { StyleSheet, View, AppState } from "react-native";
 import * as Keychain from "react-native-keychain";
 import type { TFunction } from "i18next";
 import { connect } from "react-redux";
@@ -110,10 +110,7 @@ class AuthPass extends PureComponent<Props, State> {
 
   // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
   isBackgrounded = (appState: string) => {
-    const isAppInBackground =
-      Platform.OS === "ios" ? appState === "background" : appState.match(/inactive|background/);
-
-    return isAppInBackground;
+    return appState.match(/inactive|background/);
   };
 
   // If the app reopened from the background, lock the app
