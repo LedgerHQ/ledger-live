@@ -4,6 +4,12 @@ import celo from "./datasets/celo.scanAccounts.1";
 import type { Transaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
 
+const { Buffer } = require("../../../node_modules/buffer");
+
+Object.defineProperties(globalThis, {
+  Buffer: { value: Buffer },
+});
+
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
