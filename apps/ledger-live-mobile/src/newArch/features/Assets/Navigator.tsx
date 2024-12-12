@@ -1,51 +1,43 @@
-import React, { useCallback, useMemo } from "react";
-import { Platform } from "react-native";
+import React, { useCallback } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTheme } from "styled-components/native";
-import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { track } from "~/analytics";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
-import { AssetsNavigatorParamsList } from "./types";
 import AssetsList from "./screens/AssetsList";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { track } from "~/analytics";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Navigator() {
-  const { colors } = useTheme();
-  const route = useRoute();
+interface NavigatorProps {
+  Stack: ReturnType<typeof createStackNavigator<BaseNavigatorStackParamList>>;
+}
 
-  const onClose = useCallback(() => {
+export default function Navigator({ Stack }: NavigatorProps) {
+  const navigation = useNavigation();
+
+  const handleGoBack = useCallback(() => {
     track("button_clicked", {
-      button: "Close",
-      screen: route.name,
+      button: "Back",
+      page: "Assets",
     });
-  }, [route]);
+    navigation.goBack();
+  }, [navigation]);
 
-  const stackNavigationConfig = useMemo(
-    () => ({
-      ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
-    }),
-    [colors, onClose],
+  const headerLeft = useCallback(
+    () => <NavigationHeaderBackButton onPress={handleGoBack} />,
+    [handleGoBack],
   );
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        ...stackNavigationConfig,
-        gestureEnabled: Platform.OS === "ios",
-      }}
-    >
+    <Stack.Group>
       <Stack.Screen
         name={ScreenName.AssetsList}
         component={AssetsList}
         options={{
-          headerTitle: "",
           headerRight: () => null,
+          headerTitle: () => null,
+          headerLeft: headerLeft,
         }}
       />
-    </Stack.Navigator>
+    </Stack.Group>
   );
 }
-
-const Stack = createStackNavigator<AssetsNavigatorParamsList>();

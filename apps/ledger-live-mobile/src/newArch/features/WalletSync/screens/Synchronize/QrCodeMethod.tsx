@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, TabSelector } from "@ledgerhq/native-ui";
+import { DrawerTabSelector, Flex } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import ScanQrCode from "../../components/Synchronize/ScanQrCode";
 import { Options, OptionsType } from "LLM/features/WalletSync/types/Activation";
@@ -59,7 +59,7 @@ const QrCodeMethod = ({
 
   return (
     <Flex flexDirection={"column"} alignItems={"center"} rowGap={24} width={"100%"} height={"100%"}>
-      <TabSelector
+      <DrawerTabSelector
         options={[Options.SCAN, Options.SHOW_QR]}
         selectedOption={currentOption}
         handleSelectOption={handleSelectOption}

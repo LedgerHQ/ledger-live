@@ -20,12 +20,16 @@ const StyledPressable = styled(Pressable)`
   column-gap: 12px;
 `;
 
-const AddAccountButton: React.FC = () => {
+type Props = {
+  sourceScreenName: string;
+};
+
+const AddAccountButton: React.FC<Props> = ({ sourceScreenName }) => {
   const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = useState<boolean>(false);
 
   const openAddModal = () => {
-    track("button_clicked", { button: "add a new account", page: "Accounts" });
+    track("button_clicked", { button: "Add a new account", page: sourceScreenName });
     setAddModalOpened(true);
   };
   const closeAddModal = () => setAddModalOpened(false);

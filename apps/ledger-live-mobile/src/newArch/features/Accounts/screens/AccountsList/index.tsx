@@ -49,7 +49,7 @@ export default function AccountsList({ route }: Props) {
               </Text>
             </Flex>
           )}
-          {canAddAccount && <AddAccountButton />}
+          {canAddAccount && <AddAccountButton sourceScreenName="Accounts" />}
           <AccounstListView sourceScreenName={sourceScreenName} isSyncEnabled={isSyncEnabled} />
         </SafeAreaView>
       </ReactNavigationPerformanceView>

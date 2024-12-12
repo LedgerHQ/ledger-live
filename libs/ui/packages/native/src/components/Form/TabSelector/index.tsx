@@ -1,129 +1,87 @@
-import React, { useEffect } from "react";
-import Text from "../../Text";
+import React, { useState } from "react";
+import { Pressable, LayoutChangeEvent } from "react-native";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import styled from "styled-components/native";
 import Flex from "../../Layout/Flex";
-import styled, { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Text from "../../Text";
+import Box from "../../Layout/Box";
 
-const StyledTouchableOpacity = styled(TouchableOpacity)<{ width: number }>`
-  width: ${(p) => p.width}px;
+const Container = styled(Flex)`
+  height: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+  position: relative;
+`;
+
+const AnimatedBackground = styled(Animated.View)`
+  position: absolute;
+  height: 100%;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.opacityDefault.c05};
+`;
+
+const Tab = styled(Flex)`
   flex: 1;
-  height: 100%;
-`;
-
-const StyledFlex = styled(Flex)<{ isSelected: boolean }>`
-  height: 100%;
-  justify-content: center;
+  padding: 4px;
+  border-radius: 8px;
   align-items: center;
+  justify-content: center;
 `;
 
-const StyledText = styled(Text)<{ isSelected: boolean }>`
-  line-height: 14.52px;
-  overflow: visible;
-  text-align: center;
-  font-size: 12px;
-  color: ${(p) =>
-    p.isSelected ? p.theme.colors.constant.black : p.theme.colors.opacityDefault.c50};
-`;
-
-interface OptionButtonProps<T> {
-  option: T;
-  selectedOption: T;
-  handleSelectOption: (option: T) => void;
-  label: string;
-  width: number;
-}
-
-const OptionButton = <T,>({
-  option,
-  selectedOption,
-  handleSelectOption,
-  label,
-  width,
-}: OptionButtonProps<T>) => {
-  const isSelected = selectedOption === option;
-
-  return (
-    <StyledTouchableOpacity width={width} onPress={() => handleSelectOption(option)}>
-      <StyledFlex isSelected={isSelected}>
-        <StyledText fontWeight="semiBold" isSelected={isSelected} numberOfLines={1}>
-          {label}
-        </StyledText>
-      </StyledFlex>
-    </StyledTouchableOpacity>
-  );
+type TabSelectorProps = {
+  labels: string[];
+  onToggle: (value: string) => void;
 };
 
-interface TabSelectorProps<T extends string | number> {
-  options: T[];
-  selectedOption: T;
-  handleSelectOption: (option: T) => void;
-  labels: { [key in T]: string };
-}
+export default function TabSelector({ labels, onToggle }: TabSelectorProps): JSX.Element {
+  const translateX = useSharedValue(0);
+  const [containerWidth, setContainerWidth] = useState(0);
 
-export default function TabSelector<T extends string | number>({
-  options,
-  selectedOption,
-  handleSelectOption,
-  labels,
-}: TabSelectorProps<T>): JSX.Element {
-  const { colors } = useTheme();
+  const handlePress = (value: string, index: number) => {
+    onToggle(value);
+    translateX.value = (containerWidth / labels.length) * index;
+  };
 
-  const longuestLabel =
-    labels[options[0]].length > labels[options[1]].length ? options[0] : options[1];
-
-  const widthFactor = 8;
-  const margin = 20;
-  const width = labels[longuestLabel].length * widthFactor + margin;
-  const semiWidth = width / 2;
-  const translateX = useSharedValue(-semiWidth);
-
-  useEffect(() => {
-    translateX.value = withSpring(selectedOption === options[0] ? -semiWidth : semiWidth, {
-      damping: 30,
-      stiffness: 80,
-    });
-  }, [selectedOption, translateX, options]);
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }],
+      transform: [{ translateX: withTiming(translateX.value, { duration: 250 }) }],
+      width: containerWidth / labels.length,
     };
   });
 
   return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      width={width * 2 + 4}
-      height={"35px"}
-      borderRadius={"40px"}
-      bg={colors.opacityDefault.c05}
-      position={"relative"}
+    <Box
+      height="100%"
+      width="100%"
+      borderRadius={12}
+      border={1}
+      borderColor="opacityDefault.c10"
+      p={2}
     >
-      <Animated.View
-        style={[
-          {
-            position: "absolute",
-            width: width - 2,
-            height: "90%",
-            backgroundColor: colors.primary.c80,
-            borderRadius: 40,
-          },
-          animatedStyle,
-        ]}
-      />
-      {options.map((option) => (
-        <OptionButton
-          width={width}
-          key={option}
-          option={option}
-          selectedOption={selectedOption}
-          handleSelectOption={handleSelectOption}
-          label={labels[option]}
-        />
-      ))}
-    </Flex>
+      <Container onLayout={handleLayout}>
+        <AnimatedBackground style={animatedStyle} />
+        {labels.map((label, index) => (
+          <Pressable
+            hitSlop={16}
+            key={label}
+            onPress={() => handlePress(label, index)}
+            style={({ pressed }: { pressed: boolean }) => [
+              { opacity: pressed ? 0.5 : 1.0, flex: 1 },
+            ]}
+          >
+            <Tab>
+              <Text fontSize={14} fontWeight="semiBold" flexShrink={1} numberOfLines={1}>
+                {label}
+              </Text>
+            </Tab>
+          </Pressable>
+        ))}
+      </Container>
+    </Box>
   );
 }
