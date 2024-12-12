@@ -394,7 +394,7 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ (failure() && github.event_name == 'push') || (always() && inputs.slack_notif) }}
+    if: ${{ (failure() && github.event_name == 'push') || (always() && (inputs.slack_notif || github.event_name == 'schedule')) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
@@ -409,6 +409,20 @@ jobs:
             const fs = require("fs");
             const workflowLink = `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`;
             const text = `Detox tests finished: ${workflowLink}`;
+            const header = [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "divider"
+              }
+            ];
+
             const iOSResult = [
               {
                 "type": "header",
@@ -472,9 +486,15 @@ jobs:
               }
             ];
 
+            const blocks = []
+              .concat(${{ env.SPECULOS_RUN == 'false' }} ? [] : header)
+              .concat(${{ env.SPECULOS_RUN == 'true' }} ? [] : iOSResult)
+              .concat(androidResult)
+              .concat(infoBlock);
+
             const result = {
               text,
-              blocks: [...iOSResult, ...androidResult, ...infoBlock]
+              blocks
             };
 
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
@@ -487,7 +507,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
-        if: ${{ github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name) }}
+        if: ${{ github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name) || github.event_name == 'schedule' }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C05FKJ7DFAP"
