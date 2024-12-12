@@ -19,7 +19,9 @@ export default class LedgerAccount {
 
   private client?: HwAptos;
   private publicKey: Buffer = Buffer.from([]);
-  private accountAddress: AccountAddress = new AccountAddress(new Uint8Array(32));
+  private accountAddress: AccountAddress = new AccountAddress(
+    new Uint8Array(AccountAddress.LENGTH),
+  );
 
   static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
     const account = new LedgerAccount(path);
@@ -72,7 +74,8 @@ export default class LedgerAccount {
       throw new Error("LedgerAccount not initialized");
     }
     const response = await this.client.signTransaction(this.hdPath, Buffer.from(buffer));
-    return Hex.fromHexString(response.signature.toString("hex"));
+    // return Hex.fromHexString(response.signature.toString("hex"));
+    return new Hex(new Uint8Array(response.signature));
   }
 
   async asyncSignHexString(hexString: AccountAddress): Promise<Hex> {
