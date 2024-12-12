@@ -23,6 +23,7 @@
     "BRAZE_API_KEY",
     "BRAZE_CUSTOM_ENDPOINT",
     "BRAZE_IOS_API_KEY",
+    "BYPASS_CORS",
     "CI_KEYCHAIN_NAME",
     "CI_KEYCHAIN_PASSWORD",
     "DEV_TOOLS",
@@ -50,10 +51,10 @@
     "SENTRY_PROJECT",
     "SHORT_BUNDLE_ID",
     "SWAP_API_BASE",
+    "SWAP_DISABLE_APPS_INSTALL",
     "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE",
-    "BYPASS_CORS"
+    "VERBOSE"
   ],
   "ui": "tui",
   "tasks": {

@@ -1,6 +1,6 @@
-import type { DerivationMode } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
+import { bip32asBuffer } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { bip32asBuffer } from "../../crypto";
 import invariant from "invariant";
 const addressFormatMap = {
   legacy: 0,
@@ -9,26 +9,21 @@ const addressFormatMap = {
   bitcoin_cash: 3,
   bech32m: 4,
 };
+type FormatType = keyof typeof addressFormatMap;
 
-const getSerializedAddressParameters = (
-  path: string,
-  derivationMode: DerivationMode,
+export const getSerializedAddressParameters = (
+  account: Account,
   addressFormat?: string,
-): {
-  addressParameters: Buffer;
-} => {
+): Buffer => {
+  const path = account.freshAddressPath;
+  const derivationMode = account.derivationMode;
+
   const format =
     addressFormat && addressFormat in addressFormatMap
-      ? addressFormat
-      : getAddressFormatDerivationMode(derivationMode);
+      ? (addressFormat as FormatType)
+      : (getAddressFormatDerivationMode(derivationMode) as FormatType);
   invariant(Object.keys(addressFormatMap).includes(format), "unsupported format %s", format);
   const buffer = bip32asBuffer(path);
   const addressParameters = Buffer.concat([Buffer.from([addressFormatMap[format]]), buffer]);
-  return {
-    addressParameters,
-  };
-};
-
-export default {
-  getSerializedAddressParameters,
+  return addressParameters;
 };
