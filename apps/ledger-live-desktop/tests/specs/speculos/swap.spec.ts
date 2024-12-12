@@ -112,8 +112,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
-  //todo: flaky balance retrieval, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(
       Account.SOL_1,
       Account.ETH_1,
@@ -146,7 +145,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2829",
   },
-  {
+  /*{
     swap: new Swap(
       Account.ETH_USDC_1,
       Account.ETH_1,
@@ -331,11 +330,10 @@ const tooLowAmountForQuoteSwaps = [
     ),
     xrayTicket: "B2CQA-2759",
   },
-  //todo: flaky balance, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM, Provider.CHANGELLY, Rate.FLOAT),
     xrayTicket: "B2CQA-2739",
-  },*/
+  },
 ];
 
 for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
@@ -426,6 +424,7 @@ async function performSwapUntilQuoteSelectionStep(
   await app.layout.goToAccounts();
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
   await app.layout.waitForPageDomContentLoadedState();
+
   await app.layout.waitForAccountsSyncToBeDone();
   await app.swap.waitForPageNetworkIdleState();
   await app.layout.goToSwap();
