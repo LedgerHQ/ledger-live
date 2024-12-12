@@ -26,22 +26,15 @@ export async function fetchPoolDetails(
   ledgerPoolIds?: Array<string>,
 ): Promise<APIGetPoolsDetail> {
   const currentPoolIds = poolIds.length == 0 ? ledgerPoolIds : poolIds;
-  const res = await network({
+  const { data } = await network<APIGetPoolsDetail>({
     method: "GET",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
       : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
     params: { poolIds: currentPoolIds },
   });
-  if (!res || (res.data as APIGetPoolsDetail).pools.length === 0) {
-    const newRes = await network({
-      method: "GET",
-      url: isTestnet(currency)
-        ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
-        : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
-      params: { poolIds: ledgerPoolIds },
-    });
-    return newRes && (newRes.data as APIGetPoolsDetail);
+  if (data.pools.length === 0 && ledgerPoolIds) {
+    return fetchPoolDetails(currency, ledgerPoolIds);
   }
-  return res && (res.data as APIGetPoolsDetail);
+  return data;
 }
