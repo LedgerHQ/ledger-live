@@ -193,7 +193,7 @@ const transactionE2E = [
   },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
-    xrayTicket: "",
+    xrayTicket: "B2CQA-2920",
   },
 ];
 
