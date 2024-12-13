@@ -44,7 +44,7 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
@@ -100,7 +100,7 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);
