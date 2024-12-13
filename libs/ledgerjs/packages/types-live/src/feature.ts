@@ -124,7 +124,6 @@ export type CurrencyFeatures = {
   currencyZkSync: DefaultFeature;
   currencyZkSyncSepolia: DefaultFeature;
   currencyMantra: DefaultFeature;
-  currencyCryptoOrg: DefaultFeature;
 };
 
 /**

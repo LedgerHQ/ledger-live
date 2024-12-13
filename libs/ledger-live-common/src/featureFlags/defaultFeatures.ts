@@ -83,7 +83,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZkSync: DEFAULT_FEATURE,
   currencyZkSyncSepolia: DEFAULT_FEATURE,
   currencyMantra: DEFAULT_FEATURE,
-  currencyCryptoOrg: DEFAULT_FEATURE,
 };
 
 /**
