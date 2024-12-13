@@ -3163,10 +3163,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-   // Cronos POS Chain (formerly Crypto.org) Cosmos integration
-   crypto_org_cosmos: {
+  // Cronos POS Chain (formerly Crypto.org) Cosmos integration
+  crypto_org_cosmos: {
     type: "CryptoCurrency",
-    id: "crypto_org",
+    id: "crypto_org_cosmos",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
     managerAppName: "Cronos POS Chain",
