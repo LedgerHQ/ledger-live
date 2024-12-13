@@ -201,6 +201,11 @@ jobs:
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.detox.outcome }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -292,7 +297,7 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
@@ -302,13 +307,13 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: "android-test-artifacts"
+          name: "android-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts/
 
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push' || github.event_name == 'schedule') }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
