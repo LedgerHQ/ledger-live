@@ -96,7 +96,7 @@ describe("Aptos sync logic ", () => {
       const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
         typeArguments: [],
-        functionArguments: ["0x12", "0x13", 1], // from: &signer, to: address, amount: u64
+        functionArguments: ["0x13", 1], // from: &signer, to: address, amount: u64
       };
 
       processRecipients(payload, "0x13", op, "0x1");
@@ -107,7 +107,7 @@ describe("Aptos sync logic ", () => {
       const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
         typeArguments: [],
-        functionArguments: ["0x13", "0x12", 1], // from: &signer, to: address, amount: u64
+        functionArguments: ["0x12", 1], // from: &signer, to: address, amount: u64
       };
 
       processRecipients(payload, "0x13", op, "0x1");
@@ -118,7 +118,10 @@ describe("Aptos sync logic ", () => {
       const payload: InputEntryFunctionData = {
         function: "0x1::aptos_account::batch_transfer_coins",
         typeArguments: [APTOS_ASSET_ID],
-        functionArguments: ["0x11", ["0x12", "0x13"], [1, 2]],
+        functionArguments: [
+          ["0x12", "0x13"],
+          [1, 2],
+        ],
       };
 
       op.senders.push("0x11");
@@ -130,7 +133,7 @@ describe("Aptos sync logic ", () => {
       const payload: InputEntryFunctionData = {
         function: "0x2::other::contract",
         typeArguments: [],
-        functionArguments: ["0x11", ["0x12"], [1]],
+        functionArguments: [["0x12"], [1]],
       };
 
       processRecipients(payload, "0x11", op, "0x2");
