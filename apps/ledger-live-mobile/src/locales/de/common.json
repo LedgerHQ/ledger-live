@@ -971,6 +971,18 @@
       "title" : "Ungültiger Anbieter",
       "description" : "Du musst die Einstellung „Mein Ledger-Anbieter“ ändern. Öffne dazu die Einstellungen in Ledger Live, navigiere zu „Experimentelle Features“ und wähle einen anderen Anbieter aus."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Dies könnte zu niedrig sein. Bitte erhöhen"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Sequenznummer zu neu"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Sequenznummer zu alt"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaktion abgelaufen"
+    },
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
@@ -2547,7 +2559,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "version" : "Version"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "Zeigen Sie Entwickler-Apps in My Ledger an und aktivieren Sie Testnet-Apps.",
       "analytics" : "Analysen",
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren.",
+      "mevProtection" : "MEV-Schutz",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
       "personalizedRecommendations" : "Personalisierte Nutzung",
       "personalizedRecommendationsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
       "analyticsModal" : {
@@ -3786,7 +3801,16 @@
         "title" : "Einheit wählen"
       },
       "networkInfo" : "Wählen Sie die Höhe der Netzwerkgebühren, die in der Transaktion enthalten sein sollen. Die Höhe der Gebühren beeinflusst die Verarbeitungsgeschwindigkeit der Transaktion",
-      "networkInfoMaxFees" : "Dies ist der Betrag, den du maximal für diese Transaktion zahlen musst. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet."
+      "networkInfoMaxFees" : "Dies ist der Betrag, den du maximal für diese Transaktion zahlen musst. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet.",
+      "aptos" : {
+        "options" : "Optionen",
+        "gasLimit" : "Gaslimit",
+        "gasPrice" : "Gaspreis (OCTAS)",
+        "sequenceNumber" : "Sequenznummer",
+        "expTimestamp" : "Erw. Zeitstempel",
+        "setOptimalGas" : "Optimales Gas festlegen",
+        "resetSettings" : "Einstellungen zurücksetzen"
+      }
     },
     "verification" : {
       "streaming" : {
