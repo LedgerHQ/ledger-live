@@ -1,3 +1,4 @@
+import aptos from "../families/aptos/bot-specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import crypto_org from "../families/crypto_org/specs";
@@ -23,6 +24,7 @@ import tron from "@ledgerhq/coin-tron/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
+  aptos,
   casper,
   celo,
   crypto_org,

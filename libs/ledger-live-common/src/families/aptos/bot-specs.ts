@@ -6,7 +6,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction } from "./bot-deviceActions";
-import type { Transaction } from "../types";
+import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { AccountLike } from "@ledgerhq/types-live";
