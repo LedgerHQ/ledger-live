@@ -188,7 +188,7 @@
       "description" : "Ce compte n’est pas autorisé à signer cette transaction."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -208,7 +208,7 @@
       "description" : "Merci de vérifier l’adresse et réessayer."
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Merci d’ajouter des fonds à votre compte."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
@@ -971,6 +971,18 @@
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Numéro de séquence trop récent"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Numéro de séquence trop ancien"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaction expirée"
+    },
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
@@ -1002,10 +1014,10 @@
       "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
     },
     "TonMinimumRequired" : {
-      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -1397,7 +1409,7 @@
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
       "terms" : "En continuant, vous acceptez nos",
-      "termsLink" : "Conditions d’utilisation",
+      "termsLink" : "Conditions générales",
       "privacyLink" : "Politique de confidentialité",
       "and" : "et"
     },
@@ -1407,7 +1419,7 @@
       "noLedgerYetModal" : {
         "title" : "Des millions d’utilisateurs. Aucun piratage.",
         "desc" : "Sécurisez vos actifs numériques avec un appareil Ledger, pour une tranquillité d’esprit absolue.",
-        "buy" : "Acheter un wallet Ledger",
+        "buy" : "Acheter un wallet",
         "explore" : "Explorer l’application"
       },
       "setupLedger" : {
@@ -1440,7 +1452,7 @@
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Explorer sans appareil",
-      "buyALedgerNow" : "Acheter un Ledger maintenant",
+      "buyALedgerNow" : "Acheter un wallet Ledger",
       "0" : {
         "title" : "Sécurisez tous vos crypto-actifs."
       },
@@ -1762,7 +1774,7 @@
         "desc" : "Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
         "cta" : "Comment mettre à jour",
         "supportLink" : "Contacter l’Assistance Ledger",
-        "buyLedger" : "Acheter un wallet Ledger"
+        "buyLedger" : "Acheter un wallet"
       }
     },
     "stepRecoveryPhrase" : {
@@ -2547,7 +2559,8 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking"
+      "stakedAmount" : "Montant en staking",
+      "version" : "Version"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "Afficher les apps développeur dans My Ledger et autoriser les apps testnet.",
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
+      "mevProtection" : "Protection MEV",
+      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -2940,11 +2955,11 @@
     },
     "about" : {
       "title" : "À propos",
-      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app.",
+      "desc" : "Informations, Conditions générales et Politique de confidentialité de l’app.",
       "appDescription" : "Protégez, achetez, vendez, échangez, faites fructifier et gérez vos cryptos avec Ledger Live. La plateforme tout-en-un.",
       "appVersion" : "Version",
-      "termsConditions" : "Conditions d’utilisation",
-      "termsConditionsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions d’utilisation.",
+      "termsConditions" : "Conditions générales",
+      "termsConditionsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions générales.",
       "privacyPolicy" : "Politique de confidentialité",
       "privacyPolicyDesc" : "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview" : {
@@ -3362,9 +3377,9 @@
           "method" : "Taux",
           "fees" : "Frais maximaux",
           "disclaimer" : {
-            "title" : "Conditions d’utilisation",
-            "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>.",
-            "tos" : "Conditions d’utilisation",
+            "title" : "Conditions générales",
+            "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions générales de <0>{{provider}}</0>.",
+            "tos" : "Conditions générales",
             "accept" : "Accepter",
             "reject" : "Fermer"
           }
@@ -3426,9 +3441,9 @@
         "to" : "À",
         "loading" : "Chargement...",
         "disclaimer" : {
-          "title" : "Conditions d’utilisation",
-          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
-          "tos" : "Conditions d’utilisation",
+          "title" : "Conditions générales",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions générales de {{providerName}}.",
+          "tos" : "Conditions générales",
           "accept" : "Accepter"
         },
         "notAvailable" : {
@@ -3745,7 +3760,7 @@
       "maxFee" : "Frais maximaux",
       "maxPriorityFee" : "Frais de priorité max.",
       "nextBlock" : "Bloc suivant",
-      "suggested" : "Suggérés",
+      "suggested" : "Suggéré",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
@@ -3786,7 +3801,16 @@
         "title" : "Choisir une unité"
       },
       "networkInfo" : "Choisissez le montant des frais de réseau à inclure dans la transaction. Le montant des frais affecte la vitesse de traitement de la transaction.",
-      "networkInfoMaxFees" : "Il s’agit du montant maximal que vous êtes prêt(e) à payer pour cette transaction. Toute différence entre les frais de réseau maximaux et les frais réels sera remboursée."
+      "networkInfoMaxFees" : "Il s’agit du montant maximal que vous êtes prêt(e) à payer pour cette transaction. Toute différence entre les frais de réseau maximaux et les frais réels sera remboursée.",
+      "aptos" : {
+        "options" : "Options",
+        "gasLimit" : "Limite de gaz",
+        "gasPrice" : "Prix du gaz (octas)",
+        "sequenceNumber" : "Numéro de séquence",
+        "expTimestamp" : "Horodatage exp.",
+        "setOptimalGas" : "Définir le gaz optimal",
+        "resetSettings" : "Réinitialiser les paramètres"
+      }
     },
     "verification" : {
       "streaming" : {
@@ -4281,7 +4305,7 @@
       "modalDesc" : "Téléchargez Ledger Live sur votre ordinateur pour mettre à jour le micrologiciel de votre appareil.",
       "contactUs" : "Nous contacter"
     },
-    "myApps" : "Mes apps blockchain",
+    "myApps" : "Mes apps",
     "token" : {
       "title" : "Tokens {{appName}}",
       "noAppNeeded" : "{{tokenName}} est un token utilisant l’app {{appName}}. Aucune app supplémentaire à installer.",
@@ -4452,7 +4476,7 @@
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
         "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée.",
-        "descriptionNanoXBle" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nS’il s'éteint et ne redémarre pas automatiquement, veuillez le rallumer par vous-même.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
+        "descriptionNanoXBle" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nS’il s’éteint et ne redémarre pas automatiquement, veuillez le rallumer par vous-même.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -5585,7 +5609,7 @@
     "feeAction" : "Mettre à jour les frais",
     "recommendedFee" : "Frais recommandés",
     "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
-    "suggested" : "Suggérés",
+    "suggested" : "Suggéré",
     "networkCongestion" : "Activité sur le réseau",
     "networkCongestionLevel" : {
       "LOW" : "Basse",
