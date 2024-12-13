@@ -67,6 +67,7 @@ export type Transaction = TransactionCommon & {
   estimate: TransactionEstimate;
   firstEmulation: boolean;
   errors?: TransactionErrors;
+  tag?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
