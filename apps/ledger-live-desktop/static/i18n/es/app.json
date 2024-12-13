@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "Importe retirado",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versión"
     }
   },
   "operationList" : {
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "Precio de gas",
         "ethereumMaxFee" : "Tarifa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
+        "aptosGasFee" : "Tarifa de gas",
+        "aptosGasLimit" : "Límite de gas",
+        "aptosGasPrice" : "Precio del gas (OCTAS)",
+        "aptosSetOptimalGas" : "ESTABLECER GAS ÓPTIMO",
+        "aptosAdditionalSettings" : "Ajustes adicionales",
+        "aptosSequenceNumber" : "Número de secuencia",
+        "aptosExpTimestamp" : "Marca de tiempo de caducidad",
+        "aptosResetSettings" : "RESTAURAR AJUSTES",
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
         "unitPerByte" : "{{unit}} por byte",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Diagnosticar problemas de red"
+    "title" : "Diagnosticar problemas de red",
+    "myLedgerServices" : "Servicios de Mi Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Exploradores de Bitcoin",
+    "ethereumExplorers" : "Exploradores de Ethereum",
+    "countervaluesApi" : "API de contravalores",
+    "announcements" : "Anuncios",
+    "status" : "Estado",
+    "test" : "Prueba",
+    "renderer" : "RENDERIZADOR"
   },
   "systemLanguageAvailable" : {
     "title" : "¿Deseas cambiar el idioma de tu aplicación?",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
+      "mevProtection" : "Protección contra MEV",
+      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -4107,6 +4126,10 @@
         "title" : "Modo de desarrollador del exchange",
         "desc" : "Añadir información del proveedor del exchange",
         "placeholder" : "Información del proveedor del exchange en formato CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Exchange en modo de prueba para socios",
+        "desc" : "Permitir uso de la clave pública provisional del socio"
       },
       "analyticsConsole" : {
         "title" : "Permitir consola de análisis",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Cuenta no escaneada por el nodo completo",
       "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "El número de secuencia es demasiado nuevo"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "El número de secuencia es demasiado antiguo",
+      "description" : "El número de secuencia es demasiado antiguo"
+    },
+    "TransactionExpired" : {
+      "title" : "Transacción caducada"
     },
     "SwapRateExpiredError" : {
       "title" : "Tasa caducada",
