@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "المبلغ المسحوب",
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
-      "validatorsCount" : "({{number}}) مدقق"
+      "validatorsCount" : "({{number}}) مدقق",
+      "version" : "الإصدار"
     }
   },
   "operationList" : {
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "سعر الغاز",
         "ethereumMaxFee" : "الحد الأقصى للرسوم ({{unitName}})",
         "ethereumPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unitName}})",
+        "aptosGasFee" : "Gas Fee",
+        "aptosGasLimit" : "حد الغاز",
+        "aptosGasPrice" : "Gas Price (OCTAS)",
+        "aptosSetOptimalGas" : "SET OPTIMAL GAS",
+        "aptosAdditionalSettings" : "Additional settings",
+        "aptosSequenceNumber" : "Sequence Number",
+        "aptosExpTimestamp" : "Exp. Timestamp",
+        "aptosResetSettings" : "RESET SETTINGS",
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
         "unitPerByte" : "{{unit}} لكل بايت",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "استكشاف أخطاء الشبكة وإصلاحها"
+    "title" : "استكشاف أخطاء الشبكة وإصلاحها",
+    "myLedgerServices" : "خدمات My Ledger (جهازي Ledger) (مشغّل النصوص)",
+    "bitcoinExplorers" : "مستكشفات بيتكوين",
+    "ethereumExplorers" : "مستكشفات إيثريوم",
+    "countervaluesApi" : "API القيم المقابلة",
+    "announcements" : "الإعلانات",
+    "status" : "الحالة",
+    "test" : "اختبر",
+    "renderer" : "المؤدي"
   },
   "systemLanguageAvailable" : {
     "title" : "تريد تغير لغة تطبيقك؟",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
       "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
+      "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
+      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -4107,6 +4126,10 @@
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "منصة التداول في وضع الشريك الاختباري",
+        "desc" : "تمكين استخدام المفتاح العام لمرحلة الشريك"
       },
       "analyticsConsole" : {
         "title" : "السماح بوحدة تحكم التحليلات",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "لم يتم فحص الحساب بواسطة العقدة الكاملة",
       "description" : "يرجى تكوين العقدة الكاملة الخاصة بك للبحث عن الحسابات المرتبطة بهذا الجهاز. يجب أن تقوم العقدة الكاملة الخاصة بك أولاً بالبحث عن هذا الحساب في سلسلة الكتل (blockchain) قبل أن تتمكن من إضافته إلى محفظتك الاستثمارية."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Sequence number too new"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Sequence number too old",
+      "description" : "Sequence number too old"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaction expired"
     },
     "SwapRateExpiredError" : {
       "title" : "انتهت صلاحية المعدَّل",
