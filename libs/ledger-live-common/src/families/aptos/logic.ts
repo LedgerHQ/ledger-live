@@ -171,20 +171,20 @@ export function processRecipients(
     (TRANSFER_TYPES.includes(payload.function) ||
       DELEGATION_POOL_TYPES.includes(payload.function)) &&
     payload.functionArguments &&
-    payload.functionArguments.length > 1 &&
-    typeof payload.functionArguments[1] === "string"
+    payload.functionArguments.length > 0 &&
+    typeof payload.functionArguments[0] === "string"
   ) {
     // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.functionArguments[1].toString());
+    op.recipients.push(payload.functionArguments[0].toString());
   } else if (
     BATCH_TRANSFER_TYPES.includes(payload.function) &&
     payload.functionArguments &&
-    payload.functionArguments.length > 1 &&
-    Array.isArray(payload.functionArguments[1])
+    payload.functionArguments.length > 0 &&
+    Array.isArray(payload.functionArguments[0])
   ) {
     // 2. Batch function, to validate we are in the recipients list
     if (!compareAddress(op.senders[0], address)) {
-      for (const recipient of payload.functionArguments[1]) {
+      for (const recipient of payload.functionArguments[0]) {
         if (recipient && compareAddress(recipient.toString(), address)) {
           op.recipients.push(recipient.toString());
         }
