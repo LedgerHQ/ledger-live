@@ -147,7 +147,7 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un wallet Ledger",
+    "buyLedger" : "Acheter un wallet",
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
@@ -438,7 +438,7 @@
     },
     "wrongDevice" : {
       "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
-      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -502,7 +502,7 @@
           "to" : "À",
           "toExchange" : "Montant à envoyer",
           "toReceive" : "Montant à recevoir",
-          "terms" : "Conditions d’utilisation",
+          "terms" : "Conditions générales",
           "disclaimer" : {
             "description" : "En choisissant Confirmer, je reconnais et j’accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>.",
             "acceptedDescription" : "Ce service est exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>."
@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "Montant retiré",
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
-      "validatorsCount" : "Validateurs ({{number}})"
+      "validatorsCount" : "Validateurs ({{number}})",
+      "version" : "Version"
     }
   },
   "operationList" : {
@@ -2342,8 +2343,16 @@
         "ethereumGasPrice" : "Prix du gaz",
         "ethereumMaxFee" : "Frais maximaux ({{unitName}})",
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
+        "aptosGasFee" : "Frais de gaz",
+        "aptosGasLimit" : "Limite de gaz",
+        "aptosGasPrice" : "Prix du gaz (octas)",
+        "aptosSetOptimalGas" : "Définir le gaz optimal",
+        "aptosAdditionalSettings" : "Paramètres supplémentaires",
+        "aptosSequenceNumber" : "Numéro de séquence",
+        "aptosExpTimestamp" : "Horodatage exp.",
+        "aptosResetSettings" : "Réinitialiser les paramètres",
         "nextBlock" : "Bloc suivant",
-        "suggested" : "Suggérés",
+        "suggested" : "Suggéré",
         "unitPerByte" : "{{unit}} par byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Résoudre les problèmes réseau"
+    "title" : "Résoudre les problèmes réseau",
+    "myLedgerServices" : "Services My Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Explorateurs Bitcoin",
+    "ethereumExplorers" : "Explorateurs Ethereum",
+    "countervaluesApi" : "API devises de contrepartie",
+    "announcements" : "Annonces",
+    "status" : "Statut",
+    "test" : "TEST",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "Changer la langue de l’application ?",
@@ -3027,7 +3044,7 @@
         },
         "validatorGroup" : {
           "title" : "Groupe de validateurs",
-          "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+          "ledgerByFigmentTC" : "CG de Ledger by Figment",
           "totalVotes" : "Total des votes",
           "commission" : "Commission"
         }
@@ -3616,7 +3633,7 @@
       "withdrawableInfoTooltip" : "Montant total pouvant être retiré des délégations",
       "withdrawableTitle" : "Disponible au retrait",
       "statusUpdateNotice" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
-      "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+      "ledgerByFigmentTC" : "CG de Ledger by Figment",
       "emptyState" : {
         "description" : "Vous pouvez gagner des récompenses en SOL en déléguant vos actifs.",
         "info" : "Fonctionnement de la délégation",
@@ -3871,7 +3888,7 @@
           },
           "validator" : {
             "title" : "Validateurs",
-            "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment"
+            "ledgerByFigmentTC" : "CG de Ledger by Figment"
           },
           "connectDevice" : {
             "title" : "Appareil"
@@ -4084,6 +4101,8 @@
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs.",
+      "mevProtection" : "Protection MEV",
+      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
       "marketPerformanceWidget" : "Widget de suivi du marché",
       "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
@@ -4107,6 +4126,10 @@
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
         "placeholder" : "Infos prestataire Exchange (CAL)"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Exchange avec prestataire en mode test",
+        "desc" : "Activez l’utilisation de la clé publique d’un prestataire."
       },
       "analyticsConsole" : {
         "title" : "Autoriser la console analytique",
@@ -4677,7 +4700,7 @@
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
-        "termsAndConditions" : "Conditions d’utilisation",
+        "termsAndConditions" : "Conditions générales",
         "and" : "et",
         "privacyPolicy" : "Politique de confidentialité",
         "steps" : {
@@ -5365,7 +5388,7 @@
       "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire.",
       "fee" : "Frais",
       "feeInfoText" : "Des frais de transaction minimaux de 0,00001 XLM sont nécessaires pour effectuer une transaction sur Stellar.",
-      "suggested" : "Suggérés",
+      "suggested" : "Suggéré",
       "recommendedFee" : "Frais recommandés",
       "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
       "networkCongestion" : "Activité sur le réseau",
@@ -5454,7 +5477,7 @@
       "description" : "Ce compte n’est pas autorisé à signer cette transaction."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Compte non balayé par le nœud",
       "description" : "Veuillez configurer votre nœud pour rechercher les comptes associés à cet appareil. Votre nœud doit d’abord balayer la blockchain avant de pouvoir ajouter le compte à votre Portefeuille."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Numéro de séquence trop récent"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Numéro de séquence trop ancien",
+      "description" : "Numéro de séquence trop ancien"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaction expirée"
     },
     "SwapRateExpiredError" : {
       "title" : "Taux expiré",
@@ -6342,10 +6375,10 @@
       "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
     },
     "TonMinimumRequired" : {
-      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
