@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "Çekilen Tutar",
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
-      "validatorsCount" : "Doğrulayıcılar ({{number}})"
+      "validatorsCount" : "Doğrulayıcılar ({{number}})",
+      "version" : "Sürüm"
     }
   },
   "operationList" : {
@@ -2056,7 +2057,7 @@
         "flash" : "Cihazınız hazırlanıyor..."
       },
       "confirmIdentifier" : "Tanımlayıcıyı doğrulayın",
-      "confirmIdentifierText" : "İşletim sistemi\ngüncellemesini başlatmak için\n“Yükle” seçeneğine dokunun",
+      "confirmIdentifierText" : "İşletim sistemi güncellemesini başlatmak için “Install” (Yükle) seçeneğine dokunun",
       "identifier" : "Tanımlayıcı",
       "newFirmware" : "Yeni donanım yazılımı {{version}}",
       "confirmUpdate" : "Lütfen cihazınızdaki güncellemeyi onaylayın",
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "Gas ücreti",
         "ethereumMaxFee" : "Ücret Üst Limiti ({{unitName}})",
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
+        "aptosGasFee" : "Gas Ücreti",
+        "aptosGasLimit" : "Gas Limiti",
+        "aptosGasPrice" : "Gas Ücreti (OCTAS)",
+        "aptosSetOptimalGas" : "OPTİMUM GAS ÜCRETİNİ BELİRLEYİN",
+        "aptosAdditionalSettings" : "Ek ayarlar",
+        "aptosSequenceNumber" : "Sıra Numarası",
+        "aptosExpTimestamp" : "Süre Dolumu Zaman Damgası",
+        "aptosResetSettings" : "AYARLARI SIFIRLAYIN",
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
         "unitPerByte" : "bayt başına {{unit}}",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Ağ sorunlarını giderin"
+    "title" : "Ağ sorunlarını giderin",
+    "myLedgerServices" : "Ledger hizmetlerim (scriptrunner)",
+    "bitcoinExplorers" : "Bitcoin tarayıcıları",
+    "ethereumExplorers" : "Ethereum tarayıcıları",
+    "countervaluesApi" : "Karşı değerler API'si",
+    "announcements" : "Duyurular",
+    "status" : "Durum",
+    "test" : "Test et",
+    "renderer" : "İŞLEYİCİ"
   },
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+      "mevProtection" : "MEV Koruması",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -4107,6 +4126,10 @@
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Sağlayıcı Test Modunda takas",
+        "desc" : "Sağlayıcı aşamasında açık anahtar kullanımını etkinleştirin"
       },
       "analyticsConsole" : {
         "title" : "Analiz Konsoluna İzin Verin",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Hesap tam düğüm tarafından taranmadı",
       "description" : "Lütfen tam düğümünüzü bu cihazla ilişkili hesapları tarayacak şekilde yapılandırın. Hesabı portföyünüze ekleyebilmeniz için öncelikle tam düğümünüz blok zincirini bu hesap için taramalıdır."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Sıra numarası çok yeni"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Sıra numarası çok eski",
+      "description" : "Sıra numarası çok eski"
+    },
+    "TransactionExpired" : {
+      "title" : "İşlemin süresi doldu"
     },
     "SwapRateExpiredError" : {
       "title" : "Kurun Süresi Doldu",
