@@ -143,7 +143,7 @@ jobs:
               ref: "main",
               workflow_id: "release-desktop.yml",
               inputs: {
-                branch: ${{ inputs.ref }}
+                branch: "${{ inputs.ref }}"
               }
             });
       - uses: actions/github-script@v7
@@ -158,6 +158,6 @@ jobs:
               ref: "main",
               workflow_id: "release-mobile.yml",
               inputs: {
-                ref: ${{ inputs.ref }}
+                ref: "${{ inputs.ref }}"
               }
             });
