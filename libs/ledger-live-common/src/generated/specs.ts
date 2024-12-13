@@ -1,4 +1,4 @@
-import aptos from "../families/aptos/bot-specs";
+import aptos from "../families/aptos/specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import crypto_org from "../families/crypto_org/specs";
