@@ -210,7 +210,7 @@ jobs:
           - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '2' }}
           - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '3' }}
           - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '3' }}
-          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && '1' }}
+          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push') && '1' }}
 
     steps:
       - uses: actions/checkout@v4
