@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）"
+      "validatorsCount" : "バリデータ（{{number}}）",
+      "version" : "バージョン"
     }
   },
   "operationList" : {
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "ガス価格",
         "ethereumMaxFee" : "最大手数料 ({{unitName}})",
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
+        "aptosGasFee" : "ガス代",
+        "aptosGasLimit" : "ガスリミット",
+        "aptosGasPrice" : "ガス代（OCTAS）",
+        "aptosSetOptimalGas" : "最適なガスを設定する",
+        "aptosAdditionalSettings" : "追加設定",
+        "aptosSequenceNumber" : "シーケンス番号",
+        "aptosExpTimestamp" : "有効期限タイムスタンプ",
+        "aptosResetSettings" : "設定をリセットする",
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitPerByte" : "1バイトあたり{{unit}}",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live{{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "ネットワークの問題解決"
+    "title" : "ネットワークの問題解決",
+    "myLedgerServices" : "My Ledgerサービス（scriptrunner）",
+    "bitcoinExplorers" : "ビットコインエクスプローラー",
+    "ethereumExplorers" : "イーサリアムエクスプローラー",
+    "countervaluesApi" : "カウンターバリューAPI",
+    "announcements" : "お知らせ",
+    "status" : "ステータス",
+    "test" : "TEST",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "アプリの表示言語を変更しますか？",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
       "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
+      "mevProtection" : "MEV保護",
+      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4107,6 +4126,10 @@
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "テストパートナーモードで取引",
+        "desc" : "パートナー段階の公開鍵の使用を有効にする"
       },
       "analyticsConsole" : {
         "title" : "アナリティクスコンソールを許可",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "アカウントがフルノードによってスキャンされていません。",
       "description" : "このデバイスのアカウントがスキャンされるように、フルノードを設定してください。ポートフォリオに追加する前に、フルノードでこのアカウントのブロックチェーンをスキャンする必要があります。"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "シーケンス番号が新しすぎます"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "シーケンス番号が古すぎます",
+      "description" : "シーケンス番号が古すぎます"
+    },
+    "TransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました"
     },
     "SwapRateExpiredError" : {
       "title" : "レートの有効期限切れ",
