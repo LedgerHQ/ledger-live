@@ -11,7 +11,6 @@ const mockedApolloClient = jest.mocked(ApolloClient);
 describe("Aptos API", () => {
   let api: AptosAPI;
   const currencyId = "aptos";
-  // const address = "";
 
   beforeAll(() => {
     api = new AptosAPI(currencyId);
@@ -36,7 +35,7 @@ describe("Aptos API", () => {
     expect(mockedApolloClient).toHaveBeenCalledTimes(1);
   });
 
-  it("fetches the account information", () => {
-    expect(true).toBeTruthy();
-  });
+  // it("fetches the account information", () => {
+  //   let spy = jest.spyOn(api, 'sayMyName').mockImplementation(() => 'Hello');
+  // });
 });
