@@ -971,6 +971,18 @@
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Isto pode ser baixo demais Por favor, aumente"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Número de sequência muito novo"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Número de sequência muito antigo"
+    },
+    "TransactionExpired" : {
+      "title" : "A transação expirou"
+    },
     "SequenceNumberError" : {
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
@@ -2547,7 +2559,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "version" : "Versão"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "Exiba os aplicativos de desenvolvedor em Minha Ledger e habilite os aplicativos de Testnet.",
       "analytics" : "Métricas",
       "analyticsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para ajudar a medir o desempenho do Ledger Live e aprimorar o aplicativo e a sua experiência.",
+      "mevProtection" : "Proteção MEV",
+      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
       "personalizedRecommendations" : "Experiência personalizada",
       "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
       "analyticsModal" : {
@@ -3786,7 +3801,16 @@
         "title" : "Escolha a unidade"
       },
       "networkInfo" : "Escolha o quanto de taxas de rede incluir na transação. A quantia de taxas afeta a velocidade de processamento da transação",
-      "networkInfoMaxFees" : "Esta é a quantia máxima que você pode pagar por esta transação.  Qualquer diferença entre a taxa de rede máxima e a taxa real será reembolsada."
+      "networkInfoMaxFees" : "Esta é a quantia máxima que você pode pagar por esta transação.  Qualquer diferença entre a taxa de rede máxima e a taxa real será reembolsada.",
+      "aptos" : {
+        "options" : "Opções",
+        "gasLimit" : "Limite de gas",
+        "gasPrice" : "Preço do gás (OCTAS)",
+        "sequenceNumber" : "Número de sequência",
+        "expTimestamp" : "Carimbo de tempo exp.",
+        "setOptimalGas" : "Definir gás ideal",
+        "resetSettings" : "Redefinir configurações"
+      }
     },
     "verification" : {
       "streaming" : {
