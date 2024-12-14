@@ -1,5 +1,16 @@
 # @ledgerhq/coin-cardano
 
+## 0.3.0-nightly.5
+
+### Minor Changes
+
+- [#8626](https://github.com/LedgerHQ/ledger-live/pull/8626) [`c8e1b38`](https://github.com/LedgerHQ/ledger-live/commit/c8e1b3800acd86ba508afe469bed4e30f784a7ec) Thanks [@qperrot](https://github.com/qperrot)! - Fix ADA Changing current delegation does not display the validator
+
+### Patch Changes
+
+- Updated dependencies [[`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.5
+
 ## 0.3.0-nightly.4
 
 ### Minor Changes

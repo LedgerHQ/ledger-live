@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.94.0-nightly.9
+
+### Minor Changes
+
+- [#8603](https://github.com/LedgerHQ/ledger-live/pull/8603) [`82d464f`](https://github.com/LedgerHQ/ledger-live/commit/82d464f3c20ff0bb097b85c203a9f750ef1a4f00) Thanks [@themooneer](https://github.com/themooneer)! - Support anonymous user based braze campaign notification management.
+
+- [#8626](https://github.com/LedgerHQ/ledger-live/pull/8626) [`c8e1b38`](https://github.com/LedgerHQ/ledger-live/commit/c8e1b3800acd86ba508afe469bed4e30f784a7ec) Thanks [@qperrot](https://github.com/qperrot)! - Fix ADA Changing current delegation does not display the validator
+
+- [#8621](https://github.com/LedgerHQ/ledger-live/pull/8621) [`9c06bd0`](https://github.com/LedgerHQ/ledger-live/commit/9c06bd0be802a806a2941ad82cb390eeb23f72a6) Thanks [@themooneer](https://github.com/themooneer)! - recipient field on the send flow's revalidation process is controlled by both input onChange event and watching the account.id change from the selector above
+
+### Patch Changes
+
+- Updated dependencies [[`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.5
+  - @ledgerhq/live-common@34.16.0-nightly.9
+  - @ledgerhq/coin-bitcoin@0.9.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.3.0-nightly.6
+  - @ledgerhq/coin-evm@2.7.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.4.0-nightly.5
+  - @ledgerhq/live-countervalues@0.2.15-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.15-nightly.5
+  - @ledgerhq/live-nft@0.5.0-nightly.5
+  - @ledgerhq/live-nft-react@0.5.0-nightly.5
+  - @ledgerhq/live-wallet@0.8.0-nightly.5
+
 ## 2.94.0-nightly.8
 
 ### Minor Changes

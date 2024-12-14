@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tezos
 
+## 0.8.0-nightly.5
+
+### Minor Changes
+
+- [#8673](https://github.com/LedgerHQ/ledger-live/pull/8673) [`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add pagination to listOperations for Alpaca
+
+### Patch Changes
+
+- Updated dependencies [[`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.5
+
 ## 0.8.0-nightly.4
 
 ### Minor Changes
