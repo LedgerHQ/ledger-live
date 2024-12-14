@@ -83,9 +83,14 @@ export class AccountPage extends AppPage {
     await this.viewDetailsButton.click();
   }
 
-  @step("Click on last operation ($0)")
+  @step("Click on selected ($0) last operation")
   async selectAndClickOnLastOperation(operation: string) {
     await this.selectSpecificOperation(operation).first().click();
+  }
+
+  @step("Click on last operation")
+  async clickOnLastOperation() {
+    await this.operationRows.first().click();
   }
 
   @step("Click Stake button on banner")

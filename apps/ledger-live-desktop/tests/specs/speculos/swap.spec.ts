@@ -112,8 +112,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
-  //todo: flaky balance retrieval, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(
       Account.SOL_1,
       Account.ETH_1,
@@ -146,7 +145,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2829",
   },
-  {
+  /*{
     swap: new Swap(
       Account.ETH_USDC_1,
       Account.ETH_1,
@@ -221,7 +220,7 @@ for (const { swap, xrayTicket } of swaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
@@ -285,7 +284,7 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
@@ -331,11 +330,10 @@ const tooLowAmountForQuoteSwaps = [
     ),
     xrayTicket: "B2CQA-2759",
   },
-  //todo: flaky balance, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM, Provider.CHANGELLY, Rate.FLOAT),
     xrayTicket: "B2CQA-2739",
-  },*/
+  },
 ];
 
 for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
@@ -376,13 +374,13 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."
           : new RegExp(
-              `Minimum \\d+(\\.\\d{1,5})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
+              `Minimum \\d+(\\.\\d{1,10})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
             );
         await app.swap.verifySwapAmountErrorMessageIsDisplayed(
           electronApp,
@@ -426,6 +424,7 @@ async function performSwapUntilQuoteSelectionStep(
   await app.layout.goToAccounts();
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
   await app.layout.waitForPageDomContentLoadedState();
+
   await app.layout.waitForAccountsSyncToBeDone();
   await app.swap.waitForPageNetworkIdleState();
   await app.layout.goToSwap();

@@ -40,7 +40,7 @@ test.describe("send NFT to ENS address", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
       await app.account.navigateToNFTGallery();
@@ -87,7 +87,7 @@ test.describe("The user can see his NFT floor price", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.navigateToNFTGallery();
@@ -135,7 +135,7 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.checkNftListInAccount(account.account);
@@ -170,7 +170,7 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.navigateToNFTGallery();

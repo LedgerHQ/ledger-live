@@ -15,7 +15,7 @@ test.describe("Settings", () => {
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
@@ -62,7 +62,7 @@ test.describe("Password", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
       const countBeforeLock = await app.accounts.countAccounts();
@@ -108,7 +108,7 @@ test.describe("counter value selection", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToSettings();
       await app.settings.changeCounterValue("euro");

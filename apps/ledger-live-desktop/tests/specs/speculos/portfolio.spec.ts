@@ -15,7 +15,7 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToPortfolio();
       await app.portfolio.checkBuySellButtonVisibility();
