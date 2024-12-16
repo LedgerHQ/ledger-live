@@ -7,7 +7,7 @@ import type { Transaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
 const { Buffer: OriginalBuffer } = require('buffer');
 
-// delete (globalThis as any).Buffer;
+// NOTE: overrides polyfill set here libs/ledger-live-common/jest.polyfills.js
 Object.defineProperty(globalThis, 'Buffer', {
   value: OriginalBuffer,
   writable: true,
