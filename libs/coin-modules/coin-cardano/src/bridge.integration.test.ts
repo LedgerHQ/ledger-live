@@ -5,7 +5,7 @@ import { CardanoInvalidPoolId, CardanoMinAmountError } from "./errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
-const { Buffer: OriginalBuffer } = require("buffer");
+import { Buffer as OriginalBuffer } from "buffer";
 
 // NOTE: overrides polyfill set here libs/ledger-live-common/jest.polyfills.js
 Object.defineProperty(globalThis, "Buffer", {
