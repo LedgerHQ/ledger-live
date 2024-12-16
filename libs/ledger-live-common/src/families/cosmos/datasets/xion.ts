@@ -6,35 +6,39 @@ import type { Transaction } from "../types";
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"],
-  // scanAccounts: [
-  //   {
-  //     name: "xion seed 1",
-  //     apdus: `
-  //       => 55040000190478696f6e2c00008076000080000000800000000000000000
-  //       <= 0x0301a5bc0d94728a62db72b7e162add7767a58f10a5013543637694b2c4a66cc5078696f6e316738343933346a70753376356465357971756b6b6b68786d637673773375326173306b726d359000
-  //       `,
-  //   },
-  // ],
+  scanAccounts: [
+    {
+      name: "xion seed 1",
+      apdus: `
+      => 55040000190478696f6e2c00008076000080000000800000000000000000
+      <= 03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e8378696f6e3167796175766c3434713261706e33753361756a6d333671387a726a373476727968337934657a9000
+      => 55040000190478696f6e2c00008076000080000000800000000000000000
+      <= 03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e8378696f6e3167796175766c3434713261706e33753361756a6d333671387a726a373476727968337934657a9000
+      => 55040000190478696f6e2c00008076000080010000800000000000000000
+      <= 02c8f29e73a2c99d11de0544615a87afc6c6575d22746af18a8ef733066f088b1f78696f6e3176326d70306d376b3936646d3971763630666b737063716c7a706b7a72776e657176663036399000
+      `,
+    },
+  ],
   accounts: [
     {
       FIXME_tests: ["balance is sum of ops", "pendingOperations are cleaned up"],
       raw: {
-        id: "js:2:xion:xion1g84934jpu3v5de5yqukkkhxmcvsw3u2as0krm5:",
-        seedIdentifier: "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-        xpub: "xion1g84934jpu3v5de5yqukkkhxmcvsw3u2as0krm5",
-        freshAddress: "xion1g84934jpu3v5de5yqukkkhxmcvsw3u2as0krm5",
+        id: "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+        seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+        xpub: "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
+        freshAddress: "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
         freshAddressPath: "44'/118'/0'/0/0",
         name: "Xion 1",
         derivationMode: "",
         index: 0,
-        operationsCount: 3,
-        operations: [],
-        balance: "715838",
-        spendableBalance: "715838",
-        blockHeight: 4476555,
-        pendingOperations: [],
         currencyId: "xion",
+        operationsCount: 2,
+        operations: [],
+        pendingOperations: [],
         lastSyncDate: "",
+        balance: "676335",
+        spendableBalance: "562180",
+        blockHeight: 4486981,
       },
       transactions: [
         {
