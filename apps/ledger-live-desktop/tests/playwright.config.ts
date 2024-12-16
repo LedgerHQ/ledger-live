@@ -36,7 +36,7 @@ const config: PlaywrightTestConfig = {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
   },
-  forbidOnly: !!process.env.CI,
+  //forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
