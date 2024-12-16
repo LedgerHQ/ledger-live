@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})"
+      "validatorsCount" : "验证者 ({{number}})",
+      "version" : "版本"
     }
   },
   "operationList" : {
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "Gas 价格",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
+        "aptosGasFee" : "Gas 费",
+        "aptosGasLimit" : "矿工费限值",
+        "aptosGasPrice" : "Gas 价格 (OCTAS)",
+        "aptosSetOptimalGas" : "设置最佳 Gas",
+        "aptosAdditionalSettings" : "其他设置",
+        "aptosSequenceNumber" : "序列号",
+        "aptosExpTimestamp" : "到期时间戳",
+        "aptosResetSettings" : "重置设置",
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitPerByte" : "{{unit}} 每字节",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "排除网络故障"
+    "title" : "排除网络故障",
+    "myLedgerServices" : "“我的 Ledger”服务（脚本运行器）",
+    "bitcoinExplorers" : "比特币浏览器",
+    "ethereumExplorers" : "以太坊浏览器",
+    "countervaluesApi" : "对价 API",
+    "announcements" : "公告",
+    "status" : "状态",
+    "test" : "测试",
+    "renderer" : "渲染器"
   },
   "systemLanguageAvailable" : {
     "title" : "更改您应用的语言？",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
+      "mevProtection" : "MEV 保护",
+      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4107,6 +4126,10 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "在测试合作伙伴模式下兑换",
+        "desc" : "允许使用合作伙伴阶段公钥"
       },
       "analyticsConsole" : {
         "title" : "允许分析控制台",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "账户未经完整节点扫描",
       "description" : "请配置您的完整节点以扫描与此设备相关联的账户。您的完整节点必须先扫描此账户的区块链，然后才能将其添加到您的资产组合中。"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "序列号太新"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "序列号太旧",
+      "description" : "序列号太旧"
+    },
+    "TransactionExpired" : {
+      "title" : "交易已过期"
     },
     "SwapRateExpiredError" : {
       "title" : "费率已过期",
