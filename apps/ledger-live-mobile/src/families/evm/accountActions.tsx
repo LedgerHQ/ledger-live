@@ -20,7 +20,11 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams({
+  parentRoute,
+  account,
+  parentAccount,
+}: Props): NavigationParamsType | undefined {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -33,38 +37,56 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
       },
     ];
   }
-
-  const params = {
-    screen: parentRoute.name,
-    drawer: {
-      id: "EvmStakingDrawer",
-      props: {
-        singleProviderRedirectMode: true,
-        accountId: account.id,
-        has32Eth: account.spendableBalance.gt(ETH_LIMIT),
+  if (account.type === "Account" && account.currency.id === "ethereum") {
+    const params = {
+      screen: parentRoute.name,
+      drawer: {
+        id: "EvmStakingDrawer",
+        props: {
+          singleProviderRedirectMode: true,
+          accountId: account.id,
+          has32Eth: account.spendableBalance.gt(ETH_LIMIT),
+        },
       },
-    },
-    params: {
-      ...(parentRoute.params ?? {}),
-      account,
-      parentAccount,
-    },
-  };
+      params: {
+        ...(parentRoute.params ?? {}),
+        account,
+        parentAccount,
+      },
+    };
 
-  switch (parentRoute.name) {
-    // since we have to go to different navigators b
-    case ScreenName.Account:
-    case ScreenName.Asset:
-      return [NavigatorName.Accounts, params];
-    case ScreenName.MarketDetail:
-      return [NavigatorName.Market, params];
-    default:
-      return [NavigatorName.Base, params];
+    switch (parentRoute.name) {
+      // since we have to go to different navigators b
+      case ScreenName.Account:
+      case ScreenName.Asset:
+        return [NavigatorName.Accounts, params];
+      case ScreenName.MarketDetail:
+        return [NavigatorName.Market, params];
+      default:
+        return [NavigatorName.Base, params];
+    }
+  }
+
+  if (account.type === "Account" && account.currency.id === "bsc") {
+    return [
+      ScreenName.PlatformApp,
+      {
+        params: {
+          platform: "stakekit",
+          name: "StakeKit",
+          accountId: account.id,
+          yieldId: "bsc-staking",
+        },
+      },
+    ];
   }
 }
 
 const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
-  if (account.type === "Account" && account.currency.id === "ethereum") {
+  if (
+    account.type === "Account" &&
+    (account.currency.id === "ethereum" || account.currency.id === "bsc")
+  ) {
     const label = getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
@@ -80,7 +102,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: "ETH",
+          currency: account.currency.id === "ethereum" ? "ETH" : "BNB",
         },
       },
     ];
