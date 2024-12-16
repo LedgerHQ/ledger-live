@@ -971,6 +971,18 @@
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
+    "GasLessThanEstimate" : {
+      "title" : "低すぎる可能性があります。増やしてください"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "シーケンス番号が新しすぎます"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "シーケンス番号が古すぎます"
+    },
+    "TransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました"
+    },
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
@@ -2547,7 +2559,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "version" : "バージョン"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "My Ledgerに開発者用アプリを表示し、テストネットアプリを有効化してください。",
       "analytics" : "アナリティクス",
       "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させます。",
+      "mevProtection" : "MEV保護",
+      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
       "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
       "analyticsModal" : {
@@ -3786,7 +3801,16 @@
         "title" : "単位を選択"
       },
       "networkInfo" : "トランザクションに含めるネットワーク手数料を選択してください。手数料の額は、トランザクションの処理速度に影響します。",
-      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。"
+      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。",
+      "aptos" : {
+        "options" : "オプション",
+        "gasLimit" : "ガスリミット",
+        "gasPrice" : "ガス代（OCTAS）",
+        "sequenceNumber" : "シーケンス番号",
+        "expTimestamp" : "有効期限タイムスタンプ",
+        "setOptimalGas" : "最適なガスを設定する",
+        "resetSettings" : "設定をリセットする"
+      }
     },
     "verification" : {
       "streaming" : {
