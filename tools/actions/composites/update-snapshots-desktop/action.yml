@@ -4,6 +4,9 @@ inputs:
   os:
     description: "name of the os (same as runs-on)"
     required: true
+  GITHUB_TOKEN:
+    description: "GitHub token"
+    required: true
 
 runs:
   using: "composite"
@@ -42,30 +45,30 @@ runs:
         echo "changes=$(git status -s)"
       shell: bash
 
-    - name: Add snapshots
-      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
-      run: |
-        git add ./apps/ledger-live-desktop/tests/specs
-      shell: bash
+    # - name: Add snapshots
+    #   if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+    #   run: |
+    #     git add ./apps/ledger-live-desktop/tests/specs
+    #   shell: bash
 
     - name: Commit file
       if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
       uses: swinton/commit@v2.x
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         files: |
           ./apps/ledger-live-desktop/tests/specs*
         commit-message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
 
-    - name: Rebase and push
-      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
-      run: |
-        git restore . &&
-        git pull --rebase &&
-        git push ||
-        echo ""
-      shell: bash
+    # - name: Rebase and push
+    #   if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+    #   run: |
+    #     git restore . &&
+    #     git pull --rebase &&
+    #     git push ||
+    #     echo ""
+    #   shell: bash
 
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v4
