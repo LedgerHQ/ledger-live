@@ -10,12 +10,6 @@ import invariant from "invariant";
 
 test.describe("send NFT to ENS address", () => {
   const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, Nft.PODIUM, Fee.SLOW);
-  test.beforeAll(async () => {
-    process.env.DISABLE_TRANSACTION_BROADCAST = "true";
-  });
-  test.afterAll(async () => {
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
-  });
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [

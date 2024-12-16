@@ -37,6 +37,11 @@ on:
         required: false
         type: string
         default: "B2CQA-2461"
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
       build_type:
         description: "Firebase env to target (pick js for release testing)"
         required: false
@@ -65,6 +70,12 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
+      DISABLE_TRANSACTION_BROADCAST: >
+        ${{ inputs.enable_broadcast == 'true' || 
+            (github.event_name == 'schedule' && 
+            startsWith(github.event.schedule.cron, '0 5 * * 1')) 
+            ? '0' 
+            : '1' }}
     runs-on: [ledger-live-4xlarge]
     strategy:
       fail-fast: false

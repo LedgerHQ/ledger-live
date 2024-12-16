@@ -6,7 +6,6 @@ import { Transaction } from "../../models/Transaction";
 import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
 import { getEnv } from "@ledgerhq/live-env";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
@@ -215,10 +214,6 @@ const tokenTransactionInvalid = [
 ];
 
 test.describe("Send flows", () => {
-  test.beforeAll(async () => {
-    process.env.DISABLE_TRANSACTION_BROADCAST =
-      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "0" : "1";
-  });
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
   for (const transaction of transactionE2E) {
