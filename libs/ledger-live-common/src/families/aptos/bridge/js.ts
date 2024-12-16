@@ -10,8 +10,6 @@ import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 
-const receive = makeAccountBridgeReceive();
-
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
   hydrate: () => {},
@@ -22,6 +20,8 @@ const updateTransaction = (t: Transaction, patch: Partial<Transaction>): Transac
   ...t,
   ...patch,
 });
+
+const receive = makeAccountBridgeReceive();
 
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
