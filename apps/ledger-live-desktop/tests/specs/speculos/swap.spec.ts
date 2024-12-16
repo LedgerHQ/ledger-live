@@ -145,7 +145,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2829",
   },
-  /*{
+  {
     swap: new Swap(
       Account.ETH_USDC_1,
       Account.ETH_1,
@@ -177,7 +177,7 @@ const swaps = [
       Rate.FLOAT,
     ),
     xrayTicket: "B2CQA-2832",
-  },*/
+  },
 ];
 
 for (const { swap, xrayTicket } of swaps) {
