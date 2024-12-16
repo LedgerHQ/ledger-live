@@ -80,6 +80,7 @@ export const getVotesCount = (
     case "coreum":
     case "mantra":
     case "crypto_org":
+    case "xion":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;
