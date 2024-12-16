@@ -16,32 +16,13 @@ import {
   DIRECTION,
   TRANSFER_TYPES,
 } from "./constants";
-import type { AptosTransaction, Transaction } from "./types";
+import type { AptosTransaction, TransactionOptions } from "./types";
 
 export const DEFAULT_GAS = 5;
 export const DEFAULT_GAS_PRICE = 100;
 export const ESTIMATE_GAS_MUL = 1.2;
 
-const HEX_REGEXP = /^[-+]?[a-f0-9]+\.?[a-f0-9]*?$/i;
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
-
-const LENGTH_WITH_0x = 66;
-
-export function isValidAddress(address = ""): boolean {
-  let str = address;
-
-  const validAddressWithOx = address.startsWith("0x") && address.length === LENGTH_WITH_0x;
-
-  if (!validAddressWithOx) return false;
-
-  str = str.substring(2);
-
-  return isValidHex(str);
-}
-
-function isValidHex(hex: string): boolean {
-  return HEX_REGEXP.test(hex);
-}
 
 export function isTestnet(currencyId: string): boolean {
   return getCryptoCurrencyById(currencyId).isTestnetFor ? true : false;
@@ -56,15 +37,8 @@ export const getMaxSendBalance = (amount: BigNumber): BigNumber => {
   return amount;
 };
 
-export function normalizeTransactionOptions(
-  options: Transaction["options"],
-): Transaction["options"] {
-  const check = (v: any) => {
-    if (v === undefined || v === null || v === "") {
-      return undefined;
-    }
-    return v;
-  };
+export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {
+  const check = (v: any) => ((v ?? "").toString().trim() ? v : undefined);
   return {
     maxGasAmount: check(options.maxGasAmount),
     gasUnitPrice: check(options.gasUnitPrice),
@@ -73,7 +47,7 @@ export function normalizeTransactionOptions(
   };
 }
 
-const getBlankOperation = (
+export const getBlankOperation = (
   tx: AptosTransaction,
   id: string,
 ): Operation<Record<string, string>> => ({
