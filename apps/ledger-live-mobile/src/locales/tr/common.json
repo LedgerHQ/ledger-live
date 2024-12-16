@@ -971,6 +971,18 @@
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Bu çok düşük olabilir. Lütfen arttırın"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Sıra numarası çok yeni"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Sıra numarası çok eski"
+    },
+    "TransactionExpired" : {
+      "title" : "İşlemin süresi doldu"
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -2547,7 +2559,8 @@
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "stakedAmount" : "Stake edilen miktar"
+      "stakedAmount" : "Stake edilen miktar",
+      "version" : "Sürüm"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "Geliştirici uygulamalarını My Ledger'da görün ve Testnet uygulamalarını etkinleştirin.",
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
+      "mevProtection" : "MEV Koruması",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {
@@ -3786,7 +3801,16 @@
         "title" : "Birim seçin"
       },
       "networkInfo" : "İşleme dahil edilecek ağ ücretlerinin miktarını seçin. Ücret miktarı, işlemin onaylanma hızını etkiler",
-      "networkInfoMaxFees" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir."
+      "networkInfoMaxFees" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir.",
+      "aptos" : {
+        "options" : "Seçenekler",
+        "gasLimit" : "Gas Limiti",
+        "gasPrice" : "Gas Ücreti (OCTAS)",
+        "sequenceNumber" : "Sıra Numarası",
+        "expTimestamp" : "Süre Dolumu Zaman Damgası",
+        "setOptimalGas" : "Optimum gas ücretini belirleyin",
+        "resetSettings" : "Ayarları sıfırlayın"
+      }
     },
     "verification" : {
       "streaming" : {
