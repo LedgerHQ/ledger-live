@@ -207,7 +207,7 @@ export const test = base.extend<TestFixtures>({
     //Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
-      await page.video()?.delete();
+      //await page.video()?.delete();
     }
   },
 });
