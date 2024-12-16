@@ -18,6 +18,7 @@ import {
   SequenseNumberTooOldError,
   TransactionExpiredError,
 } from "./errors";
+import { AccountAddress } from "@aptos-labs/ts-sdk";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, any> = {};
@@ -44,7 +45,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(t.recipient)) {
+  } else if (!AccountAddress.isValid({ input: t.recipient })) {
     errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
   } else if (t.recipient === a.freshAddress) {
     errors.recepient = new InvalidAddressBecauseDestinationIsAlsoSource();

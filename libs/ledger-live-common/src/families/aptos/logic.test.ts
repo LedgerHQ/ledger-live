@@ -8,9 +8,106 @@ import {
   getAptosAmounts,
   getFunctionAddress,
   isChangeOfAptos,
+  isTestnet,
   processRecipients,
+  getMaxSendBalance,
+  normalizeTransactionOptions,
+  getBlankOperation,
 } from "./logic";
-import type { AptosTransaction } from "./types";
+import type { AptosTransaction, Transaction } from "./types";
+
+jest.mock("@ledgerhq/cryptoassets", () => ({
+  getCryptoCurrencyById: jest.fn(),
+}));
+
+describe("Aptos logic ", () => {
+  describe("isTestnet", () => {
+    it("should return true for testnet currencies", () => {
+      expect(isTestnet("aptos_testnet")).toBe(true);
+    });
+
+    it("should return false for mainnet currencies", () => {
+      expect(isTestnet("aptos")).toBe(false);
+    });
+  });
+
+  describe("getMaxSendBalance", () => {
+    it("should return the correct max send balance", () => {
+      const amount = new BigNumber(1000000);
+      const result = getMaxSendBalance(amount);
+      expect(result.isEqualTo(amount.minus(BigNumber((2000 + 5) * 100)))).toBe(true);
+    });
+
+    // TOFIX: this test should be updated after validation of the getMaxSendBalance strategy for small amounts
+    // it("should return the original amount if it is less than the total gas", () => {
+    //   const amount = new BigNumber(1000);
+    //   const result = getMaxSendBalance(amount);
+    //   expect(result).toEqual(amount);
+    // });
+  });
+
+  describe("normalizeTransactionOptions", () => {
+    it("should normalize transaction options", () => {
+      const options: Transaction["options"] = {
+        maxGasAmount: "1000",
+        gasUnitPrice: "10",
+        sequenceNumber: "1",
+        expirationTimestampSecs: "1000000",
+      };
+
+      const result = normalizeTransactionOptions(options);
+      expect(result).toEqual(options);
+    });
+
+    it("should return undefined for empty values", () => {
+      const options: Transaction["options"] = {
+        maxGasAmount: "",
+        gasUnitPrice: "",
+        sequenceNumber: undefined,
+        expirationTimestampSecs: "1000000",
+      };
+
+      const result = normalizeTransactionOptions(options);
+      expect(result).toEqual({
+        maxGasAmount: undefined,
+        gasUnitPrice: undefined,
+        sequenceNumber: undefined,
+        expirationTimestampSecs: "1000000",
+      });
+    });
+  });
+
+  describe("getBlankOperation", () => {
+    it("should return a blank operation", () => {
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+      } as unknown as AptosTransaction;
+
+      const id = "test-id";
+      const result = getBlankOperation(tx, id);
+
+      expect(result).toEqual({
+        id: "",
+        hash: "0x123",
+        type: "",
+        value: new BigNumber(0),
+        fee: new BigNumber(0),
+        blockHash: "0xabc",
+        blockHeight: 1,
+        senders: [],
+        recipients: [],
+        accountId: id,
+        date: new Date(1000),
+        extra: { version: undefined },
+        transactionSequenceNumber: 1,
+        hasFailed: false,
+      });
+    });
+  });
+});
 
 describe("Aptos sync logic ", () => {
   describe("compareAddress", () => {
