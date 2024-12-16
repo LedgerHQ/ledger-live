@@ -34,8 +34,4 @@ describe("Aptos API", () => {
     expect(mockedAptosConfig).toHaveBeenCalledTimes(1);
     expect(mockedApolloClient).toHaveBeenCalledTimes(1);
   });
-
-  // it("fetches the account information", () => {
-  //   let spy = jest.spyOn(api, 'sayMyName').mockImplementation(() => 'Hello');
-  // });
 });
