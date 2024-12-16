@@ -26,27 +26,6 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
         formatDeviceAmount(account.currency, status.estimatedFees),
     },
     {
-      title: "Destination Tag",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => String(transaction.tag),
-    },
-    {
-      title: "Destination",
-      button: SpeculosButton.RIGHT,
-      trimValue: true,
-      expectedValue: ({ transaction }) => transaction.recipient,
-    },
-    {
-      title: "Account",
-      button: SpeculosButton.RIGHT,
-      trimValue: true,
-      expectedValue: ({ account }) => account.freshAddress,
-    },
-    {
-      title: "Accept",
-      button: SpeculosButton.BOTH,
-    },
-    {
       title: "Sign transaction",
       button: SpeculosButton.BOTH,
     },

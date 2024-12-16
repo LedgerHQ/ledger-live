@@ -5,7 +5,7 @@ import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { acceptTransaction } from "./bot-deviceActions";
+import { acceptTransaction } from "./speculos-deviceActions";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
@@ -28,28 +28,32 @@ const aptos: AppSpec<Transaction> = {
   name: "Aptos",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Aptos",
   },
   genericDeviceAction: acceptTransaction,
+  testTimeout: 6 * 60 * 1000,
   minViableAmount: minAmountCutoff,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
+  },
   mutations: [
     {
-      name: "move ~50%",
-      maxRun: 2,
+      name: "Send ~50%",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
 
         const sibling = pickSiblings(siblings, maxAccountSiblings);
         const recipient = sibling.freshAddress;
-        const transaction = bridge.createTransaction(account);
-
         const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
 
         checkSendableToEmptyAccount(amount, sibling);
 
-        const updates = [
+        const transaction = bridge.createTransaction(account);
+
+        const updates: Array<Partial<Transaction>> = [
           {
             amount,
           },
@@ -72,7 +76,7 @@ const aptos: AppSpec<Transaction> = {
       },
     },
     {
-      name: "send max",
+      name: "Transfer Max",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
