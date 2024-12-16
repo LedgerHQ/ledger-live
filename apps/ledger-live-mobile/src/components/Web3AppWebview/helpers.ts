@@ -144,6 +144,7 @@ export function useWebView(
     uiHook,
     postMessage: webviewHook.postMessage,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
   });
 
   const onMessage = useCallback(
@@ -555,7 +556,8 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencies = useManifestCurrencies(manifest);
-  const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
+    useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
 
   const onSelectAccount = useCallback(() => {
@@ -567,6 +569,7 @@ export function useSelectAccount({
           allowAddAccount: true,
           onSuccess: account => {
             setCurrentAccountHist(manifest.id, account);
+            setCurrentAccount(account);
           },
         },
       });
@@ -578,11 +581,12 @@ export function useSelectAccount({
           allowAddAccount: true,
           onSuccess: account => {
             setCurrentAccountHist(manifest.id, account);
+            setCurrentAccount(account);
           },
         },
       });
     }
-  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+  }, [currencies, navigation, setCurrentAccountHist, manifest.id, setCurrentAccount]);
 
   return { onSelectAccount, currentAccount };
 }
