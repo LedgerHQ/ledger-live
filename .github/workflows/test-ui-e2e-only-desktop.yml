@@ -70,12 +70,6 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
-      DISABLE_TRANSACTION_BROADCAST: >
-        ${{ inputs.enable_broadcast == 'true' || 
-            (github.event_name == 'schedule' && 
-            startsWith(github.event.schedule.cron, '0 5 * * 1')) 
-            ? '0' 
-            : '1' }}
     runs-on: [ledger-live-4xlarge]
     strategy:
       fail-fast: false
@@ -123,6 +117,15 @@ jobs:
       - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
+
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        id: set-broadcast
+        run: |
+          if [[ "${{ inputs.enable_broadcast }}" == "true" || ( "${{ github.event_name }}" == "schedule" && "${{ github.event.schedule.cron }}" == "0 5 * * 1" ) ]]; then
+            echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
+          else
+            echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
+          fi
 
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
