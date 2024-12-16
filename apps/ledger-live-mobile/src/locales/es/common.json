@@ -971,6 +971,18 @@
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Puede que sea demasiado bajo. Auméntalo"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "El número de secuencia es demasiado nuevo"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "El número de secuencia es demasiado antiguo"
+    },
+    "TransactionExpired" : {
+      "title" : "Transacción caducada"
+    },
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
@@ -2547,7 +2559,8 @@
       "gasLimit" : "Límite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
-      "stakedAmount" : "Cantidad en participación"
+      "stakedAmount" : "Cantidad en participación",
+      "version" : "Versión"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -2871,6 +2884,8 @@
       "developerModeDesc" : "Muestra las aplicaciones de desarrollador en Mi Ledger y habilita las aplicaciones Testnet.",
       "analytics" : "Análisis",
       "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia.",
+      "mevProtection" : "Protección contra MEV",
+      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
       "personalizedRecommendations" : "Experiencia personalizada",
       "personalizedRecommendationsDesc" : "Permite que la aplicación de Ledger recopile los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
       "analyticsModal" : {
@@ -3786,7 +3801,16 @@
         "title" : "Elegir unidad"
       },
       "networkInfo" : "Elige el importe de las tarifas de red que se incluirán en la transacción. El importe de las tarifas afecta a la velocidad de procesamiento de la transacción",
-      "networkInfoMaxFees" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales."
+      "networkInfoMaxFees" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales.",
+      "aptos" : {
+        "options" : "Opciones",
+        "gasLimit" : "Límite de gas",
+        "gasPrice" : "Precio del gas (OCTAS)",
+        "sequenceNumber" : "Número de secuencia",
+        "expTimestamp" : "Marca de tiempo de caducidad",
+        "setOptimalGas" : "Establecer gas óptimo",
+        "resetSettings" : "Restaurar ajustes"
+      }
     },
     "verification" : {
       "streaming" : {
