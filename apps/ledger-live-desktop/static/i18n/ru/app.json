@@ -1833,7 +1833,8 @@
       "withdrawUnbondedAmount" : "Выведенная сумма",
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
-      "validatorsCount" : "Валидаторов: {{number}}"
+      "validatorsCount" : "Валидаторов: {{number}}",
+      "version" : "Версия приложения"
     }
   },
   "operationList" : {
@@ -2342,6 +2343,14 @@
         "ethereumGasPrice" : "Цена Газа",
         "ethereumMaxFee" : "Макс. комиссия ({{unitName}})",
         "ethereumPriorityFee" : "Макс. комиссия за приоритет ({{unitName}})",
+        "aptosGasFee" : "Комиссия за Газ",
+        "aptosGasLimit" : "Лимит Газа",
+        "aptosGasPrice" : "Цена Газа (OCTAS)",
+        "aptosSetOptimalGas" : "УСТАНОВИТЬ ОПТИМАЛЬНЫЙ УРОВЕНЬ ГАЗА",
+        "aptosAdditionalSettings" : "Дополнительные настройки",
+        "aptosSequenceNumber" : "Порядковый номер",
+        "aptosExpTimestamp" : "Метка времени истечения срока действия",
+        "aptosResetSettings" : "СБРОСИТЬ НАСТРОЙКИ",
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
         "unitPerByte" : "{{unit}} за байт",
@@ -2390,7 +2399,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Устранение неполадок с сетью"
+    "title" : "Устранение неполадок с сетью",
+    "myLedgerServices" : "Сервисы «Мой Ledger» (скриптраннер)",
+    "bitcoinExplorers" : "Обозреватели Биткойна",
+    "ethereumExplorers" : "Обозреватели Эфириума",
+    "countervaluesApi" : "API эквивалентных сумм",
+    "announcements" : "Новости",
+    "status" : "Состояние",
+    "test" : "ТЕСТ",
+    "renderer" : "СОСТОЯНИЕ"
   },
   "systemLanguageAvailable" : {
     "title" : "Поменять язык в приложении?",
@@ -4084,6 +4101,8 @@
       "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета в Ledger Live между разными смартфонами и компьютерами.",
+      "mevProtection" : "Защита от MEV",
+      "mevProtectionDesc" : "Активируйте защиту от MEV для комфортного проведения транзакций в Эфириуме",
       "marketPerformanceWidget" : "Виджет поведения рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
@@ -4107,6 +4126,10 @@
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
         "placeholder" : "Данные о поставщике обмена в формате CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Биржа в режиме тестового партнёра",
+        "desc" : "Активация использования публичного ключа стейджинга партнёра"
       },
       "analyticsConsole" : {
         "title" : "Активация консоли аналитики",
@@ -5764,6 +5787,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Счёт не просканирован полной нодой",
       "description" : "Настройте полную боду для сканирования счетов, связанных с этим устройством. Ваша полная нода должна сначала просканировать блокчейн на предмет наличия данного счёта, прежде чем вы сможете добавить его в Портфель."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Порядковый номер слишком новый"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Порядковый номер слишком старый",
+      "description" : "Порядковый номер слишком старый"
+    },
+    "TransactionExpired" : {
+      "title" : "Транзакция просрочена"
     },
     "SwapRateExpiredError" : {
       "title" : "Курс неактуален",
