@@ -13,6 +13,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
 
 export enum Page {
   Market = "Page Market",
@@ -142,15 +143,8 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
     [internalCurrency, currency?.ticker, page, startStakeFlow],
   );
 
-  const availableOnBuy =
-    (!!internalCurrency &&
-      !!internalCurrency?.id &&
-      isCurrencyAvailable(internalCurrency.id, "onRamp")) ||
-    currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp"));
-
-  const availableOnSwap =
-    (!!internalCurrency && currenciesForSwapAllSet.has(internalCurrency.id)) ||
-    currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId));
+  const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
+  const availableOnSwap = isAvailableOnSwap(currency, currenciesForSwapAllSet);
 
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
