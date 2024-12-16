@@ -1,5 +1,5 @@
 import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
@@ -37,6 +37,8 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const flattenedAccounts = flattenAccounts(allAccounts);
 
   const { isCurrencyAvailable } = useRampCatalog();
+
+  const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
   const internalCurrency = currency?.internalCurrency;
 
@@ -141,11 +143,15 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   );
 
   const availableOnBuy =
-    !!internalCurrency &&
-    !!internalCurrency?.id &&
-    isCurrencyAvailable(internalCurrency.id, "onRamp");
+    (!!internalCurrency &&
+      !!internalCurrency?.id &&
+      isCurrencyAvailable(internalCurrency.id, "onRamp")) ||
+    currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp"));
 
-  const availableOnSwap = !!internalCurrency && currenciesAll?.includes(internalCurrency.id);
+  const availableOnSwap =
+    (!!internalCurrency && currenciesForSwapAllSet.has(internalCurrency.id)) ||
+    currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId));
+
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

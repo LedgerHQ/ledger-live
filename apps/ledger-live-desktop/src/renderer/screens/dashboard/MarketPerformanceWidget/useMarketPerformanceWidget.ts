@@ -13,19 +13,53 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { listTokens } from "@ledgerhq/cryptoassets/tokens";
+
+type CurrencyCheck = "onRamp" | "swap";
+
 const LIMIT_TO_DISPLAY = 5;
 
 export function useMarketPerformanceWidget() {
   const { isCurrencyAvailable } = useRampCatalog();
-  const { data: currenciesAll } = useFetchCurrencyAll();
+  const { data: currenciesForSwapAll } = useFetchCurrencyAll();
+
+  const cryptoCurrenciesList = useMemo(() => [...listCryptoCurrencies(), ...listTokens()], []);
+
+  const cryptoCurrenciesSet = useMemo(
+    () => new Set(cryptoCurrenciesList.map(({ id }) => id.toLowerCase())),
+    [cryptoCurrenciesList],
+  );
+
+  const currenciesForSwapAllSet = useMemo(
+    () => new Set(currenciesForSwapAll),
+    [currenciesForSwapAll],
+  );
+
+  const isAvailable = useCallback(
+    (id: string, type: CurrencyCheck): boolean => {
+      return type === "onRamp"
+        ? isCurrencyAvailable(id, "onRamp")
+        : currenciesForSwapAllSet.has(id);
+    },
+    [currenciesForSwapAllSet, isCurrencyAvailable],
+  );
 
   const filterAvailableBuyOrSwapCurrency = useCallback(
-    (elem: MarketItemPerformer) => {
-      const availableOnBuy = isCurrencyAvailable(elem.id, "onRamp");
-      const availableOnSwap = currenciesAll?.includes(elem.id);
-      return availableOnBuy || availableOnSwap;
+    (elem: MarketItemPerformer): boolean => {
+      const isCurrencyInLedger = elem.ledgerIds.some(ledgerId =>
+        cryptoCurrenciesSet.has(ledgerId.toLowerCase()),
+      );
+
+      const isAvailableOnBuyOrSwap = ["onRamp", "swap"].some(
+        (type: string) =>
+          isAvailable(elem.id, type as CurrencyCheck) ||
+          elem.ledgerIds.some(lrId => isAvailable(lrId, type as CurrencyCheck)),
+      );
+
+      return isCurrencyInLedger && isAvailableOnBuyOrSwap;
     },
-    [currenciesAll, isCurrencyAvailable],
+    [cryptoCurrenciesSet, isAvailable],
   );
 
   const { refreshRate, top, supported, limit, enableNewFeature } =
@@ -47,12 +81,16 @@ export function useMarketPerformanceWidget() {
   });
 
   const sliced = useMemo(() => {
-    const initialList = getSlicedList(data ?? [], order, timeRange);
-    const filteredList = initialList.filter(filterAvailableBuyOrSwapCurrency);
+    const baseList = getSlicedList(data ?? [], order, timeRange);
 
-    const finalList = enableNewFeature && filteredList.length > 0 ? filteredList : initialList;
+    // Filters only when enableNewFeature is true
+    const filteredItems = enableNewFeature
+      ? baseList.filter(filterAvailableBuyOrSwapCurrency)
+      : baseList;
 
-    return finalList.slice(0, LIMIT_TO_DISPLAY);
+    const finalItems = filteredItems.length > 0 ? filteredItems : baseList;
+
+    return finalItems.slice(0, LIMIT_TO_DISPLAY);
   }, [data, enableNewFeature, filterAvailableBuyOrSwapCurrency, order, timeRange]);
 
   return {
