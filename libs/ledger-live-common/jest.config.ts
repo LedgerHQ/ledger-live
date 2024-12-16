@@ -38,9 +38,11 @@ const defaultConfig = {
     "ts-jest": {
       isolatedModules: true,
     },
+    Buffer: Uint8Array,
   },
   testEnvironment: "node",
   reporters,
+  setupFiles: ["./jest.polyfills.js"],
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",

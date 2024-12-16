@@ -5,6 +5,14 @@ import { CardanoInvalidPoolId, CardanoMinAmountError } from "./errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
+const { Buffer: OriginalBuffer } = require('buffer');
+
+// delete (globalThis as any).Buffer;
+Object.defineProperty(globalThis, 'Buffer', {
+  value: OriginalBuffer,
+  writable: true,
+  configurable: true
+});
 
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
