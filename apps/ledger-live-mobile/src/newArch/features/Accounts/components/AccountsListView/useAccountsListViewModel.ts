@@ -20,6 +20,7 @@ export interface Props {
   sourceScreenName?: ScreenName;
   isSyncEnabled?: boolean;
   limitNumberOfAccounts?: number;
+  specificAccounts?: Account[] | TokenAccount[];
 }
 
 export type NavigationProp = BaseNavigationComposite<
@@ -31,12 +32,13 @@ const useAccountsListViewModel = ({
   sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAccounts,
+  specificAccounts,
 }: Props) => {
   const startNavigationTTITimer = useStartProfiler();
   const navigation = useNavigation<NavigationProp>();
   const accounts = useSelector(accountsSelector);
   const walletState = useSelector(walletSelector);
-  const accountsToDisplay = accounts.slice(0, limitNumberOfAccounts);
+  const accountsToDisplay = specificAccounts || accounts.slice(0, limitNumberOfAccounts);
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
