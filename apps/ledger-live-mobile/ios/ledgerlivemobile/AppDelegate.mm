@@ -178,7 +178,7 @@ static Braze *_braze;
   [self hideOverlay];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application {
   [self showOverlay];
 }
 

@@ -117,6 +117,11 @@ jest.mock("react-native-reanimated", () => {
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
+jest.mock("~/analytics", () => ({
+  ...jest.requireActual("~/analytics"),
+  track: jest.fn(),
+}));
+
 jest.mock("@react-native-firebase/messaging", () => ({
   messaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
