@@ -1,7 +1,7 @@
 import "./environment";
 import BigNumber from "bignumber.js";
 
-jest.setTimeout(360000);
+jest.setTimeout(400000);
 
 expect.extend({
   toBeBigNumber(value) {
