@@ -52,7 +52,10 @@ const RequiresCameraPermissions: React.FC<Props> = ({
 
   if (permission?.granted || (optimisticallyMountChildren && !firstAutomaticRequestCompleted))
     return (
-      <CameraPermissionContext.Provider value={contextValue}>
+      <CameraPermissionContext.Provider
+        key={permission?.granted ? "granted" : "optimistic"}
+        value={contextValue}
+      >
         {children}
       </CameraPermissionContext.Provider>
     );
