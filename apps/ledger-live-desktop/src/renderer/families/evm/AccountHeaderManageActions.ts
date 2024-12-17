@@ -26,7 +26,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     history.push({
       pathname: value,
       state: {
-        yieldId: "bsc-staking",
+        yieldId: "bsc-bnb-native-staking",
         accountId: account.id,
         returnTo: `/account/${account.id}`,
       },

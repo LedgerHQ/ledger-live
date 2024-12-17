@@ -75,7 +75,7 @@ function getNavigatorParams({
           platform: "stakekit",
           name: "StakeKit",
           accountId: account.id,
-          yieldId: "bsc-staking",
+          yieldId: "bsc-bnb-native-staking",
         },
       },
     ];
