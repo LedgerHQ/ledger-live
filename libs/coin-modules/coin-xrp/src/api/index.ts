@@ -48,8 +48,15 @@ async function operations(
   const [ops, index] = await listOperations(address, { limit, mostRecentIndex: start });
   return [
     ops.map(op => {
-      const { simpleType, ...rest } = op;
-      return { ...rest } satisfies Operation;
+      const { simpleType, blockHash, blockTime, ...rest } = op;
+      return {
+        ...rest,
+        block: {
+          height: rest.blockHeight,
+          hash: blockHash,
+          time: blockTime,
+        },
+      } satisfies Operation;
     }),
     index,
   ];

@@ -47,9 +47,9 @@ export async function listOperations(
 
   return [
     transactions
-      .filter(op => op.tx.TransactionType === "Payment")
+      .filter(op => op.tx_json.TransactionType === "Payment")
       .map(convertToCoreOperation(address)),
-    transactions.slice(-1)[0].tx.ledger_index - 1, // Returns the next index to start from for pagination
+    transactions.slice(-1)[0].tx_json.ledger_index - 1, // Returns the next index to start from for pagination
   ];
 }
 
@@ -57,18 +57,20 @@ const convertToCoreOperation =
   (address: string) =>
   (operation: XrplOperation): XrpOperation => {
     const {
+      ledger_hash,
+      hash,
+      close_time_iso,
       meta: { delivered_amount },
-      tx: {
+      tx_json: {
         TransactionType,
         Fee,
-        hash,
-        inLedger,
         date,
         Account,
         Destination,
         DestinationTag,
         Sequence,
         Memos,
+        ledger_index,
       },
     } = operation;
 
@@ -112,13 +114,15 @@ const convertToCoreOperation =
     }
 
     let op: XrpOperation = {
+      blockTime: new Date(close_time_iso),
+      blockHash: ledger_hash,
       hash,
       address,
       type: TransactionType,
       simpleType: type,
       value,
       fee,
-      blockHeight: inLedger,
+      blockHeight: ledger_index,
       senders: [Account],
       recipients: [Destination],
       date: new Date(toEpochDate),

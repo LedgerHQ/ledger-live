@@ -11,6 +11,7 @@ export type Operation = {
   value: bigint;
   fee: bigint;
   blockHeight: number;
+  block?: BlockInfo;
   senders: string[];
   recipients: string[];
   date: Date;
