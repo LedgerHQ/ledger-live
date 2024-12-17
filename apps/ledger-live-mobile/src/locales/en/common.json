@@ -3979,6 +3979,7 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "seeAllAccounts": "See all accounts",
     "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
