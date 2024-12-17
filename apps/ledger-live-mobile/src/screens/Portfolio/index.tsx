@@ -106,7 +106,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
-        <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
+        <Box background={colors.background.main} px={6} key="PortfolioAssets">
           <RecoverBanner />
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}

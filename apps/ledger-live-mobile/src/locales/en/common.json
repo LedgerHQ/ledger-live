@@ -2342,7 +2342,8 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
-    "seelAllAssets": "See All Assets",
+    "seeAllAssets": "See all assets",
+    "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
