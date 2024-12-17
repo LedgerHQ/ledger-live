@@ -1,15 +1,15 @@
 import invariant from "invariant";
 import expect from "expect";
-import { DeviceModelId } from "@ledgerhq/devices";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { acceptTransaction } from "./speculos-deviceActions";
-import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { AccountLike } from "@ledgerhq/types-live";
+import type { AppSpec } from "../../bot/types";
+import { getCryptoCurrencyById } from "../../currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
+import { acceptTransaction } from "./speculos-deviceActions";
+import type { Transaction } from "./types";
 
 const currency = getCryptoCurrencyById("aptos");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.0001");
@@ -32,7 +32,6 @@ const aptos: AppSpec<Transaction> = {
     appName: "Aptos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 6 * 60 * 1000,
   minViableAmount: minAmountCutoff,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");

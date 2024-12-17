@@ -1,4 +1,5 @@
 import algorand from "../../families/algorand/bridge/mock";
+import aptos from "../../families/aptos/bridge/mock";
 import bitcoin from "../../families/bitcoin/bridge/mock";
 import cardano from "../../families/cardano/bridge/mock";
 import casper from "../../families/casper/bridge/mock";
@@ -16,6 +17,7 @@ import xrp from "../../families/xrp/bridge/mock";
 
 export default {
   algorand,
+  aptos,
   bitcoin,
   cardano,
   casper,
