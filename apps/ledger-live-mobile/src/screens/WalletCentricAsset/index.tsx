@@ -37,6 +37,9 @@ import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
+import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -83,33 +86,57 @@ const AssetScreen = ({ route }: NavigationProps) => {
     [cryptoAccounts],
   );
 
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
+    true,
+  ) as LoadingBasedGroupedCurrencies;
+
+  const isAddAccountCtaDisabled = [LoadingStatus.Pending, LoadingStatus.Error].includes(
+    providersLoadingStatus,
+  );
+
+  const { currenciesByProvider } = result;
+
+  const provider = useMemo(
+    () =>
+      currency &&
+      currenciesByProvider.find(elem =>
+        elem.currenciesByNetwork.some(
+          currencyByNetwork =>
+            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
+        ),
+      ),
+    [currenciesByProvider, currency],
+  );
+
   const onAddAccount = useCallback(() => {
     track("button_clicked", {
       button: "Add new",
     });
-    if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigation.navigate(NavigatorName.AssetSelection, {
-        ...(currency && currency.type === "TokenCurrency"
-          ? { token: currency.id, currency: currency.parentCurrency.id }
-          : { currency: currency.id }),
-        context: "addAccounts",
-      });
-    } else {
-      if (currency && currency.type === "TokenCurrency") {
-        navigation.navigate(NavigatorName.AddAccounts, {
-          screen: undefined,
+    if (llmNetworkBasedAddAccountFlow?.enabled && currency) {
+      if (provider && provider?.currenciesByNetwork.length > 1) {
+        navigation.navigate(NavigatorName.AssetSelection, {
+          screen: ScreenName.SelectNetwork,
           params: {
-            token: currency,
+            currency: currency.id,
+            context: "addAccounts",
           },
         });
       } else {
-        navigation.navigate(NavigatorName.AddAccounts, {
-          screen: undefined,
-          currency,
+        navigation.navigate(NavigatorName.DeviceSelection, {
+          screen: ScreenName.SelectDevice,
+          params: {
+            currency: currency as CryptoCurrency,
+            context: "addAccounts",
+          },
         });
       }
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
+        currency,
+      });
     }
-  }, [currency, navigation, llmNetworkBasedAddAccountFlow]);
+  }, [llmNetworkBasedAddAccountFlow?.enabled, currency, provider, navigation]);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   if (isCryptoCurrency(currency)) {
@@ -178,6 +205,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts as Account[] | TokenAccount[]}
           currencyId={currency.id}
           currencyTicker={currency.ticker}
+          onAddAccount={onAddAccount}
+          isAddAccountCtaDisabled={isAddAccountCtaDisabled}
         />
       </SectionContainer>,
       <AssetMarketSection currency={currency} key="AssetMarketSection" />,
@@ -192,6 +221,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       onGraphCardLayout,
       currentPositionY,
       graphCardEndPosition,
+      isAddAccountCtaDisabled,
       currency,
       currencyBalance,
       cryptoAccountsEmpty,
