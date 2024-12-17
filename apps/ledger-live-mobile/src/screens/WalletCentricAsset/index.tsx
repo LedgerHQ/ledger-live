@@ -178,6 +178,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts as Account[] | TokenAccount[]}
           currencyId={currency.id}
           currencyTicker={currency.ticker}
+          onAddAccount={onAddAccount}
         />
       </SectionContainer>,
       <AssetMarketSection currency={currency} key="AssetMarketSection" />,

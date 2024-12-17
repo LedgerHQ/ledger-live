@@ -3,20 +3,31 @@ import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
 import BigNumber from "bignumber.js";
 import CounterValue from "~/components/CounterValue";
-import { Account, DerivationMode } from "@ledgerhq/types-live";
+import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/lib/derivation";
 import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
+import {
+  getParentAccount,
+  isTokenAccount as isTokenAccountChecker,
+} from "@ledgerhq/live-common/account/index";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "~/reducers/accounts";
 
 interface AccountItemProps {
-  account: Account;
+  account: Account | TokenAccount;
   balance: BigNumber;
 }
 
 const AccountItem: React.FC<AccountItemProps> = ({ account, balance }) => {
-  const currency = account.currency;
+  const allAccount = useSelector(accountsSelector);
+  const isTokenAccount = isTokenAccountChecker(account);
+  const currency = isTokenAccount ? account.token.parentCurrency : account.currency;
   const accountName = useMaybeAccountName(account);
-  const formattedAddress = formatAddress(account.freshAddress);
+  const parentAccount = getParentAccount(account, allAccount);
+  const formattedAddress = formatAddress(
+    isTokenAccount ? parentAccount.freshAddress : account.freshAddress,
+  );
   const tag =
     account.type === "Account" &&
     account?.derivationMode !== undefined &&
@@ -26,7 +37,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, balance }) => {
 
   return (
     <>
-      <Flex flex={1} flexShrink={1} testID={`accountItem-${accountName}`}>
+      <Flex flex={1} rowGap={2} flexShrink={1} testID={`accountItem-${accountName}`}>
         <Flex flexDirection="row" columnGap={8} alignItems="center" maxWidth="70%">
           <Text
             numberOfLines={1}
@@ -47,7 +58,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, balance }) => {
           <Text numberOfLines={1} variant="body" color="neutral.c70" flexShrink={1}>
             {formattedAddress}
           </Text>
-          <ParentCurrencyIcon forceIconScale={1.5} currency={currency} size={20} />
+          <ParentCurrencyIcon forceIconScale={2} currency={currency} size={20} />
         </Flex>
       </Flex>
       <Flex justifyContent="center" alignItems="flex-end">
