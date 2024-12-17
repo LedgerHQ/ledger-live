@@ -22,14 +22,19 @@ const StyledPressable = styled(Pressable)`
 
 type Props = {
   sourceScreenName: string;
+  onClick?: () => void;
 };
 
-const AddAccountButton: React.FC<Props> = ({ sourceScreenName }) => {
+const AddAccountButton: React.FC<Props> = ({ sourceScreenName, onClick }) => {
   const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = useState<boolean>(false);
 
   const openAddModal = () => {
     track("button_clicked", { button: "Add a new account", page: sourceScreenName });
+    if (onClick) {
+      onClick();
+      return;
+    }
     setAddModalOpened(true);
   };
   const closeAddModal = () => setAddModalOpened(false);
