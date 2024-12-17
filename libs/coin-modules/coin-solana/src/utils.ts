@@ -28,12 +28,13 @@ export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
   totalScore: 7,
 };
 
-export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
-  LEDGER_VALIDATOR_BY_CHORUS_ONE,
-  LEDGER_VALIDATOR_BY_FIGMENT,
-];
-
 export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
+
+// default validator first
+export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
+  LEDGER_VALIDATOR_BY_FIGMENT,
+  LEDGER_VALIDATOR_BY_CHORUS_ONE,
+];
 
 export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
 
@@ -177,8 +178,8 @@ export function ledgerFirstValidators(
   );
 
   const LEDGER_FIRST_VALIDATOR =
-    ledgerValidators.find(v => v.voteAccount === LEDGER_VALIDATOR_BY_CHORUS_ONE.voteAccount) ||
-    LEDGER_VALIDATOR_BY_CHORUS_ONE;
+    ledgerValidators.find(v => v.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount) ||
+    LEDGER_VALIDATOR_DEFAULT;
 
   const ledgerValidatorsFiltered = ledgerValidators.filter(
     v => v.voteAccount !== LEDGER_FIRST_VALIDATOR.voteAccount,
