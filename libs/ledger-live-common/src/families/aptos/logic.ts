@@ -18,9 +18,9 @@ import {
 } from "./constants";
 import type { AptosTransaction, Transaction } from "./types";
 
-export const DEFAULT_GAS = 5;
+export const DEFAULT_GAS = 200;
 export const DEFAULT_GAS_PRICE = 100;
-export const ESTIMATE_GAS_MUL = 1.2;
+export const ESTIMATE_GAS_MUL = 1.2; // defines buffer for gas estimation change
 
 const HEX_REGEXP = /^[-+]?[a-f0-9]+\.?[a-f0-9]*?$/i;
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
@@ -47,13 +47,14 @@ export function isTestnet(currencyId: string): boolean {
   return getCryptoCurrencyById(currencyId).isTestnetFor ? true : false;
 }
 
-export const getMaxSendBalance = (amount: BigNumber): BigNumber => {
-  const gas = new BigNumber(DEFAULT_GAS + 2000);
-  const gasPrice = new BigNumber(DEFAULT_GAS_PRICE);
+export const getMaxSendBalance = (
+  amount: BigNumber,
+  gas: BigNumber,
+  gasPrice: BigNumber,
+): BigNumber => {
   const totalGas = gas.multipliedBy(gasPrice);
 
-  if (amount.gt(totalGas)) return amount.minus(totalGas);
-  return amount;
+  return amount.gt(totalGas) ? amount.minus(totalGas) : new BigNumber(0);
 };
 
 export function normalizeTransactionOptions(
