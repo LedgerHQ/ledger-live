@@ -48,21 +48,6 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    // if the account changed, we should revalidate the recipient field
-    if (!initValue && value !== "" && value !== transaction.recipient) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
-    }
-  }, [
-    account.id,
-    value,
-    transaction.recipient,
-    bridge,
-    onChangeTransaction,
-    transaction,
-    initValue,
-  ]);
-
   const onChange = useCallback(
     async (recipient: string, maybeExtra?: OnChangeExtra | null) => {
       const { currency } = maybeExtra || {};
