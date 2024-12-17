@@ -415,6 +415,82 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   });
 }
 
+const swapWithSendMax = [
+  {
+    swap: new Swap(
+      Account.ETH_1,
+      Account.BTC_NATIVE_SEGWIT_1,
+      "0.02",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2110, QAA-292",
+  },
+  {
+    swap: new Swap(
+      Account.ETH_1,
+      Account.SOL_1,
+      "0.02",
+      Fee.MEDIUM,
+      Provider.CHANGELLY,
+      Rate.FLOAT,
+    ),
+    xrayTicket: "B2CQA-2110, QAA-292",
+  }
+];
+
+for (const { swap, xrayTicket } of swapWithSendMax) {
+  test.describe("Swap - Swap with Send Max", () => {
+    test.beforeAll(async () => {
+      process.env.SWAP_DISABLE_APPS_INSTALL = "true";
+      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
+      process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+    });
+
+    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
+
+    test.afterAll(async () => {
+      delete process.env.SWAP_DISABLE_APPS_INSTALL;
+      delete process.env.SWAP_API_BASE;
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    });
+
+    test.use({
+      userdata: "speculos-tests-app",
+      speculosApp: app,
+    });
+
+    test(
+      `Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await performSwapUntilQuoteSelectionStepWithSendMax(app, electronApp, swap);
+        await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
+        await app.speculos.verifyAmountsAndAcceptSwap(swap);
+        await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+      },
+    );
+  });
+}
+
 async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
