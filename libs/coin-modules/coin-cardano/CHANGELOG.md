@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.3.0-nightly.6
+
+### Patch Changes
+
+- [#8675](https://github.com/LedgerHQ/ledger-live/pull/8675) [`4957c97`](https://github.com/LedgerHQ/ledger-live/commit/4957c97c996b8f4d806982c92e9024f37619b612) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: overiddeable buffer for cardano
+
 ## 0.3.0-nightly.5
 
 ### Minor Changes

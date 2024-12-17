@@ -1,5 +1,14 @@
 ## 34.5.0-next.4
 
+## 34.16.0-nightly.10
+
+### Patch Changes
+
+- [#8675](https://github.com/LedgerHQ/ledger-live/pull/8675) [`4957c97`](https://github.com/LedgerHQ/ledger-live/commit/4957c97c996b8f4d806982c92e9024f37619b612) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: overiddeable buffer for cardano
+
+- Updated dependencies [[`4957c97`](https://github.com/LedgerHQ/ledger-live/commit/4957c97c996b8f4d806982c92e9024f37619b612)]:
+  - @ledgerhq/coin-cardano@0.3.0-nightly.6
+
 ## 34.16.0-nightly.9
 
 ### Patch Changes
