@@ -69,7 +69,7 @@ import type {
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
-} from "../families/internet_computer/types";
+} from "@ledgerhq/coin-internet_computer/types/index";
 import type {
   Transaction as multiversxTransaction,
   TransactionRaw as multiversxTransactionRaw,

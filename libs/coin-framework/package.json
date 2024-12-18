@@ -92,6 +92,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
+    "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

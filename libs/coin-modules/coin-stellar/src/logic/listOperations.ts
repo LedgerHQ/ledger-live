@@ -1,4 +1,4 @@
-import type { Operation as LiveOperation } from "@ledgerhq/types-live";
+import type { StellarOperation } from "../types/bridge";
 import { fetchOperations } from "../network";
 
 export type Operation = {
@@ -14,19 +14,27 @@ export type Operation = {
   transactionSequenceNumber: number;
 };
 
-export async function listOperations(address: string, _blockHeight: number): Promise<Operation[]> {
+export async function listOperations(
+  address: string,
+  { limit, cursor }: { limit: number; cursor?: number | undefined },
+): Promise<[Operation[], number]> {
   // Fake accountId
   const accountId = "";
   const operations = await fetchOperations({
     accountId,
     addr: address,
     order: "asc",
-    cursor: "0",
+    limit,
+    cursor: cursor?.toString(),
   });
-  return operations.map(convertToCoreOperation(address));
+
+  return [
+    operations.map(convertToCoreOperation(address)),
+    parseInt(operations.slice(-1)[0].extra.pagingToken ?? "0"),
+  ];
 }
 
-const convertToCoreOperation = (address: string) => (operation: LiveOperation) => {
+const convertToCoreOperation = (address: string) => (operation: StellarOperation) => {
   return {
     hash: operation.hash,
     address,

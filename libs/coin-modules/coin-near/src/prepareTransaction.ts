@@ -1,5 +1,5 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { NearAccount, Transaction } from "./types";
 import getEstimatedFees from "./getFeesForTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";
@@ -16,5 +16,5 @@ export const prepareTransaction: AccountBridge<
     : transaction.amount;
 
   const fees = await getEstimatedFees(transaction);
-  return defaultUpdateTransaction(transaction, { fees, amount });
+  return updateTransaction(transaction, { fees, amount });
 };

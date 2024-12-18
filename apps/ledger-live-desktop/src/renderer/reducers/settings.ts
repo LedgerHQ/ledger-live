@@ -36,6 +36,7 @@ import {
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEV,
   UPDATE_NFT_COLLECTION_STATUS,
+  UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
 } from "../actions/constants";
 import { BlockchainsType, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
@@ -134,6 +135,7 @@ export type SettingsState = {
   onboardingUseCase: OnboardingUseCase | null;
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
+  anonymousUserNotifications: Record<string, number>;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -239,6 +241,7 @@ export const INITIAL_STATE: SettingsState = {
   onboardingUseCase: null,
   lastOnboardedDevice: null,
   alwaysShowMemoTagInfo: true,
+  anonymousUserNotifications: {},
 };
 
 /* Handlers */
@@ -311,6 +314,10 @@ type HandlersPayloads = {
   [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
   [TOGGLE_MARKET_WIDGET]: boolean;
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
+    notifications: Record<string, number>;
+    purgeState?: boolean;
+  };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -555,6 +562,13 @@ const handlers: SettingsHandlers = {
   [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
     ...state,
     alwaysShowMemoTagInfo: payload,
+  }),
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => ({
+    ...state,
+    anonymousUserNotifications: {
+      ...(!payload.purgeState && state.anonymousUserNotifications),
+      ...payload.notifications,
+    },
   }),
 };
 
@@ -912,3 +926,5 @@ export const marketPerformanceWidgetSelector = (state: State) =>
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
 export const nftCollectionsStatusByNetworkSelector = (state: State) =>
   state.settings.nftCollectionsStatusByNetwork;
+export const anonymousUserNotificationsSelector = (state: State) =>
+  state.settings.anonymousUserNotifications;

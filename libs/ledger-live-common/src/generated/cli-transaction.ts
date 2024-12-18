@@ -7,6 +7,7 @@ import { cliTools as cosmos } from "../families/cosmos/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as hedera } from "../families/hedera/setup";
 import { cliTools as filecoin } from "../families/filecoin/setup";
+import { cliTools as internet_computer } from "../families/internet_computer/setup";
 import { cliTools as icon } from "../families/icon/setup";
 import { cliTools as multiversx } from "../families/multiversx/setup";
 import { cliTools as near } from "../families/near/setup";
@@ -30,6 +31,7 @@ export default {
   evm,
   hedera,
   filecoin,
+  internet_computer,
   icon,
   multiversx,
   near,

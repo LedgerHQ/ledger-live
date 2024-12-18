@@ -13,7 +13,7 @@ const knownDevice = knownDevices.nanoX;
 describe("Add account from modal", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "onboardingcompleted",
+      userdata: "skip-onboarding",
       knownDevices: [knownDevice],
     });
     deviceAction = new DeviceAction(knownDevice);

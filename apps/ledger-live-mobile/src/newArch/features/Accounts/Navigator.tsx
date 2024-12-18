@@ -10,9 +10,14 @@ import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/scre
 import SelectAccounts from "LLM/features/Accounts/screens/SelectAccounts";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
+import { AccountsListNavigator } from "./screens/AccountsList/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import AccountsList from "LLM/features/Accounts/screens/AccountsList";
+
 export default function Navigator() {
   const { colors } = useTheme();
   const route = useRoute();
+  const accountListUIFF = useFeature("llmAccountListUI");
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -53,8 +58,17 @@ export default function Navigator() {
           headerTitle: "",
         }}
       />
+      {accountListUIFF?.enabled && (
+        <Stack.Screen
+          name={ScreenName.AccountsList}
+          component={AccountsList}
+          options={{
+            headerTitle: "",
+          }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
 
-const Stack = createStackNavigator<NetworkBasedAddAccountNavigator>();
+const Stack = createStackNavigator<NetworkBasedAddAccountNavigator & AccountsListNavigator>();

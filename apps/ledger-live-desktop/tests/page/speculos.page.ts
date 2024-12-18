@@ -3,9 +3,9 @@ import { step } from "tests/misc/reporters/step";
 import {
   pressBoth,
   pressUntilTextFound,
-  waitFor,
   containsSubstringInEvent,
   activateLedgerSync,
+  expectValidAddressDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
@@ -29,26 +29,7 @@ import { delegateSolana, sendSolana } from "tests/families/solana";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
-    let deviceLabels: string[];
-
-    switch (account.currency) {
-      case Currency.SOL:
-        deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
-        break;
-      case Currency.DOT:
-      case Currency.ATOM:
-        deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
-        break;
-      default:
-        deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
-        break;
-    }
-
-    await waitFor(deviceLabels[0]);
-    const events = await pressUntilTextFound(deviceLabels[1]);
-    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-    expect(isAddressCorrect).toBeTruthy();
-    await pressBoth();
+    await expectValidAddressDevice(account, addressDisplayed);
   }
 
   @step("Activate Ledger Sync")

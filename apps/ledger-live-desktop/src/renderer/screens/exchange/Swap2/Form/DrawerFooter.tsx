@@ -6,7 +6,6 @@ import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { Separator } from "./Separator";
 import {
   getSwapProvider,
   AdditionalProviderConfig,
@@ -16,9 +15,7 @@ const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 13,
-})`
-  white-space: pre-line;
-`;
+})``;
 
 export function DrawerFooter({ provider }: { provider: string }) {
   const [providerData, setproviderData] = useState<AdditionalProviderConfig>();
@@ -43,29 +40,26 @@ export function DrawerFooter({ provider }: { provider: string }) {
       : "DeviceAction.swap.acceptTerms";
 
   return (
-    <>
-      <Separator />
-      <Box mx="22px" mb="7px">
-        <Terms>
-          <Trans
-            i18nKey={acceptTerms}
-            values={{
-              provider: providerName,
-            }}
-            components={[
-              <LinkWithExternalIcon
-                key="termsExternalLink"
-                fontSize={13}
-                color="palette.text.shade60"
-                onClick={onLinkClick}
-                style={{
-                  textDecoration: "underline",
-                }}
-              />,
-            ]}
-          />
-        </Terms>
-      </Box>
-    </>
+    <Box mt={1} mb={5} mx={3}>
+      <Terms>
+        <Trans
+          i18nKey={acceptTerms}
+          values={{
+            provider: providerName,
+          }}
+          components={[
+            <LinkWithExternalIcon
+              key="termsExternalLink"
+              fontSize={13}
+              color="palette.text.shade60"
+              onClick={onLinkClick}
+              style={{
+                textDecoration: "underline",
+              }}
+            />,
+          ]}
+        />
+      </Terms>
+    </Box>
   );
 }

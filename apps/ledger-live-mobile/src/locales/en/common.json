@@ -2342,7 +2342,8 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
-    "seelAllAssets": "See All Assets",
+    "seeAllAssets": "See all assets",
+    "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -2748,6 +2749,9 @@
         "cta": "Stake now"
       }
     }
+  },
+  "assets": {
+    "title": "Assets"
   },
   "accounts": {
     "title": "Accounts",
@@ -3959,6 +3963,7 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },

@@ -10,8 +10,7 @@ class SeiNetwork extends CosmosBase {
 
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
+    this.stakingDocUrl = "https://support.ledger.com/article/6235986236957-zd";
     this.unbondingPeriod = 28;
     this.prefix = "sei";
     this.validatorPrefix = `${this.prefix}valoper`;

@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "../../models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -60,14 +60,13 @@ test.describe("Delegate flows", () => {
         userdata: "skip-onboarding",
         speculosApp: account.delegate.account.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: account.delegate.account.currency.ticker,
               index: account.delegate.account.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -75,13 +74,11 @@ test.describe("Delegate flows", () => {
       test(
         `[${account.delegate.account.currency.name}] Delegate`,
         {
-          annotation: {
-            type: "TMS",
-            description: account.xrayTicket,
-          },
+          annotation: { type: "TMS", description: account.xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations).split(", "));
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
@@ -120,14 +117,13 @@ test.describe("Delegate flows", () => {
         userdata: "skip-onboarding",
         speculosApp: validator.delegate.account.currency.speculosApp,
         cliCommands: [
-          {
-            command: commandCLI.liveData,
-            args: {
+          (appjsonPath: string) => {
+            return CLI.liveData({
               currency: validator.delegate.account.currency.ticker,
               index: validator.delegate.account.index,
               add: true,
-              appjson: "",
-            },
+              appjson: appjsonPath,
+            });
           },
         ],
       });
@@ -135,13 +131,11 @@ test.describe("Delegate flows", () => {
       test(
         `[${validator.delegate.account.currency.name}] - Select validator`,
         {
-          annotation: {
-            type: "TMS",
-            description: validator.xrayTicket,
-          },
+          annotation: { type: "TMS", description: validator.xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations).split(", "));
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
@@ -158,13 +152,7 @@ test.describe("Delegate flows", () => {
           await app.delegate.openSearchProviderModal();
           await app.delegate.checkValidatorListIsVisible();
           await app.delegate.selectProviderOnRow(2);
-          // TODO: verification skipped due to bug (Clicking 'Show less' does not select the validator that was chosen previously) - LIVE-14500
-          if (
-            ![Currency.SOL.name, Currency.ADA.name].includes(
-              validator.delegate.account.currency.name,
-            )
-          )
-            await app.delegate.closeProviderList(2);
+          await app.delegate.closeProviderList(2);
         },
       );
     });
@@ -176,14 +164,13 @@ test.describe("Delegate flows", () => {
       userdata: "skip-onboarding",
       speculosApp: delegateAccount.account.currency.speculosApp,
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: delegateAccount.account.currency.ticker,
             index: delegateAccount.account.index,
             add: true,
-            appjson: "",
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
     });
@@ -197,7 +184,8 @@ test.describe("Delegate flows", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
         await app.layout.goToPortfolio();
         await app.portfolio.startStakeFlow();
 
@@ -218,7 +206,8 @@ test.describe("Delegate flows", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
         await app.layout.goToMarket();
         await app.market.search(delegateAccount.account.currency.name);
         await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);

@@ -15,6 +15,9 @@ import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
+import { Account } from "./enum/Account";
+import { Currency } from "./enum/Currency";
+import expect from "expect";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -438,5 +441,28 @@ export async function activateLedgerSync() {
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
   await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
+}
+
+export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  let deviceLabels: string[];
+
+  switch (account.currency) {
+    case Currency.SOL:
+      deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+      break;
+    case Currency.DOT:
+    case Currency.ATOM:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
+      break;
+    default:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+      break;
+  }
+
+  await waitFor(deviceLabels[0]);
+  const events = await pressUntilTextFound(deviceLabels[1]);
+  const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+  expect(isAddressCorrect).toBeTruthy();
   await pressBoth();
 }

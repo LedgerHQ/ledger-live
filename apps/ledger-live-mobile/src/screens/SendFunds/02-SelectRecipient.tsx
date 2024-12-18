@@ -218,6 +218,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
   );
 
+  const isContinueDisabled =
+    debouncedBridgePending ||
+    !!status.errors.recipient ||
+    memoTag?.isDebouncePending ||
+    !!memoTag?.error;
+
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
   return (
     <>
@@ -315,6 +321,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
+                  autoFocus={memoTagDrawerState !== MemoTagDrawerState.INITIAL}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">
@@ -341,7 +348,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               testID="recipient-continue-button"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={debouncedBridgePending || !!status.errors.recipient || !!memoTag?.error}
+              disabled={isContinueDisabled}
               pending={debouncedBridgePending}
               onPress={onPressContinue}
             />

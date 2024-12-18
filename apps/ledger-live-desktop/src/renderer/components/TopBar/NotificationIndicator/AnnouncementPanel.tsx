@@ -244,7 +244,6 @@ const Separator = styled.div`
 
 export function AnnouncementPanel() {
   const { notificationsCards, groupNotifications, onClickNotif } = useNotifications();
-
   const groups = useMemo(
     () => groupNotifications(notificationsCards),
     // eslint-disable-next-line react-hooks/exhaustive-deps

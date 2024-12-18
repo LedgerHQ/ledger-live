@@ -285,7 +285,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   return (
     <Flex flex={1}>
-      <NavigationScrollView style={{ flex: 1 }}>
+      <NavigationScrollView testID="receive-screen-scrollView" style={{ flex: 1 }}>
         <TrackScreen
           category="Deposit"
           name="Receive Account Qr Code"

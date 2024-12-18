@@ -3373,8 +3373,8 @@
           "pendingOperations": [],
           "currencyId": "tron",
           "lastSyncDate": "2024-08-23T12:46:56.250Z",
-          "balance": "0",
-          "spendableBalance": "0",
+          "balance": "77259507",
+          "spendableBalance": "77259507",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [],
@@ -19770,7 +19770,7 @@
           "currencyId": "solana",
           "lastSyncDate": "2024-08-01T09:07:02.214Z",
           "balance": "20000000",
-          "spendableBalance": "19109120",
+          "spendableBalance": "11119109120",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
@@ -20287,8 +20287,8 @@
           "pendingOperations": [],
           "currencyId": "tron",
           "lastSyncDate": "2024-08-01T09:06:57.118Z",
-          "balance": "1719000",
-          "spendableBalance": "1719000",
+          "balance": "77259507",
+          "spendableBalance": "77259507",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
