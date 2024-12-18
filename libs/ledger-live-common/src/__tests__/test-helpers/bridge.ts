@@ -542,29 +542,32 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               recipient: account.freshAddress,
             });
           });
-          // FIXME: Flaky test
-          // makeTest("can be run in parallel and all yield same results", async () => {
-          //   const account = await getSynced();
-          //   const t = {
-          //     ...bridge.createTransaction(account),
-          //     amount: new BigNumber(1000),
-          //     recipient: account.freshAddress,
-          //   };
-          //   const stable = await bridge.prepareTransaction(account, t);
-          //   const first = omit(
-          //     await bridge.prepareTransaction(account, stable),
-          //     arg.currencyData.IgnorePrepareTransactionFields || [],
-          //   );
-          //   const concur = await Promise.all(
-          //     Array(3)
-          //       .fill(null)
-          //       .map(() => bridge.prepareTransaction(account, stable)),
-          //   );
-          //   concur.forEach(r => {
-          //     r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
-          //     expect(r).toEqual(first);
-          //   });
-          // });
+          /*
+            FIXME: Flaky test
+            ISSUE: Sometimes the "expireTimestamp" is off by 1 microsecond
+          */
+          makeTest("can be run in parallel and all yield same results", async () => {
+            const account = await getSynced();
+            const t = {
+              ...bridge.createTransaction(account),
+              amount: new BigNumber(1000),
+              recipient: account.freshAddress,
+            };
+            const stable = await bridge.prepareTransaction(account, t);
+            const first = omit(
+              await bridge.prepareTransaction(account, stable),
+              arg.currencyData.IgnorePrepareTransactionFields || [],
+            );
+            const concur = await Promise.all(
+              Array(3)
+                .fill(null)
+                .map(() => bridge.prepareTransaction(account, stable)),
+            );
+            concur.forEach(r => {
+              r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
+              expect(r).toEqual(first);
+            });
+          });
         });
 
         describe("getTransactionStatus", () => {
