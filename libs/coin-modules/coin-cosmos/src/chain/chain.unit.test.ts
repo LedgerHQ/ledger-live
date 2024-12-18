@@ -21,6 +21,7 @@ describe("cryptoFactory test", () => {
       "stargaze",
       "stride",
       "mantra",
+      "zenrock",
     ];
     currencies.forEach(currency => {
       expect(cryptoFactory(currency)).not.toBeNull();

@@ -40,6 +40,7 @@ export const IDS = [
   "persistence",
   "onomy",
   "mantra",
+  "zenrock",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
