@@ -45,7 +45,7 @@ async function operations(
   address: string,
   { limit, start }: Pagination,
 ): Promise<[Operation[], number]> {
-  const [ops, index] = await listOperations(address, { limit, mostRecentIndex: start });
+  const [ops, index] = await listOperations(address, { limit, startAt: start ?? 0 });
   return [
     ops.map(op => {
       const { simpleType, blockHash, blockTime, ...rest } = op;

@@ -68,13 +68,13 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
 
 export const getTransactions = async (
   address: string,
-  options: { ledger_index_min?: number; ledger_index_max?: number; limit?: number} | undefined,
+  options: { ledger_index_min?: number; ledger_index_max?: number; limit?: number } | undefined,
 ): Promise<XrplOperation[]> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
-    ledger_index: "validated",
     ...options,
     api_version: 2,
+    tx_type: "Payment",
   });
 
   return result.transactions;
@@ -110,7 +110,7 @@ async function rpcCall<T extends object>(
   });
 
   if (isResponseStatus(result) && result.status !== "success") {
-    throw new Error(`couldn't fetch ${method} with params ${params}`);
+    throw new Error(`couldn't fetch ${method} with params ${JSON.stringify(params)}`);
   }
 
   return result;

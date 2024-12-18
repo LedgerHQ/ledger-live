@@ -39,7 +39,7 @@ export async function listOperations(
     options = {
       ...options,
       // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
-      ledger_index_min: Math.max(startAt ?? 0, minLedgerVersion),
+      ledger_index_min: Math.max(startAt, minLedgerVersion),
     };
   }
 
@@ -47,7 +47,6 @@ export async function listOperations(
 
   return [
     transactions
-      .filter(op => op.tx_json.TransactionType === "Payment")
       .map(convertToCoreOperation(address)),
     transactions.slice(-1)[0].tx_json.ledger_index - 1, // Returns the next index to start from for pagination
   ];
