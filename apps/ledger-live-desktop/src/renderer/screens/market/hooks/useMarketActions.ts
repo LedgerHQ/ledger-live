@@ -100,6 +100,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
           state: {
             defaultCurrency: internalCurrency,
             defaultAccount,
+            defaultAmountFrom: "0",
             defaultParentAccount:
               "parentId" in defaultAccount && defaultAccount.parentId
                 ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
