@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Linking, Platform, ScrollView } from "react-native";
+import { Image, Linking, Platform, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -37,7 +37,7 @@ import {
 import { TFunction } from "react-i18next";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ParamListBase, useTheme } from "@react-navigation/native";
+import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
 import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
@@ -63,6 +63,7 @@ import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wall
 import { SettingsState } from "~/reducers/types";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -1085,6 +1086,10 @@ export const AutoRepair = ({
   );
 };
 
+const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.png"),
+};
+
 export const HardwareUpdate = ({
   t,
   device,
@@ -1096,36 +1101,34 @@ export const HardwareUpdate = ({
   i18nKeyTitle: string;
   i18nKeyDescription: string;
 }) => {
-  const { dark } = useTheme();
-  const theme: "dark" | "light" = dark ? "dark" : "light";
-
-  const openUrl = (url: string) => {
-    Linking.openURL(url);
-  };
+  const openUrl = (url: string) => Linking.openURL(url);
 
   return (
     <Flex flex={1} justifyContent="center" minHeight="160px">
-      <AnimationContainer>
-        <Animation
-          source={getDeviceAnimation({ modelId: device.modelId, key: "quitApp", theme })}
-          style={getDeviceAnimationStyles(device.modelId)}
+      <AnimationContainer height="200px">
+        <Image
+          source={HARDWARE_UPDATE_ASSETS[device.modelId]}
+          style={{ height: 200, width: 200 }}
+          resizeMode={"contain"}
         />
       </AnimationContainer>
       <Text variant="h4" fontWeight="semiBold">
         {t(i18nKeyTitle)}
       </Text>
-      <Text pt={6}>{t(i18nKeyDescription)}</Text>
+      <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
+        {t(i18nKeyDescription)}
+      </Text>
       <Button
         type="main"
         outline={false}
         onPress={() => openUrl("https://shop.ledger.com/pages/hardware-wallet")}
-        mt={7}
+        mt={8}
         alignSelf="stretch"
       >
         {t("transfer.swap2.incompatibility.explore_compatible_devices")}
       </Button>
       <Button
-        type="main"
+        type="shade"
         outline
         onPress={() => openUrl("https://support.ledger.com")}
         mt={4}
