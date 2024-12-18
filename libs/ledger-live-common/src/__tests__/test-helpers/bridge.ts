@@ -542,10 +542,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               recipient: account.freshAddress,
             });
           });
-          /*
-            FIXME: Flaky test
-            ISSUE: Sometimes the "expireTimestamp" is off by 1 microsecond
-          */
           makeTest("can be run in parallel and all yield same results", async () => {
             const account = await getSynced();
             const t = {
