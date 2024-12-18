@@ -208,6 +208,18 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Expect Highest market cap currency to be selected")
+  async expectHighestMcapToBeSelected(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText("BTC");
+  }
+
+  @step("Expect asset or account selected $0 to be displayed")
+  async expectSelectedAssetDisplayed(asset: string, electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
+  }
+
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
