@@ -2,7 +2,6 @@ import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import "../../__tests__/test-helpers/setup";
-import { toSignedOperationRaw } from "../../transaction";
 import { fromTransactionRaw } from "./transaction";
 import { Transaction } from "./types";
 
@@ -80,29 +79,6 @@ const aptos: CurrenciesData<Transaction> = {
               amount: BigNumber("20000"),
               totalSpent: BigNumber("21100"),
             }),
-          // WARNING: DO NOT commit this test publicly unless you're ok with possibility tx could leak out. (do self txs)
-          testSignedOperation: (expect, signedOperation) => {
-            expect(toSignedOperationRaw(signedOperation)).toMatchObject({
-              operation: {
-                id: "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:--OUT",
-                hash: "",
-                type: "OUT",
-                senders: ["0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b"],
-                recipients: ["0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1"],
-                accountId:
-                  "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
-                blockHash: null,
-                blockHeight: null,
-                extra: {},
-                date: "2024-12-18T15:21:15.685Z",
-                value: "21100",
-                fee: "1100",
-                transactionSequenceNumber: 1,
-              },
-              signature:
-                "445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b01000000000000000200000000000000000000000000000000000000000000000000000000000000010d6170746f735f6163636f756e740e7472616e736665725f636f696e73010700000000000000000000000000000000000000000000000000000000000000010a6170746f735f636f696e094170746f73436f696e000220d20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c108204e0000000000000b000000000000006400000000000000d0e8626700000000010020d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d395640be1abf52a422af334bef78651d4394fc5a17a5a7936ab3fa1b851bd2811903b93644144a249d23ef893991239b0579ee916ea145d02e4dd02439a8cbaa0d3f0f",
-            });
-          },
         },
       ],
     },
