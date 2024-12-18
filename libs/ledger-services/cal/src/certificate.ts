@@ -42,7 +42,6 @@ export type CertificateInfo = {
 /**
  * Retrieve PKI certificate
  * @param device
- * @param version semver
  */
 export async function getCertificate(
   device: Device,

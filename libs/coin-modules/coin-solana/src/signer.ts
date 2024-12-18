@@ -1,3 +1,5 @@
+import { DeviceModelId } from "@ledgerhq/devices";
+
 export type SolanaAddress = {
   address: Buffer;
 };
@@ -6,7 +8,12 @@ export type SolanaSignature = {
 };
 
 export type Resolution = {
+  deviceModelId?: DeviceModelId | undefined;
   tokenAddress?: string;
+  createATA?: {
+    address: string;
+    mintAddress: string;
+  };
 };
 
 export interface SolanaSigner {
