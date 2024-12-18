@@ -21,6 +21,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
 import { ChainAPI } from "./api";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {
@@ -45,19 +46,37 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
   return optimisticOp;
 };
 
-function getResolution(transaction: Transaction): Resolution | undefined {
+function getResolution(
+  transaction: Transaction,
+  deviceModelId?: DeviceModelId,
+): Resolution | undefined {
   if (!transaction.subAccountId || !transaction.model.commandDescriptor) return;
 
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {
     case "token.transfer": {
+      if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
+        return {
+          deviceModelId,
+          createATA: {
+            address: command.recipientDescriptor.walletAddress,
+            mintAddress: command.mintAddress,
+          },
+        };
+      }
       return {
+        deviceModelId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
       };
     }
+    // Not sure we need to handle this case as we don't use the TLV descriptor on the steps of createATA
     case "token.createATA": {
       return {
-        tokenAddress: command.associatedTokenAccountAddress,
+        deviceModelId,
+        createATA: {
+          address: command.owner,
+          mintAddress: command.mint,
+        },
       };
     }
   }
@@ -68,7 +87,7 @@ export const buildSignOperation =
     signerContext: SignerContext<SolanaSigner>,
     api: () => Promise<ChainAPI>,
   ): AccountBridge<Transaction>["signOperation"] =>
-  ({ account, deviceId, transaction }) =>
+  ({ account, deviceId, deviceModelId, transaction }) =>
     new Observable(subscriber => {
       const main = async () => {
         const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
@@ -85,7 +104,7 @@ export const buildSignOperation =
           signer.signTransaction(
             account.freshAddressPath,
             Buffer.from(tx.message.serialize()),
-            getResolution(transaction),
+            getResolution(transaction, deviceModelId),
           ),
         );
 
