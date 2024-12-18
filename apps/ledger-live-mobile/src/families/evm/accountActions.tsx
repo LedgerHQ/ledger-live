@@ -20,11 +20,7 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
 
-function getNavigatorParams({
-  parentRoute,
-  account,
-  parentAccount,
-}: Props): NavigationParamsType | undefined {
+function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -36,35 +32,6 @@ function getNavigatorParams({
         },
       },
     ];
-  }
-  if (account.type === "Account" && account.currency.id === "ethereum") {
-    const params = {
-      screen: parentRoute.name,
-      drawer: {
-        id: "EvmStakingDrawer",
-        props: {
-          singleProviderRedirectMode: true,
-          accountId: account.id,
-          has32Eth: account.spendableBalance.gt(ETH_LIMIT),
-        },
-      },
-      params: {
-        ...(parentRoute.params ?? {}),
-        account,
-        parentAccount,
-      },
-    };
-
-    switch (parentRoute.name) {
-      // since we have to go to different navigators b
-      case ScreenName.Account:
-      case ScreenName.Asset:
-        return [NavigatorName.Accounts, params];
-      case ScreenName.MarketDetail:
-        return [NavigatorName.Market, params];
-      default:
-        return [NavigatorName.Base, params];
-    }
   }
 
   if (account.type === "Account" && account.currency.id === "bsc") {
@@ -79,6 +46,34 @@ function getNavigatorParams({
         },
       },
     ];
+  }
+
+  const params = {
+    screen: parentRoute.name,
+    drawer: {
+      id: "EvmStakingDrawer",
+      props: {
+        singleProviderRedirectMode: true,
+        accountId: account.id,
+        has32Eth: account.spendableBalance.gt(ETH_LIMIT),
+      },
+    },
+    params: {
+      ...(parentRoute.params ?? {}),
+      account,
+      parentAccount,
+    },
+  };
+
+  switch (parentRoute.name) {
+    // since we have to go to different navigators b
+    case ScreenName.Account:
+    case ScreenName.Asset:
+      return [NavigatorName.Accounts, params];
+    case ScreenName.MarketDetail:
+      return [NavigatorName.Market, params];
+    default:
+      return [NavigatorName.Base, params];
   }
 }
 
