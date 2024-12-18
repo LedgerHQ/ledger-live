@@ -45,8 +45,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
       setLedgerPoolsLoading(true);
-      const delegationPoolId = delegation?.poolId ? [delegation.poolId] : [];
-      fetchPoolDetails(account.currency, delegationPoolId, LEDGER_POOL_IDS)
+      const delegationPoolId = delegation?.poolId
+        ? [...[delegation.poolId], ...LEDGER_POOL_IDS]
+        : LEDGER_POOL_IDS;
+      fetchPoolDetails(account.currency, delegationPoolId)
         .then((apiRes: { pools: Array<StakePool> }) => {
           setCurrentPool(apiRes.pools);
           const filteredLedgerPools = apiRes.pools.filter(
@@ -66,7 +68,13 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   useEffect(() => {
     const selectedPool = pools.find(p => p.poolId === selectedPoolId);
     if (selectedPool) {
-      setCurrentPool([selectedPool]);
+      const firstElement = currentPool[0];
+      const shouldRemoveFirst =
+        firstElement.poolId !== delegation?.poolId &&
+        !LEDGER_POOL_IDS.includes(firstElement.poolId);
+
+      const newPool = shouldRemoveFirst ? currentPool.slice(1) : currentPool;
+      setCurrentPool([selectedPool, ...newPool]);
       onChangeValidator(selectedPool);
     }
 
