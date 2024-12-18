@@ -73,13 +73,23 @@ Horizon.AxiosClient.interceptors.response.use(response => {
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)
+
+  function fixURL(url: string): string {
+    const u = new URL(url);
+    u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
+    return u.toString();
+  }
+
   const next_href = response?.data?._links?.next?.href;
 
   if (next_href) {
-    const next = new URL(next_href);
-    next.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
-    response.data._links.next.href = next.toString();
+    response.data._links.next.href = fixURL(next_href);
   }
+
+  response?.data?._embedded?.records?.forEach((r: any) => {
+    const href = r.transaction?._links?.ledger?.href;
+    if (href) r.transaction._links.ledger.href = fixURL(href);
+  });
 
   return response;
 });
