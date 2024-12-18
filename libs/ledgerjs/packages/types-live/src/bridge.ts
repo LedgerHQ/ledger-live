@@ -6,6 +6,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountLike, Account, AccountRaw, TokenAccount, TokenAccountRaw } from "./account";
 import type {
   SignOperationEvent,
@@ -68,6 +69,7 @@ export type SignOperationArg0<T extends TransactionCommon, A extends Account> = 
   account: A;
   transaction: T;
   deviceId: DeviceId;
+  deviceModelId?: DeviceModelId;
 };
 
 /**

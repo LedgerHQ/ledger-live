@@ -1,11 +1,8 @@
 import Transport from "@ledgerhq/hw-transport";
 
 import { StatusCodes } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
 
 import BIPPath from "bip32-path";
-import axios from "axios";
-import semver from "semver";
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
@@ -31,12 +28,6 @@ enum EXTRA_STATUS_CODES {
   BLIND_SIGNATURE_REQUIRED = 0x6808,
 }
 
-const TRUSTED_NAME_MIN_VERSION = "1.6.0";
-
-export type Resolution = {
-  tokenAddress?: string;
-};
-
 /**
  * Solana API
  *
@@ -59,7 +50,13 @@ export default class Solana {
     this.transport = transport;
     this.transport.decorateAppAPIMethods(
       this,
-      ["getAddress", "signTransaction", "getAppConfiguration"],
+      [
+        "getAddress",
+        "signTransaction",
+        "getAppConfiguration",
+        "getChallenge",
+        "provideTrustedName",
+      ],
       scrambleKey,
     );
   }
@@ -112,17 +109,9 @@ export default class Solana {
   async signTransaction(
     path: string,
     txBuffer: Buffer,
-    resolution?: Resolution,
   ): Promise<{
     signature: Buffer;
   }> {
-    if (resolution) {
-      const { version } = await this.getAppConfig();
-      if (resolution.tokenAddress && semver.gte(version, TRUSTED_NAME_MIN_VERSION)) {
-        await this.trustedNameResolutionFlow(resolution.tokenAddress);
-      }
-    }
-
     const pathBuffer = this.pathToBuffer(path);
     // Ledger app supports only a single derivation path per call ATM
     const pathsCountBuffer = Buffer.alloc(1);
@@ -177,11 +166,6 @@ export default class Solana {
    * solana.getAppConfiguration().then(r => r.version)
    */
   async getAppConfiguration(): Promise<AppConfig> {
-    return this.getAppConfig();
-  }
-
-  // Created to be able to call it from signTransaction as getAppConfiguration is decorated to avoid calling it while signing
-  private async getAppConfig(): Promise<AppConfig> {
     const [blindSigningEnabled, pubKeyDisplayMode, major, minor, patch] = await this.sendToDevice(
       INS.GET_VERSION,
       P1_NON_CONFIRM,
@@ -230,36 +214,6 @@ export default class Solana {
     );
 
     return true;
-  }
-
-  private async trustedNameResolutionFlow(tokenAddress: string) {
-    const challenge = await this.getChallenge();
-    const trustedNameAPDU = await this.signTokenAddressResolution(tokenAddress, challenge);
-
-    if (trustedNameAPDU) {
-      await this.provideTrustedName(trustedNameAPDU);
-    }
-  }
-
-  private async signTokenAddressResolution(tokenAddress: string, challenge: string) {
-    return axios
-      .request<{
-        contract: string;
-        descriptorType: string;
-        descriptorVersion: number;
-        owner: string;
-        signedDescriptor: string;
-        tokenAccount: string;
-      }>({
-        method: "GET",
-        url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v2/solana/owner/${tokenAddress}?challenge=${challenge}`,
-      })
-      .then(({ data }) => {
-        return data.signedDescriptor;
-      })
-      .catch(() => {
-        return null;
-      });
   }
 
   private pathToBuffer(originalPath: string) {
