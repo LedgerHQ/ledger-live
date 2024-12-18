@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "주소 끄기 ed25519 곡선"
     },
@@ -2342,7 +2348,8 @@
       "seeMarket" : "모두 보기"
     },
     "walletBalance" : "지갑 잔액",
-    "seelAllAssets" : "모든 자산 보기",
+    "seeAllAssets" : "See all assets",
+    "seeAllAccounts" : "See all accounts",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
@@ -2749,6 +2756,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "자산"
+  },
   "accounts" : {
     "title" : "계정",
     "cryptoAccountsTitle" : "{{currencyTicker}} 계정",
@@ -3091,6 +3101,13 @@
       "desc" : "다양한 개발자 특징을 시험해 보고 의견을 나누어 주세요.",
       "customManifest" : {
         "title" : "커스텀 플랫폼 Manifest 불러오기"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "description" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보",
+        "currentSetting" : "현재 설정",
+        "error" : "유효하지 않은 CAL 값"
       }
     },
     "debug" : {
@@ -3954,6 +3971,7 @@
   },
   "addAccounts" : {
     "addNew" : "새로 추가하기",
+    "addNewOrExisting" : "기존 계정이나 신규 계정 추가",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit, 또는 Native SegWit?"
     },
@@ -5905,6 +5923,10 @@
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
       },
       "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "near" : {
@@ -6912,6 +6934,13 @@
         "title" : "다른 Ledger Live 앱과 동기화",
         "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정을 동기화하세요."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "이 앱은 더 이상 동기화되지 않습니다",
+          "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+          "cta" : "Ledger 동기화 켜기"
+        }
+      },
       "manageKey" : {
         "title" : "동기화 삭제",
         "description" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정 동기화가 중단됩니다.",
@@ -6922,6 +6951,11 @@
           "cancel" : "동기화 유지",
           "title" : "정말 동기화를 삭제하시겠습니까?",
           "desc" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다."
+        },
+        "error" : {
+          "title" : "이 앱은 더 이상 동기화되지 않습니다",
+          "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+          "cta" : "Ledger 동기화 켜기"
         }
       },
       "manageInstances" : {
