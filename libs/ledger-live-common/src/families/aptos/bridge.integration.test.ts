@@ -1,4 +1,3 @@
-// import { dataset } from "@ledgerhq/coin-aptos/bridge.integration.test";
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
