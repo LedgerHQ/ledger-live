@@ -182,6 +182,8 @@ const swaps = [
 
 for (const { swap, xrayTicket } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
+    const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
@@ -203,7 +205,11 @@ for (const { swap, xrayTicket } of swaps) {
     test.afterAll(async () => {
       delete process.env.SWAP_DISABLE_APPS_INSTALL;
       delete process.env.SWAP_API_BASE;
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      if (originalValue !== undefined) {
+        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+      } else {
+        delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      }
     });
 
     test.use({

@@ -9,13 +9,12 @@ import { CLI } from "tests/utils/cliUtils";
 import invariant from "invariant";
 
 test.describe("send NFT to ENS address", () => {
-  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, Nft.PODIUM, Fee.SLOW);
+  const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+
   test.beforeAll(async () => {
-    process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+    process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
-  test.afterAll(async () => {
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
-  });
+  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, Nft.PODIUM, Fee.SLOW);
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
@@ -59,6 +58,14 @@ test.describe("send NFT to ENS address", () => {
       await app.sendDrawer.expectNftInfos(transaction);
     },
   );
+
+  test.afterAll(() => {
+    if (originalValue !== undefined) {
+      process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+    } else {
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    }
+  });
 });
 
 test.describe("The user can see his NFT floor price", () => {
