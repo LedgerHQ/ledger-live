@@ -88,5 +88,6 @@ export function useMarketPerformanceWidget() {
     hasError: isError,
     range: timeRange,
     top,
+    enableNewFeature,
   };
 }
