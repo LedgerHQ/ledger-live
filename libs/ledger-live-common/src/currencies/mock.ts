@@ -42,6 +42,7 @@ export const IDS = [
   "mantra",
   "crypto_org",
   "xion",
+  "zenrock",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [

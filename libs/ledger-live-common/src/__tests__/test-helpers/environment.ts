@@ -105,6 +105,7 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "zenrock",
 ]);
 LiveConfig.setConfig(liveConfig);
 
