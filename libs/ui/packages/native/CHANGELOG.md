@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.27.0-nightly.0
+
+### Minor Changes
+
+- [#8663](https://github.com/LedgerHQ/ledger-live/pull/8663) [`8223e21`](https://github.com/LedgerHQ/ledger-live/commit/8223e21e5828a7735daf0a6684c1e4cab9dec892) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new tabSelector component inside native ui. Rename the existing one in DrawerTabSelector since it's used only in a drawer. Integration of the new assets/accounts lists in wallet screen
+
 ## 0.26.1
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.94.0-nightly.11
+
+### Minor Changes
+
+- [#8699](https://github.com/LedgerHQ/ledger-live/pull/8699) [`5f57930`](https://github.com/LedgerHQ/ledger-live/commit/5f579300621c8f72679f4d5d4d043bda394d9e31) Thanks [@Justkant](https://github.com/Justkant)! - feat: dapp browser v3 accountId and customDappUrl support
+
+### Patch Changes
+
+- Updated dependencies [[`5f57930`](https://github.com/LedgerHQ/ledger-live/commit/5f579300621c8f72679f4d5d4d043bda394d9e31)]:
+  - @ledgerhq/live-common@34.16.0-nightly.11
+
 ## 2.94.0-nightly.10
 
 ### Patch Changes

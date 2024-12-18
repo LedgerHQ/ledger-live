@@ -1,5 +1,16 @@
 ## 34.5.0-next.4
 
+## 34.16.0-nightly.11
+
+### Minor Changes
+
+- [#8699](https://github.com/LedgerHQ/ledger-live/pull/8699) [`5f57930`](https://github.com/LedgerHQ/ledger-live/commit/5f579300621c8f72679f4d5d4d043bda394d9e31) Thanks [@Justkant](https://github.com/Justkant)! - feat: dapp browser v3 accountId and customDappUrl support
+
+### Patch Changes
+
+- Updated dependencies [[`713cbc8`](https://github.com/LedgerHQ/ledger-live/commit/713cbc8d726d7a511cf1876b39c695c7e391f388)]:
+  - @ledgerhq/coin-solana@0.9.0-nightly.6
+
 ## 34.16.0-nightly.10
 
 ### Patch Changes

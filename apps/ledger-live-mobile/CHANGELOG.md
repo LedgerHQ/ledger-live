@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.59.0-nightly.11
+
+### Minor Changes
+
+- [#8663](https://github.com/LedgerHQ/ledger-live/pull/8663) [`8223e21`](https://github.com/LedgerHQ/ledger-live/commit/8223e21e5828a7735daf0a6684c1e4cab9dec892) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new tabSelector component inside native ui. Rename the existing one in DrawerTabSelector since it's used only in a drawer. Integration of the new assets/accounts lists in wallet screen
+
+- [#8699](https://github.com/LedgerHQ/ledger-live/pull/8699) [`5f57930`](https://github.com/LedgerHQ/ledger-live/commit/5f579300621c8f72679f4d5d4d043bda394d9e31) Thanks [@Justkant](https://github.com/Justkant)! - feat: dapp browser v3 accountId and customDappUrl support
+
+- [#8698](https://github.com/LedgerHQ/ledger-live/pull/8698) [`883cc6a`](https://github.com/LedgerHQ/ledger-live/commit/883cc6a369620ef137444fde961f3aa69d813218) Thanks [@thesan](https://github.com/thesan)! - Always blur the app preview on IOS
+
+### Patch Changes
+
+- [#8685](https://github.com/LedgerHQ/ledger-live/pull/8685) [`3635976`](https://github.com/LedgerHQ/ledger-live/commit/363597695b06ff12d3ae969d34a494749d3b0c25) Thanks [@cksanders](https://github.com/cksanders)! - Redirect users to Recover Login if they have an account as they may be logged out
+
+- Updated dependencies [[`8223e21`](https://github.com/LedgerHQ/ledger-live/commit/8223e21e5828a7735daf0a6684c1e4cab9dec892), [`5f57930`](https://github.com/LedgerHQ/ledger-live/commit/5f579300621c8f72679f4d5d4d043bda394d9e31)]:
+  - @ledgerhq/native-ui@0.27.0-nightly.0
+  - @ledgerhq/live-common@34.16.0-nightly.11
+
 ## 3.59.0-nightly.10
 
 ### Patch Changes

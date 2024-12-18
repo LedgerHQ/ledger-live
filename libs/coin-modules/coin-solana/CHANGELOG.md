@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.9.0-nightly.6
+
+### Minor Changes
+
+- [#8711](https://github.com/LedgerHQ/ledger-live/pull/8711) [`713cbc8`](https://github.com/LedgerHQ/ledger-live/commit/713cbc8d726d7a511cf1876b39c695c7e391f388) Thanks [@Canestin](https://github.com/Canestin)! - change solana validators order
+
 ## 0.9.0-nightly.5
 
 ### Patch Changes
