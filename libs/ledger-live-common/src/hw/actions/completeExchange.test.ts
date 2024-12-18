@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 
 type CompleteExchangeActionRequest = {
-  deviceId?: string;
+  device?: Device;
   provider: string;
   transaction: Transaction;
   binaryPayload: string;

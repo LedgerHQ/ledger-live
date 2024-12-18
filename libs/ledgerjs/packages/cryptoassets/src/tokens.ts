@@ -14,6 +14,7 @@ import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
+import spltokens, { SPLToken } from "./data/spl";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -54,6 +55,8 @@ addTokens(vechainTokens.map(convertVechainToken));
 addTokens(jettonTokens.map(convertJettonToken));
 // Filecoin tokens
 addTokens(filecoinTokens.map(convertERC20));
+// Solana tokens
+addTokens(spltokens.map(convertSplTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -524,6 +527,36 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
         name,
         code: ticker,
         magnitude,
+      },
+    ],
+  };
+}
+
+function convertSplTokens([chainId, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+  const chainIdToCurrencyId = {
+    // Fallback in case CAL is using chainIds for vault
+    1: "solana",
+    2: "solana_testnet",
+    3: "solana_devnet",
+    101: "solana",
+    102: "solana_testnet",
+    103: "solana_devnet",
+  };
+  const currencyId = chainIdToCurrencyId[chainId];
+  return {
+    type: "TokenCurrency",
+    id: `${currencyId}/spl/${address}`,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById(currencyId),
+    name,
+    tokenType: "spl",
+    ticker: symbol,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: symbol,
+        magnitude: decimals,
       },
     ],
   };

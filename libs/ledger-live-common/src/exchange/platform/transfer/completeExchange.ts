@@ -1,6 +1,10 @@
 import secp256k1 from "secp256k1";
 import { Observable } from "rxjs";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  DisconnectedDeviceDuringOperation,
+  TransportStatusError,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
@@ -29,7 +33,7 @@ const completeExchange = (
   let { transaction } = input; // TODO build a tx from the data
 
   const {
-    deviceId,
+    device,
     exchange,
     provider,
     binaryPayload,
@@ -46,7 +50,11 @@ const completeExchange = (
     let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
-      await withDevicePromise(deviceId, async transport => {
+      if (!device) {
+        throw new DisconnectedDeviceDuringOperation();
+      }
+
+      await withDevicePromise(device?.deviceId, async transport => {
         const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");

@@ -245,6 +245,7 @@ export type GenAccountOptions = {
   operationsSize?: number;
   currency?: CryptoCurrency;
   subAccountsCount?: number;
+  subAccounts?: TokenAccount[];
   swapHistorySize?: number;
   withNft?: boolean;
   tokenIds?: string[];
@@ -413,5 +414,9 @@ export function genAccount(
   account.used = !isAccountEmpty(account);
   if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, currency, rng);
   account.balanceHistoryCache = generateHistoryFromOperations(account);
+
+  if (opts?.subAccounts) {
+    account.subAccounts = opts.subAccounts;
+  }
   return account;
 }

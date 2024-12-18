@@ -6,7 +6,9 @@ import { genAccount } from "../../mock/account";
 // import { DeviceModelId } from "@ledgerhq/devices";
 import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import { CompleteExchangeRequestEvent } from "../platform/types";
-import { findCryptoCurrencyByTicker, setSupportedCurrencies } from "../../currencies";
+import { findCryptoCurrencyByTicker, findTokenById, setSupportedCurrencies } from "../../currencies";
+import { Device } from "@ledgerhq/hw-transport";
+import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
 
 jest.mock("../../hw/deviceAccess", () => ({
   withDevicePromise: (_deviceId: string, fn: () => void) => fn(),
@@ -58,6 +60,12 @@ jest.mock("@ledgerhq/hw-app-exchange", () => {
 });
 
 describe("completeExchange", () => {
+  beforeEach(() => {
+    for (const [_, val] of Object.entries(exchangeMock)) {
+      val.mockClear();
+    }
+  });
+
   it("returns an error if device is undefined", done => {
     // Given
     const device = undefined;
@@ -69,7 +77,7 @@ describe("completeExchange", () => {
         toAccount: genAccount("seed"),
         toParentAccount: null,
       },
-      deviceId: undefined,
+      device,
       provider: "providerName",
       binaryPayload: "binaryPayload",
       signature: "signature",
@@ -93,9 +101,10 @@ describe("completeExchange", () => {
     });
   });
 
-  it("returns calls Exchange wrapper", done => {
+  it("returns transaction to sign after validation", done => {
     // Given
     setSupportedCurrencies(["bitcoin", "ethereum"]);
+    const device = {} as Device;
     const transaction = {
       family: "algorand",
       mode: "send",
@@ -112,29 +121,20 @@ describe("completeExchange", () => {
         toAccount: genAccount("mock", { currency: findCryptoCurrencyByTicker("BTC") ?? undefined }),
         toParentAccount: null,
       },
-      deviceId: "deviceId",
+      device,
       provider: "providerName",
       binaryPayload: "binaryPayload",
-      signature: Array.from({ length: 64 }, _ => "64"),
+      signature: Array.from({ length: 64 }, _ => "64").join(""),
       transaction,
     };
 
     // When
     const sub = completeExchange(input).subscribe((event: CompleteExchangeRequestEvent) => {
       // Then
+      expect(event.type).not.toEqual("complete-exchange-error");
+
       if (event.type === "complete-exchange-result") {
         expect(event).toEqual({
-          // type: "complete-exchange-error",
-          // error: new CantOpenDevice("Cannot find registered transport to open undefined"),
-          // completeExchangeResult: {
-          //   amount: "0",
-          //   family: "algorand",
-          //   maxFeePerGas: "50",
-          //   maxPriorityFeePerGas: "50",
-          //   mode: "send",
-          //   recipient: "recipient",
-          //   type: 2,
-          // },
           completeExchangeResult: {
             ...transaction,
             maxFeePerGas: new BigNumber("50"),
@@ -143,6 +143,121 @@ describe("completeExchange", () => {
           },
           type: "complete-exchange-result",
         });
+
+        sub.unsubscribe();
+        done();
+      }
+    });
+  });
+
+  it("calls Exchange wrapper", done => {
+    // Given
+    setSupportedCurrencies(["bitcoin", "ethereum"]);
+    const device = {} as Device;
+    const transaction = {
+      family: "algorand",
+      mode: "send",
+      amount: new BigNumber("0"),
+      recipient: "recipient",
+    } as Transaction;
+    const input = {
+      exchangeType: 3, //ExchangeTypes.SwapNg,
+      exchange: {
+        fromAccount: genAccount("mock", {
+          currency: findCryptoCurrencyByTicker("ETH") ?? undefined,
+        }),
+        fromParentAccount: null,
+        toAccount: genAccount("mock", { currency: findCryptoCurrencyByTicker("BTC") ?? undefined }),
+        toParentAccount: null,
+      },
+      device,
+      provider: "providerName",
+      binaryPayload: "binaryPayload",
+      signature: Array.from({ length: 64 }, _ => "64").join(""),
+      transaction,
+    };
+
+    // When
+    const sub = completeExchange(input).subscribe((event: CompleteExchangeRequestEvent) => {
+      // Then
+      expect(event.type).not.toEqual("complete-exchange-error");
+
+      if (event.type === "complete-exchange-result") {
+        expect(exchangeMock.setPartnerKey).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkPartner).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.processTransaction).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkTransactionSignature).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.validatePayoutOrAsset).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkRefundAddress).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.signCoinTransaction).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.getChallenge).toHaveBeenCalledTimes(0);
+        expect(exchangeMock.sendTrustedDescriptor).toHaveBeenCalledTimes(0);
+
+        sub.unsubscribe();
+        done();
+      }
+    });
+  });
+
+  it.only("calls Exchange wrapper for SPL Token transaction", done => {
+    // Given
+    setSupportedCurrencies(["solana", "ethereum"]);
+    const device = {} as Device;
+    const tokenAccount = createFixtureTokenAccount(
+      "token",
+      // SPL USDC
+      // Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
+      // findTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v"),
+      findTokenById("solana/spl/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"),
+    );
+    console.log("tokenAccount", tokenAccount);
+    const transaction = {
+      family: "solana",
+      mode: "token.transfer",
+      amount: new BigNumber("0"),
+      recipient: "recipient",
+      model: {
+        kind: "token.transfer",
+        uiState: {
+          subAccountId: tokenAccount.id,
+        },
+      },
+    } as Transaction;
+    const parentAccount = genAccount("mock", {
+      currency: findCryptoCurrencyByTicker("SOL") ?? undefined,
+      subAccounts: [tokenAccount],
+    });
+    const input = {
+      exchangeType: 3, //ExchangeTypes.SwapNg,
+      exchange: {
+        fromAccount: tokenAccount,
+        fromParentAccount: parentAccount,
+        toAccount: genAccount("mock", { currency: findCryptoCurrencyByTicker("ETH") ?? undefined }),
+        toParentAccount: null,
+      },
+      device,
+      provider: "providerName",
+      binaryPayload: "binaryPayload",
+      signature: Array.from({ length: 64 }, _ => "64").join(""),
+      transaction,
+    };
+
+    // When
+    const sub = completeExchange(input).subscribe((event: CompleteExchangeRequestEvent) => {
+      // Then
+      console.log("EVENT", event);
+      expect(event.type).not.toEqual("complete-exchange-error");
+
+      if (event.type === "complete-exchange-result") {
+        expect(exchangeMock.setPartnerKey).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkPartner).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.processTransaction).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkTransactionSignature).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.validatePayoutOrAsset).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.checkRefundAddress).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.signCoinTransaction).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.getChallenge).toHaveBeenCalledTimes(1);
+        expect(exchangeMock.sendTrustedDescriptor).toHaveBeenCalledTimes(1);
 
         sub.unsubscribe();
         done();

@@ -40,7 +40,7 @@ export type StartExchangeInput = {
 
 interface CompleteExchangeInputCommon {
   rateType?: RateTypes;
-  deviceId?: string;
+  device?: Device;
   provider: string;
   binaryPayload: string;
   signature: string;

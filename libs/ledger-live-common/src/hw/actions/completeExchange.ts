@@ -119,7 +119,7 @@ export const createAction = (
         }),
         completeExchangeExec({
           ...completeExchangeRequest,
-          deviceId: reduxDeviceFrozen?.deviceId,
+          device: reduxDeviceFrozen ?? undefined,
         }),
       )
         .pipe(

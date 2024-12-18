@@ -38,7 +38,7 @@ const completeExchange = (
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
-  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
+  const { device, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
@@ -49,11 +49,11 @@ const completeExchange = (
     let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
-      if (!deviceId) {
+      if (!device) {
         throw new DisconnectedDeviceDuringOperation();
       }
 
-      await withDevicePromise(deviceId, async transport => {
+      await withDevicePromise(device.deviceId, async transport => {
         const providerConfig = await getSwapProvider(provider);
         if (providerConfig.useInExchangeApp === false) {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
