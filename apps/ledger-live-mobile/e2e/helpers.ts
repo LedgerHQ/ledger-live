@@ -1,4 +1,4 @@
-import { by, element, waitFor, device } from "detox";
+import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
 
@@ -26,23 +26,44 @@ const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
 const speculosDevices: [number, SpeculosDevice][] = [];
 
+function sync_delay(ms: number) {
+  const done = new Int32Array(new SharedArrayBuffer(4));
+  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
+}
+
 export async function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-  return await waitFor(getElementById(id)).toBeVisible().withTimeout(timeout);
+  return await waitFor(element(by.id(id)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 export async function waitForElementByText(
   text: string | RegExp,
   timeout: number = DEFAULT_TIMEOUT,
 ) {
-  return await waitFor(getElementByText(text)).toBeVisible().withTimeout(timeout);
+  return await waitFor(element(by.text(text)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 export function getElementById(id: string | RegExp, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   return element(by.id(id)).atIndex(index);
 }
 
 export function getElementByText(text: string | RegExp, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   return element(by.text(text)).atIndex(index);
+}
+
+export function getWebElementById(id: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.id(id)).atIndex(index);
+}
+
+export function getWebElementByTag(tag: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.tag(tag)).atIndex(index);
 }
 
 export async function tapById(id: string | RegExp, index = 0) {
@@ -90,6 +111,7 @@ async function performScroll(
   const scrollViewMatcher = scrollViewId
     ? by.id(scrollViewId)
     : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView");
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   await waitFor(element(elementMatcher))
     .toBeVisible()
     .whileElement(scrollViewMatcher)

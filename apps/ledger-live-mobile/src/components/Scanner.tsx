@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera/legacy";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
@@ -33,7 +32,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
           ratio="16:9"
           onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
           barCodeScannerSettings={{
-            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+            barCodeTypes: ["qr"],
           }}
         >
           <CameraScreen
