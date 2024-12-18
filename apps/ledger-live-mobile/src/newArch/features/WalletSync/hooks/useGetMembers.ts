@@ -43,21 +43,17 @@ export function useGetMembers() {
     enabled: !!trustchain && !!memberCredentials,
   });
 
+  const { isError, error, isPending, isLoading } = memberHook;
+
   useEffect(() => {
-    if (memberHook.isError) {
-      handleError(memberHook.error);
+    if (isError) {
+      handleError(error);
     }
-    if (memberHook.isPending && !memberHook.isError && !memberHook.isLoading) {
+    if (isPending && !isError && !isLoading) {
       // assuming that if getMembers returns undefined, it means the trustchain is ejected
       handleError(new TrustchainEjected());
     }
-  }, [
-    handleError,
-    memberHook.error,
-    memberHook.isError,
-    memberHook.isLoading,
-    memberHook.isPending,
-  ]);
+  }, [handleError, error, isError, isLoading, isPending]);
 
   return memberHook;
 }
