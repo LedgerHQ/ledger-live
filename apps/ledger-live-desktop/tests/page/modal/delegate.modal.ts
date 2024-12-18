@@ -14,7 +14,9 @@ export class delegateModal extends Modal {
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   private detailsButton = this.page.getByRole("button", { name: "View details" });
   private validatorTC = this.page.getByTestId("ledger-validator-tc");
-  private checkIcon = this.page.getByTestId("check-icon");
+  private checkIcon = this.page
+    .getByTestId("check-icon")
+    .locator('path[fill]:not([fill="transparent"])');
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {
@@ -83,11 +85,20 @@ export class delegateModal extends Modal {
     await this.inputSearchField.fill(provider);
   }
 
+  @step("Get selected provider name ")
+  async getSelectedProviderName() {
+    const selectedProviderElement = await this.rowProvider.filter({
+      has: this.checkIcon,
+    });
+    const providerName = await selectedProviderElement.locator(this.titleProvider).textContent();
+    return providerName;
+  }
+
   @step("Check selected provider is displayed when closing list")
   async closeProviderList(providerRow: number) {
     const selectedfProvider = await this.getTitleProvider(providerRow);
     await this.searchCloseButton.click();
-    expect(await this.getTitleProvider(1)).toContain(selectedfProvider);
+    expect(await this.getSelectedProviderName()).toContain(selectedfProvider);
   }
 
   @step("Click on chosen stake provider $0")

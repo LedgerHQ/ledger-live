@@ -23,6 +23,7 @@ export class AccountPage extends AppPage {
   private accountBalance = this.page.getByTestId("total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
+  private seeMoreCollectionsButton = this.page.getByText("See more collections");
   private advancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
@@ -187,6 +188,9 @@ export class AccountPage extends AppPage {
 
     for (const nft of account.nft) {
       const nftLocator = this.nftList(nft.collectionName);
+      if (await this.seeMoreCollectionsButton.isVisible()) {
+        await this.seeMoreCollectionsButton.click();
+      }
       await expect(nftLocator).toBeVisible();
     }
   }

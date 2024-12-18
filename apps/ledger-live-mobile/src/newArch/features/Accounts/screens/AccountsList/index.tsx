@@ -33,7 +33,7 @@ export default function AccountsList({ route }: Props) {
     <>
       <TrackScreen event="Accounts" />
       <ReactNavigationPerformanceView screenName={ScreenName.AccountsList} interactive>
-        <SafeAreaView edges={["bottom", "left", "right"]} isFlex style={{ marginHorizontal: 16 }}>
+        <SafeAreaView edges={["left", "right"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
             <Text variant="h1Inter" fontSize={28} paddingY={2}>
               {t("accounts.title")}
@@ -49,7 +49,7 @@ export default function AccountsList({ route }: Props) {
               </Text>
             </Flex>
           )}
-          {canAddAccount && <AddAccountButton />}
+          {canAddAccount && <AddAccountButton sourceScreenName="Accounts" />}
           <AccounstListView sourceScreenName={sourceScreenName} isSyncEnabled={isSyncEnabled} />
         </SafeAreaView>
       </ReactNavigationPerformanceView>

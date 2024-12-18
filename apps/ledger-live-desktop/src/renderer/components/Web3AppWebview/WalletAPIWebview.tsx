@@ -230,7 +230,8 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
+    inputs,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
@@ -288,6 +289,7 @@ function useWebView(
     postMessage: webviewHook.postMessage,
     currentAccountHistDb,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
   });
 
   const handleMessage = useCallback(
@@ -400,6 +402,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         customHandlers,
         currentAccountHistDb,
+        inputs,
       },
       webviewRef,
       tracking,

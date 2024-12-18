@@ -29,13 +29,13 @@ export function useDBRaw<State, Selected>({
   }, []);
 
   const setter = useCallback(
-    newState => {
-      const val = typeof newState === "function" ? newState(state) : newState;
+    async newState => {
+      const val = typeof newState === "function" ? newState(await getter()) : newState;
 
       setState(val);
-      setterRaw(val);
+      return setterRaw(val);
     },
-    [state, setterRaw],
+    [getter, setterRaw],
   );
 
   const result = useMemo(() => selector(state), [state, selector]);

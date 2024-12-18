@@ -92,6 +92,12 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
       },
     };
   }
+  if (_customDappUrl && manifest && manifest.dapp) {
+    manifest = {
+      ...manifest,
+      url: _customDappUrl,
+    };
+  }
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
   // - check if the app is available in store, else display a loader if apps are getting fetched from remote, else display an error stating that the app doesn't exist
