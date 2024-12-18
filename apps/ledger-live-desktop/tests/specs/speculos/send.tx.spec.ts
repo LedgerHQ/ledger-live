@@ -218,10 +218,6 @@ test.describe("Send flows", () => {
 
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
-      test.beforeAll(async () => {
-        process.env.DISABLE_TRANSACTION_BROADCAST = "0";
-      });
-
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,

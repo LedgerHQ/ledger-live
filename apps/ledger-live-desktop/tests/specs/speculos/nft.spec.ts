@@ -9,6 +9,8 @@ import { CLI } from "tests/utils/cliUtils";
 import invariant from "invariant";
 
 test.describe("send NFT to ENS address", () => {
+  const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+
   test.beforeAll(async () => {
     process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
@@ -57,8 +59,12 @@ test.describe("send NFT to ENS address", () => {
     },
   );
 
-  test.afterAll(async () => {
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
+  test.afterAll(() => {
+    if (originalValue !== undefined) {
+      process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+    } else {
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    }
   });
 });
 
