@@ -1,9 +1,9 @@
-import { BigNumber } from "bignumber.js";
 import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
-import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
-import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
+import type { Transaction } from "./types";
 
 const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
@@ -37,7 +37,7 @@ const multiversx: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        currencyId: "multiversx",
+        currencyId: "elrond",
         lastSyncDate: "",
         balance: "299569965",
         subAccounts: [

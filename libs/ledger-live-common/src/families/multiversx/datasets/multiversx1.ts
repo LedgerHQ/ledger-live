@@ -10,7 +10,7 @@ export const multiversx1: AccountRaw = {
   freshAddressPath: "44'/508'/0'/0'/0'",
   pendingOperations: [],
   operations: [],
-  currencyId: "multiversx",
+  currencyId: "elrond",
   balance: "",
   blockHeight: 0,
   lastSyncDate: "",
