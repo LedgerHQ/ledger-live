@@ -31,17 +31,14 @@ function sync_delay(ms: number) {
   Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
 }
 
-export async function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-  return await waitFor(element(by.id(id)))
+export function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(element(by.id(id)))
     .toBeVisible()
     .withTimeout(timeout);
 }
 
-export async function waitForElementByText(
-  text: string | RegExp,
-  timeout: number = DEFAULT_TIMEOUT,
-) {
-  return await waitFor(element(by.text(text)))
+export function waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(element(by.text(text)))
     .toBeVisible()
     .withTimeout(timeout);
 }
