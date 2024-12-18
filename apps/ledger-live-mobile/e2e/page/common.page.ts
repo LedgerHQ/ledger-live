@@ -31,6 +31,7 @@ export default class CommonPage {
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
+  blePairingLoadingId = "ble-pairing-loading";
   deviceRowRegex = /device-item-.*/;
 
   @Step("Perform search")
@@ -88,8 +89,8 @@ export default class CommonPage {
     await bridge.addDevicesBT(device);
     await waitForElementById(this.scannedDeviceRow(device.id));
     await tapById(this.scannedDeviceRow(device.id));
+    await waitForElementById(this.blePairingLoadingId);
     await bridge.open();
-    await deviceAction.waitForSpinner();
     await deviceAction.accessManager();
   }
 
