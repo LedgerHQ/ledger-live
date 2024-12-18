@@ -127,7 +127,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const { state } = useLocation<{
     defaultAccount?: AccountLike;
     defaultParentAccount?: Account;
-    defaultFromAmount?: Number;
+    defaultAmountFrom?: string;
     from?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
