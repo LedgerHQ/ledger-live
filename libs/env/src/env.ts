@@ -122,15 +122,15 @@ const envDefinitions = {
     def: "https://polkadot-fullnodes.api.live.ledger.com",
     desc: "Polkadot Node",
   },
-  ELROND_API_ENDPOINT: {
+  MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
-    desc: "Elrond API url",
+    desc: "MultiversX API url",
   },
-  ELROND_DELEGATION_API_ENDPOINT: {
+  MULTIVERSX_DELEGATION_API_ENDPOINT: {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
-    desc: "Elrond DELEGATION API url",
+    desc: "MultiversX DELEGATION API url",
   },
   API_STELLAR_HORIZON: {
     parser: stringParser,
