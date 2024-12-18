@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -2342,7 +2348,8 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
-    "seelAllAssets" : "Ver todos los activos",
+    "seeAllAssets" : "Ver todos los activos",
+    "seeAllAccounts" : "See all accounts",
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
@@ -2749,6 +2756,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Activos"
+  },
   "accounts" : {
     "title" : "Cuentas",
     "cryptoAccountsTitle" : "Cuentas de {{currencyTicker}}",
@@ -3091,6 +3101,13 @@
       "desc" : "Prueba las funciones experimentales y envíanos tu opinión.",
       "customManifest" : {
         "title" : "Cargar manifiesto de plataforma personalizada"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Modo de desarrollador del exchange",
+        "description" : "Añadir información del proveedor del exchange",
+        "placeholder" : "Información del proveedor del exchange en formato CAL",
+        "currentSetting" : "Ajuste actual",
+        "error" : "Valor de CAL no válido"
       }
     },
     "debug" : {
@@ -3954,6 +3971,7 @@
   },
   "addAccounts" : {
     "addNew" : "Agregar nueva",
+    "addNewOrExisting" : "Agregar cuenta nueva o existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
@@ -5905,6 +5923,10 @@
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
       },
       "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
     }
   },
   "near" : {
@@ -6912,6 +6934,13 @@
         "title" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "Eliminar sincronización",
         "description" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de sincronizarse.",
@@ -6922,6 +6951,11 @@
           "cancel" : "Mantener sincronización",
           "title" : "¿Seguro que quieres eliminar la sincronización?",
           "desc" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de estar sincronizadas. Esto no afecta a tus fondos en modo alguno."
+        },
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
         }
       },
       "manageInstances" : {
