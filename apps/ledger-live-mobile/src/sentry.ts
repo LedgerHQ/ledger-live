@@ -82,6 +82,8 @@ const excludedErrorDescription = [
 const sentryEnabled =
   Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
 
+const reactNavigationIntegration = Sentry.reactNavigationIntegration();
+
 export function withSentry(App: React.ComponentType) {
   if (sentryEnabled) {
     Sentry.init({
@@ -92,7 +94,12 @@ export function withSentry(App: React.ComponentType) {
       // dist: String(VersionNumber.buildVersion),
       sampleRate: 1,
       tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
-      integrations: [new Sentry.ReactNativeTracing()],
+      profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
+      enableAppStartTracking: true,
+      enableNativeFramesTracking: true,
+      enableStallTracking: true,
+      enableUserInteractionTracing: true,
+      integrations: [reactNavigationIntegration],
       beforeSend(event) {
         if (!getEnabled()) return null;
         // If the error matches excludedErrorName or excludedErrorDescription,
