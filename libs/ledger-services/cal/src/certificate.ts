@@ -42,11 +42,9 @@ export type CertificateInfo = {
 /**
  * Retrieve PKI certificate
  * @param device
- * @param version semver
  */
 export async function getCertificate(
   device: Device,
-  version: string,
   { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CertificateInfo> {
   const { data } = await network<CertificateResponse[]>({
@@ -56,7 +54,7 @@ export async function getCertificate(
       output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
       target_device: DeviceModel[device],
       public_key_usage: "trusted_name",
-      note_valid_after: version,
+      latest: true,
       ref,
     },
   });

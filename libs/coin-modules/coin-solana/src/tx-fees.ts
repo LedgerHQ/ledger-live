@@ -49,9 +49,10 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyStakeUndelegateTx(address);
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
+    case "token.transfer":
+      return createDummyTokenTransferTx(address);
     case "stake.split":
     case "token.createATA":
-    case "token.transfer":
       throw new Error(`not implemented for <${kind}>`);
     default:
       return assertUnreachable(kind);
@@ -158,6 +159,32 @@ const createDummyStakeWithdrawTx = (address: string): Transaction => {
   };
 };
 
+const createDummyTokenTransferTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.transfer",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.transfer",
+          amount: 0,
+          mintAddress: randomAddresses[0],
+          mintDecimals: 0,
+          ownerAddress: address,
+          ownerAssociatedTokenAccountAddress: randomAddresses[1],
+          recipientDescriptor: {
+            walletAddress: randomAddresses[1],
+            tokenAccAddress: randomAddresses[2],
+            shouldCreateAsAssociatedTokenAccount: true,
+          },
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
 const commandDescriptorCommons = {
   errors: {},
   fee: 0,
@@ -196,9 +223,9 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
     log("info", `sleeping for ${sleepTimeMS} ms, waiting for a new blockhash`);
     await sleep(sleepTimeMS);
     const blockhash = await api.getLatestBlockhash();
-    if (blockhash !== currentBlockhash) {
+    if (blockhash.blockhash !== currentBlockhash) {
       log("info", "got a new blockhash");
-      return blockhash;
+      return blockhash.blockhash;
     }
     log("info", "got same blockhash");
   }
