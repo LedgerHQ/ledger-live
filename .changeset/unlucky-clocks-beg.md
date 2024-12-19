@@ -3,4 +3,4 @@
 "live-mobile": minor
 ---
 
-Updates translations
+Adds LNS error on LLM when swapping unsupported assets. Updates translations
