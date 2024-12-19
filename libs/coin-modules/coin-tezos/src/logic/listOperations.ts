@@ -1,5 +1,6 @@
 import { tzkt } from "../network";
 import {
+  APIBlock,
   type APIDelegationType,
   type APITransactionType,
   isAPIDelegationType,
@@ -13,6 +14,11 @@ export type Operation = {
   value: bigint;
   fee: bigint;
   blockHeight: number;
+  block?: {
+    hash: string;
+    height: number;
+    time: Date;
+  };
   senders: string[];
   recipients: string[];
   date: Date;
@@ -24,17 +30,21 @@ export async function listOperations(
   { lastId, limit }: { lastId?: number; limit?: number },
 ): Promise<[Operation[], number]> {
   const operations = await tzkt.getAccountOperations(address, { lastId, limit });
-  return [
+  const operationswithBlock = await Promise.all(
     operations
       .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
-      .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]),
-    operations.slice(-1)[0].id,
-  ];
+      .map(async op => {
+        const block = await tzkt.getBlockByHash(op.block);
+        return convertOperation(address, op, block);
+      }),
+  );
+  return [operationswithBlock, operations.slice(-1)[0].id];
 }
 
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType,
+  block: APIBlock,
 ): Operation {
   const { amount, hash, storageFee, sender, timestamp, type, counter } = operation;
   let targetAddress = "";
@@ -48,7 +58,12 @@ function convertOperation(
     value: BigInt(amount),
     // storageFee for transaction is always present
     fee: BigInt(storageFee ?? 0),
-    blockHeight: 0, // operation.block is a string
+    blockHeight: block.level,
+    block: {
+      hash: block.hash,
+      height: block.level,
+      time: new Date(block.timestamp),
+    },
     senders: [sender?.address ?? ""],
     recipients: [targetAddress],
     date: new Date(timestamp),

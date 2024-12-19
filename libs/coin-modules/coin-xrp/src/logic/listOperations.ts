@@ -58,16 +58,16 @@ export async function listOperations(
   do {
     const newTransactions = await getTransactions(address, options);
     const newPaymentsTxs = newTransactions.filter(tx => tx.tx_json.TransactionType === "Payment");
-
-    needToStop = options.limit ? newTransactions.length < options.limit : true;
-
+    if (options.limit) {
+      needToStop = newTransactions.length < options.limit;
+      options.ledger_index_max = newTransactions.slice(-1)[0].tx_json.ledger_index - 1;
+    }
     transactions = transactions.concat(newPaymentsTxs);
   } while (
     options.limit &&
     !needToStop &&
     transactions.length < options.limit &&
-    (options.limit -= transactions.length) &&
-    (options.ledger_index_max = transactions.slice(-1)[0].tx_json.ledger_index - 1)
+    (options.limit -= transactions.length)
   );
 
   return [
