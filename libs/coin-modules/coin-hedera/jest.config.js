@@ -5,5 +5,4 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
-  modulePathIgnorePatterns: ["__tests__/fixtures"],
 };
