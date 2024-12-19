@@ -22,6 +22,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
+import { GroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -50,7 +51,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
 
-  const { currenciesByProvider, sortedCryptoCurrencies } = useGroupedCurrenciesByProvider();
+  const { currenciesByProvider, sortedCryptoCurrencies } =
+    useGroupedCurrenciesByProvider() as GroupedCurrencies;
 
   const onPressItem = useCallback(
     (curr: CryptoCurrency | TokenCurrency) => {

@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -39,9 +40,11 @@ function ReceiveSelectAccount({
   ScreenName.ReceiveSelectAccount
 >) {
   const currency = route?.params?.currency;
+
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
   const insets = useSafeAreaInsets();
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -123,20 +126,30 @@ function ReceiveSelectAccount({
       button: "Create a new account",
       page: "Select account to deposit to",
     });
-    if (currency && currency.type === "TokenCurrency") {
-      navigationAccount.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        params: {
-          token: currency,
-        },
+
+    if (llmNetworkBasedAddAccountFlow?.enabled) {
+      navigationAccount.navigate(NavigatorName.AssetSelection, {
+        ...(currency && currency.type === "TokenCurrency"
+          ? { token: currency.id }
+          : { currency: currency.id }),
+        context: "addAccounts",
       });
     } else {
-      navigationAccount.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        currency,
-      });
+      if (currency && currency.type === "TokenCurrency") {
+        navigationAccount.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          params: {
+            token: currency,
+          },
+        });
+      } else {
+        navigationAccount.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          currency,
+        });
+      }
     }
-  }, [currency, navigationAccount]);
+  }, [currency, navigationAccount, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
