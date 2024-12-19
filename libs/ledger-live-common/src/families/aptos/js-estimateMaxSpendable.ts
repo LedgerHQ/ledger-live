@@ -1,10 +1,10 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
-import type { Transaction } from "./types";
-import { getMaxSendBalance } from "./logic";
 import { AptosAPI } from "./api";
 import { getEstimatedGas } from "./js-getFeesForTransaction";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
+import type { Transaction } from "./types";
 
 const estimateMaxSpendable = async ({
   account,
@@ -12,20 +12,24 @@ const estimateMaxSpendable = async ({
   transaction,
 }: {
   account: AccountLike;
-  parentAccount: Account;
-  transaction: Transaction;
+  parentAccount?: Account;
+  transaction?: Transaction;
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
 
   const aptosClient = new AptosAPI(mainAccount.currency.id);
 
-  const { estimate } = await getEstimatedGas(mainAccount, transaction, aptosClient);
+  let maxGasAmount = new BigNumber(DEFAULT_GAS);
+  let gasUnitPrice = new BigNumber(DEFAULT_GAS_PRICE);
 
-  return getMaxSendBalance(
-    mainAccount.spendableBalance,
-    BigNumber(estimate.maxGasAmount),
-    BigNumber(estimate.gasUnitPrice),
-  );
+  if (transaction) {
+    const { estimate } = await getEstimatedGas(mainAccount, transaction, aptosClient);
+
+    maxGasAmount = BigNumber(estimate.maxGasAmount);
+    gasUnitPrice = BigNumber(estimate.gasUnitPrice);
+  }
+
+  return getMaxSendBalance(mainAccount.spendableBalance, maxGasAmount, gasUnitPrice);
 };
 
 export default estimateMaxSpendable;
