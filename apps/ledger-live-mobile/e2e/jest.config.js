@@ -6,6 +6,9 @@ const jestAllure2ReporterOptions = {
       issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
       tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
     },
+    labels: {
+      host: process.env.RUNNER_NAME,
+    },
   },
   overwrite: false,
   environment: async ({ $ }) => {

@@ -37,6 +37,11 @@ on:
         required: false
         type: string
         default: "B2CQA-2461"
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
       build_type:
         description: "Firebase env to target (pick js for release testing)"
         required: false
@@ -112,6 +117,15 @@ jobs:
       - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
+
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        id: set-broadcast
+        run: |
+          if [[ "${{ inputs.enable_broadcast }}" == "true" || ( "${{ github.event_name }}" == "schedule" && "${{ github.event.schedule.cron }}" == "0 5 * * 1" ) ]]; then
+            echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
+          else
+            echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
+          fi
 
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests

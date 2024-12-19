@@ -1,5 +1,12 @@
 name: "[Release] Publish packages and apps"
 on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        description: "the ref (branch) to release from"
+        required: false
+        default: main
   workflow_dispatch:
     inputs:
       app:
@@ -16,13 +23,6 @@ on:
         description: "the ref (branch) to release from"
         required: false
         default: main
-
-  workflow_run:
-    workflows:
-      - \[Release\] Prepare for releasing
-      - \[Release\](Hotfix) Prepare for releasing
-    types:
-      - "completed"
 
 jobs:
   release:

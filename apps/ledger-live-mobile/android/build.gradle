@@ -10,7 +10,7 @@ buildscript {
         androidXAnnotation = "1.2.0"
         androidXBrowser = "1.3.0"
         ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.22"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
