@@ -1,3 +1,4 @@
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type AccountsListNavigator = {
@@ -6,5 +7,6 @@ export type AccountsListNavigator = {
     showHeader?: boolean;
     canAddAccount?: boolean;
     isSyncEnabled?: boolean;
+    specificAccounts?: Account[] | TokenAccount[];
   };
 };
