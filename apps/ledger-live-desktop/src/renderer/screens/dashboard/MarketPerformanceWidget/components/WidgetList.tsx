@@ -120,12 +120,12 @@ const MainContainer = styled(Flex)`
   transition:
     background-color 0.35s ease,
     padding 0.35s ease;
+  border-radius: 12px;
 
   &:hover {
     transition-delay: 0.15s;
     background-color: ${p => p.theme.colors.opacityDefault.c05};
     padding: 6px 12px;
-    border-radius: 12px;
     cursor: pointer;
   }
 `;
