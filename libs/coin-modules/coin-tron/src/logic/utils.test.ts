@@ -1,6 +1,7 @@
-import { OperationType } from "@ledgerhq/types-live";
-import { TrongridTxInfo, TrongridTxType } from "../types";
-import { txInfoToOperation } from "./utils";
+import { Account, OperationType } from "@ledgerhq/types-live";
+import { Transaction, TrongridTxInfo, TrongridTxType, Vote } from "../types";
+import { getEstimatedBlockSize, txInfoToOperation } from "./utils";
+import BigNumber from "bignumber.js";
 
 jest.mock("@ledgerhq/coin-framework/operation", () => ({
   encodeOperationId: jest.fn(() => "encodedOpId"),
@@ -73,5 +74,118 @@ describe("txInfoToOperation", () => {
     };
 
     expect(txInfoToOperation("accountId", "address", tx)?.id).toEqual("encodedOpId");
+  });
+});
+
+describe("getEstimatedBlockSize", () => {
+  it.each([
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "send",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(270),
+    },
+    {
+      account: {
+        subAccounts: [
+          {
+            id: "12ab34c56",
+            type: "TokenAccount",
+            token: {
+              tokenType: "trc10",
+            },
+          },
+        ],
+      } as Account,
+      transaction: {
+        mode: "send",
+        subAccountId: "12ab34c56",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(285),
+    },
+    {
+      account: {
+        subAccounts: [
+          {
+            id: "12ab34c56",
+            type: "TokenAccount",
+            token: {
+              tokenType: "trc20",
+            },
+          },
+        ],
+      } as Account,
+      transaction: {
+        mode: "send",
+        subAccountId: "12ab34c56",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(350),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "freeze",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "unfreeze",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "claimReward",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "withdrawExpireUnfreeze",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "unDelegateResource",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "legacyUnfreeze",
+        votes: Array<Vote>(),
+      } as Transaction,
+      expectedValue: BigNumber(260),
+    },
+    {
+      account: {} as Account,
+      transaction: {
+        mode: "vote",
+        votes: [{}, {}, {}] as Vote[],
+      } as Transaction,
+      expectedValue: BigNumber(290 + 3 * 19),
+    },
+  ])("returns expected hardcoded value 😔", ({ account, transaction, expectedValue }) => {
+    // When
+    const value = getEstimatedBlockSize(account, transaction);
+
+    // Then
+    expect(value).toEqual(expectedValue);
   });
 });
