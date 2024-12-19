@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import useAccountsListViewModel, { type Props } from "./useAccountsListViewModel";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import { Pressable } from "react-native";
 import AccountItem from "./components/AccountItem";
@@ -15,11 +15,13 @@ type ViewProps = ReturnType<typeof useAccountsListViewModel>;
 
 const View: React.FC<ViewProps> = ({ accountsToDisplay, isSyncEnabled, onAccountPress }) => {
   const List = useMemo(() => {
-    return isSyncEnabled ? globalSyncRefreshControl<FlashListProps<Account>>(FlashList) : FlashList;
+    return isSyncEnabled
+      ? globalSyncRefreshControl<FlashListProps<Account | TokenAccount>>(FlashList)
+      : FlashList;
   }, [isSyncEnabled]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Account }) => (
+    ({ item }: { item: Account | TokenAccount }) => (
       <Pressable
         style={({ pressed }: { pressed: boolean }) => [
           { opacity: pressed ? 0.5 : 1.0, marginVertical: 12 },
