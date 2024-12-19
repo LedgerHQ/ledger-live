@@ -14,6 +14,8 @@ const prepareTransaction = async (
     return transaction;
   }
 
+  // if transaction.useAllAmount is true, then we expect transaction.amount to be 0
+  // so to check that actual amount is zero or not, we also need to check if useAllAmount is false
   if (transaction.amount.isZero() && !transaction.useAllAmount) {
     return {
       ...transaction,
@@ -21,14 +23,18 @@ const prepareTransaction = async (
     };
   }
 
-  const amount = transaction.useAllAmount
-    ? getMaxSendBalance(account.spendableBalance)
-    : BigNumber(transaction.amount);
-  transaction.amount = amount;
-
   const aptosClient = new AptosAPI(account.currency.id);
 
   const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
+
+  const amount = transaction.useAllAmount
+    ? getMaxSendBalance(
+        account.spendableBalance,
+        BigNumber(estimate.maxGasAmount),
+        BigNumber(estimate.gasUnitPrice),
+      )
+    : transaction.amount;
+  transaction.amount = amount;
 
   if (transaction.firstEmulation) {
     transaction.options.maxGasAmount = estimate.maxGasAmount;
