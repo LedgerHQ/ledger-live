@@ -567,7 +567,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: 4.0.3
-        version: 4.0.3
+        version: 5.0.1
       semver:
         specifier: 7.5.4
         version: 7.5.4
@@ -1937,7 +1937,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: ^4.0.3
-        version: 4.0.3
+        version: 5.0.1
       sha.js:
         specifier: ^2.4.11
         version: 2.4.11
@@ -3761,7 +3761,7 @@ importers:
         version: 1.1.7
       secp256k1:
         specifier: ^5.0.0
-        version: 5.0.0
+        version: 5.0.1
       tiny-secp256k1:
         specifier: 1.1.7
         version: 1.1.7
@@ -4183,7 +4183,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: ^4.0.3
-        version: 4.0.3
+        version: 5.0.1
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -4974,7 +4974,7 @@ importers:
         version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
       secp256k1:
         specifier: 5.0.0
-        version: 5.0.0
+        version: 5.0.1
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3)
@@ -17613,6 +17613,9 @@ packages:
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
 
+  bn.js@4.12.1:
+    resolution: {integrity: sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg==}
+
   bn.js@5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
 
@@ -19667,6 +19670,9 @@ packages:
 
   elliptic@6.5.5:
     resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
+
+  elliptic@6.6.1:
+    resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
 
   embla-carousel-autoplay@8.4.0:
     resolution: {integrity: sha512-AJHXrnaY+Tf4tb/+oItmJSpz4P0WvS62GrW5Z4iFY3zsH0mkKcijzd04LIkj0P4DkTazIBEuXple+nUVmuMsrQ==}
@@ -24841,6 +24847,10 @@ packages:
     resolution: {integrity: sha512-u6fs2AEUljNho3EYTJNBfImO5QTo/J/1Etd+NVdCj7qWKUSN/bSLkZwhDv7I+w/MSC6qJ4cknepkAYykDdK8og==}
     hasBin: true
 
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
+
   node-hid@2.1.2:
     resolution: {integrity: sha512-qhCyQqrPpP93F/6Wc/xUR7L8mAJW0Z6R7HMQV8jCHHksAxNDe/4z4Un/H9CpLOT+5K39OPyt9tIQlavxWES3lg==}
     engines: {node: '>=10'}
@@ -26279,6 +26289,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -27631,13 +27642,17 @@ packages:
     resolution: {integrity: sha512-UDar4sKvWAksIlfX3xIaQReADn+WFnHvbVujpcbr+9Sf/69odMwy2MUsz5CKLQgX9nsIyrjuxL2imVyoNHa3fg==}
     engines: {node: '>=10.0.0'}
 
-  secp256k1@4.0.3:
-    resolution: {integrity: sha512-NLZVf+ROMxwtEj3Xa562qgv2BK5e2WNmXPiOdVIPLgs6lyTzMvBq0aWTYMI5XCP9jZMVKOcqZLw/Wc4vDkuxhA==}
-    engines: {node: '>=10.0.0'}
+  secp256k1@4.0.4:
+    resolution: {integrity: sha512-6JfvwvjUOn8F/jUoBY2Q1v5WY5XS+rj8qSe0v8Y4ezH4InLgTEeOOPQsRll9OV429Pvo6BCHGavIyJfr3TAhsw==}
+    engines: {node: '>=18.0.0'}
 
   secp256k1@5.0.0:
     resolution: {integrity: sha512-TKWX8xvoGHrxVdqbYeZM9w+izTF4b9z3NhSaDkdn81btvuh+ivbIMGT/zQvDtTFWhRlThpoz6LEYTr7n8A5GcA==}
     engines: {node: '>=14.0.0'}
+
+  secp256k1@5.0.1:
+    resolution: {integrity: sha512-lDFs9AAIaWP9UCdtWrotXWWF9t8PWgQDcxqgAnpM9rMqxb3Oaq2J0thzPVSxBwdJgyQtkU/sYtFtbM1RSt/iYA==}
+    engines: {node: '>=18.0.0'}
 
   secretjs@0.17.8:
     resolution: {integrity: sha512-PD/GUF52GjysBo8dDVK8KZXRXON1iPXkkyBNWIBVsaap3A1nZPbqynx/VUOjSpFx103KdjvzeA4+O0+EdWWWmw==}
@@ -28449,12 +28464,15 @@ packages:
 
   sudo-prompt@8.2.5:
     resolution: {integrity: sha512-rlBo3HU/1zAJUrkY6jNxDOC9eVYliG6nS4JA8u8KAshITd07tafMc/Br7xQwCSseXwJ2iCcHCE8SNWX3q8Z+kw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sudo-prompt@9.1.1:
     resolution: {integrity: sha512-es33J1g2HjMpyAhz8lOR+ICmXXAqTuKbuXuUWLhOLew20oN9oUCgCJx615U/v7aioZg7IX5lIh9x34vwneu4pA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sumchecker@3.0.1:
     resolution: {integrity: sha512-MvjXzkz/BOfyVDkG0oFOtBxHX2u3gKbMHIF/dXblZsgD3BWOFLmHovIpZY7BykJdAjcqRCBi1WYBNdEC9yI7vg==}
@@ -33818,8 +33836,8 @@ snapshots:
       '@cosmjs/math': 0.24.1
       '@cosmjs/utils': 0.24.1
       bip39: 3.1.0
-      bn.js: 4.12.0
-      elliptic: 6.5.5
+      bn.js: 4.12.1
+      elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
@@ -33833,8 +33851,8 @@ snapshots:
       '@cosmjs/math': 0.25.6
       '@cosmjs/utils': 0.25.6
       bip39: 3.1.0
-      bn.js: 4.12.0
-      elliptic: 6.5.5
+      bn.js: 4.12.1
+      elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
       ripemd160: 2.0.2
@@ -33847,7 +33865,7 @@ snapshots:
       '@cosmjs/utils': 0.26.8
       '@noble/hashes': 1.5.0
       bn.js: 5.2.1
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       libsodium-wrappers: 0.7.13
 
   '@cosmjs/crypto@0.31.3':
@@ -33915,11 +33933,11 @@ snapshots:
 
   '@cosmjs/math@0.24.1':
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
 
   '@cosmjs/math@0.25.6':
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
 
   '@cosmjs/math@0.26.8':
     dependencies:
@@ -35108,7 +35126,7 @@ snapshots:
       chalk: 4.1.2
       ci-info: 3.9.0
       connect: 3.7.0
-      debug: 4.3.4
+      debug: 4.3.7
       env-editor: 0.4.2
       fast-glob: 3.3.2
       find-yarn-workspace-root: 2.0.0
@@ -35566,7 +35584,7 @@ snapshots:
       '@expo/image-utils': 0.5.1
       '@expo/json-file': 8.3.0
       '@react-native/normalize-colors': 0.74.85
-      debug: 4.3.4
+      debug: 4.3.7
       fs-extra: 9.1.0
       resolve-from: 5.0.0
       semver: 7.6.3
@@ -36104,7 +36122,7 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       expo-crypto: 10.2.0
       expo-random: 12.3.0
       js-base64: 3.7.7
@@ -36213,8 +36231,8 @@ snapshots:
     dependencies:
       '@iov/encoding': 2.1.0
       bip39: 3.1.0
-      bn.js: 4.12.0
-      elliptic: 6.5.5
+      bn.js: 4.12.1
+      elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
@@ -36227,7 +36245,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       readonly-date: 1.0.0
 
   '@iov/utils@2.0.2': {}
@@ -37126,7 +37144,7 @@ snapshots:
       bip39: 3.1.0
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       sha.js: 2.4.11
 
   '@keplr-wallet/proto-types@0.12.89':
@@ -44992,7 +45010,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
-      debug: 4.3.7
+      debug: 4.3.4
       eslint: 8.57.0
     optionalDependencies:
       typescript: 4.9.5
@@ -45076,7 +45094,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.4.3)
       '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.7
+      debug: 4.3.4
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.4.3)
     optionalDependencies:
@@ -45118,7 +45136,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4
+      debug: 4.3.7
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.5.4
@@ -45132,7 +45150,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4
+      debug: 4.3.7
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.5.4
@@ -45161,7 +45179,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.7
+      debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
@@ -46364,7 +46382,7 @@ snapshots:
 
   asn1.js@4.10.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
 
@@ -46565,7 +46583,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
@@ -47139,6 +47157,8 @@ snapshots:
 
   bn.js@4.12.0: {}
 
+  bn.js@4.12.1: {}
+
   bn.js@5.2.1: {}
 
   body-parser@1.20.2:
@@ -47279,7 +47299,7 @@ snapshots:
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       hash-base: 3.0.4
       inherits: 2.0.4
       parse-asn1: 5.1.7
@@ -48347,8 +48367,8 @@ snapshots:
 
   create-ecdh@4.0.4:
     dependencies:
-      bn.js: 4.12.0
-      elliptic: 6.5.5
+      bn.js: 4.12.1
+      elliptic: 6.6.1
 
   create-hash@1.2.0:
     dependencies:
@@ -49238,7 +49258,7 @@ snapshots:
 
   diffie-hellman@5.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       miller-rabin: 4.0.1
       randombytes: 2.1.0
 
@@ -49614,6 +49634,16 @@ snapshots:
   elliptic@6.5.5:
     dependencies:
       bn.js: 4.12.0
+      brorand: 1.1.0
+      hash.js: 1.1.7
+      hmac-drbg: 1.0.1
+      inherits: 2.0.4
+      minimalistic-assert: 1.0.1
+      minimalistic-crypto-utils: 1.0.1
+
+  elliptic@6.6.1:
+    dependencies:
+      bn.js: 4.12.1
       brorand: 1.1.0
       hash.js: 1.1.7
       hmac-drbg: 1.0.1
@@ -50555,8 +50585,8 @@ snapshots:
 
   eth-lib@0.1.29:
     dependencies:
-      bn.js: 4.12.0
-      elliptic: 6.5.5
+      bn.js: 4.12.1
+      elliptic: 6.6.1
       nano-json-stream-parser: 0.1.2
       servify: 0.1.12
       ws: 3.3.3
@@ -50569,7 +50599,7 @@ snapshots:
   eth-lib@0.2.8:
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       xhr-request-promise: 0.1.3
 
   ethereum-bloom-filters@1.0.10:
@@ -50591,7 +50621,7 @@ snapshots:
       randombytes: 2.1.0
       safe-buffer: 5.2.1
       scrypt-js: 3.0.1
-      secp256k1: 4.0.3
+      secp256k1: 4.0.4
       setimmediate: 1.0.5
 
   ethereum-cryptography@1.2.0:
@@ -51318,7 +51348,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   file-selector@0.6.0:
     dependencies:
@@ -52393,7 +52423,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -55646,13 +55676,13 @@ snapshots:
   keccak@3.0.2:
     dependencies:
       node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
       readable-stream: 3.6.2
 
   keccak@3.0.4:
     dependencies:
       node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
       readable-stream: 3.6.2
 
   key-encoder@2.0.3:
@@ -55660,7 +55690,7 @@ snapshots:
       '@types/elliptic': 6.4.18
       asn1.js: 5.4.1
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
 
   keygrip@1.1.0:
     dependencies:
@@ -57325,7 +57355,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       brorand: 1.1.0
 
   mime-db@1.33.0: {}
@@ -57810,6 +57840,8 @@ snapshots:
   node-forge@1.3.1: {}
 
   node-gyp-build@4.8.0: {}
+
+  node-gyp-build@4.8.4: {}
 
   node-hid@2.1.2:
     dependencies:
@@ -59390,7 +59422,7 @@ snapshots:
 
   public-encrypt@4.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       parse-asn1: 5.1.7
@@ -61335,21 +61367,27 @@ snapshots:
 
   secp256k1@4.0.2:
     dependencies:
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
 
-  secp256k1@4.0.3:
+  secp256k1@4.0.4:
     dependencies:
-      elliptic: 6.5.5
-      node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      elliptic: 6.6.1
+      node-addon-api: 5.1.0
+      node-gyp-build: 4.8.4
 
   secp256k1@5.0.0:
     dependencies:
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       node-addon-api: 5.1.0
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
+
+  secp256k1@5.0.1:
+    dependencies:
+      elliptic: 6.6.1
+      node-addon-api: 5.1.0
+      node-gyp-build: 4.8.4
 
   secretjs@0.17.8:
     dependencies:
@@ -61698,7 +61736,7 @@ snapshots:
 
   sodium-native@4.1.1:
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
     optional: true
 
   sonic-boom@4.0.1:
@@ -62821,7 +62859,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 
@@ -64088,7 +64126,7 @@ snapshots:
 
   utf-8-validate@5.0.10:
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
 
   utf-8-validate@6.0.3:
     dependencies:
@@ -64646,7 +64684,7 @@ snapshots:
 
   web3-eth-iban@1.5.2:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       web3-utils: 1.5.2
 
   web3-eth-personal@1.10.4:
@@ -64900,7 +64938,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
