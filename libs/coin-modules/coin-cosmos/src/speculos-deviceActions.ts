@@ -14,6 +14,14 @@ const typeWording = {
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
+      title: "Review",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Please",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Sequence",
       button: SpeculosButton.RIGHT,
     },
