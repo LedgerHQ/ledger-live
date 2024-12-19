@@ -34,6 +34,20 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
     ];
   }
 
+  if (account.type === "Account" && account.currency.id === "bsc") {
+    return [
+      ScreenName.PlatformApp,
+      {
+        params: {
+          platform: "stakekit",
+          name: "StakeKit",
+          accountId: account.id,
+          yieldId: "bsc-bnb-native-staking",
+        },
+      },
+    ];
+  }
+
   const params = {
     screen: parentRoute.name,
     drawer: {
@@ -64,7 +78,10 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
 }
 
 const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
-  if (account.type === "Account" && account.currency.id === "ethereum") {
+  if (
+    account.type === "Account" &&
+    (account.currency.id === "ethereum" || account.currency.id === "bsc")
+  ) {
     const label = getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
@@ -80,7 +97,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: "ETH",
+          currency: account.currency.id === "ethereum" ? "ETH" : "BNB",
         },
       },
     ];
