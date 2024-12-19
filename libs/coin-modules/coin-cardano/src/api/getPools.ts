@@ -23,18 +23,13 @@ export async function fetchPoolList(
 export async function fetchPoolDetails(
   currency: CryptoCurrency,
   poolIds: Array<string>,
-  ledgerPoolIds?: Array<string>,
 ): Promise<APIGetPoolsDetail> {
-  const currentPoolIds = poolIds.length == 0 ? ledgerPoolIds : poolIds;
   const { data } = await network<APIGetPoolsDetail>({
     method: "GET",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
       : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
-    params: { poolIds: currentPoolIds },
+    params: { poolIds },
   });
-  if (data.pools.length === 0 && ledgerPoolIds) {
-    return fetchPoolDetails(currency, ledgerPoolIds);
-  }
   return data;
 }
