@@ -32,18 +32,45 @@ describe("Aptos logic ", () => {
   });
 
   describe("getMaxSendBalance", () => {
-    it("should return the correct max send balance", () => {
+    it("should return the correct max send balance when amount is greater than total gas", () => {
       const amount = new BigNumber(1000000);
-      const result = getMaxSendBalance(amount);
-      expect(result.isEqualTo(amount.minus(BigNumber((2000 + 5) * 100)))).toBe(true);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
     });
 
-    // TOFIX: this test should be updated after validation of the getMaxSendBalance strategy for small amounts
-    // it("should return the original amount if it is less than the total gas", () => {
-    //   const amount = new BigNumber(1000);
-    //   const result = getMaxSendBalance(amount);
-    //   expect(result).toEqual(amount);
-    // });
+    it("should return zero when amount is less than total gas", () => {
+      const amount = new BigNumber(1000);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should return zero when amount is equal to total gas", () => {
+      const amount = new BigNumber(20000);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should handle zero amount", () => {
+      const amount = new BigNumber(0);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should handle zero gas and gas price", () => {
+      const amount = new BigNumber(1000000);
+      const gas = new BigNumber(0);
+      const gasPrice = new BigNumber(0);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(amount)).toBe(true);
+    });
   });
 
   describe("normalizeTransactionOptions", () => {
@@ -543,4 +570,5 @@ describe("Aptos sync logic ", () => {
       expect(result).toEqual(new BigNumber(90).negated()); // 100 - 10
     });
   });
+
 });
