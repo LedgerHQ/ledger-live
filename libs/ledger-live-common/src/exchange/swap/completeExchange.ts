@@ -1,17 +1,23 @@
 import {
+  isSolanaAccount,
+  type Transaction as SolanaTransaction,
+  type TokenTransferCommand,
+} from "@ledgerhq/coin-solana/types";
+import {
   DisconnectedDeviceDuringOperation,
   TransportStatusError,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
-import {
+import Exchange, {
   createExchange,
   ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
+import { loadPKI } from "@ledgerhq/hw-bolos";
 import Transport from "@ledgerhq/hw-transport";
-import calService from "@ledgerhq/ledger-cal-service";
+import calService, { type Device as DeviceCertificate } from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { log } from "@ledgerhq/logs";
@@ -23,7 +29,7 @@ import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount, isTokenAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
-import perFamily from "../../generated/exchange";
+import { Device } from "../../hw/actions/types";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { CompleteExchangeStep, convertTransportError } from "../error";
@@ -145,17 +151,37 @@ const completeExchange = (
 
         //-- Special case of SPLToken
         //TODO: generalize this case when another blockchain has the same requirement
-        if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
-          sendPKI(transport);
+        if (
+          isSPLTokenAccount(fromAccount) ||
+          isSPLTokenAccount(toAccount) ||
+          isSolanaAccount(toAccount)
+        ) {
+          await sendPKI(transport, device, exchange);
         }
 
         if (isSPLTokenAccount(fromAccount)) {
-          // const challenge = await exchange.getChallenge();
-          // const descriptor = await trustService.getOwnerAddress(fromAccount.freshAddress, challenge);
-          // await exchange.sendTrustedDescriptor(descriptor);
+          const tx = transaction as SolanaTransaction;
+          const { command } = tx.model.commandDescriptor!;
+          const tokenAddress = (command as TokenTransferCommand).recipientDescriptor
+            .tokenAccAddress;
+          const challenge = await exchange.getChallenge();
+          const { signedDescriptor } = await trustService.getOwnerAddress(
+            tokenAddress,
+            challenge.toString(),
+          );
+          await exchange.sendTrustedDescriptor(Buffer.from(signedDescriptor, "hex"));
         }
-        if (isSPLTokenAccount(toAccount)) {
-          //TODO Call AppExchange with TrustedService info
+        if (isSPLTokenAccount(toAccount) || isSolanaAccount(toAccount)) {
+          const tx = transaction as SolanaTransaction;
+          const { command } = tx.model.commandDescriptor!;
+          const tokenAddress = (command as TokenTransferCommand).recipientDescriptor
+            .tokenAccAddress;
+          const challenge = await exchange.getChallenge();
+          const { signedDescriptor } = await trustService.getOwnerAddress(
+            tokenAddress,
+            challenge.toString(),
+          );
+          await exchange.sendTrustedDescriptor(Buffer.from(signedDescriptor, "hex"));
         }
 
         //-- CHECK_PAYOUT_ADDRESS
@@ -269,25 +295,24 @@ function isSPLTokenAccount(account: AccountLike): account is TokenAccount {
   return isTokenAccount(account); // && account.currency.id === "solana";
 }
 
-async function sendPKI(transport: Transport) {
+async function sendPKI(transport: Transport, device: Device, exchange: Exchange) {
   // FIXME: version number hardcoded
   // const { version } = await getAppAndVersion();
   const { descriptor, signature } = await calService.getCertificate(
-    transport.deviceModel!.id,
-    "1.3.0",
+    device.deviceId as DeviceCertificate,
+    "latest",
   );
+  console.log("sendPKI", descriptor)
+  console.log("sendPKI", signature)
 
   await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
+  // await exchange.sendPKICertificate(Buffer.from(descriptor, "hex"), Buffer.from(signature, "hex"));
 }
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg
     ? Buffer.from(signature, "base64url")
     : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
-}
-
-function loadPKI(transport: Transport, arg1: string, descriptor: any, signature: any) {
-  throw new Error("Function not implemented.");
 }
 
 export default completeExchange;

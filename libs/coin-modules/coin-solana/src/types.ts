@@ -257,6 +257,9 @@ export type SolanaValidatorWithMeta = {
 
 export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
 
+export function isSolanaAccount(account: Account): account is SolanaAccount {
+  return "solanaResources" in account;
+}
 export type SolanaAccount = Account & { solanaResources: SolanaResources };
 
 export type SolanaAccountRaw = AccountRaw & {
