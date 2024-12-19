@@ -6,19 +6,24 @@ import { AccountAddresses, scanAddresses, scanOperations } from "../network/inde
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { KaspaSigner } from "../signer";
+import { logapi } from "../network/indexer-api/getFeeEstimate";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
   async info => {
+    await logapi("scanning account now.");
     const { initialAccount, deviceId, derivationPath } = info;
 
     let xpub = initialAccount?.xpub;
+    let accountIndex: number = 0;
 
     if (!xpub) {
       // CLI does not deliver account (44'/11111'/0') xpub - need to calculate it..
       const accountPath = derivationPath.split("/").slice(0, 3).join("/");
       xpub = (await signerContext(deviceId || "", signer => signer.getAddress(accountPath)))
         .publicKey;
+
+      accountIndex = parseInt(derivationPath.split("/")[2].replace("'", ""), 10);
     }
 
     // // Needed for incremental synchronisation
@@ -48,12 +53,10 @@ export const makeGetAccountShape =
     const allOperations: Operation[] = await scanOperations(usedAddresses);
     const operations = mergeOps(oldOperations, allOperations);
 
-    console.log(`Total balance: ${accountAddresses.totalBalance.toNumber()}`);
-    console.log(`Spendable balance: ${accountAddresses.spendableBalance.toNumber()}`);
-
     return {
       id: accountId,
       xpub: xpub,
+      index: accountIndex,
       blockHeight: 0, // this doesn't really make sense in Kaspa
       balance: accountAddresses.totalBalance,
       spendableBalance: accountAddresses.spendableBalance,
@@ -65,6 +68,9 @@ export const makeGetAccountShape =
       nextReceiveAddressIndex: accountAddresses.nextReceiveAddress.index,
       nextReceiveAddressType: accountAddresses.nextReceiveAddress.type,
       nextReceiveAddress: accountAddresses.nextReceiveAddress.address,
+      freshAddress: accountAddresses.nextReceiveAddress.address,
+      freshAddressPath: `44'/111111'/${accountIndex}'/${accountAddresses.nextReceiveAddress.type}/${accountAddresses.nextReceiveAddress.index}`,
+      used: operations.length > 0,
     };
   };
 

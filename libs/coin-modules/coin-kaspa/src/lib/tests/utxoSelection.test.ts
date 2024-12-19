@@ -26,7 +26,7 @@ const sampleUtxoSet: KaspaUtxo[] = [
     address: "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee",
     outpoint: {
       transactionId: "44f1881957963cffa85b1ec531e3a195104248b11882229e53df6c6c77becdcc",
-      index: 0,
+      index: 0
     },
     utxoEntry: {
       amount: BigNumber(10_0000_0000), // 10 KAS
@@ -82,7 +82,7 @@ const sampleUtxoSet2: KaspaUtxo[] = [
     address: "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee",
     outpoint: {
       transactionId: "44f1881957963cffa85b1ec531e3a195104248b11882229e53df6c6c77becdcc",
-      index: 0,
+      index: 0
     },
     utxoEntry: {
       amount: BigNumber(279959218), // 10 KAS
@@ -95,7 +95,7 @@ const sampleUtxoSet2: KaspaUtxo[] = [
     },
     accountType: 0,
     accountIndex: 5
-  } as KaspaUtxo,
+  } as KaspaUtxo
 ];
 
 describe("selectUtxos function with low-fee strategy", () => {
@@ -103,31 +103,59 @@ describe("selectUtxos function with low-fee strategy", () => {
   const recipient_is_ecdsa = false;
 
   test("error if spending more than 9997_964 with 2036 mass", () => {
-    const utxos = [sampleUtxo];
-    const amount = BigNumber(1_0000_0000 - 506 - 1118 + 1);
-    expect(() =>
-      selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate)
-    ).toThrow(Error);
-  });
+    const utxos = [{
+      address: "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee",
+      outpoint: {
+        transactionId: "44f1881957963cffa85b1ec531e3a195104248b11882229e53df6c6c77becdcc",
+        index: 0
+      },
+      utxoEntry: {
+        amount: BigNumber(399996846), // 10 KAS
+        scriptPublicKey: {
+          version: 0,
+          scriptPublicKey: "20c3e3cd358cba288acf955a6476b3c34562d0d7e4cb4b8750c12fa4685eb3b882ac"
+        },
+        blockDaaScore: "95538507",
+        isCoinbase: false
+      },
+      accountType: 0,
+      accountIndex: 5
+    } as KaspaUtxo,];
 
-  test("check ordering - lowest utxo needed #1", () => {
-    const utxos = sampleUtxoSet;
-    const amount = BigNumber(1_0000_0000 - 2_036);
+    const amount = BigNumber(9800_0000);
+    const result = selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate)
 
-    const result = selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate);
-    expect(result.utxos.length).toBe(1);
-    expect(result.utxos[0].utxoEntry.blockDaaScore).toBe("95538501");
-    expect(result.utxos[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
-  });
-  test("check fee calculation", () => {
-    const utxos = sampleUtxoSet2;
-    const amount = BigNumber(98000000);
+    console.log(result.changeAmount.toNumber())
 
-    const result = selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate);
-    expect(result.utxos.length).toBe(1);
-    expect(result.changeAmount.toNumber()).toBe(181947089);
+  })
+    ;
+
+    test("error if spending more than 9997_964 with 2036 mass", () => {
+      const utxos = [sampleUtxo];
+      const amount = BigNumber(1_0000_0000 - 506 - 1118 + 1);
+      expect(() =>
+        selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate)
+      ).toThrow(Error);
+    });
+
+    test("check ordering - lowest utxo needed #1", () => {
+      const utxos = sampleUtxoSet;
+      const amount = BigNumber(1_0000_0000 - 2_036);
+
+      const result = selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate);
+      expect(result.utxos.length).toBe(1);
+      expect(result.utxos[0].utxoEntry.blockDaaScore).toBe("95538501");
+      expect(result.utxos[0].utxoEntry.amount.eq(BigNumber(1_0000_0000))).toBe(true);
+    });
+    test("check fee calculation", () => {
+      const utxos = sampleUtxoSet2;
+      const amount = BigNumber(98000000);
+
+      const result = selectUtxos(utxos, UtxoStrategy.FIFO, recipient_is_ecdsa, amount, feerate);
+      expect(result.utxos.length).toBe(1);
+      expect(result.changeAmount.toNumber()).toBe(181947089);
+    });
   });
-});
 //
 //   test("check ordering - lowest utxo needed #2", () => {
 //     const amount = BigNumber(9000_0000);

@@ -6,25 +6,18 @@ import Transport from "@ledgerhq/hw-transport";
 import { createResolver, CreateSigner, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import { KaspaSigner } from "@ledgerhq/coin-kaspa/lib/signer";
-import {
-  KaspaAccount,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/coin-kaspa/types/bridge";
+import { KaspaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-kaspa/types/bridge";
 import { createBridges } from "@ledgerhq/coin-kaspa/lib/bridge/index";
 import type { Bridge } from "@ledgerhq/types-live";
-import { getCurrencyConfiguration } from "../../config";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { KaspaCoinConfig } from "@ledgerhq/coin-kaspa/config";
 import makeCliTools from "@ledgerhq/coin-kaspa/test/cli";
 
 const createSigner: CreateSigner<KaspaSigner> = (transport: Transport) => {
   return new Kaspa(transport);
 };
 
-const kaspaCoin = getCryptoCurrencyById("kaspa");
+// const kaspaCoin = getCryptoCurrencyById("kaspa");
 const resolver: Resolver = createResolver(createSigner, kaspaResolver);
-const getCurrencyConfig = (): KaspaCoinConfig => getCurrencyConfiguration(kaspaCoin);
+// const getCurrencyConfig = (): KaspaCoinConfig => getCurrencyConfiguration(kaspaCoin);
 
 const bridge: Bridge<Transaction, KaspaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
