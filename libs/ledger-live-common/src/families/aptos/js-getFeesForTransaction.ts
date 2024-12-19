@@ -109,14 +109,18 @@ export const getFee = async (
   return res;
 };
 
-const getCacheKey = (transaction: Transaction): string =>
-  JSON.stringify({
+const getCacheKey = (transaction: Transaction): string => {
+  console.log("#########");
+  console.log(transaction);
+  console.log("#########");
+  return JSON.stringify({
     amount: transaction.amount,
     gasUnitPrice: transaction.options.gasUnitPrice,
     maxGasAmount: transaction.options.maxGasAmount,
     sequenceNumber: transaction.options.sequenceNumber,
     expirationTimestampSecs: transaction.options.expirationTimestampSecs,
   });
+};
 
 export const getEstimatedGas = async (
   account: Account,
