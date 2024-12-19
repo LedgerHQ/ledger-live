@@ -121,7 +121,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2828",
+    xrayTicket: "B2CQA-2775",
   },
   {
     swap: new Swap(
@@ -132,7 +132,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2827",
+    xrayTicket: "B2CQA-2776",
   },
   {
     swap: new Swap(
@@ -143,7 +143,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2829",
+    xrayTicket: "B2CQA-2777",
   },
   {
     swap: new Swap(
@@ -436,13 +436,11 @@ test.describe("Swap flow from different entry point", () => {
   test.beforeAll(async () => {
     process.env.SWAP_DISABLE_APPS_INSTALL = "true";
     process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-    process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
 
   test.afterAll(async () => {
     delete process.env.SWAP_DISABLE_APPS_INSTALL;
     delete process.env.SWAP_API_BASE;
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
   });
 
   test.use({
@@ -463,7 +461,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.layout.goToPortfolio();
       await app.portfolio.clickSwapButton();
       await app.swap.waitForPageNetworkIdleState();
-      await app.swap.expectHighestMcapToBeSelected(electronApp);
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
 
@@ -489,7 +487,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Market page - 1",
+    "Entry Point - Market page - Click on swap for any coin",
     {
       annotation: {
         type: "TMS",
@@ -515,7 +513,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Market page - 2",
+    "Entry Point - Market page - More than one account for an asset",
     {
       annotation: {
         type: "TMS",
@@ -572,7 +570,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToSwap();
       await app.swap.waitForPageNetworkIdleState();
-      await app.swap.expectHighestMcapToBeSelected(electronApp);
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
 });

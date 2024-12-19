@@ -1,7 +1,7 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "../../models/Delegate";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -10,6 +10,7 @@ const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2740, B2CQA-2770",
+    bugLing: "LIVE-14501",
   },
   {
     delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
@@ -69,10 +70,16 @@ test.describe("Delegate flows", () => {
       test(
         `[${account.delegate.account.currency.name}] Delegate`,
         {
-          annotation: { type: "TMS", description: account.xrayTicket },
+          annotation: [
+            { type: "TMS", description: account.xrayTicket },
+            { type: "BUG", description: account.bugLing },
+          ],
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (account.bugLing) {
+            await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
+          }
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
