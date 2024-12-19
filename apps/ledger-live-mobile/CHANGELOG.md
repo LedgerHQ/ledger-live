@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.59.0-nightly.12
+
+### Minor Changes
+
+- [#8599](https://github.com/LedgerHQ/ledger-live/pull/8599) [`b3987c5`](https://github.com/LedgerHQ/ledger-live/commit/b3987c522c62e4a0a0d8fb31afc5ff996f512382) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Upgrade React Native from v0.74.88 to v0.75.4
+
 ## 3.59.0-nightly.11
 
 ### Minor Changes
