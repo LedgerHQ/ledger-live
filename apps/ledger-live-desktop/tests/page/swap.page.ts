@@ -121,6 +121,14 @@ export class SwapPage extends AppPage {
     await this.quoteContainer(providerName, exchangeType).click();
   }
 
+  @step("Send Max Amount")
+  async fillInMaxAmount(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.maxSpendableToggle).click();
+    //wait for potential origin amount error to be loaded
+    await this.page.waitForTimeout(500);
+  }
+
   @step("Select exchange quote with provider $1")
   async selectQuote(electronApp: ElectronApplication, providerName: string, rate: string) {
     const [, webview] = electronApp.windows();
