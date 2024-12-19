@@ -66,8 +66,9 @@ export default function useSelectCryptoViewModel({
       const isToken = curr.type === "TokenCurrency";
       const currency = isToken ? curr.parentCurrency : curr;
       const currencyAccounts = findAccountByCurrency(accounts, currency);
+      const isAddAccountContext = context === "addAccounts";
 
-      if (currencyAccounts.length > 0) {
+      if (currencyAccounts.length > 0 && !isAddAccountContext) {
         // If we found one or more accounts of the currency then we select account
         navigation.navigate(NavigatorName.AddAccounts, {
           screen: ScreenName.SelectAccounts,

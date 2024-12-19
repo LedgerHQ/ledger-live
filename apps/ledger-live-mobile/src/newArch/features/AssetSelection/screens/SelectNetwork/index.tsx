@@ -42,13 +42,13 @@ export default function SelectNetwork({
         currency={item.crypto}
         onPress={onPressItem}
         subTitle={
-          item.accounts.length > 0
+          context === "receiveFunds" && item.accounts.length > 0
             ? t("transfer.receive.selectNetwork.account", { count: item.accounts.length })
             : ""
         }
       />
     ),
-    [onPressItem, t],
+    [onPressItem, t, context],
   );
 
   return (
