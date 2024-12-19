@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { Swap } from "tests/models/Swap";
+import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider, Rate } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";

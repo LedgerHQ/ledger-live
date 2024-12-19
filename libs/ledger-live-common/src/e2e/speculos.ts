@@ -18,6 +18,20 @@ import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
+import { sendBTCBasedCoin } from "./families/bitcoin";
+import { sendEVM, sendEvmNFT } from ".//families/evm";
+import { sendPolkadot } from "./families/polkadot";
+import { sendAlgorand } from "./families/algorand";
+import { sendTron } from "./families/tron";
+import { sendStellar } from "./families/stellar";
+import { sendCardano } from "./families/cardano";
+import { sendXRP } from "./families/xrp";
+import { delegateNear } from "./families/near";
+import { delegateCosmos, sendCosmos } from "./families/cosmos";
+import { delegateSolana, sendSolana } from "./families/solana";
+import { NFTTransaction, Transaction } from "./models/Transaction";
+import { Delegate } from "./models/Delegate";
+import { Swap } from "./models/Swap";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -466,3 +480,115 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
   expect(isAddressCorrect).toBeTruthy();
   await pressBoth();
 }
+
+export async function signSendTransaction(tx: Transaction) {
+  const currencyName = tx.accountToDebit.currency;
+  switch (currencyName) {
+    case Currency.sepETH:
+    case Currency.POL:
+      await sendEVM(tx);
+      break;
+    case Currency.DOGE:
+    case Currency.BCH:
+      await sendBTCBasedCoin(tx);
+      break;
+    case Currency.DOT:
+      await sendPolkadot(tx);
+      break;
+    case Currency.ALGO:
+      await sendAlgorand(tx);
+      break;
+    case Currency.SOL:
+      await sendSolana(tx);
+      break;
+    case Currency.TRX:
+      await sendTron(tx);
+      break;
+    case Currency.XLM:
+      await sendStellar(tx);
+      break;
+    case Currency.ATOM:
+      await sendCosmos(tx);
+      break;
+    case Currency.ADA:
+      await sendCardano(tx);
+      break;
+    case Currency.XRP:
+      await sendXRP(tx);
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName}`);
+  }
+}
+
+export async function signSendNFTTransaction(tx: NFTTransaction) {
+  const currencyName = tx.accountToDebit.currency;
+  switch (currencyName) {
+    case Currency.ETH:
+      await sendEvmNFT(tx);
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName}`);
+  }
+}
+
+export async function signDelegationTransaction(delegatingAccount: Delegate) {
+  const currencyName = delegatingAccount.account.currency.name;
+  switch (currencyName) {
+    case Account.SOL_1.currency.name:
+      await delegateSolana();
+      break;
+    case Account.NEAR_1.currency.name:
+      await delegateNear(delegatingAccount);
+      break;
+    case Account.ATOM_1.currency.name:
+      await delegateCosmos(delegatingAccount);
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName}`);
+  }
+}
+
+export async function verifyAmountsAndAcceptSwap(swap: Swap) {
+  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+  await verifySwapData(swap, events);
+  await pressBoth();
+}
+
+export async function verifyAmountsAndRejectSwap(swap: Swap) {
+  const events = await pressUntilTextFound(DeviceLabels.REJECT);
+  await verifySwapData(swap, events);
+  await pressBoth();
+}
+
+async function verifySwapData(swap: Swap, events: string[]) {
+  const sendAmountScreen = containsSubstringInEvent(swap.amount, events);
+  expect(sendAmountScreen).toBeTruthy();
+  verifySwapGetAmountScreen(swap, events);
+  verifySwapFeesAmountScreen(swap, events);
+}
+
+function verifySwapGetAmountScreen(swap: Swap, events: string[]) {
+  const parsedAmountToReceive = extractNumberFromString(swap.amountToReceive);
+  swap.amountToReceive =
+    parsedAmountToReceive.length < 19
+      ? parsedAmountToReceive
+      : parsedAmountToReceive.substring(0, 18);
+
+  const receivedGetAmount = containsSubstringInEvent(`${swap.amountToReceive}`, events);
+  expect(receivedGetAmount).toBeTruthy();
+}
+
+function verifySwapFeesAmountScreen(swap: Swap, events: string[]) {
+  const parsedFeesAmount = extractNumberFromString(swap.feesAmount);
+  swap.feesAmount =
+    parsedFeesAmount.length < 19 ? parsedFeesAmount : parsedFeesAmount.substring(0, 18);
+
+  const receivedFeesAmount = containsSubstringInEvent(swap.feesAmount, events);
+  expect(receivedFeesAmount).toBeTruthy();
+}
+
+const extractNumberFromString = (input: string | undefined): string => {
+  const match = input?.match(/[\d.]+/);
+  return match ? match[0] : "";
+};

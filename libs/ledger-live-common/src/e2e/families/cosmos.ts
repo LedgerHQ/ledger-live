@@ -1,13 +1,8 @@
-import { expect } from "@playwright/test";
-import { Delegate } from "tests/models/Delegate";
-import { Transaction } from "tests/models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  waitFor,
-  containsSubstringInEvent,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import expect from "expect";
+import { Delegate } from "../models/Delegate";
+import { Transaction } from "../models/Transaction";
+import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function delegateCosmos(delegatingAccount: Delegate) {
   await waitFor(DeviceLabels.PLEASE_REVIEW);

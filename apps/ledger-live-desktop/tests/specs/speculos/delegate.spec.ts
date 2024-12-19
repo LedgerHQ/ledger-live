@@ -1,6 +1,6 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "../../models/Delegate";
+import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";

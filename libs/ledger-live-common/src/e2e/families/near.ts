@@ -1,12 +1,7 @@
-import { expect } from "@playwright/test";
-import { Delegate } from "tests/models/Delegate";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  waitFor,
-  containsSubstringInEvent,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import expect from "expect";
+import { Delegate } from "../models/Delegate";
+import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function delegateNear(delegatingAccount: Delegate) {
   await waitFor(DeviceLabels.VIEW_HEADER);
