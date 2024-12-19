@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 
 export type RequestAccountNavigatorParamList = {
   [ScreenName.RequestAccountsSelectCrypto]: {
@@ -30,4 +31,14 @@ export type RequestAccountNavigatorParamList = {
       analyticsPropertyFlow?: string;
       onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
     }>;
+  [NavigatorName.DeviceSelection]: Partial<
+    NavigatorScreenParams<DeviceSelectionNavigatorParamsList> &
+      Partial<{
+        token?: TokenCurrency;
+        inline?: boolean;
+        returnToSwap?: boolean;
+        analyticsPropertyFlow?: string;
+        onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
+      }>
+  >;
 };

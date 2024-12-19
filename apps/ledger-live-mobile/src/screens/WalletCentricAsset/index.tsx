@@ -36,6 +36,7 @@ import { View } from "react-native-animatable";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -48,6 +49,7 @@ type NavigationProps = BaseComposite<
 const AssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { currency } = route?.params;
   const cryptoAccounts = useSelector(
@@ -85,20 +87,29 @@ const AssetScreen = ({ route }: NavigationProps) => {
     track("button_clicked", {
       button: "Add new",
     });
-    if (currency && currency.type === "TokenCurrency") {
-      navigation.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        params: {
-          token: currency,
-        },
+    if (llmNetworkBasedAddAccountFlow?.enabled) {
+      navigation.navigate(NavigatorName.AssetSelection, {
+        ...(currency && currency.type === "TokenCurrency"
+          ? { token: currency.id }
+          : { currency: currency.id }),
+        context: "addAccounts",
       });
     } else {
-      navigation.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        currency,
-      });
+      if (currency && currency.type === "TokenCurrency") {
+        navigation.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          params: {
+            token: currency,
+          },
+        });
+      } else {
+        navigation.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          currency,
+        });
+      }
     }
-  }, [currency, navigation]);
+  }, [currency, navigation, llmNetworkBasedAddAccountFlow]);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   if (isCryptoCurrency(currency)) {
