@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
       name: "speculos_tests",
       testDir: "specs/speculos/",
       retries: process.env.CI ? 0 : 0,
-      timeout: process.env.CI ? 400000 : 1200000,
+      timeout: process.env.CI ? 100000 : 1200000,
     },
     {
       name: "mocked_tests",

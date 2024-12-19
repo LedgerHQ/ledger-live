@@ -52,6 +52,13 @@ export async function launchApp({
     });
 
     console.log("Electron application started successfully.");
+
+    const page = await app.firstWindow();
+
+    await page.evaluate(() => {
+      window.saveLogs("tests/artifacts/logLLD.json");
+    });
+
     return app;
   } catch (error) {
     console.error("Error launching Electron application:", error);

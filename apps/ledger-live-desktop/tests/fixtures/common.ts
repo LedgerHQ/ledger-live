@@ -155,6 +155,8 @@ export const test = base.extend<TestFixtures>({
         windowSize,
       });
 
+      console.log("Electron app lancé");
+
       await use(electronApp);
 
       // close app
@@ -166,8 +168,13 @@ export const test = base.extend<TestFixtures>({
     }
   },
   page: async ({ electronApp }, use, testInfo) => {
+    const screenshotPath = path.join(__dirname, "../artifacts/screenshots", `screenshot.png`);
     // app is ready
     const page = await electronApp.firstWindow();
+
+    console.log("JE SUIS ICI");
+    page.screenshot({ path: screenshotPath });
+
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
 

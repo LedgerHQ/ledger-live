@@ -213,7 +213,7 @@ for (const { swap, xrayTicket } of swaps) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
     });
 
