@@ -19,8 +19,7 @@ describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-1753");
   $TmsLink("B2CQA-1806");
   it("goes through discover app and should see an empty portfolio page", async () => {
-    await device.launchApp();
-    await device.reloadReactNative();
+    await device.launchApp({ newInstance: true });
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseNoLedgerYet();
     await app.onboarding.chooseToExploreApp();

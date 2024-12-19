@@ -60,16 +60,6 @@ jest.mock("expo-camera/legacy", () => {
   };
 });
 
-jest.mock("expo-barcode-scanner", () => ({
-  BarCodeScanner: {
-    Constants: {
-      BarCodeType: {
-        qr: "qr",
-      },
-    },
-  },
-}));
-
 jest.mock("expo-camera", () => {
   return {
     CameraView: jest.fn(() => null),
