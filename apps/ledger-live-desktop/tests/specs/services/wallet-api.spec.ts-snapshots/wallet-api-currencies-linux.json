@@ -808,5 +808,14 @@
     "family": "cosmos",
     "color": "#ffb386",
     "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "xion",
+    "ticker": "XION",
+    "name": "Xion",
+    "family": "cosmos",
+    "color": "#000000",
+    "decimals": 6
   }
 ]
