@@ -8,9 +8,133 @@ import {
   getAptosAmounts,
   getFunctionAddress,
   isChangeOfAptos,
+  isTestnet,
   processRecipients,
+  getMaxSendBalance,
+  normalizeTransactionOptions,
+  getBlankOperation,
 } from "./logic";
-import type { AptosTransaction } from "./types";
+import type { AptosTransaction, Transaction } from "./types";
+
+jest.mock("@ledgerhq/cryptoassets", () => ({
+  getCryptoCurrencyById: jest.fn(),
+}));
+
+describe("Aptos logic ", () => {
+  describe("isTestnet", () => {
+    it("should return true for testnet currencies", () => {
+      expect(isTestnet("aptos_testnet")).toBe(true);
+    });
+
+    it("should return false for mainnet currencies", () => {
+      expect(isTestnet("aptos")).toBe(false);
+    });
+  });
+
+  describe("getMaxSendBalance", () => {
+    it("should return the correct max send balance when amount is greater than total gas", () => {
+      const amount = new BigNumber(1000000);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
+    });
+
+    it("should return zero when amount is less than total gas", () => {
+      const amount = new BigNumber(1000);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should return zero when amount is equal to total gas", () => {
+      const amount = new BigNumber(20000);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should handle zero amount", () => {
+      const amount = new BigNumber(0);
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(new BigNumber(0))).toBe(true);
+    });
+
+    it("should handle zero gas and gas price", () => {
+      const amount = new BigNumber(1000000);
+      const gas = new BigNumber(0);
+      const gasPrice = new BigNumber(0);
+      const result = getMaxSendBalance(amount, gas, gasPrice);
+      expect(result.isEqualTo(amount)).toBe(true);
+    });
+  });
+
+  describe("normalizeTransactionOptions", () => {
+    it("should normalize transaction options", () => {
+      const options: Transaction["options"] = {
+        maxGasAmount: "1000",
+        gasUnitPrice: "10",
+        sequenceNumber: "1",
+        expirationTimestampSecs: "1000000",
+      };
+
+      const result = normalizeTransactionOptions(options);
+      expect(result).toEqual(options);
+    });
+
+    it("should return undefined for empty values", () => {
+      const options: Transaction["options"] = {
+        maxGasAmount: "",
+        gasUnitPrice: "",
+        sequenceNumber: undefined,
+        expirationTimestampSecs: "1000000",
+      };
+
+      const result = normalizeTransactionOptions(options);
+      expect(result).toEqual({
+        maxGasAmount: undefined,
+        gasUnitPrice: undefined,
+        sequenceNumber: undefined,
+        expirationTimestampSecs: "1000000",
+      });
+    });
+  });
+
+  describe("getBlankOperation", () => {
+    it("should return a blank operation", () => {
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+      } as unknown as AptosTransaction;
+
+      const id = "test-id";
+      const result = getBlankOperation(tx, id);
+
+      expect(result).toEqual({
+        id: "",
+        hash: "0x123",
+        type: "",
+        value: new BigNumber(0),
+        fee: new BigNumber(0),
+        blockHash: "0xabc",
+        blockHeight: 1,
+        senders: [],
+        recipients: [],
+        accountId: id,
+        date: new Date(1000),
+        extra: { version: undefined },
+        transactionSequenceNumber: 1,
+        hasFailed: false,
+      });
+    });
+  });
+});
 
 describe("Aptos sync logic ", () => {
   describe("compareAddress", () => {
@@ -446,4 +570,5 @@ describe("Aptos sync logic ", () => {
       expect(result).toEqual(new BigNumber(90).negated()); // 100 - 10
     });
   });
+
 });
