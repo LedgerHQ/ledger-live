@@ -2,7 +2,7 @@ import type { Transaction } from "./types";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
-import buildTransaction from "./js-buildTransaction";
+import buildTransaction from "./buildTransaction";
 import BigNumber from "bignumber.js";
 
 import type {
