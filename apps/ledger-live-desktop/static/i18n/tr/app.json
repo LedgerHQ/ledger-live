@@ -3037,6 +3037,7 @@
         "validatorGroup" : {
           "title" : "Doğrulayıcı Grubu",
           "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
           "totalVotes" : "Toplam Oy",
           "commission" : "Komisyon"
         }
@@ -3626,6 +3627,7 @@
       "withdrawableTitle" : "Çekilebilir bakiye",
       "statusUpdateNotice" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
       "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
       "emptyState" : {
         "description" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
@@ -3880,6 +3882,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
             "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
           },
           "connectDevice" : {
@@ -4147,6 +4150,7 @@
             "link" : "Bağlantı",
             "secondaryCta" : "İkincil Eylem Çağrısı",
             "cta" : "Eylem Çağrısı",
+            "tag" : "Etiket",
             "url" : "URL",
             "path" : "Yol"
           }
