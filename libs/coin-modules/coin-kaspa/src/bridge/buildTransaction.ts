@@ -41,6 +41,7 @@ export const buildTransaction = async (
     amount,
     t.feerate || 1,
   );
+
   const selectedUtxos = result.utxos;
 
   const txInputs = selectedUtxos.map(utxo => {

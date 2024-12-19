@@ -1,9 +1,11 @@
-import { BigNumber } from "bignumber.js";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types/bridge";
 
-import { isValidKaspaAddress } from "../lib/kaspa-util";
+import { isValidKaspaAddress, parseExtendedPublicKey } from "../lib/kaspa-util";
 
 import { InvalidAddress } from "@ledgerhq/errors";
+import { scanUtxos } from "../network";
+import { selectUtxos, UtxoStrategy } from "../lib/utxoSelection";
+import { BigNumber } from "bignumber.js";
 
 const getTransactionStatus = async (
   account: KaspaAccount,
@@ -11,18 +13,36 @@ const getTransactionStatus = async (
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
 
+  let estimateFee: BigNumber = BigNumber(0);
+
   if (!!transaction.recipient && !isValidKaspaAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
   }
 
+  if (transaction.amount.gt(0) && !!transaction.recipient) {
+    const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
+      Buffer.from(account.xpub, "hex"),
+    );
+    const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
+    const result = selectUtxos(
+      utxos,
+      UtxoStrategy.FIFO,
+      transaction.recipient.length > 67,
+      transaction.amount,
+      transaction.feerate || 1,
+    );
+
+    estimateFee = result.fee;
+  }
+
   return {
     errors,
     warnings: {},
-    estimatedFees: BigNumber(0),
-    amount: BigNumber(0),
-    totalSpent: BigNumber(0),
+    estimatedFees: estimateFee,
+    amount: transaction.amount,
+    totalSpent: transaction.amount.plus(estimateFee),
   };
 };
 

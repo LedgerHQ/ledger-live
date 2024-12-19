@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 
 export type KaspaAccount = Account & {
+  xpub: string;
   nextChangeAddress: string;
   nextChangeAddressType: number;
   nextChangeAddressIndex: number;

@@ -1,6 +1,7 @@
 import { KaspaAccount, Transaction } from "../types/bridge";
 import { getFeeEstimate } from "../network";
 import { FeeEstimateResponse } from "../network/indexer-api/getFeeEstimate";
+import { BigNumber } from "bignumber.js";
 
 /**
  * Prepares a transaction by calculating and setting its fee based on the specified fee strategy.
@@ -13,26 +14,28 @@ import { FeeEstimateResponse } from "../network/indexer-api/getFeeEstimate";
  * @throws Will throw an error if the fee strategy type is unknown.
  */
 export const prepareTransaction = async (account: KaspaAccount, transaction: Transaction) => {
-  const fees: FeeEstimateResponse = await getFeeEstimate();
+  if (transaction.amount.gt(BigNumber(0))) {
+    const fees: FeeEstimateResponse = await getFeeEstimate();
 
-  switch (transaction.feesStrategy) {
-    case "slow":
-      transaction.feerate = fees.lowBuckets[0].feerate;
-      break;
+    switch (transaction.feesStrategy) {
+      case "slow":
+        transaction.feerate = fees.lowBuckets[0].feerate;
+        break;
 
-    case "medium":
-      transaction.feerate = fees.normalBuckets[0].feerate;
-      break;
-    case "fast":
-      transaction.feerate = fees.priorityBucket.feerate;
-      break;
-    case "custom":
-      // transaction.fees = transaction.fees; // nothing to do here?
-      break;
+      case "medium":
+        transaction.feerate = fees.normalBuckets[0].feerate;
+        break;
+      case "fast":
+        transaction.feerate = fees.priorityBucket.feerate;
+        break;
+      case "custom":
+        // transaction.fees = transaction.fees; // nothing to do here?
+        break;
 
-    default:
-      throw new Error("Unknown fee strategy type for transaction.");
-      break;
+      default:
+        throw new Error("Unknown fee strategy type for transaction.");
+        break;
+    }
   }
 
   return transaction;

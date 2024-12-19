@@ -21,13 +21,13 @@ export enum UtxoStrategy {
 export function selectUtxos(
   utxos: KaspaUtxo[],
   utxoSelectingStrategy: UtxoStrategy,
-  recipient_is_ecdsa: boolean,
+  isEcdsaRecipient: boolean,
   amount: BigNumber,
   feerate: number = 1,
 ): { changeAmount: BigNumber; fee: BigNumber; utxos: KaspaUtxo[] } {
   switch (utxoSelectingStrategy) {
     case UtxoStrategy.FIFO:
-      return selectUtxosFIFO(utxos, recipient_is_ecdsa, amount, feerate);
+      return selectUtxosFIFO(utxos, isEcdsaRecipient, amount, feerate);
     default:
       throw new Error("Utxo selection strategy not implemented yet");
   }
