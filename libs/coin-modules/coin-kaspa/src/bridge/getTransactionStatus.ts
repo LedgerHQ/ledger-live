@@ -11,10 +11,10 @@ const getTransactionStatus = async (
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
 
-  if (!isValidKaspaAddress(transaction.recipient)) {
-    errors.recipientError = new InvalidAddress(
-      `Address ${transaction.recipient} is not a valid kaspa address`,
-    );
+  if (!!transaction.recipient && !isValidKaspaAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   return {

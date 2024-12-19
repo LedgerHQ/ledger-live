@@ -1,8 +1,8 @@
 import {
   addressToPublicKey,
-  addressToScriptPublicKey,
+  addressToScriptPublicKey, isValidKaspaAddress,
   parseExtendedPublicKey,
-  publicKeyToAddress,
+  publicKeyToAddress
 } from "../kaspa-util";
 
 describe("addressToPublicKey", () => {
@@ -187,5 +187,31 @@ describe("parseExtendedPublicKey", () => {
     expect(result.uncompressedPublicKey).toStrictEqual(expectedParsedKey.uncompressedPublicKey);
     expect(result.chainCode).toStrictEqual(expectedParsedKey.chainCode);
     expect(result.compressedPublicKey).toStrictEqual(expectedParsedKey.compressedPublicKey);
+  });
+});
+
+describe("isValidKaspaAddress", () => {
+  it("Schnorr - should verify that a valid Kaspa address returns true", () => {
+    const address = "kaspa:qqs7krzzwqfgk9kf830smtzg64s9rf3r0khfj76cjynf2pfgrr35saatu88xq";
+    const verificationStatus = isValidKaspaAddress(address);
+    expect(verificationStatus).toBe(true);
+  });
+
+  it("ECDSA - should verify that a valid Kaspa address returns true", () => {
+    const address = "kaspa:qpc6twj20gxqpeyxvgqe3v4y2ng8t0tawfax89jkf8f24wazmcreu9ggw3crl00";
+    const verificationStatus = isValidKaspaAddress(address);
+    expect(verificationStatus).toBe(true);
+  });
+
+  it("should verify that an invalid Kaspa address returns false", () => {
+    const address = "invalid:qqs7krzzwqfgk9kf830smtzg64s9rf3r0khfj76cjynf2pfgrr35saatu88xq";
+    const verificationStatus = isValidKaspaAddress(address);
+    expect(verificationStatus).toBe(false);
+  });
+
+  it("should verify that a Kaspa address without prefix returns false", () => {
+    const address = "qqs7krzzwqfgk9kf830smtzg64s9rf3r0khfj76cjynf2pfgrr35saatu88xq";
+    const verificationStatus = isValidKaspaAddress(address);
+    expect(verificationStatus).toBe(false);
   });
 });
