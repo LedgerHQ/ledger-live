@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+exports[`xion currency bridge scanAccounts xion seed 1 1`] = `
+[
+  {
+    "balance": "411630",
+    "currencyId": "xion",
+    "derivationMode": "",
+    "freshAddress": "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+    "index": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
+  },
+  {
+    "balance": "0",
+    "currencyId": "xion",
+    "derivationMode": "",
+    "freshAddress": "xion1v2mp0m7k96dm9qv60fkspcqlzpkzrwneqvf069",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "id": "js:2:xion:xion1v2mp0m7k96dm9qv60fkspcqlzpkzrwneqvf069:",
+    "index": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "xion1v2mp0m7k96dm9qv60fkspcqlzpkzrwneqvf069",
+  },
+]
+`;
+exports[`xion currency bridge scanAccounts xion seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4488607,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+            "amount": "209175",
+          },
+        ],
+      },
+      "fee": "8410",
+      "hasFailed": false,
+      "hash": "0DFDF9C21EE698B9918AA30CF4B49000028943254A3FFAF36DDB0E053687CD9A",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-0DFDF9C21EE698B9918AA30CF4B49000028943254A3FFAF36DDB0E053687CD9A-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 6,
+      "type": "DELEGATE",
+      "value": "8410",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4488564,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+            "amount": "66225",
+          },
+        ],
+      },
+      "fee": "7206",
+      "hasFailed": false,
+      "hash": "2A2B7691BAD01B57C7778300C4067B0832FE4AE34D256A65F34168C7CA891D15",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-2A2B7691BAD01B57C7778300C4067B0832FE4AE34D256A65F34168C7CA891D15-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 4,
+      "type": "DELEGATE",
+      "value": "7206",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4486960,
+      "extra": {
+        "memo": "Ledger Live",
+      },
+      "fee": "4349",
+      "hasFailed": false,
+      "hash": "3E0ED76323E0606A7AFABC7B1C7DDA4D07FE78F6B4CFCFF141F37F4532CF3267",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-3E0ED76323E0606A7AFABC7B1C7DDA4D07FE78F6B4CFCFF141F37F4532CF3267-IN",
+      "recipients": [
+        "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
+      ],
+      "senders": [
+        "xion1g84934jpu3v5de5yqukkkhxmcvsw3u2as0krm5",
+      ],
+      "transactionSequenceNumber": 3,
+      "type": "IN",
+      "value": "684211",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4488530,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+            "amount": "10",
+          },
+        ],
+      },
+      "fee": "6371",
+      "hasFailed": false,
+      "hash": "62DE7FF0CFFFE7FA3AFBC5E4B31A234494B249C2F6B61AB72094E336BE93A7F3",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-62DE7FF0CFFFE7FA3AFBC5E4B31A234494B249C2F6B61AB72094E336BE93A7F3-REWARD",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 2,
+      "type": "REWARD",
+      "value": "10",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4488578,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper18hj7x8dlchh77dd2k9wr7dqvygmmpxrpxtzql9",
+            "amount": "22075",
+          },
+        ],
+      },
+      "fee": "7219",
+      "hasFailed": false,
+      "hash": "7E470E2AB00F4BC595AD9F9416C4ECCF6C987818AB6A8F5A94EAC04241D5A4E3",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-7E470E2AB00F4BC595AD9F9416C4ECCF6C987818AB6A8F5A94EAC04241D5A4E3-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 5,
+      "type": "DELEGATE",
+      "value": "7219",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4488540,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+            "amount": "114155",
+          },
+        ],
+      },
+      "fee": "9314",
+      "hasFailed": false,
+      "hash": "82E94B0710F4EDC16D269560263E0185F1FB877A94F857D37615BD0814ACD335",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-82E94B0710F4EDC16D269560263E0185F1FB877A94F857D37615BD0814ACD335-UNDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 3,
+      "type": "UNDELEGATE",
+      "value": "9314",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4487736,
+      "extra": {
+        "memo": "Ledger Live",
+      },
+      "fee": "4466",
+      "hasFailed": false,
+      "hash": "8DA137619218388751C60C5515062F8F313143AF493C7CE3D839C210A94A6E46",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-8DA137619218388751C60C5515062F8F313143AF493C7CE3D839C210A94A6E46-OUT",
+      "recipients": [
+        "xion1rs97j43nfyvc689y5rjvnnhrq3tes6ghe4j84x",
+      ],
+      "senders": [
+        "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
+      ],
+      "transactionSequenceNumber": 1,
+      "type": "OUT",
+      "value": "226195",
+    },
+    {
+      "accountId": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:",
+      "blockHash": null,
+      "blockHeight": 4486979,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+            "amount": "114155",
+          },
+        ],
+      },
+      "fee": "7876",
+      "hasFailed": false,
+      "hash": "C0042A42F14C0454C8F5D46BA16C50B6810E5E3504E25C731BB03DD688083B47",
+      "id": "js:2:xion:xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez:-C0042A42F14C0454C8F5D46BA16C50B6810E5E3504E25C731BB03DD688083B47-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 0,
+      "type": "DELEGATE",
+      "value": "7876",
+    },
+  ],
+  [],
+]
+`;

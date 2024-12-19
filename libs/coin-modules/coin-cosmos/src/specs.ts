@@ -599,6 +599,15 @@ const mantra = {
   }),
 };
 
+const xionMinimalTransactionAmount = new BigNumber(20000);
+const xion = {
+  ...generateGenericCosmosTest("xion", false, {
+    minViableAmount: xionMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(xionMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -615,4 +624,5 @@ export default {
   coreum,
   injective,
   mantra,
+  xion,
 };
