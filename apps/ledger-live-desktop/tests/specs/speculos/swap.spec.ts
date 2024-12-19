@@ -121,7 +121,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2828",
+    xrayTicket: "B2CQA-2775",
   },
   {
     swap: new Swap(
@@ -132,7 +132,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2827",
+    xrayTicket: "B2CQA-2776",
   },
   {
     swap: new Swap(
@@ -143,7 +143,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2829",
+    xrayTicket: "B2CQA-2777",
   },
   {
     swap: new Swap(
@@ -420,6 +420,160 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
     );
   });
 }
+
+const swapEntryPoint = {
+  swap: new Swap(
+    Account.BTC_NATIVE_SEGWIT_1,
+    Account.ETH_1,
+    "0.0006",
+    Fee.MEDIUM,
+    Provider.CHANGELLY,
+    Rate.FLOAT,
+  ),
+};
+
+test.describe("Swap flow from different entry point", () => {
+  test.beforeAll(async () => {
+    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
+    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
+  });
+
+  test.afterAll(async () => {
+    delete process.env.SWAP_DISABLE_APPS_INSTALL;
+    delete process.env.SWAP_API_BASE;
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    "Entry Point - Portfolio page",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2985",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToPortfolio();
+      await app.portfolio.clickSwapButton();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
+    },
+  );
+
+  test(
+    "Entry Point - Asset Allocation",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2986",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToPortfolio();
+      await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.assetPage.startSwapFlow();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Market page - Click on swap for any coin",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2987",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToMarket();
+      await app.market.startSwapForSelectedTicker(
+        swapEntryPoint.swap.accountToDebit.currency.ticker,
+      );
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.accountName,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Market page - More than one account for an asset",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2988",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToMarket();
+      await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
+      await app.market.clickOnSwapButtonOnAsset();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Account page",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2989",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.account.navigateToSwap();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.accountName,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - left menu",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2990, B2CQA-523",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToSwap();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
+    },
+  );
+});
 
 async function performSwapUntilQuoteSelectionStep(
   app: Application,
