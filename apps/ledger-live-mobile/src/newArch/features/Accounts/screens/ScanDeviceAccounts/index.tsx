@@ -37,6 +37,12 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { accountsSelector } from "~/reducers/accounts";
 import logger from "~/logger";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import AccountItem from "../../components/AccountsListView/components/AccountItem";
+import CheckBox from "~/components/CheckBox";
+import { AccountLikeEnhanced } from "./types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
 
 type Props = StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.ScanDeviceAccounts>;
 
@@ -52,33 +58,55 @@ function ScanDeviceAccounts({ navigation, route }: Props) {
 
   const existingAccounts = useSelector(accountsSelector);
   const scanSubscription = useRef<Subscription | null>();
+  const insets = useSafeAreaInsets();
 
   const {
     currency,
     device: { deviceId },
+    context,
   } = route.params || {};
 
+  const { onSelectAccount, selectedAccountIds, onFinishAccountsSelection } =
+    useScanDeviceAccountsViewModel({
+      context,
+    });
+
+  const isAddAccountContext = context === "addAccounts";
+
   const selectAccount = useCallback(
-    (account: Account, currentScannedAccounts: Account[], addingAccountDelayMs?: number) => {
+    (
+      accountsToAdd: Account[] | Pick<AccountLikeEnhanced, "id" | "spendableBalance">[],
+      currentScannedAccounts: Account[],
+      addingAccountDelayMs?: number,
+      isAddAccountFlow?: boolean,
+    ) => {
       dispatch(
         addAccountsAction({
           existingAccounts,
           scannedAccounts: currentScannedAccounts,
-          selectedIds: [account.id],
+          selectedIds: accountsToAdd.map(a => a.id),
           renamings: {},
         }),
       );
+
+      const onSuccess = () => {
+        if (isAddAccountFlow) {
+          onFinishAccountsSelection(accountsToAdd);
+        } else {
+          // TODO: navigate to the receive flow next screen in the folowing ticket: https://ledgerhq.atlassian.net/browse/LIVE-14726
+        }
+      };
       if (addingAccountDelayMs) {
         setTimeout(() => {
           setAddingAccount(false);
-          // TODO: navigate to next screen to be done in the next feature
+          onSuccess();
         }, addingAccountDelayMs);
       } else {
-        // TODO: navigate to next screen to be done in the next feature
+        onSuccess();
       }
     },
     //[dispatch, navigation, route.params, existingAccounts],
-    [dispatch, existingAccounts],
+    [dispatch, existingAccounts, onFinishAccountsSelection],
   );
 
   const startSubscription = useCallback(() => {
@@ -128,7 +156,7 @@ function ScanDeviceAccounts({ navigation, route }: Props) {
         setScannedAccounts(prevScannedAccounts => {
           if (prevScannedAccounts.length === 1) {
             setAddingAccount(true);
-            selectAccount(prevScannedAccounts[0], prevScannedAccounts, 4000);
+            selectAccount(prevScannedAccounts, prevScannedAccounts, 4000);
           }
           return prevScannedAccounts;
         });
@@ -174,16 +202,33 @@ function ScanDeviceAccounts({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item: account }: { item: Account }) => {
-      const acc =
+      const selectedAccount =
         currency.type === "TokenCurrency"
           ? account.subAccounts?.find(a => (a as TokenAccount).token.id === currency.id)
           : account;
 
-      return acc ? (
+      if (!selectedAccount) return null;
+
+      return isAddAccountContext ? (
+        <Flex px={7} mb={6}>
+          <TouchableOpacity
+            onPress={() => onSelectAccount(selectedAccount)}
+            testID={"account-card-" + selectedAccount.id}
+          >
+            <Flex height={40} flexDirection="row" columnGap={12} alignItems="center">
+              <AccountItem
+                account={selectedAccount as Account}
+                balance={selectedAccount.spendableBalance}
+              />
+              <CheckBox isChecked={!!selectedAccountIds[selectedAccount.id]} />
+            </Flex>
+          </TouchableOpacity>
+        </Flex>
+      ) : (
         <Flex px={6}>
           <AccountCard
-            account={acc}
-            onPress={() => selectAccount(account, scannedAccounts)}
+            account={selectedAccount}
+            onPress={() => selectAccount([account], scannedAccounts)}
             AccountSubTitle={
               currency.type === "TokenCurrency" ? (
                 <LText color="neutral.c70">
@@ -193,25 +238,38 @@ function ScanDeviceAccounts({ navigation, route }: Props) {
             }
           />
         </Flex>
-      ) : null;
+      );
     },
-    [currency.id, currency.type, scannedAccounts, selectAccount, walletState],
+    [
+      currency.id,
+      currency.type,
+      scannedAccounts,
+      selectAccount,
+      walletState,
+      isAddAccountContext,
+      onSelectAccount,
+      selectedAccountIds,
+    ],
   );
 
   const renderHeader = useCallback(
     () => (
       <Flex p={6}>
         <LText fontSize="32px" fontFamily="InterMedium" semiBold>
-          {t("transfer.receive.selectAccount.title")}
+          {isAddAccountContext
+            ? t("addAccounts.scanDeviceAccounts.title")
+            : t("transfer.receive.selectAccount.title")}
         </LText>
-        <LText variant="body" color="neutral.c70">
-          {t("transfer.receive.selectAccount.subtitle", {
-            currencyTicker: currency.ticker,
-          })}
-        </LText>
+        {!isAddAccountContext && (
+          <LText variant="body" color="neutral.c70">
+            {t("transfer.receive.selectAccount.subtitle", {
+              currencyTicker: currency.ticker,
+            })}
+          </LText>
+        )}
       </Flex>
     ),
-    [currency.ticker, t],
+    [currency.ticker, t, isAddAccountContext],
   );
 
   const keyExtractor = useCallback((item: Account) => item?.id, []);
@@ -247,6 +305,31 @@ function ScanDeviceAccounts({ navigation, route }: Props) {
             keyExtractor={keyExtractor}
             showsVerticalScrollIndicator={false}
           />
+          {context === "addAccounts" && (
+            <Flex mb={insets.bottom + 2} px={6}>
+              <Button
+                type="shade"
+                size="large"
+                outline
+                onPress={() =>
+                  selectAccount(
+                    Object.keys(selectedAccountIds).map((id: string) => {
+                      return {
+                        id,
+                        spendableBalance: selectedAccountIds[id],
+                      };
+                    }),
+                    scannedAccounts,
+                    0,
+                    true,
+                  )
+                }
+                testID="button-finish-add-accounts"
+              >
+                {t("Confirm")}
+              </Button>
+            </Flex>
+          )}
         </>
       )}
       <GenericErrorBottomModal
@@ -307,7 +390,7 @@ function ScanLoading({
                 })}
               </LText>
               <Button type="secondary" onPress={stopSubscription}>
-                {t("transfer.receive.addAccount.stopSynchronization")}
+                {t("addAccounts.scanDeviceAccounts.title")}
               </Button>
             </>
           ) : null}

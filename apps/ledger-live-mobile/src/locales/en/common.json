@@ -4028,6 +4028,10 @@
         "title": "Taproot",
         "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
+    },
+    "scanDeviceAccounts": {
+      "title": "Select the accounts you want to add",
+      "ctaStopScan": "Stop scanning"
     }
   },
   "DeviceAction": {

@@ -13,6 +13,8 @@ import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts
 import { AccountsListNavigator } from "./screens/AccountsList/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
+import AddAccountsSuccess from "./screens/AddAccountSuccess";
+import AddAccountsWarning from "./screens/AddAccountWarning";
 
 export default function Navigator() {
   const { colors } = useTheme();
@@ -68,6 +70,8 @@ export default function Navigator() {
           }}
         />
       )}
+      <Stack.Screen name={ScreenName.AddAccountsSuccess} component={AddAccountsSuccess} />
+      <Stack.Screen name={ScreenName.AddAccountsWarning} component={AddAccountsWarning} />
     </Stack.Navigator>
   );
 }

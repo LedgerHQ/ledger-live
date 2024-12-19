@@ -1,6 +1,7 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";
+import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 
 type CommonParams = {
   context?: "addAccounts" | "receiveFunds";
@@ -15,5 +16,11 @@ export type NetworkBasedAddAccountNavigator = {
     currency: CryptoCurrency | TokenCurrency;
     device: Device;
     onSuccess?: (_?: unknown) => void;
+  };
+  [ScreenName.AddAccountsSuccess]: {
+    accounts: AccountLikeEnhanced[];
+  };
+  [ScreenName.AddAccountsWarning]: {
+    accounts: AccountLikeEnhanced[];
   };
 };
