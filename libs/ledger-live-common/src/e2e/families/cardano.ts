@@ -1,12 +1,7 @@
-import { expect } from "@playwright/test";
-import { Transaction } from "tests/models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  containsSubstringInEvent,
-  waitFor,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import expect from "expect";
+import { Transaction } from "../models/Transaction";
+import { pressBoth, pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
+import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function sendCardano(tx: Transaction) {
   await waitFor(DeviceLabels.NEW_ORDINARY_TRANSACTION);

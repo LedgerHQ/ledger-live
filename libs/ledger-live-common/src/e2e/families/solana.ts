@@ -1,12 +1,7 @@
-import { expect } from "@playwright/test";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  waitFor,
-  containsSubstringInEvent,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
-import { Transaction } from "tests/models/Transaction";
+import expect from "expect";
+import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import { DeviceLabels } from "../enum/DeviceLabels";
+import { Transaction } from "../models/Transaction";
 
 export async function delegateSolana() {
   await waitFor(DeviceLabels.DELEGATE_FROM);
