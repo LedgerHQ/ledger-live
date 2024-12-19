@@ -5,7 +5,7 @@ import Text from "~/renderer/components/Text";
 const Tab = styled(Base)<{
   active: boolean;
 }>`
-  padding: 0 16px 4px 16px;
+  padding: 0 200px 4px 16px;
   border-radius: 0;
   flex: ${({ fullWidth }) => (fullWidth ? "1" : "initial")};
   display: flex;
