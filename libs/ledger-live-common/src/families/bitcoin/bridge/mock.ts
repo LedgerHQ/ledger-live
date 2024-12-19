@@ -16,7 +16,10 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
@@ -120,13 +123,14 @@ const prepareTransaction = async (
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

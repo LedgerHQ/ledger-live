@@ -9,6 +9,7 @@ import { track } from "~/analytics";
 import { useRoute } from "@react-navigation/native";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const SHARED_CONFIG = {
   variant: "small" as const,
@@ -17,6 +18,7 @@ const SHARED_CONFIG = {
 function PortfolioQuickActionsBar() {
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
+  const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const {
     quickActionsList: { SEND, RECEIVE, BUY, SWAP, STAKE },
@@ -62,13 +64,20 @@ function PortfolioQuickActionsBar() {
     STAKE && {
       ...SHARED_CONFIG,
       Icon: STAKE.icon,
-      children: t("portfolio.quickActions.stake"),
+      children: t(stakeLabel),
       onPress: () => onNavigate(STAKE.route, "quick_action_stake"),
       disabled: STAKE.disabled,
     },
   ].filter(<T extends QuickActionButtonProps>(v: T | undefined): v is T => !!v);
 
-  return <QuickActionList data={quickActionsData} numColumns={5} id="asset_five_columns" />;
+  return (
+    <QuickActionList
+      data={quickActionsData}
+      numColumns={5}
+      id="asset_five_columns"
+      testID="portoflio-quick-action-button"
+    />
+  );
 }
 
 export default PortfolioQuickActionsBar;

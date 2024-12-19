@@ -13,6 +13,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Alert from "~/renderer/components/Alert";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -36,6 +37,7 @@ export default function FeesDrawerLiveApp({
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const track = useTrack();
 
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
@@ -67,6 +69,15 @@ export default function FeesDrawerLiveApp({
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
         let updatedTransaction = updater(prevTransaction);
+
+        if (prevTransaction.feesStrategy !== updatedTransaction.feesStrategy) {
+          track("button_clicked", {
+            ...swapDefaultTrack,
+            button: updatedTransaction.feesStrategy,
+            page: "quoteSwap",
+          });
+        }
+
         bridge
           .prepareTransaction(mainAccount, updatedTransaction)
           .then(preparedTransaction =>
@@ -84,7 +95,7 @@ export default function FeesDrawerLiveApp({
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount],
+    [setTransaction, bridge, mainAccount, swapDefaultTrack, track],
   );
 
   const mapStrategies = useCallback(

@@ -1,5 +1,31 @@
 # @ledgerhq/native-ui
 
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [[`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112)]:
+  - @ledgerhq/ui-shared@0.3.0
+
+## 0.26.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112)]:
+  - @ledgerhq/ui-shared@0.3.0-next.0
+
+## 0.26.0
+
+### Minor Changes
+
+- [#8322](https://github.com/LedgerHQ/ledger-live/pull/8322) [`a86b032`](https://github.com/LedgerHQ/ledger-live/commit/a86b0327e6b42f44119a645edc999cb08731c7e7) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade react-native-reanimated to 3.16.1
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#8322](https://github.com/LedgerHQ/ledger-live/pull/8322) [`a86b032`](https://github.com/LedgerHQ/ledger-live/commit/a86b0327e6b42f44119a645edc999cb08731c7e7) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade react-native-reanimated to 3.16.1
+
 ## 0.25.3
 
 ### Patch Changes

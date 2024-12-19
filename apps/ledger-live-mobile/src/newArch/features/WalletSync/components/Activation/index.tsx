@@ -32,7 +32,12 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
       <IconsHeader />
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
-        <Text variant="h4" textAlign="center" lineHeight="32.4px">
+        <Text
+          variant="h4"
+          textAlign="center"
+          lineHeight="32.4px"
+          testID="walletsync-activation-title"
+        >
           {t("walletSync.activation.screen.title")}
         </Text>
         <Text
@@ -42,6 +47,7 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
           alignSelf={"center"}
           maxWidth={330}
           numberOfLines={3}
+          testID="walletsync-activation-description"
         >
           {t("walletSync.activation.screen.description")}
         </Text>

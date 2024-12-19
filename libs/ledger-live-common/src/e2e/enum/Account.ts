@@ -1,5 +1,6 @@
 import { Currency } from "./Currency";
 import { AccountType } from "./AccountType";
+import { Nft } from "./Nft";
 
 export class Account {
   constructor(
@@ -10,6 +11,7 @@ export class Account {
     public readonly index?: number,
     public readonly ensName?: string,
     public readonly derivationMode?: string,
+    public readonly nft?: Nft[],
   ) {}
 
   static readonly APTOS_1 = new Account(
@@ -31,7 +33,7 @@ export class Account {
   static readonly BTC_NATIVE_SEGWIT_1 = new Account(
     Currency.BTC,
     "Bitcoin 1",
-    "bc1qm4mm7usmutz9sryheuytjpzj0yuy83pkg49qzk",
+    "bc1qd0jevdq89hlcazal9cak8t850t6nn9fmn5flnj",
     undefined,
     0,
     undefined,
@@ -146,6 +148,9 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
     undefined,
     0,
+    undefined,
+    undefined,
+    [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
 
   static readonly ETH_2 = new Account(
@@ -402,6 +407,9 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
     undefined,
     0,
+    undefined,
+    undefined,
+    [Nft.ANIME_SHIPS_494, Nft.BISHOP_OF_STORMS, Nft.COMMON_TOWER_MAP],
   );
 
   static readonly POL_2 = new Account(

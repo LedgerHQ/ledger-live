@@ -72,8 +72,6 @@ const ignoreErrors = [
   "CantOpenDevice",
   "could not read from HID device",
   "DeviceOnDashboardExpected",
-  "DisconnectedDevice",
-  "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",

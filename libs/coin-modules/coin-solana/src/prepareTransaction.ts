@@ -58,7 +58,7 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 
 async function deriveCommandDescriptor(
@@ -108,7 +108,7 @@ const prepareTransaction = async (
     model,
   };
 
-  return defaultUpdateTransaction(tx, patch);
+  return updateTransaction(tx, patch);
 };
 
 const deriveTokenTransferCommandDescriptor = async (

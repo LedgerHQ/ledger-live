@@ -30,7 +30,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
   const { width } = useResize(ref);
 
   return (
-    <Flex justifyContent="space-between" alignItems="center" ref={ref} mb={5}>
+    <Flex justifyContent="space-between" alignItems="center" ref={ref} mb={3}>
       <Text variant="h3Inter" fontWeight="semiBold">
         {t("dashboard.marketPerformanceWidget.title", {
           time: t(`time.range.${timeRange}`),

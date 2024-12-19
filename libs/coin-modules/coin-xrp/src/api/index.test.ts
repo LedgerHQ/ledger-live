@@ -91,7 +91,7 @@ describe("listOperations", () => {
       ]);
 
       // When
-      const results = await api.listOperations(address, 0);
+      const [results, _] = await api.listOperations(address, { limit: 100 });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);

@@ -31,7 +31,13 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
         {t("account.settings.delete.confirmationWarn")}
       </Text>
       <Flex justifyContent={"space-between"} mt={6} flexShrink={1} flexGrow={1}>
-        <Button event="DeleteAccount" type={"error"} onPress={deleteAccount} mt={4}>
+        <Button
+          event="DeleteAccount"
+          type={"error"}
+          onPress={deleteAccount}
+          mt={4}
+          testID="delete-account-confirmation-button"
+        >
           <Trans i18nKey="common.delete" />
         </Button>
         <Button event="DeleteAccountCancel" type={"default"} onPress={onRequestClose} mt={4}>

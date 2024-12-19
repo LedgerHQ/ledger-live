@@ -1299,20 +1299,20 @@
     "title": "You need a Ledger",
     "desc": "For your security, Ledger Live only works with a device. You need a device in order to continue.",
     "cta": "Buy your Ledger now",
-    "footer": "I already have a device, set it up now",
-    "bannerTitle": "Keep your crypto and NFTs safe",
-    "bannerTitle2": "You'll need a Nano to trade",
-    "bannerSubtitle": "with a Ledger Device",
-    "bannerButtonTitle": "Discover the Nano",
-    "bannerButtonTitle2": "Buy a device",
-    "setupCta": "I already have a device, set it up"
+    "footer": "I already have a Ledger, set it up",
+    "bannerTitle": "Top-notch security for your crypto and NFTs",
+    "bannerTitle2": "You will need a Ledger to be able to trade",
+    "bannerSubtitle": "with a Ledger Flex",
+    "bannerButtonTitle": "Discover the Flex",
+    "bannerButtonTitle2": "Buy a Ledger",
+    "setupCta": "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall": {
-    "title": "Have you received your device?",
-    "desc": "Once you receive your device, you can start its setup through Ledger Live!",
-    "cta": "Setup my device",
-    "bannerTitle": "Received your device?",
-    "bannerCta": "Begin the setup",
+    "title": "Did you get your Ledger yet?",
+    "desc": "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta": "Setup my Ledger",
+    "bannerTitle": "Received your Ledger?",
+    "bannerCta": "Begin setup",
     "continue": "Continue"
   },
   "purchaseDevice": {
@@ -1337,8 +1337,8 @@
   },
   "postBuyDevice": {
     "headerTitle": "Purchase successful",
-    "title": "Congratulations",
-    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "title": "Thanks for trusting Ledger",
+    "desc": "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover": {
     "title": "Discover",
@@ -2354,7 +2354,8 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
-    "seelAllAssets": "See All Assets",
+    "seeAllAssets": "See all assets",
+    "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -2372,8 +2373,7 @@
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
-      "stake": "Stake",
-      "yield": "Yield"
+      "stake": "Stake"
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2763,6 +2763,9 @@
       }
     }
   },
+  "assets": {
+    "title": "Assets"
+  },
   "accounts": {
     "title": "Accounts",
     "cryptoAccountsTitle": "{{currencyTicker}} accounts",
@@ -3105,6 +3108,13 @@
       "desc": "Try out the Developer features and let us know what you think.",
       "customManifest": {
         "title": "Load Custom Platform Manifest"
+      },
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "description": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format",
+        "currentSetting": "Current Setting",
+        "error": "Invalid CAL value"
       }
     },
     "debug": {
@@ -3285,7 +3295,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Stake your crypto holdings."
+      "description": "Get rewards on your crypto."
     },
     "swap": {
       "title": "Swap",
@@ -3975,6 +3985,7 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
@@ -6941,6 +6952,13 @@
         "title": "Sync with another Ledger Live app",
         "description": "Sync your Ledger Live crypto accounts across different phones and computers."
       },
+      "unauthorizeMember": {
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
+        }
+      },
       "manageKey": {
         "title": "Delete Sync",
         "description": "Your crypto accounts across different phones and computers will stop synching.",
@@ -6951,6 +6969,11 @@
           "cancel": "Keep sync",
           "title": "Sure you want delete sync?",
           "desc": "Your crypto accounts on different phones and computers will stop being in sync. This does not impact your funds in any way."
+        },
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
         }
       },
       "manageInstances": {

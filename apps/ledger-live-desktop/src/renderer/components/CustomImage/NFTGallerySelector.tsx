@@ -9,8 +9,10 @@ import NFTItem from "./NFTItem";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
-import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
+import { State } from "~/renderer/reducers";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -31,8 +33,14 @@ type Props = {
 
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const accounts = useSelector(accountsSelector);
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addresses = useMemo(
     () =>
@@ -44,19 +52,26 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
     [accounts],
   );
 
-  const { fetchNextPage, hasNextPage, allNfts } = useNftCollections({
-    nftsOwned: nftsOrdered,
+  const {
+    nfts: nftsFiltered,
+    fetchNextPage,
+    hasNextPage,
+  } = useNftGalleryFilter({
+    nftsOwned: nftsOrdered || [],
     addresses: addresses,
     chains: SUPPORTED_NFT_CURRENCIES,
+    threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
   });
 
+  const nfts = nftsFromSimplehashFeature?.enabled ? nftsFiltered : nftsOrdered;
   const { t } = useTranslation();
 
   const [displayedCount, setDisplayedCount] = useState(10);
 
   const content = useMemo(
     () =>
-      allNfts.slice(0, displayedCount).map((nft, index) => {
+      nfts.slice(0, displayedCount).map((nft, index) => {
         const { id } = nft;
         return (
           <NFTItem
@@ -69,7 +84,7 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
           />
         );
       }),
-    [allNfts, displayedCount, selectedNftId, handlePickNft],
+    [nfts, displayedCount, selectedNftId, handlePickNft],
   );
 
   const loaderContainerRef = useRef<HTMLDivElement>(null);
@@ -81,13 +96,13 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   };
 
   useOnScreen({
-    enabled: displayedCount < allNfts.length,
+    enabled: displayedCount < nfts.length,
     onIntersect: updateDisplayable,
     target: loaderContainerRef,
     threshold: 0.5,
   });
 
-  if (allNfts.length <= 0) return <NftGalleryEmptyState />;
+  if (nfts.length <= 0) return <NftGalleryEmptyState />;
 
   return (
     <Flex flex={1} flexDirection="column" overflowY="hidden">
@@ -98,7 +113,7 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
         <Grid flex={1} columns={2} rowGap={6} columnGap={6}>
           {content}
         </Grid>
-        {displayedCount < allNfts.length ? (
+        {displayedCount < nfts.length ? (
           <Flex ref={loaderContainerRef} flex={1} m={6} justifyContent="center">
             <InfiniteLoader size={20} />
           </Flex>

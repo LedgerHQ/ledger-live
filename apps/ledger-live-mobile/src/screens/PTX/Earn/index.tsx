@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSettings } from "~/hooks";
 import { Platform } from "react-native";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -41,6 +42,7 @@ function Earn({ route }: Props) {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
+  const countryLocale = getCountryLocale();
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
@@ -57,6 +59,7 @@ function Earn({ route }: Props) {
           theme,
           lang: language,
           locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
+          countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           OS: Platform.OS,

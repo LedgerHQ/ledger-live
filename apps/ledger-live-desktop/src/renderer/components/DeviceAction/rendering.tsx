@@ -101,6 +101,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   min-height: 260px;
   max-width: 100%;
+  margin: auto ${p => p.theme.space[5]}px;
 `;
 
 export const ConfirmWrapper = styled.div`
@@ -760,6 +761,8 @@ export const renderError = ({
   device,
   inlineRetry = true,
   withDescription = true,
+  learnMoreLink,
+  learnMoreTextKey,
   Icon,
 }: {
   error: Error | ErrorConstructor;
@@ -769,6 +772,8 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  learnMoreLink?: string;
+  learnMoreTextKey?: string;
   buyLedger?: string;
   warning?: boolean;
   info?: boolean;
@@ -798,6 +803,8 @@ export const renderError = ({
       <NoSuchAppOnProviderErrorComponent
         error={tmpError}
         productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        learnMoreLink={learnMoreLink}
+        learnMoreTextKey={learnMoreTextKey}
       />
     );
   }
@@ -954,17 +961,23 @@ const OpenSwapBtn = () => {
   );
 };
 
-export const renderHardwareUpdate = () => (
+export const HardwareUpdate = ({
+  i18nKeyTitle,
+  i18nKeyDescription,
+}: {
+  i18nKeyTitle: string;
+  i18nKeyDescription: string;
+}) => (
   <Wrapper>
     <Header>
       <Image resource={Nano} alt="NanoS" mb="40px"></Image>
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
-        <Trans i18nKey="swap.wrongDevice.title" />
+        <Trans i18nKey={i18nKeyTitle} />
       </Title>
       <Text variant="body" color="palette.text.shade60" textAlign="center">
-        <Trans i18nKey="swap.wrongDevice.description" />
+        <Trans i18nKey={i18nKeyDescription} />
       </Text>
     </Flex>
     <ButtonFooter>
@@ -1201,9 +1214,7 @@ export const renderSwapDeviceConfirmation = ({
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
       <Separator />
-      <Flex width="100%" mb={3}>
-        <DrawerFooter provider={exchangeRate.provider} />
-      </Flex>
+      <DrawerFooter provider={exchangeRate.provider} />
     </>
   );
 };

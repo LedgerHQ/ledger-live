@@ -12,7 +12,6 @@ export type ApplicationState = {
   debug: {
     alwaysShowSkeletons: boolean;
   };
-  alwaysShowMemoTagInfo: boolean;
 };
 const { language, region } = getParsedSystemLocale();
 const osLangSupported = LanguageIds.includes(language);
@@ -27,7 +26,6 @@ const state: ApplicationState = {
   debug: {
     alwaysShowSkeletons: false,
   },
-  alwaysShowMemoTagInfo: true,
 };
 
 type HandlersPayloads = {
@@ -62,9 +60,6 @@ export const osLangAndRegionSelector = (state: { application: ApplicationState }
   state.application.osLanguage;
 export const isNavigationLocked = (state: { application: ApplicationState }) =>
   state.application.navigationLocked;
-export const alwaysShowMemoTagInfoSelector = (state: { application: ApplicationState }) =>
-  state.application.alwaysShowMemoTagInfo;
-
 // Exporting reducer
 
 export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(

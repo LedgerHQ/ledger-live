@@ -11,6 +11,7 @@ import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
 import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -67,10 +68,7 @@ export default function MarketCoinScreen() {
     changeCounterCurrency,
   } = useMarketCoin();
 
-  const yieldStakeLabelCoin =
-    currency && currency.id === "bitcoin"
-      ? t("accounts.contextMenu.yield")
-      : t("accounts.contextMenu.stake");
+  const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const { name, ticker, image, internalCurrency, price } = currency || {};
 
@@ -135,7 +133,7 @@ export default function MarketCoinScreen() {
               )}
               {availableOnStake && (
                 <Button variant="color" onClick={onStake} data-testid="market-coin-stake-button">
-                  {yieldStakeLabelCoin}
+                  {earnStakeLabelCoin}
                 </Button>
               )}
             </>

@@ -22,12 +22,6 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                               moduleName:@"ledgerlivemobile"
-                                               initialProperties:nil];
-
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
@@ -73,13 +67,24 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
     
+  BOOL appLaunched = [super application:application didFinishLaunchingWithOptions:launchOptions];
+  // This condition is needed to prevent a crash since upgrading to React Native 0.75.4
+  // It may be fixed in a later version of React Native
+  // https://github.com/facebook/react-native/issues/47202
+  if (!appLaunched) {
+    return NO;
+  }
+
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                               moduleName:@"ledgerlivemobile"
+                                               initialProperties:nil];
   [self.window makeKeyAndVisible];
   UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
   UIViewController *vc = [sb instantiateInitialViewController];
   rootView.loadingView = vc.view;
   
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-  
+
   return YES;
 }
 
@@ -178,7 +183,7 @@ static Braze *_braze;
   [self hideOverlay];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application {
   [self showOverlay];
 }
 

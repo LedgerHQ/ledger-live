@@ -9,6 +9,7 @@ export type UniswapSupportedCommand =
   | "PERMIT2_TRANSFER_FROM"
   | "PERMIT2_PERMIT_BATCH"
   | "PERMIT2_TRANSFER_FROM_BATCH"
-  | "PAY_PORTION";
+  | "PAY_PORTION"
+  | "SWEEP";
 
 export type CommandsAndTokens = [UniswapSupportedCommand | undefined, `0x${string}`[]][];

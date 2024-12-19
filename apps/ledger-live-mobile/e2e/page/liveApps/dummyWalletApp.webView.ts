@@ -1,6 +1,6 @@
-import { web, by } from "detox";
 import { send, startLiveApp, stopServer } from "../../models/liveApps";
 import DiscoverPage from "../discover/discover.page";
+import { getWebElementById } from "../../helpers";
 
 const port = 52619;
 
@@ -16,10 +16,10 @@ export default class DummyWalletApp {
   }
 
   async expectApp() {
-    const title = await web.element(by.web.id("image-container")).getTitle();
+    const title = await getWebElementById("image-container").getTitle();
     expect(title).toBe("Dummy Wallet API App");
 
-    const url = await web.element(by.web.id("param-container")).getCurrentUrl();
+    const url = await getWebElementById("param-container").getCurrentUrl();
     expect(url).toBe(
       `http://localhost:${port}/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App`,
     );

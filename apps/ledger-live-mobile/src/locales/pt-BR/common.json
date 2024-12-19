@@ -1287,20 +1287,20 @@
     "title" : "Tenha uma Ledger",
     "desc" : "Para sua segurança, o Ledger Live só funciona com um dispositivo. Você precisa de um dispositivo para poder continuar.",
     "cta" : "Comprar sua Ledger agora",
-    "footer" : "Já tenho um dispositivo, configurar agora",
-    "bannerTitle" : "Proteja suas criptomoedas e NFTs",
-    "bannerTitle2" : "Você precisará de uma Nano para negociar",
-    "bannerSubtitle" : "com um dispositivo Ledger",
-    "bannerButtonTitle" : "Descubra a Nano",
-    "bannerButtonTitle2" : "Comprar um dispositivo",
-    "setupCta" : "Já tenho um dispositivo, configurar agora"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "Buy a Ledger",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Já recebeu seu dispositivo?",
-    "desc" : "Quando receber seu dispositivo, você pode começar a configurá-lo através do Ledger Live!",
-    "cta" : "Configurar meu dispositivo",
-    "bannerTitle" : "Recebeu seu dispositivo?",
-    "bannerCta" : "Começar Configuração",
+    "title" : "Did you get your Ledger yet?",
+    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta" : "Setup my Ledger",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Compra bem-sucedida",
-    "title" : "Parabéns!",
-    "desc" : "Seu pedido está sendo processado.\nVocê receberá sua Ledger em breve. Verifique seu e-mail para a confirmação de seu pedido."
+    "title" : "Thanks for trusting Ledger",
+    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover" : {
     "title" : "Explorar",
@@ -2360,8 +2360,7 @@
       "swap" : "Trocar",
       "send" : "Enviar",
       "deposit" : "Receber",
-      "stake" : "Aplicar",
-      "yield" : "Rendimento"
+      "stake" : "Aplicar"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2871,6 +2870,8 @@
       "developerModeDesc" : "Exiba os aplicativos de desenvolvedor em Minha Ledger e habilite os aplicativos de Testnet.",
       "analytics" : "Métricas",
       "analyticsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para ajudar a medir o desempenho do Ledger Live e aprimorar o aplicativo e a sua experiência.",
+      "mevProtection" : "Proteção MEV",
+      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
       "personalizedRecommendations" : "Experiência personalizada",
       "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
       "analyticsModal" : {
@@ -3270,7 +3271,7 @@
     },
     "stake" : {
       "title" : "Aplicar",
-      "description" : "Faça staking dos seus criptoativos."
+      "description" : "Receba recompensas com sua cripto."
     },
     "swap" : {
       "title" : "Trocar",

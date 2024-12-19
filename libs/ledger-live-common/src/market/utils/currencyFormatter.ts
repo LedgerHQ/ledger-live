@@ -91,6 +91,7 @@ export const format = (
 });
 
 export const formatPerformer = (currency: MarketItemResponse): MarketItemPerformer => ({
+  id: currency.id,
   ledgerIds: currency.ledgerIds,
   name: currency.name,
   image: currency.image,

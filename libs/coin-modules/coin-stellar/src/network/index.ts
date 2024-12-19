@@ -1,6 +1,7 @@
 export {
   broadcastTransaction,
   fetchAccount,
+  fetchAllOperations,
   fetchOperations,
   fetchBaseFee,
   fetchSequence,

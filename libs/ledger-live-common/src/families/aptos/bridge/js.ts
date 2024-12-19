@@ -1,4 +1,5 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 
@@ -28,6 +29,7 @@ const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
+  getSerializedAddressParameters,
   prepareTransaction,
   sync,
   receive,

@@ -11,6 +11,7 @@ import {
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
 import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 import { getMainAccount } from "../../../account";
@@ -218,6 +219,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   broadcast,
   estimateMaxSpendable,
+  getSerializedAddressParameters,
 };
 export default {
   currencyBridge,

@@ -38,7 +38,7 @@ for (const token of subAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();
@@ -74,7 +74,7 @@ for (const token of subAccountReceive) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(token.account.accountName);
@@ -84,9 +84,11 @@ for (const token of subAccountReceive) {
         await app.receive.selectToken(token.account);
 
         await app.modal.continue();
-        await app.receive.expectValidReceiveAddress(token.account.address);
 
-        await app.speculos.expectValidAddressDevice(token.account);
+        const displayedAddress = await app.receive.getAddressDisplayed();
+        await app.receive.expectValidReceiveAddress(displayedAddress);
+
+        await app.speculos.expectValidAddressDevice(token.account, displayedAddress);
         await app.receive.expectApproveLabel();
       },
     );
@@ -108,7 +110,7 @@ for (const token of subAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(token.account.accountName);

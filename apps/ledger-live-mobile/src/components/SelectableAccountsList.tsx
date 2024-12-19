@@ -335,7 +335,11 @@ const Header = ({ text, areAllSelected, onSelectAll, onUnselectAll }: HeaderProp
             onPress={areAllSelected ? onUnselectAll : onSelectAll}
             hitSlop={selectAllHitSlop}
           >
-            <Text fontSize={14} color="neutral.c70">
+            <Text
+              fontSize={14}
+              color="neutral.c70"
+              testID={`add-accounts-${areAllSelected ? "deselect" : "select"}-all`}
+            >
               {areAllSelected ? (
                 <Trans i18nKey="selectableAccountsList.deselectAll" />
               ) : (

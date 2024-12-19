@@ -442,6 +442,14 @@
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
+    "incompatibility": {
+      "ton_title": "Ledger Nano S™ does not support swapping Ton through Ledger Live",
+      "ton_description": "To swap Ton through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens through Ledger Live",
+      "spl_tokens_description": "To swap Solana tokens through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title": "Ledger Nano S™ does not support swapping Cardano through Ledger Live",
+      "ada_description": "To swap Cardano through Ledger Live, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+    },
     "providers": {
       "title": "Choose a provider to swap crypto",
       "learnMore": "What is Swap?",
@@ -1139,6 +1147,7 @@
       "send": "Send",
       "swap": "Swap",
       "stake": "Stake",
+      "earn": "Earn",
       "yield": "Yield",
       "buy": "Buy",
       "sell": "Sell",
@@ -1485,7 +1494,7 @@
       },
       "earn": {
         "title": "Stake",
-        "description": "Stake your crypto with Ledger"
+        "description": "Get rewards on your crypto"
       }
     },
     "recoverBanner": {
@@ -3053,6 +3062,7 @@
         "validatorGroup": {
           "title": "Validator Group",
           "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+          "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
           "totalVotes": "Total Votes",
           "commission": "Commission"
         }
@@ -3650,6 +3660,7 @@
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
       "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+      "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
       "emptyState": {
         "description": "You can earn SOL rewards by delegating your assets.",
         "info": "How Delegation works",
@@ -3908,6 +3919,7 @@
           },
           "validator": {
             "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4175,6 +4187,7 @@
             "link": "Link",
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
+            "tag": "Tag",
             "url": "URL",
             "path": "Path"
           }

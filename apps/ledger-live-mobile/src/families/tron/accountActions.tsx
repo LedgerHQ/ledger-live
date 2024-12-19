@@ -6,6 +6,7 @@ import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -15,6 +16,7 @@ const getMainActions = ({
   parentAccount: TronAccount | null | undefined;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const label = getStakeLabelLocaleBased();
   const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
     ? [
         NavigatorName.NoFundsFlow,
@@ -42,7 +44,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {

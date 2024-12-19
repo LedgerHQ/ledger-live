@@ -48,12 +48,17 @@ export type PreloadStrategy = Partial<{
   preloadMaxAge: number;
 }>;
 
+export type BroadcastConfig = {
+  mevProtected: boolean;
+};
+
 /**
  *
  */
 export type BroadcastArg<A extends Account> = {
   account: A;
   signedOperation: SignedOperation;
+  broadcastConfig?: BroadcastConfig;
 };
 
 /**
@@ -127,7 +132,7 @@ export interface CurrencyBridge {
 /**
  * Abstraction related to an account
  */
-export interface AccountBridge<
+interface SendReceiveAccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
@@ -214,6 +219,17 @@ export interface AccountBridge<
   fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
   toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
 }
+
+type AccountBridgeWithExchange<A extends Account = Account> = {
+  getSerializedAddressParameters: (account: A, addressFormat?: string) => Buffer;
+};
+
+export type AccountBridge<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  R extends AccountRaw = AccountRaw,
+> = SendReceiveAccountBridge<T, A, U, R> & AccountBridgeWithExchange<A>;
 
 type ExpectFn = (...args: Array<any>) => any;
 

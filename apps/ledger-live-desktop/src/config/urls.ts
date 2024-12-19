@@ -154,6 +154,7 @@ export const urls = {
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
     recipient_info: "https://support.ledger.com",
+    ledgerByChorusOneTC: "https://chorus.one/tos",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },

@@ -1,5 +1,49 @@
 # @ledgerhq/coin-evm
 
+## 2.6.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0
+  - @ledgerhq/domain-service@1.2.13
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0-next.0
+  - @ledgerhq/domain-service@1.2.13-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.19.1
+  - @ledgerhq/domain-service@1.2.12
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.19.1-next.0
+  - @ledgerhq/domain-service@1.2.12-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
 ## 2.5.0
 
 ### Minor Changes

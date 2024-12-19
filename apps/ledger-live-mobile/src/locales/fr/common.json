@@ -188,7 +188,7 @@
       "description" : "Ce compte n’est pas autorisé à signer cette transaction."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -208,7 +208,7 @@
       "description" : "Merci de vérifier l’adresse et réessayer."
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
-      "title" : "Fonds insuffisants",
+      "title" : "Solde insuffisant",
       "description" : "Merci d’ajouter des fonds à votre compte."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
@@ -1002,10 +1002,10 @@
       "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
     },
     "TonMinimumRequired" : {
-      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -1287,20 +1287,20 @@
     "title" : "Vous avez besoin d’un Ledger",
     "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un Ledger pour continuer. ",
     "cta" : "Acheter votre wallet Ledger",
-    "footer" : "J’ai déjà un appareil, je veux le configurer",
-    "bannerTitle" : "Protégez vos cryptos et vos NFT",
-    "bannerTitle2" : "Accédez au trading avec un Nano",
-    "bannerSubtitle" : "avec un appareil Ledger",
-    "bannerButtonTitle" : "Découvrez le Nano",
-    "bannerButtonTitle2" : "Achetez un appareil",
-    "setupCta" : "J’ai déjà un appareil, je veux le configurer"
+    "footer" : "J’ai un wallet Ledger, je le configure",
+    "bannerTitle" : "Une sécurité de pointe pour vos cryptos et NFT",
+    "bannerTitle2" : "Vous avez besoin d’un wallet Ledger pour le trading",
+    "bannerSubtitle" : "avec le Ledger Flex",
+    "bannerButtonTitle" : "Découvrir Ledger Flex",
+    "bannerButtonTitle2" : "Acheter un wallet",
+    "setupCta" : "J’ai un wallet Ledger, je le configure"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Avez-vous reçu votre appareil ?",
-    "desc" : "Une fois votre appareil reçu, vous pouvez commencer à le configurer via Ledger Live.",
-    "cta" : "Configurer mon appareil",
-    "bannerTitle" : "Avez-vous reçu votre appareil ?",
-    "bannerCta" : "Commencer la configuration",
+    "title" : "Avez-vous déjà votre wallet Ledger ?",
+    "desc" : "Dès que vous recevez votre wallet Ledger, configurez-le pour découvrir toutes les fonctionnalités de Ledger Live.",
+    "cta" : "Configurer mon wallet",
+    "bannerTitle" : "Vous avez reçu votre wallet ?",
+    "bannerCta" : "Démarrer",
     "continue" : "Continuer"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Achat confirmé",
-    "title" : "Félicitations.",
-    "desc" : "Votre commande est en cours de traitement.\nVous recevrez bientôt votre Ledger. Vous trouverez la confirmation de commande dans votre boîte mail."
+    "title" : "Merci d’avoir choisi Ledger.",
+    "desc" : "Votre commande est en cours de traitement. \nVous trouverez la confirmation de commande dans votre boîte mail."
   },
   "discover" : {
     "title" : "Discover",
@@ -1407,7 +1407,7 @@
       "noLedgerYetModal" : {
         "title" : "Des millions d’utilisateurs. Aucun piratage.",
         "desc" : "Sécurisez vos actifs numériques avec un appareil Ledger, pour une tranquillité d’esprit absolue.",
-        "buy" : "Acheter un wallet Ledger",
+        "buy" : "Acheter un wallet",
         "explore" : "Explorer l’application"
       },
       "setupLedger" : {
@@ -1440,7 +1440,7 @@
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Explorer sans appareil",
-      "buyALedgerNow" : "Acheter un Ledger maintenant",
+      "buyALedgerNow" : "Acheter un wallet Ledger",
       "0" : {
         "title" : "Sécurisez tous vos crypto-actifs."
       },
@@ -1762,7 +1762,7 @@
         "desc" : "Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
         "cta" : "Comment mettre à jour",
         "supportLink" : "Contacter l’Assistance Ledger",
-        "buyLedger" : "Acheter un wallet Ledger"
+        "buyLedger" : "Acheter un wallet"
       }
     },
     "stepRecoveryPhrase" : {
@@ -2360,8 +2360,7 @@
       "swap" : "Échanger",
       "send" : "Envoyer",
       "deposit" : "Recevoir",
-      "stake" : "Staker",
-      "yield" : "Rendement"
+      "stake" : "Staker"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2871,6 +2870,8 @@
       "developerModeDesc" : "Afficher les apps développeur dans My Ledger et autoriser les apps testnet.",
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
+      "mevProtection" : "Protection MEV",
+      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -3270,7 +3271,7 @@
     },
     "stake" : {
       "title" : "Staker",
-      "description" : "Stakez vos cryptos"
+      "description" : "Obtenez des récompenses sur vos cryptos."
     },
     "swap" : {
       "title" : "Swap",

@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -12,13 +12,11 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-817",
-      },
+      annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToAccounts();
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
@@ -43,14 +41,13 @@ test.describe("Password", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
@@ -65,7 +62,8 @@ test.describe("Password", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToAccounts();
       const countBeforeLock = await app.accounts.countAccounts();
       await app.layout.goToSettings();
@@ -80,6 +78,48 @@ test.describe("Password", () => {
       const countAfterLock = await app.accounts.countAccounts();
       await app.accounts.compareAccountsCountFromJson(countBeforeLock, countAfterLock);
       await app.accounts.navigateToAccountByName(account.accountName);
+    },
+  );
+});
+
+test.describe("counter value selection", () => {
+  const account = Account.BTC_NATIVE_SEGWIT_1;
+  test.use({
+    userdata: "skip-onboarding",
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.currency.currencyId,
+          index: account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+    speculosApp: account.currency.speculosApp,
+  });
+
+  test(
+    "User can select a counter value to display amount",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-804",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.changeCounterValue("euro");
+      await app.settings.expectCounterValue("Euro - EUR");
+      await app.layout.goToPortfolio();
+
+      await app.layout.waitForAccountsSyncToBeDone();
+      await app.portfolio.expectTotalBalanceCounterValue("€");
+      await app.portfolio.expectBalanceDiffCounterValue("€");
+      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectOperationCounterValue("€");
     },
   );
 });

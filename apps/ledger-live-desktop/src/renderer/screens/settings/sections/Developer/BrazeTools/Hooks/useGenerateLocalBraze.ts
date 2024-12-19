@@ -22,6 +22,8 @@ const generateNewPortfolioCard = (
   image: string,
   order?: number,
   url?: string,
+  cta?: string,
+  tag?: string,
 ): PortfolioContentCard => ({
   id: String(Date.now()),
   title,
@@ -29,10 +31,11 @@ const generateNewPortfolioCard = (
   location: LocationContentCard.Portfolio,
   image,
   created: new Date(),
-  onClickOnSlide: () => {},
   order,
   isMock: true,
   url,
+  cta,
+  tag,
 });
 
 const generateNewActionCard = (
@@ -92,8 +95,10 @@ export const useGenerateLocalBraze = () => {
     image: string,
     order?: number,
     url?: string,
+    cta?: string,
+    tag?: string,
   ) => {
-    const newCard = generateNewPortfolioCard(title, description, image, order, url);
+    const newCard = generateNewPortfolioCard(title, description, image, order, url, cta, tag);
     dispatch(setPortfolioCards([...portfolioCards, newCard]));
   };
 

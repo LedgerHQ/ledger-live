@@ -82,6 +82,11 @@ export class AccountsPage extends AppPage {
     return await this.page.locator(".accounts-account-row-item-content").count();
   }
 
+  @step("Expect number of accounts to be $0")
+  async expectAccountsCount(count: number) {
+    expect(await this.countAccounts()).toBe(count);
+  }
+
   async getAccountsName() {
     const accountElements = await this.accountListNumber.all();
     const accountNames = [];
