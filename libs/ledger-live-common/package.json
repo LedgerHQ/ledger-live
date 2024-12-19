@@ -170,9 +170,11 @@
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
+    "@ledgerhq/hw-bolos": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
+    "@ledgerhq/ledger-trust-service": "workspace:*",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
@@ -261,6 +263,7 @@
     "@types/react": "^18.2.21",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
+    "buffer": "6.0.3",
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
@@ -287,9 +290,8 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
     "typescript": "5.1.3",
+    "undici": "6.19.2",
     "uuid": "^8.3.2",
-    "ws": "7",
-    "buffer": "6.0.3",
-    "undici": "6.19.2"
+    "ws": "7"
   }
 }
