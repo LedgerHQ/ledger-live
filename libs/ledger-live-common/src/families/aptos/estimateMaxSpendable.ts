@@ -4,7 +4,7 @@ import { getMainAccount } from "../../account";
 import type { Transaction } from "./types";
 import { getMaxSendBalance } from "./logic";
 import { AptosAPI } from "./api";
-import { getEstimatedGas } from "./js-getFeesForTransaction";
+import { getEstimatedGas } from "./getFeesForTransaction";
 
 const estimateMaxSpendable = async ({
   account,
