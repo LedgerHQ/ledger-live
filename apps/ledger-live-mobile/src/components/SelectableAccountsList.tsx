@@ -18,7 +18,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
@@ -28,6 +28,10 @@ import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
 import { AddAccountsNavigatorParamList } from "./RootNavigator/types/AddAccountsNavigator";
+import AccountItem from "~/newArch/features/Accounts/components/AccountsListView/components/AccountItem";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
+const ANIMATION_DURATION = 200;
 
 const selectAllHitSlop = {
   top: 16,
@@ -85,6 +89,85 @@ const SelectableAccountsList = ({
   }, [accounts, onUnselectAllProp]);
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
+  const translateY = useRef(new Animated.Value(50)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.8)).current;
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+
+  useEffect(() => {
+    if (!llmNetworkBasedAddAccountFlow?.enabled) return;
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: ANIMATION_DURATION,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: ANIMATION_DURATION,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: ANIMATION_DURATION,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [translateY, opacity, scale, llmNetworkBasedAddAccountFlow?.enabled]);
+
+  const animatedSelectableAccount = useMemo(
+    () => ({
+      transform: [{ translateY }, { scale }],
+      opacity,
+    }),
+    [translateY, scale, opacity],
+  );
+
+  const renderSelectableAccount = useCallback(
+    ({ item, index }: { index: number; item: Account }) =>
+      llmNetworkBasedAddAccountFlow?.enabled ? (
+        <Animated.View style={[animatedSelectableAccount]}>
+          <SelectableAccount
+            navigation={navigation}
+            showHint={!index && showHint}
+            rowIndex={index}
+            listIndex={listIndex}
+            account={item}
+            onAccountNameChange={onAccountNameChange}
+            isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+            isDisabled={isDisabled}
+            onPress={onPressAccount}
+            useFullBalance={useFullBalance}
+          />
+        </Animated.View>
+      ) : (
+        <SelectableAccount
+          navigation={navigation}
+          showHint={!index && showHint}
+          rowIndex={index}
+          listIndex={listIndex}
+          account={item}
+          onAccountNameChange={onAccountNameChange}
+          isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+          isDisabled={isDisabled}
+          onPress={onPressAccount}
+          useFullBalance={useFullBalance}
+        />
+      ),
+    [
+      navigation,
+      showHint,
+      listIndex,
+      selectedIds,
+      forceSelected,
+      isDisabled,
+      onAccountNameChange,
+      onPressAccount,
+      useFullBalance,
+      animatedSelectableAccount,
+      llmNetworkBasedAddAccountFlow?.enabled,
+    ],
+  );
 
   return (
     <Flex marginBottom={7} {...props}>
@@ -99,21 +182,12 @@ const SelectableAccountsList = ({
       <FlatList
         data={accounts}
         keyExtractor={(item, index) => item.id + index}
-        renderItem={({ item, index }) => (
-          <SelectableAccount
-            navigation={navigation}
-            showHint={!index && showHint}
-            rowIndex={index}
-            listIndex={listIndex}
-            account={item}
-            onAccountNameChange={onAccountNameChange}
-            isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
-            isDisabled={isDisabled}
-            onPress={onPressAccount}
-            useFullBalance={useFullBalance}
-          />
+        renderItem={renderSelectableAccount}
+        ListEmptyComponent={() => (
+          <Flex height="100%" flexDirection="row" justifyContent="center">
+            {emptyState || null}
+          </Flex>
         )}
-        ListEmptyComponent={() => <>{emptyState || null}</>}
       />
     </Flex>
   );
@@ -147,6 +221,7 @@ const SelectableAccount = ({
   useFullBalance,
 }: SelectableAccountProps) => {
   const [stopAnimation, setStopAnimation] = useState<boolean>(false);
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const swipeableRow = useRef<Swipeable>(null);
 
@@ -206,11 +281,21 @@ const SelectableAccount = ({
     if (!onAccountNameChange) return;
 
     swipedAccountSubject.next({ row: -1, list: -1 });
-    navigation.navigate(ScreenName.EditAccountName, {
-      onAccountNameChange,
-      account,
-    });
-  }, [account, navigation, onAccountNameChange]);
+    if (llmNetworkBasedAddAccountFlow?.enabled) {
+      navigation.navigate(NavigatorName.AccountSettings, {
+        screen: ScreenName.EditAccountName,
+        params: {
+          onAccountNameChange,
+          account,
+        },
+      });
+    } else {
+      navigation.navigate(ScreenName.EditAccountName, {
+        onAccountNameChange,
+        account,
+      });
+    }
+  }, [account, navigation, onAccountNameChange, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const renderLeftActions = useCallback(
     (
@@ -259,25 +344,41 @@ const SelectableAccount = ({
       opacity={isDisabled ? 0.4 : 1}
       backgroundColor="neutral.c30"
     >
-      <Flex flex={1}>
-        <AccountCard
-          useFullBalance={useFullBalance}
-          account={account}
-          AccountSubTitle={
-            subAccountCount && !isDisabled ? (
-              <Flex marginTop={2}>
-                <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
-                  <Trans
-                    i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
-                    count={subAccountCount}
-                    values={{ count: subAccountCount }}
-                  />
-                </Text>
-              </Flex>
-            ) : null
-          }
-        />
-      </Flex>
+      {llmNetworkBasedAddAccountFlow?.enabled ? (
+        <Flex
+          flex={1}
+          flexDirection="row"
+          height={56}
+          alignItems="center"
+          backgroundColor="neutral.c30"
+          borderRadius="12px"
+          padding="8px"
+          columnGap={8}
+        >
+          <AccountItem account={account as Account} balance={account.spendableBalance} />
+        </Flex>
+      ) : (
+        <Flex flex={1}>
+          <AccountCard
+            useFullBalance={useFullBalance}
+            account={account}
+            AccountSubTitle={
+              subAccountCount && !isDisabled ? (
+                <Flex marginTop={2}>
+                  <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
+                    <Trans
+                      i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
+                      count={subAccountCount}
+                      values={{ count: subAccountCount }}
+                    />
+                  </Text>
+                </Flex>
+              ) : null
+            }
+          />
+        </Flex>
+      )}
+
       {!isDisabled && (
         <Flex marginLeft={4}>
           <CheckBox onChange={handlePress} isChecked={!!isSelected} />
@@ -317,14 +418,20 @@ type HeaderProps = {
 
 const Header = ({ text, areAllSelected, onSelectAll, onUnselectAll }: HeaderProps) => {
   const shouldDisplaySelectAll = !!onSelectAll && !!onUnselectAll;
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   return (
-    <Flex paddingX={16} flexDirection="row" alignItems="center" paddingBottom={8}>
+    <Flex
+      paddingX={llmNetworkBasedAddAccountFlow?.enabled ? 16 : 22}
+      flexDirection="row"
+      alignItems="center"
+      paddingBottom={llmNetworkBasedAddAccountFlow?.enabled ? 16 : 8}
+    >
       <Text
         fontWeight="semiBold"
         flexShrink={1}
         variant="small"
-        textTransform="uppercase"
+        {...(!llmNetworkBasedAddAccountFlow?.enabled && { textTransform: "uppercase" })}
         color="neutral.c70"
         numberOfLines={1}
       >

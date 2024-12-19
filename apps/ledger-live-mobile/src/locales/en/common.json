@@ -4002,6 +4002,8 @@
       "desc": "Are you sure you want to cancel adding accounts?"
     },
     "imported": "Asset added successfully",
+    "added": "Account added to your portfolio",
+    "added_plural": "{{count}} Accounts added to your portfolio",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -4058,6 +4060,30 @@
         "title": "Taproot",
         "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
+    },
+    "scanDeviceAccounts": {
+      "title": "Select the accounts you want to add",
+      "ctaStopScan": "Stop scanning",
+      "confirm": "Confirm",
+      "scanningTitle": "Looking for any existing accounts on the Blockchain...",
+      "sections": {
+        "importable": {
+          "title": "We found {{count}} account"
+        },
+        "creatable": {
+          "title": "New account"
+        },
+        "imported": {
+          "title": "Accounts already in the Portfolio ({{length}})"
+        },
+        "migrate": {
+          "title": "Accounts to update"
+        }
+      }
+    },
+    "addAccountsSuccess": {
+      "ctaAddFunds": "Add funds to my account",
+      "ctaClose": "Close"
     }
   },
   "DeviceAction": {
@@ -7159,7 +7185,9 @@
       "title": "Select Asset"
     },
     "selectNetwork": {
-      "title": "Select the blockchain network the asset belongs to"
+      "title": "Select the blockchain network the asset belongs to",
+      "detectedAccounts": "{{count}} account (detected)",
+      "detectedAccounts_plural": "{{count}} accounts (detected)"
     }
   }
 }
