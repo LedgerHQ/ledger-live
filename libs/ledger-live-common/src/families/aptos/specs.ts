@@ -1,37 +1,16 @@
 import invariant from "invariant";
 import expect from "expect";
-// import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-// import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
-// import { AccountLike } from "@ledgerhq/types-live";
 import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 import type { Transaction } from "./types";
-import { log } from "@ledgerhq/logs";
 
 const currency = getCryptoCurrencyById("aptos");
-const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.0001");
-// const reserve = parseCurrencyUnit(currency.units[0], "0.5");
+const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.0001");
 const maxAccountSiblings = 4;
-
-log("MINAMOUNTCUTOFF", minAmountCutoff.toString());
-
-// function randomIntFromInterval(min, max): string {
-//   const minBig = new BigNumber(min);
-//   const maxBig = new BigNumber(max);
-
-//   const random = BigNumber.random().multipliedBy(maxBig.minus(minBig).plus(1)).plus(minBig);
-//   const randomInt = random.integerValue(BigNumber.ROUND_FLOOR);
-
-//   return randomInt.toString();
-// }
-
-// function getRandomTransferID(): string {
-//   return randomIntFromInterval(0, Number.MAX_SAFE_INTEGER);
-// }
 
 const aptos: AppSpec<Transaction> = {
   name: "Aptos",
@@ -41,10 +20,10 @@ const aptos: AppSpec<Transaction> = {
     appName: "Aptos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 1000,
-  minViableAmount: minAmountCutoff,
+  testTimeout: 5 * 60 * 1000,
+  minViableAmount: minBalanceNewAccount,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
+    invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
   },
   mutations: [
     {
@@ -52,7 +31,7 @@ const aptos: AppSpec<Transaction> = {
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
+        invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
 
         const sibling = pickSiblings(siblings, maxAccountSiblings);
         const recipient = sibling.freshAddress;
@@ -65,12 +44,6 @@ const aptos: AppSpec<Transaction> = {
           },
           { amount },
         ];
-
-        // if (Math.random() < 0.5) {
-        //   updates.push({
-        //     transferId: getRandomTransferID(),
-        //   });
-        // }
 
         return {
           transaction,
