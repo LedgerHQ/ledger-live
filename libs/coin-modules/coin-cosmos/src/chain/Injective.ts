@@ -10,7 +10,8 @@ class Injective extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
-    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9604085095965?support=true";
+    this.stakingDocUrl =
+      "https://support.ledger.com/hc/en-us/articles/9604085095965-zd?support=true";
     this.unbondingPeriod = 21;
     this.prefix = "inj";
     this.validatorPrefix = `${this.prefix}valoper`;
