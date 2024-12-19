@@ -1287,20 +1287,20 @@
     "title" : "您需要 Ledger 设备",
     "desc" : "为了保障安全，Ledger Live 只能搭配设备使用。您需要有设备才能继续。",
     "cta" : "立即购买您的 Ledger 设备",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
+    "footer" : "我已经有一个 Ledger 设备，对该设备进行设置",
+    "bannerTitle" : "为您的加密货币和 NFT 提供一流的安全性",
+    "bannerTitle2" : "您需要一个 Ledger 设备才能进行交易",
+    "bannerSubtitle" : "使用 Ledger Flex",
+    "bannerButtonTitle" : "探索 Flex",
     "bannerButtonTitle2" : "购买 Ledger 设备",
-    "setupCta" : "I already have a Ledger, set it up"
+    "setupCta" : "我已经有一个 Ledger 设备，对该设备进行设置"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "拿到您的 Ledger 设备了吗？",
+    "desc" : "拿到您的 Ledger 设备后，请完成设置，以解锁 Ledger Live 应用程序的所有功能。",
+    "cta" : "设置我的 Ledger 设备",
+    "bannerTitle" : "已收到您的 Ledger 设备？",
+    "bannerCta" : "开始设置",
     "continue" : "继续"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "购买成功",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "感谢您对 Ledger 的信任",
+    "desc" : "您的订单正在处理中。\n请查收您的电子邮件以确认订单。"
   },
   "discover" : {
     "title" : "探索",
@@ -3091,6 +3091,13 @@
       "desc" : "尝试一下开发者功能，让我们知道您的想法。",
       "customManifest" : {
         "title" : "加载自定义平台清单"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "兑换开发模式",
+        "description" : "添加兑换提供商的信息",
+        "placeholder" : "CAL 格式的兑换提供商信息",
+        "currentSetting" : "当前设置",
+        "error" : "CAL 值无效"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "与另一个 Ledger Live 应用程序同步",
         "description" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。"
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "此应用程序不再同步",
+          "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync。",
+          "cta" : "开启 Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "删除同步",
         "description" : "您在不同手机和电脑上的加密货币账户将停止同步。",
@@ -6922,6 +6936,11 @@
           "cancel" : "保持同步",
           "title" : "确定要删除同步吗？",
           "desc" : "您在不同手机和电脑上的加密货币账户将停止同步。此操作不会对您的资金产生任何影响。"
+        },
+        "error" : {
+          "title" : "此应用程序不再同步",
+          "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync。",
+          "cta" : "开启 Ledger Sync"
         }
       },
       "manageInstances" : {
