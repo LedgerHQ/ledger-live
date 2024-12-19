@@ -31,6 +31,7 @@ export default function InfiniteLoader({
   size = 38,
   color = "primary.c50",
   mock = false,
+  testID = "",
   ...extraProps
 }: Props): JSX.Element {
   const rotation = useSharedValue(0);
@@ -59,6 +60,7 @@ export default function InfiniteLoader({
   return (
     <Animated.View
       style={[{ display: "flex", justifyContent: "center", alignItems: "center" }, animatedStyles]}
+      testID={testID}
     >
       <Loader
         size={size}
