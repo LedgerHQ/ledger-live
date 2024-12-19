@@ -22,7 +22,11 @@ export const GenericView = (props: HookResult) => {
         <InfiniteLoader />
       ) : (
         <>
-          <ContentCardsLocation locationId={useCase} hasStickyCta={!!landingStickyCTA} />
+          <ContentCardsLocation
+            locationId={useCase}
+            hasStickyCta={!!landingStickyCTA}
+            bottomSpacing={32}
+          />
           {!!landingStickyCTA && (
             <StickyContainer alignItems="center" justifyContent="center" width="100%">
               <Button onPress={() => openLink(landingStickyCTA)} type="main">

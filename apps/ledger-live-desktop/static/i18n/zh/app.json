@@ -1139,6 +1139,7 @@
       "send" : "发送",
       "swap" : "互换",
       "stake" : "权益质押",
+      "earn" : "赚取",
       "yield" : "收益率",
       "buy" : "买入",
       "sell" : "卖出",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "权益质押",
-        "description" : "使用 Ledger 设备权益质押加密货币"
+        "description" : "获得加密货币权益质押奖励"
       }
     },
     "recoverBanner" : {
@@ -2390,7 +2391,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "排除网络故障"
+    "title" : "排除网络故障",
+    "myLedgerServices" : "“我的 Ledger”服务（脚本运行器）",
+    "bitcoinExplorers" : "比特币浏览器",
+    "ethereumExplorers" : "以太坊浏览器",
+    "countervaluesApi" : "对价 API",
+    "announcements" : "公告",
+    "status" : "状态",
+    "test" : "测试",
+    "renderer" : "渲染器"
   },
   "systemLanguageAvailable" : {
     "title" : "更改您应用的语言？",
@@ -4084,6 +4093,8 @@
       "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
+      "mevProtection" : "MEV 保护",
+      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4107,6 +4118,10 @@
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "在测试合作伙伴模式下兑换",
+        "desc" : "允许使用合作伙伴阶段公钥"
       },
       "analyticsConsole" : {
         "title" : "允许分析控制台",

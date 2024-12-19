@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react",
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*", "src/index.tsx"]
+}

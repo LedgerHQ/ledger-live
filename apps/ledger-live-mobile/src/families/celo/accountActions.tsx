@@ -7,6 +7,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import CeloIcon from "./components/CeloIcon";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -17,6 +18,7 @@ const getMainActions = ({
 }): ActionButtonEvent[] => {
   const { celoResources } = account;
   invariant(celoResources, "celo resources not parsed");
+  const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = isAccountEmpty(account)
     ? [
@@ -42,7 +44,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: () => <CeloIcon isDisabled={false} />,
       eventProperties: {
         currency: "CELO",

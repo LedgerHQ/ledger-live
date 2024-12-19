@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-tron/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,
@@ -114,6 +115,7 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 const currencyBridge: CurrencyBridge = {

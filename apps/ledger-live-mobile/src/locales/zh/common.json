@@ -1287,20 +1287,20 @@
     "title" : "您需要 Ledger 设备",
     "desc" : "为了保障安全，Ledger Live 只能搭配设备使用。您需要有设备才能继续。",
     "cta" : "立即购买您的 Ledger 设备",
-    "footer" : "我已经有一个设备了，现在就设置吧",
-    "bannerTitle" : "确保您的加密货币和 NFT 安全",
-    "bannerTitle2" : "您需要用 Nano ",
-    "bannerSubtitle" : "来通过 Ledger 设备进行交易",
-    "bannerButtonTitle" : "了解 Nano",
-    "bannerButtonTitle2" : "购买设备",
-    "setupCta" : "我已经有设备，请设置该设备"
+    "footer" : "I already have a Ledger, set it up",
+    "bannerTitle" : "Top-notch security for your crypto and NFTs",
+    "bannerTitle2" : "You will need a Ledger to be able to trade",
+    "bannerSubtitle" : "with a Ledger Flex",
+    "bannerButtonTitle" : "Discover the Flex",
+    "bannerButtonTitle2" : "购买 Ledger 设备",
+    "setupCta" : "I already have a Ledger, set it up"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "收到您的设备了吗？",
-    "desc" : "收到设备后，您可以立即通过 Ledger Live 开始设置！",
-    "cta" : "设置我的设备",
-    "bannerTitle" : "收到了您的设备？",
-    "bannerCta" : "开始设置",
+    "title" : "Did you get your Ledger yet?",
+    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
+    "cta" : "Setup my Ledger",
+    "bannerTitle" : "Received your Ledger?",
+    "bannerCta" : "Begin setup",
     "continue" : "继续"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "购买成功",
-    "title" : "恭喜",
-    "desc" : "您的订单正在处理中。\n您将很快收到您的 Ledger。请查收您的电子邮件以确认订单。"
+    "title" : "Thanks for trusting Ledger",
+    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
   "discover" : {
     "title" : "探索",
@@ -2360,8 +2360,7 @@
       "swap" : "互换",
       "send" : "发送",
       "deposit" : "接收",
-      "stake" : "质押",
-      "yield" : "收益率"
+      "stake" : "质押"
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2871,6 +2870,8 @@
       "developerModeDesc" : "在“我的 Ledger”中显示开发者应用程序并启用测试网应用程序。",
       "analytics" : "数据分析",
       "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
+      "mevProtection" : "MEV 保护",
+      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
       "personalizedRecommendations" : "个性化体验",
       "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {
@@ -3270,7 +3271,7 @@
     },
     "stake" : {
       "title" : "权益质押",
-      "description" : "权益质押您持有的加密货币。"
+      "description" : "获得加密货币权益质押奖励。"
     },
     "swap" : {
       "title" : "互换",

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -29,8 +29,11 @@ import CompleteExchange, {
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { Exchange } from "@ledgerhq/live-common/exchange/types";
-import { renderLoading } from "./DeviceAction/rendering";
+import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
+import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -60,10 +63,50 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   return "exchangeType" in data;
 }
 
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+
+type Keys = Record<string, { title: string; description: string }>;
+
+const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
+  solana: {
+    title: "swap.incompatibility.spl_tokens_title",
+    description: "swap.incompatibility.spl_tokens_description",
+  },
+};
+
+const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
+  ton: {
+    title: "swap.incompatibility.ton_title",
+    description: "swap.incompatibility.ton_description",
+  },
+  cardano: {
+    title: "swap.incompatibility.ada_title",
+    description: "swap.incompatibility.ada_description",
+  },
+};
+const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
+  const parentFrom =
+    (exchange?.fromAccount?.type === "TokenAccount" && exchange?.fromParentAccount?.currency?.id) ||
+    "";
+  const parentTo =
+    (exchange?.toAccount?.type === "TokenAccount" && exchange?.toParentAccount?.currency?.id) || "";
+  const from =
+    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
+  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
+
+  return (
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
+  );
+};
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const device = useSelector(getCurrentDevice);
 
   // @ts-expect-error how to type payload?
   const {
@@ -156,23 +199,43 @@ export const LiveAppDrawer = () => {
             </Box>
           </>
         );
-      case "EXCHANGE_START":
-        return data && isStartExchangeData(data) ? (
-          <DeviceAction
-            action={action}
-            request={data}
-            Result={() => renderLoading()}
-            onResult={result => {
-              if ("startExchangeResult" in result) {
-                data.onResult(result.startExchangeResult);
-              }
-              if ("startExchangeError" in result) {
-                data.onCancel?.(result.startExchangeError);
-                dispatch(closePlatformAppDrawer());
-              }
-            }}
-          />
-        ) : null;
+      case "EXCHANGE_START": {
+        if (data && isStartExchangeData(data)) {
+          if (device?.modelId === "nanoS" && data.exchange && isExchangeSwap(data.exchange)) {
+            if (data.provider === "thorswap") {
+              return (
+                <HardwareUpdate
+                  i18nKeyTitle="swap.wrongDevice.title"
+                  i18nKeyDescription="swap.wrongDevice.description"
+                />
+              );
+            }
+            const keys = getIncompatibleCurrencyKeys(data.exchange);
+            if (keys) {
+              return (
+                <HardwareUpdate i18nKeyTitle={keys.title} i18nKeyDescription={keys.description} />
+              );
+            }
+          }
+          return (
+            <DeviceAction
+              action={action}
+              request={data}
+              Result={() => renderLoading()}
+              onResult={result => {
+                if ("startExchangeResult" in result) {
+                  data.onResult(result.startExchangeResult);
+                }
+                if ("startExchangeError" in result) {
+                  data.onCancel?.(result.startExchangeError);
+                  dispatch(closePlatformAppDrawer());
+                }
+              }}
+            />
+          );
+        }
+        return null;
+      }
       case "EXCHANGE_COMPLETE":
         return data && isCompleteExchangeData(data) ? (
           <CompleteExchange
@@ -185,13 +248,18 @@ export const LiveAppDrawer = () => {
       default:
         return null;
     }
-  }, [payload, t, dismissDisclaimerChecked, onContinue, dispatch]);
+  }, [payload, t, dismissDisclaimerChecked, onContinue, device?.modelId, dispatch]);
 
   return (
     <SideDrawer
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
+        payload?.data?.onCancel?.({
+          error: new DrawerClosedError("User closed the drawer"),
+          name: "DrawerClosedError",
+          message: "User closed the drawer",
+        });
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"

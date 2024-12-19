@@ -1,7 +1,7 @@
 import {
   TransportStatusError,
-  WrongDeviceForAccountRefund,
   WrongDeviceForAccountPayout,
+  WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
@@ -10,21 +10,20 @@ import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
-import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import {
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
-import { getSwapProvider } from "../providers";
-import { convertToAppExchangePartnerKey } from "../providers";
+import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
+import { CEXProviderConfig } from "../providers/swap";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -49,14 +48,16 @@ const completeExchange = (
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = await getSwapProvider(provider);
-        if (providerConfig.type !== "CEX") {
+        if (providerConfig.useInExchangeApp === false) {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
 
         const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
+
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
+        const payoutAccountBridge = getAccountBridge(payoutAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
@@ -102,11 +103,13 @@ const completeExchange = (
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
         currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
+        await exchange.setPartnerKey(
+          convertToAppExchangePartnerKey(providerConfig as CEXProviderConfig),
+        );
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerConfig.signature);
+        await exchange.checkPartner((providerConfig as CEXProviderConfig).signature);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
@@ -124,15 +127,30 @@ const completeExchange = (
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
-        const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
-        ].getSerializedAddressParameters(
-          payoutAccount.freshAddressPath,
-          payoutAccount.derivationMode,
+        const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
+          payoutAccount,
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
+        //-- Special case of SPLToken
+        //- NOT READY YET
+        // //TODO: generalize this case when another blockchain has the same requirement
+        // if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
+        //   sendPKI(transport);
+        // }
+
+        // if (isSPLTokenAccount(fromAccount)) {
+        //   //TODO Call AppExchange with TrustedService info
+        // }
+        // if (isSPLTokenAccount(toAccount)) {
+        //   //TODO Call AppExchange with TrustedService info
+        // }
+
+        //-- CHECK_PAYOUT_ADDRESS
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
 
@@ -141,7 +159,7 @@ const completeExchange = (
           await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters,
+            payoutAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
@@ -163,14 +181,14 @@ const completeExchange = (
 
         // Swap specific checks to confirm the refund address is correct.
         if (unsubscribed) return;
-        const refundAddressParameters = await perFamily[
-          mainRefundCurrency.family
-        ].getSerializedAddressParameters(
-          refundAccount.freshAddressPath,
-          refundAccount.derivationMode,
+        const refundAddressParameters = accountBridge.getSerializedAddressParameters(
+          refundAccount,
           mainRefundCurrency.id,
         );
         if (unsubscribed) return;
+        if (!refundAddressParameters) {
+          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+        }
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
           await getCurrencyExchangeConfig(refundCurrency);
@@ -181,7 +199,7 @@ const completeExchange = (
           await exchange.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters,
+            refundAddressParameters,
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
@@ -238,6 +256,20 @@ const completeExchange = (
     };
   });
 };
+
+// function isSPLTokenAccount(account: AccountLike): boolean {
+//   return account.type !== "TokenAccount" && account.currency.id === "solana";
+// }
+
+// async function sendPKI(transport: Transport) {
+//   // FIXME: version number hardcoded
+//   const { descriptor, signature } = await calService.getCertificate(
+//     transport.deviceModel!.id,
+//     "1.3.0",
+//   );
+
+//   await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
+// }
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg

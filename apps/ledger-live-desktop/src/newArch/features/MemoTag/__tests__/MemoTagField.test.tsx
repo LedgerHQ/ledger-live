@@ -48,4 +48,14 @@ describe("MemoTagField", () => {
     render(<MemoTagField error={new Error("Error message")} />);
     expect(screen.getByTestId("input-error")).toBeInTheDocument();
   });
+
+  it("should render with custom placeholder", () => {
+    render(<MemoTagField placeholder="Custom Placeholder" />);
+    expect(screen.getByPlaceholderText("Custom Placeholder")).toBeInTheDocument();
+  });
+
+  it("should render with custom label", () => {
+    render(<MemoTagField label="Custom Label" />);
+    expect(screen.getByText("Custom Label")).toBeInTheDocument();
+  });
 });

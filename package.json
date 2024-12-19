@@ -82,9 +82,11 @@
     "coin:hedera": "pnpm --filter coin-hedera",
     "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
+    "coin:icp": "pnpm --filter coin-internet_computer",
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
+    "coin:vechain": "pnpm --filter coin-vechain",
     "coin:xrp": "pnpm --filter coin-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
@@ -108,6 +110,7 @@
     "countervalues-react": "pnpm --filter live-countervalues-react",
     "nft": "pnpm --filter live-nft",
     "nft-react": "pnpm --filter live-nft-react",
+    "live-dmk": "pnpm --filter live-dmk",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
@@ -127,6 +130,7 @@
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
     "ljs:hw-app-icon": "pnpm --filter hw-app-icon",
+    "ljs:hw-bolos": "pnpm --filter hw-bolos",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
@@ -148,6 +152,8 @@
     "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
+    "service:cal": "pnpm --filter ledger-cal-service",
+    "service:trust": "pnpm --filter ledger-trust-service",
     "speculos-transport": "pnpm --filter speculos-transport",
     "test-utils": "pnpm --filter test-utils",
     "dummy-live-app": "pnpm --filter dummy-live-app",
@@ -208,7 +214,7 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.26.2": "patches/detox@20.26.2.patch",
+      "detox@20.28.0": "patches/detox@20.28.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
@@ -226,6 +232,11 @@
       "detox-allure2-adapter": {
         "dependencies": {
           "tslib": "*"
+        }
+      },
+      "detox": {
+        "dependencies": {
+          "expect": "*"
         }
       }
     }

@@ -1,6 +1,6 @@
 import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
 import { stakeActions } from "@ledgerhq/coin-solana/logic";
-import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
+import { LEDGER_VALIDATORS_VOTE_ACCOUNTS } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { isAccountEmpty } from "../../account";
@@ -23,8 +23,9 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
   const { validators } = getCurrentSolanaPreloadData(account.currency) ?? {
     validators: [],
   };
-  const ledgerValidator = validators.find(
-    validator => validator.voteAccount === LEDGER_VALIDATOR.voteAccount,
+
+  const ledgerValidator = validators.find(validator =>
+    LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validator.voteAccount),
   );
 
   // If Ledger doesn't provide validator, we don't display banner
@@ -49,7 +50,7 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
     const actions = stakeActions(delegation);
     const isValidRedelegation =
       validator &&
-      validatorAdress !== ledgerValidator.voteAccount &&
+      !LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validatorAdress) &&
       worstValidator.commission <= validator.commission &&
       actions.includes("deactivate");
     if (isValidRedelegation) {
@@ -58,7 +59,7 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
     }
   }
   if (worstValidator) {
-    if (worstValidator?.voteAccount === ledgerValidator?.voteAccount) {
+    if (LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(worstValidator?.voteAccount)) {
       if (!isAccountEmpty(account)) {
         display = true;
       }

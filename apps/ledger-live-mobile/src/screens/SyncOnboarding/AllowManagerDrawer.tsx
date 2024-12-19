@@ -47,7 +47,7 @@ const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
         </Text>
         <Flex alignSelf="stretch" alignItems="center" justifyContent="center">
           <Animation
-            source={getDeviceAnimation({ device, key: "allowManager", theme })}
+            source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
             style={getDeviceAnimationStyles(device.modelId, { height: 200 })}
           />
         </Flex>

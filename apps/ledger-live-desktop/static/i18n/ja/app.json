@@ -1139,6 +1139,7 @@
       "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
+      "earn" : "報酬獲得",
       "yield" : "イールド",
       "buy" : "購入",
       "sell" : "売却",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産をステーキング"
+        "description" : "お持ちの暗号資産で報酬を獲得"
       }
     },
     "recoverBanner" : {
@@ -2390,7 +2391,15 @@
     "version" : "Ledger Live{{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "ネットワークの問題解決"
+    "title" : "ネットワークの問題解決",
+    "myLedgerServices" : "My Ledgerサービス（scriptrunner）",
+    "bitcoinExplorers" : "ビットコインエクスプローラー",
+    "ethereumExplorers" : "イーサリアムエクスプローラー",
+    "countervaluesApi" : "カウンターバリューAPI",
+    "announcements" : "お知らせ",
+    "status" : "ステータス",
+    "test" : "TEST",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "アプリの表示言語を変更しますか？",
@@ -4084,6 +4093,8 @@
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
       "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
+      "mevProtection" : "MEV保護",
+      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4107,6 +4118,10 @@
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "テストパートナーモードで取引",
+        "desc" : "パートナー段階の公開鍵の使用を有効にする"
       },
       "analyticsConsole" : {
         "title" : "アナリティクスコンソールを許可",

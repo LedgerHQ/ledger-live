@@ -30,14 +30,10 @@ type Props = {
 };
 
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
-  const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
+  const [currentPool, setCurrentPool] = useState<Array<StakePool>>([]);
+  const [defaultPool, setDefaultPool] = useState<Array<StakePool>>([]);
   const unit = useAccountUnit(account);
-
-  const [showAll, setShowAll] = useState(
-    LEDGER_POOL_IDS.length === 0 ||
-      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
-  );
-
+  const [showAll, setShowAll] = useState(false);
   const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
@@ -50,13 +46,18 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
       setLedgerPoolsLoading(true);
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
+      const delegationPoolId = delegation?.poolId
+        ? [delegation.poolId, ...LEDGER_POOL_IDS]
+        : LEDGER_POOL_IDS;
+      fetchPoolDetails(account.currency, delegationPoolId)
         .then((apiRes: { pools: Array<StakePool> }) => {
+          setCurrentPool([apiRes.pools[0]]);
+          const filteredPools = apiRes.pools.filter(pool => LEDGER_POOL_IDS.includes(pool.poolId));
+          setDefaultPool(filteredPools);
           const filteredLedgerPools = apiRes.pools.filter(
-            pool => pool.poolId !== delegation?.poolId,
+            pool => pool.poolId === delegation?.poolId,
           );
           if (filteredLedgerPools.length) {
-            setLedgerPools(filteredLedgerPools);
             onChangeValidator(filteredLedgerPools[0]);
           }
         })
@@ -66,6 +67,22 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const selectedPool =
+      pools.find(p => p.poolId === selectedPoolId) ||
+      defaultPool.find(pool => pool.poolId === selectedPoolId);
+
+    if (selectedPool) {
+      setCurrentPool([selectedPool]);
+      if (pools.some(p => p.poolId === selectedPoolId)) {
+        onChangeValidator(selectedPool);
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPoolId]);
+
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(evt.target.value),
     [setSearchQuery],
@@ -77,7 +94,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
         key={validatorIdx + validator.poolId}
         pool={validator}
         unit={unit}
-        active={selectedPoolId === validator.poolId || validator.poolId === delegation?.poolId}
+        active={
+          selectedPoolId === validator.poolId ||
+          (validator.poolId === delegation?.poolId && validator.poolId === selectedPoolId)
+        }
         onClick={onChangeValidator}
       />
     );
@@ -88,7 +108,9 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
+          {(showAll && isSearching) ||
+          (!showAll && ledgerPoolsLoading) ||
+          (!showAll && !pools.length) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
             </Box>
@@ -96,8 +118,17 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             <ScrollLoadingList
               data={
                 showAll
-                  ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
-                  : ledgerPools
+                  ? [
+                      currentPool[0],
+                      ...defaultPool.filter(p => p !== currentPool[0]),
+                      ...pools.filter(
+                        p =>
+                          p &&
+                          !poolIdsToFilterFromAllPools.includes(p.poolId) &&
+                          p !== currentPool[0],
+                      ),
+                    ]
+                  : currentPool
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",

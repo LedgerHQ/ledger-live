@@ -9,9 +9,10 @@ import { getNodeApi } from "./api/node/index";
 export const broadcast: AccountBridge<EvmTransaction>["broadcast"] = async ({
   account,
   signedOperation: { signature, operation },
+  broadcastConfig,
 }) => {
   const nodeApi = getNodeApi(account.currency);
-  const hash = await nodeApi.broadcastTransaction(account.currency, signature);
+  const hash = await nodeApi.broadcastTransaction(account.currency, signature, broadcastConfig);
   return patchOperationWithHash(operation, hash);
 };
 

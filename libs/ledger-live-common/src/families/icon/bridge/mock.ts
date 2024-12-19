@@ -2,7 +2,10 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,
@@ -24,8 +27,6 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
   fees: null,
 });
-
-const updateTransaction = defaultUpdateTransaction;
 
 const prepareTransaction = async (a, t) => t;
 
@@ -79,6 +80,7 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 const currencyBridge: CurrencyBridge = {

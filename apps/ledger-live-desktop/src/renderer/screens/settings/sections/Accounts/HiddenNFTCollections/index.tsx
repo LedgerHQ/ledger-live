@@ -2,8 +2,8 @@ import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { unhideNftCollection, whitelistNftCollection } from "~/renderer/actions/settings";
-import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
+import { updateNftStatus } from "~/renderer/actions/settings";
+import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/settings";
 
 import { SettingsSection as Section, SettingsSectionRow as Row } from "../../../SettingsSection";
 import Box from "~/renderer/components/Box";
@@ -13,6 +13,8 @@ import ShowMore from "LLD/features/Collectibles/components/Collection/ShowMore";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { HiddenNftCollectionRow } from "./row";
 import { decodeCollectionId } from "@ledgerhq/live-nft-react";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 // Styled components and layout
 
@@ -39,14 +41,24 @@ export default function HiddenNftCollections() {
   const dispatch = useDispatch();
   const [sectionVisible, setSectionVisible] = useState(false);
 
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const collections = useSelector(nftCollectionsStatusByNetworkSelector);
+
+  const hiddenNftCollections = useMemo(
+    () =>
+      Object.values(collections).flatMap(network =>
+        Object.keys(network).filter(
+          collection =>
+            network[collection] === NftStatus.blacklisted || network[collection] === NftStatus.spam,
+        ),
+      ),
+    [collections],
+  );
 
   const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
 
   const onUnhideCollection = useCallback(
-    (collectionId: string) => {
-      dispatch(unhideNftCollection(collectionId));
-      dispatch(whitelistNftCollection(collectionId));
+    (collectionId: string, blockchain: BlockchainsType) => {
+      dispatch(updateNftStatus(blockchain, collectionId, NftStatus.whitelisted));
     },
     [dispatch],
   );
@@ -96,12 +108,16 @@ export default function HiddenNftCollections() {
         <Body>
           {visibleCollections.map(collectionId => {
             const { accountId, contractAddress } = decodeCollectionId(collectionId);
+            const network = (Object.keys(collections).find(
+              key => collections[key as BlockchainEVM][collectionId],
+            ) ?? BlockchainEVM.Ethereum) as BlockchainsType;
             return (
               <HiddenNftCollectionRow
                 key={collectionId}
                 accountId={accountId}
                 contractAddress={contractAddress}
-                onUnhide={() => onUnhideCollection(collectionId)}
+                onUnhide={() => onUnhideCollection(collectionId, network)}
+                network={network}
               />
             );
           })}

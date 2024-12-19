@@ -1139,6 +1139,7 @@
       "send" : "Enviar",
       "swap" : "Trocar",
       "stake" : "Aplicar",
+      "earn" : "Ganhar",
       "yield" : "Rendimento",
       "buy" : "Comprar",
       "sell" : "Vender",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Faça staking de suas criptos com a Ledger"
+        "description" : "Receba recompensas com sua cripto"
       }
     },
     "recoverBanner" : {
@@ -2390,7 +2391,15 @@
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
-    "title" : "Solucionar problemas de rede"
+    "title" : "Solucionar problemas de rede",
+    "myLedgerServices" : "Serviços do Minha Ledger (scriptrunner)",
+    "bitcoinExplorers" : "Exploradores Bitcoin",
+    "ethereumExplorers" : "Exploradores Ethereum",
+    "countervaluesApi" : "API de contravalores",
+    "announcements" : "Anúncios",
+    "status" : "Status",
+    "test" : "Testar",
+    "renderer" : "RENDERER"
   },
   "systemLanguageAvailable" : {
     "title" : "Alterar o idioma do seu aplicativo?",
@@ -4084,6 +4093,8 @@
       "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincronize suas contas cripto em diferentes smartphones e computadores.",
+      "mevProtection" : "Proteção MEV",
+      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
       "marketPerformanceWidget" : "Widget Desempenho do Mercado",
       "marketPerformanceWidgetDesc" : "Ative esse recurso para visualizar as principais altas e baixas em períodos selecionados na página Portfólio."
     },
@@ -4107,6 +4118,10 @@
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
         "placeholder" : "Info. do provedor de Exchange em formato CAL"
+      },
+      "exchangeTestPartnerMode" : {
+        "title" : "Negociar em Test Partner Mode",
+        "desc" : "Habilita o uso da chave pública do partner stage"
       },
       "analyticsConsole" : {
         "title" : "Permitir o Analytics Console",
@@ -4252,7 +4267,7 @@
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
       "featureFlagsRestoreAll" : "Restaurar valores de todos os marcadores",
-      "flagHint" : "Se um marcador de função (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o \nnome do marcador em camelCase sem o prefixo “feature”.",
+      "flagHint" : "Se um marcador de recurso (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o \nnome do marcador em camelCase sem o prefixo “feature”.",
       "showButtonDesc" : "Sempre exibir o botão Incluir Marcadores na barra lateral",
       "buttonTitle" : "Marcadores desativados localmente",
       "overridden" : {

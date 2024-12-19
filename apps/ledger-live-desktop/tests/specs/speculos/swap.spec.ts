@@ -112,8 +112,7 @@ const swaps = [
     ),
     xrayTicket: "B2CQA-2751",
   },
-  //todo: flaky balance retrieval, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(
       Account.SOL_1,
       Account.ETH_1,
@@ -122,7 +121,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2828",
+    xrayTicket: "B2CQA-2775",
   },
   {
     swap: new Swap(
@@ -133,7 +132,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2827",
+    xrayTicket: "B2CQA-2776",
   },
   {
     swap: new Swap(
@@ -144,7 +143,7 @@ const swaps = [
       Provider.CHANGELLY,
       Rate.FLOAT,
     ),
-    xrayTicket: "B2CQA-2829",
+    xrayTicket: "B2CQA-2777",
   },
   {
     swap: new Swap(
@@ -178,15 +177,17 @@ const swaps = [
       Rate.FLOAT,
     ),
     xrayTicket: "B2CQA-2832",
-  },*/
+  },
 ];
 
 for (const { swap, xrayTicket } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
+    const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-      process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
     });
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
@@ -204,7 +205,11 @@ for (const { swap, xrayTicket } of swaps) {
     test.afterAll(async () => {
       delete process.env.SWAP_DISABLE_APPS_INSTALL;
       delete process.env.SWAP_API_BASE;
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      if (originalValue !== undefined) {
+        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+      } else {
+        delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      }
     });
 
     test.use({
@@ -221,7 +226,8 @@ for (const { swap, xrayTicket } of swaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
@@ -284,7 +290,8 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
@@ -300,7 +307,7 @@ const tooLowAmountForQuoteSwaps = [
     swap: new Swap(
       Account.ETH_1,
       Account.BTC_NATIVE_SEGWIT_1,
-      "0.005",
+      "0.001",
       Fee.MEDIUM,
       Provider.CHANGELLY,
       Rate.FLOAT,
@@ -329,11 +336,10 @@ const tooLowAmountForQuoteSwaps = [
     ),
     xrayTicket: "B2CQA-2759",
   },
-  //todo: flaky balance, reactivate after LIVE-14410
-  /*{
+  {
     swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM, Provider.CHANGELLY, Rate.FLOAT),
     xrayTicket: "B2CQA-2739",
-  },*/
+  },
 ];
 
 for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
@@ -374,12 +380,13 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
         },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."
           : new RegExp(
-              `Minimum \\d+(\\.\\d{1,5})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
+              `Minimum \\d+(\\.\\d{1,10})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
             );
         await app.swap.verifySwapAmountErrorMessageIsDisplayed(
           electronApp,
@@ -414,6 +421,160 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   });
 }
 
+const swapEntryPoint = {
+  swap: new Swap(
+    Account.BTC_NATIVE_SEGWIT_1,
+    Account.ETH_1,
+    "0.0006",
+    Fee.MEDIUM,
+    Provider.CHANGELLY,
+    Rate.FLOAT,
+  ),
+};
+
+test.describe("Swap flow from different entry point", () => {
+  test.beforeAll(async () => {
+    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
+    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
+  });
+
+  test.afterAll(async () => {
+    delete process.env.SWAP_DISABLE_APPS_INSTALL;
+    delete process.env.SWAP_API_BASE;
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    "Entry Point - Portfolio page",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2985",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToPortfolio();
+      await app.portfolio.clickSwapButton();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
+    },
+  );
+
+  test(
+    "Entry Point - Asset Allocation",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2986",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToPortfolio();
+      await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.assetPage.startSwapFlow();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Market page - Click on swap for any coin",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2987",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToMarket();
+      await app.market.startSwapForSelectedTicker(
+        swapEntryPoint.swap.accountToDebit.currency.ticker,
+      );
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.accountName,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Market page - More than one account for an asset",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2988",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToMarket();
+      await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
+      await app.market.clickOnSwapButtonOnAsset();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - Account page",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2989",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.account.navigateToSwap();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.currency.name,
+        electronApp,
+      );
+      await app.swap.expectSelectedAssetDisplayed(
+        swapEntryPoint.swap.accountToDebit.accountName,
+        electronApp,
+      );
+    },
+  );
+
+  test(
+    "Entry Point - left menu",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2990, B2CQA-523",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToSwap();
+      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
+    },
+  );
+});
+
 async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
@@ -423,6 +584,7 @@ async function performSwapUntilQuoteSelectionStep(
   await app.layout.goToAccounts();
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
   await app.layout.waitForPageDomContentLoadedState();
+
   await app.layout.waitForAccountsSyncToBeDone();
   await app.swap.waitForPageNetworkIdleState();
   await app.layout.goToSwap();

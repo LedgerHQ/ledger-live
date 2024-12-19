@@ -24,6 +24,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
+  [ScreenName.ExchangeDeveloperMode]: undefined;
   [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;

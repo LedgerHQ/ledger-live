@@ -1,20 +1,21 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TezosFamily } from "./types";
 import { StepId } from "./DelegateFlowModal/types";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   account,
   parentAccount,
   source,
 }) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const label = useGetStakeLabelLocaleBased();
+
   const delegation = useDelegation(account);
 
   const onClick = useCallback(() => {
@@ -50,7 +51,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",

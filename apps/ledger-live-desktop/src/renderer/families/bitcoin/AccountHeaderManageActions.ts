@@ -1,6 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
@@ -8,6 +7,7 @@ import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
   account: BitcoinAccount | TokenAccount;
@@ -18,15 +18,21 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake = stakeProgramsEnabled && listFlag.includes("bitcoin");
+  const availableOnStake =
+    stakeProgramsEnabled && (listFlag.includes("bitcoin") || listFlag.includes("bitcoin_testnet"));
   const history = useHistory();
-  const { t } = useTranslation();
+  const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const {
     bitcoinResources,
     currency: { id: currencyId },
   } = mainAccount;
-  if (!bitcoinResources || parentAccount || currencyId !== "bitcoin") return null;
+  if (
+    !bitcoinResources ||
+    parentAccount ||
+    (currencyId !== "bitcoin" && currencyId !== "bitcoin_testnet")
+  )
+    return null;
 
   const stakeOnClick = () => {
     const value = "/platform/acre";
@@ -53,7 +59,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         {
           key: "Stake",
           icon: IconCoins,
-          label: t("accounts.contextMenu.yield"),
+          label,
           event: "button_clicked2",
           eventProperties: {
             button: "stake",

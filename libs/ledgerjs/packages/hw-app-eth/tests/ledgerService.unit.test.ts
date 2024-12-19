@@ -676,7 +676,6 @@ describe("Ledger Service", () => {
           domains: [],
           erc20Tokens: [
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
-            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
           ],
           nfts: [],
           externalPlugin: [
@@ -689,8 +688,8 @@ describe("Ledger Service", () => {
           plugin: [],
         });
         expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(0);
-        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(3);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(3);
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(2);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
         expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
         expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
@@ -719,7 +718,6 @@ describe("Ledger Service", () => {
           domains: [],
           erc20Tokens: [
             "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
-            "0457455448c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000012000000013045022100b47ee8551c15a2cf681c649651e987d7e527c481d27c38da1f971a8242792bd3022069c3f688ac5493a23dab5798e3c9b07484765069e1d4be14321aae4d92cb8cbe",
           ],
           nfts: [],
           externalPlugin: [
@@ -732,8 +730,8 @@ describe("Ledger Service", () => {
           plugin: [],
         });
         expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(0);
-        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(3);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(3);
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(2);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
         expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
         expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalled();

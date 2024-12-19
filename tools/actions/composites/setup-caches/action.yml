@@ -10,9 +10,9 @@ inputs:
     required: false
     default: "false"
   skip-pnpm-cache:
-    description: "true to skip pnpm caching, false by default"
+    description: "true to skip pnpm caching, true by default"
     required: false
-    default: "false"
+    default: "true"
   skip-pod-cache:
     description: "false to get cache, true by default"
     required: false
@@ -23,10 +23,10 @@ inputs:
     default: "true"
   accountId:
     description: "aws cache account id"
-    required: true
+    required: false
   roleName:
     description: "aws cache role name"
-    required: true
+    required: false
   region:
     description: "aws cache region"
     required: false
@@ -57,6 +57,11 @@ runs:
       shell: bash
       run: proto use
 
+    - uses: pnpm/action-setup@v4
+      if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
+      with:
+        version: 9.12.3
+
     - name: Get pnpm store directory
       shell: bash
       run: |
@@ -72,7 +77,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'false'
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}

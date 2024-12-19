@@ -14,7 +14,6 @@ const targets = [
   "mock.ts",
   "account.ts",
   "formatters.ts",
-  "exchange.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
   "operation.ts",
@@ -30,6 +29,7 @@ const familiesWPackage = [
   "evm",
   "hedera",
   "filecoin",
+  "internet_computer",
   "icon",
   "near",
   "polkadot",
@@ -39,6 +39,7 @@ const familiesWPackage = [
   "tezos",
   "ton",
   "tron",
+  "vechain",
   "xrp",
 ];
 
