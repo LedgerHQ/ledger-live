@@ -74,7 +74,6 @@ export const getTransactions = async (
     account: address,
     ...options,
     api_version: 2,
-    tx_type: "Payment",
   });
 
   return result.transactions;

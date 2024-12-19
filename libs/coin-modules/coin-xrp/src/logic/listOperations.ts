@@ -26,9 +26,16 @@ export async function listOperations(
   const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  let options: { ledger_index_min?: number; ledger_index_max?: number; limit?: number } = {
+  let options: {
+    ledger_index_min?: number;
+    ledger_index_max?: number;
+    limit?: number;
+    tx_type?: string;
+  } = {
     ledger_index_max: mostRecentIndex ?? maxLedgerVersion,
+    tx_type: "Payment",
   };
+
   if (limit) {
     options = {
       ...options,
@@ -43,11 +50,28 @@ export async function listOperations(
     };
   }
 
-  const transactions = await getTransactions(address, options);
+  // We need to filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC
+  // is not working as expected. It returns all the transactions. We need to call the node RPC multiple times to get the
+  // desired number of transactions by the limiter.
+  let transactions: XrplOperation[] = [];
+  let needToStop = true;
+  do {
+    const newTransactions = await getTransactions(address, options);
+    const newPaymentsTxs = newTransactions.filter(tx => tx.tx_json.TransactionType === "Payment");
+
+    needToStop = options.limit ? newTransactions.length < options.limit : true;
+
+    transactions = transactions.concat(newPaymentsTxs);
+  } while (
+    options.limit &&
+    !needToStop &&
+    transactions.length < options.limit &&
+    (options.limit -= transactions.length) &&
+    (options.ledger_index_max = transactions.slice(-1)[0].tx_json.ledger_index - 1)
+  );
 
   return [
-    transactions
-      .map(convertToCoreOperation(address)),
+    transactions.map(convertToCoreOperation(address)),
     transactions.slice(-1)[0].tx_json.ledger_index - 1, // Returns the next index to start from for pagination
   ];
 }
