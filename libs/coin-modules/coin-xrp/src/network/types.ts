@@ -1,4 +1,7 @@
 export type XrplOperation = {
+  ledger_hash: string;
+  hash: string;
+  close_time_iso: string;
   meta: {
     AffectedNodes: {
       ModifiedNode: {
@@ -22,7 +25,7 @@ export type XrplOperation = {
     TransactionResult: string;
     delivered_amount: string;
   };
-  tx: {
+  tx_json: {
     Account: string;
     Amount: string;
     DeliverMax: string;
@@ -44,8 +47,6 @@ export type XrplOperation = {
     TransactionType: string;
     TxnSignature: string;
     date: number;
-    hash: string;
-    inLedger: number;
     ledger_index: number;
   };
   validated: boolean;

@@ -27,6 +27,12 @@ const api = {
       date: new Date(data[0].timestamp),
     };
   },
+  async getBlockByHash(hash: string): Promise<APIBlock> {
+    const { data } = await network<APIBlock>({
+      url: `${getExplorerUrl()}/v1/blocks/${hash}`,
+    });
+    return data;
+  },
   async getAccountByAddress(address: string): Promise<APIAccount> {
     const { data } = await network<APIAccount>({
       url: `${getExplorerUrl()}/v1/accounts/${address}`,
