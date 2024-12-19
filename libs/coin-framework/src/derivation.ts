@@ -176,6 +176,9 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  aptos: {
+    overridesDerivation: "44'/637'/<account>'/0'/0'",
+  },
   ton: {
     overridesDerivation: "44'/607'/0'/0'/<account>'/0'",
   },

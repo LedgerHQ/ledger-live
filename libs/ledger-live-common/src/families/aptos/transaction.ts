@@ -1,0 +1,63 @@
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "./types";
+
+import { Account } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "../../currencies";
+import {
+  fromTransactionCommonRaw,
+  toTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "@ledgerhq/coin-framework/serialization";
+import { formatTransactionStatus } from "@ledgerhq/coin-bitcoin/transaction";
+
+export const formatTransaction = (
+  { mode, amount, fees, recipient, useAllAmount }: Transaction,
+  account: Account,
+): string => `
+${mode.toUpperCase()} ${
+  useAllAmount
+    ? "MAX"
+    : amount.isZero()
+      ? ""
+      : " " + formatCurrencyUnit(account.currency.units[0], amount)
+}
+TO ${recipient}
+with fees=${fees ? formatCurrencyUnit(account.currency.units[0], fees) : "?"}`;
+
+export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
+  const common = fromTransactionCommonRaw(t);
+  return {
+    ...common,
+    family: t.family,
+    mode: t.mode,
+    fees: t.fees ? new BigNumber(t.fees) : null,
+    options: JSON.parse(t.options),
+    estimate: JSON.parse(t.estimate),
+    firstEmulation: JSON.parse(t.firstEmulation),
+    errors: t.errors ? JSON.parse(t.errors) : {},
+  };
+};
+
+export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(t);
+  return {
+    ...common,
+    family: t.family,
+    mode: t.mode,
+    fees: t.fees ? t.fees.toString() : null,
+    options: JSON.stringify(t.options),
+    estimate: JSON.stringify(t.estimate),
+    firstEmulation: JSON.stringify(t.firstEmulation),
+    errors: JSON.stringify(t.errors),
+  };
+};
+
+export default {
+  formatTransaction,
+  fromTransactionRaw,
+  toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
+};
