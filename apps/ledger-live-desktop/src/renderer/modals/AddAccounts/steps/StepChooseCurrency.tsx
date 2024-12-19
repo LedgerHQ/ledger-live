@@ -85,6 +85,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const zksync = useFeature("currencyZkSync");
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
+  const zenrock = useFeature("currencyZenrock");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -138,6 +139,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zksync,
       zksync_sepolia: zksyncSepolia,
       mantra,
+      zenrock,
     }),
     [
       axelar,
@@ -190,6 +192,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zksync,
       zksyncSepolia,
       mantra,
+      zenrock,
     ],
   );
 
