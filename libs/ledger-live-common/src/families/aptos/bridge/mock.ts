@@ -1,3 +1,4 @@
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
 import {
   AmountRequired,
@@ -17,10 +18,8 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
-// import { isTransferIdValid } from "./bridgeHelpers/transferId";
-// import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "../errors";
 import { getMainAccount } from "../../../account";
 
 const receive = makeAccountBridgeReceive();
@@ -31,7 +30,7 @@ const createTransaction = (): Transaction => ({
   amount: BigNumber(0),
   recipient: "",
   useAllAmount: false,
-  fees: new BigNumber(0),
+  fees: new BigNumber(0.0001),
   firstEmulation: true,
   options: {
     maxGasAmount: DEFAULT_GAS.toString(),
@@ -48,7 +47,6 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   const warnings: TransactionStatus["warnings"] = {};
 
   const { balance } = a;
-  // const { balance, spendableBalance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount } = t;
   let { amount } = t;
@@ -65,11 +63,6 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.sender = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
-  // else if (!isTransferIdValid(t.transferId)) {
-  //   errors.sender = new CasperInvalidTransferId("", {
-  //     maxTransferId: CASPER_MAX_TRANSFER_ID,
-  //   });
-  // }
 
   let estimatedFees = t.fees;
 
@@ -96,21 +89,10 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     }
   }
 
-  // if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES) && !errors.amount)
-  //   errors.amount = new InvalidMinimumAmount("", {
-  //     minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR} CSPR`,
-  //   });
-
-  // if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES))
-  //   warnings.amount = new MayBlockAccount("", {
-  //     minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR + CASPER_FEES_CSPR} CSPR`,
-  //   });
-
   return {
     errors,
     warnings,
     estimatedFees,
-    // estimatedFees,
     amount,
     totalSpent,
   };
@@ -162,8 +144,9 @@ const currencyBridge: CurrencyBridge = {
   scanAccounts,
 };
 const accountBridge: AccountBridge<Transaction> = {
+  getSerializedAddressParameters,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   prepareTransaction,
   getTransactionStatus,
   sync,
