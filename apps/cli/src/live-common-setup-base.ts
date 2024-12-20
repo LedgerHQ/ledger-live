@@ -92,6 +92,8 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
+  "aptos",
+  "aptos_testnet",
   "ton",
   "linea_sepolia",
   "blast",
