@@ -884,11 +884,9 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={Config.DETOX} />
+        <InfiniteLoader mock={Config.DETOX} testID="device-action-loading" />
       </SpinnerContainer>
-      <CenteredText testID="device-action-loading">
-        {description ?? t("DeviceAction.loading")}
-      </CenteredText>
+      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );

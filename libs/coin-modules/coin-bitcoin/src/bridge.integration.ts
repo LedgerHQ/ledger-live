@@ -1,4 +1,5 @@
 import { DatasetTest } from "@ledgerhq/types-live";
+import { Buffer as OriginalBuffer } from "buffer";
 // import { testBridge } from "@ledgerhq/coin-framework/test-helpers/bridge-integration-suite";
 
 import type { Transaction } from "./types";
@@ -12,6 +13,13 @@ import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
 import zcash from "./datasets/zcash";
+
+// NOTE: overrides polyfill set here libs/ledger-live-common/jest.polyfills.js
+Object.defineProperty(globalThis, "Buffer", {
+  value: OriginalBuffer,
+  writable: true,
+  configurable: true,
+});
 
 /*
 import { createBridges } from "./bridge/js";

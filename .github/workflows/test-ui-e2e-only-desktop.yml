@@ -70,7 +70,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
       matrix:
