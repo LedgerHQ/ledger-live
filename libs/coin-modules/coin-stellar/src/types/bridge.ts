@@ -111,6 +111,7 @@ export type StellarOperationExtra = {
   assetAmount?: string | undefined;
   ledgerOpType: OperationType;
   memo?: string;
+  blockTime: Date;
 };
 
 export type StellarAccount = Account;

@@ -8,6 +8,11 @@ export type Operation = {
   value: bigint;
   fee: bigint;
   blockHeight: number;
+  block?: {
+    hash: string;
+    time: Date;
+    height: number;
+  };
   senders: string[];
   recipients: string[];
   date: Date;
@@ -42,6 +47,11 @@ const convertToCoreOperation = (address: string) => (operation: StellarOperation
     value: BigInt(operation.value.toString()),
     fee: BigInt(operation.fee.toString()),
     blockHeight: operation.blockHeight!,
+    block: {
+      hash: operation.blockHash!,
+      time: operation.extra.blockTime,
+      height: operation.blockHeight!,
+    },
     senders: operation.senders,
     recipients: operation.recipients,
     date: operation.date,
