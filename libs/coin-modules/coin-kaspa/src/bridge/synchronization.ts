@@ -6,16 +6,14 @@ import { AccountAddresses, scanAddresses, scanOperations } from "../network/inde
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { KaspaSigner } from "../signer";
-import { logapi } from "../network/indexer-api/getFeeEstimate";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
   async info => {
-    await logapi("scanning account now.");
     const { initialAccount, deviceId, derivationPath } = info;
 
     let xpub = initialAccount?.xpub;
-    let accountIndex: number = 0;
+    let accountIndex: number = initialAccount?.index || 0;
 
     if (!xpub) {
       // CLI does not deliver account (44'/11111'/0') xpub - need to calculate it..
@@ -53,6 +51,10 @@ export const makeGetAccountShape =
     const allOperations: Operation[] = await scanOperations(usedAddresses);
     const operations = mergeOps(oldOperations, allOperations);
 
+    const activeAddressCount: number =
+      accountAddresses.usedReceiveAddresses.filter(address => address.balance.gt(0)).length +
+      accountAddresses.usedChangeAddresses.filter(address => address.balance.gt(0)).length;
+
     return {
       id: accountId,
       xpub: xpub,
@@ -68,10 +70,9 @@ export const makeGetAccountShape =
       nextReceiveAddressIndex: accountAddresses.nextReceiveAddress.index,
       nextReceiveAddressType: accountAddresses.nextReceiveAddress.type,
       nextReceiveAddress: accountAddresses.nextReceiveAddress.address,
+      activeAddressCount: activeAddressCount,
       freshAddress: accountAddresses.nextReceiveAddress.address,
       freshAddressPath: `44'/111111'/${accountIndex}'/${accountAddresses.nextReceiveAddress.type}/${accountAddresses.nextReceiveAddress.index}`,
       used: operations.length > 0,
     };
   };
-
-// export const sync = makeSync({ getAccountShape });
