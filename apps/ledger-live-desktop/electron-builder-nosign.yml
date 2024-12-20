@@ -5,6 +5,7 @@ protocols:
   schemes:
     - ledgerlive
 
+afterPack: scripts/afterPack.js
 beforePack: scripts/beforePack.js
 
 mac:
