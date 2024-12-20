@@ -17,7 +17,11 @@ const buildTransaction = async (
   aptosClient: AptosAPI,
 ): Promise<RawTransaction> => {
   const amount = transaction.useAllAmount
-    ? getMaxSendBalance(account.spendableBalance, new BigNumber(DEFAULT_GAS), new BigNumber(DEFAULT_GAS_PRICE))
+    ? getMaxSendBalance(
+        account.spendableBalance,
+        new BigNumber(DEFAULT_GAS),
+        new BigNumber(DEFAULT_GAS_PRICE),
+      )
     : transaction.amount;
 
   const txPayload = getPayload(transaction.recipient, amount);
