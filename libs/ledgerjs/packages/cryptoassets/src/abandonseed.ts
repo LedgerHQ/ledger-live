@@ -114,6 +114,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zksync_sepolia: EVM_DEAD_ADDRESS,
   mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
   aptos: "0x634166b91829f78bedd71aaeccc56f179a8451c43ebbfa4aff7207af95051f58",
+  aptos_testnet: "0x634166b91829f78bedd71aaeccc56f179a8451c43ebbfa4aff7207af95051f58",
 };
 
 /**
