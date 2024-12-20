@@ -1,5 +1,11 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.9.0-nightly.6
+
+### Patch Changes
+
+- [#8733](https://github.com/LedgerHQ/ledger-live/pull/8733) [`21bb612`](https://github.com/LedgerHQ/ledger-live/commit/21bb61262e2103461c40dcf22013fc2e336735a5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: override buffer polyfill for bitcoin integration test
+
 ## 0.9.0-nightly.5
 
 ### Patch Changes

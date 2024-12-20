@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.94.0-nightly.12
+
+### Minor Changes
+
+- [#8722](https://github.com/LedgerHQ/ledger-live/pull/8722) [`5ea70f0`](https://github.com/LedgerHQ/ledger-live/commit/5ea70f05f7a009d5aec3d9388a28c0b585071fca) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Stake for BNB will open directly the Stakekit live app
+
+### Patch Changes
+
+- [#8736](https://github.com/LedgerHQ/ledger-live/pull/8736) [`0cebff5`](https://github.com/LedgerHQ/ledger-live/commit/0cebff5395eb4ce098b0b7ac6abec0a098592468) Thanks [@qperrot](https://github.com/qperrot)! - Show default validators for cardano
+
+- Updated dependencies [[`21bb612`](https://github.com/LedgerHQ/ledger-live/commit/21bb61262e2103461c40dcf22013fc2e336735a5)]:
+  - @ledgerhq/coin-bitcoin@0.9.0-nightly.6
+  - @ledgerhq/live-common@34.16.0-nightly.12
+
 ## 2.94.0-nightly.11
 
 ### Minor Changes

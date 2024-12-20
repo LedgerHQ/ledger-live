@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.59.0-nightly.13
+
+### Minor Changes
+
+- [#8722](https://github.com/LedgerHQ/ledger-live/pull/8722) [`5ea70f0`](https://github.com/LedgerHQ/ledger-live/commit/5ea70f05f7a009d5aec3d9388a28c0b585071fca) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Stake for BNB will open directly the Stakekit live app
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.16.0-nightly.12
+
 ## 3.59.0-nightly.12
 
 ### Minor Changes

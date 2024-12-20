@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.3.0-nightly.7
+
+### Patch Changes
+
+- [#8736](https://github.com/LedgerHQ/ledger-live/pull/8736) [`0cebff5`](https://github.com/LedgerHQ/ledger-live/commit/0cebff5395eb4ce098b0b7ac6abec0a098592468) Thanks [@qperrot](https://github.com/qperrot)! - Show default validators for cardano
+
 ## 0.3.0-nightly.6
 
 ### Patch Changes

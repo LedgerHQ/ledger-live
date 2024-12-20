@@ -1,5 +1,13 @@
 ## 34.5.0-next.4
 
+## 34.16.0-nightly.12
+
+### Patch Changes
+
+- Updated dependencies [[`0cebff5`](https://github.com/LedgerHQ/ledger-live/commit/0cebff5395eb4ce098b0b7ac6abec0a098592468), [`21bb612`](https://github.com/LedgerHQ/ledger-live/commit/21bb61262e2103461c40dcf22013fc2e336735a5)]:
+  - @ledgerhq/coin-cardano@0.3.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.9.0-nightly.6
+
 ## 34.16.0-nightly.11
 
 ### Minor Changes
