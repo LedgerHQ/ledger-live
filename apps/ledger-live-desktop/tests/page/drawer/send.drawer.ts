@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
 import { expect } from "@playwright/test";
-import { NFTTransaction, Transaction } from "tests/models/Transaction";
+import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendDrawer extends Drawer {
   private addressValue = (address: string) =>
