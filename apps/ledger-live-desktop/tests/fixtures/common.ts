@@ -85,6 +85,7 @@ export const test = base.extend<TestFixtures>({
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
+    console.log("Created userdataDestinationPath: ", userdataDestinationPath);
 
     const fileUserData = userdataOriginalFile
       ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
@@ -92,6 +93,12 @@ export const test = base.extend<TestFixtures>({
 
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    console.log("Written user data to:", `${userdataDestinationPath}/app.json`);
+
+    const writtenUserData = await fsPromises.readFile(`${userdataDestinationPath}/app.json`, {
+      encoding: "utf-8",
+    });
+    console.log("User data content:", writtenUserData);
 
     let device: any | undefined;
 
@@ -113,7 +120,7 @@ export const test = base.extend<TestFixtures>({
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
         setEnv("MOCK", "");
 
-        if (cliCommands?.length) {
+        if (cliCommands) {
           registerSpeculosTransport(device?.ports.apiPort);
           for (const cmd of cliCommands) {
             const promise = await cmd(`${userdataDestinationPath}/app.json`);

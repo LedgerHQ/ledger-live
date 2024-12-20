@@ -10,7 +10,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 
-const app: AppInfos = AppInfos.EXCHANGE;
+const app: AppInfos = AppInfos.ETHEREUM;
 
 const swaps = [
   {
