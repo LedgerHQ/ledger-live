@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 /**
  * Interface for the end user.
  * @memberof DataModel
@@ -38,6 +40,18 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
   function decodeModel(raw) {
     let { data } = raw;
 
+    if (data.currencyId == "crypto_org" && !data.cosmosResources) {
+      data.cosmosResources = {
+        delegations: [],
+        redelegations: [],
+        unbondings: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+        withdrawAddress: data.freshAddress,
+        sequence: 0,
+      };
+    }
     for (let i = raw.version; i < version; i++) {
       data = migrations[i](data);
     }

@@ -115,6 +115,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
   aptos: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   aptos_testnet: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  xion: "xion19rl4cm2hmr8afy4kldpxz3fka4jguq0a5xyz123",
 };
 
 /**
