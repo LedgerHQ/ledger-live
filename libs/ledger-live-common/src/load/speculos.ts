@@ -5,7 +5,6 @@ import invariant from "invariant";
 import path from "path";
 import semver from "semver";
 import { promises as fsp } from "fs";
-import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
@@ -151,7 +150,7 @@ export const findAppCandidate = (
   const app = picker(apps);
 
   if (apps.length > 1) {
-    log(
+    console.warn(
       "speculos",
       apps.length +
         " app candidates (out of " +
@@ -252,7 +251,7 @@ export async function createImplicitSpeculos(query: string): Promise<{
 
   const appCandidate = findAppCandidate(apps, search);
   invariant(appCandidate, "could not find an app that matches '%s'", query);
-  log("speculos", "using app " + formatAppCandidate(appCandidate as AppCandidate));
+  console.warn("speculos", "using app " + formatAppCandidate(appCandidate as AppCandidate));
   return appCandidate
     ? {
         device: await createSpeculosDevice({
