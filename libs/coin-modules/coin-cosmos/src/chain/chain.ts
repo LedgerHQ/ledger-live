@@ -82,6 +82,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "crypto_org":
         cosmosChainParams[currencyId] = new CryptoOrg();
+        break;
       case "xion":
         cosmosChainParams[currencyId] = new Xion();
         break;
