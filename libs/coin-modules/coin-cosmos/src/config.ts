@@ -189,6 +189,16 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
+  config_currency_zenrock: {
+    type: "object",
+    default: {
+      lcd: "https://api.diamond.zenrocklabs.io",
+      minGasPrice: 0.1,
+      status: {
+        type: "active",
+      },
+    },
+  },
 };
 
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";

@@ -125,6 +125,7 @@ export type CurrencyFeatures = {
   currencyZkSyncSepolia: DefaultFeature;
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
+  currencyZenrock: DefaultFeature;
 };
 
 /**

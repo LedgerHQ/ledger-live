@@ -130,6 +130,7 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "zenrock",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
