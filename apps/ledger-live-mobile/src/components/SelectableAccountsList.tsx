@@ -28,6 +28,7 @@ import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
 import { AddAccountsNavigatorParamList } from "./RootNavigator/types/AddAccountsNavigator";
+import AccountItem from "~/newArch/features/Accounts/components/AccountsListView/components/AccountItem";
 
 const selectAllHitSlop = {
   top: 16,
@@ -259,25 +260,8 @@ const SelectableAccount = ({
       opacity={isDisabled ? 0.4 : 1}
       backgroundColor="neutral.c30"
     >
-      <Flex flex={1}>
-        <AccountCard
-          useFullBalance={useFullBalance}
-          account={account}
-          AccountSubTitle={
-            subAccountCount && !isDisabled ? (
-              <Flex marginTop={2}>
-                <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
-                  <Trans
-                    i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
-                    count={subAccountCount}
-                    values={{ count: subAccountCount }}
-                  />
-                </Text>
-              </Flex>
-            ) : null
-          }
-        />
-      </Flex>
+      <AccountItem account={account as Account} balance={account.spendableBalance} />
+
       {!isDisabled && (
         <Flex marginLeft={4}>
           <CheckBox onChange={handlePress} isChecked={!!isSelected} />
