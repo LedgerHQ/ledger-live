@@ -1287,20 +1287,20 @@
     "title" : "Tenha uma Ledger",
     "desc" : "Para sua segurança, o Ledger Live só funciona com um dispositivo. Você precisa de um dispositivo para poder continuar.",
     "cta" : "Comprar sua Ledger agora",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "Já tenho uma Ledger, configurar agora",
+    "bannerTitle" : "Segurança de alto nível para suas criptomoedas e NFTs",
+    "bannerTitle2" : "Você precisará de uma Ledger para negociar",
+    "bannerSubtitle" : "com uma Ledger Flex",
+    "bannerButtonTitle" : "Descubra a Flex",
+    "bannerButtonTitle2" : "Comprar uma Ledger",
+    "setupCta" : "Já tenho uma Ledger, configurar agora"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Você já recebeu sua Ledger?",
+    "desc" : "Depois de receber sua Ledger, configure-a para poder usar tudo o que o aplicativo Ledger Live tem a oferecer.",
+    "cta" : "Configurar minha Ledger",
+    "bannerTitle" : "Recebeu sua Ledger?",
+    "bannerCta" : "Iniciar configuração",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Compra bem-sucedida",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Agradecemos por confiar na Ledger",
+    "desc" : "Sua compra está sendo processada.\nVerifique seu e-mail para ver a confirmação da sua compra."
   },
   "discover" : {
     "title" : "Explorar",
@@ -3091,6 +3091,13 @@
       "desc" : "Ative os recursos para desenvolvedores e nos conte o que achou.",
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange em Modo Desenvolvedor",
+        "description" : "Insira a informação do provedor de negociação",
+        "placeholder" : "Info. do provedor de Exchange em formato CAL",
+        "currentSetting" : "Configuração Atual",
+        "error" : "Valor de CAL inválido"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "Sincronizar com outro aplicativo Ledger Live",
         "description" : "Sincronize suas contas cripto do Ledger Live em diferentes smartphones e computadores."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Este aplicativo não está mais sincronizado",
+          "description" : "Ative o Ledger Sync nesse Ledger Live ou no qual você está sincronizando.",
+          "cta" : "Ativar Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "Excluir sincronização",
         "description" : "Suas contas cripto em diferentes smartphones e computadores não serão mais sincronizadas.",
@@ -6922,6 +6936,11 @@
           "cancel" : "Manter sincronização",
           "title" : "Tem certeza que quer excluir a sincronização?",
           "desc" : "Suas contas cripto em diferentes smartphones e computadores não serão mais sincronizadas. Isso não impacta seus fundos de nenhum modo."
+        },
+        "error" : {
+          "title" : "Este aplicativo não está mais sincronizado",
+          "description" : "Ative o Ledger Sync nesse Ledger Live ou no qual você está sincronizando.",
+          "cta" : "Ativar Ledger Sync"
         }
       },
       "manageInstances" : {

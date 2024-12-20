@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-btc
 
+## 10.5.0
+
+### Minor Changes
+
+- [#8548](https://github.com/LedgerHQ/ledger-live/pull/8548) [`1a388b9`](https://github.com/LedgerHQ/ledger-live/commit/1a388b946ce309c0a0e6e0c50b28af4e3c3a2cdb) Thanks [@qperrot](https://github.com/qperrot)! - Update Zcash consensus ID to NU6
+
+## 10.5.0-next.0
+
+### Minor Changes
+
+- [#8548](https://github.com/LedgerHQ/ledger-live/pull/8548) [`1a388b9`](https://github.com/LedgerHQ/ledger-live/commit/1a388b946ce309c0a0e6e0c50b28af4e3c3a2cdb) Thanks [@qperrot](https://github.com/qperrot)! - Update Zcash consensus ID to NU6
+
 ## 10.4.3
 
 ### Patch Changes
