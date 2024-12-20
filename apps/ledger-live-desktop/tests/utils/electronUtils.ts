@@ -54,8 +54,13 @@ export async function launchApp({
     console.log("Electron application started successfully.");
 
     const page = await app.firstWindow();
-    const screenshot = await page.screenshot();
-    console.log(screenshot.toString("base64"));
+    page.setDefaultTimeout(120000);
+    console.log("FIRST WINDOW");
+    console.log((await page.screenshot()).toString("base64"));
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForSelector("#loader-container", { state: "hidden" });
+    console.log("SECOND WINDOW");
+    console.log((await page.screenshot()).toString("base64"));
 
     await page.evaluate(() => {
       window.saveLogs("tests/artifacts/logLLD.json");
