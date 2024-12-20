@@ -6,6 +6,7 @@ import BottomContainer from "./BottomContainer";
 import { CameraView, BarcodeScanningResult } from "expo-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
+import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -72,17 +73,22 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <CameraView
-            style={{
-              backgroundColor: colors.neutral.c50,
-              width: 280,
-              height: 280,
-            }}
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr"],
-            }}
-            onBarcodeScanned={onBarCodeScanned}
-          />
+          <CameraPermissionContext.Consumer>
+            {({ permissionGranted }) => (
+              <CameraView
+                active={permissionGranted ?? false}
+                style={{
+                  backgroundColor: colors.neutral.c50,
+                  width: 280,
+                  height: 280,
+                }}
+                barcodeScannerSettings={{
+                  barcodeTypes: ["qr"],
+                }}
+                onBarcodeScanned={onBarCodeScanned}
+              />
+            )}
+          </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />
         </Flex>
         <Flex flexDirection={"row"} alignItems={"center"} columnGap={8}>

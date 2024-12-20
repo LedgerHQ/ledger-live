@@ -122,6 +122,7 @@ export default function AssetBalanceSummaryHeader({
         defaultAccount: account,
         defaultParentAccount: parentAccount,
         defaultCurrency: currency,
+        defaultAmountFrom: "0",
         from: history.location.pathname,
       },
     });
