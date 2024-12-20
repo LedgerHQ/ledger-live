@@ -121,7 +121,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
-    "@aptos-labs/ts-sdk": "^1.33.0",
+    "@aptos-labs/ts-sdk": "^1.33.1",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^6.0.2",
@@ -218,6 +218,7 @@
     "blakejs": "^1.2.1",
     "bs58": "^4.0.1",
     "casper-js-sdk": "^2.15.2",
+    "cbor": "^10.0.3",
     "date-fns": "^2.23.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
