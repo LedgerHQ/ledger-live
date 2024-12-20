@@ -160,6 +160,7 @@
     "xstate": "4.38.3"
   },
   "devDependencies": {
+    "@electron/fuses": "1.8.0",
     "@electron/notarize": "2.3.2",
     "@jest/globals": "29.7.0",
     "@ledgerhq/esbuild-utils": "workspace:*",
