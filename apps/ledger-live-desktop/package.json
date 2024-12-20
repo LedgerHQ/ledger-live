@@ -100,7 +100,6 @@
     "chart.js": "2.9.4",
     "color": "4.2.3",
     "dotenv": "16.4.5",
-    "electron-app-universal-protocol-client": "1.3.0",
     "electron-context-menu": "3.6.1",
     "electron-store": "8.2.0",
     "electron-updater": "6.1.8",
