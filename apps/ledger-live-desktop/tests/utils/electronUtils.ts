@@ -54,6 +54,8 @@ export async function launchApp({
     console.log("Electron application started successfully.");
 
     const page = await app.firstWindow();
+    const screenshot = await page.screenshot();
+    console.log(screenshot.toString("base64"));
 
     await page.evaluate(() => {
       window.saveLogs("tests/artifacts/logLLD.json");
