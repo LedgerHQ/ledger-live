@@ -7,7 +7,7 @@ import { calculateChangeAmount } from "./lib";
 // in this case outputs of [2000_0000, 2000_0000]
 const DEFAULT_MASS_1_OUTPUT: number = 506;
 const MASS_PER_INPUT: number = 1118;
-const MASS_UTXOS_PER_TX: number = 88;
+const MAX_UTXOS_PER_TX: number = 88;
 
 export const selectUtxosFIFO = (
   utxos: KaspaUtxo[],
@@ -60,13 +60,13 @@ function checkMaxSpendableAmountValidity(
 ): BigNumber {
   // first check if this strategy is really working for this amount
   const maxInputAmount = utxos
-    .slice(0, MASS_UTXOS_PER_TX)
+    .slice(0, MAX_UTXOS_PER_TX)
     .reduce((sum, utxo) => sum.plus(new BigNumber(utxo.utxoEntry.amount)), new BigNumber(0));
 
   //  storage mass can be neglected here
   // max compute mass for one output and 88 inputs is 98901
   let maxSpendableAmount = maxInputAmount.minus(
-    BigNumber(DEFAULT_MASS_1_OUTPUT + Math.min(MASS_UTXOS_PER_TX, utxos.length) * MASS_PER_INPUT),
+    BigNumber(DEFAULT_MASS_1_OUTPUT + Math.min(MAX_UTXOS_PER_TX, utxos.length) * MASS_PER_INPUT),
   );
   if (isEcdsaRecipient) {
     maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));

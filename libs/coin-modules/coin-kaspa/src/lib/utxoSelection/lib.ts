@@ -16,7 +16,7 @@ export function calculateChangeAmount(
   let fee = BigNumber(Math.ceil(mass * fee_rate));
   let changeAmount = sumBigNumber(inputs).minus(amount).minus(fee);
   let prev_fee: BigNumber | null = null;
-  let discard_change = false;
+  let discard_change = changeAmount.lt(0);
 
   while (prev_fee === null || !fee.eq(prev_fee)) {
     prev_fee = fee;
