@@ -15,11 +15,13 @@ export class KaspaHwTransaction {
   changeAddressType: number;
   changeAddressIndex: number;
   account: number;
+  fee: number;
 
   constructor(txData: {
     inputs: KaspaHwTransactionInput[];
     outputs: KaspaHwTransactionOutput[];
     version: number;
+    fee?: number;
     changeAddressType?: number;
     changeAddressIndex?: number;
     account?: number;
@@ -40,6 +42,7 @@ export class KaspaHwTransaction {
     this.changeAddressType = txData.changeAddressType ?? 0;
     this.changeAddressIndex = txData.changeAddressIndex ?? 0;
     this.account = txData.account ?? 0x80000000;
+    this.fee = txData.fee || 0;
 
     if (!(this.changeAddressType === 0 || this.changeAddressType === 1)) {
       throw new Error(`changeAddressType must be 0 or 1 if set`);

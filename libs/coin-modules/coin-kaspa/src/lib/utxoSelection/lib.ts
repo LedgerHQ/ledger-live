@@ -1,10 +1,14 @@
 import { calcComputeMass, calcStorageMass, calcTotalMass } from "../massCalcluation";
 import { BigNumber } from "bignumber.js";
+import { KaspaUtxo } from "../../types";
 
 const DEFAULT_MASS_2_OUTPUTS = 918;
 const ADDITIONAL_MASS_PER_INPUT = 1118;
 const MAX_MASS = 100_000;
 const THROWAWAY_CHANGE_THRESHOLD: BigNumber = BigNumber(1000_0000);
+
+const DEFAULT_MASS_1_OUTPUT: number = 506;
+const MAX_UTXOS_PER_TX: number = 88;
 
 export function calculateChangeAmount(
   inputs: BigNumber[],
@@ -66,6 +70,31 @@ export function calculateChangeAmount(
     mass,
   };
 }
+
+export const calcMaxSpendableAmount = (
+  utxos: KaspaUtxo[],
+  isEcdsaRecipient: boolean,
+): BigNumber => {
+  const maxInputAmount = utxos
+    .sort((a, b) =>
+      new BigNumber(b.utxoEntry.amount).minus(new BigNumber(a.utxoEntry.amount)).toNumber(),
+    )
+    .slice(0, MAX_UTXOS_PER_TX)
+    .reduce((sum, utxo) => sum.plus(new BigNumber(utxo.utxoEntry.amount)), new BigNumber(0));
+
+  //  storage mass can be neglected here
+  // max compute mass for one output and 88 inputs is 98901
+  let maxSpendableAmount = maxInputAmount.minus(
+    BigNumber(
+      DEFAULT_MASS_1_OUTPUT + Math.min(MAX_UTXOS_PER_TX, utxos.length) * ADDITIONAL_MASS_PER_INPUT,
+    ),
+  );
+  if (isEcdsaRecipient) {
+    maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));
+  }
+
+  return maxSpendableAmount;
+};
 
 export const sumBigNumber = (values: BigNumber[]): BigNumber => {
   return values.reduce((acc, v) => acc.plus(v), BigNumber(0));

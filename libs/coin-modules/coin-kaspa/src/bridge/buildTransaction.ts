@@ -80,5 +80,6 @@ export const buildTransaction = async (
     changeAddressType: accountAddresses.nextChangeAddress.type,
     changeAddressIndex: accountAddresses.nextChangeAddress.index,
     account: 0x80000000 + a.index, // account is hardened
+    fee: result.fee.toNumber(),
   });
 };

@@ -16,7 +16,6 @@ export const buildInitialOperation = (
     scriptPublicKeyToAddress(output.scriptPublicKey),
   );
   const value = BigNumber(transaction.outputs[0].value);
-
   const type = "OUT";
 
   const op: Operation = {
@@ -27,7 +26,7 @@ export const buildInitialOperation = (
     blockHash: null,
     blockHeight: null,
     senders,
-    fee: BigNumber(0),
+    fee: BigNumber(transaction.fee),
     recipients,
     accountId: id,
     date: new Date(),
