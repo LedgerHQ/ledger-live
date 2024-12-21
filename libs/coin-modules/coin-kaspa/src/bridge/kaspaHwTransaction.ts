@@ -117,6 +117,7 @@ export class KaspaHwTransactionInput {
   outpointIndex: number;
   addressType: number;
   addressIndex: number;
+  address: string;
 
   constructor(inputData: {
     value: number;
@@ -124,6 +125,7 @@ export class KaspaHwTransactionInput {
     outpointIndex: number;
     addressType: number;
     addressIndex: number;
+    address: string;
   }) {
     this.value = inputData.value;
     this.prevTxId = inputData.prevTxId;
@@ -132,6 +134,7 @@ export class KaspaHwTransactionInput {
     this.addressIndex = inputData.addressIndex;
     this.signature = null;
     this.sighash = null;
+    this.address = inputData.address;
   }
 
   serialize(): Buffer {

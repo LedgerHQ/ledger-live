@@ -89,6 +89,45 @@ function checksumToArray(checksum: number) {
   return result.reverse();
 }
 
+// Function to determine the version based on the scriptPublicKey string
+function determineVersionFromScriptPublicKey(scriptPublicKey: string): string {
+  if (
+    scriptPublicKey.startsWith("20") &&
+    scriptPublicKey.endsWith("ac") &&
+    scriptPublicKey.length == 68
+  ) {
+    return "schnorr";
+  } else if (
+    scriptPublicKey.startsWith("21") &&
+    scriptPublicKey.endsWith("ab") &&
+    scriptPublicKey.length === 70
+  ) {
+    return "ecdsa";
+  } else if (
+    scriptPublicKey.startsWith("aa20") &&
+    scriptPublicKey.endsWith("87") &&
+    scriptPublicKey.length === 70
+  ) {
+    return "p2sh";
+  }
+
+  throw new Error("Script public key version could not be determined.");
+}
+
+/**
+ * Converts a script public key to a corresponding address.
+ *
+ * @param {string} scriptPublicKey - The script public key to be converted.
+ * @param {boolean} [stripPrefix=false] - Optional flag to determine if the prefix should be stripped from the resulting address.
+ * @return {string} The address derived from the provided script public key.
+ */
+export function scriptPublicKeyToAddress(scriptPublicKey: string, stripPrefix?: boolean): string {
+  // determine version of script public key
+  const version = determineVersionFromScriptPublicKey(scriptPublicKey);
+  const publicKey = Buffer.from(scriptPublicKey.slice(version === "p2sh" ? 4 : 2, -2), "hex"); // Remove the prefix and suffix
+  return publicKeyToAddress(publicKey, stripPrefix, version);
+}
+
 export function publicKeyToAddress(
   hashBuffer: Buffer,
   stripPrefix?: boolean,

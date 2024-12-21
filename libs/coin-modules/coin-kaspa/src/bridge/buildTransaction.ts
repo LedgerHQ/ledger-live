@@ -51,6 +51,7 @@ export const buildTransaction = async (
       addressType: utxo.accountType,
       addressIndex: utxo.accountIndex,
       value: utxo.utxoEntry.amount.toNumber(),
+      address: utxo.address,
     });
   });
 

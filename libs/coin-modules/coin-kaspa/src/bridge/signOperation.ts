@@ -37,7 +37,7 @@ export const buildSignOperation =
 
         o.next({ type: "device-signature-granted" });
 
-        const operation = buildInitialOperation(account, transaction);
+        const operation = buildInitialOperation(account, tx);
 
         o.next({
           type: "signed",

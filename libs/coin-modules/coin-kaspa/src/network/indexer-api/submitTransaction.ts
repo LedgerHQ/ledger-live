@@ -20,7 +20,7 @@ export const submitTransaction = async (
       throw new Error(`Failed to submit transaction. Status: ${response.status}`);
     }
 
-    const txId: string = await response.text();
+    const txId: string = (await response.json()).transactionId;
     return {
       txId,
     };

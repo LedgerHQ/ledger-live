@@ -1,8 +1,9 @@
 import {
   addressToPublicKey,
-  addressToScriptPublicKey, isValidKaspaAddress,
+  addressToScriptPublicKey,
+  isValidKaspaAddress,
   parseExtendedPublicKey,
-  publicKeyToAddress
+  publicKeyToAddress, scriptPublicKeyToAddress
 } from "../kaspa-util";
 
 describe("addressToPublicKey", () => {
@@ -214,4 +215,41 @@ describe("isValidKaspaAddress", () => {
     const verificationStatus = isValidKaspaAddress(address);
     expect(verificationStatus).toBe(false);
   });
+});
+
+describe("scriptPublicKeyToAddress", () => {
+  it("should correctly convert a schnorr scriptPublicKey to an address", () => {
+    const scriptPublicKey = "202c0b0a4c1f84e31b7234adb319ae970b6943592f0eae5e8513fcc476d0d211a5ac";
+    const expectedAddress = "kaspa:qqkqkzjvr7zwxxmjxjkmxxdwju9kjs6e9u82uh59z07vgaks6gg62v8707g73";
+
+    const result = scriptPublicKeyToAddress(scriptPublicKey);
+
+    expect(result).toBe(expectedAddress);
+  });
+
+  it("should correctly convert a ECDSA scriptPublicKey to an address", () => {
+    const scriptPublicKey = "2103bfa30686df5a375dc145bf69722d99c482c2b12c37ec9e6c5d459133b18230bdab";
+    const expectedAddress = "kaspa:qypmlgcxsm045d6ac9zm76tj9kvufqkzkykr0my7d3w5tyfnkxprp0g9lhr329c";
+
+    const result = scriptPublicKeyToAddress(scriptPublicKey);
+
+    expect(result).toBe(expectedAddress);
+  });
+
+  it("should correctly convert a P2SH scriptPublicKey to an address", () => {
+    const scriptPublicKey = "aa209c5809e7f2aad6f0eaec0389083d6c2beae8dbabf47cd3d354cf4b15dacee4a987";
+    const expectedAddress = "kaspa:pzw9sz08724ddu82aspcjzpads4746xm4068e57n2n85k9w6emj2j450rc47a";
+
+    const result = scriptPublicKeyToAddress(scriptPublicKey);
+
+    expect(result).toBe(expectedAddress);
+  });
+
+  it("incorrect scriptPublicKey throws error", () => {
+    const scriptPublicKey = "aa219c5809e7f2aad6f0eaec0389083d6c2beae8dbabf47cd3d354cf4b15dacee4a987";
+    const expectedAddress = "kaspa:pzw9sz08724ddu82aspcjzpads4746xm4068e57n2n85k9w6emj2j450rc47a";
+
+    expect(() => scriptPublicKeyToAddress(scriptPublicKey)).toThrow();
+  });
+
 });
