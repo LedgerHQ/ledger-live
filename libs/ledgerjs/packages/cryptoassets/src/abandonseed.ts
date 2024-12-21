@@ -42,6 +42,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
   bsc: EVM_DEAD_ADDRESS,
   solana: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
+  solana_testnet: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
+  solana_devnet: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
   polygon: EVM_DEAD_ADDRESS,
   crypto_org: "cro1r3ywhs4ng96dnm9zkc5y3etl7tps5cvvz26lr4",
   crypto_org_croeseid: "cro1r3ywhs4ng96dnm9zkc5y3etl7tps5cvvz26lr4",

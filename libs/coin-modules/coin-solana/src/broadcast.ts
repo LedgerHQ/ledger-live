@@ -3,6 +3,7 @@ import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "./errors";
+import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 
 export const broadcastWithAPI = async (
   {
@@ -14,10 +15,13 @@ export const broadcastWithAPI = async (
   },
   api: ChainAPI,
 ): Promise<Operation> => {
-  const { signature, operation } = signedOperation;
+  const { signature, operation, rawData } = signedOperation;
 
   try {
-    const txSignature = await api.sendRawTransaction(Buffer.from(signature, "hex"));
+    const txSignature = await api.sendRawTransaction(
+      Buffer.from(signature, "hex"),
+      rawData?.recentBlockhash as BlockhashWithExpiryBlockHeight,
+    );
     return patchOperationWithHash(operation, txSignature);
   } catch (e: any) {
     // heuristics to make some errors more user friendly

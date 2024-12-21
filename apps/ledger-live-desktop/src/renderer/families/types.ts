@@ -169,6 +169,7 @@ export type LLDCoinFamily<
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
+      device: Device;
     }>;
 
     footer?: React.ComponentType<{
