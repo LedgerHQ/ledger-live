@@ -322,15 +322,16 @@ const Header = ({ text, areAllSelected, onSelectAll, onUnselectAll }: HeaderProp
     <Flex paddingX={16} flexDirection="row" alignItems="center" paddingBottom={8}>
       <Text
         fontWeight="semiBold"
-        flexGrow={1}
+        flexShrink={1}
         variant="small"
         textTransform="uppercase"
         color="neutral.c70"
+        numberOfLines={1}
       >
         {text}
       </Text>
       {shouldDisplaySelectAll && (
-        <Flex flexShrink={1}>
+        <Flex flexGrow={1} alignItems="flex-end">
           <TouchableOpacity
             onPress={areAllSelected ? onUnselectAll : onSelectAll}
             hitSlop={selectAllHitSlop}
@@ -339,6 +340,7 @@ const Header = ({ text, areAllSelected, onSelectAll, onUnselectAll }: HeaderProp
               fontSize={14}
               color="neutral.c70"
               testID={`add-accounts-${areAllSelected ? "deselect" : "select"}-all`}
+              numberOfLines={1}
             >
               {areAllSelected ? (
                 <Trans i18nKey="selectableAccountsList.deselectAll" />

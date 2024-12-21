@@ -314,6 +314,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZClassic unit (zclassic) 1`] = `"123.456.789,00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
@@ -645,6 +647,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZClassic unit (zclassic) 1`] = `"123,456,789.00000000- -ZCL"`;
 
@@ -978,6 +982,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZClassic unit (zclassic) 1`] = `"123.456.789,00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
@@ -1309,6 +1315,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Waves unit (WAVES) 1`] = `"123 456 789,00000000- -WAVES"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format XRP unit (XRP) 1`] = `"12 345 678 900,000000- -XRP"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Xion unit (Xion) 1`] = `"12 345 678 900,000000- -XION"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZClassic unit (zclassic) 1`] = `"123 456 789,00000000- -ZCL"`;
 
@@ -1642,6 +1650,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZClassic unit (zclassic) 1`] = `"123,456,789.00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
@@ -1973,6 +1983,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZClassic unit (zclassic) 1`] = `"123,456,789.00000000- -ZCL"`;
 
@@ -2306,6 +2318,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZClassic unit (zclassic) 1`] = `"123.456.789,00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
@@ -2637,6 +2651,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Waves unit (WAVES) 1`] = `"123 456 789,00000000- -WAVES"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format XRP unit (XRP) 1`] = `"12 345 678 900,000000- -XRP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Xion unit (Xion) 1`] = `"12 345 678 900,000000- -XION"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZClassic unit (zclassic) 1`] = `"123 456 789,00000000- -ZCL"`;
 
@@ -2970,6 +2986,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZClassic unit (zclassic) 1`] = `"123.456.789,00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
@@ -3302,6 +3320,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZClassic unit (zclassic) 1`] = `"123,456,789.00000000- -ZCL"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
@@ -3633,6 +3653,8 @@ exports[`formatCurrencyUnit with default options should correctly format Wanchai
 exports[`formatCurrencyUnit with default options should correctly format Waves unit (WAVES) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format XRP unit (XRP) 1`] = `"12,345,678,900"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Xion unit (Xion) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format ZClassic unit (zclassic) 1`] = `"123,456,789"`;
 

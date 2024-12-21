@@ -257,6 +257,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultCurrency: currency,
         defaultAccount: account,
         defaultParentAccount: parentAccount,
+        defaultAmountFrom: "0",
         from: history.location.pathname,
       },
     });

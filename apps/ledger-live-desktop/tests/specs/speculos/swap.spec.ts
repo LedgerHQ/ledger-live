@@ -149,7 +149,7 @@ const swaps = [
     swap: new Swap(
       Account.ETH_USDC_1,
       Account.ETH_1,
-      "45",
+      "65",
       Fee.MEDIUM,
       Provider.EXODUS,
       Rate.FLOAT,
@@ -171,7 +171,7 @@ const swaps = [
     swap: new Swap(
       Account.ETH_USDC_1,
       Account.BTC_NATIVE_SEGWIT_1,
-      "45",
+      "65",
       Fee.MEDIUM,
       Provider.EXODUS,
       Rate.FLOAT,
