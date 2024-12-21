@@ -1,5 +1,21 @@
 # @ledgerhq/coin-cosmos
 
+## 0.3.0-nightly.7
+
+### Minor Changes
+
+- [#8374](https://github.com/LedgerHQ/ledger-live/pull/8374) [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d) Thanks [@qperrot](https://github.com/qperrot)! - move crypto_org into cosmos coin module
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+### Patch Changes
+
+- Updated dependencies [[`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
+  - @ledgerhq/cryptoassets@13.8.0-nightly.0
+  - @ledgerhq/types-live@6.55.0-nightly.4
+  - @ledgerhq/types-cryptoassets@7.18.0-nightly.0
+  - @ledgerhq/coin-framework@0.21.0-nightly.6
+
 ## 0.3.0-nightly.6
 
 ### Patch Changes

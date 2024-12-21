@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.59.0-nightly.14
+
+### Minor Changes
+
+- [#8374](https://github.com/LedgerHQ/ledger-live/pull/8374) [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d) Thanks [@qperrot](https://github.com/qperrot)! - move crypto_org into cosmos coin module
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+- [#8712](https://github.com/LedgerHQ/ledger-live/pull/8712) [`72b3042`](https://github.com/LedgerHQ/ledger-live/commit/72b304281f04fd903d57f650b3908e439d599584) Thanks [@thesan](https://github.com/thesan)! - Fix camera rendering right after granting access
+
+- [#8739](https://github.com/LedgerHQ/ledger-live/pull/8739) [`fcfa219`](https://github.com/LedgerHQ/ledger-live/commit/fcfa2199c27b52b3fd08bdd21a0684516842a548) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add an ellipsis to the Add account title when too long
+
+- [#8708](https://github.com/LedgerHQ/ledger-live/pull/8708) [`fd44b1c`](https://github.com/LedgerHQ/ledger-live/commit/fd44b1ccbb3f847f9b4b6ec712df6c27643a78f0) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Adds LNS error on LLM when swapping unsupported assets. Updates translations
+
+### Patch Changes
+
+- Updated dependencies [[`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
+  - @ledgerhq/types-live@6.55.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.3.0-nightly.7
+  - @ledgerhq/live-common@34.16.0-nightly.13
+  - @ledgerhq/types-cryptoassets@7.18.0-nightly.0
+  - @ledgerhq/coin-framework@0.21.0-nightly.6
+  - @ledgerhq/coin-elrond@0.2.0-nightly.6
+  - @ledgerhq/coin-evm@2.7.0-nightly.6
+  - @ledgerhq/coin-filecoin@1.4.0-nightly.6
+  - @ledgerhq/coin-stacks@0.3.0-nightly.7
+  - @ledgerhq/live-countervalues@0.2.15-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.15-nightly.6
+  - @ledgerhq/live-nft@0.5.0-nightly.6
+  - @ledgerhq/live-nft-react@0.5.0-nightly.6
+  - @ledgerhq/live-wallet@0.8.0-nightly.6
+  - @ledgerhq/domain-service@1.2.14-nightly.4
+  - @ledgerhq/native-ui@0.27.0-nightly.1
+
 ## 3.59.0-nightly.13
 
 ### Minor Changes

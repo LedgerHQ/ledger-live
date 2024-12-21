@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.9.0-nightly.13
+
+### Minor Changes
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+### Patch Changes
+
+- Updated dependencies [[`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
+  - @ledgerhq/cryptoassets@13.8.0-nightly.0
+  - @ledgerhq/live-common@34.16.0-nightly.13
+  - @ledgerhq/coin-framework@0.21.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.9.0-nightly.7
+  - @ledgerhq/live-countervalues@0.2.15-nightly.6
+  - @ledgerhq/live-wallet@0.8.0-nightly.6
+  - @ledgerhq/device-core@0.4.9-nightly.4
+
 ## 24.8.3-nightly.12
 
 ### Patch Changes
