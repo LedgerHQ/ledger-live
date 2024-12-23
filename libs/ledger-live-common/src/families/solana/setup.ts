@@ -13,10 +13,22 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
+import { FirmwareOrAppUpdateRequired, TransportStatusError } from "@ledgerhq/errors";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 
 const TRUSTED_NAME_MIN_VERSION = "1.6.1";
+
+async function checkVersion(app: Solana) {
+  const { version } = await app.getAppConfiguration();
+  if (semver.lt(version, TRUSTED_NAME_MIN_VERSION)) {
+    throw new FirmwareOrAppUpdateRequired();
+  }
+}
+
+function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
+  return err instanceof TransportStatusError && err.message.includes("0x6a81");
+}
 
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   const app = new Solana(transport);
@@ -33,11 +45,17 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
             resolution.deviceModelId,
           );
 
-          await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
+          try {
+            await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
+          } catch (err) {
+            if (isPKIUnsupportedError(err)) {
+              throw new FirmwareOrAppUpdateRequired();
+            }
+          }
 
-          // TODO throw error to update the app and os if wrong version of the app instead of allowing non clear signing flows
-          const { version } = await app.getAppConfiguration();
-          if (resolution.tokenAddress && semver.gte(version, TRUSTED_NAME_MIN_VERSION)) {
+          if (resolution.tokenAddress) {
+            await checkVersion(app);
+
             const challenge = await app.getChallenge();
             const { signedDescriptor } = await trustService.getOwnerAddress(
               resolution.tokenAddress,
@@ -48,7 +66,9 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
               await app.provideTrustedName(signedDescriptor);
             }
           }
-          if (resolution.createATA && semver.gte(version, TRUSTED_NAME_MIN_VERSION)) {
+          if (resolution.createATA) {
+            await checkVersion(app);
+
             const challenge = await app.getChallenge();
             const { signedDescriptor } = await trustService.computedTokenAddress(
               resolution.createATA.address,
