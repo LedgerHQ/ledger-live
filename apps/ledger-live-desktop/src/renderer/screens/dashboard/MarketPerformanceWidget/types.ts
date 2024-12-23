@@ -50,3 +50,5 @@ export enum Order {
   asc = "asc",
   desc = "desc",
 }
+
+export type CurrencyCheck = "onRamp" | "swap";
