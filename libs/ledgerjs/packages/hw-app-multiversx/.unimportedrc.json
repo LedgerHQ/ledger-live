@@ -1,4 +1,5 @@
 {
-    "entry": ["src/MultiversX.ts"],
-    "ignoreUnimported": []
-  }
+  "entry": ["src/MultiversX.ts"],
+  "ignoreUnimported": [],
+  "ignoreUnused": ["axios"]
+}
