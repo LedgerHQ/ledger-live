@@ -200,7 +200,8 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "SENDING" : "보내기"
+      "SENDING" : "보내기",
+      "BURN" : "소각됨"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -441,6 +442,14 @@
       "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ does not support swapping Ton",
+      "ton_description" : "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ does not support swapping Solana tokens",
+      "spl_tokens_description" : "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ does not support swapping Cardano",
+      "ada_description" : "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "검증인 그룹",
           "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
           "totalVotes" : "총 투표수",
           "commission" : "커미션"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "출금 가능",
       "statusUpdateNotice" : "거래 확인 후 위임 상태가 업데이트됩니다.",
       "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
       "emptyState" : {
         "description" : "자산을 위임하여 SOL 보상을 받을 수 있습니다.",
         "info" : "위임은 어떤 원리인가요?",
@@ -3715,6 +3726,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "ethereum" : {
@@ -3880,6 +3895,7 @@
           },
           "validator" : {
             "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4147,6 +4163,7 @@
             "link" : "링크",
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
+            "tag" : "태그",
             "url" : "URL",
             "path" : "경로"
           }
@@ -6166,6 +6183,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
