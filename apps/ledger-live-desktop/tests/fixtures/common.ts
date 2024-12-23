@@ -5,6 +5,7 @@ import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
+import invariant from "invariant";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
@@ -110,6 +111,8 @@ export const test = base.extend<TestFixtures>({
           testInfo.title.replace(/ /g, "_"),
           specs[speculosApp.name.replace(/ /g, "_")],
         );
+        invariant(device, "[E2E Setup] Speculos not started");
+
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
         setEnv("MOCK", "");
 
