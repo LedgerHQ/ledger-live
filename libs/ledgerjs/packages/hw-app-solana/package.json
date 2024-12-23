@@ -29,8 +29,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "bip32-path": "^0.4.2",
-    "semver": "7.6.3"
+    "bip32-path": "^0.4.2"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
