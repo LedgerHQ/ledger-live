@@ -200,7 +200,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -441,6 +442,14 @@
       "description" : "A Ledger Nano S™ não é compatível com a THORChain Você pode usar a Ledger Nano S Plus, a Ledger Nano X, a Ledger Stax ou a Ledger Flex e realizar trocas cross-chain pela THORChain através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ does not support swapping Ton",
+      "ton_description" : "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ does not support swapping Solana tokens",
+      "spl_tokens_description" : "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ does not support swapping Cardano",
+      "ada_description" : "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "Grupo de validadores",
           "ledgerByFigmentTC" : "Ledger por Figment T&Cs",
+          "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
           "totalVotes" : "Total de votos",
           "commission" : "Comissão"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "Sacáveis",
       "statusUpdateNotice" : "O status da delegação será atualizado quando a transação for confirmada.",
       "ledgerByFigmentTC" : "Ledger por Figment T&Cs",
+      "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
       "emptyState" : {
         "description" : "Você pode ganhar recompensas em SOL delegando seus ativos.",
         "info" : "Como funciona a delegação",
@@ -3715,6 +3726,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "ethereum" : {
@@ -3880,6 +3895,7 @@
           },
           "validator" : {
             "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
             "ledgerByFigmentTC" : "Ledger por Figment T&Cs"
           },
           "connectDevice" : {
@@ -4147,6 +4163,7 @@
             "link" : "Link",
             "secondaryCta" : "CTA secundário",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Path"
           }
@@ -6166,6 +6183,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
