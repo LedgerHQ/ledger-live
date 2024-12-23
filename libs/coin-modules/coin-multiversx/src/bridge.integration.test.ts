@@ -136,7 +136,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     // multiversx,
-    elrond
+    elrond,
   },
 };
 

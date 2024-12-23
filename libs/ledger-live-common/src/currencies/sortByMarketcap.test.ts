@@ -24,7 +24,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "cosmos",
     "near",
     "injective",
-    "multiversx",
+    "elrond",
     "tezos",
     "celo",
     "osmo",

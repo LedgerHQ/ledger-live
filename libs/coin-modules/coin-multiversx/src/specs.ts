@@ -157,7 +157,7 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
 
 const multiversx: AppSpec<Transaction> = {
   name: "MultiversX",
-  currency: getCryptoCurrencyById("multiversx"),
+  currency: getCryptoCurrencyById("elrond"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "MultiversX",
