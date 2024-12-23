@@ -200,7 +200,8 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "SENDING" : "Envoi"
+      "SENDING" : "Envoi",
+      "BURN" : "Brûlé"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -442,6 +443,14 @@
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ does not support swapping Ton",
+      "ton_description" : "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ does not support swapping Solana tokens",
+      "spl_tokens_description" : "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ does not support swapping Cardano",
+      "ada_description" : "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+    },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
       "learnMore" : "Qu’est-ce que le Swap ?",
@@ -502,7 +511,7 @@
           "to" : "À",
           "toExchange" : "Montant à envoyer",
           "toReceive" : "Montant à recevoir",
-          "terms" : "Conditions d’utilisation",
+          "terms" : "Conditions générales",
           "disclaimer" : {
             "description" : "En choisissant Confirmer, je reconnais et j’accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>.",
             "acceptedDescription" : "Ce service est exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>."
@@ -2344,7 +2353,7 @@
         "ethereumMaxFee" : "Frais maximaux ({{unitName}})",
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
         "nextBlock" : "Bloc suivant",
-        "suggested" : "Suggérés",
+        "suggested" : "Suggéré",
         "unitPerByte" : "{{unit}} par byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
@@ -3036,7 +3045,8 @@
         },
         "validatorGroup" : {
           "title" : "Groupe de validateurs",
-          "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+          "ledgerByFigmentTC" : "CG de Ledger by Figment",
+          "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
           "totalVotes" : "Total des votes",
           "commission" : "Commission"
         }
@@ -3625,7 +3635,8 @@
       "withdrawableInfoTooltip" : "Montant total pouvant être retiré des délégations",
       "withdrawableTitle" : "Disponible au retrait",
       "statusUpdateNotice" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
-      "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+      "ledgerByFigmentTC" : "CG de Ledger by Figment",
+      "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
       "emptyState" : {
         "description" : "Vous pouvez gagner des récompenses en SOL en déléguant vos actifs.",
         "info" : "Fonctionnement de la délégation",
@@ -3715,6 +3726,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "ethereum" : {
@@ -3880,7 +3895,8 @@
           },
           "validator" : {
             "title" : "Validateurs",
-            "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment"
+            "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "CG de Ledger by Figment"
           },
           "connectDevice" : {
             "title" : "Appareil"
@@ -4075,7 +4091,7 @@
         "button" : "Terminé",
         "title" : "Scannez pour exporter vers Ledger Live mobile",
         "listTitle" : "Sur l’application Ledger Live pour le mobile :",
-        "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Afficher tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
+        "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Voir tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
         "step3" : "Scannez <highlight>le code QR</highlight> jusqu’à ce que la barre soit à 100 %."
       }
@@ -4147,6 +4163,7 @@
             "link" : "Lien",
             "secondaryCta" : "CTA secondaire",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Chemin"
           }
@@ -4692,7 +4709,7 @@
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
-        "termsAndConditions" : "Conditions d’utilisation",
+        "termsAndConditions" : "Conditions générales",
         "and" : "et",
         "privacyPolicy" : "Politique de confidentialité",
         "steps" : {
@@ -5380,7 +5397,7 @@
       "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire.",
       "fee" : "Frais",
       "feeInfoText" : "Des frais de transaction minimaux de 0,00001 XLM sont nécessaires pour effectuer une transaction sur Stellar.",
-      "suggested" : "Suggérés",
+      "suggested" : "Suggéré",
       "recommendedFee" : "Frais recommandés",
       "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
       "networkCongestion" : "Activité sur le réseau",
@@ -6166,6 +6183,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Mémo trop long. Longueur maximale : {{maxLength}}"
