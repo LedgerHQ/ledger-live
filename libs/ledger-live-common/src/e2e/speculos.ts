@@ -277,7 +277,11 @@ export async function startSpeculos(
   const { model } = appQuery;
   const { dependencies } = spec;
   const newAppQuery = dependencies?.map(dep => {
-    return findLatestAppCandidate(appCandidates, { model, appName: dep.name });
+    return findLatestAppCandidate(appCandidates, {
+      model,
+      appName: dep.name,
+      firmware: appCandidate?.firmware,
+    });
   });
   const appVersionMap = new Map(newAppQuery?.map(app => [app?.appName, app?.appVersion]));
   dependencies?.forEach(dependency => {
