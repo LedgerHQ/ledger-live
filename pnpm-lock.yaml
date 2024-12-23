@@ -5232,9 +5232,6 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
-      semver:
-        specifier: 7.6.3
-        version: 7.6.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -12900,8 +12897,6 @@ packages:
   '@react-native/babel-preset@0.74.87':
     resolution: {integrity: sha512-hyKpfqzN2nxZmYYJ0tQIHG99FQO0OWXp/gVggAfEUgiT+yNKas1C60LuofUsK7cd+2o9jrpqgqW4WzEDZoBlTg==}
     engines: {node: '>=18'}
-    peerDependencies:
-      '@babel/core': '*'
 
   '@react-native/babel-preset@0.75.4':
     resolution: {integrity: sha512-UtyYCDJ3rZIeggyFEfh/q5t/FZ5a1h9F8EI37Nbrwyk/OKPH+1XS4PbHROHJzBARlJwOAfmT75+ovYUO0eakJA==}
@@ -39111,7 +39106,7 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@react-native/babel-preset@0.74.87(@babel/core@7.24.3)':
+  '@react-native/babel-preset@0.74.87':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.24.3)
@@ -39160,7 +39155,7 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@react-native/babel-preset@0.74.87(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))':
+  '@react-native/babel-preset@0.74.87(@babel/preset-env@7.24.3(@babel/core@7.24.3))':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.24.3)
@@ -39508,7 +39503,7 @@ snapshots:
   '@react-native/metro-babel-transformer@0.74.87':
     dependencies:
       '@babel/core': 7.24.3
-      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
+      '@react-native/babel-preset': 0.74.87
       hermes-parser: 0.19.1
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -46433,7 +46428,7 @@ snapshots:
       '@babel/plugin-transform-parameters': 7.25.9(@babel/core@7.24.3)
       '@babel/preset-react': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
-      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)
+      '@react-native/babel-preset': 0.74.87
       babel-plugin-react-compiler: 0.0.0-experimental-592953e-20240517
       babel-plugin-react-native-web: 0.19.13
       react-refresh: 0.14.2
@@ -46450,7 +46445,7 @@ snapshots:
       '@babel/plugin-transform-parameters': 7.25.9(@babel/core@7.24.3)
       '@babel/preset-react': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
-      '@react-native/babel-preset': 0.74.87(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))
+      '@react-native/babel-preset': 0.74.87(@babel/preset-env@7.24.3(@babel/core@7.24.3))
       babel-plugin-react-compiler: 0.0.0-experimental-592953e-20240517
       babel-plugin-react-native-web: 0.19.13
       react-refresh: 0.14.2
