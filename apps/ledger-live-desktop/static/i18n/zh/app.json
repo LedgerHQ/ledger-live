@@ -200,7 +200,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "SENDING" : "发送"
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -441,6 +442,14 @@
       "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ does not support swapping Ton",
+      "ton_description" : "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ does not support swapping Solana tokens",
+      "spl_tokens_description" : "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ does not support swapping Cardano",
+      "ada_description" : "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "验证者组",
           "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
           "totalVotes" : "总投票数",
           "commission" : "佣金"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
       "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
       "emptyState" : {
         "description" : "您可以通过委托资产赚取 SOL 奖励。",
         "info" : "委托机制如何运作",
@@ -3715,6 +3726,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum" : {
@@ -3880,6 +3895,7 @@
           },
           "validator" : {
             "title" : "验证者",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
             "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件"
           },
           "connectDevice" : {
@@ -4147,6 +4163,7 @@
             "link" : "链接",
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
+            "tag" : "标签",
             "url" : "网址",
             "path" : "路径"
           }
@@ -6166,6 +6183,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
