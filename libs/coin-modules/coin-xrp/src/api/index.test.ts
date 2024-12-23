@@ -112,7 +112,6 @@ describe("listOperations", () => {
           type: "Payment",
           value: expectedValue,
           fee: BigInt(10),
-          blockHeight: 1,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,
@@ -129,7 +128,6 @@ describe("listOperations", () => {
           type: "Payment",
           value: expectedValue,
           fee: BigInt(10),
-          blockHeight: 1,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,
@@ -149,7 +147,6 @@ describe("listOperations", () => {
           type: "Payment",
           value: expectedValue,
           fee: BigInt(10),
-          blockHeight: 1,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,

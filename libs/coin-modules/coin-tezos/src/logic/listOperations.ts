@@ -13,11 +13,10 @@ export type Operation = {
   type: string;
   value: bigint;
   fee: bigint;
-  blockHeight: number;
-  block?: {
-    hash: string;
+  block: {
+    hash?: string;
     height: number;
-    time: Date;
+    time?: Date;
   };
   senders: string[];
   recipients: string[];
@@ -58,7 +57,6 @@ function convertOperation(
     value: BigInt(amount),
     // storageFee for transaction is always present
     fee: BigInt(storageFee ?? 0),
-    blockHeight: block.level,
     block: {
       hash: block.hash,
       height: block.level,

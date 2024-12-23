@@ -1,7 +1,7 @@
 export type BlockInfo = {
   height: number;
-  hash: string;
-  time: Date;
+  hash?: string;
+  time?: Date;
 };
 
 export type Operation = {
@@ -10,8 +10,7 @@ export type Operation = {
   type: string;
   value: bigint;
   fee: bigint;
-  blockHeight: number;
-  block?: BlockInfo;
+  block: BlockInfo;
   senders: string[];
   recipients: string[];
   date: Date;
