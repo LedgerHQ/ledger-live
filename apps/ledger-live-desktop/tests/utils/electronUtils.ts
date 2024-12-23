@@ -16,7 +16,7 @@ export async function launchApp({
   simulateCamera?: string;
   windowSize: { width: number; height: number };
 }): Promise<ElectronApplication> {
-  const app = await electron.launch({
+  return await electron.launch({
     args: [
       `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
       `--user-data-dir=${userdataDestinationPath}`,
@@ -41,15 +41,4 @@ export async function launchApp({
     executablePath: require("electron/index.js"),
     timeout: 120000,
   });
-
-  const page = await app.firstWindow();
-  page.setDefaultTimeout(120000);
-  console.warn("FIRST WINDOW");
-  console.warn((await page.screenshot()).toString("base64"));
-  await page.waitForLoadState("domcontentloaded");
-  await page.waitForSelector("#loader-container", { state: "hidden" });
-  console.warn("SECOND WINDOW");
-  console.warn((await page.screenshot()).toString("base64"));
-
-  return app;
 }
