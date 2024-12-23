@@ -12,7 +12,7 @@ import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerforma
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
 
-export function WidgetList({ data, order, range, top }: PropsBody) {
+export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;
 
   return (
@@ -21,14 +21,21 @@ export function WidgetList({ data, order, range, top }: PropsBody) {
         <MissingData order={order} range={range} top={top} />
       ) : (
         data.map((elem, i) => (
-          <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} range={range} />
+          <WidgetRow
+            key={i}
+            index={i + 1}
+            data={elem}
+            isFirst={i === 0}
+            range={range}
+            enableNewFeature={enableNewFeature}
+          />
         ))
       )}
     </Flex>
   );
 }
 
-function WidgetRow({ data, index, range }: PropsBodyElem) {
+function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const history = useHistory();
@@ -45,7 +52,12 @@ function WidgetRow({ data, index, range }: PropsBodyElem) {
   }, [data, history]);
 
   return (
-    <MainContainer justifyContent="space-between" py="6px" onClick={onCurrencyClick}>
+    <MainContainer
+      justifyContent="space-between"
+      py="6px"
+      onClick={enableNewFeature ? onCurrencyClick : undefined}
+      featureFlagEnabled={enableNewFeature}
+    >
       <Flex alignItems="center" flex={1}>
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
@@ -116,18 +128,22 @@ function WidgetRow({ data, index, range }: PropsBodyElem) {
   );
 }
 
-const MainContainer = styled(Flex)`
+const MainContainer = styled(Flex)<{ featureFlagEnabled?: boolean }>`
   transition:
     background-color 0.35s ease,
     padding 0.35s ease;
   border-radius: 12px;
 
-  &:hover {
-    transition-delay: 0.15s;
-    background-color: ${p => p.theme.colors.opacityDefault.c05};
-    padding: 6px 12px;
-    cursor: pointer;
-  }
+  ${({ featureFlagEnabled, theme }) =>
+    featureFlagEnabled &&
+    `
+      &:hover {
+        transition-delay: 0.15s;
+        background-color: ${theme.colors.opacityDefault.c05};
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+    `}
 `;
 
 const CryptoCurrencyIconWrapper = styled(Flex)<{

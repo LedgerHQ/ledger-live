@@ -70,6 +70,7 @@ const getMarketWidgetAnalytics = (state: State) => {
 
   return {
     hasMarketWidget: !marketWidget?.enabled ? "Null" : hasMarketWidgetActivated ? "Yes" : "No",
+    hasSeenWidgetImprovements: marketWidget?.params?.enableNewFeature ? "Yes" : "No",
   };
 };
 
