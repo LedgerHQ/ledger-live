@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -1287,20 +1293,20 @@
     "title" : "أنت بحاجة إلى جهاز Ledger",
     "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
     "cta" : "اشترِ محفظتك Ledger الآن",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "لديّ جهاز Ledger بالفعل، لنعده",
+    "bannerTitle" : "مستوى عالي التطور من الأمان لأصولك المشفرة ورموزك غير القابلة للاستبدال",
+    "bannerTitle2" : "ستحتاج إلى جهاز Ledger لتكون قادراً على التداول",
+    "bannerSubtitle" : "بواسطة Ledger Flex",
+    "bannerButtonTitle" : "اكتشف Flex",
+    "bannerButtonTitle2" : "شراء Ledger",
+    "setupCta" : "لديّ جهاز Ledger بالفعل، لنعده"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "هل حصلت على جهازك Ledger بعد؟",
+    "desc" : "بمجرد أن يكون لديك جهازك Ledger، قم بإعداده للوصول إلى كل ميزات تطبيق Ledger Live.",
+    "cta" : "إعداد جهازي Ledger",
+    "bannerTitle" : "تلقيت جهازك Ledger؟",
+    "bannerCta" : "ابدأ الإعداد",
     "continue" : "متابعة"
   },
   "purchaseDevice" : {
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "تم الشراء بنجاح",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "شكراً على ثقتك في Ledger",
+    "desc" : "طلبك قيد المعالجة.\nيُرجى أن تتحقق من بريدك الإلكتروني للعثور على تأكيد طلبك."
   },
   "discover" : {
     "title" : "اكتشف",
@@ -2342,7 +2348,8 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
-    "seelAllAssets" : "رؤية جميع الأصول",
+    "seeAllAssets" : "رؤية جميع الأصول",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
@@ -2749,6 +2756,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "الأصول"
+  },
   "accounts" : {
     "title" : "الحسابات",
     "cryptoAccountsTitle" : "حسابات {{currencyTicker}}",
@@ -3091,6 +3101,13 @@
       "desc" : "جرّب ميزات المطور وأخبرنا برأيك.",
       "customManifest" : {
         "title" : "تحميل بيان المنصة المخصص"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "وضع المطور لمنصة التداول",
+        "description" : "إضافة معلومات مُزوّد منصة التداول",
+        "placeholder" : "معلومات مُزوّد التداول بصيغة CAL",
+        "currentSetting" : "الإعداد الحالي",
+        "error" : "قيمة CAL غير صالحة"
       }
     },
     "debug" : {
@@ -3271,7 +3288,7 @@
     },
     "stake" : {
       "title" : "تكديس",
-      "description" : "Get rewards on your crypto."
+      "description" : "احصل على مكافآت على أصولك المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -3460,6 +3477,16 @@
         "providers" : {
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "contact_support" : "تواصل مع دعم العملاء",
+        "ton_title" : "Ledger Nano S™ does not support swapping Ton",
+        "ton_description" : "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "spl_tokens_title" : "Ledger Nano S™ does not support swapping Solana tokens",
+        "spl_tokens_description" : "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ada_title" : "Ledger Nano S™ does not support swapping Cardano",
+        "ada_description" : "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -3954,6 +3981,7 @@
   },
   "addAccounts" : {
     "addNew" : "إضافة جديد",
+    "addNewOrExisting" : "إضافة حساب جديد أو موجود",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit أم Native SegWit؟"
     },
@@ -5905,6 +5933,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "near" : {
@@ -6912,6 +6944,13 @@
         "title" : "المزامنة مع تطبيق Ledger Live آخر",
         "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "هذا التطبيق لم يعد متزامناً",
+          "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على التطبيق الذي تقوم بالمزامنة معه.",
+          "cta" : "تشغيل مزامنة Ledger"
+        }
+      },
       "manageKey" : {
         "title" : "حذف المزامنة",
         "description" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة ستتوقف عن المزامنة.",
@@ -6922,6 +6961,11 @@
           "cancel" : "إبقاء المزامنة",
           "title" : "متأكد أنك تريد حذف المزامنة؟",
           "desc" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة لن تكون متزامنة بعد الآن. هذا لا يؤثر على أموالك بأي طريقة."
+        },
+        "error" : {
+          "title" : "هذا التطبيق لم يعد متزامناً",
+          "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على التطبيق الذي تقوم بالمزامنة معه.",
+          "cta" : "تشغيل مزامنة Ledger"
         }
       },
       "manageInstances" : {
