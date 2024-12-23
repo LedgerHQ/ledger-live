@@ -7,7 +7,7 @@ import type { Transaction } from "./types";
 
 const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
-const multiversx: CurrenciesData<Transaction> = {
+const elrond: CurrenciesData<Transaction> = {
   FIXME_ignorePreloadFields: [
     "validators", // They are always changing
   ],
@@ -135,7 +135,8 @@ const multiversx: CurrenciesData<Transaction> = {
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    multiversx,
+    // multiversx,
+    elrond
   },
 };
 
