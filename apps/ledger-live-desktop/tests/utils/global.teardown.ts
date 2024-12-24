@@ -8,7 +8,6 @@ const environmentFilePath = "allure-results/environment.properties";
 
 export default async function globalTeardown() {
   if (process.env.CI) {
-    console.log("---------------------------------------------------");
     const electronApp: ElectronApplication = await launchApp({
       env: Object.assign(process.env),
       lang: "en-US",
