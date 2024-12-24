@@ -265,7 +265,7 @@
     "id": "elrond",
     "ticker": "EGLD",
     "name": "MultiversX",
-    "family": "multiversx",
+    "family": "elrond",
     "color": "#23F7DD",
     "decimals": 18
   },
