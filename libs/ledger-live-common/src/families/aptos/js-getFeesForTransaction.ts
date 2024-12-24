@@ -69,7 +69,14 @@ export const getFee = async (
             break;
           }
           default: {
-            throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+            // HOTFIX: we need to check if there is enough balance for gas
+            // idealy it should be covered with EINSUFFICIENT_BALANCE from network
+            const expectedGas = BigNumber(gasLimit * gasPrice);
+            if (transaction.amount.plus(expectedGas).isGreaterThan(account.spendableBalance)) {
+              break;
+            } else {
+              throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+            }
           }
         }
       }
