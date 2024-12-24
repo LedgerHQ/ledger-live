@@ -15,6 +15,7 @@ export type Props = {
   isLoading: boolean;
   hasError: boolean;
   top: number;
+  enableNewFeature?: boolean;
 };
 
 /**
@@ -33,6 +34,7 @@ export type PropsBody = {
   order: Order;
   range: PortfolioRange;
   top: number;
+  enableNewFeature?: boolean;
 };
 
 export type PropsBodyElem = {
@@ -40,6 +42,7 @@ export type PropsBodyElem = {
   index: number;
   isFirst: boolean;
   range: PortfolioRange;
+  enableNewFeature?: boolean;
 };
 
 /**
@@ -50,3 +53,5 @@ export enum Order {
   asc = "asc",
   desc = "desc",
 }
+
+export type CurrencyCheck = "onRamp" | "swap";

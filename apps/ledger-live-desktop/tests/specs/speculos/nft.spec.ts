@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { NFTTransaction } from "../../models/Transaction";
+import { NFTTransaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Nft } from "@ledgerhq/live-common/e2e/enum/Nft";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
