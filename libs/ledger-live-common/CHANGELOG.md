@@ -1,5 +1,15 @@
 ## 34.5.0-next.4
 
+## 34.16.0-nightly.14
+
+### Minor Changes
+
+- [#8696](https://github.com/LedgerHQ/ledger-live/pull/8696) [`8134fff`](https://github.com/LedgerHQ/ledger-live/commit/8134fff81a8ee6955463bf689e00bbc94a434d3e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Market Performance widget - Missing buyable/swappable tokens
+
+- [#8752](https://github.com/LedgerHQ/ledger-live/pull/8752) [`aa9819d`](https://github.com/LedgerHQ/ledger-live/commit/aa9819da9c9137c1628ee69983369f725a18dffd) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Updating method to get Speculos app - e2e testing
+
+- [#8668](https://github.com/LedgerHQ/ledger-live/pull/8668) [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update groupCurrenciesByProvider to get Coins instead of token when it's relevant
+
 ## 34.16.0-nightly.13
 
 ### Minor Changes

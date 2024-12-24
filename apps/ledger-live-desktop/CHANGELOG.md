@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.94.0-nightly.14
+
+### Minor Changes
+
+- [#8754](https://github.com/LedgerHQ/ledger-live/pull/8754) [`4fad912`](https://github.com/LedgerHQ/ledger-live/commit/4fad912c0c939816b7da0e9027835bb40b9e6732) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update analytics + click under FF
+
+- [#8696](https://github.com/LedgerHQ/ledger-live/pull/8696) [`8134fff`](https://github.com/LedgerHQ/ledger-live/commit/8134fff81a8ee6955463bf689e00bbc94a434d3e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Market Performance widget - Missing buyable/swappable tokens
+
+- [#8752](https://github.com/LedgerHQ/ledger-live/pull/8752) [`aa9819d`](https://github.com/LedgerHQ/ledger-live/commit/aa9819da9c9137c1628ee69983369f725a18dffd) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Updating method to get Speculos app - e2e testing
+
+### Patch Changes
+
+- [#8381](https://github.com/LedgerHQ/ledger-live/pull/8381) [`80f5a8f`](https://github.com/LedgerHQ/ledger-live/commit/80f5a8f59a1adadb2b4f3a842525a9d12d49a071) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix split address that didn't take in consideration special characters (cf Hedera)
+
+- Updated dependencies [[`8134fff`](https://github.com/LedgerHQ/ledger-live/commit/8134fff81a8ee6955463bf689e00bbc94a434d3e), [`aa9819d`](https://github.com/LedgerHQ/ledger-live/commit/aa9819da9c9137c1628ee69983369f725a18dffd), [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd)]:
+  - @ledgerhq/live-common@34.16.0-nightly.14
+
 ## 2.94.0-nightly.13
 
 ### Minor Changes

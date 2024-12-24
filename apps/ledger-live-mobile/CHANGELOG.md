@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.59.0-nightly.15
+
+### Minor Changes
+
+- [#8746](https://github.com/LedgerHQ/ledger-live/pull/8746) [`918d005`](https://github.com/LedgerHQ/ledger-live/commit/918d00517d3cafc01f73b7bebddcd1946cb360ed) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Small copy update on the send flow
+
+- [#8743](https://github.com/LedgerHQ/ledger-live/pull/8743) [`a694023`](https://github.com/LedgerHQ/ledger-live/commit/a69402376afdd5ff18d5b5cf897447328016dda1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Token listed multiple times without account details in Receive flow
+
+### Patch Changes
+
+- Updated dependencies [[`8134fff`](https://github.com/LedgerHQ/ledger-live/commit/8134fff81a8ee6955463bf689e00bbc94a434d3e), [`aa9819d`](https://github.com/LedgerHQ/ledger-live/commit/aa9819da9c9137c1628ee69983369f725a18dffd), [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd)]:
+  - @ledgerhq/live-common@34.16.0-nightly.14
+
 ## 3.59.0-nightly.14
 
 ### Minor Changes

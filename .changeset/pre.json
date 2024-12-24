@@ -169,6 +169,7 @@
     "@ledgerhq/coin-internet_computer": "1.3.2"
   },
   "changesets": [
+    "afraid-actors-fry",
     "angry-rats-kick",
     "beige-moose-worry",
     "beige-rings-move",
@@ -226,15 +227,19 @@
     "mighty-days-tan",
     "moody-oranges-reply",
     "new-bees-attack",
+    "nine-pots-happen",
     "nine-toes-worry",
     "ninety-scissors-grow",
     "odd-cooks-glow",
+    "pink-bats-attack",
     "plenty-beds-chew",
     "pretty-hairs-laugh",
     "purple-beers-report",
     "rare-schools-happen",
     "real-suits-repair",
+    "red-roses-try",
     "rotten-horses-shop",
+    "rotten-lamps-care",
     "rude-bats-fold",
     "shaggy-days-flash",
     "shy-insects-flash",
@@ -250,6 +255,7 @@
     "stale-guests-drum",
     "strong-bobcats-marry",
     "stupid-hotels-laugh",
+    "stupid-starfishes-hammer",
     "swift-cherries-hammer",
     "swift-islands-begin",
     "tall-ladybugs-worry",
@@ -264,6 +270,7 @@
     "wet-cameras-juggle",
     "wet-rocks-cough",
     "witty-swans-share",
-    "young-eels-hunt"
+    "young-eels-hunt",
+    "young-jeans-sparkle"
   ]
 }
