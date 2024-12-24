@@ -1595,6 +1595,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "fic",
   "flow",
   "LBRY",
+  "elrond",
   "musicoin",
   "nyx",
   "onomy",
