@@ -971,6 +971,18 @@
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
     },
+    "GasLessThanEstimate" : {
+      "title" : "这可能太低。请增加"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "序列号太新"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "序列号太旧"
+    },
+    "TransactionExpired" : {
+      "title" : "交易已过期"
+    },
     "SequenceNumberError" : {
       "title" : "序列号错误",
       "description" : "请关闭窗口，稍后再重试"
@@ -1287,20 +1299,20 @@
     "title" : "您需要 Ledger 设备",
     "desc" : "为了保障安全，Ledger Live 只能搭配设备使用。您需要有设备才能继续。",
     "cta" : "立即购买您的 Ledger 设备",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
+    "footer" : "我已经有一个 Ledger 设备，对该设备进行设置",
+    "bannerTitle" : "为您的加密货币和 NFT 提供一流的安全性",
+    "bannerTitle2" : "您需要一个 Ledger 设备才能进行交易",
+    "bannerSubtitle" : "使用 Ledger Flex",
+    "bannerButtonTitle" : "探索 Flex",
     "bannerButtonTitle2" : "购买 Ledger 设备",
-    "setupCta" : "I already have a Ledger, set it up"
+    "setupCta" : "我已经有一个 Ledger 设备，对该设备进行设置"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "拿到您的 Ledger 设备了吗？",
+    "desc" : "拿到您的 Ledger 设备后，请完成设置，以解锁 Ledger Live 应用程序的所有功能。",
+    "cta" : "设置我的 Ledger 设备",
+    "bannerTitle" : "已收到您的 Ledger 设备？",
+    "bannerCta" : "开始设置",
     "continue" : "继续"
   },
   "purchaseDevice" : {
@@ -1325,8 +1337,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "购买成功",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "感谢您对 Ledger 的信任",
+    "desc" : "您的订单正在处理中。\n请查收您的电子邮件以确认订单。"
   },
   "discover" : {
     "title" : "探索",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "显示全部"
     },
     "walletBalance" : "钱包余额",
-    "seelAllAssets" : "查看所有资产",
+    "seeAllAssets" : "查看所有资产",
+    "seeAllAccounts" : "查看所有账户",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
@@ -2546,7 +2559,8 @@
       "gasLimit" : "矿工费限值",
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
-      "stakedAmount" : "权益质押数额"
+      "stakedAmount" : "权益质押数额",
+      "version" : "版本"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -2748,6 +2762,9 @@
         "cta" : "立即进行权益质押"
       }
     }
+  },
+  "assets" : {
+    "title" : "多种资产"
   },
   "accounts" : {
     "title" : "账户",
@@ -3091,6 +3108,13 @@
       "desc" : "尝试一下开发者功能，让我们知道您的想法。",
       "customManifest" : {
         "title" : "加载自定义平台清单"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "兑换开发模式",
+        "description" : "添加兑换提供商的信息",
+        "placeholder" : "CAL 格式的兑换提供商信息",
+        "currentSetting" : "当前设置",
+        "error" : "CAL 值无效"
       }
     },
     "debug" : {
@@ -3460,6 +3484,16 @@
         "providers" : {
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "浏览兼容设备",
+        "contact_support" : "联系客服",
+        "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+        "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+        "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+        "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -3787,7 +3821,16 @@
         "title" : "选择单位"
       },
       "networkInfo" : "选择该交易包含的网络费用数额。费用数额的多少会影响到该交易的处理速度",
-      "networkInfoMaxFees" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。"
+      "networkInfoMaxFees" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。",
+      "aptos" : {
+        "options" : "选项",
+        "gasLimit" : "矿工费限值",
+        "gasPrice" : "Gas 价格 (OCTAS)",
+        "sequenceNumber" : "序列号",
+        "expTimestamp" : "到期时间戳",
+        "setOptimalGas" : "设置最佳 Gas",
+        "resetSettings" : "重置设置"
+      }
     },
     "verification" : {
       "streaming" : {
@@ -3954,6 +3997,7 @@
   },
   "addAccounts" : {
     "addNew" : "添加新的",
+    "addNewOrExisting" : "添加新账户或现有账户",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -6912,6 +6956,13 @@
         "title" : "与另一个 Ledger Live 应用程序同步",
         "description" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。"
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "此应用程序不再同步",
+          "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync。",
+          "cta" : "开启 Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "删除同步",
         "description" : "您在不同手机和电脑上的加密货币账户将停止同步。",
@@ -6922,6 +6973,11 @@
           "cancel" : "保持同步",
           "title" : "确定要删除同步吗？",
           "desc" : "您在不同手机和电脑上的加密货币账户将停止同步。此操作不会对您的资金产生任何影响。"
+        },
+        "error" : {
+          "title" : "此应用程序不再同步",
+          "description" : "在此 Ledger Live 或您要同步的 Ledger Live 上开启 Ledger Sync。",
+          "cta" : "开启 Ledger Sync"
         }
       },
       "manageInstances" : {
