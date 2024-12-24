@@ -1,4 +1,5 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
+import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
@@ -56,7 +57,7 @@ for (const k in modelMap) {
  * Release a speculos device
  */
 export async function releaseSpeculosDevice(id: string) {
-  console.warn("speculos", "release " + id);
+  log("speculos", "release " + id);
   const obj = data[id];
 
   if (obj) {
@@ -222,7 +223,7 @@ export async function createSpeculosDevice(
         ]),
   ];
 
-  console.warn("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
+  log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 
   const p = spawn("docker", [...params, "--seed", `${seed}`]);
 
@@ -242,10 +243,10 @@ export async function createSpeculosDevice(
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
-          console.warn("speculos-error", `${speculosID} not destroyed ${error} ${stderr}`);
+          log("speculos-error", `${speculosID} not destroyed ${error} ${stderr}`);
           reject(error);
         } else {
-          console.warn("speculos", `destroyed ${speculosID}`);
+          log("speculos", `destroyed ${speculosID}`);
           resolve(undefined);
         }
       });
@@ -254,7 +255,7 @@ export async function createSpeculosDevice(
 
   p.stdout.on("data", data => {
     if (data) {
-      console.warn("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
     }
   });
   let latestStderr: string | undefined;
@@ -263,27 +264,25 @@ export async function createSpeculosDevice(
     latestStderr = data;
 
     if (!data.includes("apdu: ")) {
-      console.warn("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by")) {
       rejectReady(
-        new Error(
-          "speculos already in use! Try `ledger-live cleanSpeculos` or check console.warns",
-        ),
+        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
-        console.warn("speculos", "retrying speculos connection");
+        log("speculos", "retrying speculos connection");
         await destroy();
         resolveReady(false);
       }
     }
   });
   p.on("close", async () => {
-    console.warn("speculos", `${speculosID} closed`);
+    log("speculos", `${speculosID} closed`);
 
     if (!destroyed) {
       await destroy();
