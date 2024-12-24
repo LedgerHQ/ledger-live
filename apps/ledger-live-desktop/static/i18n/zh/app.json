@@ -442,6 +442,14 @@
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+      "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+      "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+      "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+    },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
       "learnMore" : "什么是互换（Swap）？",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})"
+      "validatorsCount" : "验证者 ({{number}})",
+      "version" : "版本"
     }
   },
   "operationList" : {
@@ -2343,6 +2352,14 @@
         "ethereumGasPrice" : "Gas 价格",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
+        "aptosGasFee" : "Gas 费",
+        "aptosGasLimit" : "矿工费限值",
+        "aptosGasPrice" : "Gas 价格 (OCTAS)",
+        "aptosSetOptimalGas" : "设置最佳 Gas",
+        "aptosAdditionalSettings" : "其他设置",
+        "aptosSequenceNumber" : "序列号",
+        "aptosExpTimestamp" : "到期时间戳",
+        "aptosResetSettings" : "重置设置",
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitPerByte" : "{{unit}} 每字节",
@@ -3037,6 +3054,7 @@
         "validatorGroup" : {
           "title" : "验证者组",
           "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
           "totalVotes" : "总投票数",
           "commission" : "佣金"
         }
@@ -3626,6 +3644,7 @@
       "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
       "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
       "emptyState" : {
         "description" : "您可以通过委托资产赚取 SOL 奖励。",
         "info" : "委托机制如何运作",
@@ -3880,6 +3899,7 @@
           },
           "validator" : {
             "title" : "验证者",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
             "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件"
           },
           "connectDevice" : {
@@ -4147,6 +4167,7 @@
             "link" : "链接",
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
+            "tag" : "标签",
             "url" : "网址",
             "path" : "路径"
           }
@@ -5779,6 +5800,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "账户未经完整节点扫描",
       "description" : "请配置您的完整节点以扫描与此设备相关联的账户。您的完整节点必须先扫描此账户的区块链，然后才能将其添加到您的资产组合中。"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "序列号太新"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "序列号太旧",
+      "description" : "序列号太旧"
+    },
+    "TransactionExpired" : {
+      "title" : "交易已过期"
     },
     "SwapRateExpiredError" : {
       "title" : "费率已过期",
