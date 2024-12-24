@@ -119,7 +119,7 @@
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
-    "featureFlags": "Feature Flags",
+    "featureFlags": "Feature flag",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
