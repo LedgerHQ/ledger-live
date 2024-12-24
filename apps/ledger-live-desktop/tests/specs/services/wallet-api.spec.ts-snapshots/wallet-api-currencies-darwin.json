@@ -262,6 +262,15 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "elrond",
+    "ticker": "EGLD",
+    "name": "MultiversX",
+    "family": "elrond",
+    "color": "#23F7DD",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "ethereum_classic",
     "ticker": "ETC",
     "name": "Ethereum Classic",
