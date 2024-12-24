@@ -3,8 +3,8 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "./api";
-import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
+import buildTransaction from "./js-buildTransaction";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL, getMaxSendBalance } from "./logic";
 import type { Transaction, TransactionErrors } from "./types";
 
 type IGetEstimatedGasReturnType = {
@@ -50,6 +50,14 @@ export const getFee = async (
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
+
+      if (transaction.useAllAmount && transaction.firstEmulation === true) {
+        transaction.amount = getMaxSendBalance(
+          account.spendableBalance,
+          new BigNumber(DEFAULT_GAS),
+          new BigNumber(DEFAULT_GAS_PRICE),
+        );
+      }
       const tx = await buildTransaction(account, transaction, aptosClient);
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
