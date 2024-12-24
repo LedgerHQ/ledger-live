@@ -112,8 +112,10 @@ export const test = base.extend<TestFixtures>({
           specs[speculosApp.name.replace(/ /g, "_")],
         );
         invariant(device, "[E2E Setup] Speculos not started");
+        const speculosApiPort = device.ports.apiPort;
+        invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
 
-        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+        setEnv("SPECULOS_API_PORT", speculosApiPort.toString());
         setEnv("MOCK", "");
 
         if (cliCommands?.length) {
