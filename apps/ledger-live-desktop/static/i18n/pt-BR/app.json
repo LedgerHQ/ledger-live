@@ -442,6 +442,14 @@
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
+    "incompatibility" : {
+      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
+      "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
+      "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+    },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
       "learnMore" : "O que é Troca (Swap)?",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Quantia Sacada",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versão"
     }
   },
   "operationList" : {
@@ -2343,6 +2352,14 @@
         "ethereumGasPrice" : "Preço do gás",
         "ethereumMaxFee" : "Taxa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
+        "aptosGasFee" : "Taxa de gás",
+        "aptosGasLimit" : "Limite de gas",
+        "aptosGasPrice" : "Preço do gás (OCTAS)",
+        "aptosSetOptimalGas" : "DEFINIR GÁS IDEAL",
+        "aptosAdditionalSettings" : "Configurações adicionais",
+        "aptosSequenceNumber" : "Número de sequência",
+        "aptosExpTimestamp" : "Carimbo de tempo exp.",
+        "aptosResetSettings" : "REDEFINIR CONFIGURAÇÕES",
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
         "unitPerByte" : "{{unit}} por byte",
@@ -3037,6 +3054,7 @@
         "validatorGroup" : {
           "title" : "Grupo de validadores",
           "ledgerByFigmentTC" : "Ledger por Figment T&Cs",
+          "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
           "totalVotes" : "Total de votos",
           "commission" : "Comissão"
         }
@@ -3626,6 +3644,7 @@
       "withdrawableTitle" : "Sacáveis",
       "statusUpdateNotice" : "O status da delegação será atualizado quando a transação for confirmada.",
       "ledgerByFigmentTC" : "Ledger por Figment T&Cs",
+      "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
       "emptyState" : {
         "description" : "Você pode ganhar recompensas em SOL delegando seus ativos.",
         "info" : "Como funciona a delegação",
@@ -3880,6 +3899,7 @@
           },
           "validator" : {
             "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
             "ledgerByFigmentTC" : "Ledger por Figment T&Cs"
           },
           "connectDevice" : {
@@ -4147,6 +4167,7 @@
             "link" : "Link",
             "secondaryCta" : "CTA secundário",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Path"
           }
@@ -5779,6 +5800,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Conta não buscada pelo node completo",
       "description" : "Configure seu node completo para buscar as contas associadas a este dispositivo. Seu node completo deve primeiro buscar esta conta na blockchain para que você possa adicioná-la ao seu portfólio."
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Número de sequência muito novo"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Número de sequência muito antigo",
+      "description" : "Número de sequência muito antigo"
+    },
+    "TransactionExpired" : {
+      "title" : "A transação expirou"
     },
     "SwapRateExpiredError" : {
       "title" : "Cotação Expirada",
