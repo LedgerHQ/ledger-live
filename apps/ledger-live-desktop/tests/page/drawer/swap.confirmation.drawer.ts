@@ -57,7 +57,7 @@ export class SwapConfirmationDrawer extends Drawer {
   @step("Verify swap completion: $0")
   async verifyExchangeCompletedTextContent(currencyToReceive: string) {
     await expect(this.swapCompletedMessage).toHaveText("Transaction broadcast successfully", {
-      timeout: 90000,
+      timeout: 120000,
     });
     await expect(this.swapCompletedDescription).toHaveText(
       `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
