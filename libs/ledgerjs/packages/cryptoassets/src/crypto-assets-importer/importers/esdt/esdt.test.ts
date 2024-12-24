@@ -53,7 +53,7 @@ export default tokens as MultiversXESDTToken[];
       "https://crypto-assets-service.api.ledger.com/v1/tokens",
       {
         params: {
-          blockchain_name: "multiversx",
+          blockchain_name: "elrond",
           output: "ticker,id,decimals,live_signature,name",
         },
       },
