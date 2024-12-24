@@ -1019,6 +1019,12 @@
     "ScannedNewImportQrCode": {
       "title": "Update required",
       "description": "To sync your apps, please make sure both are updated to the latest version."
+    },
+    "AppManifestUnknownError": {
+      "title": "Swap Live App not found"
+    },
+    "AppManifestNotFoundError": {
+      "title": "Failed to load Swap Live App"
     }
   },
   "crash": {
