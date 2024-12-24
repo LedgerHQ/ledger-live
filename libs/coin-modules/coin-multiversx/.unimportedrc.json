@@ -22,6 +22,7 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "@ledgerhq/live-promise",
+    "axios",
     "expect",
     "invariant",
     "lodash"
