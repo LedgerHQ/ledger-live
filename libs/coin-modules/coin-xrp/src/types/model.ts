@@ -11,6 +11,8 @@ export type XrpMemo = {
   type?: string;
 };
 export type XrpOperation = {
+  blockTime: Date;
+  blockHash: string;
   hash: string;
   address: string;
   type: string;
