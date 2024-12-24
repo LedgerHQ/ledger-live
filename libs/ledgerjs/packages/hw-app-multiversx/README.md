@@ -8,7 +8,7 @@
 
 Ledger Hardware Wallet Multiversx JavaScript bindings.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -16,10 +16,10 @@ You may be using this package to communicate with the Multiversx Nano App.
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
----
+***
 
 ## API
 
@@ -27,37 +27,37 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-- [Multiversx](#multiversx)
-  - [Parameters](#parameters)
-  - [Examples](#examples)
-  - [getAppConfiguration](#getappconfiguration)
-    - [Examples](#examples-1)
-  - [getAddress](#getaddress)
-    - [Parameters](#parameters-1)
-    - [Examples](#examples-2)
-  - [setAddress](#setaddress)
-    - [Parameters](#parameters-2)
-    - [Examples](#examples-3)
+*   [MultiversX](#multiversx)
+    *   [Parameters](#parameters)
+    *   [Examples](#examples)
+    *   [getAppConfiguration](#getappconfiguration)
+        *   [Examples](#examples-1)
+    *   [getAddress](#getaddress)
+        *   [Parameters](#parameters-1)
+        *   [Examples](#examples-2)
+    *   [setAddress](#setaddress)
+        *   [Parameters](#parameters-2)
+        *   [Examples](#examples-3)
 
-### Multiversx
+### MultiversX
 
-Multiversx API
+MultiversX API
 
 #### Parameters
 
-- `transport` **Transport**&#x20;
-- `scrambleKey` (optional, default `"eGLD"`)
+*   `transport` **Transport**&#x20;
+*   `scrambleKey`   (optional, default `"eGLD"`)
 
 #### Examples
 
 ```javascript
-import Multiversx from "@ledgerhq/hw-app-multiversx";
-const multiversx = new Multiversx(transport);
+import MultiversX from "@ledgerhq/hw-app-multiversx";
+const multiversx = new MultiversX(transport)
 ```
 
 #### getAppConfiguration
 
-Get Multiversx app configuration.
+Get MultiversX app configuration.
 
 ##### Examples
 
@@ -70,12 +70,12 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### getAddress
 
-Get Multiversx address for a given BIP 32 path.
+Get MultiversX address for a given BIP 32 path.
 
 ##### Parameters
 
-- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
 
 ##### Examples
 
@@ -88,18 +88,18 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### setAddress
 
-Set Multiversx address for a given BIP 32 path.
+Set MultiversX address for a given BIP 32 path.
 
 ##### Parameters
 
-- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-- `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the display
 
 ##### Examples
 
 ```javascript
 const result = await multiversx.setAddress("44'/508'/0'/0/0");
-result: Buffer;
+result : Buffer;
 ```
 
 Returns **any** an object with a address
