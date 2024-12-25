@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.21.0-nightly.7
+
+### Minor Changes
+
+- [#8723](https://github.com/LedgerHQ/ledger-live/pull/8723) [`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44) Thanks [@Salim-belkhir](https://github.com/Salim-belkhir)! - Add block informations to an operation (hash, time and height of a block)
+
 ## 0.21.0-nightly.6
 
 ### Patch Changes

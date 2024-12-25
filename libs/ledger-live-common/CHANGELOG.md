@@ -1,5 +1,36 @@
 ## 34.5.0-next.4
 
+## 34.16.0-nightly.15
+
+### Patch Changes
+
+- Updated dependencies [[`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44)]:
+  - @ledgerhq/coin-stellar@0.5.0-nightly.7
+  - @ledgerhq/coin-tezos@0.8.0-nightly.7
+  - @ledgerhq/coin-xrp@0.8.0-nightly.7
+  - @ledgerhq/coin-framework@0.21.0-nightly.7
+  - @ledgerhq/coin-algorand@0.6.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.9.0-nightly.8
+  - @ledgerhq/coin-cardano@0.3.0-nightly.9
+  - @ledgerhq/coin-cosmos@0.3.0-nightly.8
+  - @ledgerhq/coin-elrond@0.2.0-nightly.7
+  - @ledgerhq/coin-evm@2.7.0-nightly.7
+  - @ledgerhq/coin-filecoin@1.4.0-nightly.7
+  - @ledgerhq/coin-hedera@1.2.0-nightly.7
+  - @ledgerhq/coin-icon@0.5.0-nightly.7
+  - @ledgerhq/coin-internet_computer@1.4.0-nightly.4
+  - @ledgerhq/coin-near@0.6.0-nightly.7
+  - @ledgerhq/coin-polkadot@1.5.0-nightly.7
+  - @ledgerhq/coin-solana@0.9.0-nightly.8
+  - @ledgerhq/coin-stacks@0.3.0-nightly.8
+  - @ledgerhq/coin-ton@0.4.0-nightly.7
+  - @ledgerhq/coin-tron@0.1.0-nightly.7
+  - @ledgerhq/coin-vechain@2.3.0-nightly.7
+  - @ledgerhq/live-countervalues@0.2.15-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.15-nightly.7
+  - @ledgerhq/live-nft@0.5.0-nightly.7
+  - @ledgerhq/live-wallet@0.8.0-nightly.7
+
 ## 34.16.0-nightly.14
 
 ### Minor Changes

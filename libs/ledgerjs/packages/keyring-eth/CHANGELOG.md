@@ -1,5 +1,12 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.13-nightly.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.7.0-nightly.7
+
 ## 0.2.13-nightly.6
 
 ### Patch Changes

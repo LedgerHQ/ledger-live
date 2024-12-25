@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.59.0-nightly.16
+
+### Minor Changes
+
+- [#8724](https://github.com/LedgerHQ/ledger-live/pull/8724) [`8acd8b2`](https://github.com/LedgerHQ/ledger-live/commit/8acd8b2ec2d9464aebb36e4fa46d08c8d4cf3647) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LIVE-15094 - Infinite loop during operations involving member removal and QR code scanning
+
+- [#8753](https://github.com/LedgerHQ/ledger-live/pull/8753) [`0e6ee7d`](https://github.com/LedgerHQ/ledger-live/commit/0e6ee7d63d302526fc7807d3eb9241bea98c4cfa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restore IOS launchscreen
+
+### Patch Changes
+
+- Updated dependencies [[`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.7
+  - @ledgerhq/live-common@34.16.0-nightly.15
+  - @ledgerhq/coin-cosmos@0.3.0-nightly.8
+  - @ledgerhq/coin-elrond@0.2.0-nightly.7
+  - @ledgerhq/coin-evm@2.7.0-nightly.7
+  - @ledgerhq/coin-filecoin@1.4.0-nightly.7
+  - @ledgerhq/coin-stacks@0.3.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.15-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.15-nightly.7
+  - @ledgerhq/live-nft@0.5.0-nightly.7
+  - @ledgerhq/live-nft-react@0.5.0-nightly.7
+  - @ledgerhq/live-wallet@0.8.0-nightly.7
+
 ## 3.59.0-nightly.15
 
 ### Minor Changes
