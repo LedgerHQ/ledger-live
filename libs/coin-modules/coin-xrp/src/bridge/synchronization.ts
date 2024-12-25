@@ -74,7 +74,7 @@ async function filterOperations(
         type: op.simpleType,
         value: new BigNumber(op.value.toString()),
         fee: new BigNumber(op.fee.toString()),
-        blockHash: null,
+        blockHash: op.blockHash,
         blockHeight: op.blockHeight,
         senders: op.senders,
         recipients: op.recipients,

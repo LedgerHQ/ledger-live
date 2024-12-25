@@ -329,7 +329,6 @@ export async function startSpeculos(
   try {
     return await createSpeculosDevice(deviceParams);
   } catch (e: unknown) {
-    if (process.env.CI) console.error(e);
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
   }

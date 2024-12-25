@@ -236,10 +236,10 @@ export async function createSpeculosDevice(
   let destroyed = false;
 
   const destroy = async () => {
-    if (destroyed) return;
+    if (destroyed) return Promise.resolve();
     destroyed = true;
     return new Promise((resolve, reject) => {
-      if (!data[speculosID]) return;
+      if (!data[speculosID]) return resolve(undefined);
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
