@@ -26,6 +26,7 @@ import { sendTron } from "./families/tron";
 import { sendStellar } from "./families/stellar";
 import { sendCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
+import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
@@ -526,6 +527,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.XRP:
       await sendXRP(tx);
+      break;
+    case Currency.APT:
+      await sendAptos();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
