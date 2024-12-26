@@ -12,7 +12,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import HwAptos from "@ledgerhq/hw-app-aptos";
 import Transport from "@ledgerhq/hw-transport";
-import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
+import { sha3_256 as sha3Hash } from "js-sha3";
 
 export default class LedgerAccount {
   private readonly hdPath: string;
@@ -62,7 +62,7 @@ export default class LedgerAccount {
     const hash = sha3Hash.create();
     hash.update(this.publicKey.toString("hex"));
     hash.update("\x00");
-    return AccountAddress.from(hash.digest());
+    return AccountAddress.from(hash.hex());
   }
 
   pubKey(): AccountAddress {
