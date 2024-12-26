@@ -79,6 +79,7 @@ async function formatOperation(
   addr: string,
 ): Promise<StellarOperation> {
   const transaction = await rawOperation.transaction();
+  const { hash: blockHash, closed_at: blockTime } = await transaction.ledger();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
   const recipients = getRecipients(rawOperation);
@@ -103,9 +104,10 @@ async function formatOperation(
     recipients,
     transactionSequenceNumber: Number(transaction.source_account_sequence),
     hasFailed: !rawOperation.transaction_successful,
-    blockHash: null,
+    blockHash: blockHash,
     extra: {
       ledgerOpType: type,
+      blockTime: new Date(blockTime),
     },
   };
 

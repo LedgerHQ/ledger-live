@@ -78,12 +78,13 @@ describe("getAccountShape", () => {
     });
     mockGetTransactions.mockResolvedValue([
       {
+        ledger_hash: "HASH_VALUE_BLOCK",
+        hash: "HASH_VALUE",
         meta: { delivered_amount: "100" },
-        tx: {
+        tx_json: {
           TransactionType: "Payment",
           Fee: "10",
-          hash: "HASH_VALUE",
-          inLedger: 1,
+          ledger_index: 1,
           date: 1000,
           Account: "account_addr",
           Destination: "destination_addr",
@@ -117,7 +118,7 @@ describe("getAccountShape", () => {
       operations: [
         {
           accountId: "js:2:ripple:address:",
-          blockHash: null,
+          blockHash: "HASH_VALUE_BLOCK",
           blockHeight: 1,
           date: new Date("2000-01-01T00:16:40.000Z"),
           hash: "HASH_VALUE",

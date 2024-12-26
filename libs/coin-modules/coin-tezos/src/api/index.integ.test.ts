@@ -55,6 +55,7 @@ describe("Tezos Api", () => {
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
+        expect(operation.block).toBeDefined();
       });
     });
 
