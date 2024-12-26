@@ -29,8 +29,8 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@noble/hashes": "1.5.0",
-    "bip32-path": "^0.4.2"
+    "bip32-path": "^0.4.2",
+    "js-sha3": "0.9.3"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
