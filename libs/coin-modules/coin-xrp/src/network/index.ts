@@ -72,8 +72,8 @@ export const getTransactions = async (
 ): Promise<XrplOperation[]> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
-    ledger_index: "validated",
     ...options,
+    api_version: 2,
   });
 
   return result.transactions;
@@ -109,7 +109,7 @@ async function rpcCall<T extends object>(
   });
 
   if (isResponseStatus(result) && result.status !== "success") {
-    throw new Error(`couldn't fetch ${method} with params ${params}`);
+    throw new Error(`couldn't fetch ${method} with params ${JSON.stringify(params)}`);
   }
 
   return result;

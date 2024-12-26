@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "../enum/Account";
 
 export class Delegate {
   constructor(

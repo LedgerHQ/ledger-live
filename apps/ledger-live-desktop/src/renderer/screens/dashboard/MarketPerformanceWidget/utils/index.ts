@@ -1,7 +1,7 @@
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
-import { Order } from "~/renderer/screens/dashboard/MarketPerformanceWidget/types";
+import { CurrencyCheck, Order } from "~/renderer/screens/dashboard/MarketPerformanceWidget/types";
 
 export function getSlicedList(list: MarketItemPerformer[], order: Order, range: PortfolioRange) {
   return list.filter(elem =>
@@ -23,4 +23,51 @@ export function getChangePercentage(data: MarketItemPerformer, range: PortfolioR
     default:
       return data.priceChangePercentage1y;
   }
+}
+
+export function isAvailableOnBuyOrSwap(
+  id: string,
+  currenciesForSwapAllSet: Set<string>,
+  isCurrencyAvailable: (currencyId: string, mode: "onRamp" | "offRamp") => boolean,
+  type: CurrencyCheck,
+): boolean {
+  return type === "onRamp" ? isCurrencyAvailable(id, "onRamp") : currenciesForSwapAllSet.has(id);
+}
+
+export function filterAvailableBuyOrSwapCurrency(
+  elem: MarketItemPerformer,
+  cryptoCurrenciesSet: Set<string>,
+  isAvailable: (id: string, type: CurrencyCheck) => boolean,
+): boolean {
+  const isCurrencyInLedger = elem.ledgerIds.some(ledgerId =>
+    cryptoCurrenciesSet.has(ledgerId.toLowerCase()),
+  );
+
+  const isAvailableOnBuyOrSwap = ["onRamp", "swap"].some(
+    type =>
+      isAvailable(elem.id, type as CurrencyCheck) ||
+      elem.ledgerIds.some(lrId => isAvailable(lrId, type as CurrencyCheck)),
+  );
+
+  return isCurrencyInLedger && isAvailableOnBuyOrSwap;
+}
+
+export function getSlicedListWithFilters(
+  data: MarketItemPerformer[],
+  order: Order,
+  timeRange: PortfolioRange,
+  enableNewFeature: boolean,
+  filterAvailableBuyOrSwapCurrency: (elem: MarketItemPerformer) => boolean,
+  limit: number,
+): MarketItemPerformer[] {
+  const baseList = getSlicedList(data ?? [], order, timeRange);
+
+  // Filter only when enableNewFeature is true
+  const filteredItems = enableNewFeature
+    ? baseList.filter(filterAvailableBuyOrSwapCurrency)
+    : baseList;
+
+  const finalItems = filteredItems.length > 0 ? filteredItems : baseList;
+
+  return finalItems.slice(0, limit);
 }
