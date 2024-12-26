@@ -67,7 +67,6 @@
     "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage && mv libs/coin-modules/**/coverage/*.json coverage && pnpm exec nyc merge coverage coverage/coverage-final.json && pnpm exec nyc report -t coverage --report-dir coverage --reporter=html-spa",
     "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
-    "coin:aptos": "pnpm --filter coin-aptos",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:cosmos": "pnpm --filter coin-cosmos",
