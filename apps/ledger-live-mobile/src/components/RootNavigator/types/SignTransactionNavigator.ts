@@ -1,6 +1,5 @@
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
-import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
