@@ -263,7 +263,7 @@ function readPackage(pkg, context) {
       // Is there another way without adding them explicitly ?
       addDependencies("tronweb", {
         "aes-js": "*",
-        "@noble/hashes": "*",
+        "@noble/hashes": "1.6.1",
         "@noble/secp256k1": "*",
         "@ethersproject/bytes": "*",
         "@ethersproject/bignumber": "*",
@@ -277,6 +277,9 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/github", {
         undici: "*",
+      }),
+      addDependencies("@aptos-labs/ts-sdk", {
+        "@aptos-labs/aptos-client": "0.1.1",
       }),
     ],
     pkg,
