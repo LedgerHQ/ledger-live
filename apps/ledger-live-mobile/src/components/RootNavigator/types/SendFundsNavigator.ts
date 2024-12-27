@@ -173,21 +173,6 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.AptosCustomFees]: {
-    accountId: string;
-    parentId?: string;
-    transaction: AptosTransaction;
-    setCustomFees?: (transaction: Partial<AptosTransaction>) => void;
-    setTransaction?: Result<AptosTransaction>["setTransaction"];
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
