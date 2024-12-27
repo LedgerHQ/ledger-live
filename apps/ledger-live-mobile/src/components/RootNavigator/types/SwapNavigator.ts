@@ -10,7 +10,6 @@ import type {
   SwapPendingOperation,
   SwapOperation,
 } from "../../../screens/Swap/types";
-import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
