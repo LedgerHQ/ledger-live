@@ -54,7 +54,12 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      if (!completedTx.success) {
+      const expectedGas = BigNumber(gasLimit * gasPrice);
+      const isUnderMaxSpendable = !transaction.amount
+        .plus(expectedGas)
+        .isGreaterThan(account.spendableBalance);
+
+      if (isUnderMaxSpendable && !completedTx.success) {
         switch (true) {
           case completedTx.vm_status.includes("SEQUENCE_NUMBER"): {
             res.errors.sequenceNumber = completedTx.vm_status;
@@ -69,14 +74,7 @@ export const getFee = async (
             break;
           }
           default: {
-            // HOTFIX: we need to check if there is enough balance for gas
-            // idealy it should be covered with EINSUFFICIENT_BALANCE from network
-            const expectedGas = BigNumber(gasLimit * gasPrice);
-            if (transaction.amount.plus(expectedGas).isGreaterThan(account.spendableBalance)) {
-              break;
-            } else {
-              throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
-            }
+            throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
           }
         }
       }
