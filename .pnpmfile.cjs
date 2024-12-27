@@ -278,9 +278,6 @@ function readPackage(pkg, context) {
       addDependencies("@actions/github", {
         undici: "*",
       }),
-      addDependencies("@aptos-labs/ts-sdk", {
-        "@aptos-labs/aptos-client": "0.1.1",
-      }),
     ],
     pkg,
     context,
