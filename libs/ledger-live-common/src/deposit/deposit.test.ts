@@ -1,7 +1,7 @@
 import { groupCurrenciesByProvider, searchByNameOrTicker, searchByProviderId } from "./helper";
-import { MOCK } from "./mock";
+import { MOCK, MOCK_POL } from "./mock";
 import { MappedAsset } from "./type";
-import { getTokenById } from "../currencies/index";
+import { getCryptoCurrencyById, getTokenById } from "../currencies/index";
 
 const MAPPED_ASSETS = MOCK as MappedAsset[];
 
@@ -25,5 +25,20 @@ describe("Deposit logic", () => {
         currenciesByNetwork: currencies,
       },
     ]);
+    const currenciesPol = MOCK_POL.map(asset =>
+      asset.$type === "Token"
+        ? getTokenById(asset.ledgerId)
+        : getCryptoCurrencyById(asset.ledgerId),
+    );
+    const { currenciesByProvider: currenciesByProviderBis, sortedCryptoCurrencies } =
+      groupCurrenciesByProvider(MOCK_POL as MappedAsset[], currenciesPol);
+    expect(currenciesByProviderBis).toEqual([
+      {
+        providerId: "matic-network",
+        currenciesByNetwork: currenciesPol,
+      },
+    ]);
+
+    expect(sortedCryptoCurrencies).toEqual([currenciesPol[1]]);
   });
 });

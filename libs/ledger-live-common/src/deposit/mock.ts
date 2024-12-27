@@ -45,3 +45,49 @@ export const MOCK = [
     ticker: "BSC-USD",
   },
 ];
+
+export const MOCK_POL = [
+  {
+    $type: "Token",
+    ledgerId: "bsc/bep20/matic_token",
+    providerId: "matic-network",
+    name: "Matic Token",
+    ticker: "MATIC",
+    network: "bsc",
+    contract: "0xcc42724c6683b7e57334c4e856f4c9965ed682bd",
+    status: "Ok",
+    reason: null,
+    data: {
+      img: "https://proxycgassets.api.live.ledger.com/coins/images/4713/large/polygon.png",
+      marketCapRank: 121,
+    },
+  },
+  {
+    $type: "Coin",
+    ledgerId: "polygon",
+    providerId: "matic-network",
+    name: "Polygon",
+    ticker: "POL",
+    status: "Ok",
+    reason: "Overridden",
+    data: {
+      img: "https://proxycgassets.api.live.ledger.com/coins/images/4713/large/polygon.png",
+      marketCapRank: 121,
+    },
+  },
+  {
+    $type: "Token",
+    ledgerId: "ethereum/erc20/matic",
+    providerId: "matic-network",
+    name: "Matic",
+    ticker: "MATIC",
+    network: "ethereum",
+    contract: "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
+    status: "Ok",
+    reason: null,
+    data: {
+      img: "https://proxycgassets.api.live.ledger.com/coins/images/4713/large/polygon.png",
+      marketCapRank: 121,
+    },
+  },
+];

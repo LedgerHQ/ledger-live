@@ -1,8 +1,5 @@
-import sendAmountFields from "./SendAmountFields";
 import { AptosFamily } from "./types";
 
-const family: AptosFamily = {
-  sendAmountFields,
-};
+const family: AptosFamily = {};
 
 export default family;
