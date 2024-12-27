@@ -1,3 +1,4 @@
+import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
