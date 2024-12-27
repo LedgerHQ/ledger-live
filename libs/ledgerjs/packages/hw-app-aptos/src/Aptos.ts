@@ -16,7 +16,7 @@
  ********************************************************************************/
 
 import BIPPath from "bip32-path";
-import { sha3_256 as sha3Hash } from "js-sha3";
+import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
 
@@ -207,7 +207,7 @@ export default class Aptos {
     const hash = sha3Hash.create();
     hash.update(pubKey);
     hash.update("\x00");
-    return Buffer.from(hash.hex());
+    return Buffer.from(hash.digest());
   }
 
   private throwOnFailure(reply: Buffer): void {
