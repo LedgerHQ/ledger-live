@@ -70,11 +70,7 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
     );
   }
   if (a.type === "Account" && a.currency.family === "solana") {
-    return (
-      (a as any).solanaResources &&
-      (a as any).balance.isZero() &&
-      (a as any).spendableBalance.isZero()
-    );
+    return (a as any).balance.isZero() || (a as any).spendableBalance.isZero();
   }
   const hasSubAccounts = a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
