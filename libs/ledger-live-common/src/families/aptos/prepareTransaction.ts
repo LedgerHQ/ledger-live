@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { AptosAPI } from "./api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "./types";
-import { getMaxSendBalance } from "./logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
 
 const prepareTransaction = async (
   account: Account,
@@ -24,6 +24,15 @@ const prepareTransaction = async (
   }
 
   const aptosClient = new AptosAPI(account.currency.id);
+
+  if (transaction.useAllAmount) {
+    // we will use this amount in simulation, to estimate gas
+    transaction.amount = getMaxSendBalance(
+      account.spendableBalance,
+      new BigNumber(DEFAULT_GAS),
+      new BigNumber(DEFAULT_GAS_PRICE),
+    );
+  }
 
   const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
 

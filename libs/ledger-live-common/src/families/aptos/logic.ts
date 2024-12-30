@@ -20,7 +20,7 @@ import type { AptosTransaction, Transaction } from "./types";
 
 export const DEFAULT_GAS = 200;
 export const DEFAULT_GAS_PRICE = 100;
-export const ESTIMATE_GAS_MUL = 1.2; // defines buffer for gas estimation change
+export const ESTIMATE_GAS_MUL = 1.0; // define buffer for gas estimation change here, if needed
 
 const HEX_REGEXP = /^[-+]?[a-f0-9]+\.?[a-f0-9]*?$/i;
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
