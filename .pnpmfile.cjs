@@ -263,7 +263,7 @@ function readPackage(pkg, context) {
       // Is there another way without adding them explicitly ?
       addDependencies("tronweb", {
         "aes-js": "*",
-        "@noble/hashes": "1.6.1",
+        "@noble/hashes": "*",
         "@noble/secp256k1": "*",
         "@ethersproject/bytes": "*",
         "@ethersproject/bignumber": "*",
