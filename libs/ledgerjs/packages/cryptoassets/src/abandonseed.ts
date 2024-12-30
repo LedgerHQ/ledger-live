@@ -1,5 +1,5 @@
-import invariant from "invariant";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
 const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
