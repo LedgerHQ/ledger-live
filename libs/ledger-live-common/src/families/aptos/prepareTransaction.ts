@@ -2,7 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 import { AptosAPI } from "./api";
-import { getEstimatedGas } from "./js-getFeesForTransaction";
+import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "./types";
 import { getMaxSendBalance } from "./logic";
 

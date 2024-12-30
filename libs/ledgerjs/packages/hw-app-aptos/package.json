@@ -6,6 +6,7 @@
     "Ledger",
     "LedgerWallet",
     "Aptos",
+    "apt",
     "NanoS",
     "Blue",
     "Hardware Wallet"
@@ -28,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@noble/hashes": "1.5.0",
+    "@noble/hashes": "1.6.1",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

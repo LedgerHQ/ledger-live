@@ -106,6 +106,7 @@ setSupportedCurrencies([
   "mantra",
   "aptos",
   "xion",
+  "aptos",
 ]);
 LiveConfig.setConfig(liveConfig);
 
