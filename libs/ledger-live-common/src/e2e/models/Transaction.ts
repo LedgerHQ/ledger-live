@@ -1,6 +1,6 @@
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Nft } from "@ledgerhq/live-common/e2e/enum/Nft";
+import { Fee } from "../enum/Fee";
+import { Account } from "../enum/Account";
+import { Nft } from "../enum/Nft";
 
 export class Transaction {
   constructor(

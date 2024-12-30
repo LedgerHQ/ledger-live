@@ -1,12 +1,7 @@
-import { expect } from "@playwright/test";
-import { NFTTransaction, Transaction } from "tests/models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  containsSubstringInEvent,
-  waitFor,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { DeviceLabels } from "@ledgerhq/live-common/e2e/enum/DeviceLabels";
+import expect from "expect";
+import { NFTTransaction, Transaction } from "../models/Transaction";
+import { pressBoth, pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
+import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function sendEVM(tx: Transaction) {
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
