@@ -1,12 +1,11 @@
-import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { CLI } from "tests/utils/cliUtils";
 import { test } from "../../fixtures/common";
-import { Transaction } from "../../models/Transaction";
 import { getDescription } from "../../utils/customJsonReporter";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
