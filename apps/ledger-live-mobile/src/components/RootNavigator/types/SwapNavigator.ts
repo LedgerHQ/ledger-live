@@ -10,7 +10,6 @@ import type {
   SwapPendingOperation,
   SwapOperation,
 } from "../../../screens/Swap/types";
-import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -124,19 +123,6 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     account: CardanoAccount;
     transaction: CardanoTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.AptosCustomFees]: {
-    accountId: string;
-    parentId?: string;
-    transaction: AptosTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
