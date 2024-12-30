@@ -50,7 +50,6 @@ export const getFee = async (
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
-
       const tx = await buildTransaction(account, transaction, aptosClient);
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
