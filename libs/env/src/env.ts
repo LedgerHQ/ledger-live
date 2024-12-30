@@ -63,22 +63,22 @@ const envDefinitions = {
     desc: "Rosetta API for ICP",
   },
   APTOS_API_ENDPOINT: {
-    def: "https://fullnode.mainnet.aptoslabs.com/v1/",
+    def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
     desc: "API enpoint for Aptos",
   },
   APTOS_TESTNET_API_ENDPOINT: {
-    def: "https://fullnode.testnet.aptoslabs.com/v1/",
+    def: "https://apt.coin.ledger-stg.com/node/v1",
     parser: stringParser,
     desc: "API enpoint for Aptos",
   },
   APTOS_INDEXER_ENDPOINT: {
-    def: "https://indexer.mainnet.aptoslabs.com/v1/graphql",
+    def: "https://apt.coin.ledger.com/node/v1/graphql",
     parser: stringParser,
     desc: "Indexer endpoint for Aptos",
   },
   APTOS_TESTNET_INDEXER_ENDPOINT: {
-    def: "https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql",
+    def: "https://apt.coin.ledger-stg.com/node/v1/graphql",
     parser: stringParser,
     desc: "Indexer endpoint for Aptos",
   },
