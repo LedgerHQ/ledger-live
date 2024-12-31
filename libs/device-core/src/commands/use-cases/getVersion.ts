@@ -19,5 +19,6 @@ export async function getVersion(
   const res = await transport.send(...GET_VERSION_APDU, undefined, {
     abortTimeoutMs,
   });
+
   return parseGetVersionResponse(res);
 }

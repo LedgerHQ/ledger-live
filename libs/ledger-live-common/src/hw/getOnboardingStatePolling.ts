@@ -15,6 +15,7 @@ import {
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
 
 export type OnboardingStatePollingResult = {
@@ -60,7 +61,10 @@ export const getOnboardingStatePolling = ({
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {
-        if (isAllowedOnboardingStatePollingError(error)) {
+        if (
+          isAllowedOnboardingStatePollingError(error) ||
+          isAllowedOnboardingStatePollingErrorDmk(error)
+        ) {
           // Pushes the error to the next step to be processed (no retry from the beginning)
           return of(error as Error);
         }
