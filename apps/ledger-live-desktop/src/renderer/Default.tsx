@@ -258,7 +258,9 @@ export default function Default() {
                 {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
               </DebugWrapper>
               {process.env.DISABLE_TRANSACTION_BROADCAST ? (
-                <DisableTransactionBroadcastWarning />
+                <DisableTransactionBroadcastWarning
+                  value={process.env.DISABLE_TRANSACTION_BROADCAST}
+                />
               ) : null}
               <Switch>
                 <Route
