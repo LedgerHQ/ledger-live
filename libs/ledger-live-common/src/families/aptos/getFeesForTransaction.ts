@@ -69,7 +69,7 @@ export const getFee = async (
             res.errors.expirationTimestampSecs = completedTx.vm_status;
             break;
           }
-          case completedTx.vm_status.includes("EINSUFFICIENT_BALANCE"): {
+          case completedTx.vm_status.includes("INSUFFICIENT_BALANCE"): {
             // skip, processed in getTransactionStatus
             break;
           }

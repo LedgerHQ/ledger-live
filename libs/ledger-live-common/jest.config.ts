@@ -78,6 +78,6 @@ export default {
     : undefined,
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
-  coverageReporters: ["json", "lcov", "clover", "json-summary"],
+  coverageReporters: ["html", "json", "lcov", "clover", "json-summary"],
   projects: [defaultConfig],
 };
