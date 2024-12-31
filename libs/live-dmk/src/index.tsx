@@ -7,16 +7,21 @@ import {
   type DeviceSessionState,
   DeviceStatus,
   LogLevel,
-  BuiltinTransports,
   DiscoveredDevice,
+  DeviceModelId,
 } from "@ledgerhq/device-management-kit";
-import { DescriptorEvent } from "@ledgerhq/types-devices";
+import {
+  WebHidSendReportError,
+  webHidTransportFactory,
+} from "@ledgerhq/device-transport-kit-web-hid";
+import { DescriptorEvent, DeviceModelId as DeviceModelIdTypes } from "@ledgerhq/types-devices";
 import { BehaviorSubject, firstValueFrom, map, Observer, pairwise, startWith } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
+import { DeviceBusyError } from "@ledgerhq/device-management-kit/src/internal/device-session/model/Errors.js";
 
 const deviceManagementKit = new DeviceManagementKitBuilder()
-  .addTransport(BuiltinTransports.USB)
-  .addLogger(new ConsoleLogger(LogLevel.Info))
+  .addTransport(webHidTransportFactory)
+  .addLogger(new ConsoleLogger(LogLevel.Debug))
   .build();
 
 export const DeviceManagementKitContext = createContext<DeviceManagementKit>(deviceManagementKit);
@@ -63,6 +68,56 @@ export const useDeviceSessionState = (): DeviceSessionState | undefined => {
   }, [sdk]);
 
   return sessionState;
+};
+
+export const useDeviceSessionRefresherToggle = (ff: boolean) => {
+  const sdk = useDeviceManagementKit();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!ff) return;
+    const sub = activeDeviceSessionSubject.subscribe({
+      next: session => {
+        if (session) {
+          if (sessionId !== session.sessionId) {
+            if (sessionId) {
+              sdk.toggleDeviceSessionRefresher({
+                sessionId: sessionId,
+                enabled: true,
+              });
+            }
+
+            setSessionId(session.sessionId);
+            sdk.toggleDeviceSessionRefresher({
+              sessionId: session.sessionId,
+              enabled: false,
+            });
+          }
+        }
+      },
+    });
+
+    return () => {
+      if (!ff) return;
+      sub.unsubscribe();
+      if (sessionId) {
+        sdk.toggleDeviceSessionRefresher({
+          sessionId: sessionId,
+          enabled: true,
+        });
+      }
+    };
+  }, []);
+};
+
+export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean => {
+  if (error) {
+    if (error instanceof WebHidSendReportError || error instanceof DeviceBusyError) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const activeDeviceSessionSubject: BehaviorSubject<{
@@ -152,6 +207,10 @@ export class DeviceManagementKitTransport extends Transport {
       .subscribe({
         next: ({ added, removed }) => {
           for (const device of added) {
+            const id =
+              device.deviceModel.model === DeviceModelId.FLEX
+                ? DeviceModelIdTypes.europa // Still called europa in LL codebase
+                : device.deviceModel.model;
             tracer.trace(`[listen] device added ${device.deviceModel.model}`);
             observer.next({
               type: "add",
@@ -159,7 +218,7 @@ export class DeviceManagementKitTransport extends Transport {
               device: device,
               deviceModel: {
                 // @ts-expect-error types are not matching
-                id: device.deviceModel.model,
+                id,
                 type: device.transport,
               },
             });

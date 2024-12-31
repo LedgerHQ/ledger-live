@@ -29,6 +29,7 @@ const Manager = () => {
     },
     [setDrawer],
   );
+
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
