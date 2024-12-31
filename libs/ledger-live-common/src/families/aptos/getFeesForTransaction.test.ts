@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
 import createTransaction from "./createTransaction";
-import { getFee } from "./getFeesForTransaction";
+import { getFee, getEstimatedGas } from "./getFeesForTransaction";
 import { AptosAPI } from "./api";
 
 let simulateTransaction = jest.fn();
@@ -159,11 +159,52 @@ describe("getFeesForTransaction Test", () => {
     });
   });
 
-  describe("when using getCacheKey", () => {
-    it("should return tx", async () => {});
-  });
-
   describe("when using getEstimatedGas", () => {
-    it("should return tx", async () => {});
+    describe("when key not in cache", () => {
+      it("should return cached fee", async () => {
+        const account = createFixtureAccount();
+        const transaction = createTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        const result = await getEstimatedGas(account, transaction, aptosClient);
+
+        const expected = {
+          errors: {},
+          estimate: {
+            expirationTimestampSecs: "",
+            gasUnitPrice: "100",
+            maxGasAmount: "200",
+            sequenceNumber: "",
+          },
+          fees: new BigNumber("20000"),
+        };
+
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe("when key is in cache", () => {
+      it("should return cached fee", async () => {
+        const account = createFixtureAccount();
+        const transaction = createTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        await getEstimatedGas(account, transaction, aptosClient);
+        const result = await getEstimatedGas(account, transaction, aptosClient);
+
+        const expected = {
+          errors: {},
+          estimate: {
+            expirationTimestampSecs: "",
+            gasUnitPrice: "100",
+            maxGasAmount: "200",
+            sequenceNumber: "",
+          },
+          fees: new BigNumber("20000"),
+        };
+
+        expect(result).toEqual(expected);
+      });
+    });
   });
 });
