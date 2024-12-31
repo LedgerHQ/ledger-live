@@ -1,7 +1,7 @@
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
-import { CurrencyCheck, Order } from "~/renderer/screens/dashboard/MarketPerformanceWidget/types";
+import { CurrencyCheck, Order } from "LLD/features/MarketPerformanceWidget/types";
 
 export function getSlicedList(list: MarketItemPerformer[], order: Order, range: PortfolioRange) {
   return list.filter(elem =>

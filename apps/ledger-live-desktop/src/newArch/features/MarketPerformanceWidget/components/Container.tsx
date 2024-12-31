@@ -1,12 +1,12 @@
 import React from "react";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import Card from "~/renderer/components/Box/Card";
-import { WidgetList } from "~/renderer/screens/dashboard/MarketPerformanceWidget/components/WidgetList";
 import { Props, PropsBody } from "../types";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { MarketPerformanceWidgetFooter } from "./Footer";
 import { MarketPerformanceWidgetHeader } from "./Header";
 import { Error } from "./Error";
+import { WidgetList } from "./WidgetList";
 
 const BodyByMode: Record<ABTestingVariants, React.ComponentType<PropsBody>> = {
   [ABTestingVariants.variantA]: WidgetList,
