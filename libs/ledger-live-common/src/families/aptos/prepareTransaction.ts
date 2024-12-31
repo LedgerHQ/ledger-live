@@ -45,9 +45,13 @@ const prepareTransaction = async (
     : transaction.amount;
   transaction.amount = amount;
 
-  if (transaction.firstEmulation) {
-    transaction.options.maxGasAmount = estimate.maxGasAmount;
-  }
+  transaction.options = {
+    ...transaction.options,
+    maxGasAmount: estimate.maxGasAmount,
+    gasUnitPrice: estimate.gasUnitPrice,
+    sequenceNumber: estimate.sequenceNumber,
+    expirationTimestampSecs: estimate.expirationTimestampSecs,
+  };
 
   transaction.fees = fees;
   transaction.estimate = estimate;

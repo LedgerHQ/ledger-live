@@ -54,7 +54,12 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      if (!completedTx.success) {
+      const expectedGas = BigNumber(gasLimit * gasPrice);
+      const isUnderMaxSpendable = !transaction.amount
+        .plus(expectedGas)
+        .isGreaterThan(account.spendableBalance);
+
+      if (isUnderMaxSpendable && !completedTx.success) {
         switch (true) {
           case completedTx.vm_status.includes("SEQUENCE_NUMBER"): {
             res.errors.sequenceNumber = completedTx.vm_status;
@@ -97,14 +102,7 @@ export const getFee = async (
   res.estimate.sequenceNumber = sequenceNumber.toString();
   res.estimate.maxGasAmount = gasLimit.toString();
 
-  if (transaction.firstEmulation) {
-    res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
-  } else {
-    res.fees = res.fees
-      .plus(transaction.options.gasUnitPrice)
-      .multipliedBy(BigNumber(transaction.options.maxGasAmount));
-  }
-
+  res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
   CACHE.delete(getCacheKey(transaction));
   return res;
 };
