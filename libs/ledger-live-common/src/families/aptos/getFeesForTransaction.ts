@@ -123,11 +123,9 @@ export const getEstimatedGas = async (
 ): Promise<IGetEstimatedGasReturnType> => {
   const key = getCacheKey(transaction);
 
-  if (CACHE.has(key)) {
-    return CACHE.get(key);
+  if (!CACHE.has(key)) {
+    CACHE.set(key, getFee(account, transaction, aptosClient));
   }
-
-  CACHE.set(key, getFee(account, transaction, aptosClient));
 
   return CACHE.get(key);
 };
