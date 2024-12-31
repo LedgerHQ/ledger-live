@@ -1,19 +1,16 @@
-import { ApolloClient } from "@apollo/client";
-import { Aptos, AptosConfig, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { Aptos, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { AptosAPI } from ".";
 import { Account } from "../../../e2e/enum/Account";
-import { TransactionOptions } from "../types";
 
 jest.mock("@aptos-labs/ts-sdk");
-jest.mock("@apollo/client");
 let mockedAptos;
-/*const mockedAptosConfig = jest.mocked(AptosConfig);
-const mockedApolloClient = jest.mocked(ApolloClient);*/
 
 describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
   });
+
+  afterEach(() => jest.clearAllMocks());
 
   it("builds the client properly for mainnet", () => {
     const api = new AptosAPI("aptos");
@@ -50,19 +47,22 @@ describe("Aptos API", () => {
   });
 
   describe("generateTransaction", () => {
-    it.only("generates a transaction with the correct options", async () => {
-      const mockSimple = jest
-        .fn()
-        .mockImplementation(
-          (transactionInfo: {
-            sender: AccountAddressInput;
-            data: InputGenerateTransactionPayloadData;
-            options?: InputGenerateTransactionOptions;
-          }) => {
-            rawTransaction: {
-            }
-          },
-        );
+    it("generates a transaction with the correct options", async () => {
+      const payload: InputEntryFunctionData = {
+        function: "0x1::coin::transfer",
+        functionArguments: ["0x13", 1],
+      };
+      const options = {
+        maxGasAmount: "100",
+        gasUnitPrice: "50",
+        sequenceNumber: "1",
+        expirationTimestampSecs: "1735639799486",
+      };
+
+      const mockSimple = jest.fn().mockImplementation(async () => ({
+        rawTransaction: null,
+      }));
+
       mockedAptos.mockImplementation(() => {
         return {
           transaction: {
@@ -73,68 +73,63 @@ describe("Aptos API", () => {
         };
       });
 
+      const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
+
       const api = new AptosAPI("aptos");
+      await api.generateTransaction(Account.APTOS_1.address, payload, options);
 
-      // do better
-      // const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
+      const optionsArgs = mockSimpleSpy.mock.calls[0][0].options;
 
+      expect(optionsArgs).toMatchObject({
+        maxGasAmount: Number(options.maxGasAmount),
+        gasUnitPrice: Number(options.gasUnitPrice),
+        expireTimestamp: Number(options.expirationTimestampSecs),
+        accountSequenceNumber: Number(options.sequenceNumber),
+      });
+    });
+
+    it("generates a transaction with no expire timestamp option set", async () => {
       const payload: InputEntryFunctionData = {
         function: "0x1::coin::transfer",
         functionArguments: ["0x13", 1],
       };
-      const options: TransactionOptions = {
+      const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        expirationTimestampSecs: "1735639799486",
         sequenceNumber: "1",
       };
 
-      // jest.mock(".");
-      /*const mockAPI = jest.fn().mockReturnValueOnce({
-        apiUrl: "",
-        indexerUrl: "",
-        aptosConfig: {},
-        aptosClient: {
+      const mockSimple = jest.fn().mockImplementation(async () => ({
+        rawTransaction: null,
+      }));
+      const mockGetLedgerInfo = jest.fn().mockImplementation(async () => ({
+        ledger_timestamp: "0",
+      }));
+
+      mockedAptos.mockImplementation(() => {
+        return {
           transaction: {
             build: {
-              simple: async ({
-                options,
-              }: {
-                options: {
-                  maxGasAmount: number;
-                  gasUnitPrice: number;
-                  expireTimestamp: number;
-                  accountSequenceNumber: number | bigint;
-                };
-              }) => ({
-                max_gas_amount: BigInt(options.maxGasAmount),
-                gas_unit_price: BigInt(options.gasUnitPrice),
-                expiration_timestamp_secs: BigInt(options.expireTimestamp),
-                sequence_number: BigInt(options.accountSequenceNumber),
-              }),
+              simple: mockSimple,
             },
           },
-        },
-        apolloClient: {},
-        generateTransaction: api.generateTransaction,
+          getLedgerInfo: mockGetLedgerInfo,
+        };
       });
 
-      const mockedApi = new mockAPI("aptos");*/
-      const transaction = await api.generateTransaction(Account.APTOS_1.address, payload, options);
+      const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
 
-      expect(transaction.max_gas_amount.toString()).toEqual(options.maxGasAmount);
-      // expect(transaction.gas_unit_price.toString()).toEqual(options.gasUnitPrice);
-      // expect(transaction.expiration_timestamp_secs.toString()).toEqual(
-      //   options.expirationTimestampSecs,
-      // );
-      // expect(transaction.sequence_number.toString()).toEqual(options.sequenceNumber);
-      /*expect(mockSimpleSpy.mock.calls[0][0]).toMatchObject({
-        sender: Account.APTOS_1.address,
-        data: payload,
-        options: options,
-      });*/
+      const api = new AptosAPI("aptos");
+      await api.generateTransaction(Account.APTOS_1.address, payload, options);
+
+      const optionsArgs = mockSimpleSpy.mock.calls[0][0].options;
+
+      expect(optionsArgs).toMatchObject({
+        maxGasAmount: Number(options.maxGasAmount),
+        gasUnitPrice: Number(options.gasUnitPrice),
+        accountSequenceNumber: Number(options.sequenceNumber),
+        expireTimestamp: 120,
+      });
     });
   });
-
-  it("it returns an empty array when the address is empty", () => {});
 });
