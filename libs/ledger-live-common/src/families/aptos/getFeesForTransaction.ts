@@ -102,14 +102,7 @@ export const getFee = async (
   res.estimate.sequenceNumber = sequenceNumber.toString();
   res.estimate.maxGasAmount = gasLimit.toString();
 
-  if (transaction.firstEmulation) {
-    res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
-  } else {
-    res.fees = res.fees
-      .plus(transaction.options.gasUnitPrice)
-      .multipliedBy(BigNumber(transaction.options.maxGasAmount));
-  }
-
+  res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
   CACHE.delete(getCacheKey(transaction));
   return res;
 };
