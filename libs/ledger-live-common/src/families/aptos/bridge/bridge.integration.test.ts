@@ -75,9 +75,9 @@ const aptos: CurrenciesData<Transaction> = {
             ({
               errors: {},
               warnings: {},
-              estimatedFees: BigNumber("1100"),
+              estimatedFees: BigNumber("900"),
               amount: BigNumber("20000"),
-              totalSpent: BigNumber("21100"),
+              totalSpent: BigNumber("20900"),
             }),
         },
       ],
