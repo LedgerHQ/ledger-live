@@ -34,140 +34,14 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     runs-on: [ledger-live-4xlarge]
     steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      - uses: actions/checkout@v4
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null }}
-        run: gh pr checkout ${{ inputs.number }}
+      - name: Create dummy file
+        run: echo "This is a dummy file" > dummyfile.txt
+      - name: Commit file
+        uses: swinton/commit@v2.x
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-      - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
-        id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
-        id: update-snapshots
-        with:
-          os: ubuntu-22.04
-
-  report-start:
-    name: Report start
-    runs-on: ubuntu-22.04
-    if: inputs.commentId != ''
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: report start
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          result-encoding: string
-          retries: 3
-          script: |
-            const {repo: {owner, repo}, run_id} = context
-            const issue_number = ${{ inputs.number }}
-            const body = `\
-            @${{ inputs.login }}
-
-            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
-            await github.rest.issues.updateComment({
-              owner,
-              repo,
-              comment_id: "${{ inputs.commentId }}",
-              body,
-            });
-
-  report-end:
-    needs: ["generate-screenshots-linux", "report-start"]
-    if: ${{ !cancelled() }}
-    name: Report end
-    runs-on: ubuntu-22.04
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: report jobs status
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          result-encoding: string
-          retries: 3
-          script: |
-            const fs = require("fs");
-            const {repo: {owner, repo}} = context;
-            const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
-              owner,
-              repo,
-              run_id: ${{ github.run_id }},
-            });
-
-            const jobsStatusString = jobs
-              .filter(job => job.name.startsWith("generate-screenshots"))
-              .map(job => `${job.conclusion === "success" ? "✅" : "❌"} - [${job.name}](${job.html_url})`)
-              .join("\n")
-
-            const body = `\
-            @${{ inputs.login }}
-
-            [Generating screenshots: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            **Jobs status:**
-            ${jobsStatusString}
-            `
-
-            const output = {
-              summary: body,
-            };
-
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-
-            if(${{ inputs.commentId != '' }}) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: "${{ inputs.commentId }}",
-                body
-              });
-            }
-      - uses: actions/upload-artifact@v4
-        name: upload summary
-        with:
-          name: summary.json
-          path: ${{ github.workspace }}/summary.json
+          files: |
+            ./dummyfile.txt
+          commit-message: Committing ./myfile
+          ref: refs/heads/support/signed-screenshot-gh-commits-swinton-test-2
