@@ -1,13 +1,33 @@
-import { Aptos, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { ApolloClient } from "@apollo/client";
+import {
+  AccountAddress,
+  Aptos,
+  ChainId,
+  Ed25519PublicKey,
+  InputEntryFunctionData,
+  RawTransaction,
+  Serializable,
+  post,
+} from "@aptos-labs/ts-sdk";
+import network from "@ledgerhq/live-network/network";
+import BigNumber from "bignumber.js";
 import { AptosAPI } from ".";
 import { Account } from "../../../e2e/enum/Account";
 
 jest.mock("@aptos-labs/ts-sdk");
+jest.mock("@apollo/client");
 let mockedAptos;
+let mockedApolloClient;
+let mockedPost;
+
+jest.mock("@ledgerhq/live-network/network");
+const mockedNetwork = jest.mocked(network);
 
 describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
+    mockedApolloClient = jest.mocked(ApolloClient);
+    mockedPost = jest.mocked(post);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -66,59 +86,260 @@ describe("Aptos API", () => {
     });
   });
 
-  // describe("getAccountInfo", () => {
-  //   it("calls getBalance, fetchTransactions and getHeight", async () => {
-  //     mockedAptos.mockImplementation(() => ({
-  //       view: jest.fn().mockReturnValue(["123"]),
-  //       getTransactionByVersion: jest.fn().mockReturnValue({
-  //         type: "user_transaction",
-  //         version: "v1",
-  //         hash: "82e93d80a60d0054261741990d072b02cdd3e614afb7573499d3d86b599388ec",
-  //         state_change_hash: "82e93d80a60d0054261741990d072b02cdd3e614afb7573499d3d86b599388ec",
-  //         event_root_hash: "82e93d80a60d0054261741990d072b02cdd3e614afb7573499d3d86b599388ec",
-  //         state_checkpoint_hash: null,
-  //         gas_used: "10",
-  //         success: true,
-  //         vm_status: "good",
-  //         accumulator_root_hash: "82e93d80a60d0054261741990d072b02cdd3e614afb7573499d3d86b599388ec",
-  //         // changes: Array<WriteSetChange>;
-  //         // sender: string;
-  //         // sequence_number: string;
-  //         // max_gas_amount: string;
-  //         // gas_unit_price: string;
-  //         // expiration_timestamp_secs: string;
-  //         // payload: TransactionPayloadResponse;
-  //         // signature?: TransactionSignature;
-  //         // events: Array<Event>;
-  //         timestamp: "0",
-  //       }),
-  //       getBlockByVersion: jest.fn().mockReturnValue({
-  //         block_height: "1",
-  //         block_hash: "83ca6d000a92893befe216e3bbc268d9df623fb3d822c6e72f5111e95e15f942",
-  //         // block_timestamp: "12398723492",
-  //         // first_version: "1",
-  //         // last_version: "1",
-  //       }),
-  //     }));
+  describe("getAccountInfo", () => {
+    it("calls getBalance, fetchTransactions and getHeight", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["123"]),
+        getTransactionByVersion: jest.fn().mockReturnValue({
+          type: "user_transaction",
+          version: "v1",
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+      }));
 
-  //     jest.mock("@apollo/client");
-  //     const mockedApolloClient = jest.mocked(ApolloClient);
-  //     mockedApolloClient.mockImplementation(() => ({
-  //       query: async () => ({
-  //         data: {
-  //           address_version_from_move_resources: [{ transaction_version: "v1" }],
-  //         },
-  //         loading: false,
-  //         networkStatus: NetworkStatus.ready,
-  //       }),
-  //     }));
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
 
-  //     const api = new AptosAPI("aptos");
-  //     const accountInfo = await api.getAccountInfo(Account.APTOS_1.address, "0");
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
 
-  //     expect(accountInfo.balance).toEqual(123);
-  //   });
-  // });
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo(Account.APTOS_1.address, "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(123));
+      expect(accountInfo.transactions).toEqual([
+        {
+          type: "user_transaction",
+          version: "v1",
+          block: {
+            height: 1,
+            hash: "83ca6d",
+          },
+        },
+      ]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+
+    it("return balance = 0 if it fails to fetch balance", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockImplementation(() => {
+          throw new Error("error");
+        }),
+        getTransactionByVersion: jest.fn().mockReturnValue({
+          type: "user_transaction",
+          version: "v1",
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+      }));
+
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
+
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo(Account.APTOS_1.address, "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(0));
+      expect(accountInfo.transactions).toEqual([
+        {
+          type: "user_transaction",
+          version: "v1",
+          block: {
+            height: 1,
+            hash: "83ca6d",
+          },
+        },
+      ]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+
+    it("returns no transactions if it the address is empty", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["123"]),
+        getTransactionByVersion: jest.fn().mockReturnValue({
+          type: "user_transaction",
+          version: "v1",
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+      }));
+
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
+
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo("", "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(123));
+      expect(accountInfo.transactions).toEqual([]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+
+    it("returns a null transaction if it fails to getTransactionByVersion", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["123"]),
+        getTransactionByVersion: jest.fn().mockImplementation(() => {
+          throw new Error("error");
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+      }));
+
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
+
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo(Account.APTOS_1.address, "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(123));
+      expect(accountInfo.transactions).toEqual([null]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+  });
+
+  describe("estimateGasPrice", () => {
+    it("estimates the gas price", async () => {
+      const gasEstimation = { gas_estimate: 100 };
+      mockedAptos.mockImplementation(() => ({
+        getGasPriceEstimation: jest.fn().mockReturnValue(gasEstimation),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const gasPrice = await api.estimateGasPrice();
+
+      expect(gasPrice.gas_estimate).toEqual(100);
+    });
+  });
 
   describe("generateTransaction", () => {
     const payload: InputEntryFunctionData = {
@@ -222,6 +443,68 @@ describe("Aptos API", () => {
       expect(
         async () => await api.generateTransaction(Account.APTOS_1.address, payload, options),
       ).rejects.toThrow();
+    });
+  });
+
+  describe("simulateTransaction", () => {
+    it("simulates a transaction with the correct options", async () => {
+      const mockSimple = jest.fn().mockImplementation(async () => ({
+        rawTransaction: null,
+      }));
+      mockedAptos.mockImplementation(() => ({
+        transaction: {
+          simulate: {
+            simple: mockSimple,
+          },
+        },
+      }));
+
+      const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
+
+      const api = new AptosAPI("aptos");
+      const address = new Ed25519PublicKey(Account.APTOS_1.address);
+      const tx = new RawTransaction(
+        new AccountAddress(Uint8Array.from(Account.APTOS_2.address)),
+        BigInt(1),
+        "" as unknown as Serializable,
+        BigInt(100),
+        BigInt(50),
+        BigInt(1),
+        { chainId: 1 } as ChainId,
+      );
+      await api.simulateTransaction(address, tx);
+
+      expect(mockSimpleSpy).toHaveBeenCalledWith({
+        signerPublicKey: address,
+        transaction: { rawTransaction: tx },
+        options: {
+          estimateGasUnitPrice: true,
+          estimateMaxGasAmount: true,
+          estimatePrioritizedGasUnitPrice: false,
+        },
+      });
+    });
+  });
+  describe("broadcast", () => {
+    it("broadcasts the transaction", async () => {
+      mockedPost.mockImplementation(async () => ({ data: { hash: "ok" } }));
+      const mockedPostSpy = jest.spyOn({ post: mockedPost }, "post");
+
+      mockedAptos.mockImplementation(() => ({
+        config: "config",
+      }));
+
+      const api = new AptosAPI("aptos");
+      await api.broadcast("signature");
+
+      expect(mockedPostSpy).toHaveBeenCalledWith({
+        contentType: "application/x.aptos.signed_transaction+bcs",
+        aptosConfig: "config",
+        body: Uint8Array.from(Buffer.from("signature", "hex")),
+        path: "transactions",
+        type: "Fullnode",
+        originMethod: "",
+      });
     });
   });
 });
