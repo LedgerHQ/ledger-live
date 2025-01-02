@@ -38,14 +38,24 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     runs-on: [ledger-live-4xlarge]
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        if: ${{ inputs.ref != null }}
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
       - name: Create dummy file
         run: echo "This is a dummy file" > dummyfile.txt
-      - name: List dummy file
-        run: ls -l dummyfile.txt
       - name: Display dummy file contents
         run: cat dummyfile.txt
       - name: Commit file
-        uses: swinton/commit@v2.x
+        uses: swinton/commit@v2.0.0
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -53,3 +63,18 @@ jobs:
             dummyfile.txt
           commit-message: Committing dummyfile.txt
           ref: refs/heads/support/signed-screenshot-gh-commits-swinton-test-2
+      - name: Force pull latest changes
+        run: git fetch origin ${{ inputs.ref }} && git reset --hard FETCH_HEAD
+      - name: Create 2nd dummy file
+        run: echo "This is a SECOND dummy file" > dummyfile2.txt
+      - name: Display dummy file 2 contents
+        run: cat dummyfile2.txt
+      - name: Commit updated screenshots to PR
+        id: commit-screenshots
+        uses: stefanzweifel/git-auto-commit-action@v5
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file_pattern: "dummyfile2.txt"
+          commit_message: "commit dummyfile 2"
+  
