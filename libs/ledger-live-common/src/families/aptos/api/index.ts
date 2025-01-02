@@ -167,13 +167,13 @@ export class AptosAPI {
     }
   }
 
-  private async fetchTransactions(address: string, startAt?: string) {
+  private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
     }
 
     let query = GetAccountTransactionsData;
-    if (startAt) {
+    if (gt) {
       query = GetAccountTransactionsDataGt;
     }
 
@@ -187,7 +187,7 @@ export class AptosAPI {
         limit: 1000,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        gt: startAt,
+        gt,
       },
       fetchPolicy: "network-only",
     });
