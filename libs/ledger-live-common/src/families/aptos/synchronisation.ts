@@ -1,16 +1,16 @@
-import { from, firstValueFrom } from "rxjs";
-import { withDevice } from "../../hw/deviceAccess";
+import { firstValueFrom, from } from "rxjs";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
+import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { withDevice } from "../../hw/deviceAccess";
 import type { AptosAccount } from "./types";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
-import { encodeAccountId, decodeAccountId } from "../../account";
+import { decodeAccountId, encodeAccountId } from "../../account";
 
+import Aptos from "@ledgerhq/hw-app-aptos";
 import { AptosAPI } from "./api";
 import { txsToOps } from "./logic";
-import Aptos from "@ledgerhq/hw-app-aptos";
 
-const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, derivationMode, currency, deviceId, derivationPath } = info;
 
   // "xpub" field is used to store publicKey to simulate transaction during sending tokens.
