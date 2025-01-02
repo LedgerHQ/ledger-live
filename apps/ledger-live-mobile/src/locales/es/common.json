@@ -2342,7 +2342,8 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
-    "seelAllAssets" : "Ver todos los activos",
+    "seeAllAssets" : "Ver todos los activos",
+    "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
@@ -2749,6 +2750,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Activos"
+  },
   "accounts" : {
     "title" : "Cuentas",
     "cryptoAccountsTitle" : "Cuentas de {{currencyTicker}}",
@@ -3091,6 +3095,13 @@
       "desc" : "Prueba las funciones experimentales y envíanos tu opinión.",
       "customManifest" : {
         "title" : "Cargar manifiesto de plataforma personalizada"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Modo de desarrollador del exchange",
+        "description" : "Añadir información del proveedor del exchange",
+        "placeholder" : "Información del proveedor del exchange en formato CAL",
+        "currentSetting" : "Ajuste actual",
+        "error" : "Valor de CAL no válido"
       }
     },
     "debug" : {
@@ -3460,6 +3471,16 @@
         "providers" : {
           "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "contact_support" : "Ponte en contacto con Soporte",
+        "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+        "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+        "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+        "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -3954,6 +3975,7 @@
   },
   "addAccounts" : {
     "addNew" : "Agregar nueva",
+    "addNewOrExisting" : "Agregar cuenta nueva o existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
@@ -6095,7 +6117,7 @@
     },
     "warning" : "Asegúrate de que la dirección que se muestra en tu Ledger coincide con la dirección de {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Verifica siempre que la dirección que muestra tu dispositivo coincida exactamente con la que te haya proporcionado el receptor",
+      "send" : "Comprueba siempre que la dirección mostrada en tu dispositivo coincida exactamente con la indicada por el destinatario.",
       "delegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "undelegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "freeze" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te hayan proporcionado",
@@ -6912,6 +6934,13 @@
         "title" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "Eliminar sincronización",
         "description" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de sincronizarse.",
@@ -6922,6 +6951,11 @@
           "cancel" : "Mantener sincronización",
           "title" : "¿Seguro que quieres eliminar la sincronización?",
           "desc" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de estar sincronizadas. Esto no afecta a tus fondos en modo alguno."
+        },
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
         }
       },
       "manageInstances" : {
@@ -7092,6 +7126,14 @@
           "name" : "Agregar una cuenta"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Seleccionar activo"
+    },
+    "selectNetwork" : {
+      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo"
     }
   }
 }
