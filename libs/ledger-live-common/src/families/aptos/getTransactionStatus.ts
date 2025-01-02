@@ -47,7 +47,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   } else if (!isValidAddress(t.recipient)) {
     errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
   } else if (t.recipient === a.freshAddress) {
-    errors.recepient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   if (
