@@ -971,6 +971,18 @@
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
     },
+    "GasLessThanEstimate" : {
+      "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "رقم التسلسل حديث جداً"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "رقم التسلسل قديم جداً"
+    },
+    "TransactionExpired" : {
+      "title" : "انتهت صلاحية المعاملة"
+    },
     "SequenceNumberError" : {
       "title" : "خطأ في رقم التسلسل",
       "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
@@ -1287,20 +1299,20 @@
     "title" : "أنت بحاجة إلى جهاز Ledger",
     "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
     "cta" : "اشترِ محفظتك Ledger الآن",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "لديّ جهاز Ledger بالفعل، لنعده",
+    "bannerTitle" : "مستوى عالي التطور من الأمان لأصولك المشفرة ورموزك غير القابلة للاستبدال",
+    "bannerTitle2" : "ستحتاج إلى جهاز Ledger لتكون قادراً على التداول",
+    "bannerSubtitle" : "بواسطة Ledger Flex",
+    "bannerButtonTitle" : "اكتشف Flex",
+    "bannerButtonTitle2" : "شراء Ledger",
+    "setupCta" : "لديّ جهاز Ledger بالفعل، لنعده"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "هل حصلت على جهازك Ledger بعد؟",
+    "desc" : "بمجرد أن يكون لديك جهازك Ledger، قم بإعداده للوصول إلى كل ميزات تطبيق Ledger Live.",
+    "cta" : "إعداد جهازي Ledger",
+    "bannerTitle" : "تلقيت جهازك Ledger؟",
+    "bannerCta" : "ابدأ الإعداد",
     "continue" : "متابعة"
   },
   "purchaseDevice" : {
@@ -1325,8 +1337,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "تم الشراء بنجاح",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "شكراً على ثقتك في Ledger",
+    "desc" : "طلبك قيد المعالجة.\nيُرجى أن تتحقق من بريدك الإلكتروني للعثور على تأكيد طلبك."
   },
   "discover" : {
     "title" : "اكتشف",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
-    "seelAllAssets" : "رؤية جميع الأصول",
+    "seeAllAssets" : "رؤية جميع الأصول",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
@@ -2546,7 +2559,8 @@
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
-      "stakedAmount" : "المبلغ المُكدَّس"
+      "stakedAmount" : "المبلغ المُكدَّس",
+      "version" : "الإصدار"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -2748,6 +2762,9 @@
         "cta" : "قم بالتكديس الآن"
       }
     }
+  },
+  "assets" : {
+    "title" : "الأصول"
   },
   "accounts" : {
     "title" : "الحسابات",
@@ -3091,6 +3108,13 @@
       "desc" : "جرّب ميزات المطور وأخبرنا برأيك.",
       "customManifest" : {
         "title" : "تحميل بيان المنصة المخصص"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "وضع المطور لمنصة التداول",
+        "description" : "إضافة معلومات مُزوّد منصة التداول",
+        "placeholder" : "معلومات مُزوّد التداول بصيغة CAL",
+        "currentSetting" : "الإعداد الحالي",
+        "error" : "قيمة CAL غير صالحة"
       }
     },
     "debug" : {
@@ -3271,7 +3295,7 @@
     },
     "stake" : {
       "title" : "تكديس",
-      "description" : "Get rewards on your crypto."
+      "description" : "احصل على مكافآت على أصولك المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -3460,6 +3484,16 @@
         "providers" : {
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "contact_support" : "تواصل مع دعم العملاء",
+        "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+        "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+        "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+        "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -3787,7 +3821,16 @@
         "title" : "اختر الوحدة"
       },
       "networkInfo" : "اختر مبلغ رسوم الشبكة المراد تضمينها في المعاملة. يؤثر مبلغ الرسوم على سرعة معالجة المعاملة",
-      "networkInfoMaxFees" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية."
+      "networkInfoMaxFees" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية.",
+      "aptos" : {
+        "options" : "الخيارات",
+        "gasLimit" : "حد الغاز",
+        "gasPrice" : "سعر الغاز (OCTAS)",
+        "sequenceNumber" : "رقم التسلسل",
+        "expTimestamp" : "الطابع الزمني المتوقع",
+        "setOptimalGas" : "تعيين سعر الغاز الأمثل",
+        "resetSettings" : "إعادة تعيين الإعدادات"
+      }
     },
     "verification" : {
       "streaming" : {
@@ -3954,6 +3997,7 @@
   },
   "addAccounts" : {
     "addNew" : "إضافة جديد",
+    "addNewOrExisting" : "إضافة حساب جديد أو موجود",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit أم Native SegWit؟"
     },
@@ -6095,7 +6139,7 @@
     },
     "warning" : "تأكد أن العنوان المعروض على Ledger الخاص بك يُطابق عنوان {{recipientWording}}",
     "recipientWording" : {
-      "send" : "دائماً تحقق من أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه لك المستلم",
+      "send" : "دائماً تحقق أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه المستلم",
       "delegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "undelegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "freeze" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما تم تقديمه إليك",
@@ -6912,6 +6956,13 @@
         "title" : "المزامنة مع تطبيق Ledger Live آخر",
         "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "هذا التطبيق لم يعد متزامناً",
+          "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على التطبيق الذي تقوم بالمزامنة معه.",
+          "cta" : "تشغيل مزامنة Ledger"
+        }
+      },
       "manageKey" : {
         "title" : "حذف المزامنة",
         "description" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة ستتوقف عن المزامنة.",
@@ -6922,6 +6973,11 @@
           "cancel" : "إبقاء المزامنة",
           "title" : "متأكد أنك تريد حذف المزامنة؟",
           "desc" : "حسابات أصولك المشفرة عبر الهواتف وأجهزة الكمبيوتر المختلفة لن تكون متزامنة بعد الآن. هذا لا يؤثر على أموالك بأي طريقة."
+        },
+        "error" : {
+          "title" : "هذا التطبيق لم يعد متزامناً",
+          "description" : "قم بتشغيل مزامنة Ledger إما على تطبيق Ledger Live هذا أو على التطبيق الذي تقوم بالمزامنة معه.",
+          "cta" : "تشغيل مزامنة Ledger"
         }
       },
       "manageInstances" : {
