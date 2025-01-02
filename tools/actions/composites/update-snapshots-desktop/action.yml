@@ -52,7 +52,7 @@ runs:
         GH_TOKEN: ${{ inputs.token }}
       with:
         files: |
-          apps/ledger-live-desktop/tests/specs*
+          $(git status --porcelain | awk '{print $2}' | sed 's/^/          /')
         commit-message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
         ref: $(git branch --show-current)
 
