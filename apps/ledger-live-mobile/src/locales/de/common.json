@@ -971,6 +971,18 @@
       "title" : "Ungültiger Anbieter",
       "description" : "Du musst die Einstellung „Mein Ledger-Anbieter“ ändern. Öffne dazu die Einstellungen in Ledger Live, navigiere zu „Experimentelle Features“ und wähle einen anderen Anbieter aus."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Dies könnte zu niedrig sein. Bitte erhöhen"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "Sequenznummer zu neu"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "Sequenznummer zu alt"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaktion abgelaufen"
+    },
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
@@ -1287,20 +1299,20 @@
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert Ledger Live nur mit einem Gerät. Sie benötigen ein Gerät, um fortzufahren.",
     "cta" : "Ledger jetzt kaufen",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
+    "footer" : "Ich habe bereits ein Ledger-Gerät. Bitte Einrichtung starten.",
+    "bannerTitle" : "Überragende Sicherheit für deine Kryptos und NFTs",
+    "bannerTitle2" : "Du brauchst ein Ledger-Gerät zum Handeln",
+    "bannerSubtitle" : "mit einer Ledger Flex",
+    "bannerButtonTitle" : "Flex entdecken",
     "bannerButtonTitle2" : "Ledger-Gerät kaufen",
-    "setupCta" : "I already have a Ledger, set it up"
+    "setupCta" : "Ich habe bereits ein Ledger-Gerät. Einrichtung starten."
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Hast du deine Ledger schon bekommen?",
+    "desc" : "Sobald du dein Ledger-Gerät erhalten hast, richte es ein, um alle Funktionen der Ledger Live-App freizuschalten.",
+    "cta" : "Mein Ledger-Gerät einrichten",
+    "bannerTitle" : "Hast du dein Ledger-Gerät erhalten?",
+    "bannerCta" : "Einrichtung starten",
     "continue" : "Weiter"
   },
   "purchaseDevice" : {
@@ -1325,8 +1337,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Kauf erfolgreich",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Vielen Dank für dein Vertrauen in Ledger",
+    "desc" : "Deine Bestellung wird bearbeitet.\nEine Auftragsbestätigung erhältst du per E-Mail."
   },
   "discover" : {
     "title" : "Neues entdecken",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "Alles anzeigen"
     },
     "walletBalance" : "Kontostand der Wallet",
-    "seelAllAssets" : "Alle Vermögenswerte anzeigen",
+    "seeAllAssets" : "Alle Vermögenswerte anzeigen",
+    "seeAllAccounts" : "Alle Konten anzeigen",
     "marketPriceSection" : {
       "title" : "Marktpreis für {{currencyTicker}}",
       "currencyPrice" : "Preis für 1 {{currencyTicker}}",
@@ -2546,7 +2559,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "version" : "Version"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -2748,6 +2762,9 @@
         "cta" : "Jetzt staken"
       }
     }
+  },
+  "assets" : {
+    "title" : "Vermögenswerte"
   },
   "accounts" : {
     "title" : "Konten",
@@ -3091,6 +3108,13 @@
       "desc" : "Probieren Sie die experimentellen Entwicklerfunktionen aus und lassen Sie uns wissen, was Sie davon halten.",
       "customManifest" : {
         "title" : "Benutzerdefiniertes Plattform-Manifest laden"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Entwicklermodus für Börsen",
+        "description" : "Info des Börsenanbieters hinzufügen",
+        "placeholder" : "Info des Börsenanbieters im CAL-Format",
+        "currentSetting" : "Aktuelle Einstellung",
+        "error" : "Ungültiger CAL-Wert"
       }
     },
     "debug" : {
@@ -3460,6 +3484,16 @@
         "providers" : {
           "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Kompatible Geräte entdecken",
+        "contact_support" : "Kundensupport kontaktieren",
+        "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
+        "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
+        "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
+        "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
       }
     },
     "lending" : {
@@ -3787,7 +3821,16 @@
         "title" : "Einheit wählen"
       },
       "networkInfo" : "Wählen Sie die Höhe der Netzwerkgebühren, die in der Transaktion enthalten sein sollen. Die Höhe der Gebühren beeinflusst die Verarbeitungsgeschwindigkeit der Transaktion",
-      "networkInfoMaxFees" : "Dies ist der Betrag, den du maximal für diese Transaktion zahlen musst. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet."
+      "networkInfoMaxFees" : "Dies ist der Betrag, den du maximal für diese Transaktion zahlen musst. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet.",
+      "aptos" : {
+        "options" : "Optionen",
+        "gasLimit" : "Gaslimit",
+        "gasPrice" : "Gaspreis (OCTAS)",
+        "sequenceNumber" : "Sequenznummer",
+        "expTimestamp" : "Erw. Zeitstempel",
+        "setOptimalGas" : "Optimales Gas festlegen",
+        "resetSettings" : "Einstellungen zurücksetzen"
+      }
     },
     "verification" : {
       "streaming" : {
@@ -3954,6 +3997,7 @@
   },
   "addAccounts" : {
     "addNew" : "Neu hinzufügen",
+    "addNewOrExisting" : "Neues oder bestehendes Konto hinzufügen",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit oder Native Segwit?"
     },
@@ -6095,7 +6139,7 @@
     },
     "warning" : "Vergewissere dich, dass die auf deinem Ledger-Gerät angezeigte Adresse mit der Adresse des {{recipientWording}} übereinstimmt",
     "recipientWording" : {
-      "send" : "Vergewissere dich immer, dass die auf deinem Gerät angezeigte Adresse exakt mit derjenigen übereinstimmt, die dir der Empfänger mitgeteilt hat",
+      "send" : "Always verify that the address displayed on your device matches exactly with the one provided by the recipient",
       "delegate" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt so anzeigt, wie sie vom Validator angegeben wurde",
       "undelegate" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt so anzeigt, wie sie vom Validator angegeben wurde",
       "freeze" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt wie angegeben anzeigt",
@@ -6912,6 +6956,13 @@
         "title" : "Mit einer anderen Ledger Live-App synchronisieren",
         "description" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
+        }
+      },
       "manageKey" : {
         "title" : "Sync löschen",
         "description" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert.",
@@ -6922,6 +6973,11 @@
           "cancel" : "Sync behalten",
           "title" : "Möchtest du Sync wirklich löschen?",
           "desc" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert. Das hat keinerlei Auswirkungen auf deine Vermögenswerte."
+        },
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
         }
       },
       "manageInstances" : {
