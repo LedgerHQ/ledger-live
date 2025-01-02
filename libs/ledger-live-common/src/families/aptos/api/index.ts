@@ -22,11 +22,7 @@ import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID } from "../constants";
 import { isTestnet } from "../logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
-import {
-  GetAccountTransactionsData,
-  GetAccountTransactionsDataGt,
-  GetAccountTransactionsDataLt,
-} from "./graphql/queries";
+import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataQueryVariables,
@@ -70,7 +66,7 @@ export class AptosAPI {
   async getAccountInfo(address: string, startAt: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
       this.getBalance(address),
-      this.fetchTransactions(address, undefined, startAt),
+      this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
 
@@ -171,17 +167,13 @@ export class AptosAPI {
     }
   }
 
-  private async fetchTransactions(address: string, lt?: string, gt?: string) {
+  private async fetchTransactions(address: string, startAt?: string) {
     if (!address) {
       return [];
     }
 
-    // WORKAROUND: Where is no way to pass optional bigint var to query
     let query = GetAccountTransactionsData;
-    if (lt) {
-      query = GetAccountTransactionsDataLt;
-    }
-    if (gt) {
+    if (startAt) {
       query = GetAccountTransactionsDataGt;
     }
 
@@ -195,8 +187,7 @@ export class AptosAPI {
         limit: 1000,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        lt,
-        gt,
+        startAt,
       },
       fetchPolicy: "network-only",
     });
