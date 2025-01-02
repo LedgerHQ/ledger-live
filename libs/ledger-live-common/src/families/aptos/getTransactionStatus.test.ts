@@ -11,7 +11,11 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { SequenseNumberTooNewError, SequenseNumberTooOldError, TransactionExpiredError } from "./errors";
+import {
+  SequenceNumberTooNewError,
+  SequenceNumberTooOldError,
+  TransactionExpiredError,
+} from "./errors";
 
 describe("getTransactionStatus Test", () => {
   it("should return errors for AmountRequired", async () => {
@@ -134,7 +138,7 @@ describe("getTransactionStatus Test", () => {
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
-    account.freshAddress = "0x" + "0".repeat(64);
+    account.freshAddress = transaction.recipient;
 
     const result = await getTransactionStatus(account, transaction);
 
@@ -203,7 +207,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return errors for SequenseNumberTooOldError", async () => {
+  it("should return errors for SequenceNumberTooOldError", async () => {
     const account = createFixtureAccount();
     const transaction = createTransaction();
 
@@ -218,7 +222,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        sequenceNumber: new SequenseNumberTooOldError(),
+        sequenceNumber: new SequenceNumberTooOldError(),
       },
       warnings: {},
       estimatedFees: new BigNumber(2),
@@ -229,7 +233,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return errors for SequenseNumberTooNewError", async () => {
+  it("should return errors for SequenceNumberTooNewError", async () => {
     const account = createFixtureAccount();
     const transaction = createTransaction();
 
@@ -244,7 +248,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        sequenceNumber: new SequenseNumberTooNewError(),
+        sequenceNumber: new SequenceNumberTooNewError(),
       },
       warnings: {},
       estimatedFees: new BigNumber(2),

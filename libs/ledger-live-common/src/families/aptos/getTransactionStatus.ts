@@ -14,8 +14,8 @@ import type { Transaction } from "./types";
 
 import { isValidAddress } from "./logic";
 import {
-  SequenseNumberTooNewError,
-  SequenseNumberTooOldError,
+  SequenceNumberTooNewError,
+  SequenceNumberTooOldError,
   TransactionExpiredError,
 } from "./errors";
 
@@ -68,9 +68,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   if (t.errors?.sequenceNumber) {
     if (t.errors.sequenceNumber.includes("TOO_OLD")) {
-      errors.sequenceNumber = new SequenseNumberTooOldError();
+      errors.sequenceNumber = new SequenceNumberTooOldError();
     } else if (t.errors.sequenceNumber.includes("TOO_NEW")) {
-      errors.sequenceNumber = new SequenseNumberTooNewError();
+      errors.sequenceNumber = new SequenceNumberTooNewError();
     }
   }
 
