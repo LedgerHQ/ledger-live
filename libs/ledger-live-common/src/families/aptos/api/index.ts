@@ -187,7 +187,7 @@ export class AptosAPI {
         limit: 1000,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        startAt,
+        gt: startAt,
       },
       fetchPolicy: "network-only",
     });
