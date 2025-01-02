@@ -1,9 +1,9 @@
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
-import "../../__tests__/test-helpers/setup";
-import { fromTransactionRaw } from "./transaction";
-import { Transaction } from "./types";
+import { testBridge } from "../../../__tests__/test-helpers/bridge";
+import "../../../__tests__/test-helpers/setup";
+import { fromTransactionRaw } from "../transaction";
+import { Transaction } from "../types";
 
 const aptos: CurrenciesData<Transaction> = {
   scanAccounts: [
