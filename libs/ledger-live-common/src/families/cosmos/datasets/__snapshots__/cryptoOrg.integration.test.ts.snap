@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 1`] = `
+[
+  {
+    "balance": "10000000",
+    "cosmosResources": {
+      "delegatedBalance": "0",
+      "delegations": [],
+      "pendingRewardsBalance": "0",
+      "redelegations": [],
+      "sequence": 0,
+      "unbondingBalance": "0",
+      "unbondings": [],
+      "withdrawAddress": "cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39",
+    },
+    "currencyId": "crypto_org",
+    "derivationMode": "",
+    "freshAddress": "cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39",
+    "freshAddressPath": "44'/394'/0'/0/0",
+    "id": "js:2:crypto_org:cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39:",
+    "index": 0,
+    "operationsCount": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "0346289788c2f518a158232e7028e8e86b30cff0670326d3a2507183cb0d81cecb",
+    "spendableBalance": "10000000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39",
+  },
+  {
+    "balance": "0",
+    "cosmosResources": {
+      "delegatedBalance": "0",
+      "delegations": [],
+      "pendingRewardsBalance": "0",
+      "redelegations": [],
+      "sequence": 0,
+      "unbondingBalance": "0",
+      "unbondings": [],
+      "withdrawAddress": "cro1x7dn0wn5q9rvpzkqsqravg2jgvgr64l6nfeafz",
+    },
+    "currencyId": "crypto_org",
+    "derivationMode": "",
+    "freshAddress": "cro1x7dn0wn5q9rvpzkqsqravg2jgvgr64l6nfeafz",
+    "freshAddressPath": "44'/394'/1'/0/0",
+    "id": "js:2:crypto_org:cro1x7dn0wn5q9rvpzkqsqravg2jgvgr64l6nfeafz:",
+    "index": 1,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "0346289788c2f518a158232e7028e8e86b30cff0670326d3a2507183cb0d81cecb",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "cro1x7dn0wn5q9rvpzkqsqravg2jgvgr64l6nfeafz",
+  },
+]
+`;
+
+exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:crypto_org:cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39:",
+      "blockHash": null,
+      "blockHeight": 20675998,
+      "extra": {},
+      "fee": "5000",
+      "hasFailed": false,
+      "hash": "26AD74D54761E751720F49D7427B703EB1F179CB87255BEFDB725F4016B38F89",
+      "id": "js:2:crypto_org:cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39:-26AD74D54761E751720F49D7427B703EB1F179CB87255BEFDB725F4016B38F89-IN",
+      "recipients": [
+        "cro1jr0kggxjd3k67eu7xr7lz4s30tynsmrz44fr39",
+      ],
+      "senders": [
+        "cro1urt70xd2naehl3jxtjhpsrmjhaspd2azlkh44c",
+      ],
+      "transactionSequenceNumber": 5,
+      "type": "IN",
+      "value": "10000000",
+    },
+  ],
+  [],
+]
+`;

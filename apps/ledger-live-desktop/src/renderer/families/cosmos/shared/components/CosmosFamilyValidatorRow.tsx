@@ -25,12 +25,12 @@ type Props = {
 };
 function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
-  const currencyName = currency.name.toLowerCase();
+  const currencyID = currency.id;
 
   const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const onExternalLink = useCallback(
     (address: string) => {
-      const ledgerValidator = cryptoFactory(currencyName).ledgerValidator;
+      const ledgerValidator = cryptoFactory(currencyID).ledgerValidator;
       if (address === ledgerValidator) {
         openURL(ledgerValidatorUrl);
       } else {
@@ -38,7 +38,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
         if (srURL) openURL(srURL);
       }
     },
-    [currencyName, explorerView, ledgerValidatorUrl],
+    [currencyID, explorerView, ledgerValidatorUrl],
   );
   return (
     <StyledValidatorRow

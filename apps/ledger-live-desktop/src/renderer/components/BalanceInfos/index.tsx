@@ -168,6 +168,7 @@ export default function BalanceInfos({
       state: {
         from: history.location.pathname,
         defaultAccount,
+        defaultAmountFrom: "0",
         defaultParentAccount: parentAccount,
       },
     });

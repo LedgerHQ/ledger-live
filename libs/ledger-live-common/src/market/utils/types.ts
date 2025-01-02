@@ -82,6 +82,7 @@ export enum KeysPriceChange {
 
 export type CurrencyData = {
   id: string;
+  ledgerIds: string[];
   name: string;
   image?: string;
   internalCurrency?: CryptoOrTokenCurrency;

@@ -3484,6 +3484,16 @@
         "providers": {
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
+      },
+      "incompatibility": {
+        "explore_compatible_devices": "Explore compatible devices",
+        "contact_support": "Contact customer support",
+        "ton_title": "Ledger Nano S™ does not support swapping Ton",
+        "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
+        "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ada_title": "Ledger Nano S™ does not support swapping Cardano",
+        "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -6131,7 +6141,7 @@
     },
     "warning": "Make sure the address displayed on your Ledger matches the {{recipientWording}}'s address",
     "recipientWording": {
-      "send": "Always verify the address displayed your device exactly matches the one given to you by the recipient",
+      "send": "Always verify that the address displayed on your device matches exactly with the one provided by the recipient",
       "delegate": "Always verify that your device displays the address exactly as provided by the validator",
       "undelegate": "Always verify that your device displays the address exactly as provided by the validator",
       "freeze": "Always verify that your device displays the address exactly as provided",

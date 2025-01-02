@@ -1,6 +1,6 @@
+import aptos from "../families/aptos/specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
-import crypto_org from "../families/crypto_org/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
@@ -23,9 +23,9 @@ import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
+  aptos,
   casper,
   celo,
-  crypto_org,
   algorand,
   bitcoin,
   cardano,

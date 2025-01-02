@@ -127,6 +127,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const { state } = useLocation<{
     defaultAccount?: AccountLike;
     defaultParentAccount?: Account;
+    defaultAmountFrom?: string;
     from?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
@@ -402,11 +403,23 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 state?.defaultAccount,
                 state?.defaultParentAccount,
               ).id,
+              amountFrom: state?.defaultAmountFrom || "",
             }
           : {}),
-        ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
+        ...(state?.from
+          ? {
+              fromPath: simplifyFromPath(state?.from),
+            }
+          : {}),
       }).toString(),
-    [isOffline, state?.defaultAccount, state?.defaultParentAccount, state?.from, walletState],
+    [
+      isOffline,
+      state?.defaultAccount,
+      state?.defaultParentAccount,
+      state?.defaultAmountFrom,
+      state?.from,
+      walletState,
+    ],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {

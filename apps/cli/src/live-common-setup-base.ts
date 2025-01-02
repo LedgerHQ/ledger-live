@@ -10,6 +10,8 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "aptos",
+  "aptos_testnet",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -92,8 +94,6 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
-  "aptos",
-  "aptos_testnet",
   "ton",
   "linea_sepolia",
   "blast",
@@ -104,6 +104,7 @@ setSupportedCurrencies([
   "zksync",
   "zksync_sepolia",
   "mantra",
+  "xion",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

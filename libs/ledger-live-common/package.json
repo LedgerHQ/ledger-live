@@ -121,7 +121,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
-    "@aptos-labs/ts-sdk": "^1.33.0",
+    "@aptos-labs/ts-sdk": "^1.33.1",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^6.0.2",
@@ -129,7 +129,9 @@
     "@celo/utils": "^7.0.0",
     "@celo/wallet-base": "^6.0.3",
     "@celo/wallet-ledger": "^6.0.3",
-    "@crypto-org-chain/chain-jslib": "1.1.2",
+    "@dfinity/agent": "^0.21.0",
+    "@dfinity/candid": "^0.21.0",
+    "@dfinity/principal": "^0.15.6",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
@@ -193,7 +195,7 @@
     "@ledgerhq/wallet-api-core": "^1.13.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.6.0",
-    "@noble/hashes": "1.5.0",
+    "@noble/hashes": "1.6.1",
     "@stricahq/typhonjs": "^2.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
@@ -266,6 +268,7 @@
     "@types/react": "^18.2.21",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
+    "buffer": "6.0.3",
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
@@ -292,9 +295,8 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
     "typescript": "5.1.3",
+    "undici": "6.19.2",
     "uuid": "^8.3.2",
-    "ws": "7",
-    "buffer": "6.0.3",
-    "undici": "6.19.2"
+    "ws": "7"
   }
 }

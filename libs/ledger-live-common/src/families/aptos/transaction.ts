@@ -1,15 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
-import { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatTransactionStatus } from "@ledgerhq/coin-bitcoin/transaction";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { formatTransactionStatus } from "@ledgerhq/coin-bitcoin/transaction";
+import { Account } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
   { mode, amount, fees, recipient, useAllAmount }: Transaction,
@@ -31,11 +31,11 @@ export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
     ...common,
     family: t.family,
     mode: t.mode,
-    fees: t.fees ? new BigNumber(t.fees) : null,
     options: JSON.parse(t.options),
     estimate: JSON.parse(t.estimate),
     firstEmulation: JSON.parse(t.firstEmulation),
-    errors: t.errors ? JSON.parse(t.errors) : {},
+    ...(t.fees && { fees: new BigNumber(t.fees) }),
+    ...(t.errors && { errors: JSON.parse(t.errors) }),
   };
 };
 
