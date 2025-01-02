@@ -971,6 +971,18 @@
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
+    "GasLessThanEstimate" : {
+      "title" : "低すぎる可能性があります。増やしてください"
+    },
+    "SequenseNumberTooNew" : {
+      "title" : "シーケンス番号が新しすぎます"
+    },
+    "SequenseNumberTooOld" : {
+      "title" : "シーケンス番号が古すぎます"
+    },
+    "TransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました"
+    },
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
@@ -1287,20 +1299,20 @@
     "title" : "Ledgerが必要です",
     "desc" : "セキュリティーの都合上、Ledger Liveはデバイス上でのみ機能します。継続にはデバイスが必要です。",
     "cta" : "Ledgerを今すぐ購入",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "すでにLedgerを持っているので、セットアップします",
+    "bannerTitle" : "暗号資産とNFTの一流のセキュリティ",
+    "bannerTitle2" : "トレードにはLedgerが必要です",
+    "bannerSubtitle" : "Ledger Flexで実現",
+    "bannerButtonTitle" : "Flexの詳細を知る",
+    "bannerButtonTitle2" : "Ledgerを購入する",
+    "setupCta" : "すでにLedgerを持っているので、セットアップします"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Ledgerはすでに入手されましたか？",
+    "desc" : "Ledgerを入手したら、セットアップしてLedger Liveアプリの全機能をご利用ください。",
+    "cta" : "Ledgerをセットアップ",
+    "bannerTitle" : "Ledgerを受け取りましたか？",
+    "bannerCta" : "セットアップを開始",
     "continue" : "続行"
   },
   "purchaseDevice" : {
@@ -1325,8 +1337,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "購入手続きに成功",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Ledgerをご信頼いただきありがとうございます",
+    "desc" : "ご注文を処理しています。\nご注文確認のメールをご確認ください。"
   },
   "discover" : {
     "title" : "アプリ一覧",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "すべて表示"
     },
     "walletBalance" : "ウォレット残高",
-    "seelAllAssets" : "すべての暗号資産を表示",
+    "seeAllAssets" : "すべての暗号資産を表示",
+    "seeAllAccounts" : "すべてのアカウントを表示",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}}の市場価格",
       "currencyPrice" : "1 {{currencyTicker}}の価格",
@@ -2546,7 +2559,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "version" : "バージョン"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -2748,6 +2762,9 @@
         "cta" : "今すぐステーキング"
       }
     }
+  },
+  "assets" : {
+    "title" : "資産"
   },
   "accounts" : {
     "title" : "アカウント",
@@ -3091,6 +3108,13 @@
       "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange開発者モード",
+        "description" : "Exchange（取引）プロバイダーの情報を追加する",
+        "placeholder" : "CAL形式のExchangeプロバイダー情報",
+        "currentSetting" : "現在の設定",
+        "error" : "CAL値が無効です"
       }
     },
     "debug" : {
@@ -3460,6 +3484,16 @@
         "providers" : {
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "対応デバイスを探す",
+        "contact_support" : "カスタマーサポートに問い合わせる",
+        "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+        "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+        "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+        "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -3787,7 +3821,16 @@
         "title" : "単位を選択"
       },
       "networkInfo" : "トランザクションに含めるネットワーク手数料を選択してください。手数料の額は、トランザクションの処理速度に影響します。",
-      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。"
+      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。",
+      "aptos" : {
+        "options" : "オプション",
+        "gasLimit" : "ガスリミット",
+        "gasPrice" : "ガス代（OCTAS）",
+        "sequenceNumber" : "シーケンス番号",
+        "expTimestamp" : "有効期限タイムスタンプ",
+        "setOptimalGas" : "最適なガスを設定する",
+        "resetSettings" : "設定をリセットする"
+      }
     },
     "verification" : {
       "streaming" : {
@@ -3954,6 +3997,7 @@
   },
   "addAccounts" : {
     "addNew" : "新規で追加",
+    "addNewOrExisting" : "新規または既存のアカウントを追加する",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegwitとNative Segwitとは？"
     },
@@ -6095,7 +6139,7 @@
     },
     "warning" : "Ledgerに表示されているアドレスが{{recipientWording}}のアドレスと一致していることを確認してください",
     "recipientWording" : {
-      "send" : "デバイス上に表示されているアドレスが、受取人から提供されたものと完全に一致していることを、毎回必ず確認してください。",
+      "send" : "デバイスに表示されるアドレスが受信者から提供されたアドレスと完全に一致していることを、常に確認してください。",
       "delegate" : "デバイス上に、バリデーターから提供されたアドレスが正確に表示されていることを常に確認してください。",
       "undelegate" : "デバイス上に、バリデーターから提供されたアドレスが正確に表示されていることを常に確認してください。",
       "freeze" : "デバイス上に、アドレスが正確に表示されていることを常に確認してください。",
@@ -6912,6 +6956,13 @@
         "title" : "別のLedger Liveアプリと同期する",
         "description" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。"
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "このアプリの同期は終了しました",
+          "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします。",
+          "cta" : "Ledger Syncをオンにする"
+        }
+      },
       "manageKey" : {
         "title" : "同期の削除",
         "description" : "さまざまなスマートフォンやコンピューター間の暗号資産アカウントの同期が停止します。",
@@ -6922,6 +6973,11 @@
           "cancel" : "同期を維持",
           "title" : "同期を削除してもよろしいですか？",
           "desc" : "別のスマートフォンやコンピューター上の暗号資産アカウントは同期されなくなります。これはお客様の資金には一切影響しません。"
+        },
+        "error" : {
+          "title" : "このアプリの同期は終了しました",
+          "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします。",
+          "cta" : "Ledger Syncをオンにする"
         }
       },
       "manageInstances" : {
