@@ -69,15 +69,15 @@ export default {
   globalSetup: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
     : process.env.USE_BACKEND_MOCKS
-      ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUseMocks.ts"
-      : undefined,
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUseMocks.ts"
+    : undefined,
   globalTeardown: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUpdateMocks.ts"
     : process.env.USE_BACKEND_MOCKS
-      ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUseMocks.ts"
-      : undefined,
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUseMocks.ts"
+    : undefined,
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
-  coverageReporters: ["json", "lcov", "clover", "json-summary", "html"],
+  coverageReporters: ["json", "lcov", "clover", "json-summary""],
   projects: [defaultConfig],
 };
