@@ -464,7 +464,7 @@ describe("Aptos API", () => {
       const api = new AptosAPI("aptos");
       const address = new Ed25519PublicKey(Account.APTOS_1.address);
       const tx = new RawTransaction(
-        new AccountAddress(Uint8Array.from(Account.APTOS_2.address)),
+        new AccountAddress(Uint8Array.from(Buffer.from(Account.APTOS_2.address))),
         BigInt(1),
         "" as unknown as Serializable,
         BigInt(100),
