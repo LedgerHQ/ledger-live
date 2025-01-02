@@ -127,7 +127,7 @@ export const getEstimatedGas = async (
     return CACHE.get(key);
   }
 
-  CACHE.set(key, getFee(account, transaction, aptosClient));
+  CACHE.set(key, await getFee(account, transaction, aptosClient));
 
   return CACHE.get(key);
 };

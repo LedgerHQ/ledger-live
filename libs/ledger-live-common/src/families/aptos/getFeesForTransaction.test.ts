@@ -10,8 +10,10 @@ jest.mock("./api", () => {
   return {
     AptosAPI: function () {
       return {
+        estimateGasPrice: jest.fn(() => ({ gas_estimate: 101 })),
         generateTransaction: jest.fn(() => "tx"),
         simulateTransaction,
+        getAccount: jest.fn(() => ({ sequence_number: "123" })),
       };
     },
   };
@@ -20,6 +22,15 @@ jest.mock("./api", () => {
 jest.mock("@aptos-labs/ts-sdk", () => {
   return {
     Ed25519PublicKey: jest.fn(),
+  };
+});
+
+jest.mock("./logic", () => {
+  return {
+    DEFAULT_GAS: 201,
+    DEFAULT_GAS_PRICE: 101,
+    ESTIMATE_GAS_MUL: 1,
+    normalizeTransactionOptions: jest.fn(),
   };
 });
 
@@ -46,11 +57,11 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20000),
+          fees: new BigNumber(20301),
           estimate: {
-            maxGasAmount: "200",
-            gasUnitPrice: "100",
-            sequenceNumber: "",
+            maxGasAmount: "201",
+            gasUnitPrice: "101",
+            sequenceNumber: "123",
             expirationTimestampSecs: 5,
           },
           errors: {
@@ -83,11 +94,11 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20000),
+          fees: new BigNumber(20301),
           estimate: {
-            maxGasAmount: "200",
-            gasUnitPrice: "100",
-            sequenceNumber: "",
+            maxGasAmount: "201",
+            gasUnitPrice: "101",
+            sequenceNumber: "123",
             expirationTimestampSecs: 5,
           },
           errors: {
@@ -120,11 +131,11 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20000),
+          fees: new BigNumber(20301),
           estimate: {
-            maxGasAmount: "200",
-            gasUnitPrice: "100",
-            sequenceNumber: "",
+            maxGasAmount: "201",
+            gasUnitPrice: "101",
+            sequenceNumber: "123",
             expirationTimestampSecs: 5,
           },
           errors: {},
@@ -172,11 +183,11 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             expirationTimestampSecs: "",
-            gasUnitPrice: "100",
-            maxGasAmount: "200",
-            sequenceNumber: "",
+            gasUnitPrice: "101",
+            maxGasAmount: "201",
+            sequenceNumber: "123",
           },
-          fees: new BigNumber("20000"),
+          fees: new BigNumber("20301"),
         };
 
         expect(result).toEqual(expected);
@@ -196,11 +207,11 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             expirationTimestampSecs: "",
-            gasUnitPrice: "100",
-            maxGasAmount: "200",
-            sequenceNumber: "",
+            gasUnitPrice: "101",
+            maxGasAmount: "201",
+            sequenceNumber: "123",
           },
-          fees: new BigNumber("20000"),
+          fees: new BigNumber("20301"),
         };
 
         expect(result).toEqual(expected);
