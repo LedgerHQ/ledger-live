@@ -40,12 +40,16 @@ jobs:
     steps:
       - name: Create dummy file
         run: echo "This is a dummy file" > dummyfile.txt
+      - name: List dummy file
+        run: ls -l dummyfile.txt
+      - name: Display dummy file contents
+        run: cat dummyfile.txt
       - name: Commit file
         uses: swinton/commit@v2.x
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ./dummyfile.txt
-          commit-message: Committing ./myfile
+            dummyfile.txt
+          commit-message: Committing dummyfile.txt
           ref: refs/heads/support/signed-screenshot-gh-commits-swinton-test-2
