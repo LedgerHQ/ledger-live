@@ -14,11 +14,13 @@ jest.mock("./api", () => {
   };
 });
 
+let signTransaction;
+
 jest.mock("./LedgerAccount", () => {
   return function () {
     return {
       init: jest.fn(),
-      signTransaction: jest.fn(() => "tx"),
+      signTransaction,
     };
   };
 });
@@ -39,14 +41,50 @@ jest.mock("../../operation", () => {
 
 jest.mock("./buildTransaction", () => {
   return function () {
-    return jest.fn(() => {});
+    return {
+      sequence_number: "789",
+    };
   };
 });
 
 describe("signOperation Test", () => {
-  it("should return errors for AmountRequired", async () => {
+  beforeEach(() => {
+    signTransaction = jest.fn(() => "tx");
+  });
+
+  it("should thrown an error", async () => {
+    signTransaction = () => {
+      throw new Error("observable-catch-error");
+    };
+
     const account = createFixtureAccount();
     const transaction = createTransaction();
+
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
+
+    const observable = await signOperation({
+      account,
+      deviceId: "1",
+      transaction,
+    });
+
+    observable.subscribe({
+      error: err => {
+        expect(err.message).toBe("observable-catch-error");
+      },
+    });
+  });
+
+  it("should return 3 operations", async () => {
+    const date = new Date("2020-01-01");
+    jest.useFakeTimers().setSystemTime(date);
+
+    const account = createFixtureAccount();
+    const transaction = createTransaction();
+
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
 
     const observable = await signOperation({
       account,
@@ -71,11 +109,11 @@ describe("signOperation Test", () => {
             extra: {},
             blockHash: null,
             blockHeight: null,
-            senders: [Array],
-            recipients: [Array],
-            accountId: "js:2:ethereum:0x000:",
-            date: new Date(),
-            transactionSequenceNumber: NaN,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            accountId: "js:2:aptos:0x000:",
+            date,
+            transactionSequenceNumber: 789,
           },
           signature: "7478",
         },
@@ -85,7 +123,62 @@ describe("signOperation Test", () => {
     let i = 0;
 
     observable.forEach(signOperationEvent => {
-      console.error("signOperationEvent", signOperationEvent);
+      expect(signOperationEvent).toEqual(expectedValues[i]);
+      i++;
+    });
+  });
+
+  it("should return 3 operations with all amount", async () => {
+    const date = new Date("2020-01-01");
+    jest.useFakeTimers().setSystemTime(date);
+
+    const account = createFixtureAccount();
+    const transaction = createTransaction();
+
+    account.balance = new BigNumber(40);
+    transaction.fees = new BigNumber(30);
+    transaction.useAllAmount = true;
+
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
+
+    const observable = await signOperation({
+      account,
+      deviceId: "1",
+      transaction,
+    });
+
+    expect(observable).toBeInstanceOf(Observable);
+
+    const expectedValues = [
+      { type: "device-signature-requested" },
+      { type: "device-signature-granted" },
+      {
+        type: "signed",
+        signedOperation: {
+          operation: {
+            id: "js:2:aptos:0x000",
+            hash: "",
+            type: "OUT",
+            value: new BigNumber(10),
+            fee: transaction.fees,
+            extra: {},
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            accountId: "js:2:aptos:0x000:",
+            date,
+            transactionSequenceNumber: 789,
+          },
+          signature: "7478",
+        },
+      },
+    ];
+
+    let i = 0;
+
+    observable.forEach(signOperationEvent => {
       expect(signOperationEvent).toEqual(expectedValues[i]);
       i++;
     });
