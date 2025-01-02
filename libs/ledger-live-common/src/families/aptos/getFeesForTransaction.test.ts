@@ -179,6 +179,8 @@ describe("getFeesForTransaction Test", () => {
 
         const result = await getEstimatedGas(account, transaction, aptosClient);
 
+        jest.resetAllMocks();
+
         const expected = {
           errors: {},
           estimate: {
@@ -201,6 +203,10 @@ describe("getFeesForTransaction Test", () => {
         const aptosClient = new AptosAPI(account.currency.id);
 
         await getEstimatedGas(account, transaction, aptosClient);
+
+        account.spendableBalance = account.spendableBalance.plus(new BigNumber(1));
+        transaction.fees = new BigNumber(2001);
+
         const result = await getEstimatedGas(account, transaction, aptosClient);
 
         const expected = {
