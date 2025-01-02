@@ -78,6 +78,7 @@ jobs:
         id: update-snapshots
         with:
           os: ubuntu-22.04
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   report-start:
     name: Report start
