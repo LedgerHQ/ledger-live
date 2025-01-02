@@ -86,7 +86,7 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs`,
-      params: {verbosity: 'Minimal', ...params},
+      params: { verbosity: "Minimal", ...params },
     });
     const txs = data.data;
     const nextPageToken = data.token;
@@ -97,7 +97,7 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs/pending`,
-      params: {verbosity: 'Minimal', ...params},
+      params: { verbosity: "Minimal", ...params },
     });
     return data;
   }
