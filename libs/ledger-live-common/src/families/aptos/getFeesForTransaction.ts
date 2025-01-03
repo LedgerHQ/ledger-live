@@ -79,7 +79,6 @@ export const getFee = async (
         }
       }
 
-      res.estimate.expirationTimestampSecs = completedTx.expiration_timestamp_secs;
       gasLimit =
         Number(completedTx.gas_used) ||
         Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
