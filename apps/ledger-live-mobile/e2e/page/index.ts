@@ -82,10 +82,10 @@ export class Application {
   public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
 
-  constructor() {
+  constructor(userdata?: string) {
     if (!getEnv("MOCK")) {
       // Create a temporary userdata file for Speculos tests
-      const originalUserdata = "skip-onboarding";
+      const originalUserdata = userdata || "skip-onboarding";
       this.userdataSpeculos = `temp-userdata-${Date.now()}`;
       this.userdataPath = getUserdataPath(this.userdataSpeculos);
       const originalFilePath = getUserdataPath(originalUserdata);
