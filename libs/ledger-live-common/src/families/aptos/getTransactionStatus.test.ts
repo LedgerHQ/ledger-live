@@ -44,6 +44,7 @@ describe("getTransactionStatus Test", () => {
     const account = createFixtureAccount();
     const transaction = createTransaction();
 
+    transaction.fees = null;
     transaction.amount = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
 
