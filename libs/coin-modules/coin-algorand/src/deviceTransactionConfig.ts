@@ -59,8 +59,8 @@ const getSendFields = (
 
   if (amount) {
     fields.push({
-      type: "text",
       label: account.type === "TokenAccount" ? "Asset amt" : "Amount",
+      type: "amount",
       value: formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
