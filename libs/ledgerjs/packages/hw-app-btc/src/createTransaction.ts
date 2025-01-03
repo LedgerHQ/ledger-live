@@ -38,7 +38,15 @@ const defaultsSignTransaction = {
  *
  */
 export type CreateTransactionArg = {
-  inputs: Array<[Transaction, number, string | null | undefined, number | null | undefined]>;
+  inputs: Array<
+    [
+      Transaction,
+      number,
+      string | null | undefined,
+      number | null | undefined,
+      number | null | undefined,
+    ]
+  >;
   associatedKeysets: string[];
   changePath?: string;
   outputScriptHex: string;
@@ -291,11 +299,12 @@ export async function createTransaction(
       onDeviceSignatureGranted();
       notify(1, 0);
     }
+    const lockTimeInput = input.length >= 5 && typeof input[4] === "number" ? input[4] : lockTime;
 
     const signature = await signTransaction(
       transport,
       associatedKeysets[i],
-      lockTime,
+      lockTimeInput,
       sigHashType,
       expiryHeight,
       additionals,

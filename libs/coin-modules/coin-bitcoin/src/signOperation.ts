@@ -47,6 +47,9 @@ export const buildSignOperation =
           const unixtime = Math.floor(Date.now() / 1000);
           lockTime = unixtime - 777;
         }
+        if (currency.id === "zcash" && lockTime === undefined) {
+          lockTime = account.blockHeight; // NOTE: minus something ?
+        }
 
         const networkParams = getNetworkParameters(currency.id);
         const sigHashType = networkParams.sigHash;
