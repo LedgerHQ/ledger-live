@@ -44,7 +44,14 @@ const AnimationContainer = styled(Flex).attrs({
 
 function AmountField({ account, status, field }: FieldComponentProps) {
   const unit = useAccountUnit(account);
-  return <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />;
+  return (
+    <DataRowUnitValue
+      label={field.label}
+      unit={unit}
+      value={status.amount}
+      testID="send-validation-amount"
+    />
+  );
 }
 
 function FeesField({ account, parentAccount, status, field }: FieldComponentProps) {
@@ -57,7 +64,9 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
-  return <TextValueField label={field.label} value={field.address} />;
+  return (
+    <TextValueField label={field.label} value={field.address} testID="send-validation-address" />
+  );
 }
 
 // NB Leaving AddressField although I think it's redundant at this point
