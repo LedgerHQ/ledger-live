@@ -251,6 +251,7 @@ class BitcoinLikeWallet {
       number,
       string | null | undefined,
       number | null | undefined,
+      number | null | undefined, // NOTE: blockheight
     ][];
     const inputs: Inputs = txInfo.inputs.map(i => {
       log("hw", `splitTransaction`, {
@@ -264,6 +265,7 @@ class BitcoinLikeWallet {
         i.output_index,
         null,
         i.sequence,
+        i.block_height,
       ];
     });
 

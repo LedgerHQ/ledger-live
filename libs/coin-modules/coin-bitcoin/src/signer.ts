@@ -64,7 +64,18 @@ export type SignerTransaction = {
   extraData?: Buffer;
 };
 export type CreateTransaction = {
-  inputs: Array<[SignerTransaction, number, string | null | undefined, number | null | undefined]>;
+  inputs:
+    | Array<[SignerTransaction, number, string | null | undefined, number | null | undefined]>
+    | Array<
+        [
+          SignerTransaction,
+          number,
+          string | null | undefined,
+          number | null | undefined,
+          number | null | undefined,
+        ]
+      >;
+  // inputs: Array<[SignerTransaction, number, string | null | undefined, number | null | undefined, number | null | undefined]>;
   associatedKeysets: string[];
   changePath?: string | undefined;
   outputScriptHex: string;
