@@ -13,7 +13,13 @@ type Props = {
 export function Error({ title, description, top, range }: Props) {
   const { t } = useTranslation();
   return (
-    <Flex flexDirection="column" alignItems="center" justifyContent="center" flex={1}>
+    <Flex
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      flex={1}
+      data-testid="error-container"
+    >
       <Flex
         borderRadius={50}
         width={"60px"}

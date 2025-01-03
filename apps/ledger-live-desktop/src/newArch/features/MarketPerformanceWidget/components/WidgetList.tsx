@@ -8,9 +8,9 @@ import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerformanceWidget/utils";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
+import { getChangePercentage } from "../utils";
 
 export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;
@@ -57,6 +57,7 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
       py="6px"
       onClick={enableNewFeature ? onCurrencyClick : undefined}
       featureFlagEnabled={enableNewFeature}
+      data-testid={`market-performance-widget-row-${index}`}
     >
       <Flex alignItems="center" flex={1}>
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
