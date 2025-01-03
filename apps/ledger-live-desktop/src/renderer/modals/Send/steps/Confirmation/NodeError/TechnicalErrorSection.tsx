@@ -9,7 +9,16 @@ type Props = {
   onSaveLogs: () => void;
 };
 
+const Container = styled(Flex)`
+  --line-clamp: 2;
+
+  &:hover {
+    --line-clamp: unset;
+  }
+`;
+
 const InteractFlex = styled(Flex)`
+  height: 40px;
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.palette.opacityDefault.c10};
@@ -26,11 +35,12 @@ const InteractFlex = styled(Flex)`
 `;
 
 const StyledText = styled(Text)`
-  word-break: break-all;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--line-clamp);
   overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 6px;
 `;
 
 const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
@@ -49,20 +59,25 @@ const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
   };
 
   return (
-    <Flex
-      alignItems="flex-start"
-      flexDirection="column"
+    <Container
+      flexDirection="row"
       bg="opacityDefault.c05"
       borderRadius={8}
       justifyContent="space-between"
-      p={2}
+      p={3}
+      flex={1}
+      width="100%"
     >
-      <StyledText variant="bodyLineHeight" fontSize={13} width="100%">
-        {t("errors.TransactionBroadcastError.technicalErrorTitle")}
-        <Text color="neutral.c70">{error.message}</Text>
-      </StyledText>
-      <Flex columnGap={2}>
-        <InteractFlex onClick={onSaveLogs}>
+      <Flex flexShrink={1}>
+        <StyledText variant="bodyLineHeight" fontSize={13} flex={1} color="neutral.c70">
+          <Text color="neutral.c100">
+            {t("errors.TransactionBroadcastError.technicalErrorTitle")}
+          </Text>
+          <Text color="neutral.c70">{error.message}</Text>
+        </StyledText>
+      </Flex>
+      <Flex columnGap={2} alignSelf="start">
+        <InteractFlex onClick={onSaveLogs} flexShrink={1}>
           <Icons.Download color="neutral.c100" size="S" />
           <Text variant="bodyLineHeight" fontSize={13}>
             {t("errors.TransactionBroadcastError.saveLogs")}
@@ -70,7 +85,7 @@ const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
         </InteractFlex>
         <InteractFlex onClick={handleCopyError}>{icon}</InteractFlex>
       </Flex>
-    </Flex>
+    </Container>
   );
 };
 

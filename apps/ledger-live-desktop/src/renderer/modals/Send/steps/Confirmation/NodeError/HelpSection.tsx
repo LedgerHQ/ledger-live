@@ -7,7 +7,16 @@ type Props = {
   onGetHelp: () => void;
 };
 
+const Container = styled(Flex)`
+  --line-clamp: 2;
+
+  &:hover {
+    --line-clamp: unset;
+  }
+`;
+
 const InteractFlex = styled(Flex)`
+  height: 40px;
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.palette.opacityDefault.c10};
@@ -24,34 +33,40 @@ const InteractFlex = styled(Flex)`
 `;
 
 const StyledText = styled(Text)`
-  word-break: break-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--line-clamp);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 6px;
 `;
 
 const HelpSection = ({ onGetHelp }: Props) => {
   const { t } = useTranslation();
   return (
-    <Flex
-      alignItems="start"
-      flexDirection="column"
-      rowGap={2}
+    <Container
+      flexDirection="row"
       bg="opacityDefault.c05"
       borderRadius={8}
       justifyContent="space-between"
-      p={2}
-      minHeight="128px"
+      p={3}
       flex={1}
+      mb={2}
+      width="100%"
     >
-      <Text variant="bodyLineHeight" fontSize={13}>
-        {t("errors.TransactionBroadcastError.helpCenterTitle")}
-        <Text color="neutral.c70">{t("errors.TransactionBroadcastError.helpCenterDesc")}</Text>
-      </Text>
-      <InteractFlex onClick={onGetHelp}>
+      <Flex flexShrink={1}>
+        <StyledText variant="bodyLineHeight" fontSize={13} flex={1} color="neutral.c70">
+          <Text color="neutral.c100">{t("errors.TransactionBroadcastError.helpCenterTitle")}</Text>
+          <Text color="neutral.c70">{t("errors.TransactionBroadcastError.helpCenterDesc")}</Text>
+        </StyledText>
+      </Flex>
+      <InteractFlex onClick={onGetHelp} flexShrink={0} flexGrow={0} alignSelf={"start"}>
         <Icons.Support color="neutral.c100" size="S" />
         <StyledText variant="bodyLineHeight" fontSize={13}>
           {t("errors.TransactionBroadcastError.getHelp")}
         </StyledText>
       </InteractFlex>
-    </Flex>
+    </Container>
   );
 };
 
