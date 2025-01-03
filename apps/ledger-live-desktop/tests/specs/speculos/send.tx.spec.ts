@@ -221,7 +221,7 @@ test.describe("Send flows", () => {
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
   for (const transaction of transactionE2E) {
-    test.only("Send from 1 account to another", () => {
+    test.describe("Send from 1 account to another", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
@@ -245,7 +245,7 @@ test.describe("Send flows", () => {
         ],
       });
 
-      test(
+      test.only(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
           annotation: [
