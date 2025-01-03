@@ -62,6 +62,7 @@ export enum ScreenName {
   DebugSettings = "DebugSettings",
   DebugSnackbars = "DebugSnackbars",
   DebugTransactionsAlerts = "DebugTransactionsAlerts",
+  DebugContentCards = "DebugContentCards",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",

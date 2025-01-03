@@ -76,33 +76,35 @@ export default function Features() {
         iconLeft={<IconsLegacy.InstagramMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
       />
-
       <SettingsRow
         title="Terms of Use"
         desc="Trigger Terms of Use Popup"
         iconLeft={<IconsLegacy.LinkMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
       />
-
       <SettingsRow
         title="Successive drawers opening/closing"
         desc="Open and close several bottom drawers"
         iconLeft={<IconsLegacy.LayersMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawers)}
       />
-
       <SettingsRow
         title="Snackbars"
         desc="Test toasts and other snackbars"
         iconLeft={<IconsLegacy.MailMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugSnackbars)}
       />
-
       <SettingsRow
         title="Transactions alerts"
         desc="See your addresses that are registered in chainwatch"
         iconLeft={<IconsLegacy.NotificationsMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTransactionsAlerts)}
+      />
+      <SettingsRow
+        title="Content Cards"
+        desc="Create mock content cards to see how they look in the app"
+        iconLeft={<IconsLegacy.CardMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugContentCards)}
       />
     </SettingsNavigationScrollView>
   );

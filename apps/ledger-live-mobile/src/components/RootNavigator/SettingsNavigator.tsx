@@ -36,6 +36,7 @@ import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debuggin
 import DebugSettings from "~/screens/Settings/Debug";
 import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
 import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
+import DebugContentCards from "~/screens/Settings/Debug/Features/ContentCards";
 import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
@@ -430,6 +431,13 @@ export default function SettingsNavigator() {
         component={DebugTransactionsAlerts}
         options={{
           title: "Debug transactions alerts",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugContentCards}
+        component={DebugContentCards}
+        options={{
+          title: "Debug content cards",
         }}
       />
       <Stack.Screen
