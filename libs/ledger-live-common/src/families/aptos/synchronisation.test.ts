@@ -2,143 +2,200 @@ import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Account, SyncConfig } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";
+import { decodeAccountId } from "../../account";
+import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { AptosAPI } from "./api";
+import { txsToOps } from "./logic";
 import { getAccountShape } from "./synchronisation";
 
 jest.mock("rxjs");
-const mockedFistValueFrom = jest.mocked(firstValueFrom);
+let mockedFistValueFrom;
 
-// const mockGetServerInfos = jest.fn().mockResolvedValue({
-//   info: {
-//     complete_ledgers: "1-2",
-//     validated_ledger: {
-//       reserve_base_xrp: "0",
-//       reserve_inc_xrp: "0",
-//     },
-//   },
-// });
-// const mockGetAccountInfo = jest.fn().mockResolvedValue({
-//   isNewAccount: true,
-//   balance: "0",
-//   ownerCount: 0,
-//   sequence: 0,
-// });
-// const mockGetTransactions = jest.fn();
-// jest.mock("../network", () => ({
-//   getServerInfos: () => mockGetServerInfos(),
-//   getAccountInfo: () => mockGetAccountInfo(),
-//   getTransactions: () => mockGetTransactions(),
-// }));
+jest.mock("../../account");
+let mockedDecodeAccountId;
+
+jest.mock("./api");
+let mockedAptosAPI;
+
+jest.mock("./logic");
+jest.mocked(txsToOps);
+
+jest.mock("../../bridge/jsHelpers");
+jest.mocked(makeScanAccounts);
+jest.mocked(makeSync);
 
 describe("getAccountShape", () => {
-  // beforeEach(() => {
-  //   mockGetServerInfos.mockClear();
-  //   mockGetAccountInfo.mockClear();
-  //   mockGetTransactions.mockClear();
-  // });
+  beforeEach(() => {
+    mockedAptosAPI = jest.mocked(AptosAPI);
 
-  it.only("returns early when account is new", async () => {
-    // // Given
-    // mockGetAccountInfo.mockResolvedValue({
-    //   isNewAccount: true,
-    //   balance: "0",
-    //   ownerCount: 0,
-    //   sequence: 0,
-    // });
+    mockedDecodeAccountId = jest.mocked(decodeAccountId).mockReturnValue({
+      currencyId: "aptos",
+      derivationMode: "",
+      type: "js",
+      version: "1",
+      xpubOrAddress: "address",
+    });
+
+    mockedFistValueFrom = jest
+      .mocked(firstValueFrom)
+      .mockImplementation(async () => ({ publicKey: "publicKey" }));
+
+    jest.mocked(mergeOps).mockReturnValue([]);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("get xpub from device id", async () => {
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigInt(0),
+      transactions: [],
+      blockHeight: 0,
+    }));
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+    }));
+    const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     const account = await getAccountShape(
       {
+        id: "1",
         address: "address",
         currency: getCryptoCurrencyById("aptos"),
         derivationMode: "",
         index: 0,
         xpub: "address",
         derivationPath: "",
-      } as AccountShapeInfo<Account>,
+        deviceId: "1",
+        initialAccount: {
+          id: "1:1:1:1:1",
+          // xpub: "address",
+          seedIdentifier: "1",
+          derivationMode: "",
+          index: 0,
+          freshAddress: "address",
+          freshAddressPath: "",
+          used: true,
+          balance: BigInt(10),
+          spendableBalance: BigInt(10),
+          creationDate: new Date(),
+          blockHeight: 0,
+          currency: getCryptoCurrencyById("aptos"),
+          operationsCount: 0,
+          operations: [],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          balanceHistoryCache: {},
+          swapHistory: [],
+        },
+      } as unknown as AccountShapeInfo<Account>,
+      {} as SyncConfig,
+    );
+
+    expect(account.xpub).toEqual("7075626c69634b6579");
+    expect(mockedFistValueFrom).toHaveBeenCalledTimes(1);
+    expect(mockedDecodeAccountId).toHaveBeenCalledTimes(0);
+    expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
+  });
+
+  it("get xpub from initial account id", async () => {
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigInt(0),
+      transactions: [],
+      blockHeight: 0,
+    }));
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+    }));
+    const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
+
+    const account = await getAccountShape(
+      {
+        id: "1",
+        address: "address",
+        currency: getCryptoCurrencyById("aptos"),
+        derivationMode: "",
+        index: 0,
+        xpub: "address",
+        derivationPath: "",
+        // deviceId: "1",
+        initialAccount: {
+          id: "1:1:1:1:1",
+          // xpub: "address",
+          seedIdentifier: "1",
+          derivationMode: "",
+          index: 0,
+          freshAddress: "address",
+          freshAddressPath: "",
+          used: true,
+          balance: BigInt(10),
+          spendableBalance: BigInt(10),
+          creationDate: new Date(),
+          blockHeight: 0,
+          currency: getCryptoCurrencyById("aptos"),
+          operationsCount: 0,
+          operations: [],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          balanceHistoryCache: {},
+          swapHistory: [],
+        },
+      } as unknown as AccountShapeInfo<Account>,
       {} as SyncConfig,
     );
 
     expect(account.xpub).toEqual("address");
-    expect(mockedFistValueFrom).toHaveBeenCalledTimes(1);
-
-    // Then
-    // expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
-    // expect(mockGetServerInfos).toHaveBeenCalledTimes(0);
-    // expect(mockGetTransactions).toHaveBeenCalledTimes(0);
-    // expect(account).toEqual({
-    //   id: "js:2:ripple:address:",
-    //   xpub: "address",
-    //   blockHeight: 0,
-    //   balance: new BigNumber(0),
-    //   spendableBalance: new BigNumber(0),
-    //   operations: [],
-    //   operationsCount: 0,
-    // });
+    expect(mockedFistValueFrom).toHaveBeenCalledTimes(0);
+    expect(mockedDecodeAccountId).toHaveBeenCalledTimes(1);
+    expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
-  // it("convert correctly operations", async () => {
-  //   // Given
-  //   mockGetAccountInfo.mockResolvedValue({
-  //     isNewAccount: false,
-  //     balance: "0",
-  //     ownerCount: 0,
-  //     sequence: 0,
-  //   });
-  //   mockGetTransactions.mockResolvedValue([
-  //     {
-  //       ledger_hash: "HASH_VALUE_BLOCK",
-  //       hash: "HASH_VALUE",
-  //       meta: { delivered_amount: "100" },
-  //       tx_json: {
-  //         TransactionType: "Payment",
-  //         Fee: "10",
-  //         ledger_index: 1,
-  //         date: 1000,
-  //         Account: "account_addr",
-  //         Destination: "destination_addr",
-  //         Sequence: 1,
-  //       },
-  //     },
-  //   ]);
+  it("unable to get xpub", async () => {
+    mockedDecodeAccountId = jest.mocked(decodeAccountId).mockImplementation(() => {
+      throw new Error("Unable to retrieve public key");
+    });
 
-  //   // When
-  //   const account = await getAccountShape(
-  //     {
-  //       address: "address",
-  //       currency: getCryptoCurrencyById("ripple"),
-  //       derivationMode: "",
-  //       index: 0,
-  //     } as AccountShapeInfo<Account>,
-  //     {} as SyncConfig,
-  //   );
+    expect(
+      async () =>
+        await getAccountShape(
+          {
+            id: "1",
+            address: "address",
+            currency: getCryptoCurrencyById("aptos"),
+            derivationMode: "",
+            index: 0,
+            xpub: "address",
+            derivationPath: "",
+            // deviceId: "1",
+            initialAccount: {
+              id: "1:1:1:1:1",
+              // xpub: "address",
+              seedIdentifier: "1",
+              derivationMode: "",
+              index: 0,
+              freshAddress: "address",
+              freshAddressPath: "",
+              used: true,
+              balance: BigInt(10),
+              spendableBalance: BigInt(10),
+              creationDate: new Date(),
+              blockHeight: 0,
+              currency: getCryptoCurrencyById("aptos"),
+              operationsCount: 0,
+              operations: [],
+              pendingOperations: [],
+              lastSyncDate: new Date(),
+              balanceHistoryCache: {},
+              swapHistory: [],
+            },
+          } as unknown as AccountShapeInfo<Account>,
+          {} as SyncConfig,
+        ),
+    ).rejects.toThrow();
 
-  //   // Then
-  //   expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
-  //   expect(mockGetServerInfos).toHaveBeenCalled();
-  //   expect(mockGetTransactions).toHaveBeenCalledTimes(1);
-  //   expect(account).toEqual({
-  //     id: "js:2:ripple:address:",
-  //     xpub: "address",
-  //     blockHeight: 2,
-  //     operationsCount: 1,
-  //     balance: new BigNumber(0),
-  //     spendableBalance: new BigNumber(0),
-  //     operations: [
-  //       {
-  //         accountId: "js:2:ripple:address:",
-  //         blockHash: "HASH_VALUE_BLOCK",
-  //         blockHeight: 1,
-  //         date: new Date("2000-01-01T00:16:40.000Z"),
-  //         hash: "HASH_VALUE",
-  //         id: "js:2:ripple:address:-HASH_VALUE-IN",
-  //         recipients: ["destination_addr"],
-  //         senders: ["account_addr"],
-  //         transactionSequenceNumber: 1,
-  //         type: "IN",
-  //         value: new BigNumber("100"),
-  //         fee: new BigNumber("10"),
-  //         extra: {},
-  //       },
-  //     ],
-  //   });
-  // });
+    expect;
+  });
 });

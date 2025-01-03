@@ -1,14 +1,12 @@
+import Aptos from "@ledgerhq/hw-app-aptos";
 import { firstValueFrom, from } from "rxjs";
+import { decodeAccountId, encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { withDevice } from "../../hw/deviceAccess";
-import type { AptosAccount } from "./types";
-
-import { decodeAccountId, encodeAccountId } from "../../account";
-
-import Aptos from "@ledgerhq/hw-app-aptos";
 import { AptosAPI } from "./api";
 import { txsToOps } from "./logic";
+import type { AptosAccount } from "./types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, derivationMode, currency, deviceId, derivationPath } = info;
