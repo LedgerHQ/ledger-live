@@ -974,10 +974,10 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "SequenseNumberTooNew": {
+    "SequenceNumberTooNew": {
       "title": "Sequence number too new"
     },
-    "SequenseNumberTooOld": {
+    "SequenceNumberTooOld": {
       "title": "Sequence number too old"
     },
     "TransactionExpired": {

@@ -13,8 +13,8 @@ import type { TransactionStatus } from "../..//generated/types";
 import type { Transaction } from "./types";
 
 import {
-  SequenseNumberTooNewError,
-  SequenseNumberTooOldError,
+  SequenceNumberTooNewError,
+  SequenceNumberTooOldError,
   TransactionExpiredError,
 } from "./errors";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
@@ -47,7 +47,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   } else if (!AccountAddress.isValid({ input: t.recipient })) {
     errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
   } else if (t.recipient === a.freshAddress) {
-    errors.recepient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   if (
@@ -68,9 +68,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   if (t.errors?.sequenceNumber) {
     if (t.errors.sequenceNumber.includes("TOO_OLD")) {
-      errors.sequenceNumber = new SequenseNumberTooOldError();
+      errors.sequenceNumber = new SequenceNumberTooOldError();
     } else if (t.errors.sequenceNumber.includes("TOO_NEW")) {
-      errors.sequenceNumber = new SequenseNumberTooNewError();
+      errors.sequenceNumber = new SequenceNumberTooNewError();
     }
   }
 
