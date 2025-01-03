@@ -11,50 +11,72 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Update playwright snapshots [Linux => xvfb-run]
-      if: ${{ startsWith(inputs.os, 'ubuntu') }}
-      run: |
-        xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
-      shell: bash
+    # - name: Update playwright snapshots [Linux => xvfb-run]
+    #   if: ${{ startsWith(inputs.os, 'ubuntu') }}
+    #   run: |
+    #     xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+    #   shell: bash
 
-    - name: Update playwright snapshots
-      if: ${{ !startsWith(inputs.os, 'ubuntu') }}
-      run: |
-        pnpm desktop test:playwright:update-snapshots
-      shell: bash
+    # - name: Update playwright snapshots
+    #   if: ${{ !startsWith(inputs.os, 'ubuntu') }}
+    #   run: |
+    #     pnpm desktop test:playwright:update-snapshots
+    #   shell: bash
 
-    - name: Status (Linux | macOS)
-      if: ${{ !startsWith(inputs.os, 'windows') }}
-      id: status
-      run: |
-        echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
-      shell: bash
+    # - name: Status (Linux | macOS)
+    #   if: ${{ !startsWith(inputs.os, 'windows') }}
+    #   id: status
+    #   run: |
+    #     echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+    #   shell: bash
 
-    - name: Status (Windows)
-      id: status-windows
-      if: ${{ startsWith(inputs.os, 'windows') }}
-      run: |
-        $out = $(git status --porcelain | measure -l | Format-Wide | Out-String -Stream)
-        $out = $out.Trim()
-        echo "status=$out" >> $env:GITHUB_OUTPUT
-      shell: pwsh
+    # - name: Status (Windows)
+    #   id: status-windows
+    #   if: ${{ startsWith(inputs.os, 'windows') }}
+    #   run: |
+    #     $out = $(git status --porcelain | measure -l | Format-Wide | Out-String -Stream)
+    #     $out = $out.Trim()
+    #     echo "status=$out" >> $env:GITHUB_OUTPUT
+    #   shell: pwsh
 
-    - id: changes
-      run: |
-        echo ${{ steps.status.outputs.status }}
-        echo "changes=$(git status -s)"
-      shell: bash
+    # - id: changes
+    #   run: |
+    #     echo ${{ steps.status.outputs.status }}
+    #     echo "changes=$(git status -s)"
+    #   shell: bash
 
-    - name: Commit file
-      uses: swinton/commit@v2.0.0
-      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
-      env:
-        GH_TOKEN: ${{ inputs.token }}
-      with:
-        files: |
-          $(git status --porcelain | awk '{print $2}' | sed 's/^/          /')
-        commit-message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
-        ref: $(git branch --show-current)
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Setup GitHub Authentication
+      run: |
+        # git remote set-url origin https://github.com/${{ github.repository }}
+        git config --global credential.helper cache
+        echo "url=https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+        git config --global credential.helper store
+
+    - name: Make changes and commit
+      run: |
+        echo "Test commit" > file.txt
+        git add .
+        git commit -m "Automated commit"
+
+    - name: Push changes
+      run: |
+        git push origin HEAD:main
+
+    # - name: Commit file
+    #   uses: swinton/commit@v2.0.0
+    #   if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+    #   env:
+    #     GH_TOKEN: ${{ inputs.token }}
+    #   with:
+    #     files: |
+    #       $(git status --porcelain | awk '{print $2}' | sed 's/^/          /')
+    #     commit-message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
+    #     ref: $(git branch --show-current)
 
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v4
