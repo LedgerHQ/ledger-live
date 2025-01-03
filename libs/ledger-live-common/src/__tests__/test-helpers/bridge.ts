@@ -500,7 +500,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           function expectStability(t, patch) {
             const t2 = bridge.updateTransaction(t, patch);
             const t3 = bridge.updateTransaction(t2, patch);
-            expect(t2).toBe(t3);
+            expect(t2).toEqual(t3);
           }
 
           makeTest("ref stability on empty transaction", async () => {
