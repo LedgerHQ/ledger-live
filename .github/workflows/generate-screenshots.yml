@@ -28,6 +28,10 @@ permissions:
 
 jobs:
   generate-screenshots-linux:
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push,
+      # for use in the update-snapshots-desktop action
+      contents: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
