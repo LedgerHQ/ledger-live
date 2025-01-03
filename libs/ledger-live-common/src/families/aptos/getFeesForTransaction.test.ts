@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
 import createTransaction from "./createTransaction";
-import { getFee, getEstimatedGas } from "./getFeesForTransaction";
+import * as getFeesForTransaction from "./getFeesForTransaction";
 import { AptosAPI } from "./api";
 
 let simulateTransaction = jest.fn();
@@ -54,7 +54,7 @@ describe("getFeesForTransaction Test", () => {
         account.xpub = "xpub";
         account.spendableBalance = new BigNumber(100000000);
 
-        const result = await getFee(account, transaction, aptosClient);
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
           fees: new BigNumber(20301),
@@ -62,7 +62,7 @@ describe("getFeesForTransaction Test", () => {
             maxGasAmount: "201",
             gasUnitPrice: "101",
             sequenceNumber: "123",
-            expirationTimestampSecs: 5,
+            expirationTimestampSecs: "",
           },
           errors: {
             sequenceNumber: ["SEQUENCE_NUMBER"],
@@ -91,7 +91,7 @@ describe("getFeesForTransaction Test", () => {
         account.xpub = "xpub";
         account.spendableBalance = new BigNumber(100000000);
 
-        const result = await getFee(account, transaction, aptosClient);
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
           fees: new BigNumber(20301),
@@ -99,7 +99,7 @@ describe("getFeesForTransaction Test", () => {
             maxGasAmount: "201",
             gasUnitPrice: "101",
             sequenceNumber: "123",
-            expirationTimestampSecs: 5,
+            expirationTimestampSecs: "",
           },
           errors: {
             expirationTimestampSecs: ["TRANSACTION_EXPIRED"],
@@ -128,7 +128,7 @@ describe("getFeesForTransaction Test", () => {
         account.xpub = "xpub";
         account.spendableBalance = new BigNumber(100000000);
 
-        const result = await getFee(account, transaction, aptosClient);
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
           fees: new BigNumber(20301),
@@ -136,7 +136,7 @@ describe("getFeesForTransaction Test", () => {
             maxGasAmount: "201",
             gasUnitPrice: "101",
             sequenceNumber: "123",
-            expirationTimestampSecs: 5,
+            expirationTimestampSecs: "",
           },
           errors: {},
         };
@@ -164,7 +164,7 @@ describe("getFeesForTransaction Test", () => {
         account.spendableBalance = new BigNumber(100000000);
 
         expect(async () => {
-          await getFee(account, transaction, aptosClient);
+          await getFeesForTransaction.getFee(account, transaction, aptosClient);
         }).rejects.toThrow("Simulation failed with following error: DUMMY_STATE");
       });
     });
@@ -177,9 +177,11 @@ describe("getFeesForTransaction Test", () => {
         const transaction = createTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
-        const result = await getEstimatedGas(account, transaction, aptosClient);
-
-        jest.resetAllMocks();
+        const result = await getFeesForTransaction.getEstimatedGas(
+          account,
+          transaction,
+          aptosClient,
+        );
 
         const expected = {
           errors: {},
@@ -196,18 +198,32 @@ describe("getFeesForTransaction Test", () => {
       });
     });
 
-    describe("when key is in cache", () => {
+    describe("when key is in cache 22", () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
       it("should return cached fee", async () => {
+        const mocked = jest.spyOn(getFeesForTransaction, "getFee");
+
         const account = createFixtureAccount();
         const transaction = createTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
-        await getEstimatedGas(account, transaction, aptosClient);
+        transaction.amount = new BigNumber(10);
 
-        account.spendableBalance = account.spendableBalance.plus(new BigNumber(1));
-        transaction.fees = new BigNumber(2001);
+        const result1 = await getFeesForTransaction.getEstimatedGas(
+          account,
+          transaction,
+          aptosClient,
+        );
+        const result2 = await getFeesForTransaction.getEstimatedGas(
+          account,
+          transaction,
+          aptosClient,
+        );
 
-        const result = await getEstimatedGas(account, transaction, aptosClient);
+        expect(mocked).toHaveBeenCalledTimes(1);
 
         const expected = {
           errors: {},
@@ -220,7 +236,8 @@ describe("getFeesForTransaction Test", () => {
           fees: new BigNumber("20301"),
         };
 
-        expect(result).toEqual(expected);
+        expect(result1).toEqual(expected);
+        expect(result2).toEqual(expected);
       });
     });
   });
