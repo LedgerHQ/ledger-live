@@ -7,7 +7,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 jest.mock("./api");
-jest.mock("./js-getFeesForTransaction");
+jest.mock("./getFeesForTransaction");
 jest.mock("./logic");
 
 describe("Aptos prepareTransaction", () => {
@@ -118,7 +118,7 @@ describe("Aptos prepareTransaction", () => {
       expect(result.errors).toEqual({});
     });
 
-    it("should set maxGasAmount in options if firstEmulation is true", async () => {
+    it("should set maxGasAmount in options", async () => {
       transaction.recipient = "test-recipient";
       transaction.amount = new BigNumber(100);
       transaction.firstEmulation = true;
@@ -130,21 +130,6 @@ describe("Aptos prepareTransaction", () => {
 
       const result = await prepareTransaction(account, transaction);
       expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
-      expect(result.firstEmulation).toBe(false);
-    });
-
-    it("should not change transaction.options.maxGasAmount if firstEmulation is false", async () => {
-      transaction.recipient = "test-recipient";
-      transaction.amount = new BigNumber(100);
-      transaction.firstEmulation = false;
-      (getEstimatedGas as jest.Mock).mockResolvedValue({
-        fees: new BigNumber(2000),
-        estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(10) },
-        errors: {},
-      });
-
-      const result = await prepareTransaction(account, transaction);
-      expect(result.options.maxGasAmount).toBeUndefined();
       expect(result.firstEmulation).toBe(false);
     });
   });

@@ -128,7 +128,7 @@ export function compareAddress(addressA: string, addressB: string) {
 }
 
 export function getFunctionAddress(payload: InputEntryFunctionData): string | undefined {
-  if ("function" in payload) {
+  if (payload.function) {
     const parts = payload.function.split("::");
     return parts.length === 3 && parts[0].length ? parts[0] : undefined;
   }
