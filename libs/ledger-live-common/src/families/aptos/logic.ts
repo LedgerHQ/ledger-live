@@ -60,17 +60,11 @@ export const getMaxSendBalance = (
 export function normalizeTransactionOptions(
   options: Transaction["options"],
 ): Transaction["options"] {
-  const check = (v: any) => {
-    if (v === undefined || v === null || v === "") {
-      return undefined;
-    }
-    return v;
-  };
   return {
-    maxGasAmount: check(options.maxGasAmount),
-    gasUnitPrice: check(options.gasUnitPrice),
-    sequenceNumber: check(options.sequenceNumber),
-    expirationTimestampSecs: check(options.expirationTimestampSecs),
+    maxGasAmount: options?.maxGasAmount,
+    gasUnitPrice: options?.gasUnitPrice,
+    sequenceNumber: options?.sequenceNumber,
+    expirationTimestampSecs: options?.expirationTimestampSecs,
   };
 }
 

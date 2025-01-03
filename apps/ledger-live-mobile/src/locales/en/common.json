@@ -2559,8 +2559,7 @@
       "gasLimit": "Gas Limit",
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
-      "stakedAmount": "Staked amount",
-      "version": "Version"
+      "stakedAmount": "Staked amount"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -3775,6 +3774,7 @@
       "to": "To",
       "infoTotalTitle": "Total debit",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasFee": "Gas fee",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
@@ -3821,16 +3821,7 @@
         "title": "Choose unit"
       },
       "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
-      "networkInfoMaxFees": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded.",
-      "aptos": {
-        "options": "Options",
-        "gasLimit": "Gas Limit",
-        "gasPrice": "Gas Price (OCTAS)",
-        "sequenceNumber": "Sequence Number",
-        "expTimestamp": "Exp. Timestamp",
-        "setOptimalGas": "Set optimal gas",
-        "resetSettings": "Reset settings"
-      }
+      "networkInfoMaxFees": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded."
     },
     "verification": {
       "streaming": {
