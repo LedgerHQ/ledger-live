@@ -102,7 +102,6 @@ describe("Aptos prepareTransaction", () => {
       expect(result.firstEmulation).toBe(false);
     });
 
-    //--------------------------------------------------------------------------------
     it("should return the transaction with updated fees and estimate if recipient is set and amount is not zero", async () => {
       transaction.recipient = "test-recipient";
       transaction.amount = new BigNumber(100);
