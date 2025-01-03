@@ -258,4 +258,140 @@ describe("getAccountShape", () => {
         ),
     ).rejects.toThrow("Unable to retrieve public key");
   });
+
+  it("get xpub from device id and account has operations history", async () => {
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigInt(0),
+      transactions: [],
+      blockHeight: 0,
+    }));
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+    }));
+    const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
+
+    const account = await getAccountShape(
+      {
+        id: "1",
+        address: "address",
+        currency: getCryptoCurrencyById("aptos"),
+        derivationMode: "",
+        index: 0,
+        xpub: "address",
+        derivationPath: "",
+        deviceId: "1",
+        initialAccount: {
+          id: "1:1:1:1:1",
+          // xpub: "address",
+          seedIdentifier: "1",
+          derivationMode: "",
+          index: 0,
+          freshAddress: "address",
+          freshAddressPath: "",
+          used: true,
+          balance: BigInt(10),
+          spendableBalance: BigInt(10),
+          creationDate: new Date(),
+          blockHeight: 0,
+          currency: getCryptoCurrencyById("aptos"),
+          operationsCount: 1,
+          operations: [
+            {
+              id: "1",
+              hash: "hash",
+              type: "OUT",
+              value: BigInt(10),
+              fee: BigInt(0),
+              blockHeight: 0,
+              blockHash: "blockHash",
+              accountId: "1",
+              senders: ["sender"],
+              recipients: ["recipient"],
+              date: new Date(),
+              // extra: {},
+            },
+          ],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          balanceHistoryCache: {},
+          swapHistory: [],
+        },
+      } as unknown as AccountShapeInfo<Account>,
+      {} as SyncConfig,
+    );
+
+    expect(account.xpub).toEqual("7075626c69634b6579");
+    expect(mockedFistValueFrom).toHaveBeenCalledTimes(1);
+    expect(mockedDecodeAccountId).toHaveBeenCalledTimes(0);
+    expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
+  });
+
+  it("get xpub from device id and account has operations history with extra", async () => {
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigInt(0),
+      transactions: [],
+      blockHeight: 0,
+    }));
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+    }));
+    const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
+
+    const account = await getAccountShape(
+      {
+        id: "1",
+        address: "address",
+        currency: getCryptoCurrencyById("aptos"),
+        derivationMode: "",
+        index: 0,
+        xpub: "address",
+        derivationPath: "",
+        deviceId: "1",
+        initialAccount: {
+          id: "1:1:1:1:1",
+          // xpub: "address",
+          seedIdentifier: "1",
+          derivationMode: "",
+          index: 0,
+          freshAddress: "address",
+          freshAddressPath: "",
+          used: true,
+          balance: BigInt(10),
+          spendableBalance: BigInt(10),
+          creationDate: new Date(),
+          blockHeight: 0,
+          currency: getCryptoCurrencyById("aptos"),
+          operationsCount: 1,
+          operations: [
+            {
+              id: "1",
+              hash: "hash",
+              type: "OUT",
+              value: BigInt(10),
+              fee: BigInt(0),
+              blockHeight: 0,
+              blockHash: "blockHash",
+              accountId: "1",
+              senders: ["sender"],
+              recipients: ["recipient"],
+              date: new Date(),
+              extra: { version: 1 },
+            },
+          ],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          balanceHistoryCache: {},
+          swapHistory: [],
+        },
+      } as unknown as AccountShapeInfo<Account>,
+      {} as SyncConfig,
+    );
+
+    expect(account.xpub).toEqual("7075626c69634b6579");
+    expect(mockedFistValueFrom).toHaveBeenCalledTimes(1);
+    expect(mockedDecodeAccountId).toHaveBeenCalledTimes(0);
+    expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", 1);
+  });
 });
