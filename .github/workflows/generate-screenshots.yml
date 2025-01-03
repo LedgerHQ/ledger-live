@@ -28,6 +28,10 @@ permissions:
 
 jobs:
   generate-screenshots-linux:
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -57,6 +61,27 @@ jobs:
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      # - uses: actions/checkout@v4
+      # # Include the pull request ref in the checkout action to prevent merge commit
+      # # https://github.com/actions/checkout?tab=readme-ov-file#checkout-pull-request-head-commit-instead-of-merge-commit
+      #   with:
+      #     ref: ${{ github.event.pull_request.head.sha }}
+
+      # Run steps that make changes to the local repo here.
+      - name: Make changes and commit
+        run: |
+          echo "Test commit in generate-screenshots" > file0.txt
+          git add .
+
+      # Commit all changed files back to the repository
+      - uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "Automated commit, generate-screenshots"
+          repo: ${{ github.repository }}
+          branch: ${{ github.head_ref || github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
