@@ -14,6 +14,7 @@ import {
   SimpleTransaction,
   TransactionResponse,
   UserTransactionResponse,
+  PostRequestOptions,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
@@ -25,7 +26,7 @@ import type { AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
-  GetAccountTransactionsDataQueryVariables,
+  GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
@@ -140,7 +141,7 @@ export class AptosAPI {
 
   async broadcast(signature: string): Promise<string> {
     const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    const pendingTx = await post({
+    const pendingTx = await post<PostRequestOptions, TransactionResponse>({
       contentType: MimeType.BCS_SIGNED_TRANSACTION,
       aptosConfig: this.aptosClient.config,
       body: txBytes,
@@ -148,7 +149,7 @@ export class AptosAPI {
       type: AptosApiType.FULLNODE,
       originMethod: "",
     });
-    return (pendingTx.data as TransactionResponse).hash;
+    return pendingTx.data.hash;
   }
 
   private async getBalance(address: string): Promise<BigNumber> {
@@ -179,14 +180,12 @@ export class AptosAPI {
 
     const queryResponse = await this.apolloClient.query<
       GetAccountTransactionsDataQuery,
-      GetAccountTransactionsDataQueryVariables
+      GetAccountTransactionsDataGtQueryVariables
     >({
       query,
       variables: {
         address,
         limit: 1000,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         gt,
       },
       fetchPolicy: "network-only",

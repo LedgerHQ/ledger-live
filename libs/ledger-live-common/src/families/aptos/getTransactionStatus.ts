@@ -12,12 +12,12 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
 import type { Transaction } from "./types";
 
-import { isValidAddress } from "./logic";
 import {
   SequenceNumberTooNewError,
   SequenceNumberTooOldError,
   TransactionExpiredError,
 } from "./errors";
+import { AccountAddress } from "@aptos-labs/ts-sdk";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, any> = {};
@@ -44,7 +44,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(t.recipient)) {
+  } else if (AccountAddress.isValid({ input: t.recipient }).valid === false) {
     errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
   } else if (t.recipient === a.freshAddress) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();

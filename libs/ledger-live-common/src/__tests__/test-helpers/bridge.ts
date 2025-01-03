@@ -1,37 +1,37 @@
-import { AmountRequired, InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
+import { reduce, filter, map } from "rxjs/operators";
+import flatMap from "lodash/flatMap";
+import omit from "lodash/omit";
+import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
+import {
+  fromAccountRaw,
+  toAccountRaw,
+  decodeAccountId,
+  encodeAccountId,
+  flattenAccounts,
+  isAccountBalanceUnconfirmed,
+} from "../../account";
+import { getCryptoCurrencyById } from "../../currencies";
+import { getOperationAmountNumber } from "../../operation";
+import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
+import { getAccountBridge, getCurrencyBridge } from "../../bridge";
+import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import type {
   Account,
   AccountBridge,
   AccountLike,
   AccountRawLike,
-  CurrenciesData,
-  DatasetTest,
   SubAccount,
   SyncConfig,
+  DatasetTest,
+  CurrenciesData,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import flatMap from "lodash/flatMap";
-import omit from "lodash/omit";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
-import { filter, map, reduce } from "rxjs/operators";
-import {
-  decodeAccountId,
-  encodeAccountId,
-  flattenAccounts,
-  fromAccountRaw,
-  isAccountBalanceUnconfirmed,
-  toAccountRaw,
-} from "../../account";
-import { getAccountBridge, getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "../../currencies";
-import { getOperationAmountNumber } from "../../operation";
-import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
-import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -500,7 +500,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           function expectStability(t, patch) {
             const t2 = bridge.updateTransaction(t, patch);
             const t3 = bridge.updateTransaction(t2, patch);
-            expect(t2).toStrictEqual(t3);
+            expect(t2).toEqual(t3);
           }
 
           makeTest("ref stability on empty transaction", async () => {

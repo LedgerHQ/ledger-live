@@ -105,8 +105,8 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "aptos",
+  "aptos_testnet",
   "xion",
-  "aptos",
 ]);
 LiveConfig.setConfig(liveConfig);
 
