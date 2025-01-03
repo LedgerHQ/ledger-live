@@ -154,8 +154,12 @@ describe("getAccountShape", () => {
   });
 
   it("unable to get xpub", async () => {
-    mockedDecodeAccountId = jest.mocked(decodeAccountId).mockImplementation(() => {
-      throw new Error("Unable to retrieve public key");
+    mockedDecodeAccountId = jest.mocked(decodeAccountId).mockReturnValue({
+      currencyId: "aptos",
+      derivationMode: "",
+      type: "js",
+      version: "1",
+      xpubOrAddress: "",
     });
 
     expect(
@@ -194,8 +198,6 @@ describe("getAccountShape", () => {
           } as unknown as AccountShapeInfo<Account>,
           {} as SyncConfig,
         ),
-    ).rejects.toThrow();
-
-    expect;
+    ).rejects.toThrow("Unable to retrieve public key");
   });
 });
