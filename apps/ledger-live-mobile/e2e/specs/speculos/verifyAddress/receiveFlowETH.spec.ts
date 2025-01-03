@@ -1,12 +1,11 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Application } from "../../../page";
 
-const app = new Application();
+const app = new Application("EthAccountXrpAccountReadOnlyFalse");
 const account = Account.ETH_1;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    app.userdataSpeculos = "EthAccountXrpAccountReadOnlyFalse";
     await app.init({
       speculosApp: account.currency.speculosApp,
     });
