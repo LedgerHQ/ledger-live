@@ -100,6 +100,38 @@ describe("getAccountShape", () => {
     expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
+  it("get xpub from device id when there is no initial account", async () => {
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigInt(0),
+      transactions: [],
+      blockHeight: 0,
+    }));
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+    }));
+    const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
+
+    const account = await getAccountShape(
+      {
+        id: "1",
+        address: "address",
+        currency: getCryptoCurrencyById("aptos"),
+        derivationMode: "",
+        index: 0,
+        xpub: "address",
+        derivationPath: "",
+        deviceId: "1",
+      } as unknown as AccountShapeInfo<Account>,
+      {} as SyncConfig,
+    );
+
+    expect(account.xpub).toEqual("7075626c69634b6579");
+    expect(mockedFistValueFrom).toHaveBeenCalledTimes(1);
+    expect(mockedDecodeAccountId).toHaveBeenCalledTimes(0);
+    expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
+  });
+
   it("get xpub from initial account id", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
       balance: BigInt(0),
@@ -153,7 +185,7 @@ describe("getAccountShape", () => {
     expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
-  it("unable to get xpub", async () => {
+  it("unable to get xpub error is thrown", async () => {
     mockedDecodeAccountId = jest.mocked(decodeAccountId).mockReturnValue({
       currencyId: "aptos",
       derivationMode: "",
@@ -195,6 +227,32 @@ describe("getAccountShape", () => {
               balanceHistoryCache: {},
               swapHistory: [],
             },
+          } as unknown as AccountShapeInfo<Account>,
+          {} as SyncConfig,
+        ),
+    ).rejects.toThrow("Unable to retrieve public key");
+  });
+
+  it("unable to get xpub error is thrown when there is no initial account", async () => {
+    mockedDecodeAccountId = jest.mocked(decodeAccountId).mockReturnValue({
+      currencyId: "aptos",
+      derivationMode: "",
+      type: "js",
+      version: "1",
+      xpubOrAddress: "",
+    });
+
+    expect(
+      async () =>
+        await getAccountShape(
+          {
+            id: "1",
+            address: "address",
+            currency: getCryptoCurrencyById("aptos"),
+            derivationMode: "",
+            index: 0,
+            xpub: "address",
+            derivationPath: "",
           } as unknown as AccountShapeInfo<Account>,
           {} as SyncConfig,
         ),
