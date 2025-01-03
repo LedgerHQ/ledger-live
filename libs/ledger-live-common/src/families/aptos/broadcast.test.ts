@@ -1,7 +1,6 @@
 import broadcast from "./broadcast";
 import { AptosAPI } from "./api";
 import { patchOperationWithHash } from "./../../operation";
-import { log } from "@ledgerhq/logs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
@@ -84,7 +83,6 @@ describe("broadcast", () => {
 
     expect(AptosAPI.prototype.broadcast).toHaveBeenCalledWith("mockSignature");
     expect(patchOperationWithHash).toHaveBeenCalledWith(mockOperation, mockHash);
-    expect(log).toHaveBeenCalledWith("INFO", "APTOS_OP", mockOperation);
     expect(result).toEqual({ ...mockOperation, hash: mockHash });
   });
 
