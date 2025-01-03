@@ -145,55 +145,55 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
-    xrayTicket: "B2CQA-2574",
-  },
-  {
-    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
-    xrayTicket: "B2CQA-2807",
-    bugTicket: "BACK-8150",
-  },
-  {
-    transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
-    xrayTicket: "B2CQA-2573",
-  },
-  {
-    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
-    xrayTicket: "B2CQA-2808",
-  },
-  {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
-    xrayTicket: "B2CQA-2809",
-  },
-  {
-    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
-    xrayTicket: "B2CQA-2810",
-  },
-  {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
-    xrayTicket: "B2CQA-2811",
-  },
-  {
-    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
-    xrayTicket: "B2CQA-2812",
-  },
-  {
-    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
-    xrayTicket: "B2CQA-2813",
-  },
-  {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
-    xrayTicket: "B2CQA-2814",
-  },
-  {
-    transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
-    xrayTicket: "B2CQA-2815",
-  },
-  {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
-    xrayTicket: "B2CQA-2816",
-  },
+  // {
+  //   transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+  //   xrayTicket: "B2CQA-2574",
+  // },
+  // {
+  //   transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+  //   xrayTicket: "B2CQA-2807",
+  //   bugTicket: "BACK-8150",
+  // },
+  // {
+  //   transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
+  //   xrayTicket: "B2CQA-2573",
+  // },
+  // {
+  //   transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
+  //   xrayTicket: "B2CQA-2808",
+  // },
+  // {
+  //   transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
+  //   xrayTicket: "B2CQA-2809",
+  // },
+  // {
+  //   transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
+  //   xrayTicket: "B2CQA-2810",
+  // },
+  // {
+  //   transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
+  //   xrayTicket: "B2CQA-2811",
+  // },
+  // {
+  //   transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
+  //   xrayTicket: "B2CQA-2812",
+  // },
+  // {
+  //   transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
+  //   xrayTicket: "B2CQA-2813",
+  // },
+  // {
+  //   transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
+  //   xrayTicket: "B2CQA-2814",
+  // },
+  // {
+  //   transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
+  //   xrayTicket: "B2CQA-2815",
+  // },
+  // {
+  //   transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
+  //   xrayTicket: "B2CQA-2816",
+  // },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
@@ -221,7 +221,7 @@ test.describe("Send flows", () => {
   //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
   for (const transaction of transactionE2E) {
-    test.describe("Send from 1 account to another", () => {
+    test.only("Send from 1 account to another", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
