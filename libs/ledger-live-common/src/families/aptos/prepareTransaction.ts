@@ -48,9 +48,6 @@ const prepareTransaction = async (
   transaction.options = {
     ...transaction.options,
     maxGasAmount: estimate.maxGasAmount,
-    gasUnitPrice: estimate.gasUnitPrice,
-    sequenceNumber: estimate.sequenceNumber,
-    expirationTimestampSecs: estimate.expirationTimestampSecs,
   };
 
   transaction.fees = fees;
