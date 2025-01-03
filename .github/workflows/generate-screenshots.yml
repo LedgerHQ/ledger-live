@@ -62,43 +62,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
-      # - uses: actions/checkout@v4
-      # # Include the pull request ref in the checkout action to prevent merge commit
-      # # https://github.com/actions/checkout?tab=readme-ov-file#checkout-pull-request-head-commit-instead-of-merge-commit
-      #   with:
-      #     ref: ${{ github.event.pull_request.head.sha }}
-
-      # Run steps that make changes to the local repo here.
-      - name: Make changes and commit
-        run: |
-          echo "Test commit in generate-screenshots" > file0.txt
-          git add .
-
-      # Commit all changed files back to the repository
-      - uses: planetscale/ghcommit-action@v0.1.6
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+      - name: Setup the toolchain
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          commit_message: "Automated commit, generate-screenshots"
-          repo: ${{ github.repository }}
-          branch: ${{ github.head_ref || github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      # - name: Setup git user
-      #   uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      # - name: Setup the toolchain
-      #   id: caches
-      #   uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-      #   with:
-      #     accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      #     roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      #     region: ${{ secrets.AWS_CACHE_REGION }}
-      #     turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      # - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
-      #   id: setup-test-desktop
-      #   with:
-      #     skip_ruby: true
-      #     install_playwright: true
-      #     turborepo-server-port: ${{ steps.caches.outputs.port }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+        id: setup-test-desktop
+        with:
+          skip_ruby: true
+          install_playwright: true
+          turborepo-server-port: ${{ steps.caches.outputs.port }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@support/signed-screenshot-gh-commits-swinton
         id: update-snapshots
         with:
