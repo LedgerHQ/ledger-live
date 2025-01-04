@@ -6,6 +6,7 @@ import { AccountAddresses, scanAddresses, scanOperations } from "../network/inde
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { KaspaSigner } from "../signer";
+import { getVirtualChainBlueScore } from "../network/indexer-api/getVirtualChainBlueScore";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
@@ -48,7 +49,7 @@ export const makeGetAccountShape =
       ...accountAddresses.usedReceiveAddresses.map(addr => addr.address),
       ...accountAddresses.usedChangeAddresses.map(addr => addr.address),
     ];
-    const allOperations: Operation[] = await scanOperations(usedAddresses);
+    const allOperations: Operation[] = await scanOperations(usedAddresses, accountId);
     const operations = mergeOps(oldOperations, allOperations);
 
     const activeAddressCount: number =
@@ -59,7 +60,7 @@ export const makeGetAccountShape =
       id: accountId,
       xpub: xpub,
       index: accountIndex,
-      blockHeight: 0, // this doesn't really make sense in Kaspa
+      blockHeight: await getVirtualChainBlueScore(),
       balance: accountAddresses.totalBalance,
       spendableBalance: accountAddresses.spendableBalance,
       operations,
