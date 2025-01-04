@@ -197,7 +197,7 @@ function getTypeAndIndexFromAccountAddresses(accountAddreses: AccountAddress[], 
   }
 }
 
-export async function scanOperations(addresses: string[]): Promise<Operation[]> {
+export async function scanOperations(addresses: string[], accountId: string): Promise<Operation[]> {
   const operations: Operation[] = [];
 
   // console.log(`Timestamp with ms: ${new Date().toISOString()}`);
@@ -245,7 +245,7 @@ export async function scanOperations(addresses: string[]): Promise<Operation[]> 
       recipients: tx.outputs.map(output => output.script_public_key_address),
       blockHeight: tx.accepting_block_blue_score,
       blockHash: tx.block_hash[0],
-      accountId: "kaspa?",
+      accountId: accountId,
       date: new Date(tx.block_time),
       extra: {},
     } as Operation);
