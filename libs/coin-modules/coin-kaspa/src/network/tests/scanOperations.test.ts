@@ -6,7 +6,7 @@ describe("scan transactions for multiple addresses", () => {
   it("One address", async () => {
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
 
-    const result = await scanOperations([address]);
+    const result = await scanOperations([address], "");
     expect(result.length).toBeGreaterThan(20);
 
     const exampleTx = result.find(
@@ -45,7 +45,7 @@ describe("scan transactions for multiple addresses", () => {
       "kaspa:qqkqkzjvr7zwxxmjxjkmxxdwju9kjs6e9u82uh59z07vgaks6gg62v8707g73",
     ];
     // console.log(new Date().toLocaleString());
-    const result = await scanOperations(addresses);
+    const result = await scanOperations(addresses, "");
     // console.log(result);
     expect(result.length).toBeGreaterThan(20);
 
@@ -261,7 +261,7 @@ describe("scan transactions for multiple addresses", () => {
     // console.log(new Date().toLocaleString());
 
     const startTime = Date.now();
-    const result = await scanOperations(addresses);
+    const result = await scanOperations(addresses, "");
     const endTime = Date.now();
     const timeTakenInSeconds = (endTime - startTime) / 1000;
     console.log(`Time taken: ${timeTakenInSeconds} seconds`);
