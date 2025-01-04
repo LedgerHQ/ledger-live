@@ -1,5 +1,11 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.8.11-nightly.0
+
+### Patch Changes
+
+- [#8765](https://github.com/LedgerHQ/ledger-live/pull/8765) [`72c6f67`](https://github.com/LedgerHQ/ledger-live/commit/72c6f672f129f7cc2a1b22e54c2f037d974c707b) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: pass minimal verbosity to bitcoin explorer calls
+
 ## 0.8.10
 
 ### Patch Changes

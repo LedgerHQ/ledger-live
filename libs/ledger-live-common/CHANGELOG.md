@@ -1,5 +1,16 @@
 ## 34.5.0-next.4
 
+## 34.17.0-nightly.0
+
+### Minor Changes
+
+- [#8670](https://github.com/LedgerHQ/ledger-live/pull/8670) [`a070f4e`](https://github.com/LedgerHQ/ledger-live/commit/a070f4ee9ff3d3b5cddfc4e03b703fb289b4cc36) Thanks [@themooneer](https://github.com/themooneer)! - When llmNetworkBasedAddAccount feature flag is enabled, all the ctas that open an add account process will be redirected to the new flow and support currency and related route params.
+
+### Patch Changes
+
+- Updated dependencies [[`72c6f67`](https://github.com/LedgerHQ/ledger-live/commit/72c6f672f129f7cc2a1b22e54c2f037d974c707b)]:
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.0
+
 ## 34.16.0
 
 ### Minor Changes

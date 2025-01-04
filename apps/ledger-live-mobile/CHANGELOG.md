@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.60.0-nightly.0
+
+### Minor Changes
+
+- [#8762](https://github.com/LedgerHQ/ledger-live/pull/8762) [`1d47a95`](https://github.com/LedgerHQ/ledger-live/commit/1d47a95e2c4c2ed42af59dcb1993b8f06269cc4a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - LLM add error page
+
+- [#8670](https://github.com/LedgerHQ/ledger-live/pull/8670) [`a070f4e`](https://github.com/LedgerHQ/ledger-live/commit/a070f4ee9ff3d3b5cddfc4e03b703fb289b4cc36) Thanks [@themooneer](https://github.com/themooneer)! - When llmNetworkBasedAddAccount feature flag is enabled, all the ctas that open an add account process will be redirected to the new flow and support currency and related route params.
+
+### Patch Changes
+
+- Updated dependencies [[`a070f4e`](https://github.com/LedgerHQ/ledger-live/commit/a070f4ee9ff3d3b5cddfc4e03b703fb289b4cc36)]:
+  - @ledgerhq/live-common@34.17.0-nightly.0
+
 ## 3.59.0
 
 ### Minor Changes

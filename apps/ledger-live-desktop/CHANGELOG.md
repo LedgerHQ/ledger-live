@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.95.0-nightly.0
+
+### Minor Changes
+
+- [#8790](https://github.com/LedgerHQ/ledger-live/pull/8790) [`386a51b`](https://github.com/LedgerHQ/ledger-live/commit/386a51b9fb0a29d385fcb4acc86fc343f6cbd42c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix Send StepConfirmation error message layout that was broken on some languages
+
+- [#8777](https://github.com/LedgerHQ/ledger-live/pull/8777) [`ddaf8a4`](https://github.com/LedgerHQ/ledger-live/commit/ddaf8a41eaa8d0744b1c6aa1d2f14bf4632aab11) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce integration tests for Market Widget
+
+### Patch Changes
+
+- Updated dependencies [[`a070f4e`](https://github.com/LedgerHQ/ledger-live/commit/a070f4ee9ff3d3b5cddfc4e03b703fb289b4cc36), [`72c6f67`](https://github.com/LedgerHQ/ledger-live/commit/72c6f672f129f7cc2a1b22e54c2f037d974c707b)]:
+  - @ledgerhq/live-common@34.17.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.0
+
 ## 2.94.0
 
 ### Minor Changes
