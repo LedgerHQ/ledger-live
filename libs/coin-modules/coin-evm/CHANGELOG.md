@@ -1,74 +1,38 @@
 # @ledgerhq/coin-evm
 
-## 2.7.0-nightly.7
-
-### Patch Changes
-
-- Updated dependencies [[`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.7
-
-## 2.7.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
-  - @ledgerhq/cryptoassets@13.8.0-nightly.0
-  - @ledgerhq/coin-framework@0.21.0-nightly.6
-  - @ledgerhq/domain-service@1.2.14-nightly.4
-  - @ledgerhq/evm-tools@1.3.0
-
-## 2.7.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.5
-
-## 2.7.0-nightly.4
+## 2.7.0
 
 ### Minor Changes
 
-- [#8499](https://github.com/LedgerHQ/ledger-live/pull/8499) [`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Exchange function is now in coin-modules
-
-### Patch Changes
-
-- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.4
-  - @ledgerhq/domain-service@1.2.14-nightly.3
-  - @ledgerhq/evm-tools@1.3.0
-
-## 2.6.1-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.3
-
-## 2.6.1-nightly.2
+- [#8375](https://github.com/LedgerHQ/ledger-live/pull/8375) [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b) Thanks [@Canestin](https://github.com/Canestin)! - add mev protection
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-framework@0.20.1-nightly.2
-  - @ledgerhq/domain-service@1.2.14-nightly.2
+  - @ledgerhq/coin-framework@0.20.1
+  - @ledgerhq/domain-service@1.2.14
   - @ledgerhq/evm-tools@1.3.0
 
-## 2.6.1-nightly.1
+## 2.7.0-next.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-framework@0.20.1-nightly.1
-  - @ledgerhq/domain-service@1.2.14-nightly.1
+  - @ledgerhq/coin-framework@0.20.1-next.1
+  - @ledgerhq/domain-service@1.2.14-next.1
   - @ledgerhq/evm-tools@1.3.0
 
-## 2.6.1-nightly.0
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#8375](https://github.com/LedgerHQ/ledger-live/pull/8375) [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b) Thanks [@Canestin](https://github.com/Canestin)! - add mev protection
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-framework@0.20.1-nightly.0
-  - @ledgerhq/domain-service@1.2.14-nightly.0
+  - @ledgerhq/coin-framework@0.20.1-next.0
+  - @ledgerhq/domain-service@1.2.14-next.0
   - @ledgerhq/evm-tools@1.3.0
 
 ## 2.6.0

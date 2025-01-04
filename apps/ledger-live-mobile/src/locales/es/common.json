@@ -3091,6 +3091,13 @@
       "desc" : "Prueba las funciones experimentales y envíanos tu opinión.",
       "customManifest" : {
         "title" : "Cargar manifiesto de plataforma personalizada"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Modo de desarrollador del exchange",
+        "description" : "Añadir información del proveedor del exchange",
+        "placeholder" : "Información del proveedor del exchange en formato CAL",
+        "currentSetting" : "Ajuste actual",
+        "error" : "Valor de CAL no válido"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "Eliminar sincronización",
         "description" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de sincronizarse.",
@@ -6922,6 +6936,11 @@
           "cancel" : "Mantener sincronización",
           "title" : "¿Seguro que quieres eliminar la sincronización?",
           "desc" : "Tus cuentas de cripto en distintos teléfonos y PCs dejarán de estar sincronizadas. Esto no afecta a tus fondos en modo alguno."
+        },
+        "error" : {
+          "title" : "Esta aplicación ya no está sincronizada",
+          "description" : "Activa Ledger Sync en este Ledger Live o en el Ledger Live con el que estás sincronizando.",
+          "cta" : "Activar Ledger Sync"
         }
       },
       "manageInstances" : {

@@ -1,72 +1,28 @@
 # @ledgerhq/live-wallet
 
-## 0.8.0-nightly.7
+## 0.7.7
 
 ### Patch Changes
 
-- Updated dependencies [[`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.7
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c), [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0
+  - @ledgerhq/coin-framework@0.20.1
 
-## 0.8.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
-  - @ledgerhq/cryptoassets@13.8.0-nightly.0
-  - @ledgerhq/types-live@6.55.0-nightly.4
-  - @ledgerhq/types-cryptoassets@7.18.0-nightly.0
-  - @ledgerhq/coin-framework@0.21.0-nightly.6
-
-## 0.8.0-nightly.5
+## 0.7.7-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.5
+- Updated dependencies [[`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0-next.1
+  - @ledgerhq/coin-framework@0.20.1-next.1
 
-## 0.8.0-nightly.4
-
-### Minor Changes
-
-- [#8499](https://github.com/LedgerHQ/ledger-live/pull/8499) [`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Exchange function is now in coin-modules
+## 0.7.7-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01)]:
-  - @ledgerhq/types-live@6.55.0-nightly.3
-  - @ledgerhq/coin-framework@0.21.0-nightly.4
-  - @ledgerhq/ledger-key-ring-protocol@0.5.2-nightly.0
-
-## 0.7.7-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5)]:
-  - @ledgerhq/coin-framework@0.21.0-nightly.3
-
-## 0.7.7-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`1447c15`](https://github.com/LedgerHQ/ledger-live/commit/1447c15a698a40aeb4b1b8ac5c587b9036afe647)]:
-  - @ledgerhq/types-live@6.55.0-nightly.2
-  - @ledgerhq/coin-framework@0.20.1-nightly.2
-
-## 0.7.7-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`be4233c`](https://github.com/LedgerHQ/ledger-live/commit/be4233ce713b90dc3ad335c330ca9d6509bf23e3), [`fe81150`](https://github.com/LedgerHQ/ledger-live/commit/fe811500ae626cab1995ccf8bd8cb8aa8e74bb40)]:
-  - @ledgerhq/types-live@6.55.0-nightly.1
-  - @ledgerhq/coin-framework@0.20.1-nightly.1
-
-## 0.7.7-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba)]:
-  - @ledgerhq/types-live@6.55.0-nightly.0
-  - @ledgerhq/coin-framework@0.20.1-nightly.0
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c)]:
+  - @ledgerhq/types-live@6.55.0-next.0
+  - @ledgerhq/coin-framework@0.20.1-next.0
 
 ## 0.7.6
 

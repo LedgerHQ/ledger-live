@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, Grid, Icons, Text } from "@ledgerhq/react-ui";
+import { Flex, Icons, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { CircleWrapper } from "~/renderer/components/CryptoCurrencyIcon";
 import { useExportLogs } from "LLD/hooks/useExportLogs";
@@ -46,7 +46,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
     <Flex
       justifyContent="center"
       alignItems="center"
-      width={"90%"}
+      width="100%"
       rowGap={32}
       flexDirection="column"
     >
@@ -72,7 +72,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
           }
         />
       </Flex>
-      <Flex flexDirection="column" rowGap={16} width="100%" alignItems="flex-start">
+      <Flex flexDirection="column" rowGap={16} flex={1} alignItems="flex-start">
         <InteractFlex alignItems="center" onClick={onShowMore}>
           <Text variant="bodyLineHeight" fontSize={13}>
             {t("errors.TransactionBroadcastError.needHelp")}
@@ -85,10 +85,10 @@ const NodeError: React.FC<Props> = ({ error }) => {
           )}
         </InteractFlex>
         {isShowMore && (
-          <Grid columns={2} columnGap="8px" width="100%">
+          <Flex flexDirection="column" flex={1}>
             <HelpSection onGetHelp={onGetHelp} />
             <TechnicalErrorSection error={error} onSaveLogs={onSaveLogs} />
-          </Grid>
+          </Flex>
         )}
       </Flex>
     </Flex>
