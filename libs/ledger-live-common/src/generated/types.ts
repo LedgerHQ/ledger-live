@@ -75,7 +75,7 @@ import type {
   TransactionRaw as kaspaTransactionRaw,
   TransactionStatus as kaspaTransactionStatus,
   TransactionStatusRaw as kaspaTransactionStatusRaw,
-} from "@ledgerhq/coin-kaspa/types";
+} from "@ledgerhq/coin-kaspa/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,

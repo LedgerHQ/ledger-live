@@ -12,6 +12,7 @@ import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as evm } from "../families/evm/setup";
+import { resolver as kaspa } from "../families/kaspa/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
@@ -35,6 +36,7 @@ export default {
   bitcoin,
   cardano,
   evm,
+  kaspa,
   near,
   polkadot,
   solana,

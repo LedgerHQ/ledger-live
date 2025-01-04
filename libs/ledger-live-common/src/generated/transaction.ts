@@ -12,6 +12,7 @@ import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
+import kaspa from "@ledgerhq/coin-kaspa/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 import solana from "@ledgerhq/coin-solana/transaction";
@@ -35,6 +36,7 @@ export default {
   bitcoin,
   cardano,
   evm,
+  kaspa,
   near,
   polkadot,
   solana,
