@@ -6,6 +6,7 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { scanUtxos } from "../network";
 import { selectUtxos, UtxoStrategy } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
+import { calcMaxSpendableAmount } from "../lib/utxoSelection/lib";
 
 const getTransactionStatus = async (
   account: KaspaAccount,
@@ -21,11 +22,22 @@ const getTransactionStatus = async (
     });
   }
 
-  if (transaction.amount.gt(0) && !!transaction.recipient) {
+  if ((transaction.amount.gt(0) || transaction.useAllAmount) && !!transaction.recipient) {
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
       Buffer.from(account.xpub, "hex"),
     );
+
     const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
+
+    if (transaction.useAllAmount) {
+      const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
+        utxos,
+        transaction.recipient.length > 67,
+      );
+
+      transaction.amount = maxSpendableAmount;
+    }
+
     const result = selectUtxos(
       utxos,
       UtxoStrategy.FIFO,
