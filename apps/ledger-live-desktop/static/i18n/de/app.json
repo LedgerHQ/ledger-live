@@ -442,6 +442,14 @@
       "cta" : "Kompatible Geräte entdecken",
       "changeProvider" : "Bei anderem Anbieter swappen"
     },
+    "incompatibility" : {
+      "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
+      "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
+      "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
+      "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+    },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
       "learnMore" : "Was ist Swappen?",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Abgehobener Betrag",
       "palletMethod" : "Methode",
       "transferAmount" : "Betrag transferieren",
-      "validatorsCount" : "Validatoren ({{number}})"
+      "validatorsCount" : "Validatoren ({{number}})",
+      "version" : "Version"
     }
   },
   "operationList" : {
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "Validator-Gruppe",
           "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+          "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
           "totalVotes" : "Stimmen insgesamt",
           "commission" : "Provision"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "Auszahlbar",
       "statusUpdateNotice" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
       "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+      "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
       "emptyState" : {
         "description" : "Du kannst SOL-Belohnungen verdienen, indem du deine Vermögenswerte delegierst.",
         "info" : "So funktioniert Delegation",
@@ -3880,6 +3891,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
+            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
             "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
           },
           "connectDevice" : {
@@ -4147,6 +4159,7 @@
             "link" : "Link",
             "secondaryCta" : "Sekundärer CTA",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Pfad"
           }
@@ -5780,6 +5793,16 @@
       "title" : "Konto nicht von Knoten (Full Node) gescannt",
       "description" : "Bitte konfigurieren Sie Ihren Full Node so, dass er nach den Konten sucht, die mit diesem Gerät verbunden sind. Ihr Full Node muss zuerst die Blockchain nach diesem Konto durchsuchen, bevor Sie es zu Ihrem Portfolio hinzufügen können."
     },
+    "SequenceNumberTooNew" : {
+      "title" : "Sequence number too new"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Sequence number too old",
+      "description" : "Sequence number too old"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaktion abgelaufen"
+    },
     "SwapRateExpiredError" : {
       "title" : "Wechselkurs abgelaufen",
       "description" : "Wechselkurs abgelaufen. Bitte lade die Seite neu und versuche es dann noch einmal."
@@ -6331,7 +6354,7 @@
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
       "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
-      "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+      "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
     "EtherscanAPIError" : {
       "title" : "Abruf der Transaktionen fehlgeschlagen",
