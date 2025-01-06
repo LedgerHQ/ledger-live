@@ -140,8 +140,7 @@ const deriveTokenTransferCommandDescriptor = async (
     validateMemoCommon(memo, errors);
   }
 
-  const tokenIdParts = subAccount.token.id.split("/");
-  const mintAddress = tokenIdParts[tokenIdParts.length - 1];
+  const mintAddress = subAccount.token.contractAddress;
   const mintDecimals = subAccount.token.units[0].magnitude;
 
   const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
@@ -282,8 +281,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   const errors: Record<string, Error> = {};
 
   const token = getTokenById(model.uiState.tokenId);
-  const tokenIdParts = token.id.split("/");
-  const mint = tokenIdParts[tokenIdParts.length - 1];
+  const mint = token.contractAddress;
 
   const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
     mainAccount.freshAddress,

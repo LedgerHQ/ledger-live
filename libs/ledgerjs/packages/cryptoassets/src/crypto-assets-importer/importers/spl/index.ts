@@ -3,6 +3,7 @@ import path from "path";
 import { fetchTokensFromCALService } from "../../fetch";
 
 type SPLToken = [
+  string, // CAL id
   number, // chainId
   string, // name
   string, // ticker
@@ -14,6 +15,7 @@ export const importSPLTokens = async (outputDir: string) => {
   try {
     console.log("importing spl tokens...");
     const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "solana" }, [
+      "id",
       "chain_id",
       "name",
       "ticker",
@@ -21,6 +23,7 @@ export const importSPLTokens = async (outputDir: string) => {
       "decimals",
     ]);
     const splTokens: SPLToken[] = tokens.map(token => [
+      token.id,
       token.chain_id,
       token.name,
       token.ticker,
@@ -30,6 +33,7 @@ export const importSPLTokens = async (outputDir: string) => {
 
     const filePath = path.join(outputDir, "spl");
     const splTypeStringified = `export type SPLToken = [
+  string, // CAL id
   number, // chainId
   string, // name
   string, // ticker
