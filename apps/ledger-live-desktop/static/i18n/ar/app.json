@@ -442,6 +442,14 @@
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
+    "incompatibility" : {
+      "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+      "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+      "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+      "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+    },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
       "learnMore" : "ما هي المبادلة؟",
@@ -1139,7 +1147,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
-      "earn" : "Earn",
+      "earn" : "اكسب",
       "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
@@ -1486,7 +1494,7 @@
       },
       "earn" : {
         "title" : "تكديس",
-        "description" : "Get rewards on your crypto"
+        "description" : "احصل على مكافآت على أصولك المشفرة"
       }
     },
     "recoverBanner" : {
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "المبلغ المسحوب",
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
-      "validatorsCount" : "({{number}}) مدقق"
+      "validatorsCount" : "({{number}}) مدقق",
+      "version" : "الإصدار"
     }
   },
   "operationList" : {
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "مجموعة المدققين",
           "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+          "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
           "totalVotes" : "مجموع الأصوات",
           "commission" : "العمولة"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "قابل للسحب",
       "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
       "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+      "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
       "emptyState" : {
         "description" : "يمكنك كسب مكافآت SOL عن طريق تفويض أصولك.",
         "info" : "كيف يعمل التفويض",
@@ -3880,6 +3891,7 @@
           },
           "validator" : {
             "title" : "المدققون",
+            "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
             "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
           },
           "connectDevice" : {
@@ -4147,6 +4159,7 @@
             "link" : "الرابط",
             "secondaryCta" : "CTA الثانوي",
             "cta" : "CTA",
+            "tag" : "علامة",
             "url" : "عنوان URL",
             "path" : "المسار"
           }
@@ -5779,6 +5792,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "لم يتم فحص الحساب بواسطة العقدة الكاملة",
       "description" : "يرجى تكوين العقدة الكاملة الخاصة بك للبحث عن الحسابات المرتبطة بهذا الجهاز. يجب أن تقوم العقدة الكاملة الخاصة بك أولاً بالبحث عن هذا الحساب في سلسلة الكتل (blockchain) قبل أن تتمكن من إضافته إلى محفظتك الاستثمارية."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "رقم التسلسل حديث جداً"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "رقم التسلسل قديم جداً",
+      "description" : "رقم التسلسل قديم جداً"
+    },
+    "TransactionExpired" : {
+      "title" : "انتهت صلاحية المعاملة"
     },
     "SwapRateExpiredError" : {
       "title" : "انتهت صلاحية المعدَّل",
