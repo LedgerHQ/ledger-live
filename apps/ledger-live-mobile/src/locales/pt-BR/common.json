@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Atualização necessária",
       "description" : "Para sincronizar seus aplicativos, certifique-se de que ambos estejam atualizados com a versão mais recente."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2354,8 @@
       "seeMarket" : "Ver tudo"
     },
     "walletBalance" : "Saldo da carteira",
-    "seelAllAssets" : "Ver todos os ativos",
+    "seeAllAssets" : "Ver todos os ativos",
+    "seeAllAccounts" : "Ver todas as contas",
     "marketPriceSection" : {
       "title" : "preço de mercado de {{currencyTicker}}",
       "currencyPrice" : "preço de 1 {{currencyTicker}}",
@@ -2748,6 +2761,9 @@
         "cta" : "Aplicar agora"
       }
     }
+  },
+  "assets" : {
+    "title" : "Ativos"
   },
   "accounts" : {
     "title" : "Contas",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
+        "contact_support" : "Entre em contato com o suporte",
+        "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
+        "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
+        "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
+        "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "Adicionar nova",
+    "seeAllAccounts" : "Ver todas as contas",
+    "addNewOrExisting" : "Adicionar conta nova ou existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit ou Native segwit?"
     },
@@ -5912,6 +5940,10 @@
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
       },
       "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "Certifique-se de que o endereço exibido em sua Ledger corresponda ao endereço de {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Sempre verifique se o endereço exibido em seu dispositivo corresponde exatamente ao que lhe foi dado pelo destinatário",
+      "send" : "Sempre verifique se o endereço exibido no seu dispositivo corresponde exatamente ao oferecido pelo recipiente",
       "delegate" : "Sempre verifique se seu dispositivo exibe o endereço exatamente como fornecido pelo validador",
       "undelegate" : "Sempre verifique se seu dispositivo exibe o endereço exatamente como fornecido pelo validador",
       "freeze" : "Sempre verifique se seu dispositivo exibe o endereço exatamente como fornecido",
@@ -7111,6 +7143,14 @@
           "name" : "Adicionar uma conta"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Selecionar ativo"
+    },
+    "selectNetwork" : {
+      "title" : "Selecione a rede blockchain à qual o ativo pertence"
     }
   }
 }
