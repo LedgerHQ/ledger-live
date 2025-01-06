@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "مطلوب التحديث",
       "description" : "لمزامنة تطبيقاتك، يُرجى التأكد من أن كليهما مُحدّث إلى أحدث إصدار."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2354,8 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
-    "seelAllAssets" : "رؤية جميع الأصول",
+    "seeAllAssets" : "رؤية جميع الأصول",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
@@ -2748,6 +2761,9 @@
         "cta" : "قم بالتكديس الآن"
       }
     }
+  },
+  "assets" : {
+    "title" : "الأصول"
   },
   "accounts" : {
     "title" : "الحسابات",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "contact_support" : "تواصل مع دعم العملاء",
+        "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+        "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+        "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+        "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "إضافة جديد",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
+    "addNewOrExisting" : "إضافة حساب جديد أو موجود",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit أم Native SegWit؟"
     },
@@ -5912,6 +5940,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "تأكد أن العنوان المعروض على Ledger الخاص بك يُطابق عنوان {{recipientWording}}",
     "recipientWording" : {
-      "send" : "دائماً تحقق من أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه لك المستلم",
+      "send" : "دائماً تحقق أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه المستلم",
       "delegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "undelegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "freeze" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما تم تقديمه إليك",
@@ -7111,6 +7143,14 @@
           "name" : "إضافة حساب"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "اختر أصل"
+    },
+    "selectNetwork" : {
+      "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها"
     }
   }
 }
