@@ -74,20 +74,22 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           alignItems={"center"}
         >
           <CameraPermissionContext.Consumer>
-            {({ permissionGranted }) => (
-              <CameraView
-                active={permissionGranted ?? false}
-                style={{
-                  backgroundColor: colors.neutral.c50,
-                  width: 280,
-                  height: 280,
-                }}
-                barcodeScannerSettings={{
-                  barcodeTypes: ["qr"],
-                }}
-                onBarcodeScanned={onBarCodeScanned}
-              />
-            )}
+            {({ permissionGranted }) =>
+              permissionGranted ? (
+                <CameraView
+                  active={permissionGranted ?? false}
+                  style={{
+                    backgroundColor: colors.neutral.c50,
+                    width: 280,
+                    height: 280,
+                  }}
+                  barcodeScannerSettings={{
+                    barcodeTypes: ["qr"],
+                  }}
+                  onBarcodeScanned={onBarCodeScanned}
+                />
+              ) : null
+            }
           </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />
         </Flex>
