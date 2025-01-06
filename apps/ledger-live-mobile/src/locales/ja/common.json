@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "アップデートが必要です",
       "description" : "アプリを同期するには、両方が最新バージョンにアップデートされていることをご確認ください。"
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2354,8 @@
       "seeMarket" : "すべて表示"
     },
     "walletBalance" : "ウォレット残高",
-    "seelAllAssets" : "すべての暗号資産を表示",
+    "seeAllAssets" : "すべての暗号資産を表示",
+    "seeAllAccounts" : "すべてのアカウントを表示",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}}の市場価格",
       "currencyPrice" : "1 {{currencyTicker}}の価格",
@@ -2748,6 +2761,9 @@
         "cta" : "今すぐステーキング"
       }
     }
+  },
+  "assets" : {
+    "title" : "資産"
   },
   "accounts" : {
     "title" : "アカウント",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "対応デバイスを探す",
+        "contact_support" : "カスタマーサポートに問い合わせる",
+        "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+        "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+        "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+        "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "新規で追加",
+    "seeAllAccounts" : "すべてのアカウントを表示",
+    "addNewOrExisting" : "新規または既存のアカウントを追加する",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegwitとNative Segwitとは？"
     },
@@ -5912,6 +5940,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "Ledgerに表示されているアドレスが{{recipientWording}}のアドレスと一致していることを確認してください",
     "recipientWording" : {
-      "send" : "デバイス上に表示されているアドレスが、受取人から提供されたものと完全に一致していることを、毎回必ず確認してください。",
+      "send" : "デバイスに表示されるアドレスが受信者から提供されたアドレスと完全に一致していることを、常に確認してください。",
       "delegate" : "デバイス上に、バリデーターから提供されたアドレスが正確に表示されていることを常に確認してください。",
       "undelegate" : "デバイス上に、バリデーターから提供されたアドレスが正確に表示されていることを常に確認してください。",
       "freeze" : "デバイス上に、アドレスが正確に表示されていることを常に確認してください。",
@@ -7111,6 +7143,14 @@
           "name" : "アカウントを追加"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "「暗号資産」を選択"
+    },
+    "selectNetwork" : {
+      "title" : "暗号資産が属するブロックチェーンネットワークを選択"
     }
   }
 }
