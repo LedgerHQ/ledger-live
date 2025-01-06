@@ -75,12 +75,12 @@ describe("Aptos API", () => {
         };
       });
 
-      const mockSimpleSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
+      const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
       const api = new AptosAPI("aptos");
       await api.getAccount(Account.APTOS_1.address);
 
-      expect(mockSimpleSpy).toHaveBeenCalledWith({
+      expect(mockGetAccountSpy).toHaveBeenCalledWith({
         accountAddress: Account.APTOS_1.address,
       });
     });
