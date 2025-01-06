@@ -1,3 +1,7 @@
+# 2.94.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.92.1
 
 We've upgraded the sell feature to provide a more seamless and flexible experience. Users can now select their preferred payment method and easily compare quotes from different providers, ensuring they get the best deal possible.
