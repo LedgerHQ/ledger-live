@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 export const methodToString = (method: number): string => {
   switch (method) {
     case 0:
-      return "Token transfer";
+      return "Coin transfer";
     default:
       return "Unknown";
   }
