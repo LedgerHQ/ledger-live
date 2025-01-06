@@ -208,13 +208,20 @@ function useTransport(postMessage: (message: string) => void | undefined): Trans
   }, [postMessage]);
 }
 
-export function useConfig({ appId, userId, tracking, wallet }: ServerConfig): ServerConfig {
+export function useConfig({
+  appId,
+  userId,
+  tracking,
+  wallet,
+  mevProtected,
+}: ServerConfig): ServerConfig {
   return useMemo(
     () => ({
       appId,
       userId,
       tracking,
       wallet,
+      mevProtected,
     }),
     [appId, tracking, userId, wallet],
   );
@@ -558,9 +565,15 @@ export function useWalletAPIServer({
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
               try {
+                let broadcastConfig = config.mevProtected
+                  ? {
+                      broadcastConfig: { mevProtected: config.mevProtected },
+                    }
+                  : {};
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
+                  ...broadcastConfig,
                 });
                 tracking.broadcastSuccess(manifest);
               } catch (error) {

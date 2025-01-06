@@ -27,7 +27,7 @@ import { WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { trackingEnabledSelector } from "../../reducers/settings";
+import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
@@ -76,6 +76,7 @@ export function useWebView(
   );
 
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook();
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -85,6 +86,7 @@ export function useWebView(
     userId,
     tracking: trackingEnabled,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {

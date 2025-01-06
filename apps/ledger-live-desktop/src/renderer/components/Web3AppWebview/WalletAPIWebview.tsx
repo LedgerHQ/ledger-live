@@ -32,7 +32,7 @@ import { track } from "~/renderer/analytics/segment";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -238,6 +238,7 @@ function useWebView(
   customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -247,6 +248,7 @@ function useWebView(
     userId,
     tracking: shareAnalytics,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {
