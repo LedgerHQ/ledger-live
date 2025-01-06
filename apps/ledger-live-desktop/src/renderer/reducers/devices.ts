@@ -78,7 +78,7 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
     return {
       deviceId: "",
       wired: true,
-      modelId: DeviceModelId.nanoS,
+      modelId: DeviceModelId.nanoSP,
     };
   }
   return state.devices.currentDevice;
@@ -90,7 +90,7 @@ export function getDevices(state: { devices: DevicesState }) {
       {
         deviceId: "",
         wired: true,
-        modelId: DeviceModelId.nanoS,
+        modelId: DeviceModelId.nanoSP,
       },
     ];
   }
