@@ -8,22 +8,6 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "../../currencies";
-
-export const formatTransaction = (
-  { mode, amount, fees, recipient, useAllAmount }: Transaction,
-  account: Account,
-): string => `
-${mode.toUpperCase()} ${
-  useAllAmount
-    ? "MAX"
-    : amount.isZero()
-      ? ""
-      : " " + formatCurrencyUnit(account.currency.units[0], amount)
-}
-TO ${recipient}
-with fees=${fees ? formatCurrencyUnit(account.currency.units[0], fees) : "?"}`;
 
 export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(t);
@@ -54,7 +38,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
 };
 
 export default {
-  formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
