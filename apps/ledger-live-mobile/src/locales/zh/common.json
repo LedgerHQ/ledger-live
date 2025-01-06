@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "地址关闭 ed25519 曲线"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "需要更新",
       "description" : "要同步您的应用程序，请确保两个应用程序都已更新至最新版本。"
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2354,8 @@
       "seeMarket" : "显示全部"
     },
     "walletBalance" : "钱包余额",
-    "seelAllAssets" : "查看所有资产",
+    "seeAllAssets" : "查看所有资产",
+    "seeAllAccounts" : "查看所有账户",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
@@ -2748,6 +2761,9 @@
         "cta" : "立即进行权益质押"
       }
     }
+  },
+  "assets" : {
+    "title" : "多种资产"
   },
   "accounts" : {
     "title" : "账户",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "浏览兼容设备",
+        "contact_support" : "联系客服",
+        "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+        "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+        "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+        "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "添加新的",
+    "seeAllAccounts" : "查看所有账户",
+    "addNewOrExisting" : "添加新账户或现有账户",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -5912,6 +5940,10 @@
         "description" : "您可以将 SOL 资产委托给验证者，从而赚取奖励。"
       },
       "reserveWarning" : "请确保您的钱包中至少保留 {{amount}} SOL，用来支付未来停用和撤回权益质押所需的网络费用"
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "确保 Ledger 上显示的地址与 {{recipientWording}} 的地址相符",
     "recipientWording" : {
-      "send" : "每次都要核对您设备上显示的地址与接收方所提供给您的完全一致",
+      "send" : "每次都要核对您设备上显示的地址与接收方所提供的完全一致",
       "delegate" : "每次都要核对您设备上显示的地址与验证者所提供的地址完全一致",
       "undelegate" : "每次都要核对您设备上显示的地址与验证者所提供的地址完全一致",
       "freeze" : "每次都要核对您设备上显示的地址与所提供的完全一致",
@@ -7111,6 +7143,14 @@
           "name" : "添加账户"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "选择资产"
+    },
+    "selectNetwork" : {
+      "title" : "选择该资产所属的区块链网络"
     }
   }
 }
