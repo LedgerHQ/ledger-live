@@ -11,8 +11,6 @@ export type OperationType =
   | "NONE"
   | "CREATE"
   | "REVEAL"
-  // APTOS
-  | "UNKNOWN"
   // COSMOS
   | "DELEGATE"
   | "UNDELEGATE"
