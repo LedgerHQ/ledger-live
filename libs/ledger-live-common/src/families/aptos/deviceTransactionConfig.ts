@@ -1,10 +1,10 @@
-import type { DeviceTransactionField } from "../../transaction";
 import BigNumber from "bignumber.js";
+import type { DeviceTransactionField } from "../../transaction";
 
 export const methodToString = (method: number): string => {
   switch (method) {
     case 0:
-      return "Token transfer";
+      return "Coin transfer";
     default:
       return "Unknown";
   }
