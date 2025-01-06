@@ -174,8 +174,6 @@ async function getSendTransactionStatus(
     }
   }
 
-  errors.fees = new FeeNotLoaded("TOTO");
-
   return Promise.resolve({
     errors,
     warnings,

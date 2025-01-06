@@ -395,8 +395,7 @@ export const buildTransaction = async (
       languageView: protocolParams.languageView,
       maxTxSize: Number(protocolParams.maxTxSize),
       maxValueSize: Number(protocolParams.maxValueSize),
-      //@ts-ignore
-      utxoCostPerByte: new BigNumber(undefined),
+      utxoCostPerByte: new BigNumber(protocolParams.utxoCostPerByte),
     },
   });
   const ttl = getTTL(account.currency.id);

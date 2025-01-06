@@ -152,7 +152,7 @@ const cardano: AppSpec<Transaction> = {
                 amount: new BigNumber(CARDANO_MAX_SUPPLY),
                 tokens: tokenBalance,
               },
-              new BigNumber(""),
+              new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
             )
           : new BigNumber(0);
 
