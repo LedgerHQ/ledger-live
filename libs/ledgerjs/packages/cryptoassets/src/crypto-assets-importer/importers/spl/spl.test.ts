@@ -6,6 +6,7 @@ const splTokens = [
   {
     id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
     blockchain_name: "solana",
+    network: "solana",
     chain_id: 101,
     contract_address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     decimals: 6,
@@ -34,7 +35,7 @@ describe("import Spl tokens", () => {
   it("should output the file in the correct format", async () => {
     const expectedFile = `export type SPLToken = [
   string, // CAL id
-  number, // chainId
+  string, // network
   string, // name
   string, // ticker
   string, // address
@@ -58,7 +59,7 @@ export default tokens as SPLToken[];
         params: {
           blockchain_name: "solana",
           chain_id: undefined,
-          output: "id,chain_id,name,ticker,contract_address,decimals",
+          output: "id,network,name,ticker,contract_address,decimals",
           standard: undefined,
         },
       },
@@ -69,7 +70,7 @@ export default tokens as SPLToken[];
       JSON.stringify([
         [
           "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
-          101,
+          "solana",
           "USD Coin",
           "USDC",
           "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
