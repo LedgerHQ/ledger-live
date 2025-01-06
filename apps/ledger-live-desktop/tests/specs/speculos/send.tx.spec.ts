@@ -1,7 +1,7 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -273,7 +273,6 @@ test.describe("Send flows", () => {
             transaction.transaction.accountToCredit.address,
           );
           await app.drawer.close();
-          // Todo: Update method => Check the receiver account only when we broadcast
           if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
             await app.layout.goToAccounts();
             await app.accounts.clickSyncBtnForAccount(
@@ -282,7 +281,7 @@ test.describe("Send flows", () => {
             await app.accounts.navigateToAccountByName(
               transaction.transaction.accountToCredit.accountName,
             );
-            await app.account.selectAndClickOnLastOperation(OperationType.RECEIVED);
+            await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
             await app.sendDrawer.expectReceiverInfos(transaction.transaction);
           }
         },

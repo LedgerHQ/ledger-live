@@ -21,10 +21,11 @@ import { accountsSelector } from "~/reducers/accounts";
 import { sharedSwapTracking } from "../utils";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
-
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const { track } = useAnalytics();
   const unfilteredAccounts = useSelector(accountsSelector);
 
@@ -146,19 +147,34 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
       account: "account",
       button: "new source account",
     });
-    // @ts-expect-error navigation type is only partially declared
-    navigation.navigate(NavigatorName.AddAccounts, {
-      screen: ScreenName.AddAccountsSelectCrypto,
-      params: {
-        returnToSwap: true,
-        filterCurrencyIds: selectableCurrencyIds,
-        onSuccess: () => {
-          navigation.navigate(ScreenName.SwapSelectAccount, params);
+    if (llmNetworkBasedAddAccountFlow?.enabled) {
+      navigation.navigate(NavigatorName.AssetSelection, {
+        screen: ScreenName.AddAccountsSelectCrypto,
+        params: {
+          returnToSwap: true,
+          filterCurrencyIds: selectableCurrencyIds,
+          onSuccess: () => {
+            navigation.navigate(ScreenName.SwapSelectAccount, params);
+          },
+          analyticsPropertyFlow: "swap",
+          context: "addAccounts",
         },
-        analyticsPropertyFlow: "swap",
-      },
-    });
-  }, [navigation, params, selectableCurrencyIds, track]);
+      });
+    } else {
+      // @ts-expect-error navigation type is only partially declared
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsSelectCrypto,
+        params: {
+          returnToSwap: true,
+          filterCurrencyIds: selectableCurrencyIds,
+          onSuccess: () => {
+            navigation.navigate(ScreenName.SwapSelectAccount, params);
+          },
+          analyticsPropertyFlow: "swap",
+        },
+      });
+    }
+  }, [navigation, params, selectableCurrencyIds, track, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const renderList = useCallback(
     (items: typeof allAccounts) => {

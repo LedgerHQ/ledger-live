@@ -1287,20 +1287,20 @@
     "title" : "Ledgerが必要です",
     "desc" : "セキュリティーの都合上、Ledger Liveはデバイス上でのみ機能します。継続にはデバイスが必要です。",
     "cta" : "Ledgerを今すぐ購入",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "すでにLedgerを持っているので、セットアップします",
+    "bannerTitle" : "暗号資産とNFTの一流のセキュリティ",
+    "bannerTitle2" : "トレードにはLedgerが必要です",
+    "bannerSubtitle" : "Ledger Flexで実現",
+    "bannerButtonTitle" : "Flexの詳細を知る",
+    "bannerButtonTitle2" : "Ledgerを購入する",
+    "setupCta" : "すでにLedgerを持っているので、セットアップします"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Ledgerはすでに入手されましたか？",
+    "desc" : "Ledgerを入手したら、セットアップしてLedger Liveアプリの全機能をご利用ください。",
+    "cta" : "Ledgerをセットアップ",
+    "bannerTitle" : "Ledgerを受け取りましたか？",
+    "bannerCta" : "セットアップを開始",
     "continue" : "続行"
   },
   "purchaseDevice" : {
@@ -1325,8 +1325,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "購入手続きに成功",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Ledgerをご信頼いただきありがとうございます",
+    "desc" : "ご注文を処理しています。\nご注文確認のメールをご確認ください。"
   },
   "discover" : {
     "title" : "アプリ一覧",
@@ -3091,6 +3091,13 @@
       "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange開発者モード",
+        "description" : "Exchange（取引）プロバイダーの情報を追加する",
+        "placeholder" : "CAL形式のExchangeプロバイダー情報",
+        "currentSetting" : "現在の設定",
+        "error" : "CAL値が無効です"
       }
     },
     "debug" : {
@@ -6912,6 +6919,13 @@
         "title" : "別のLedger Liveアプリと同期する",
         "description" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。"
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "このアプリの同期は終了しました",
+          "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします。",
+          "cta" : "Ledger Syncをオンにする"
+        }
+      },
       "manageKey" : {
         "title" : "同期の削除",
         "description" : "さまざまなスマートフォンやコンピューター間の暗号資産アカウントの同期が停止します。",
@@ -6922,6 +6936,11 @@
           "cancel" : "同期を維持",
           "title" : "同期を削除してもよろしいですか？",
           "desc" : "別のスマートフォンやコンピューター上の暗号資産アカウントは同期されなくなります。これはお客様の資金には一切影響しません。"
+        },
+        "error" : {
+          "title" : "このアプリの同期は終了しました",
+          "description" : "このLedger Liveまたは同期するもののいずれかでLedger Syncをオンにします。",
+          "cta" : "Ledger Syncをオンにする"
         }
       },
       "manageInstances" : {
