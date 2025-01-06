@@ -285,12 +285,7 @@
     "src/wallet-api/version.ts",
     "src/errors/transactionBroadcastErrors.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -327,7 +322,7 @@
     "src/e2e/enum/DeviceLabels.ts",
     "src/e2e/enum/Fee.ts",
     "src/e2e/enum/Nft.ts",
-    "src/e2e/enum/OperationType.ts",
+    "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/enum/Swap.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
