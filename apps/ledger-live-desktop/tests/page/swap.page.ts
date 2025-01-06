@@ -123,19 +123,21 @@ export class SwapPage extends AppPage {
       return provider && !provider.kyc;
     });
 
-    const nativeProviders = providersWithoutKYC.filter(providerName => {
+    for (const providerName of providersWithoutKYC) {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      return provider && provider.isNative;
-    });
+      if (provider && provider.isNative) {
+        const providerLocator = webview
+          .locator(`//span[@data-testid='quote-card-provider-name' and text()='${providerName}']`)
+          .first();
 
-    for (const providerName of nativeProviders) {
-      const providerSelected = webview
-        .locator(`//span[@data-testid='quote-card-provider-name' and text()='${providerName}']`)
-        .first();
-      await providerSelected.isVisible();
-      await providerSelected.click();
-      return providerName;
+        await providerLocator.isVisible();
+        await providerLocator.click();
+
+        return providerName;
+      }
     }
+
+    throw new Error("No valid providers found");
   }
 
   async waitForExchangeToBeAvailable() {
