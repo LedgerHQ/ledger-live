@@ -207,6 +207,7 @@ export function useDappLogic({
   tracking,
   currentAccountHistDb,
   initialAccountId,
+  mevProtected,
 }: {
   manifest: AppManifest;
   postMessage: (message: string) => void;
@@ -215,6 +216,7 @@ export function useDappLogic({
   tracking: TrackingAPI;
   currentAccountHistDb?: CurrentAccountHistDB;
   initialAccountId?: string;
+  mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
@@ -489,10 +491,17 @@ export function useDappLogic({
 
               let optimisticOperation: Operation = signedTransaction.operation;
 
+              let broadcastConfig = mevProtected
+                ? {
+                    broadcastConfig: { mevProtected: mevProtected },
+                  }
+                : {};
+
               if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation: signedTransaction,
+                  ...broadcastConfig,
                 });
               }
 
