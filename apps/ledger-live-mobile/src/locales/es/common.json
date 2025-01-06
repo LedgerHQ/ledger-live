@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Actualización necesaria",
       "description" : "Para sincronizar tus aplicaciones, asegúrate de que ambas estén actualizadas a la versión más reciente."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2354,8 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
-    "seelAllAssets" : "Ver todos los activos",
+    "seeAllAssets" : "Ver todos los activos",
+    "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
@@ -2748,6 +2761,9 @@
         "cta" : "Comienza a poner en participación ahora"
       }
     }
+  },
+  "assets" : {
+    "title" : "Activos"
   },
   "accounts" : {
     "title" : "Cuentas",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "contact_support" : "Ponte en contacto con Soporte",
+        "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+        "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+        "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+        "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "Agregar nueva",
+    "seeAllAccounts" : "Ver todas las cuentas",
+    "addNewOrExisting" : "Agregar cuenta nueva o existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
@@ -5912,6 +5940,10 @@
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
       },
       "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "Asegúrate de que la dirección que se muestra en tu Ledger coincide con la dirección de {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Verifica siempre que la dirección que muestra tu dispositivo coincida exactamente con la que te haya proporcionado el receptor",
+      "send" : "Comprueba siempre que la dirección mostrada en tu dispositivo coincida exactamente con la indicada por el destinatario.",
       "delegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "undelegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "freeze" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te hayan proporcionado",
@@ -7111,6 +7143,14 @@
           "name" : "Agregar una cuenta"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Seleccionar activo"
+    },
+    "selectNetwork" : {
+      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo"
     }
   }
 }
