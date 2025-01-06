@@ -108,12 +108,12 @@ export const txsToOps = (
 
       if (op.value.isZero()) {
         // skip transaction that result no Aptos change
-        op.type = DIRECTION.UNKNOWN;
+        op.type = DIRECTION.NONE;
       }
 
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(id, tx.hash, op.type);
-      if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
+      if (op.type !== DIRECTION.NONE) ops.push(op);
     }
   });
 

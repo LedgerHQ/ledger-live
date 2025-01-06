@@ -26,5 +26,5 @@ export const APTOS_COIN_CHANGE = `0x1::coin::CoinStore<${APTOS_ASSET_ID}>`;
 export enum DIRECTION {
   IN = "IN",
   OUT = "OUT",
-  UNKNOWN = "UNKNOWN",
+  NONE = "NONE",
 }
