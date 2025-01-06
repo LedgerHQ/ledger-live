@@ -29,8 +29,9 @@ permissions:
 jobs:
   generate-screenshots-linux:
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push,
-      # for use in the update-snapshots-desktop action
+      id-token: write
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
       contents: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
