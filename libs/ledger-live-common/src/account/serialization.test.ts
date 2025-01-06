@@ -8,7 +8,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies(["solana"]);
 const Solana = getCryptoCurrencyById("solana");
-const USDC = getTokenById("solana/spl/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const USDC = getTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v");
 
 describe("serialization", () => {
   test("TokenAccount extra fields should be serialized/deserialized", () => {
