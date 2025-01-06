@@ -200,7 +200,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -441,6 +442,14 @@
       "description" : "A Ledger Nano S™ não é compatível com a THORChain Você pode usar a Ledger Nano S Plus, a Ledger Nano X, a Ledger Stax ou a Ledger Flex e realizar trocas cross-chain pela THORChain através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
+    },
+    "incompatibility" : {
+      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
+      "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
+      "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -3717,6 +3726,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "ethereum" : {
@@ -6170,6 +6183,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
