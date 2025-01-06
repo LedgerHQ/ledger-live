@@ -18,11 +18,16 @@ import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
-import { AminoMsg, Coin } from "@cosmjs/amino";
+import { Coin } from "@cosmjs/amino";
 
 type ProtoMsg = {
   typeUrl: string;
   value: Uint8Array;
+};
+
+type AminoMsg = {
+  readonly type: string;
+  readonly value: any;
 };
 
 export interface AminoZenrockMsgDelegate extends AminoMsg {
