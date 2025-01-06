@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, ProtoNFT } from "@ledgerhq/types-live";
+import { Account, AccountLike, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type AccountsNavigatorParamList = {
@@ -39,5 +39,6 @@ export type AccountsNavigatorParamList = {
     showHeader?: boolean;
     canAddAccount?: boolean;
     isSyncEnabled?: boolean;
+    specificAccounts?: Account[] | TokenAccount[];
   };
 };
