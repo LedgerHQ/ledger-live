@@ -18,16 +18,40 @@ import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
+import { AminoMsg, Coin } from "@cosmjs/amino";
 
 type ProtoMsg = {
   typeUrl: string;
   value: Uint8Array;
 };
 
-type AminoMsg = {
-  readonly type: string;
-  readonly value: any;
-};
+export interface AminoZenrockMsgDelegate extends AminoMsg {
+  readonly type: "zrchain/MsgDelegate";
+  readonly value: {
+    readonly delegator_address: string;
+    readonly validator_address: string;
+    readonly amount: Coin;
+  };
+}
+
+export interface AminoZenrockMsgBeginRedelegate extends AminoMsg {
+  readonly type: "zrchain/MsgBeginRedelegate";
+  readonly value: {
+    readonly delegator_address: string;
+    readonly validator_src_address: string;
+    readonly validator_dst_address: string;
+    readonly amount: Coin;
+  };
+}
+
+export interface AminoZenrockMsgUndelegate extends AminoMsg {
+  readonly type: "zrchain/MsgUndelegate";
+  readonly value: {
+    readonly delegator_address: string;
+    readonly validator_address: string;
+    readonly amount: Coin;
+  };
+}
 
 export const txToMessages = (
   account: Account,
@@ -73,8 +97,9 @@ export const txToMessages = (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && transaction.amount.gt(0)) {
-          const aminoMsg: AminoMsgDelegate = {
-            type: "cosmos-sdk/MsgDelegate",
+          const aminoMsg: AminoMsgDelegate | AminoZenrockMsgDelegate = {
+            type:
+              account.currency.id === "zenrock" ? "zrchain/MsgDelegate" : "cosmos-sdk/MsgDelegate",
             value: {
               delegator_address: account.freshAddress,
               validator_address: validator.address,
@@ -88,7 +113,10 @@ export const txToMessages = (
 
           // PROTO MESSAGE
           protoMsgs.push({
-            typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+            typeUrl:
+              account.currency.id === "zenrock"
+                ? "/zrchain.validation.MsgDelegate"
+                : "/cosmos.staking.v1beta1.MsgDelegate",
             value: MsgDelegate.encode({
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
@@ -111,8 +139,11 @@ export const txToMessages = (
         transaction.validators[0].amount.gt(0)
       ) {
         const validator = transaction.validators[0];
-        const aminoMsg: AminoMsgBeginRedelegate = {
-          type: "cosmos-sdk/MsgBeginRedelegate",
+        const aminoMsg: AminoMsgBeginRedelegate | AminoZenrockMsgBeginRedelegate = {
+          type:
+            account.currency.id === "zenrock"
+              ? "zrchain/MsgBeginRedelegate"
+              : "cosmos-sdk/MsgBeginRedelegate",
           value: {
             delegator_address: account.freshAddress,
             validator_src_address: transaction.sourceValidator,
@@ -127,7 +158,10 @@ export const txToMessages = (
 
         // PROTO MESSAGE
         protoMsgs.push({
-          typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+          typeUrl:
+            account.currency.id === "zenrock"
+              ? "/zrchain.validation.MsgBeginRedelegate"
+              : "/cosmos.staking.v1beta1.MsgBeginRedelegate",
           value: MsgBeginRedelegate.encode({
             delegatorAddress: account.freshAddress,
             validatorSrcAddress: transaction.sourceValidator,
@@ -145,8 +179,11 @@ export const txToMessages = (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && validator.amount.gt(0)) {
-          const aminoMsg: AminoMsgUndelegate = {
-            type: "cosmos-sdk/MsgUndelegate",
+          const aminoMsg: AminoMsgUndelegate | AminoZenrockMsgUndelegate = {
+            type:
+              account.currency.id === "zenrock"
+                ? "zrchain/MsgUndelegate"
+                : "cosmos-sdk/MsgUndelegate",
             value: {
               delegator_address: account.freshAddress,
               validator_address: validator.address,
@@ -160,7 +197,10 @@ export const txToMessages = (
 
           // PROTO MESSAGE
           protoMsgs.push({
-            typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
+            typeUrl:
+              account.currency.id === "zenrock"
+                ? "/zrchain.validation.MsgUndelegate"
+                : "/cosmos.staking.v1beta1.MsgUndelegate",
             value: MsgUndelegate.encode({
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
@@ -215,8 +255,9 @@ export const txToMessages = (
             validator_address: validator.address,
           },
         };
-        const aminoDelegateMsg: AminoMsgDelegate = {
-          type: "cosmos-sdk/MsgDelegate",
+        const aminoDelegateMsg: AminoMsgDelegate | AminoZenrockMsgDelegate = {
+          type:
+            account.currency.id === "zenrock" ? "zrchain/MsgDelegate" : "cosmos-sdk/MsgDelegate",
           value: {
             delegator_address: account.freshAddress,
             validator_address: validator.address,
@@ -237,7 +278,10 @@ export const txToMessages = (
           }).finish(),
         });
         protoMsgs.push({
-          typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+          typeUrl:
+            account.currency.id === "zenrock"
+              ? "/zrchain.validation.MsgDelegate"
+              : "/cosmos.staking.v1beta1.MsgDelegate",
           value: MsgDelegate.encode({
             delegatorAddress: account.freshAddress,
             validatorAddress: validator.address,
