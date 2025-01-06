@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import type { DeviceTransactionField } from "../../transaction";
+import BigNumber from "bignumber.js";
 
 export const methodToString = (method: number): string => {
   switch (method) {
