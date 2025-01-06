@@ -79,7 +79,7 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@support/signed-screenshot-gh-commits-swinton-test-3
         id: update-snapshots
         with:
           os: ubuntu-22.04
