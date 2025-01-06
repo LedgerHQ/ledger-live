@@ -9,15 +9,13 @@ import {
   toStakeAccountWithInfo,
   TransactionDescriptor,
 } from "./api/chain/web3";
-import { getTokenById } from "@ledgerhq/cryptoassets";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Awaited,
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
   tokenIsListedOnLedger,
-  toTokenId,
-  toTokenMint,
   withdrawableFromStake,
 } from "./logic";
 import {
@@ -80,7 +78,7 @@ export const getAccountShapeWithAPI = async (
   const subAccByMint = pipe(
     () => mainInitialAcc?.subAccounts ?? [],
     filter((subAcc): subAcc is TokenAccount => subAcc.type === "TokenAccount"),
-    keyBy(subAcc => toTokenMint(subAcc.token.id)),
+    keyBy(subAcc => subAcc.token.contractAddress),
     v => new Map(toPairs(v)),
   )();
 
@@ -260,8 +258,12 @@ function newSubAcc({
 
   const creationDate = new Date((firstTx.info.blockTime ?? Date.now() / 1000) * 1000);
 
-  const tokenId = toTokenId(currencyId, assocTokenAcc.info.mint.toBase58());
-  const tokenCurrency = getTokenById(tokenId);
+  const mint = assocTokenAcc.info.mint.toBase58();
+  const tokenCurrency = findTokenByAddressInCurrency(mint, currencyId);
+
+  if (!tokenCurrency) {
+    throw new Error(`token for mint "${mint}" not found`);
+  }
 
   const accosTokenAccPubkey = assocTokenAcc.onChainAcc.pubkey;
 

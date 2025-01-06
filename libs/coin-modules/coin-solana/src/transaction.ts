@@ -20,11 +20,10 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
 import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { assertUnreachable } from "./utils";
-import { toTokenId } from "./logic";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -148,7 +147,10 @@ function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: Tok
 }
 
 function formatCreateATA(mainAccount: Account, command: TokenCreateATACommand) {
-  const token = getTokenById(toTokenId(mainAccount.currency.id, command.mint));
+  const token = findTokenByAddressInCurrency(command.mint, mainAccount.currency.id);
+  if (!token) {
+    throw new Error(`token for mint "${command.mint}" not found`);
+  }
   const str = [`  OPT IN TOKEN: ${token.ticker}`].filter(Boolean).join("\n");
   return "\n" + str;
 }

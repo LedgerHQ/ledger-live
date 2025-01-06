@@ -406,7 +406,7 @@ function convertElrondESDTTokens([
   };
 }
 
-function convertSplTokens([chainId, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+function convertSplTokens([id, chainId, name, symbol, address, decimals]: SPLToken): TokenCurrency {
   const chainIdToCurrencyId = {
     // Fallback in case CAL is using chainIds for vault
     1: "solana",
@@ -419,7 +419,7 @@ function convertSplTokens([chainId, name, symbol, address, decimals]: SPLToken):
   const currencyId = chainIdToCurrencyId[chainId];
   return {
     type: "TokenCurrency",
-    id: `${currencyId}/spl/${address}`,
+    id,
     contractAddress: address,
     parentCurrency: getCryptoCurrencyById(currencyId),
     name,
