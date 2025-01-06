@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Необходимо обновление",
       "description" : "Для синхронизации приложений обновите их до последних версий."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -1457,7 +1469,7 @@
     "stepLanguage" : {
       "title" : "Выберите язык",
       "cta" : "Продолжить",
-      "changeDeviceLanguage" : "{{language}} язык также доступен для {{deviceName}}.",
+      "changeDeviceLanguage" : "Теперь для {{deviceName}} доступен {{language}} язык.",
       "changeDeviceLanguageDescription" : "Хотите сменить язык на {{language}}?",
       "warning" : {
         "title" : "Настроить на английском",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "Просмотреть все"
     },
     "walletBalance" : "Баланс кошелька",
-    "seelAllAssets" : "Посмотреть все активы",
+    "seeAllAssets" : "Посмотреть все активы",
+    "seeAllAccounts" : "Показать все",
     "marketPriceSection" : {
       "title" : "Рыночная цена {{currencyTicker}}",
       "currencyPrice" : "Цена {{currencyTicker}}",
@@ -2748,6 +2761,9 @@
         "cta" : "Застейкать"
       }
     }
+  },
+  "assets" : {
+    "title" : "Активы"
   },
   "accounts" : {
     "title" : "Счета",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "Ничего не найдено. По текущему фильтру нет подходящих курсов."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Совместимые устройства",
+        "contact_support" : "Связаться с Поддержкой",
+        "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
+        "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
+        "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
+        "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "Добавить новый",
+    "seeAllAccounts" : "Показать все",
+    "addNewOrExisting" : "Добавить новый или существующий счёт",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -4574,7 +4602,7 @@
     "languageInstalledDesc" : "Язык на вашем устройстве изменён",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
-      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или позже, в разделе «Мой Ledger»."
     },
     "installingLanguage" : "Установка языка",
     "languages" : {
@@ -5912,6 +5940,10 @@
         "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
       },
       "reserveWarning" : "Убедитесь в наличии как минимум {{amount}} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
     }
   },
   "near" : {
@@ -6102,7 +6134,7 @@
     },
     "warning" : "Убедитесь, что адрес на устройстве Ledger в точности совпадает с адресом {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Обязательно проверяйте соответствие адреса на экране устройства с адресом, который вам предоставил получатель",
+      "send" : "Всегда проверяйте, чтобы адрес на экране устройства точно совпадал с адресом, который вам предоставил получатель",
       "delegate" : "Обязательно проверяйте соответствие адреса на экране устройства с адресом, который вам предоставил валидатор",
       "undelegate" : "Обязательно проверяйте соответствие адреса на экране устройства с адресом, который вам предоставил валидатор",
       "freeze" : "Обязательно проверяйте соответствие адреса на экране устройства с адресом, который вам предоставили",
@@ -7111,6 +7143,14 @@
           "name" : "Добавить счёт"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Выберите криптоактив"
+    },
+    "selectNetwork" : {
+      "title" : "Укажите сеть криптоактива"
     }
   }
 }
