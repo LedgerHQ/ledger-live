@@ -69,7 +69,7 @@ export const getFee = async (
             res.errors.expirationTimestampSecs = completedTx.vm_status;
             break;
           }
-          case completedTx.vm_status.includes("EINSUFFICIENT_BALANCE"): {
+          case completedTx.vm_status.includes("INSUFFICIENT_BALANCE"): {
             // skip, processed in getTransactionStatus
             break;
           }
@@ -123,7 +123,7 @@ export const getEstimatedGas = async (
   const key = getCacheKey(transaction);
 
   if (!CACHE.has(key)) {
-    CACHE.set(key, getFee(account, transaction, aptosClient));
+    CACHE.set(key, await getFee(account, transaction, aptosClient));
   }
 
   return CACHE.get(key);
