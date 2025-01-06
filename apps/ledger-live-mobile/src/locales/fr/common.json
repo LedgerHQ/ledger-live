@@ -5,7 +5,7 @@
   "common" : {
     "cancel" : "Annuler",
     "apply" : "Appliquer",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse en dehors de la courbe ed25519"
     },
@@ -1019,6 +1025,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Mise à jour nécessaire",
       "description" : "Pour synchroniser vos applications, assurez-vous qu’elles sont toutes deux mises à jour avec la dernière version."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2339,10 +2351,11 @@
     },
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
-      "seeMarket" : "Tout afficher"
+      "seeMarket" : "Afficher tout"
     },
     "walletBalance" : "Solde total",
-    "seelAllAssets" : "Afficher tous les actifs",
+    "seeAllAssets" : "Voir tous les actifs",
+    "seeAllAccounts" : "Voir tous les comptes",
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
@@ -2497,7 +2510,7 @@
     "identifier" : "Identifiant de la transaction",
     "viewOperation" : "Voir dans l’explorateur",
     "whatIsThis" : "À quoi correspond cette opération ?",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeLess" : "Afficher moins",
     "viewInExplorer" : "Voir dans l’explorateur",
     "sending" : "Envoi en cours…",
@@ -2602,7 +2615,7 @@
       },
       "stellar" : {
         "seeMore" : "Voir plus d’actifs",
-        "seeLess" : "Afficher moins d’actifs",
+        "seeLess" : "Voir moins d’actifs",
         "addTokens" : "Ajouter des actifs",
         "howTo" : "Vous pouvez ajouter des actifs à votre compte Stellar",
         "addAsset" : "Ajouter un actif"
@@ -2748,6 +2761,9 @@
         "cta" : "Staker maintenant"
       }
     }
+  },
+  "assets" : {
+    "title" : "Actifs"
   },
   "accounts" : {
     "title" : "Comptes",
@@ -3467,6 +3483,16 @@
         "providers" : {
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Voir les appareils compatibles",
+        "contact_support" : "Contacter l’Assistance",
+        "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
+        "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
+        "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
+        "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -3961,6 +3987,8 @@
   },
   "addAccounts" : {
     "addNew" : "Ajouter",
+    "seeAllAccounts" : "Voir tous les comptes",
+    "addNewOrExisting" : "Ajouter un compte nouveau ou existant",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -3986,7 +4014,7 @@
     "success" : {
       "desc" : "Accédez à vos comptes ou ajoutez d’autres comptes.",
       "secondaryCTA" : "Ajouter un nouvel actif",
-      "cta" : "Afficher votre actif"
+      "cta" : "Voir votre actif"
     },
     "stopScanning" : "Mettre fin au balayage",
     "retryScanning" : "Réessayer le balayage",
@@ -5912,6 +5940,10 @@
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
       "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "near" : {
@@ -6604,7 +6636,7 @@
         "select" : "Sélectionner",
         "filter" : "Filtrer",
         "blockchain" : "Blockchain",
-        "seeAll" : "Tout afficher",
+        "seeAll" : "Afficher tout",
         "selectAndHide" : "Sélectionner et masquer",
         "hide" : "Masquer {{count}} collection",
         "hiddenCollections" : "Collections masquées",
@@ -7111,6 +7143,14 @@
           "name" : "Ajouter un compte"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Sélectionner un actif"
+    },
+    "selectNetwork" : {
+      "title" : "Sélectionner le réseau de blockchain pour cet actif"
     }
   }
 }
