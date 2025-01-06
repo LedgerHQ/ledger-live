@@ -1,7 +1,7 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import invariant from "invariant";
 
 export class AccountPage extends AppPage {
