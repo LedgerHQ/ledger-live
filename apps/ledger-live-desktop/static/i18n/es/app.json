@@ -442,6 +442,14 @@
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
+    "incompatibility" : {
+      "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+      "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+      "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+      "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+    },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
       "learnMore" : "¿Qué es la permuta?",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Importe retirado",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versión"
     }
   },
   "operationList" : {
@@ -3037,6 +3046,7 @@
         "validatorGroup" : {
           "title" : "Grupo de validadores",
           "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
+          "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
           "totalVotes" : "Total de votos",
           "commission" : "Comisión"
         }
@@ -3626,6 +3636,7 @@
       "withdrawableTitle" : "Puede retirarse",
       "statusUpdateNotice" : "El estado de la delegación se actualizará cuando se confirme la transacción.",
       "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
+      "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
       "emptyState" : {
         "description" : "Puedes recibir recompensas SOL delegando tu activos.",
         "info" : "Cómo funciona la delegación",
@@ -3880,6 +3891,7 @@
           },
           "validator" : {
             "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
             "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
           },
           "connectDevice" : {
@@ -4147,6 +4159,7 @@
             "link" : "Enlace",
             "secondaryCta" : "CTA secundario",
             "cta" : "CTA",
+            "tag" : "Etiqueta",
             "url" : "URL",
             "path" : "Ruta"
           }
@@ -5779,6 +5792,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Cuenta no escaneada por el nodo completo",
       "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "El número de secuencia es demasiado nuevo"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "El número de secuencia es demasiado antiguo",
+      "description" : "El número de secuencia es demasiado antiguo"
+    },
+    "TransactionExpired" : {
+      "title" : "Transacción caducada"
     },
     "SwapRateExpiredError" : {
       "title" : "Tasa caducada",
