@@ -72,10 +72,12 @@ export const getTransactions = async (
 ): Promise<XrplOperation[]> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
+    // newest first
+    // note that order within the results is not guaranteed (see documentation of account_tx)
+    forward: false,
     ...options,
     api_version: 2,
   });
-
   return result.transactions;
 };
 
@@ -91,7 +93,7 @@ export async function getLedgerIndex(): Promise<number> {
 
 async function rpcCall<T extends object>(
   method: string,
-  params: Record<string, string | number>,
+  params: Record<string, string | number | boolean> = {},
 ): Promise<T> {
   const {
     data: { result },
