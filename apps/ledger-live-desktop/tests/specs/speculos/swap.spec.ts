@@ -134,18 +134,13 @@ for (const { swap, xrayTicket } of swaps) {
   });
 }
 
-const rejectedSwap = {
-  swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
-  xrayTicket: "B2CQA-600, B2CQA-2212",
-};
-
 test.describe("Swap - Rejected on device", () => {
+  const rejectedSwap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
   test.beforeEach(async () => {
-    const { swap } = rejectedSwap;
-    const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
+      acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
     setExchangeDependencies(accountPair.map(name => ({ name })));
   });
@@ -156,22 +151,22 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test(
-    `Swap ${rejectedSwap.swap.accountToDebit.currency.name} to ${rejectedSwap.swap.accountToCredit.currency.name}`,
+    `Swap ${rejectedSwap.accountToDebit.currency.name} to ${rejectedSwap.accountToCredit.currency.name}`,
     {
-      annotation: { type: "TMS", description: rejectedSwap.xrayTicket },
+      annotation: { type: "TMS", description: "B2CQA-600, B2CQA-2212" },
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap.swap);
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
       const selectedProvider = await app.swap.selectExchange(electronApp);
       await performSwapUntilDeviceVerificationStep(
         app,
         electronApp,
-        rejectedSwap.swap,
+        rejectedSwap,
         selectedProvider,
       );
-      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap.swap);
+      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
   );
