@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.95.0-nightly.1
+
+### Minor Changes
+
+- [#8800](https://github.com/LedgerHQ/ledger-live/pull/8800) [`4364a11`](https://github.com/LedgerHQ/ledger-live/commit/4364a11a6c77a68ae140e7b45835e5b2d3429051) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test: Refactoring of the Swap Enum + updating Provider Selection + Updating device for e2e tests
+
+### Patch Changes
+
+- [#8729](https://github.com/LedgerHQ/ledger-live/pull/8729) [`9baded6`](https://github.com/LedgerHQ/ledger-live/commit/9baded6a7532ad8effd40ba8c251ca7f4d81dbed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix transport registration crash
+
+- Updated dependencies [[`beb691b`](https://github.com/LedgerHQ/ledger-live/commit/beb691b63370f1e2622fe290e493b85eb23dc91d), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9), [`4364a11`](https://github.com/LedgerHQ/ledger-live/commit/4364a11a6c77a68ae140e7b45835e5b2d3429051)]:
+  - @ledgerhq/live-common@34.17.0-nightly.1
+  - @ledgerhq/cryptoassets@13.8.0-nightly.1
+  - @ledgerhq/coin-framework@0.20.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.1
+  - @ledgerhq/coin-cosmos@0.3.1-nightly.0
+  - @ledgerhq/coin-evm@2.7.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.3.6-nightly.0
+  - @ledgerhq/live-countervalues@0.2.16-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.16-nightly.0
+  - @ledgerhq/live-nft@0.5.1-nightly.0
+  - @ledgerhq/live-nft-react@0.5.1-nightly.0
+  - @ledgerhq/live-wallet@0.7.8-nightly.0
+
 ## 2.95.0-nightly.0
 
 ### Minor Changes

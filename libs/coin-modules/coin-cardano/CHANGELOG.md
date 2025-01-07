@@ -1,5 +1,17 @@
 # @ledgerhq/coin-cardano
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#8812](https://github.com/LedgerHQ/ledger-live/pull/8812) [`8fb90ef`](https://github.com/LedgerHQ/ledger-live/commit/8fb90ef590d7806bc5434b3bc842d6d6b6b66ae3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Disable auto withdrawal of rewards as a workaround for the upcoming Cardano hard fork
+
+### Patch Changes
+
+- Updated dependencies [[`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9)]:
+  - @ledgerhq/cryptoassets@13.8.0-nightly.1
+  - @ledgerhq/coin-framework@0.20.2-nightly.0
+
 ## 0.2.10
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.8.0-nightly.1
+
+### Minor Changes
+
+- [#8579](https://github.com/LedgerHQ/ledger-live/pull/8579) [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9) Thanks [@ahsan-javaiid](https://github.com/ahsan-javaiid)! - fix: updare rsk network name to rootstock
+
 ## 13.8.0-nightly.0
 
 ### Minor Changes

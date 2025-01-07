@@ -1,5 +1,13 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.4.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9)]:
+  - @ledgerhq/cryptoassets@13.8.0-nightly.1
+  - @ledgerhq/coin-framework@0.20.2-nightly.0
+
 ## 1.4.0-nightly.4
 
 ### Patch Changes

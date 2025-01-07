@@ -1,5 +1,44 @@
 ## 34.5.0-next.4
 
+## 34.17.0-nightly.1
+
+### Minor Changes
+
+- [#8800](https://github.com/LedgerHQ/ledger-live/pull/8800) [`4364a11`](https://github.com/LedgerHQ/ledger-live/commit/4364a11a6c77a68ae140e7b45835e5b2d3429051) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test: Refactoring of the Swap Enum + updating Provider Selection + Updating device for e2e tests
+
+### Patch Changes
+
+- [#8729](https://github.com/LedgerHQ/ledger-live/pull/8729) [`beb691b`](https://github.com/LedgerHQ/ledger-live/commit/beb691b63370f1e2622fe290e493b85eb23dc91d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firebase: fix typing of getFeature
+
+- Updated dependencies [[`8fb90ef`](https://github.com/LedgerHQ/ledger-live/commit/8fb90ef590d7806bc5434b3bc842d6d6b6b66ae3), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9)]:
+  - @ledgerhq/coin-cardano@0.3.0-nightly.0
+  - @ledgerhq/cryptoassets@13.8.0-nightly.1
+  - @ledgerhq/coin-framework@0.20.2-nightly.0
+  - @ledgerhq/coin-algorand@0.5.16-nightly.0
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.1
+  - @ledgerhq/coin-cosmos@0.3.1-nightly.0
+  - @ledgerhq/coin-elrond@0.1.11-nightly.0
+  - @ledgerhq/coin-evm@2.7.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.3.6-nightly.0
+  - @ledgerhq/coin-hedera@1.1.4-nightly.0
+  - @ledgerhq/coin-icon@0.4.13-nightly.0
+  - @ledgerhq/coin-internet_computer@1.4.0-nightly.5
+  - @ledgerhq/coin-near@0.5.16-nightly.0
+  - @ledgerhq/coin-polkadot@1.4.2-nightly.0
+  - @ledgerhq/coin-solana@0.9.1-nightly.0
+  - @ledgerhq/coin-stacks@0.3.1-nightly.0
+  - @ledgerhq/coin-stellar@0.4.2-nightly.0
+  - @ledgerhq/coin-tezos@0.7.2-nightly.0
+  - @ledgerhq/coin-ton@0.3.24-nightly.0
+  - @ledgerhq/coin-tron@0.0.16-nightly.0
+  - @ledgerhq/coin-vechain@2.2.2-nightly.0
+  - @ledgerhq/coin-xrp@0.7.2-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.11-nightly.1
+  - @ledgerhq/live-countervalues@0.2.16-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.16-nightly.0
+  - @ledgerhq/live-nft@0.5.1-nightly.0
+  - @ledgerhq/live-wallet@0.7.8-nightly.0
+
 ## 34.17.0-nightly.0
 
 ### Minor Changes

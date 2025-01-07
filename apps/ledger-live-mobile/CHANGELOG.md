@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.60.0-nightly.1
+
+### Minor Changes
+
+- [#8759](https://github.com/LedgerHQ/ledger-live/pull/8759) [`c10a2db`](https://github.com/LedgerHQ/ledger-live/commit/c10a2db051f8bac17bbe1b95169e294c72dcf5e1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix qr code scanner crash
+
+- [#8717](https://github.com/LedgerHQ/ledger-live/pull/8717) [`cfce7d9`](https://github.com/LedgerHQ/ledger-live/commit/cfce7d98643775b1016ebc147fa7771d43dc7aee) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Implementation of the new accounts list inside wallet centric screen.
+
+### Patch Changes
+
+- Updated dependencies [[`beb691b`](https://github.com/LedgerHQ/ledger-live/commit/beb691b63370f1e2622fe290e493b85eb23dc91d), [`4364a11`](https://github.com/LedgerHQ/ledger-live/commit/4364a11a6c77a68ae140e7b45835e5b2d3429051)]:
+  - @ledgerhq/live-common@34.17.0-nightly.1
+  - @ledgerhq/coin-framework@0.20.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.3.1-nightly.0
+  - @ledgerhq/coin-elrond@0.1.11-nightly.0
+  - @ledgerhq/coin-evm@2.7.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.3.6-nightly.0
+  - @ledgerhq/coin-stacks@0.3.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.16-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.16-nightly.0
+  - @ledgerhq/live-nft@0.5.1-nightly.0
+  - @ledgerhq/live-nft-react@0.5.1-nightly.0
+  - @ledgerhq/live-wallet@0.7.8-nightly.0
+
 ## 3.60.0-nightly.0
 
 ### Minor Changes
