@@ -12,8 +12,8 @@ type IGetEstimatedGasReturnType = {
   estimate: {
     maxGasAmount: string;
     gasUnitPrice: string;
-    sequenceNumber: string;
-    expirationTimestampSecs: string;
+    //sequenceNumber: string;
+    //expirationTimestampSecs: string;
   };
   errors: TransactionErrors;
 };
@@ -28,25 +28,24 @@ export const getFee = async (
   const res = {
     fees: new BigNumber(0),
     estimate: {
-      maxGasAmount: transaction.estimate.maxGasAmount,
-      gasUnitPrice: transaction.estimate.gasUnitPrice,
-      sequenceNumber: transaction.options.sequenceNumber || "",
-      expirationTimestampSecs: transaction.options.expirationTimestampSecs || "",
+      maxGasAmount: transaction.estimate.maxGasAmount, // why don't use default
+      gasUnitPrice: transaction.estimate.gasUnitPrice, // why don't use default
+      //sequenceNumber: transaction.options.sequenceNumber || "",
     },
     errors: { ...transaction.errors },
   };
+  CACHE.delete(getCacheKey(transaction)); // this one deletes transaction that was in the begining of the function, cause we are not supposed to change transaction, so to be mmore clear, we should clear cache in the begining
 
   let gasPrice = DEFAULT_GAS_PRICE;
-  let gasLimit = DEFAULT_GAS;
-  let sequenceNumber = "";
-
   try {
     const { gas_estimate } = await aptosClient.estimateGasPrice();
     gasPrice = gas_estimate;
-  } catch (err) {
-    // skip
+  } catch (error: any) {
+    log(`Failed to estimate gas price: ${error.message}`);
   }
+  res.estimate.gasUnitPrice = gasPrice.toString();// why don't use value from simulation
 
+  let gasLimit = DEFAULT_GAS;
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
@@ -54,10 +53,10 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      const expectedGas = BigNumber(gasLimit * gasPrice);
-      const isUnderMaxSpendable = !transaction.amount
+      const expectedGas = BigNumber(gasPrice).multipliedBy(BigNumber(gasLimit));
+      const isUnderMaxSpendable = transaction.amount
         .plus(expectedGas)
-        .isGreaterThan(account.spendableBalance);
+        .isLessThan(account.spendableBalance);
 
       if (isUnderMaxSpendable && !completedTx.success) {
         switch (true) {
@@ -79,40 +78,33 @@ export const getFee = async (
         }
       }
 
-      gasLimit =
-        Number(completedTx.gas_used) ||
-        Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
+      // can we use estimation from simulation instead of separate request?
+      gasLimit = // inconsistency with gas_used
+        Number(completedTx.gas_used) * ESTIMATE_GAS_MUL || Number(transaction.options.maxGasAmount); // why use option here but not estimation
     } catch (error: any) {
       log(error.message);
       throw error;
     }
   }
-
-  try {
-    const { sequence_number } = await aptosClient.getAccount(account.freshAddress);
-    sequenceNumber = sequence_number;
-  } catch (_) {
-    // skip
-  }
-
-  gasLimit = Math.ceil(gasLimit * ESTIMATE_GAS_MUL);
-
-  res.estimate.gasUnitPrice = gasPrice.toString();
-  res.estimate.sequenceNumber = sequenceNumber.toString();
   res.estimate.maxGasAmount = gasLimit.toString();
 
-  res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
-  CACHE.delete(getCacheKey(transaction));
+  // try {
+  //   const { sequence_number } = await aptosClient.getAccount(account.freshAddress);
+  //   res.estimate.sequenceNumber = sequence_number.toString();
+  // } catch (error: any) {
+  //   //log(`Failed to fetch sequence number: ${error.message}`);
+  // }
+
+  res.fees = BigNumber(gasPrice).multipliedBy(BigNumber(gasLimit));
+
   return res;
 };
 
 const getCacheKey = (transaction: Transaction): string =>
   JSON.stringify({
     amount: transaction.amount,
-    gasUnitPrice: transaction.options.gasUnitPrice,
+    //gasUnitPrice: transaction.options.gasUnitPrice,
     maxGasAmount: transaction.options.maxGasAmount,
-    sequenceNumber: transaction.options.sequenceNumber,
-    expirationTimestampSecs: transaction.options.expirationTimestampSecs,
   });
 
 export const getEstimatedGas = async (

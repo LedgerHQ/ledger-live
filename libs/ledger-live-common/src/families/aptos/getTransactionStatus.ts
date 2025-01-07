@@ -58,13 +58,13 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.maxGasAmount = new GasLessThanEstimate();
   }
 
-  if (
-    t.options.gasUnitPrice &&
-    t.estimate.gasUnitPrice &&
-    +t.options.gasUnitPrice < +t.estimate.gasUnitPrice
-  ) {
-    errors.gasUnitPrice = new GasLessThanEstimate();
-  }
+  // if (
+  //   t.options.gasUnitPrice &&
+  //   t.estimate.gasUnitPrice &&
+  //   +t.options.gasUnitPrice < +t.estimate.gasUnitPrice
+  // ) {
+  //   errors.gasUnitPrice = new GasLessThanEstimate();
+  // }
 
   if (t.errors?.sequenceNumber) {
     if (t.errors.sequenceNumber.includes("TOO_OLD")) {
