@@ -442,6 +442,14 @@
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+      "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+      "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+    },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
@@ -3037,6 +3045,7 @@
         "validatorGroup" : {
           "title" : "バリデーターグループ",
           "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
           "totalVotes" : "総投票数",
           "commission" : "コミッション"
         }
@@ -3626,6 +3635,7 @@
       "withdrawableTitle" : "引き出し可能",
       "statusUpdateNotice" : "処理が承認されると、デリゲートのステータスが更新されます。",
       "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
       "emptyState" : {
         "description" : "資産をデリゲートすることで、SOLで報酬を獲得できます。",
         "info" : "デリゲートの仕組み",
@@ -3880,6 +3890,7 @@
           },
           "validator" : {
             "title" : "バリデーター",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
             "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
           },
           "connectDevice" : {
@@ -4147,6 +4158,7 @@
             "link" : "リンク",
             "secondaryCta" : "セカンダリCTA",
             "cta" : "CTA",
+            "tag" : "タグ",
             "url" : "URL",
             "path" : "パス"
           }
@@ -5678,17 +5690,17 @@
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "小数点以下の最大桁数に達しました",
       "description" : "指定された量の小数点以下が18桁であることをご確認ください。"
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
     },
     "NotEnoughEGLDForFees" : {
