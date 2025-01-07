@@ -9,6 +9,24 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 
+function setupEnv(disableBroadcast?: boolean) {
+  const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+  test.beforeAll(async () => {
+    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
+    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
+    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
+  });
+  test.afterAll(async () => {
+    delete process.env.SWAP_DISABLE_APPS_INSTALL;
+    delete process.env.SWAP_API_BASE;
+    if (originalBroadcastValue !== undefined) {
+      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
+    } else {
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    }
+  });
+}
+
 const app: AppInfos = AppInfos.EXCHANGE;
 
 const swaps = [
@@ -76,13 +94,7 @@ const swaps = [
 
 for (const { swap, xrayTicket } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
-    const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-
-    test.beforeAll(async () => {
-      process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-    });
+    setupEnv(true);
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -94,16 +106,6 @@ for (const { swap, xrayTicket } of swaps) {
           name: appName,
         })),
       );
-    });
-
-    test.afterAll(async () => {
-      delete process.env.SWAP_DISABLE_APPS_INSTALL;
-      delete process.env.SWAP_API_BASE;
-      if (originalValue !== undefined) {
-        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
-      } else {
-        delete process.env.DISABLE_TRANSACTION_BROADCAST;
-      }
     });
 
     test.use({
@@ -132,62 +134,48 @@ for (const { swap, xrayTicket } of swaps) {
   });
 }
 
-const rejectedSwaps = [
-  {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
-    xrayTicket: "B2CQA-600, B2CQA-2212",
-  },
-];
+const rejectedSwap = {
+  swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
+  xrayTicket: "B2CQA-600, B2CQA-2212",
+};
 
-for (const { swap, xrayTicket } of rejectedSwaps) {
-  test.describe("Swap - Rejected on device", () => {
-    test.beforeAll(async () => {
-      process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-    });
+test.describe("Swap - Rejected on device", () => {
+  setupEnv(true);
 
-    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+  test.beforeEach(async () => {
+    const { swap } = rejectedSwap;
+    const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
-
-    test.beforeEach(async () => {
-      setExchangeDependencies(
-        accPair.map(appName => ({
-          name: appName,
-        })),
-      );
-    });
-
-    test.afterAll(async () => {
-      delete process.env.SWAP_DISABLE_APPS_INSTALL;
-      delete process.env.SWAP_API_BASE;
-    });
-
-    test.use({
-      userdata: "speculos-tests-app",
-      speculosApp: app,
-    });
-
-    test(
-      `Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
-      {
-        annotation: {
-          type: "TMS",
-          description: xrayTicket,
-        },
-      },
-      async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        const selectedProvider = await app.swap.selectExchange(electronApp);
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
-        await app.speculos.verifyAmountsAndRejectSwap(swap);
-        await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
-      },
-    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
   });
-}
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `Swap ${rejectedSwap.swap.accountToDebit.currency.name} to ${rejectedSwap.swap.accountToCredit.currency.name}`,
+    {
+      annotation: { type: "TMS", description: rejectedSwap.xrayTicket },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap.swap);
+      const selectedProvider = await app.swap.selectExchange(electronApp);
+      await performSwapUntilDeviceVerificationStep(
+        app,
+        electronApp,
+        rejectedSwap.swap,
+        selectedProvider,
+      );
+      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap.swap);
+      await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
+    },
+  );
+});
 
 const tooLowAmountForQuoteSwaps = [
   {
@@ -210,10 +198,7 @@ const tooLowAmountForQuoteSwaps = [
 
 for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   test.describe("Swap - with too low amount (throwing UI errors)", () => {
-    test.beforeAll(async () => {
-      process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-    });
+    setupEnv(true);
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -225,11 +210,6 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
           name: appName,
         })),
       );
-    });
-
-    test.afterAll(async () => {
-      delete process.env.SWAP_DISABLE_APPS_INSTALL;
-      delete process.env.SWAP_API_BASE;
     });
 
     test.use({
@@ -292,15 +272,7 @@ const swapEntryPoint = {
 };
 
 test.describe("Swap flow from different entry point", () => {
-  test.beforeAll(async () => {
-    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
-  });
-
-  test.afterAll(async () => {
-    delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    delete process.env.SWAP_API_BASE;
-  });
+  setupEnv(true);
 
   test.use({
     userdata: "speculos-tests-app",
