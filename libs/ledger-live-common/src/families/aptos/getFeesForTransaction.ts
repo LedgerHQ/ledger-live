@@ -80,7 +80,7 @@ export const getFee = async (
 
       // can we use estimation from simulation instead of separate request?
       gasLimit = // inconsistency with gas_used
-        Number(completedTx.gas_used) * ESTIMATE_GAS_MUL || Number(transaction.options.maxGasAmount); // why use option here but not estimation
+        Number(completedTx.gas_used) * ESTIMATE_GAS_MUL || Number(transaction.estimate.maxGasAmount); // why use option here but not estimation
     } catch (error: any) {
       log(error.message);
       throw error;
@@ -104,7 +104,7 @@ const getCacheKey = (transaction: Transaction): string =>
   JSON.stringify({
     amount: transaction.amount,
     //gasUnitPrice: transaction.options.gasUnitPrice,
-    maxGasAmount: transaction.options.maxGasAmount,
+    //maxGasAmount: transaction.options.maxGasAmount,
   });
 
 export const getEstimatedGas = async (

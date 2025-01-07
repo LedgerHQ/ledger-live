@@ -164,7 +164,7 @@ describe("getTransactionStatus Test", () => {
     transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
 
-    transaction.options.maxGasAmount = "50";
+    //transaction.options.maxGasAmount = "50";
     transaction.estimate.maxGasAmount = "100";
 
     const result = await getTransactionStatus(account, transaction);
@@ -190,7 +190,7 @@ describe("getTransactionStatus Test", () => {
     transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
 
-    transaction.options.gasUnitPrice = "50";
+    //transaction.options.gasUnitPrice = "50";
     transaction.estimate.gasUnitPrice = "100";
 
     const result = await getTransactionStatus(account, transaction);
