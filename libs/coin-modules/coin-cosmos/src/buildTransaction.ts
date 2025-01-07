@@ -30,32 +30,16 @@ type AminoMsg = {
   readonly value: any;
 };
 
-export interface AminoZenrockMsgDelegate extends AminoMsg {
+export interface AminoZenrockMsgDelegate extends Omit<AminoMsgDelegate, "type"> {
   readonly type: "zrchain/MsgDelegate";
-  readonly value: {
-    readonly delegator_address: string;
-    readonly validator_address: string;
-    readonly amount: Coin;
-  };
 }
 
-export interface AminoZenrockMsgBeginRedelegate extends AminoMsg {
+export interface AminoZenrockMsgBeginRedelegate extends Omit<AminoMsgBeginRedelegate, "type"> {
   readonly type: "zrchain/MsgBeginRedelegate";
-  readonly value: {
-    readonly delegator_address: string;
-    readonly validator_src_address: string;
-    readonly validator_dst_address: string;
-    readonly amount: Coin;
-  };
 }
 
-export interface AminoZenrockMsgUndelegate extends AminoMsg {
+export interface AminoZenrockMsgUndelegate extends Omit<AminoMsgUndelegate, "type"> {
   readonly type: "zrchain/MsgUndelegate";
-  readonly value: {
-    readonly delegator_address: string;
-    readonly validator_address: string;
-    readonly amount: Coin;
-  };
 }
 
 export const txToMessages = (
