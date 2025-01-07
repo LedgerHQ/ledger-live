@@ -442,6 +442,14 @@
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
+      "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
+      "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
+      "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+    },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
       "learnMore" : "스왑이란?",
@@ -3037,6 +3045,7 @@
         "validatorGroup" : {
           "title" : "검증인 그룹",
           "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
           "totalVotes" : "총 투표수",
           "commission" : "커미션"
         }
@@ -3626,6 +3635,7 @@
       "withdrawableTitle" : "출금 가능",
       "statusUpdateNotice" : "거래 확인 후 위임 상태가 업데이트됩니다.",
       "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
       "emptyState" : {
         "description" : "자산을 위임하여 SOL 보상을 받을 수 있습니다.",
         "info" : "위임은 어떤 원리인가요?",
@@ -3880,6 +3890,7 @@
           },
           "validator" : {
             "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4147,6 +4158,7 @@
             "link" : "링크",
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
+            "tag" : "태그",
             "url" : "URL",
             "path" : "경로"
           }
@@ -5678,17 +5690,17 @@
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "최대 소수점 제한에 도달했습니다.",
       "description" : "제공된 금액이 소수점 이하 18자리인지 확인하세요."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "위임된 금액은 {{formattedAmount}} 이상이어야 합니다"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "위임되지 않은 금액은 {{formattedAmount}} 이상이어야 합니다."
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
     },
     "NotEnoughEGLDForFees" : {
