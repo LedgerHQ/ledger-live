@@ -43,8 +43,8 @@ export function normalizeTransactionOptions(options: TransactionOptions): Transa
   return {
     maxGasAmount: check(options.maxGasAmount),
     gasUnitPrice: check(options.gasUnitPrice),
-    sequenceNumber: check(options.sequenceNumber),
-    expirationTimestampSecs: check(options.expirationTimestampSecs),
+    //sequenceNumber: check(options.sequenceNumber),
+    //expirationTimestampSecs: check(options.expirationTimestampSecs),
   };
 }
 
