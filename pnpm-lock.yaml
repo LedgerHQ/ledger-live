@@ -3105,17 +3105,17 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@taquito/ledger-signer':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.0.0
       '@taquito/rpc':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.0.0
       '@taquito/taquito':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.0.0
       '@taquito/utils':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.0.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4071,8 +4071,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@taquito/ledger-signer':
-        specifier: ^20.0.0
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.0.0
       '@ton-community/ton-ledger':
         specifier: ^7.0.1
         version: 7.0.1(@ton/core@0.56.3(@ton/crypto@3.3.0))
@@ -15323,40 +15323,40 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  '@taquito/core@20.0.1':
-    resolution: {integrity: sha512-/NvTkS8Enz5zxm481h7Ld5+MTa3/q84PMqtQ+HN3Mniv4EshnX5uIGfbdXdCQoaAeVdJOCeNIZDgeP6ZnkomRA==}
+  '@taquito/core@21.0.0':
+    resolution: {integrity: sha512-aXwNt21LPpCwulgJkT7DpFtaJppRPsb3tjuZ5K8+c3A06+Qa1mr/gk7OnG80of8X469Bxne4yxI3SId5rw6t7Q==}
     engines: {node: '>=18'}
 
-  '@taquito/http-utils@20.0.1':
-    resolution: {integrity: sha512-belYNmWoT49IF8o51gEB5je5Wz54+C7Q5hmvh7modl7fG0qE8VD1ulSH+WjuZsFTPJdNEAfCe0O50Vb5tNzw2w==}
+  '@taquito/http-utils@21.0.0':
+    resolution: {integrity: sha512-fBqz3B+4zAsr193PMmuhXhQEKETxfqyCOwEltj2GJf2oE4jAjBWZbOd3h/Kn/Kv0tjysXgmp8ID7uSLwJo0wBw==}
     engines: {node: '>=18'}
 
-  '@taquito/ledger-signer@20.0.1':
-    resolution: {integrity: sha512-w8PM2tmBGK7FaQnifDJr43Gt+xt5AApiMr8rh7PV5v+uyHfmaqudNBK0SdlbTKpS7GkERs4X8CBojpeGAage8Q==}
+  '@taquito/ledger-signer@21.0.0':
+    resolution: {integrity: sha512-/UKA8fOr4cXsKihcbRuddCkphb5lasyM0IMM8Pj2Fi+vre4VuecY7UgRdP/UYK2JwX5xpJpbLrE1lXCDmI/f/w==}
     engines: {node: '>=18'}
 
-  '@taquito/local-forging@20.0.1':
-    resolution: {integrity: sha512-+XYHnoAYXpOYA4WbUvUO86F6uoUh1anaNQGD544ySaonJW1ZgwhylrGvvTVjQfFSqqP3TRWn69EqINco+hX7gA==}
+  '@taquito/local-forging@21.0.0':
+    resolution: {integrity: sha512-WO+M7irXK/mwLBrw2Wf0q0qLWcE7EwaqWVpM+C2g4K+fXgPjLC5UPSeY0wHU8te6TpO/8ttweAXE+k+lA+ABCA==}
     engines: {node: '>=18'}
 
-  '@taquito/michel-codec@20.0.1':
-    resolution: {integrity: sha512-TB6fJS4ArW4p1mqR28cjKbYs4cbLz/wnf8bHI/4ubxpiPcARZkja7r4U89D+Lb6Kn1Er+USPIMdbRTkP011e0w==}
+  '@taquito/michel-codec@21.0.0':
+    resolution: {integrity: sha512-xNFrQpEwS/oFe0j3+J+YorxHXZfx78PkgXOfRu6eMq1l3LVDZs61Vy7l/32GvpFEDJdf9X1QQQzDvzs9LD67/Q==}
     engines: {node: '>=18'}
 
-  '@taquito/michelson-encoder@20.0.1':
-    resolution: {integrity: sha512-YfMLpxDL/Qd9AlIfjlCsXYiE07ReZRAqvj+mI/Q8sPsKpqrkjvhyieNUQDLVqMDRcWLBWUSIqccr7UVRlQ/+BQ==}
+  '@taquito/michelson-encoder@21.0.0':
+    resolution: {integrity: sha512-Y9JqiLRCae+WsbbWnLIgPdyu46ta6CqaHATQ9RJVsp9ftxsmIPW0gw4n7Oep04OGrUiliLl17gsFD1OHvtGQsg==}
     engines: {node: '>=18'}
 
-  '@taquito/rpc@20.0.1':
-    resolution: {integrity: sha512-Ec6fXoehjLpfILpVAHZ1NJz6cAaguEFs9McK2Ct4RRKmVhModgrVPAGXn17rb7fLXwOLP3MCzqSgFPToY7ZIFA==}
+  '@taquito/rpc@21.0.0':
+    resolution: {integrity: sha512-7EqwHHOQke/zeB+sbVAey7jMnn184TqLKKQyiukHg+Cz13938xqVVFzKUsw9KhBZ1g3P5K18TkGIFXShKljcJg==}
     engines: {node: '>=18'}
 
-  '@taquito/taquito@20.0.1':
-    resolution: {integrity: sha512-BcRNWcUGOWfthFPgPf12U1ZIf1xSyy1ZS4xU5TciuxI395LnKTz6I3WfmMggsZzWxqEgi/Lj8GXjji7DCtaZRg==}
+  '@taquito/taquito@21.0.0':
+    resolution: {integrity: sha512-0PoPJXu3rHhAisVRz+x9JwBW6oreRZe7C3S7aA4MZnSS5XeinysiN+0Q6yQuwj98sn2/k8iXnIpNx1EV9K6qMg==}
     engines: {node: '>=18'}
 
-  '@taquito/utils@20.0.1':
-    resolution: {integrity: sha512-aJaKukIW9thzU/WZ7p9ARRIDoXLQZ8TsB0brtbf48GqBFoGXDNAsDo72lkeTpehEcgYItSjdBuWEKH/lyTMr+w==}
+  '@taquito/utils@21.0.0':
+    resolution: {integrity: sha512-nFaOXbKSOZF9mJYOxDjmmSRJ7ZIc9bcixkr75vEYavSoOj84wMHHttSL9VGE5ysjQwKUIP1XtXBq/eBMSm9ecA==}
     engines: {node: '>=18'}
 
   '@testing-library/dom@9.3.4':
@@ -19583,6 +19583,9 @@ packages:
 
   elliptic@6.5.5:
     resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
+
+  elliptic@6.6.1:
+    resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
 
   embla-carousel-autoplay@8.4.0:
     resolution: {integrity: sha512-AJHXrnaY+Tf4tb/+oItmJSpz4P0WvS62GrW5Z4iFY3zsH0mkKcijzd04LIkj0P4DkTazIBEuXple+nUVmuMsrQ==}
@@ -43517,82 +43520,82 @@ snapshots:
       '@tanstack/query-core': 5.28.9
       react: 18.3.1
 
-  '@taquito/core@20.0.1':
+  '@taquito/core@21.0.0':
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/http-utils@20.0.1':
+  '@taquito/http-utils@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
+      '@taquito/core': 21.0.0
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/ledger-signer@20.0.1':
+  '@taquito/ledger-signer@21.0.0':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
       '@stablelib/blake2b': 1.0.1
-      '@taquito/core': 20.0.1
-      '@taquito/taquito': 20.0.1
-      '@taquito/utils': 20.0.1
+      '@taquito/core': 21.0.0
+      '@taquito/taquito': 21.0.0
+      '@taquito/utils': 21.0.0
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/local-forging@20.0.1':
+  '@taquito/local-forging@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
-      '@taquito/utils': 20.0.1
+      '@taquito/core': 21.0.0
+      '@taquito/utils': 21.0.0
       bignumber.js: 9.1.2
 
-  '@taquito/michel-codec@20.0.1':
+  '@taquito/michel-codec@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
+      '@taquito/core': 21.0.0
 
-  '@taquito/michelson-encoder@20.0.1':
+  '@taquito/michelson-encoder@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
-      '@taquito/rpc': 20.0.1
-      '@taquito/utils': 20.0.1
+      '@taquito/core': 21.0.0
+      '@taquito/rpc': 21.0.0
+      '@taquito/utils': 21.0.0
       bignumber.js: 9.1.2
       fast-json-stable-stringify: 2.1.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/rpc@20.0.1':
+  '@taquito/rpc@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
-      '@taquito/http-utils': 20.0.1
-      '@taquito/utils': 20.0.1
+      '@taquito/core': 21.0.0
+      '@taquito/http-utils': 21.0.0
+      '@taquito/utils': 21.0.0
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/taquito@20.0.1':
+  '@taquito/taquito@21.0.0':
     dependencies:
-      '@taquito/core': 20.0.1
-      '@taquito/http-utils': 20.0.1
-      '@taquito/local-forging': 20.0.1
-      '@taquito/michel-codec': 20.0.1
-      '@taquito/michelson-encoder': 20.0.1
-      '@taquito/rpc': 20.0.1
-      '@taquito/utils': 20.0.1
+      '@taquito/core': 21.0.0
+      '@taquito/http-utils': 21.0.0
+      '@taquito/local-forging': 21.0.0
+      '@taquito/michel-codec': 21.0.0
+      '@taquito/michelson-encoder': 21.0.0
+      '@taquito/rpc': 21.0.0
+      '@taquito/utils': 21.0.0
       bignumber.js: 9.1.2
       rxjs: 7.8.1
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/utils@20.0.1':
+  '@taquito/utils@21.0.0':
     dependencies:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
-      '@taquito/core': 20.0.1
+      '@taquito/core': 21.0.0
       '@types/bs58check': 2.1.2
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58check: 3.0.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       typedarray-to-buffer: 4.0.0
 
   '@testing-library/dom@9.3.4':
@@ -49201,6 +49204,16 @@ snapshots:
       minimalistic-crypto-utils: 1.0.1
 
   elliptic@6.5.5:
+    dependencies:
+      bn.js: 4.12.0
+      brorand: 1.1.0
+      hash.js: 1.1.7
+      hmac-drbg: 1.0.1
+      inherits: 2.0.4
+      minimalistic-assert: 1.0.1
+      minimalistic-crypto-utils: 1.0.1
+
+  elliptic@6.6.1:
     dependencies:
       bn.js: 4.12.0
       brorand: 1.1.0
